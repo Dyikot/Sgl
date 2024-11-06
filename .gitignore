@@ -1,0 +1,7 @@
+x64
+Test
+Dependencies
+*.sln
+*.vcxproj
+*.filters
+*.user
