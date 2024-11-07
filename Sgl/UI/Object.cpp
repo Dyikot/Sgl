@@ -2,9 +2,14 @@
 
 namespace Sgl
 {
-    void Object::SetStyle(const Style& style)
+    Object::Object(const SDL_FPoint& position) noexcept:
+        _position(position)
+    {}
+
+    Object::Object(const SDL_FPoint& position, const Style& style) noexcept:
+        _position(position),
+        UIElement(style)
     {
-        UIElement::SetStyle(style);
         style.TryInit(SizeChangedProperty, SizeChanged);
         style.TryInit(WidthProperty, _width);
         style.TryInit(HeightProperty, _height);
@@ -18,6 +23,10 @@ namespace Sgl
         style.TryInit(VerticalAligmentProperty, _verticalAlignment);
         style.TryInit(HorizontalAlignmentProperty, _horizontalAlignment);
     }
+
+    Object::Object(const Style& style) noexcept:
+        Object(SDL_FPoint{}, style)
+    {}
 
     void Object::OnRender() const
     {

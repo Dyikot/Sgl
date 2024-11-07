@@ -1,13 +1,12 @@
 #pragma once
+#include <SDL/SDL_render.h>
+#include <variant>
 
 namespace Sgl
 {
 	struct ColorBrush
 	{
-		uint8_t R;
-		uint8_t G;
-		uint8_t B;
-		uint8_t A;
+		uint8_t R, G, B, A;
 
 		constexpr ColorBrush(uint8_t r, uint8_t g, uint8_t b, uint8_t a):
 			R(r), G(g), B(b), A(a)
@@ -37,4 +36,16 @@ namespace Sgl
 		inline constexpr ColorBrush Lightgreen = 0x00af00ff;
 		inline constexpr ColorBrush Darkgrey = 0x464646ff;
 	}
+
+	struct TextureBrush: ColorBrush
+	{
+	public:
+		SDL_Texture* Source;
+	public:
+		TextureBrush(SDL_Texture* texture, ColorBrush brush = Colors::White):
+			ColorBrush(brush), Source(texture)
+		{}
+	};
+
+	using Brush = std::variant<ColorBrush, TextureBrush>;
 }

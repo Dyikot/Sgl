@@ -3,7 +3,7 @@
 #include <string_view>
 #include <iostream>
 #include "SDL/SDL_image.h"
-#include "Color.h"
+#include "Brushes.h"
 
 namespace Sgl
 {
@@ -28,15 +28,5 @@ namespace Sgl
 		{ 
 			return _texture;
 		}
-	};
-
-	struct ImageBrush: ColorBrush
-	{
-	public:
-		Texture& Image;
-	public:
-		ImageBrush(Texture& texture, ColorBrush brush):
-			ColorBrush(brush), Image(texture)
-		{}
 	};
 }

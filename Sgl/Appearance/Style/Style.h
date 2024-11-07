@@ -8,7 +8,7 @@ namespace Sgl
 	class Style
 	{		
 	private:
-		std::unordered_map<PropertyId, IProperty*> _idToPropertyMap;
+		std::unordered_map<PropertyId, IProperty*> _propertyMap;
 	public:
 		Style() noexcept;
 		Style(const Style& style) noexcept;
@@ -23,7 +23,7 @@ namespace Sgl
 				throw std::invalid_argument("Id type and property type is equal!");
 			}
 
-			_idToPropertyMap.insert(std::make_pair(id, property));
+			_propertyMap.insert(std::make_pair(id, property));
 		}
 
 		template<typename T, typename... Args>
@@ -35,7 +35,7 @@ namespace Sgl
 				throw std::invalid_argument("Id type and property type is equal!");
 			}
 
-			_idToPropertyMap.insert(std::make_pair(id, property));
+			_propertyMap.insert(std::make_pair(id, property));
 		}
 
 		void Add(const Style& style);
@@ -47,27 +47,27 @@ namespace Sgl
 		template<typename T>
 		void TryInit(PropertyId id, T& value) const
 		{
-			if(_idToPropertyMap.contains(id))
+			if(_propertyMap.contains(id))
 			{
-				value = _idToPropertyMap.at(id)->Get<T>();
+				value = _propertyMap.at(id)->Get<T>();
 			}
 		}
 
 		template<typename T>
 		void TryInit(PropertyId id, Event<T>& value) const
 		{
-			if(_idToPropertyMap.contains(id))
+			if(_propertyMap.contains(id))
 			{
-				value += _idToPropertyMap.at(id)->Get<T>();
+				value += _propertyMap.at(id)->Get<T>();
 			}
 		}
 
 		template<typename T>
 		T GetValue(PropertyId id) const
 		{
-			if(_idToPropertyMap.contains(id))
+			if(_propertyMap.contains(id))
 			{
-				return _idToPropertyMap.at(id)->Get<T>();
+				return _propertyMap.at(id)->Get<T>();
 			}
 
 			return T{};

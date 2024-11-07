@@ -5,3 +5,4 @@ Dependencies
 *.vcxproj
 *.filters
 *.user
+.vs

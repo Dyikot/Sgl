@@ -2,7 +2,7 @@
 
 namespace Sgl
 {
-	void UIElement::SetStyle(const Style& style)
+	UIElement::UIElement(const Style& style) noexcept
 	{
 		style.TryInit(MouseDownProperty, MouseDown);
 		style.TryInit(MouseUpProperty, MouseUp);

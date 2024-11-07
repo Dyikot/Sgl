@@ -1,15 +1,19 @@
 #include "Control.h"
 
-void Sgl::Control::SetStyle(const Style& style)
+namespace Sgl
 {
-	Object::SetStyle(style);
-	//style.TryInit(Back)
-}
-
-void Sgl::Control::OnMouseDoubleClick(const MouseButtonEventArgs& e)
-{
-	if(MouseDoubleClick)
+	Control::Control(const Style& style) noexcept:
+		Object(style)
 	{
-		MouseDoubleClick(this, e);
+		style.TryInit(BackgroundProperty, _backgound);
+		style.TryInit(MouseDoubleClickProperty, MouseDoubleClick);
+	}
+
+	void Control::OnMouseDoubleClick(const MouseButtonEventArgs& e)
+	{
+		if(MouseDoubleClick)
+		{
+			MouseDoubleClick(this, e);
+		}
 	}
 }

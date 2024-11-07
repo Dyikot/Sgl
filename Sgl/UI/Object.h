@@ -41,93 +41,113 @@ namespace Sgl
 		VerticalAligment _verticalAlignment = VerticalAligment::Stretch;
 	public:
 		Object() = default;
-		Object(const SDL_FPoint& position) noexcept:
-			_position(position)
-		{}
+		Object(const SDL_FPoint& position) noexcept;
+		Object(const SDL_FPoint& position, const Style& style) noexcept;
+		Object(const Style& style) noexcept;
 		virtual ~Object() = default;
 
-		virtual void SetStyle(const Style& style) override;
+		#pragma region Setters
 		virtual void SetWidth(float value)
 		{
 			_width = value;
 		}
-		virtual void SetHeight(float value) 
-		{ 
-			_height = value; 
+
+		virtual void SetHeight(float value)
+		{
+			_height = value;
 		}
-		virtual void SetMinWidth(float value) 
-		{ 
-			_minWidth = value; 
+
+		virtual void SetMinWidth(float value)
+		{
+			_minWidth = value;
 		}
-		virtual void SetMinHeight(float value) 
-		{ 
-			_minHeight = value; 
+
+		virtual void SetMinHeight(float value)
+		{
+			_minHeight = value;
 		}
+
 		virtual void SetMaxWidth(float value)
-		{ 
+		{
 			_maxWidth = value;
 		}
+
 		virtual void SetMaxHeight(float value)
-		{ 
+		{
 			_maxHeight = value;
 		}
-		virtual void SetPosition(const SDL_FPoint& value) 
-		{ 
+
+		virtual void SetPosition(const SDL_FPoint& value)
+		{
 			_position = value;
 		}
+
 		virtual void SetMargin(const Thikness& value)
-		{ 
+		{
 			_margin = value;
 		}
+
 		virtual void SetHorizontalAlignment(HorizontalAlignment value)
 		{
 			_horizontalAlignment = value;
 		}
+
 		virtual void SetVerticalAlignment(VerticalAligment value)
 		{
 			_verticalAlignment = value;
 		}
-
-		virtual float GetWidth() const 
-		{ 
+		#pragma endregion
+		#pragma region Getters
+		virtual float GetWidth() const
+		{
 			return _width;
 		}
-		virtual float GetHeight() const 
+
+		virtual float GetHeight() const
 		{
 			return _height;
 		}
-		virtual float GetMinWidth() const 
-		{ 
+
+		virtual float GetMinWidth() const
+		{
 			return _minWidth;
 		}
-		virtual float GetMinHeight() const 
+
+		virtual float GetMinHeight() const
 		{
 			return _minHeight;
 		}
-		virtual float GetMaxWidth() const 
-		{ 
-			return _maxWidth; 
+
+		virtual float GetMaxWidth() const
+		{
+			return _maxWidth;
 		}
-		virtual float GetMaxHeight() const 
+
+		virtual float GetMaxHeight() const
 		{
 			return _maxHeight;
 		}
-		virtual const SDL_FPoint& GetPosition() const 
+
+		virtual const SDL_FPoint& GetPosition() const
 		{
 			return _position;
 		}
+
 		virtual const Thikness& GetMargin() const
-		{ 
-			return _margin; 
+		{
+			return _margin;
 		}
+
 		virtual HorizontalAlignment GetHorizontalAlignment() const
 		{
 			return _horizontalAlignment;
 		}
+
 		virtual VerticalAligment GetVerticalAlignment() const
 		{
 			return _verticalAlignment;
 		}
+		#pragma endregion		
 
 		Event<SizeChangedEventHandler> SizeChanged;
 
@@ -137,10 +157,5 @@ namespace Sgl
 		void OnMouseEnter(const MouseButtonEventArgs& e) override;
 		void OnMouseLeave(const MouseButtonEventArgs& e) override;
 		virtual void OnSizeChanged(IVisual* sender, const SizeChangedEventArgs& e);
-	private:
-		void OnWidthChange(float value)
-		{
-			
-		}
 	};
 }

@@ -2,7 +2,7 @@
 
 #include "SDL/SDL_ttf.h"
 #include "../Object.h"
-#include "../../Appearance/Color.h"
+#include "../../Appearance/Brushes.h"
 #include "../../Appearance/ControlAppearance.h"
 
 namespace Sgl
@@ -10,9 +10,16 @@ namespace Sgl
 	class Control: public Object
 	{
 	public:
-		static inline const PropertyId BackgroundProperty = PropertyManager::Register<ColorBrush>("Background");
+		static inline const PropertyId BackgroundProperty = PropertyManager::Register<Brush>("Background");
+		static inline const PropertyId BorderProperty = PropertyManager::Register<ColorBrush>("Border");
+		static inline const PropertyId BorderThiknessProperty = PropertyManager::Register<Thikness>("BorderThikness");
+		static inline const PropertyId FontFamilyProperty = PropertyManager::Register<FontFamily>("FontFamily");
+		static inline const PropertyId FontWeightProperty = PropertyManager::Register<FontWeight>("FontWeight");
+		static inline const PropertyId FontColorProperty = PropertyManager::Register<ColorBrush>("FontColor");
+		static inline const PropertyId FontSizeProperty = PropertyManager::Register<uint16_t>("FontSize");
+		static inline const PropertyId MouseDoubleClickProperty = PropertyManager::Register<MouseEventHandler>("MouseDoubleClick");
 	private:
-		ColorBrush _backgound = Colors::Transparent;
+		Brush _backgound = Colors::Transparent;
 		ColorBrush _borderColor = Colors::Transparent;
 		Thikness _borderThickness;
 		FontFamily _fontFamily;
@@ -20,65 +27,81 @@ namespace Sgl
 		ColorBrush _fontColor = Colors::Black;
 		uint16_t _fontSize;
 	public:
-		virtual void SetStyle(const Style& style) override;
-		virtual void SetBackgound(const ColorBrush& value) 
+		Control() = default;
+		Control(const Style& style) noexcept;
+
+		#pragma region Setters
+		virtual void SetBackgound(const Brush& value)
 		{
 			_backgound = value;
 		}
+
 		virtual void SetBorderColor(const ColorBrush& value)
 		{
 			_borderColor = value;
 		}
-		virtual void SetFontColor(const ColorBrush& value) 
+
+		virtual void SetFontColor(const ColorBrush& value)
 		{
-			_fontColor = value; 
+			_fontColor = value;
 		}
-		virtual void SetBorderThikness(const Thikness& value) 
+
+		virtual void SetBorderThikness(const Thikness& value)
 		{
 			_borderThickness = value;
 		}
-		virtual void SetFontFamily(const FontFamily& value) 
+
+		virtual void SetFontFamily(const FontFamily& value)
 		{
 			_fontFamily = value;
 		}
-		virtual void SetFontSize(uint16_t value) 
-		{ 
+
+		virtual void SetFontSize(uint16_t value)
+		{
 			_fontSize = value;
 		}
-		virtual void SetFontWeight(FontWeight value) 
+
+		virtual void SetFontWeight(FontWeight value)
 		{
-			_fontWeight = value; 
+			_fontWeight = value;
 		}
-		
-		virtual const ColorBrush& GetBackgound() const 
+		#pragma endregion
+		#pragma region Getters
+		virtual const Brush& GetBackgound() const
 		{
-			return _backgound; 
+			return _backgound;
 		}
-		virtual const ColorBrush& GetBorderColor() const 
+
+		virtual const ColorBrush& GetBorderColor() const
 		{
-			return _borderColor; 
+			return _borderColor;
 		}
-		virtual const ColorBrush& GetFontColor() const 
+
+		virtual const ColorBrush& GetFontColor() const
 		{
-			return _fontColor; 
+			return _fontColor;
 		}
-		virtual const Thikness& GetBorderThikness() const 
+
+		virtual const Thikness& GetBorderThikness() const
 		{
 			return _borderThickness;
 		}
+
 		virtual const FontFamily& GetFontFamily() const
 		{
 			return _fontFamily;
 		}
-		virtual const uint16_t GetFontSize() const 
-		{ 
-			return _fontSize; 
-		}
-		virtual const FontWeight GetFontWeight() const 
+
+		virtual const uint16_t GetFontSize() const
 		{
-			return _fontWeight; 
+			return _fontSize;
 		}
 
+		virtual const FontWeight GetFontWeight() const
+		{
+			return _fontWeight;
+		}
+		#pragma endregion
 
 		Event<MouseEventHandler> MouseDoubleClick;
 	protected:

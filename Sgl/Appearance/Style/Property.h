@@ -65,7 +65,7 @@ namespace Sgl
 	class PropertyManager
 	{
 	private:
-		static inline std::unordered_map<PropertyId, std::string> _idToTypeNameMap = {};
+		static inline std::unordered_map<PropertyId, std::string> _typeNameMap = {};
 		static inline std::unordered_set<std::string> _propertiesNames = {};
 	public:
 		template<typename Type>
@@ -76,7 +76,7 @@ namespace Sgl
 			if(isInserted)
 			{
 				PropertyId id = _propertiesNames.size() - 1;
-				_idToTypeNameMap.emplace(id, typeid(Type).name());
+				_typeNameMap.emplace(id, typeid(Type).name());
 				return id;
 			}
 			else

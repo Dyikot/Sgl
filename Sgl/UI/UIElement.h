@@ -21,10 +21,12 @@ namespace Sgl
 		static inline const PropertyId MouseLeaveProperty = PropertyManager::Register<MouseEventHandler>("MouseLeave");
 		static inline const PropertyId KeyDownProperty = PropertyManager::Register<KeyEventHandler>("KeyDown");
 		static inline const PropertyId KeyUpProperty = PropertyManager::Register<KeyEventHandler>("KeyUp");
-	public:
-		virtual ~UIElement() = default;
 
-		virtual void SetStyle(const Style& style);
+		std::unordered_map<std::string, Style> StyleMap;
+	public:
+		UIElement() = default;
+		UIElement(const Style& style) noexcept;
+		virtual ~UIElement() = default;
 
 		Event<MouseEventHandler> MouseDown;
 		Event<MouseEventHandler> MouseUp;

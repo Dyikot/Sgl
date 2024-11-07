@@ -1,29 +1,31 @@
 #include "Scene.h"
 #include "../Application.h"
+#include "Controls/Control.h"
 
 namespace Sgl
 {
-	void SceneBackgroundDrawing::Draw() const
+	void SceneBackgroundDrawing::Fill(const ColorBrush& brush) const
 	{
-		SetRenderColor(Background);
-		Fill(Background);
-	}
-
-	void SceneBackgroundDrawing::Fill(ColorBrush brush) const
-	{
+		SetRenderColor(brush);
 		SDL_RenderClear(Renderer);
 	}
 
-	void SceneBackgroundDrawing::Fill(ImageBrush& brush) const
+	void SceneBackgroundDrawing::Fill(const TextureBrush& brush) const
 	{
-		SDL_RenderCopy(Renderer, brush.Image, NULL, NULL);
+		SetRenderColor(brush);
+		SDL_RenderCopy(Renderer, brush.Source, NULL, NULL);
 	}
 
-	void Scene::SetStyle(const Style& style)
+	void SceneBackgroundDrawing::Draw() const
 	{
-		UIElement::SetStyle(style);
+		std::visit([this](const auto& brush) { Fill(brush); }, Background);
+	}
+
+	Scene::Scene(const Style& style) noexcept:
+		UIElement(style)
+	{
 		style.TryInit(ClosedProperty, Closed);
-		style.TryInit(BackgroundProperty, Background);
+		style.TryInit(Control::BackgroundProperty, Background);
 	}
 
 	void Scene::OnRender() const
@@ -106,5 +108,4 @@ namespace Sgl
 			Closed(this, e);
 		}
 	}
-	
 }
