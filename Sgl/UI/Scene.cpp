@@ -4,23 +4,6 @@
 
 namespace Sgl
 {
-	void SceneBackgroundDrawing::Fill(const ColorBrush& brush) const
-	{
-		SetRenderColor(brush);
-		SDL_RenderClear(Renderer);
-	}
-
-	void SceneBackgroundDrawing::Fill(const TextureBrush& brush) const
-	{
-		SetRenderColor(brush);
-		SDL_RenderCopy(Renderer, brush.Source, NULL, NULL);
-	}
-
-	void SceneBackgroundDrawing::Draw() const
-	{
-		std::visit([this](const auto& brush) { Fill(brush); }, Background);
-	}
-
 	Scene::Scene(const Style& style) noexcept:
 		UIElement(style)
 	{
@@ -28,9 +11,9 @@ namespace Sgl
 		style.TryInit(Control::BackgroundProperty, Background);
 	}
 
-	void Scene::OnRender() const
+	void Scene::OnRender(RenderContext& renderContext) const
 	{
-		_backgroundDrawing.Draw();
+		renderContext.DrawSceneBackground(Background);
 	}
 
 	void Scene::HandleEvent(const SDL_Event& e)

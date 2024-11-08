@@ -6,17 +6,32 @@ namespace Sgl
 {
 	struct ColorBrush
 	{
+	public:
 		uint8_t R, G, B, A;
-
+	protected:
+		static constexpr uint8_t Opaque = 0xff;
+		static constexpr uint8_t Transparent = 0x00;
+	public:
 		constexpr ColorBrush(uint8_t r, uint8_t g, uint8_t b, uint8_t a):
 			R(r), G(g), B(b), A(a)
 		{}
 		constexpr ColorBrush(uint8_t r, uint8_t g, uint8_t b) :
-			ColorBrush(r, g, b, 0xff)
+			ColorBrush(r, g, b, Opaque)
 		{}
 		constexpr ColorBrush(uint32_t color):
 			R(color), G(color >> 8), B(color >> 16), A(color >> 24)
 		{}
+
+		bool IsOpaque() const noexcept { return A == Opaque; }
+		bool IsTransparent() const noexcept { return A == Transparent; }
+
+		bool operator==(ColorBrush brush) const 
+		{
+			return R == brush.R && G == brush.G && B == brush.B;
+		}
+
+		bool operator!=(ColorBrush brush) const { return !operator==(brush); }
+		operator SDL_Color() const { return SDL_Color{ .r = R, .g = G, .b = B, .a = A }; }
 	};	
 
 	namespace Colors
@@ -40,10 +55,10 @@ namespace Sgl
 	struct TextureBrush: ColorBrush
 	{
 	public:
-		SDL_Texture* Source;
+		SDL_Texture* RawTexture;
 	public:
 		TextureBrush(SDL_Texture* texture, ColorBrush brush = Colors::White):
-			ColorBrush(brush), Source(texture)
+			ColorBrush(brush), RawTexture(texture)
 		{}
 	};
 

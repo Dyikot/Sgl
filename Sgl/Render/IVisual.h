@@ -1,5 +1,7 @@
 #pragma once
 
+#include "RenderContext.h"
+
 namespace Sgl
 {
 	class IVisual
@@ -7,6 +9,6 @@ namespace Sgl
 	public:
 		virtual ~IVisual() = default;
 
-		virtual void OnRender() const = 0;
+		virtual void OnRender(RenderContext& renderContext) const = 0;
 	};
 }

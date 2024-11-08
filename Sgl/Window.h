@@ -4,7 +4,7 @@
 #include <filesystem>
 #include <iostream>
 #include "Collections/SceneCollection.h"
-#include "Appearance/Brushes.h"
+#include "Render/RenderContext.h"
 #include "Appearance/Style/Style.h"
 #include "Events/Event.h"
 
@@ -34,9 +34,9 @@ namespace Sgl
 		using WindowSizeChangedEventHandler = std::function<void(Window*, const SizeChangedEventArgs&)>;
 
 		SDL_Window* const SDLWindow;
-		SDL_Renderer* const Renderer;
 		SceneCollection Scenes;
 	protected:
+		RenderContext _renderContext;
 		SDL_Surface* _icon = nullptr;
 		int _width;
 		int _height;		
@@ -56,20 +56,12 @@ namespace Sgl
 		void SetIcon(std::string_view path);
 		void SetDisplayMode(DiplayMode displayMode);
 
-		int	GetWidth() const noexcept 
-		{
-			return _width;
-		}
-		int	GetHeight() const noexcept 
-		{
-			return _height; 
-		}
+		int	GetWidth() const noexcept { return _width; }
+		int	GetHeight() const noexcept { return _height; }
 		std::pair<size_t, size_t> GetLogicalSize() const;
-		std::string_view GetTitle() const 
-		{
-			SDL_GetWindowTitle(SDLWindow);
-		}
+		std::string_view GetTitle() const { SDL_GetWindowTitle(SDLWindow); }
 		SDL_Point GetPosition() const;
+		virtual RenderContext& GetRenderContext() { return _renderContext; }
 
 		void Show();
 		void Hide();
@@ -78,6 +70,6 @@ namespace Sgl
 	protected:
 		virtual void OnSizeChanged(const SizeChangedEventArgs& e);
 
-		void Render() const;
+		void Render();
 	};
 }

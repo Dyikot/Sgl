@@ -4,9 +4,7 @@ namespace Sgl
 {
 	Action::Action(const Timer& timer) noexcept:
 		_timer(timer)
-	{
-		
-	}
+	{}
 
 	void Action::Handle()
 	{

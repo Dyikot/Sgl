@@ -46,112 +46,31 @@ namespace Sgl
 		Object(const Style& style) noexcept;
 		virtual ~Object() = default;
 
-		#pragma region Setters
-		virtual void SetWidth(float value)
-		{
-			_width = value;
-		}
+		virtual void SetWidth(float value) { _width = value; }
+		virtual void SetHeight(float value) { _height = value; }
+		virtual void SetMinWidth(float value) { _minWidth = value; }
+		virtual void SetMinHeight(float value) { _minHeight = value; }
+		virtual void SetMaxWidth(float value) { _maxWidth = value; }
+		virtual void SetMaxHeight(float value) { _maxHeight = value; }
+		virtual void SetPosition(const SDL_FPoint& value) { _position = value; }
+		virtual void SetMargin(const Thikness& value) { _margin = value; }
+		virtual void SetHorizontalAlignment(HorizontalAlignment value) { _horizontalAlignment = value; }
+		virtual void SetVerticalAlignment(VerticalAligment value) { _verticalAlignment = value; }
 
-		virtual void SetHeight(float value)
-		{
-			_height = value;
-		}
-
-		virtual void SetMinWidth(float value)
-		{
-			_minWidth = value;
-		}
-
-		virtual void SetMinHeight(float value)
-		{
-			_minHeight = value;
-		}
-
-		virtual void SetMaxWidth(float value)
-		{
-			_maxWidth = value;
-		}
-
-		virtual void SetMaxHeight(float value)
-		{
-			_maxHeight = value;
-		}
-
-		virtual void SetPosition(const SDL_FPoint& value)
-		{
-			_position = value;
-		}
-
-		virtual void SetMargin(const Thikness& value)
-		{
-			_margin = value;
-		}
-
-		virtual void SetHorizontalAlignment(HorizontalAlignment value)
-		{
-			_horizontalAlignment = value;
-		}
-
-		virtual void SetVerticalAlignment(VerticalAligment value)
-		{
-			_verticalAlignment = value;
-		}
-		#pragma endregion
-		#pragma region Getters
-		virtual float GetWidth() const
-		{
-			return _width;
-		}
-
-		virtual float GetHeight() const
-		{
-			return _height;
-		}
-
-		virtual float GetMinWidth() const
-		{
-			return _minWidth;
-		}
-
-		virtual float GetMinHeight() const
-		{
-			return _minHeight;
-		}
-
-		virtual float GetMaxWidth() const
-		{
-			return _maxWidth;
-		}
-
-		virtual float GetMaxHeight() const
-		{
-			return _maxHeight;
-		}
-
-		virtual const SDL_FPoint& GetPosition() const
-		{
-			return _position;
-		}
-
-		virtual const Thikness& GetMargin() const
-		{
-			return _margin;
-		}
-
-		virtual HorizontalAlignment GetHorizontalAlignment() const
-		{
-			return _horizontalAlignment;
-		}
-
-		virtual VerticalAligment GetVerticalAlignment() const
-		{
-			return _verticalAlignment;
-		}
-		#pragma endregion		
+		virtual float GetWidth() const { return _width; }
+		virtual float GetHeight() const { return _height; }
+		virtual float GetMinWidth() const { return _minWidth; }
+		virtual float GetMinHeight() const { return _minHeight; }
+		virtual float GetMaxWidth() const { return _maxWidth; }
+		virtual float GetMaxHeight() const { return _maxHeight; }
+		virtual const SDL_FPoint& GetPosition() const { return _position; }
+		virtual const Thikness& GetMargin() const { return _margin; }
+		virtual HorizontalAlignment GetHorizontalAlignment() const { return _horizontalAlignment; }
+		virtual VerticalAligment GetVerticalAlignment() const { return _verticalAlignment; }
 
 		Event<SizeChangedEventHandler> SizeChanged;
 
-		void OnRender() const override;
+		void OnRender(RenderContext& renderContext) const override;
 		virtual bool IsMouseOver(const SDL_Point& mousePosition) const noexcept;
 	protected:
 		void OnMouseEnter(const MouseButtonEventArgs& e) override;

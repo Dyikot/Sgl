@@ -23,18 +23,9 @@ namespace Sgl
 		Event<ActionEventHandler> Elapsed;
 
 		void Handle() override;
-		void Start() override 
-		{
-			_timer.Start(); 
-		}
-		void Stop() override 
-		{
-			_timer.Reset();
-		}
-		void Pause() override 
-		{ 
-			_timer.Pause(); 
-		}
+		void Start() override { _timer.Start(); }
+		void Stop() override { _timer.Reset(); }
+		void Pause() override {  _timer.Pause(); }
 	protected:
 		virtual void OnElapsed(const ActionEventArgs& e);
 	};

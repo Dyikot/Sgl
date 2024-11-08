@@ -36,25 +36,25 @@ namespace Sgl
 		SDL_Quit();
 	}
 
-	void Application::Run(Window* window)
+	void Application::Run(Window& window)
 	{
 		SDL_Event e;
-		_window = window;
+		_window = &window;
 
 		OnStartup(EventArgs());
 
-		while(!_window->Scenes.Empty())
+		while(!window.Scenes.Empty())
 		{
 			while(SDL_PollEvent(&e))
 			{
 				switch(e.type)
 				{
 					case SDL_QUIT: Shutdown(); break;
-					default: _window->Scenes.Current()->HandleEvent(e);
+					default: window.Scenes.Current()->HandleEvent(e);
 				}
 			}
 
-			_window->Render();
+			window.Render();
 			SDL_Delay(_delay);
 		}
 
@@ -63,7 +63,8 @@ namespace Sgl
 
 	void Application::Run()
 	{
-		Run(new Window());
+		Window mainWindow;
+		Run(mainWindow);
 	}
 
 	void Application::Shutdown() noexcept

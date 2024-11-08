@@ -9,20 +9,16 @@ namespace Sgl
 		Duration(duration),
 		SeparateThread(Duration >= 100ms),
 		_timeElapsed(0ms)
-	{
-		
-	}
+	{}
 
 	Timer::Timer(const Timer& timer) noexcept:
 		Duration(timer.Duration),
 		SeparateThread(timer.SeparateThread),
 		_timeElapsed(timer._timeElapsed)
-	{
-		
-	}
+	{}
 
-	Timer::~Timer() noexcept
-	{
+	Timer::~Timer() noexcept 
+	{ 
 		Pause();
 	}
 

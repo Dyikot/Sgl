@@ -10,7 +10,7 @@ namespace Sgl
 	using EventHandler = std::function<void(IVisual*, const EventArgs&)>;
 	using MouseEventHandler = std::function<void(IVisual*, const MouseButtonEventArgs&)>;
 	using KeyEventHandler = std::function<void(IVisual*, const KeyEventArgs&)>;
-
+	
 	class UIElement: public IVisual
 	{
 	public:

@@ -24,20 +24,14 @@ namespace Sgl
 		Application() noexcept;
 		~Application() noexcept;
 
-		Window* const GetWindow() 
-		{ 
-			return _window;
-		}
-		template<typename T = AudioManager>
-		T* const GetAudioManager() const 
-		{ 
-			return static_cast<T* const>(_audioManager); 
-		}
+		Window* const GetWindow() { return _window; }
+		template<typename T = AudioManager> 
+		T* const GetAudioManager() const { return static_cast<T* const>(_audioManager); }
 
 		Event<ApplicationEventHandler> Startup;
 		Event<ApplicationEventHandler> Quit;
 
-		void Run(Window* window);
+		void Run(Window& window);
 		void Run();
 		void Shutdown() noexcept;
 	protected:

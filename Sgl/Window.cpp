@@ -14,26 +14,26 @@ namespace Sgl
                                    properties.Position.x, properties.Position.y,
                                    properties.Width, properties.Height,
                                    properties.Flags)),
-        Renderer(SDL_CreateRenderer(SDLWindow, -1, SDL_RENDERER_ACCELERATED))
+        _renderContext(SDL_CreateRenderer(SDLWindow, -1, SDL_RENDERER_ACCELERATED))
     {
         if(SDLWindow == nullptr)
         {
             std::cout << SDL_GetError() << '\n';
         }
-
-        if(Renderer == nullptr)
+        
+        if(_renderContext.Renderer == nullptr)
         {
             std::cout << SDL_GetError() << '\n';
         }
 
-        SDL_SetRenderDrawBlendMode(Renderer, SDL_BLENDMODE_BLEND);
+        SDL_SetRenderDrawBlendMode(_renderContext.Renderer, SDL_BLENDMODE_BLEND);
         SetLogicalSize(properties.LogicalWidth, properties.LogicalHeight);
     }
 
     Window::~Window() noexcept
     {
         SDL_FreeSurface(_icon);
-        SDL_DestroyRenderer(Renderer);
+        SDL_DestroyRenderer(_renderContext.Renderer);
         SDL_DestroyWindow(SDLWindow);
     }
 
@@ -51,7 +51,7 @@ namespace Sgl
 
     void Window::SetLogicalSize(size_t width, size_t height)
     {
-        SDL_RenderSetLogicalSize(Renderer, width, height);
+        SDL_RenderSetLogicalSize(_renderContext.Renderer, width, height);
     }
 
     void Window::SetMaxSize(size_t width, size_t height)
@@ -92,7 +92,7 @@ namespace Sgl
     std::pair<size_t, size_t> Window::GetLogicalSize() const
     {
         int width, height;
-        SDL_RenderGetLogicalSize(Renderer, &width, &height);
+        SDL_RenderGetLogicalSize(_renderContext.Renderer, &width, &height);
         return { width, height };
     }
 
@@ -118,7 +118,7 @@ namespace Sgl
         Scenes.Clear();
     }
 
-    void Window::Render() const
+    void Window::Render()
     {        
         if(Scenes.Empty() || !IsVisible())
         {
@@ -126,8 +126,8 @@ namespace Sgl
         }
         
         Scenes.Current()->Process();
-        Scenes.Current()->OnRender();
-        SDL_RenderPresent(Renderer);
+        Scenes.Current()->OnRender(GetRenderContext());
+        SDL_RenderPresent(_renderContext.Renderer);
     }    
 
     bool Window::IsVisible() const

@@ -22,7 +22,7 @@ namespace Sgl
 			_handlers.remove(std::forward<decltype(handler)>(handler));
 		}
 
-		operator bool() const 
+		operator bool() const noexcept
 		{ 
 			return !_handlers.empty();
 		}
@@ -36,14 +36,14 @@ namespace Sgl
 			}
 		}
 
-		void Clear() 
+		void Clear() noexcept
 		{ 
 			_handlers.clear(); 
 		}
 	};	
 
 	template <typename T>
-	static bool operator==(const std::function<T>& lhs, const std::function<T>& rhs)
+	static bool operator==(const std::function<T>& lhs, const std::function<T>& rhs) noexcept
 	{
 		return lhs.target_type() == rhs.target_type();
 	}

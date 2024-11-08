@@ -5,9 +5,7 @@ namespace Sgl
 	Animation::Animation(const Timer& timer, size_t actions) noexcept:
 		_timer(timer),
 		Actions(actions)
-	{
-	
-	}
+	{}
 
 	void Animation::Handle()
 	{

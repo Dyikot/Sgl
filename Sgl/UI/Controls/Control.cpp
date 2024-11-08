@@ -11,7 +11,7 @@ namespace Sgl
 
 	void Control::OnMouseDoubleClick(const MouseButtonEventArgs& e)
 	{
-		if(MouseDoubleClick)
+		if(MouseDoubleClick) 
 		{
 			MouseDoubleClick(this, e);
 		}

@@ -32,10 +32,7 @@ namespace Sgl
 		void Handle() override;
 		void Start() override;
 		void Stop() override;
-		void Pause() override
-		{ 
-			_timer.Pause();
-		}
+		void Pause() override { _timer.Pause(); }
 	protected:
 		virtual void OnAnimationStarted(const AnimationEventArgs& e);
 		virtual void OnAnimationCompleted(const AnimationEventArgs& e);

@@ -24,10 +24,7 @@ namespace Sgl
 		void Start() noexcept;
 		void Pause() noexcept;
 		void Reset() noexcept;
-		bool IsPaused() const noexcept
-		{
-			return _isPaused;
-		}
+		bool IsPaused() const noexcept { return _isPaused; }
 		bool Elapsed() const noexcept;
 	private:
 		void WaitOnSeparateThread();

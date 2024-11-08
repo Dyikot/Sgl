@@ -28,11 +28,11 @@ namespace Sgl
         Object(SDL_FPoint{}, style)
     {}
 
-    void Object::OnRender() const
+    void Object::OnRender(RenderContext& renderContext) const
     {
         if(_isToolTipRenderRequired)
         {
-            ToolTip->OnRender();
+            ToolTip->OnRender(renderContext);
         }
     }
 
@@ -47,11 +47,12 @@ namespace Sgl
     void Object::OnMouseEnter(const MouseButtonEventArgs& e)
     {
         UIElement::OnMouseEnter(e);
+
+        _isToolTipRenderRequired = ToolTip;
         if(SDLCursor != nullptr)
         {
             SDL_SetCursor(SDLCursor);
         }
-        _isToolTipRenderRequired = ToolTip;
     }
 
     void Object::OnMouseLeave(const MouseButtonEventArgs& e)
