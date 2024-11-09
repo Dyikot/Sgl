@@ -8,17 +8,22 @@ namespace Sgl
 {
 	class SoundEffect: public AudioBase
 	{
-	private:
-		static constexpr int ChannelAutoSelection = -1;
-
+	protected:
+		static constexpr int FreeChannel = -1;
 		Mix_Chunk* _soundChunk;
 	public:
-		SoundEffect(std::string_view path) noexcept;
-		~SoundEffect() noexcept;
+		SoundEffect(std::string_view path) noexcept:
+			_soundChunk(Mix_LoadWAV(path.data()))
+		{
+			if(_soundChunk == nullptr)
+			{
+				std::cout << SDL_GetError() << '\n';
+			}
+		}
+		~SoundEffect() noexcept { Mix_FreeChunk(_soundChunk); }
 
-		void SetVolume(size_t value) noexcept override;
-
-		void Play() const noexcept override;
-		void Play(int channel) const noexcept;
+		void SetVolume(Volume value) noexcept override { Mix_VolumeChunk(_soundChunk, ToMixVolume(value)); }
+		void Play(int channel) const noexcept { Mix_PlayChannel(channel, _soundChunk, Once); }
+		void Play() const noexcept override { Play(FreeChannel); }
 	};
 }

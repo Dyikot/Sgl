@@ -12,9 +12,9 @@ namespace Sgl
 	{
 	public:
 		using ApplicationEventHandler = std::function<void(Application*, const EventArgs&)>;
+		AudioManager AudioManager;
 	protected:
 		Window* _window = nullptr;
-		AudioManager* _audioManager = nullptr;
 		uint32_t _delay = 10;
 	private:
 		inline static Application* _current = nullptr;
@@ -25,8 +25,6 @@ namespace Sgl
 		~Application() noexcept;
 
 		Window* const GetWindow() { return _window; }
-		template<typename T = AudioManager> 
-		T* const GetAudioManager() const { return static_cast<T* const>(_audioManager); }
 
 		Event<ApplicationEventHandler> Startup;
 		Event<ApplicationEventHandler> Quit;

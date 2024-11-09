@@ -29,7 +29,6 @@ namespace Sgl
 
 	Application::~Application() noexcept
 	{
-		delete _audioManager;
 		TTF_Quit();
 		IMG_Quit();
 		Mix_Quit();

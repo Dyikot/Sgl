@@ -4,29 +4,41 @@
 
 namespace Sgl
 {
+	class Volume
+	{
+	public:
+		static constexpr uint8_t Max = 100;
+	protected:
+		uint8_t _value;
+	public:
+		Volume(uint8_t value):
+			_value(Adjust(value))
+		{}
+
+		operator uint8_t() { return _value; }
+		uint8_t operator*(Volume volume) { return _value * volume._value; }
+	private:
+		static uint8_t Adjust(uint8_t value) { return value > Max ? Max : value; }
+	};
+
 	class AudioBase
 	{
+	public:
+		Volume MaxVolume;
 	protected:
-		static constexpr int PlayEndless = -1;
-		static constexpr int PlayOnce = 0;
-		static constexpr size_t MaxVolumeInPercent = 100;
-		static constexpr double MaxMixVolume = MIX_MAX_VOLUME;
-
-		double _partOfMaxVolume;
+		static constexpr int Endless = -1;
+		static constexpr int Once = 0;
 	public:
 		AudioBase() noexcept;
 		virtual ~AudioBase() = default;
 
-		void SetMaxVolume(size_t value);
-
 		virtual void Play() const = 0;
-		virtual void SetVolume(size_t volume) = 0;
+		virtual void SetVolume(Volume volume) = 0;
 	protected:
-		/// <summary>
-		/// Correct volume if its value is greater than 100 %
-		/// </summary>
-		/// <param name="volume">- percent value 0 ... 100 %</param>
-		void CorrectVolume(size_t& volume);
-		size_t ToMixVolume(size_t volume);
+		uint8_t ToMixVolume(Volume volume) const
+		{ 
+			return static_cast<double>(volume * MaxVolume) / (Volume::Max * Volume::Max)
+				   * MIX_MAX_VOLUME;
+		}
 	};
 }

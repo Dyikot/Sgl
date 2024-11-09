@@ -2,25 +2,49 @@
 
 namespace Sgl
 {
-	void AudioManager::SetVolume(size_t value)
+	AudioManager::~AudioManager()
+	{
+		for(auto& [_, musicTrack] :	_musicTracks)
+		{
+			delete musicTrack;
+		}
+
+		for(auto& [_, soundEffect] : _soundEffects)
+		{
+			delete soundEffect;
+		}
+	}
+
+	void AudioManager::AddMusic(std::string_view path)
+	{
+		_musicTracks[path.data()] = new Music(path);
+		_musicTracksOrder.push_back(_musicTracks[path.data()]);
+	}
+
+	void AudioManager::AddSoundEffect(std::string_view path)
+	{
+		_soundEffects[path.data()] = new SoundEffect(path);
+	}
+
+	void AudioManager::SetVolume(Volume value)
 	{
 		SetSoundEffectsVolume(value);
 		SetMusicVolume(value);
 	}
 
-	void AudioManager::SetSoundEffectsVolume(size_t value)
+	void AudioManager::SetSoundEffectsVolume(Volume value)
 	{
-		for(auto soundEffect : _soundEffects)
+		for(auto& [_, soundEffect] : _soundEffects)
 		{
 			soundEffect->SetVolume(value);
 		}
 	}
 
-	void AudioManager::SetMusicVolume(size_t value)
+	void AudioManager::SetMusicVolume(Volume value)
 	{
-		for(auto music : _musicTracks)
+		for(auto& [_, musicTrack] : _musicTracks)
 		{
-			music->SetVolume(value);
+			musicTrack->SetVolume(value);
 		}
 	}
 
@@ -33,9 +57,10 @@ namespace Sgl
 		
 		if(!Mix_PlayingMusic())
 		{
-			if(_currentTrack == _musicTracks.end())
+			if(_currentTrack == _musicTracksOrder.end())
 			{
-				ShuffleMusicTracks();
+				Random().Shuffle(_musicTracksOrder);
+				_currentTrack = _musicTracksOrder.begin();
 			}
 
 			CurrentTrack()->Play();
@@ -47,14 +72,8 @@ namespace Sgl
 		}
 	}
 
-	void AudioManager::ShuffleMusicTracks()
+	Music* AudioManager::CurrentTrack()  noexcept
 	{
-		Random().Shuffle(_musicTracks);
-		_currentTrack = _musicTracks.begin();
-	}
-
-	Music* const AudioManager::CurrentTrack() const noexcept
-	{
-		return _musicTracks.empty() ? nullptr : _currentTrack.operator*();
+		return _musicTracks.empty() ? nullptr : *_currentTrack;
 	}
 }
