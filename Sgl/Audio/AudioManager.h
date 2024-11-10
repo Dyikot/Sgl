@@ -1,34 +1,42 @@
 #pragma once
 
-#include <vector>
-#include <unordered_map>
-#include "Music.h"
-#include "SoundEffect.h"
+#include <list>
+#include "Audio.h"
 #include "Random/Random.h"
 
 namespace Sgl
-{
+{	
 	class AudioManager
 	{
 	public:
-		using MusicIterator = std::vector<Music*>::iterator;
+		Volume MasterVolume;
+		Volume MusicVolume;
+		Volume SoundEffectsVolume;		
+		AudioResources* Resources = nullptr;
 	protected:
-		std::unordered_map<std::string, Music*> _musicTracks;
-		std::unordered_map<std::string, SoundEffect*> _soundEffects;
-		std::vector<Music*> _musicTracksOrder;
-		MusicIterator _currentTrack;
+		static constexpr int FreeChannel = -1;
 	public:
-		~AudioManager();
+		AudioManager();
+		AudioManager(Volume masterVolume, Volume musicVolume, Volume soundEffectsVolume) noexcept;
 
-		void AddMusic(std::string_view path);
-		void AddSoundEffect(std::string_view path);
-		Music& GetMusic(const std::string& name) { return *_musicTracks.at(name); }
-		SoundEffect& GetSoundEffect(const std::string& name) { return *_soundEffects.at(name); }
-
-		void SetVolume(Volume value);
-		void SetSoundEffectsVolume(Volume value);
-		void SetMusicVolume(Volume value);
-		void PlayMusic();
-		Music* CurrentTrack() noexcept;
+		void PlayMusic(const Music& music, int loops = 0);
+		void PlayMusic(const std::string& music, int loops = 0);
+		void PlaySoundEffect(const SoundEffect& soundEffect, int channel = FreeChannel, int loops = 0);
+		void PlaySoundEffect(const std::string& soundEffect, int channel = FreeChannel, int loops = 0);
+		void PlayPlayList(PlayList& playlist);
+		void PlayPlayList(const std::string& playlist);
+		void PauseMusic() const noexcept;
+		void ResumeMusic() const noexcept { Mix_ResumeMusic(); }
+		void HaltMusic() const noexcept { Mix_HaltMusic(); }
+		void SetMusicVolume(const Music& music);
+		void SetMusicVolume(const Music& music, const AudioGroup& group);
+		void SetSoundEffectVolume(const SoundEffect& soundEffect);
+		void SetSoundEffectVolume(const SoundEffect& soundEffect, const AudioGroup& group);
+	protected:
+		uint8_t ToMixVolume(Volume volume, Volume audioTypeVolume, Volume groupVolume = Volume::Max) const
+		{
+			return (MasterVolume * audioTypeVolume * volume * groupVolume) 
+				   / std::pow(Volume::Max, 4) * MIX_MAX_VOLUME;
+		}
 	};
 }
