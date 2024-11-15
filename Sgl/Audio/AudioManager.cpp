@@ -14,11 +14,11 @@ namespace Sgl
 		Mix_PlayMusic(music, loops);
 	}
 
-	void AudioManager::PlayMusic(const std::string & music, int loops)
+	void AudioManager::PlayMusic(const std::string& music, int loops)
 	{
 		if(Resources)
 		{
-			PlayMusic(*Resources->MusicTracks[music], loops);
+			PlayMusic(*Resources->MusicTracks.at(music), loops);
 		}
 	}
 
@@ -35,11 +35,6 @@ namespace Sgl
 		Mix_VolumeMusic(ToMixVolume(music.AudioVolume, MusicVolume, Volume::Max));
 	}
 
-	void AudioManager::SetMusicVolume(const Music& music, const AudioGroup& group)
-	{
-		Mix_VolumeMusic(ToMixVolume(music.AudioVolume, MusicVolume, group.Volume));
-	}
-
 	void AudioManager::SetSoundEffectVolume(const SoundEffect& soundEffect)
 	{
 		Mix_VolumeChunk(soundEffect,
@@ -48,8 +43,8 @@ namespace Sgl
 
 	void AudioManager::SetSoundEffectVolume(const SoundEffect& soundEffect, const AudioGroup& group)
 	{
-		Mix_VolumeChunk(soundEffect,
-						ToMixVolume(soundEffect.AudioVolume, SoundEffectsVolume, group.Volume));
+		Mix_VolumeChunk(soundEffect, 
+						ToMixVolume(soundEffect.AudioVolume, SoundEffectsVolume, group.AudioVolume));
 	}
 
 	void AudioManager::PlaySoundEffect(const SoundEffect& soundEffect, int channel, int loops)
@@ -57,11 +52,11 @@ namespace Sgl
 		Mix_PlayChannel(channel, soundEffect, loops);
 	}
 
-	void AudioManager::PlaySoundEffect(const std::string & soundEffect, int channel, int loops)
+	void AudioManager::PlaySoundEffect(const std::string& soundEffect, int channel, int loops)
 	{
 		if(Resources)
 		{
-			PlaySoundEffect(*Resources->SoundEffects[soundEffect], channel, loops);
+			PlaySoundEffect(*Resources->SoundEffects.at(soundEffect), channel, loops);
 		}
 	}
 
@@ -78,7 +73,8 @@ namespace Sgl
 			{
 				playlist.Shuffle();
 			}
-
+			
+			SetMusicVolume(*playlist.Current(), playlist);
 			PlayMusic(*playlist.Current());
 			playlist.SetCurrentToNext();
 		}
@@ -88,11 +84,11 @@ namespace Sgl
 		}
 	}
 
-	void AudioManager::PlayPlayList(const std::string & playlist)
+	void AudioManager::PlayPlayList(const std::string& playlist)
 	{
 		if(Resources)
 		{
-			PlayPlayList(Resources->PlayLists[playlist]);
+			PlayPlayList(Resources->PlayLists.at(playlist));
 		}
 	}
 }

@@ -27,11 +27,17 @@ namespace Sgl
 		void PlayPlayList(const std::string& playlist);
 		void PauseMusic() const noexcept;
 		void ResumeMusic() const noexcept { Mix_ResumeMusic(); }
+		void RewindMusic() const noexcept { Mix_RewindMusic(); }
 		void HaltMusic() const noexcept { Mix_HaltMusic(); }
-		void SetMusicVolume(const Music& music);
-		void SetMusicVolume(const Music& music, const AudioGroup& group);
 		void SetSoundEffectVolume(const SoundEffect& soundEffect);
 		void SetSoundEffectVolume(const SoundEffect& soundEffect, const AudioGroup& group);
+
+		void SetMusicVolume(const Music& music);
+		template <AudioPtr T>
+		void SetMusicVolume(const Music& music, const AudioCollection<T>& collection)
+		{
+			Mix_VolumeMusic(ToMixVolume(music.AudioVolume, MusicVolume, collection.AudioVolume));
+		}
 	protected:
 		uint8_t ToMixVolume(Volume volume, Volume audioTypeVolume, Volume groupVolume = Volume::Max) const
 		{

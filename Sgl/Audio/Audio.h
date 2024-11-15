@@ -37,12 +37,6 @@ namespace Sgl
 		virtual ~AudioBase() = default;
 	};
 
-	struct AudioGroup
-	{
-		Volume Volume;
-		std::list<AudioBase*> Items;
-	};
-
 	class Music: public AudioBase
 	{
 	protected:
@@ -77,13 +71,35 @@ namespace Sgl
 		~SoundEffect() noexcept { Mix_FreeChunk(_soundChunk); }
 
 		operator Mix_Chunk* () const { return _soundChunk; }
-	};	
+	};
 
-	class PlayList: public std::vector<Music*>
+	template<typename T>
+	concept AudioPtr = std::is_pointer_v<T> &&
+					   std::derived_from<std::remove_pointer_t<T>, AudioBase>;
+
+	template<AudioPtr T>
+	class AudioCollection: public std::vector<T>
+	{
+	public:
+		Volume AudioVolume;
+	public:
+		AudioCollection(Volume volume = Volume::Max):
+			std::vector<T>(),
+			AudioVolume(volume)
+		{}
+	};
+
+	using AudioGroup = AudioCollection<AudioBase*>;
+
+	class PlayList: public AudioCollection<Music*>
 	{
 	private:
 		PlayList::iterator _current;
 	public:
+		PlayList(Volume volume = Volume::Max):
+			AudioCollection<Music*>(volume)
+		{}
+
 		Music* const Current() const { return empty() ? nullptr : *_current; }
 		void SetCurrentToBegin() { _current = begin(); }
 		void SetCurrentToEnd() { _current = end(); }
