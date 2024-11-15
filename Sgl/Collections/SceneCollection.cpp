@@ -2,12 +2,12 @@
 
 namespace Sgl
 {
-	void SceneCollection::Add(Scene* scene)
+	void SceneCollection::Push(Scene* scene)
 	{
 		push(scene);
 	}
 
-	void SceneCollection::RemoveCurrent()
+	void SceneCollection::Pop()
 	{
 		delete top();
 		pop();
@@ -27,7 +27,7 @@ namespace Sgl
 	{
 		while(!empty())
 		{
-			RemoveCurrent();
+			Pop();
 		}
 	}
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <list>
+#include <chrono>
 #include "Panels/Panel.h"
 #include "../Appearance/Brushes.h"
 #include "../Appearance/Texture.h"
@@ -20,7 +21,7 @@ namespace Sgl
 
 		Event<EventHandler> Closed;
 
-		virtual void Process() = 0;
+		virtual void Process(float elapsedMs) = 0;
 		void OnRender(RenderContext& renderContext) const override;
 		void HandleEvent(const SDL_Event& e);
 		void Close();

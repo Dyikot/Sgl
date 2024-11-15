@@ -13,8 +13,6 @@ namespace Sgl
 	class Window
 	{
 	public:
-		friend class Application;
-
 		enum class DiplayMode
 		{
 			Window, BorderlessWindow, Fullscreen
@@ -39,7 +37,9 @@ namespace Sgl
 		RenderContext _renderContext;
 		SDL_Surface* _icon = nullptr;
 		int _width;
-		int _height;		
+		int _height;
+	private:
+		friend class Application;
 	public:
 		Window() noexcept;
 		Window(const WindowProperties& properties) noexcept;

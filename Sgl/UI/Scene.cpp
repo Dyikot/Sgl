@@ -81,7 +81,7 @@ namespace Sgl
 	void Scene::Close()
 	{	
 		OnClose(EventArgs{});
-		Application::Current()->GetWindow()->Scenes.RemoveCurrent();
+		Application::Current()->GetWindow()->Scenes.Pop();
 	}
 	
 	void Scene::OnClose(const EventArgs & e)

@@ -125,7 +125,6 @@ namespace Sgl
             return;
         }
         
-        Scenes.Current()->Process();
         Scenes.Current()->OnRender(GetRenderContext());
         SDL_RenderPresent(_renderContext.Renderer);
     }    

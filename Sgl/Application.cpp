@@ -35,10 +35,16 @@ namespace Sgl
 		SDL_Quit();
 	}
 
+	void Application::SetMaxFrameRate(uint32_t value)
+	{
+		_maxFrameRate = value > MaxFrameRate? MaxFrameRate : value;
+	}
+
 	void Application::Run(Window& window)
 	{
 		SDL_Event e;
 		_window = &window;
+		_startTimePoint = SDL_GetPerformanceCounter();
 
 		OnStartup(EventArgs());
 
@@ -53,8 +59,15 @@ namespace Sgl
 				}
 			}
 
+			window.Scenes.Current()->Process(ElapsedMs());
 			window.Render();
-			SDL_Delay(_delay);
+
+			if(_maxFrameRate.has_value())
+			{
+				SDL_Delay(MaxFrameTimeMs() - ElapsedMs());
+			}
+
+			_startTimePoint = SDL_GetPerformanceCounter();
 		}
 
 		OnQuit(EventArgs());
