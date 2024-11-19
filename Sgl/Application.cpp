@@ -43,7 +43,7 @@ namespace Sgl
 	void Application::Run(Window& window)
 	{
 		SDL_Event e;
-		_window = &window;
+		MainWindow = &window;
 		_startTimePoint = SDL_GetPerformanceCounter();
 
 		OnStartup(EventArgs());
@@ -81,9 +81,9 @@ namespace Sgl
 
 	void Application::Shutdown() noexcept
 	{
-		if(_window != nullptr)
+		if(MainWindow != nullptr)
 		{
-			_window->Close();
+			MainWindow->Close();
 		}
 	}
 

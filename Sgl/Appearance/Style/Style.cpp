@@ -59,6 +59,6 @@ namespace Sgl
 
 	bool Style::IsTypeCorrect(PropertyId id, IProperty* property) const
 	{
-		return PropertyManager::GetTypeNameBy(id) == property->Type().name();
+		return PropertyManager::GetTypeNameOf(id) == property->Type().name();
 	}	
 }

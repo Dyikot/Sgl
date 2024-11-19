@@ -1,4 +1,5 @@
 #include "Object.h"
+#include "../Application.h"
 
 namespace Sgl
 {

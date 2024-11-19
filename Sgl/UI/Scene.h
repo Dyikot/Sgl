@@ -2,13 +2,14 @@
 
 #include <list>
 #include <chrono>
-#include "Panels/Panel.h"
 #include "../Appearance/Brushes.h"
 #include "../Appearance/Texture.h"
+#include "../ECS/IProcessed.h"
+#include "UIElement.h"
 
 namespace Sgl
 {	
-	class Scene: public UIElement
+	class Scene: public UIElement, public IProcessed
 	{
 	public:		
 		static inline const PropertyId ClosedProperty = PropertyManager::Register<EventHandler>("Closed");
@@ -21,7 +22,6 @@ namespace Sgl
 
 		Event<EventHandler> Closed;
 
-		virtual void Process(float elapsedMs) = 0;
 		void OnRender(RenderContext& renderContext) const override;
 		void HandleEvent(const SDL_Event& e);
 		void Close();

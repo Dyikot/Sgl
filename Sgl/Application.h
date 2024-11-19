@@ -13,13 +13,13 @@ namespace Sgl
 	public:
 		using ApplicationEventHandler = std::function<void(Application*, const EventArgs&)>;
 		AudioManager AudioManager;
+		Window* MainWindow = nullptr;
 	protected:
-		Window* _window = nullptr;
 		size_t _startTimePoint;
 	private:
+		inline static Application* _current = nullptr;
 		static constexpr uint32_t MaxFrameRate = 360;
 		std::optional<uint32_t> _maxFrameRate = std::nullopt;
-		inline static Application* _current = nullptr;
 	public:
 		static Application* const Current() { return _current; }
 
@@ -27,9 +27,7 @@ namespace Sgl
 		~Application() noexcept;
 
 		void SetMaxFrameRate(uint32_t value);
-
 		std::optional<uint32_t> GetMaxFrameRate() const { return _maxFrameRate; }
-		Window* const GetWindow() { return _window; }
 
 		Event<ApplicationEventHandler> Startup;
 		Event<ApplicationEventHandler> Quit;

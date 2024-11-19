@@ -84,6 +84,6 @@ namespace Sgl
 				throw std::invalid_argument("Property with this name already exist\n");
 			}
 		}
-		static std::string_view GetTypeNameBy(const PropertyId id);
+		static std::string_view GetTypeNameOf(const PropertyId id);
 	};	
 }

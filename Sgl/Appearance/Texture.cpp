@@ -4,7 +4,7 @@
 namespace Sgl
 {
 	Texture::Texture(std::string_view path) noexcept:
-		_texture(IMG_LoadTexture(Application::Current()->GetWindow()->GetRenderContext().Renderer, path.data()))
+		_texture(IMG_LoadTexture(Application::Current()->MainWindow->GetRenderContext().Renderer, path.data()))
 	{	
 		if(_texture == nullptr)
 		{
