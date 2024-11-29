@@ -9,8 +9,6 @@
 
 namespace Sgl
 {	
-	
-
 	class Scene: public UIElement, public IProcessed
 	{
 	public:		

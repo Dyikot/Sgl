@@ -4,7 +4,7 @@
 
 namespace Sgl
 {
-	struct ColorBrush
+	class ColorBrush
 	{
 	public:
 		uint8_t R, G, B, A;
@@ -51,7 +51,7 @@ namespace Sgl
 		inline constexpr ColorBrush Darkgrey = 0x464646ff;
 	}
 
-	struct TextureBrush: ColorBrush
+	class TextureBrush: public ColorBrush
 	{
 	public:
 		SDL_Texture* RawTexture;

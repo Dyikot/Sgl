@@ -24,6 +24,7 @@ namespace Sgl
 		void Draw(const Figure& figure) const;
 		void Draw(const Ellipse& ellipse) const;
 		void DrawSceneBackground(const Brush& background) const;
+		SDL_Texture* CreateTexture(std::string_view path) const;
 	protected:
 		void SetRenderColor(ColorBrush brush) const noexcept
 		{
@@ -43,8 +44,8 @@ namespace Sgl
 			}
 		}
 
-		void FillBackground(const ColorBrush& brush) const noexcept;
-		void FillBackground(const TextureBrush& brush) const noexcept;
+		void SetSceneBackground(const ColorBrush& brush) const noexcept;
+		void SetSceneBackground(const TextureBrush& brush) const noexcept;
 	};
 }
 

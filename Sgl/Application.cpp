@@ -48,6 +48,7 @@ namespace Sgl
 
 		while(!window.Scenes.Empty())
 		{
+			auto currentScene = window.Scenes.Current();
 			_start = SDL_GetPerformanceCounter();
 
 			for(SDL_Event* e = nullptr; SDL_PollEvent(e);)
@@ -68,7 +69,7 @@ namespace Sgl
 
 					case SDL_KEYDOWN:
 					{
-						window.Scenes.Current()->OnKeyDown(
+						currentScene->OnKeyDown(
 							KeyEventArgs
 							{
 								.IsDown = true,
@@ -82,7 +83,7 @@ namespace Sgl
 
 					case SDL_KEYUP:
 					{
-						window.Scenes.Current()->OnKeyUp(
+						currentScene->OnKeyUp(
 							KeyEventArgs
 							{
 								.IsDown = false,
@@ -96,7 +97,7 @@ namespace Sgl
 
 					case SDL_TEXTEDITING:
 					{
-						window.Scenes.Current()->OnTextChanged(
+						currentScene->OnTextChanged(
 							TextChangedEventArgs
 							{
 								.Text = e->edit.text,
@@ -110,7 +111,7 @@ namespace Sgl
 
 					case SDL_TEXTEDITING_EXT:
 					{
-						window.Scenes.Current()->OnTextChanged(
+						currentScene->OnTextChanged(
 							TextChangedEventArgs
 							{
 								.Text = e->editExt.text,
@@ -125,7 +126,7 @@ namespace Sgl
 
 					case SDL_TEXTINPUT:
 					{
-						window.Scenes.Current()->OnTextInput(
+						currentScene->OnTextInput(
 							TextInputEventArgs
 							{
 								.Text = e->text.text
@@ -137,7 +138,7 @@ namespace Sgl
 
 					case SDL_MOUSEBUTTONDOWN:
 					{
-						window.Scenes.Current()->OnMouseDown(
+						currentScene->OnMouseDown(
 							MouseButtonEventArgs
 							{
 								.Button = ToMouseButton(e->button.button),
@@ -152,7 +153,7 @@ namespace Sgl
 
 					case SDL_MOUSEBUTTONUP:
 					{
-						window.Scenes.Current()->OnMouseUp(
+						currentScene->OnMouseUp(
 							MouseButtonEventArgs
 							{
 								.Button = ToMouseButton(e->button.button),
@@ -167,7 +168,7 @@ namespace Sgl
 
 					case SDL_MOUSEMOTION:
 					{
-						window.Scenes.Current()->OnMouseMove(
+						currentScene->OnMouseMove(
 							MouseButtonEventArgs
 							{
 								.Position = { e->motion.x, e->motion.y }
@@ -179,7 +180,7 @@ namespace Sgl
 
 					case SDL_MOUSEWHEEL:
 					{
-						window.Scenes.Current()->OnMouseWheel(
+						currentScene->OnMouseWheel(
 							MouseWheelEventArgs
 							{
 								.Position = { e->wheel.mouseX, e->wheel.mouseY },
@@ -194,7 +195,6 @@ namespace Sgl
 				}
 			}
 
-			auto currentScene = window.Scenes.Current();
 			if(currentScene->IsClosed())
 			{
 				window.Scenes.Pop();

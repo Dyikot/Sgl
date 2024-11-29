@@ -1,4 +1,6 @@
 #include "RenderContext.h"
+#include "../Tools/Log.h"
+#include <SDL/SDL_image.h>
 
 namespace Sgl
 {
@@ -67,16 +69,27 @@ namespace Sgl
 
 	void RenderContext::DrawSceneBackground(const Brush& background) const
 	{
-		std::visit([this](const auto& brush) { FillBackground(brush); }, background);
+		std::visit([this](const auto& brush) { SetSceneBackground(brush); }, background);
 	}
 
-	void RenderContext::FillBackground(const ColorBrush& brush) const noexcept
+	SDL_Texture* RenderContext::CreateTexture(std::string_view path) const
+	{
+		auto texture = IMG_LoadTexture(Renderer, path.data());
+		if(texture == nullptr)
+		{
+			PrintSDLError();
+		}
+
+		return texture;
+	}
+
+	void RenderContext::SetSceneBackground(const ColorBrush& brush) const noexcept
 	{
 		SetRenderColor(brush);
 		SDL_RenderClear(Renderer);
 	}
 
-	void RenderContext::FillBackground(const TextureBrush & brush) const noexcept
+	void RenderContext::SetSceneBackground(const TextureBrush & brush) const noexcept
 	{
 		SetRenderColor(brush);
 		SDL_RenderCopy(Renderer, brush.RawTexture, nullptr, nullptr);

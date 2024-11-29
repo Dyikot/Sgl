@@ -9,59 +9,15 @@
 
 namespace Sgl
 {
-	using PropertyId = size_t;
-
-	template<typename T>
-	class Property;
-
-	class IProperty
-	{
-	public:
-		virtual ~IProperty() = default;
-
-		virtual const std::type_info& Type() const = 0;
-		virtual IProperty* Copy() const = 0;
-
-		template<typename T>
-		const T& Get() const
-		{
-			return static_cast<const Property<T>*>(this)->Value;
-		}
-
-		template<typename T>
-		void Set(const T& value)
-		{
-			static_cast<Property<T>*>(this)->Value = value;
-		}
-	};
-
-	template<typename T>
-	class Property: public IProperty
-	{
-	public:
-		T Value;
-	public:
-		Property():
-			Value()
-		{}
-		Property(auto&&... args):
-			Value(std::forward<decltype(auto)>(args)...)
-		{}
-		Property(const T& value):
-			Value(value)
-		{}
-
-		IProperty* Copy() const override { return new Property<T>(*this); }
-		const std::type_info& Type() const override { return typeid(Value); }
-	};
+	using PropertyId = size_t;	
 
 	class PropertyManager
 	{
 	private:
-		static inline std::unordered_map<PropertyId, std::string> _typeNameMap = {};
+		static inline std::unordered_map<PropertyId, std::string> _propertyIdMap = {};
 		static inline std::unordered_set<std::string> _propertiesNames = {};
 	public:
-		template<typename Type>
+		template<typename T>
 		static const PropertyId Register(std::string&& name)
 		{
 			auto [_, isInserted] = _propertiesNames.insert(std::move(name));
@@ -69,7 +25,7 @@ namespace Sgl
 			if(isInserted)
 			{
 				PropertyId id = _propertiesNames.size() - 1;
-				_typeNameMap.emplace(id, typeid(Type).name());
+				_propertyIdMap.emplace(id, typeid(T).name());
 				return id;
 			}
 			else
@@ -77,6 +33,9 @@ namespace Sgl
 				throw std::invalid_argument("Property with this name already exist\n");
 			}
 		}
-		static std::string_view GetTypeNameOf(const PropertyId id);
+		static std::string_view GetTypeNameOf(const PropertyId id)
+		{
+			return _propertyIdMap.at(id);
+		}
 	};	
 }

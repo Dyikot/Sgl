@@ -1,6 +1,5 @@
 #include "Style.h"
 
-
 namespace Sgl
 {
 	Style::Style() noexcept:
@@ -13,25 +12,16 @@ namespace Sgl
 		Add(style);
 	}
 
-	Style::~Style() noexcept
-	{
-		for(auto& [_, value] : _propertyMap)
-		{
-			delete value;
-		}
-	}
-
 	void Style::Add(const Style& style)
 	{
-		for(auto& [id, property] : style._propertyMap)
+		for(auto& [id, object] : style._propertyMap)
 		{
-			_propertyMap.insert(std::make_pair(id, property->Copy()));
+			_propertyMap.emplace(id, object);
 		}
 	}
 
 	void Style::Remove(PropertyId id) noexcept
 	{
-		delete _propertyMap.at(id);
 		_propertyMap.erase(id);
 	}
 
@@ -50,13 +40,13 @@ namespace Sgl
 		return _propertyMap.size();
 	}
 
-	IProperty* Style::operator[](PropertyId id)
+	Any& Style::operator[](PropertyId id)
 	{
 		return _propertyMap[id];
 	}
 
-	bool Style::IsTypeCorrect(PropertyId id, IProperty* property) const
+	bool Style::IsTypeCorrect(PropertyId id, const Any& object) const
 	{
-		return PropertyManager::GetTypeNameOf(id) == property->Type().name();
-	}	
+		return PropertyManager::GetTypeNameOf(id) == object.Type().name();
+	}
 }
