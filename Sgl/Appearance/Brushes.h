@@ -22,7 +22,6 @@ namespace Sgl
 			R(color), G(color >> 8), B(color >> 16), A(color >> 24)
 		{}
 
-		bool IsOpaque() const noexcept { return A == Opaque; }
 		bool IsTransparent() const noexcept { return A == Transparent; }
 
 		bool operator==(ColorBrush brush) const 

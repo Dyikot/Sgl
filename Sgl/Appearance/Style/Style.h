@@ -14,18 +14,6 @@ namespace Sgl
 		Style(const Style& style) noexcept;
 		~Style() noexcept;
 
-		template<typename T>
-		void Add(PropertyId id)
-		{
-			IProperty* property = new Property<T>();
-			if(IsTypeCorrect(id, property))
-			{
-				throw std::invalid_argument("Id type and property type is equal!");
-			}
-
-			_propertyMap.insert(std::make_pair(id, property));
-		}
-
 		template<typename T, typename... Args>
 		void Add(PropertyId id, Args&&... args)
 		{
@@ -62,18 +50,7 @@ namespace Sgl
 			}
 		}
 
-		template<typename T>
-		T GetValue(PropertyId id) const
-		{
-			if(_propertyMap.contains(id))
-			{
-				return _propertyMap.at(id)->Get<T>();
-			}
-
-			return T{};
-		}
-
-		IProperty* const operator[](PropertyId id);
+		IProperty* operator[](PropertyId id);
 	private:
 		bool IsTypeCorrect(PropertyId id, IProperty* property) const;
 	};

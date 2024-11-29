@@ -10,10 +10,7 @@ namespace Sgl
 	Style::Style(const Style & style) noexcept:
 		_propertyMap()
 	{
-		for(auto& [id, property] : style._propertyMap)
-		{
-			_propertyMap.insert(std::make_pair(id, property->Copy()));
-		}
+		Add(style);
 	}
 
 	Style::~Style() noexcept
@@ -34,6 +31,7 @@ namespace Sgl
 
 	void Style::Remove(PropertyId id) noexcept
 	{
+		delete _propertyMap.at(id);
 		_propertyMap.erase(id);
 	}
 
@@ -52,7 +50,7 @@ namespace Sgl
 		return _propertyMap.size();
 	}
 
-	IProperty* const Style::operator[](PropertyId id)
+	IProperty* Style::operator[](PropertyId id)
 	{
 		return _propertyMap[id];
 	}

@@ -1,11 +1,10 @@
 #pragma once
 
 #include "SDL/SDL.h"
+#include "Event.h"
 
 namespace Sgl
 {
-	struct EventArgs {};
-
 	struct KeyEventArgs: EventArgs
 	{
 		bool IsDown;
@@ -29,6 +28,14 @@ namespace Sgl
 		MouseButtonState ButtonState;
 		Uint8 ClickCount;
 		SDL_Point Position;
+	};
+
+	struct MouseWheelEventArgs: EventArgs
+	{
+		SDL_Point Position;
+		float ScrolledHorizontally;
+		float ScrolledVertically;
+		SDL_MouseWheelDirection Direction;
 	};
 
 	struct SizeChangedEventArgs: EventArgs
@@ -55,4 +62,16 @@ namespace Sgl
 			case SDL_RELEASED: return MouseButtonState::Release;
 		}
 	}
+
+	struct TextChangedEventArgs: EventArgs
+	{
+		std::string Text;
+		size_t SelectionLength;
+		int SelectionStart;
+	};
+
+	struct TextInputEventArgs: EventArgs
+	{
+		std::string Text;
+	};
 }

@@ -2,18 +2,19 @@
 
 #include <functional>
 #include "../Render/IVisual.h"
-#include "../Events/Event.h"
+#include "../Events/EventArgs.h"
 #include "../Appearance/Style/Style.h"
 
 namespace Sgl
-{
-	using EventHandler = std::function<void(IVisual*, const EventArgs&)>;
-	using MouseEventHandler = std::function<void(IVisual*, const MouseButtonEventArgs&)>;
-	using KeyEventHandler = std::function<void(IVisual*, const KeyEventArgs&)>;
-	
+{	
 	class UIElement: public IVisual
 	{
 	public:
+		using UIEventHandler = EventHandler<UIElement, EventArgs>;
+		using MouseEventHandler = EventHandler<UIElement, MouseButtonEventArgs>;
+		using MouseWheelEventHandler = EventHandler<UIElement, MouseWheelEventArgs>;
+		using KeyEventHandler = EventHandler<UIElement, KeyEventArgs>;
+
 		static inline const PropertyId MouseDownProperty = PropertyManager::Register<MouseEventHandler>("MouseDown");
 		static inline const PropertyId MouseUpProperty = PropertyManager::Register<MouseEventHandler>("MouseUp");
 		static inline const PropertyId MouseMoveProperty = PropertyManager::Register<MouseEventHandler>("MouseMove");
@@ -33,6 +34,7 @@ namespace Sgl
 		Event<MouseEventHandler> MouseMove;
 		Event<MouseEventHandler> MouseEnter;
 		Event<MouseEventHandler> MouseLeave;
+		Event<MouseWheelEventHandler> MouseWheel;
 		Event<KeyEventHandler> KeyDown;
 		Event<KeyEventHandler> KeyUp;
 	protected:
@@ -41,6 +43,7 @@ namespace Sgl
 		virtual void OnMouseMove(const MouseButtonEventArgs& e);
 		virtual void OnMouseEnter(const MouseButtonEventArgs& e);
 		virtual void OnMouseLeave(const MouseButtonEventArgs& e);
+		virtual void OnMouseWheel(const MouseWheelEventArgs& e);
 		virtual void OnKeyDown(const KeyEventArgs& e);
 		virtual void OnKeyUp(const KeyEventArgs& e);
 	};

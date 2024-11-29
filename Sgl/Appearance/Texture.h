@@ -9,12 +9,6 @@ namespace Sgl
 {
 	class Texture
 	{
-	public:
-		struct Size
-		{
-			int Width;
-			int Height;
-		};
 	protected:
 		SDL_Texture* _texture;
 	public:
@@ -22,7 +16,7 @@ namespace Sgl
 		Texture(SDL_Texture* texture) noexcept;
 		~Texture() noexcept;
 
-		Size QuerySize() const noexcept;
+		std::pair<size_t, size_t> QuerySize() const noexcept;
 		Texture& operator=(SDL_Texture* texture);
 		operator SDL_Texture* () const 
 		{ 

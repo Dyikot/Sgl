@@ -5,6 +5,7 @@
 #include <iostream>
 #include <unordered_map>
 #include "SDL/SDL_mixer.h"
+#include "../Tools/Log.h"
 
 namespace Sgl
 {
@@ -65,7 +66,7 @@ namespace Sgl
 		{
 			if(_soundChunk == nullptr)
 			{
-				std::cout << SDL_GetError() << '\n';
+				PrintSDLError();
 			}
 		}
 		~SoundEffect() noexcept { Mix_FreeChunk(_soundChunk); }

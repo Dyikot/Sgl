@@ -1,9 +1,12 @@
 #pragma once
 
-class IProcessed
+namespace Sgl
 {
-public:
-	virtual ~IProcessed() = 0;
+	class IProcessed
+	{
+	public:
+		virtual ~IProcessed() = default;
 
-	virtual void Process(float elapsedMs) = 0;
-};
+		virtual void Process(float elapsedMs) = 0;
+	};
+}

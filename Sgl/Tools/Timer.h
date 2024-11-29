@@ -14,7 +14,7 @@ namespace Sgl
 	class Timer
 	{
 	public:
-		using TimeElapsedHandler = std::function<void(Timer*, const TimeElapsedEventArgs&)>;
+		using TimeElapsedHandler = EventHandler<Timer, TimeElapsedEventArgs>;
 		const std::chrono::milliseconds Duration;
 	private:
 		bool _isPaused = true;

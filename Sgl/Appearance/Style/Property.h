@@ -45,21 +45,14 @@ namespace Sgl
 			Value()
 		{}
 		Property(auto&&... args):
-			Value(args...)
+			Value(std::forward<decltype(auto)>(args)...)
 		{}
 		Property(const T& value):
 			Value(value)
 		{}
 
-		IProperty* Copy() const override
-		{
-			return new Property<T>(*this);
-		}
-
-		const std::type_info& Type() const override
-		{
-			return typeid(Value);
-		}
+		IProperty* Copy() const override { return new Property<T>(*this); }
+		const std::type_info& Type() const override { return typeid(Value); }
 	};
 
 	class PropertyManager

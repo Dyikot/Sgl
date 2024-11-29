@@ -3,10 +3,11 @@
 #include <stack>
 #include <filesystem>
 #include <iostream>
-#include "Collections/SceneCollection.h"
+#include "Collections/SceneStack.h"
+#include "UI/Scene.h"
 #include "Render/RenderContext.h"
 #include "Appearance/Style/Style.h"
-#include "Events/Event.h"
+#include "Events/EventArgs.h"
 
 namespace Sgl
 {
@@ -29,17 +30,15 @@ namespace Sgl
 			SDL_WindowFlags Flags = SDL_WindowFlags::SDL_WINDOW_SHOWN;
 		};
 		
-		using WindowSizeChangedEventHandler = std::function<void(Window*, const SizeChangedEventArgs&)>;
+		using WindowSizeChangedEventHandler = EventHandler<Window, SizeChangedEventArgs>;
 
 		SDL_Window* const SDLWindow;
-		SceneCollection Scenes;
+		SceneStack Scenes;
 	protected:
 		RenderContext _renderContext;
 		SDL_Surface* _icon = nullptr;
 		int _width;
 		int _height;
-	private:
-		friend class Application;
 	public:
 		Window() noexcept;
 		Window(const WindowProperties& properties) noexcept;
@@ -69,7 +68,10 @@ namespace Sgl
 		bool IsVisible() const;
 	protected:
 		virtual void OnSizeChanged(const SizeChangedEventArgs& e);
+		virtual void OnStateChanged() {};
 
 		void Render();
+	private:
+		friend class Application;
 	};
 }

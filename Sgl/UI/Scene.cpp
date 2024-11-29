@@ -7,7 +7,8 @@ namespace Sgl
 	Scene::Scene(const Style& style) noexcept:
 		UIElement(style)
 	{
-		style.TryInit(ClosedProperty, Closed);
+		style.TryInit(LoadedProperty, Loaded);
+		style.TryInit(UnloadedProperty, Unloaded);
 		style.TryInit(Control::BackgroundProperty, Background);
 	}
 
@@ -16,79 +17,29 @@ namespace Sgl
 		renderContext.DrawSceneBackground(Background);
 	}
 
-	void Scene::HandleEvent(const SDL_Event& e)
+	void Scene::Close()
 	{
-		switch(e.type)
+		_isClosed = true;
+	}
+
+	bool Scene::IsClosed() const noexcept
+	{
+		return _isClosed;
+	}
+
+	void Scene::OnLoaded(const EventArgs& e)
+	{
+		if(Loaded)
 		{
-			case SDL_KEYDOWN:
-			{
-				OnKeyDown(KeyEventArgs
-					{
-						.IsDown = true,
-						.IsUp = false,
-						.Key = e.key.keysym
-					});
-
-				break;
-			}
-
-			case SDL_KEYUP:
-			{
-				OnKeyUp(KeyEventArgs
-					{
-						.IsDown = false,
-						.IsUp = true,
-						.Key = e.key.keysym
-					});
-
-				break;
-			}
-
-			case SDL_MOUSEBUTTONDOWN:
-			{
-				OnMouseDown(MouseButtonEventArgs
-					{
-						.Button = ToMouseButton(e.button.button),
-						.ButtonState = ToMouseButtonState(e.button.state),
-						.ClickCount = e.button.clicks,
-						.Position = { e.button.x, e.button.y }
-					});
-
-				break;
-			}
-
-			case SDL_MOUSEBUTTONUP:
-			{
-				OnMouseUp(MouseButtonEventArgs
-					{
-						.Button = ToMouseButton(e.button.button),
-						.ButtonState = ToMouseButtonState(e.button.state),
-						.ClickCount = e.button.clicks,
-						.Position = { e.button.x, e.button.y }
-					});
-
-				break;
-			}
-
-			case SDL_MOUSEMOTION:
-			{
-				OnMouseMove(MouseButtonEventArgs{ .Position = { e.motion.x, e.motion.y } });
-				break;
-			}
+			Loaded(this, e);
 		}
 	}
 
-	void Scene::Close()
-	{	
-		OnClose(EventArgs{});
-		Application::Current()->MainWindow->Scenes.Pop();
-	}
-	
-	void Scene::OnClose(const EventArgs & e)
+	void Scene::OnUnloaded(const EventArgs& e)
 	{
-		if(Closed)
+		if(Unloaded)
 		{
-			Closed(this, e);
+			Unloaded(this, e);
 		}
 	}
 }

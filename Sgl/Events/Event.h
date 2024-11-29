@@ -2,15 +2,19 @@
 
 #include <list>
 #include <functional>
-#include "EventArgs.h"
 
 namespace Sgl
 {
-	template<typename T>
+	struct EventArgs {};
+
+	template<typename TObject, typename TEventArgs> requires std::derived_from<TEventArgs, EventArgs>
+	using EventHandler = std::function<void(TObject*, const TEventArgs&)>;
+
+	template<typename THandler>
 	class Event
 	{
 	protected:
-		std::list<T> _handlers;
+		std::list<THandler> _handlers;
 	public:
 		void operator+=(auto&& handler) 
 		{ 
@@ -27,10 +31,10 @@ namespace Sgl
 			return !_handlers.empty();
 		}
 
-		template<typename O, typename E> requires std::derived_from<E, EventArgs>
-		void operator()(O* sender, const E& e) const
+		template<typename TObject, typename TEventArgs> requires std::derived_from<TEventArgs, EventArgs>
+		void operator()(TObject* sender, const TEventArgs& e) const
 		{
-			for(const T& handler : _handlers)
+			for(const THandler& handler : _handlers)
 			{
 				handler(sender, e);
 			}
@@ -42,8 +46,9 @@ namespace Sgl
 		}
 	};	
 
-	template <typename T>
-	static bool operator==(const std::function<T>& lhs, const std::function<T>& rhs) noexcept
+	template <typename THandler>
+	static bool operator==(const std::function<THandler>& lhs, 
+						   const std::function<THandler>& rhs) noexcept
 	{
 		return lhs.target_type() == rhs.target_type();
 	}

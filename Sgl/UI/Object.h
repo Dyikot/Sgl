@@ -4,13 +4,12 @@
 #include "../Appearance/ControlAppearance.h"
 #include "../Appearance/Cursor.h"
 
-
 namespace Sgl
 {
 	class Object: public UIElement
 	{
 	public:
-		using SizeChangedEventHandler = std::function<void(IVisual*, const SizeChangedEventArgs&)>;
+		using SizeChangedEventHandler = EventHandler<IVisual, SizeChangedEventArgs>;
 
 		static inline const PropertyId WidthProperty = PropertyManager::Register<float>("Width");
 		static inline const PropertyId HeightProperty = PropertyManager::Register<float>("Height");

@@ -37,7 +37,7 @@ namespace Sgl
 				SDL_SetTextureColorMod(brush.RawTexture, brush.R, brush.G, brush.B);
 			}
 
-			if(brush.IsOpaque())
+			if(!brush.IsTransparent())
 			{
 				SDL_SetTextureAlphaMod(brush.RawTexture, brush.A);
 			}

@@ -53,6 +53,14 @@ namespace Sgl
 		}
 	}
 
+	void UIElement::OnMouseWheel(const MouseWheelEventArgs& e)
+	{
+		if(MouseWheel)
+		{
+			MouseWheel(this, e);
+		}
+	}
+
 	void UIElement::OnKeyDown(const KeyEventArgs& e)
 	{
 		if(KeyDown)

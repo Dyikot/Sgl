@@ -8,22 +8,22 @@ namespace Sgl
 
 		if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_AUDIO) < 0)
 		{
-			std::cout << SDL_GetError() << '\n';
+			PrintSDLError();
 		}
 
 		if(TTF_Init() < 0)
 		{
-			std::cout << SDL_GetError() << '\n';
+			PrintSDLError();
 		}
 
 		if(!IMG_Init(IMG_InitFlags::IMG_INIT_PNG | IMG_InitFlags::IMG_INIT_JPG))
 		{
-			std::cout << SDL_GetError() << '\n';
+			PrintSDLError();
 		}
 
 		if(Mix_OpenAudio(48000, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 2048) < 0)
 		{
-			std::cout << SDL_GetError() << '\n';
+			PrintSDLError();
 		}
 	}
 
@@ -42,32 +42,171 @@ namespace Sgl
 
 	void Application::Run(Window& window)
 	{
-		SDL_Event e;
 		MainWindow = &window;
-		_startTimePoint = SDL_GetPerformanceCounter();
 
 		OnStartup(EventArgs());
 
 		while(!window.Scenes.Empty())
 		{
-			while(SDL_PollEvent(&e))
+			_start = SDL_GetPerformanceCounter();
+
+			for(SDL_Event* e = nullptr; SDL_PollEvent(e);)
 			{
-				switch(e.type)
+				switch(e->type)
 				{
-					case SDL_QUIT: Shutdown(); break;
-					default: window.Scenes.Current()->HandleEvent(e);
+					case SDL_QUIT: 
+					{
+						Shutdown();
+						break;
+					}
+
+					case SDL_WINDOWEVENT:
+					{
+						window.OnStateChanged();
+						break;
+					}
+
+					case SDL_KEYDOWN:
+					{
+						window.Scenes.Current()->OnKeyDown(
+							KeyEventArgs
+							{
+								.IsDown = true,
+								.IsUp = false,
+								.Key = e->key.keysym
+							}
+						);
+
+						break;
+					}
+
+					case SDL_KEYUP:
+					{
+						window.Scenes.Current()->OnKeyUp(
+							KeyEventArgs
+							{
+								.IsDown = false,
+								.IsUp = true,
+								.Key = e->key.keysym
+							}
+						);
+
+						break;
+					}
+
+					case SDL_TEXTEDITING:
+					{
+						window.Scenes.Current()->OnTextChanged(
+							TextChangedEventArgs
+							{
+								.Text = e->edit.text,
+								.SelectionLength = static_cast<size_t>(e->edit.length),
+								.SelectionStart = e->edit.start
+							}
+						);
+
+						break;
+					}
+
+					case SDL_TEXTEDITING_EXT:
+					{
+						window.Scenes.Current()->OnTextChanged(
+							TextChangedEventArgs
+							{
+								.Text = e->editExt.text,
+								.SelectionLength = static_cast<size_t>(e->editExt.length),
+								.SelectionStart = e->editExt.start
+							}
+						);
+						SDL_free(e->editExt.text);
+
+						break;
+					}
+
+					case SDL_TEXTINPUT:
+					{
+						window.Scenes.Current()->OnTextInput(
+							TextInputEventArgs
+							{
+								.Text = e->text.text
+							}
+						);
+
+						break;
+					}
+
+					case SDL_MOUSEBUTTONDOWN:
+					{
+						window.Scenes.Current()->OnMouseDown(
+							MouseButtonEventArgs
+							{
+								.Button = ToMouseButton(e->button.button),
+								.ButtonState = ToMouseButtonState(e->button.state),
+								.ClickCount = e->button.clicks,
+								.Position = { e->button.x, e->button.y }
+							}
+						);
+
+						break;
+					}
+
+					case SDL_MOUSEBUTTONUP:
+					{
+						window.Scenes.Current()->OnMouseUp(
+							MouseButtonEventArgs
+							{
+								.Button = ToMouseButton(e->button.button),
+								.ButtonState = ToMouseButtonState(e->button.state),
+								.ClickCount = e->button.clicks,
+								.Position = { e->button.x, e->button.y }
+							}
+						);
+
+						break;
+					}
+
+					case SDL_MOUSEMOTION:
+					{
+						window.Scenes.Current()->OnMouseMove(
+							MouseButtonEventArgs
+							{
+								.Position = { e->motion.x, e->motion.y }
+							}
+						);
+
+						break;
+					}
+
+					case SDL_MOUSEWHEEL:
+					{
+						window.Scenes.Current()->OnMouseWheel(
+							MouseWheelEventArgs
+							{
+								.Position = { e->wheel.mouseX, e->wheel.mouseY },
+								.ScrolledHorizontally = e->wheel.preciseX,
+								.ScrolledVertically = e->wheel.preciseY,
+								.Direction = SDL_MouseWheelDirection(e->wheel.direction)
+							}
+						);
+
+						break;
+					}
 				}
 			}
 
-			window.Scenes.Current()->Process(ElapsedMs());
+			auto currentScene = window.Scenes.Current();
+			if(currentScene->IsClosed())
+			{
+				window.Scenes.Pop();
+				continue;
+			}
+			currentScene->Process(ElapsedMs());
 			window.Render();
 
 			if(_maxFrameRate.has_value())
 			{
 				SDL_Delay(MaxFrameTimeMs() - ElapsedMs());
 			}
-
-			_startTimePoint = SDL_GetPerformanceCounter();
 		}
 
 		OnQuit(EventArgs());

@@ -18,12 +18,12 @@ namespace Sgl
     {
         if(SDLWindow == nullptr)
         {
-            std::cout << SDL_GetError() << '\n';
+            PrintSDLError();
         }
         
         if(_renderContext.Renderer == nullptr)
         {
-            std::cout << SDL_GetError() << '\n';
+            PrintSDLError();
         }
 
         SDL_SetRenderDrawBlendMode(_renderContext.Renderer, SDL_BLENDMODE_BLEND);
