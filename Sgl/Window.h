@@ -8,6 +8,7 @@
 #include "Render/RenderContext.h"
 #include "Appearance/Style/Style.h"
 #include "Events/EventArgs.h"
+#include "Appearance/Icon.h"
 
 namespace Sgl
 {
@@ -32,17 +33,18 @@ namespace Sgl
 		
 		using WindowSizeChangedEventHandler = EventHandler<Window, SizeChangedEventArgs>;
 
-		SDL_Window* const SDLWindow;
 		SceneStack Scenes;
 	protected:
+		SDL_Window* const _sdlWindow;
 		RenderContext _renderContext;
-		SDL_Surface* _icon = nullptr;
+		std::optional<Icon> _icon = std::nullopt;
 		int _width;
 		int _height;
+		bool _isVsyncEnable = false;
 	public:
 		Window() noexcept;
 		Window(const WindowProperties& properties) noexcept;
-		~Window() noexcept;
+		~Window() noexcept { SDL_DestroyWindow(_sdlWindow); }
 
 		Event<WindowSizeChangedEventHandler> SizeChanged;
 		
@@ -52,13 +54,13 @@ namespace Sgl
 		void SetMaxSize(size_t width, size_t height);
 		void SetTitle(std::string_view value);
 		void SetPosition(SDL_Point value);
-		void SetIcon(std::string_view path);
+		void SetIcon(Icon&& icon);
 		void SetDisplayMode(DiplayMode displayMode);
 
 		int	GetWidth() const noexcept { return _width; }
 		int	GetHeight() const noexcept { return _height; }
 		std::pair<size_t, size_t> GetLogicalSize() const;
-		std::string_view GetTitle() const { SDL_GetWindowTitle(SDLWindow); }
+		std::string_view GetTitle() const { SDL_GetWindowTitle(_sdlWindow); }
 		SDL_Point GetPosition() const;
 		virtual RenderContext& GetRenderContext() { return _renderContext; }
 
@@ -66,6 +68,11 @@ namespace Sgl
 		void Hide();
 		void Close();
 		bool IsVisible() const;
+		void EnableVsync();
+		void DisableVsync();
+		bool IsVsyncEnable() const { _isVsyncEnable; }
+
+		operator SDL_Window* () const { return _sdlWindow; }
 	protected:
 		virtual void OnSizeChanged(const SizeChangedEventArgs& e);
 		virtual void OnStateChanged() {};

@@ -27,6 +27,11 @@ namespace Sgl
 		return _isClosed;
 	}
 
+	Control* Scene::FindControl(SDL_Point mousePosition)
+	{
+		
+	}
+
 	void Scene::OnLoaded(const EventArgs& e)
 	{
 		if(Loaded)

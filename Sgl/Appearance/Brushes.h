@@ -30,7 +30,7 @@ namespace Sgl
 		}
 
 		bool operator!=(ColorBrush brush) const { return !operator==(brush); }
-		operator SDL_Color() const { return SDL_Color{ .r = R, .g = G, .b = B, .a = A }; }
+		operator SDL_Color() const { return { R, G, B, A }; }
 	};	
 
 	namespace Colors

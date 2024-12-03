@@ -24,9 +24,6 @@ namespace Sgl
 	public:
 		T Value;
 	public:
-		ValueContainer():
-			Value()
-		{}
 		template<typename... TArgs>
 		ValueContainer(TArgs&&... args):
 			Value(std::forward<TArgs>(args)...)

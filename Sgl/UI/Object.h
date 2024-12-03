@@ -27,7 +27,7 @@ namespace Sgl
 		SDL_Cursor* SDLCursor = nullptr;
 		IVisual* ToolTip = nullptr;
 	protected:
-		bool _isToolTipRenderRequired = false;
+		bool _isMouseOver = false;
 		float _width = 0;
 		float _height = 0;
 		float _minWidth = 0;
@@ -40,8 +40,8 @@ namespace Sgl
 		VerticalAligment _verticalAlignment = VerticalAligment::Stretch;
 	public:
 		Object() = default;
-		Object(const SDL_FPoint& position) noexcept;
-		Object(const SDL_FPoint& position, const Style& style) noexcept;
+		Object(SDL_FPoint position) noexcept;
+		Object(SDL_FPoint position, const Style& style) noexcept;
 		Object(const Style& style) noexcept;
 		virtual ~Object() = default;
 
@@ -51,7 +51,7 @@ namespace Sgl
 		virtual void SetMinHeight(float value) { _minHeight = value; }
 		virtual void SetMaxWidth(float value) { _maxWidth = value; }
 		virtual void SetMaxHeight(float value) { _maxHeight = value; }
-		virtual void SetPosition(const SDL_FPoint& value) { _position = value; }
+		virtual void SetPosition(SDL_FPoint value) { _position = value; }
 		virtual void SetMargin(const Thikness& value) { _margin = value; }
 		virtual void SetHorizontalAlignment(HorizontalAlignment value) { _horizontalAlignment = value; }
 		virtual void SetVerticalAlignment(VerticalAligment value) { _verticalAlignment = value; }
@@ -62,7 +62,7 @@ namespace Sgl
 		virtual float GetMinHeight() const { return _minHeight; }
 		virtual float GetMaxWidth() const { return _maxWidth; }
 		virtual float GetMaxHeight() const { return _maxHeight; }
-		virtual const SDL_FPoint& GetPosition() const { return _position; }
+		virtual SDL_FPoint GetPosition() const { return _position; }
 		virtual const Thikness& GetMargin() const { return _margin; }
 		virtual HorizontalAlignment GetHorizontalAlignment() const { return _horizontalAlignment; }
 		virtual VerticalAligment GetVerticalAlignment() const { return _verticalAlignment; }
@@ -70,7 +70,7 @@ namespace Sgl
 		Event<SizeChangedEventHandler> SizeChanged;
 
 		void OnRender(RenderContext& renderContext) const override;
-		virtual bool IsMouseOver(const SDL_Point& mousePosition) const noexcept;
+		bool IsMouseOver() const noexcept { return _isMouseOver; }
 	protected:
 		void OnMouseEnter(const MouseButtonEventArgs& e) override;
 		void OnMouseLeave(const MouseButtonEventArgs& e) override;

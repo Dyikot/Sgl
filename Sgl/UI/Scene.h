@@ -5,7 +5,7 @@
 #include "../Appearance/Brushes.h"
 #include "../Appearance/Texture.h"
 #include "../ECS/IProcessed.h"
-#include "UIElement.h"
+#include "Controls/Control.h"
 
 namespace Sgl
 {	
@@ -16,6 +16,7 @@ namespace Sgl
 		static inline const PropertyId UnloadedProperty = PropertyManager::Register<UIEventHandler>("Unloaded");
 		
 		Brush Background = Colors::Black;
+		std::vector<Control*> Controls;
 	private:
 		bool _isClosed = false;
 	public:
@@ -30,6 +31,7 @@ namespace Sgl
 		void Close();
 		bool IsClosed() const noexcept;
 	protected:
+		Control* FindControl(SDL_Point mousePosition);
 		virtual void OnLoaded(const EventArgs& e);
 		virtual void OnUnloaded(const EventArgs& e);
 		virtual void OnTextChanged(const TextChangedEventArgs& e) {};

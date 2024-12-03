@@ -200,6 +200,7 @@ namespace Sgl
 				window.Scenes.Pop();
 				continue;
 			}
+
 			currentScene->Process(ElapsedMs());
 			window.Render();
 

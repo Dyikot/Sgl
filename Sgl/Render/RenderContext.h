@@ -8,11 +8,11 @@ namespace Sgl
 {
 	class RenderContext
 	{
-	public:
-		SDL_Renderer* const Renderer;
+	protected:
+		SDL_Renderer* const _renderer;
 	public:
 		RenderContext(SDL_Renderer* const renderer) noexcept;
-		virtual ~RenderContext() = default;
+		virtual ~RenderContext() noexcept { SDL_DestroyRenderer(_renderer); }
 
 		void Draw(const Line& line) const;
 		void Draw(const Lines& lines) const;
@@ -24,11 +24,14 @@ namespace Sgl
 		void Draw(const Figure& figure) const;
 		void Draw(const Ellipse& ellipse) const;
 		void DrawSceneBackground(const Brush& background) const;
+		void SetBlendMode(SDL_BlendMode blendMode);
 		SDL_Texture* CreateTexture(std::string_view path) const;
+
+		operator SDL_Renderer* () const { return _renderer; }
 	protected:
 		void SetRenderColor(ColorBrush brush) const noexcept
 		{
-			SDL_SetRenderDrawColor(Renderer, brush.R, brush.G, brush.B, brush.A);
+			SDL_SetRenderDrawColor(_renderer, brush.R, brush.G, brush.B, brush.A);
 		}
 
 		void SetRenderColor(const TextureBrush& brush) const noexcept

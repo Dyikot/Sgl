@@ -31,20 +31,20 @@ namespace Sgl
 		Control(const Style& style) noexcept;
 
 		virtual void SetBackgound(const Brush& value) { _backgound = value; }
-		virtual void SetBorderColor(const ColorBrush& value) { _borderColor = value; }
-		virtual void SetFontColor(const ColorBrush& value) { _fontColor = value; }
+		virtual void SetBorderColor(ColorBrush value) { _borderColor = value; }
+		virtual void SetFontColor(ColorBrush value) { _fontColor = value; }
 		virtual void SetBorderThikness(const Thikness& value) { _borderThickness = value; }
 		virtual void SetFontFamily(const FontFamily& value) { _fontFamily = value; }
 		virtual void SetFontSize(uint16_t value) { _fontSize = value; }
 		virtual void SetFontWeight(FontWeight value) { _fontWeight = value; }
 		
 		virtual const Brush& GetBackgound() const { return _backgound; }
-		virtual const ColorBrush& GetBorderColor() const { return _borderColor; }
-		virtual const ColorBrush& GetFontColor() const { return _fontColor; }
+		virtual ColorBrush GetBorderColor() const { return _borderColor; }
+		virtual ColorBrush GetFontColor() const { return _fontColor; }
 		virtual const Thikness& GetBorderThikness() const { return _borderThickness; }
 		virtual const FontFamily& GetFontFamily() const { return _fontFamily; }
-		virtual const uint16_t GetFontSize() const { return _fontSize; }
-		virtual const FontWeight GetFontWeight() const { return _fontWeight; }
+		virtual uint16_t GetFontSize() const { return _fontSize; }
+		virtual FontWeight GetFontWeight() const { return _fontWeight; }
 
 		Event<MouseEventHandler> MouseDoubleClick;
 	protected:

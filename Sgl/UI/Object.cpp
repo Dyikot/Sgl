@@ -3,11 +3,11 @@
 
 namespace Sgl
 {
-    Object::Object(const SDL_FPoint& position) noexcept:
+    Object::Object(SDL_FPoint position) noexcept:
         _position(position)
     {}
 
-    Object::Object(const SDL_FPoint& position, const Style& style) noexcept:
+    Object::Object(SDL_FPoint position, const Style& style) noexcept:
         _position(position),
         UIElement(style)
     {
@@ -31,25 +31,17 @@ namespace Sgl
 
     void Object::OnRender(RenderContext& renderContext) const
     {
-        if(_isToolTipRenderRequired)
+        if(_isMouseOver && ToolTip)
         {
             ToolTip->OnRender(renderContext);
         }
-    }
-
-    bool Object::IsMouseOver(const SDL_Point& mousePosition) const noexcept
-    {
-        return mousePosition.x >= _position.x &&
-               mousePosition.x <= _position.x + _width &&
-               mousePosition.y >= _position.y &&
-               mousePosition.y >= _position.y + _height;
     }
 
     void Object::OnMouseEnter(const MouseButtonEventArgs& e)
     {
         UIElement::OnMouseEnter(e);
 
-        _isToolTipRenderRequired = ToolTip;
+        _isMouseOver = true;
         if(SDLCursor != nullptr)
         {
             SDL_SetCursor(SDLCursor);
@@ -59,7 +51,7 @@ namespace Sgl
     void Object::OnMouseLeave(const MouseButtonEventArgs& e)
     {
         UIElement::OnMouseLeave(e);
-        _isToolTipRenderRequired = false;
+        _isMouseOver = false;
     }
 
     void Object::OnSizeChanged(IVisual* sender, const SizeChangedEventArgs& e)

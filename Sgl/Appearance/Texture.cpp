@@ -1,14 +1,13 @@
 #include "Texture.h"
-#include "../Application.h"
 
 namespace Sgl
 {
-	Texture::Texture(SDL_Texture* texture) noexcept:
-		_texture(texture) {}
-
 	Texture::~Texture() noexcept
 	{
-		SDL_DestroyTexture(_texture);
+		if(_texture)
+		{
+			SDL_DestroyTexture(_texture);
+		}
 	}
 
 	std::pair<size_t, size_t> Texture::QuerySize() const noexcept
@@ -22,7 +21,13 @@ namespace Sgl
 	{
 		SDL_DestroyTexture(_texture);
 		_texture = texture;
+		return *this;
+	}
 
+	Texture& Texture::operator=(Texture&& texture) noexcept
+	{
+		_texture = texture._texture;
+		texture._texture = nullptr;
 		return *this;
 	}
 }

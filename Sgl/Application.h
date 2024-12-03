@@ -18,7 +18,7 @@ namespace Sgl
 	protected:
 		static constexpr uint32_t MaxFrameRate = 360;
 		std::optional<uint32_t> _maxFrameRate = std::nullopt;
-		size_t _start;
+		size_t _start = 0;
 	private:
 		inline static Application* _current = nullptr;
 	public:
