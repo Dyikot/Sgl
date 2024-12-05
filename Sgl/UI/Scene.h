@@ -16,7 +16,7 @@ namespace Sgl
 		static inline const PropertyId UnloadedProperty = PropertyManager::Register<UIEventHandler>("Unloaded");
 		
 		Brush Background = Colors::Black;
-		std::vector<Control*> Controls;
+		std::vector<Panel*> Panels;
 	private:
 		bool _isClosed = false;
 	public:
@@ -31,13 +31,27 @@ namespace Sgl
 		void Close();
 		bool IsClosed() const noexcept;
 	protected:
-		Control* FindControl(SDL_Point mousePosition);
+		void OnMouseMove(const MouseButtonEventArgs& e) override;
 		virtual void OnLoaded(const EventArgs& e);
 		virtual void OnUnloaded(const EventArgs& e);
 		virtual void OnTextChanged(const TextChangedEventArgs& e) {};
 		virtual void OnTextInput(const TextInputEventArgs& e) {};
+
+		void UpdatePanelMouseMoveEvents(Panel& panel, const MouseButtonEventArgs& e);
 	private:
-		friend class SceneStack;
+		static bool IsMouseOverControl(Control& control, SDL_FPoint mousePosition)
+		{
+			auto position = control.GetPosition();
+			auto width = control.GetWidth();
+			auto height = control.GetHeight();
+
+			return mousePosition.x >= position.x &&
+				   mousePosition.x <= position.x + width &&
+				   mousePosition.y >= position.y &&
+				   mousePosition.y <= position.y + height;
+		}
+
+		friend class SceneCollection;
 		friend class Application;
 	};
 }

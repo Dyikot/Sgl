@@ -6,7 +6,7 @@ namespace Sgl
 {
 	class Scene;
 
-	class SceneStack: protected std::stack<Scene*>
+	class SceneCollection: protected std::stack<Scene*>
 	{
 	public:
 		void Push(Scene* scene);

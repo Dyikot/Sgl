@@ -27,12 +27,12 @@ namespace Sgl
 		MouseButton Button;
 		MouseButtonState ButtonState;
 		Uint8 ClickCount;
-		SDL_Point Position;
+		SDL_FPoint Position;
 	};
 
 	struct MouseWheelEventArgs: EventArgs
 	{
-		SDL_Point Position;
+		SDL_FPoint Position;
 		float ScrolledHorizontally;
 		float ScrolledVertically;
 		SDL_MouseWheelDirection Direction;

@@ -1,9 +1,8 @@
 #pragma once
 
 #include "SDL/SDL_ttf.h"
-#include "../Object.h"
+#include "../Panels/Panel.h"
 #include "../../Appearance/Brushes.h"
-#include "../../Appearance/ControlAppearance.h"
 
 namespace Sgl
 {
@@ -18,6 +17,8 @@ namespace Sgl
 		static inline const PropertyId FontColorProperty = PropertyManager::Register<ColorBrush>("FontColor");
 		static inline const PropertyId FontSizeProperty = PropertyManager::Register<uint16_t>("FontSize");
 		static inline const PropertyId MouseDoubleClickProperty = PropertyManager::Register<MouseEventHandler>("MouseDoubleClick");
+
+		Panel* ControlPanel;
 	private:
 		Brush _backgound = Colors::Transparent;
 		ColorBrush _borderColor = Colors::Transparent;
@@ -49,5 +50,7 @@ namespace Sgl
 		Event<MouseEventHandler> MouseDoubleClick;
 	protected:
 		virtual void OnMouseDoubleClick(const MouseButtonEventArgs& e);
+	private:
+		friend class Scene;
 	};
 }

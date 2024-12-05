@@ -144,7 +144,11 @@ namespace Sgl
 								.Button = ToMouseButton(e->button.button),
 								.ButtonState = ToMouseButtonState(e->button.state),
 								.ClickCount = e->button.clicks,
-								.Position = { e->button.x, e->button.y }
+								.Position = 
+								{ 
+									.x = static_cast<float>(e->button.x),
+									.y = static_cast<float>(e->button.y)
+								}
 							}
 						);
 
@@ -159,7 +163,11 @@ namespace Sgl
 								.Button = ToMouseButton(e->button.button),
 								.ButtonState = ToMouseButtonState(e->button.state),
 								.ClickCount = e->button.clicks,
-								.Position = { e->button.x, e->button.y }
+								.Position =
+								{
+									.x = static_cast<float>(e->button.x),
+									.y = static_cast<float>(e->button.y)
+								}
 							}
 						);
 
@@ -171,7 +179,11 @@ namespace Sgl
 						currentScene->OnMouseMove(
 							MouseButtonEventArgs
 							{
-								.Position = { e->motion.x, e->motion.y }
+								.Position =
+								{
+									.x = static_cast<float>(e->button.x),
+									.y = static_cast<float>(e->button.y)
+								}
 							}
 						);
 
@@ -183,7 +195,11 @@ namespace Sgl
 						currentScene->OnMouseWheel(
 							MouseWheelEventArgs
 							{
-								.Position = { e->wheel.mouseX, e->wheel.mouseY },
+								.Position = 
+								{
+									.x = static_cast<float>(e->button.x),
+									.y = static_cast<float>(e->button.y)
+								},
 								.ScrolledHorizontally = e->wheel.preciseX,
 								.ScrolledVertically = e->wheel.preciseY,
 								.Direction = SDL_MouseWheelDirection(e->wheel.direction)

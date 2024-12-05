@@ -3,7 +3,7 @@
 #include <stack>
 #include <filesystem>
 #include <iostream>
-#include "Collections/SceneStack.h"
+#include "Collections/SceneCollection.h"
 #include "UI/Scene.h"
 #include "Render/RenderContext.h"
 #include "Appearance/Style/Style.h"
@@ -33,7 +33,7 @@ namespace Sgl
 		
 		using WindowSizeChangedEventHandler = EventHandler<Window, SizeChangedEventArgs>;
 
-		SceneStack Scenes;
+		SceneCollection Scenes;
 	protected:
 		SDL_Window* const _sdlWindow;
 		RenderContext _renderContext;

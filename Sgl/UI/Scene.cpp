@@ -1,6 +1,5 @@
 #include "Scene.h"
 #include "../Application.h"
-#include "Controls/Control.h"
 
 namespace Sgl
 {
@@ -27,9 +26,37 @@ namespace Sgl
 		return _isClosed;
 	}
 
-	Control* Scene::FindControl(SDL_Point mousePosition)
+	void Scene::OnMouseMove(const MouseButtonEventArgs& e)
 	{
-		
+		UIElement::OnMouseMove(e);
+
+		for(auto panel: Panels)
+		{
+			UpdatePanelMouseMoveEvents(*panel, e);
+		}
+	}
+
+	void Scene::UpdatePanelMouseMoveEvents(Panel& panel, const MouseButtonEventArgs& e)
+	{
+		for(Control* child : *panel.Children)
+		{
+			if(IsMouseOverControl(*child, e.Position))
+			{
+				if(panel.MouseOverControl != nullptr)
+				{
+					child->OnMouseLeave(e);
+				}
+
+				panel.MouseOverControl = child;
+				child->OnMouseEnter(e);
+				child->OnMouseMove(e);
+			}
+
+			if(child->ControlPanel != nullptr)
+			{
+				UpdatePanelMouseMoveEvents(*child->ControlPanel, e);
+			}
+		}
 	}
 
 	void Scene::OnLoaded(const EventArgs& e)

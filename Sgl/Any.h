@@ -82,6 +82,7 @@ namespace Sgl
 			any._value = nullptr;
 			return *this;
 		}
+
 		operator bool() const noexcept { return _value != nullptr; }
 	private:
 		IValueContainer* _value = nullptr;
