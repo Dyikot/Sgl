@@ -41,7 +41,7 @@ namespace Sgl
 		size_t Count() const noexcept;
 
 		template<typename T>
-		void TryInit(PropertyId id, T& value) const
+		void TryCopyTo(PropertyId id, T& value) const
 		{
 			if(_propertyMap.contains(id))
 			{
@@ -50,7 +50,16 @@ namespace Sgl
 		}
 
 		template<typename T>
-		void TryInit(PropertyId id, Event<T>& event) const
+		void TryMoveTo(PropertyId id, T& value) const
+		{
+			if(_propertyMap.contains(id))
+			{
+				value = std::move(_propertyMap.at(id).As<T>());
+			}
+		}
+
+		template<typename T>
+		void TryAddHandlerToEvent(PropertyId id, Event<T>& event) const
 		{
 			if(_propertyMap.contains(id))
 			{

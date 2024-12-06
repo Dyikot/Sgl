@@ -19,6 +19,8 @@ namespace Sgl
 		static constexpr uint32_t MaxFrameRate = 360;
 		std::optional<uint32_t> _maxFrameRate = std::nullopt;
 		size_t _start = 0;
+		const Cursor* _appicationCursor = &Cursors::Arrow;
+		const Cursor* _activeCursor = _appicationCursor;
 	private:
 		inline static Application* _current = nullptr;
 	public:
@@ -27,7 +29,11 @@ namespace Sgl
 		Application() noexcept;
 		~Application() noexcept;
 
+		void SetApplicationCursor();
+		void SetCursor(const Cursor& cursor);
 		void SetMaxFrameRate(uint32_t value);
+
+		const Cursor& GetCursor() const;
 		std::optional<uint32_t> GetMaxFrameRate() const { return _maxFrameRate; }
 
 		Event<ApplicationEventHandler> Startup;

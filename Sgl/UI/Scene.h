@@ -18,6 +18,7 @@ namespace Sgl
 		Brush Background = Colors::Black;
 		std::vector<Panel*> Panels;
 	private:
+		Panel* _mouseOverPanel = nullptr;
 		bool _isClosed = false;
 	public:
 		Scene() = default;
@@ -37,7 +38,7 @@ namespace Sgl
 		virtual void OnTextChanged(const TextChangedEventArgs& e) {};
 		virtual void OnTextInput(const TextInputEventArgs& e) {};
 
-		void UpdatePanelMouseMoveEvents(Panel& panel, const MouseButtonEventArgs& e);
+		bool TryUpdatePanelMouseMoveEvents(Panel& panel, const MouseButtonEventArgs& e);
 	private:
 		static bool IsMouseOverControl(Control& control, SDL_FPoint mousePosition)
 		{

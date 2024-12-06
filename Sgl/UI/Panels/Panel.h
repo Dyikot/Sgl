@@ -8,11 +8,10 @@ namespace Sgl
 
 	class Panel: public Object
 	{
-	protected:
-		std::vector<Control*> _children;
 	public:
 		Control* MouseOverControl = nullptr;
-		std::vector<Control*>* const Children = &_children;
+		std::vector<Control*> Children;
 	public:
+
 	};
 }

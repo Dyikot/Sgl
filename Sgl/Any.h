@@ -50,7 +50,12 @@ namespace Sgl
 		Any() noexcept = default;
 		template<typename T>
 		Any(const T& value):
-			_value(new ValueContainer<T>(value)) {}
+			_value(new ValueContainer<T>(value))
+		{}
+		template<typename T>
+		Any(T&& value):
+			_value(new ValueContainer<T>(std::forward<T>(value)))
+		{}
 		Any(const Any& any):
 			_value(any._value->Copy())
 		{}
@@ -62,12 +67,17 @@ namespace Sgl
 		~Any() noexcept { delete _value; }
 
 		const std::type_info& Type() const { return _value->Type(); }
+
 		template<typename T>
 		bool Is() const { return Type() == typeid(T); }
+
 		template<typename T>
 		T& As() const { return _value->Get<T>(); }
+
 		template<typename T>
 		T* TryAs() const { return Is<T>() ? &_value->Get<T>() : nullptr; }
+	
+		bool HasValue() const { return _value != nullptr; }
 
 		Any& operator=(const Any& any)
 		{
@@ -83,7 +93,7 @@ namespace Sgl
 			return *this;
 		}
 
-		operator bool() const noexcept { return _value != nullptr; }
+		operator bool() const noexcept { return HasValue(); }
 	private:
 		IValueContainer* _value = nullptr;
 	};

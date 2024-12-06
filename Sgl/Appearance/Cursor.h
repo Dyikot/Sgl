@@ -9,36 +9,44 @@ namespace Sgl
 	class Cursor
 	{
 	private:
-		SDL_Cursor* _surface;
+		SDL_Cursor* _cursor;
 	public:
 		Cursor() noexcept:
 			Cursor(SDL_SYSTEM_CURSOR_ARROW)
 		{}
 		Cursor(std::string_view path):
-			_surface(SDL_CreateColorCursor(IMG_Load(path.data()), 0, 0))
+			_cursor(SDL_CreateColorCursor(IMG_Load(path.data()), 0, 0))
 		{}
 		Cursor(SDL_SystemCursor id) noexcept:
-			_surface(SDL_CreateSystemCursor(id))
+			_cursor(SDL_CreateSystemCursor(id))
 		{}
-		Cursor(Cursor&& cursor) noexcept:
-			_surface(cursor._surface)
-		{
-			cursor._surface = nullptr;
-		}
+		Cursor(const Cursor&) = delete;
+		Cursor(Cursor&&) = delete;
 		~Cursor() noexcept
 		{
-			if(_surface)
+			if(_cursor)
 			{
-				SDL_FreeCursor(_surface);
+				SDL_FreeCursor(_cursor);
 			}
 		}
 
-		operator SDL_Cursor* () const { return _surface; }
-		Cursor& operator=(Cursor&& cursor) noexcept
-		{
-			_surface = cursor._surface;
-			cursor._surface = nullptr;
-			return *this;
-		}
+		operator SDL_Cursor* () const { return _cursor; }
+	};
+
+	class Cursors
+	{
+	public:
+		static inline Cursor Arrow = Cursor(SDL_SYSTEM_CURSOR_ARROW);
+		static inline Cursor Ibeam = Cursor(SDL_SYSTEM_CURSOR_IBEAM);
+		static inline Cursor Wait = Cursor(SDL_SYSTEM_CURSOR_WAIT);
+		static inline Cursor Crosshair = Cursor(SDL_SYSTEM_CURSOR_CROSSHAIR);
+		static inline Cursor WaitArrow = Cursor(SDL_SYSTEM_CURSOR_WAITARROW);
+		static inline Cursor ArrowNWSE = Cursor(SDL_SYSTEM_CURSOR_SIZENWSE);
+		static inline Cursor ArrowNESW = Cursor(SDL_SYSTEM_CURSOR_SIZENESW);
+		static inline Cursor ArrowWE = Cursor(SDL_SYSTEM_CURSOR_SIZEWE);
+		static inline Cursor ArrowNS = Cursor(SDL_SYSTEM_CURSOR_SIZENS);
+		static inline Cursor ArrowAll = Cursor(SDL_SYSTEM_CURSOR_SIZEALL);
+		static inline Cursor No = Cursor(SDL_SYSTEM_CURSOR_NO);
+		static inline Cursor Hand = Cursor(SDL_SYSTEM_CURSOR_HAND);
 	};
 }

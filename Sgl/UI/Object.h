@@ -18,16 +18,17 @@ namespace Sgl
 		static inline const PropertyId MaxWidthProperty = PropertyManager::Register<float>("MaxWidth");
 		static inline const PropertyId MaxHeightProperty = PropertyManager::Register<float>("MaxHeight");
 		static inline const PropertyId MarginProperty = PropertyManager::Register<Thikness>("Margin");
-		static inline const PropertyId CursorProperty = PropertyManager::Register<SDL_Cursor*>("Cursor");
+		static inline const PropertyId CursorProperty = PropertyManager::Register<Cursor*>("Cursor");
 		static inline const PropertyId ToolTipProperty = PropertyManager::Register<IVisual*>("ToolTip");
 		static inline const PropertyId HorizontalAlignmentProperty = PropertyManager::Register<HorizontalAlignment>("HorizontalAlignment");
 		static inline const PropertyId VerticalAligmentProperty = PropertyManager::Register<VerticalAligment>("VerticalAligment");
+		static inline const PropertyId MouseEnterProperty = PropertyManager::Register<MouseEventHandler>("MouseEnter");
+		static inline const PropertyId MouseLeaveProperty = PropertyManager::Register<MouseEventHandler>("MouseLeave");
 		static inline const PropertyId SizeChangedProperty = PropertyManager::Register<SizeChangedEventHandler>("SizeChanged");
 
-		SDL_Cursor* SDLCursor = nullptr;
+		Cursor* ObjectCursor = nullptr;
 		IVisual* ToolTip = nullptr;
 	protected:
-		bool _isMouseOver = false;
 		float _width = 0;
 		float _height = 0;
 		float _minWidth = 0;
@@ -38,6 +39,8 @@ namespace Sgl
 		Thikness _margin = {};
 		HorizontalAlignment _horizontalAlignment = HorizontalAlignment::Stretch;
 		VerticalAligment _verticalAlignment = VerticalAligment::Stretch;
+	private:
+		bool _isMouseOver = false;
 	public:
 		Object() = default;
 		Object(SDL_FPoint position) noexcept;
@@ -67,13 +70,17 @@ namespace Sgl
 		virtual HorizontalAlignment GetHorizontalAlignment() const { return _horizontalAlignment; }
 		virtual VerticalAligment GetVerticalAlignment() const { return _verticalAlignment; }
 
+		Event<MouseEventHandler> MouseEnter;
+		Event<MouseEventHandler> MouseLeave;
 		Event<SizeChangedEventHandler> SizeChanged;
 
 		void OnRender(RenderContext& renderContext) const override;
 		bool IsMouseOver() const noexcept { return _isMouseOver; }
 	protected:
-		void OnMouseEnter(const MouseButtonEventArgs& e) override;
-		void OnMouseLeave(const MouseButtonEventArgs& e) override;
+		virtual void OnMouseEnter(const MouseButtonEventArgs& e);
+		virtual void OnMouseLeave(const MouseButtonEventArgs& e);
 		virtual void OnSizeChanged(IVisual* sender, const SizeChangedEventArgs& e);
+	private:
+		friend class Scene;
 	};
 }

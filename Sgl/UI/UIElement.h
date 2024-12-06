@@ -18,8 +18,6 @@ namespace Sgl
 		static inline const PropertyId MouseDownProperty = PropertyManager::Register<MouseEventHandler>("MouseDown");
 		static inline const PropertyId MouseUpProperty = PropertyManager::Register<MouseEventHandler>("MouseUp");
 		static inline const PropertyId MouseMoveProperty = PropertyManager::Register<MouseEventHandler>("MouseMove");
-		static inline const PropertyId MouseEnterProperty = PropertyManager::Register<MouseEventHandler>("MouseEnter");
-		static inline const PropertyId MouseLeaveProperty = PropertyManager::Register<MouseEventHandler>("MouseLeave");
 		static inline const PropertyId KeyDownProperty = PropertyManager::Register<KeyEventHandler>("KeyDown");
 		static inline const PropertyId KeyUpProperty = PropertyManager::Register<KeyEventHandler>("KeyUp");
 
@@ -32,8 +30,6 @@ namespace Sgl
 		Event<MouseEventHandler> MouseDown;
 		Event<MouseEventHandler> MouseUp;
 		Event<MouseEventHandler> MouseMove;
-		Event<MouseEventHandler> MouseEnter;
-		Event<MouseEventHandler> MouseLeave;
 		Event<MouseWheelEventHandler> MouseWheel;
 		Event<KeyEventHandler> KeyDown;
 		Event<KeyEventHandler> KeyUp;
@@ -41,10 +37,10 @@ namespace Sgl
 		virtual void OnMouseDown(const MouseButtonEventArgs& e);
 		virtual void OnMouseUp(const MouseButtonEventArgs& e);
 		virtual void OnMouseMove(const MouseButtonEventArgs& e);
-		virtual void OnMouseEnter(const MouseButtonEventArgs& e);
-		virtual void OnMouseLeave(const MouseButtonEventArgs& e);
 		virtual void OnMouseWheel(const MouseWheelEventArgs& e);
 		virtual void OnKeyDown(const KeyEventArgs& e);
 		virtual void OnKeyUp(const KeyEventArgs& e);
+	private:
+		friend class Scene;
 	};
 }

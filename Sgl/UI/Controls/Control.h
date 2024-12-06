@@ -18,7 +18,7 @@ namespace Sgl
 		static inline const PropertyId FontSizeProperty = PropertyManager::Register<uint16_t>("FontSize");
 		static inline const PropertyId MouseDoubleClickProperty = PropertyManager::Register<MouseEventHandler>("MouseDoubleClick");
 
-		Panel* ControlPanel;
+		Panel* ControlPanel = nullptr;
 	private:
 		Brush _backgound = Colors::Transparent;
 		ColorBrush _borderColor = Colors::Transparent;

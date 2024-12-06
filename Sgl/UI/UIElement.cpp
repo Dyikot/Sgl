@@ -4,13 +4,11 @@ namespace Sgl
 {
 	UIElement::UIElement(const Style& style) noexcept
 	{
-		style.TryInit(MouseDownProperty, MouseDown);
-		style.TryInit(MouseUpProperty, MouseUp);
-		style.TryInit(MouseMoveProperty, MouseMove);
-		style.TryInit(MouseEnterProperty, MouseEnter);
-		style.TryInit(MouseLeaveProperty, MouseLeave);
-		style.TryInit(KeyUpProperty, KeyUp);
-		style.TryInit(KeyDownProperty, KeyDown);
+		style.TryAddHandlerToEvent(MouseDownProperty, MouseDown);
+		style.TryAddHandlerToEvent(MouseUpProperty, MouseUp);
+		style.TryAddHandlerToEvent(MouseMoveProperty, MouseMove);
+		style.TryAddHandlerToEvent(KeyUpProperty, KeyUp);
+		style.TryAddHandlerToEvent(KeyDownProperty, KeyDown);
 	}
 
 	void UIElement::OnMouseDown(const MouseButtonEventArgs& e)
@@ -34,22 +32,6 @@ namespace Sgl
 		if(MouseMove)
 		{
 			MouseMove(this, e);
-		}
-	}
-
-	void UIElement::OnMouseEnter(const MouseButtonEventArgs& e)
-	{
-		if(MouseEnter)
-		{
-			MouseEnter(this, e);
-		}
-	}
-
-	void UIElement::OnMouseLeave(const MouseButtonEventArgs& e)
-	{
-		if(MouseLeave)
-		{
-			MouseLeave(this, e);
 		}
 	}
 

@@ -35,9 +35,29 @@ namespace Sgl
 		SDL_Quit();
 	}
 
+	void Application::SetApplicationCursor()
+	{
+		SetCursor(*_appicationCursor);
+	}
+
+	void Application::SetCursor(const Cursor& cursor)
+	{
+		if(_activeCursor != &cursor)
+		{
+			SDL_SetCursor(cursor);
+		}
+
+		_activeCursor = &cursor;
+	}
+
 	void Application::SetMaxFrameRate(uint32_t value)
 	{
 		_maxFrameRate = value > MaxFrameRate? MaxFrameRate : value;
+	}
+
+	const Cursor& Application::GetCursor() const
+	{
+		return *_activeCursor;
 	}
 
 	void Application::Run(Window& window)
@@ -220,7 +240,7 @@ namespace Sgl
 			currentScene->Process(ElapsedMs());
 			window.Render();
 
-			if(_maxFrameRate.has_value())
+			if(_maxFrameRate)
 			{
 				SDL_Delay(MaxFrameTimeMs() - ElapsedMs());
 			}
