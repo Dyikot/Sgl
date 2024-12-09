@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../Tools/Stopwatch.h"
+
 namespace Sgl
 {
 	class IProcessed
@@ -7,6 +9,6 @@ namespace Sgl
 	public:
 		virtual ~IProcessed() = default;
 
-		virtual void Process(float elapsedMs) = 0;
+		virtual void Process(TimeSpan elapsed) = 0;
 	};
 }

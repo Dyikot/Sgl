@@ -95,6 +95,26 @@ namespace Sgl
         return position;
     }
 
+    Window::State Window::GetWindowState() const
+    {
+        const auto flags = SDL_GetWindowFlags(_sdlWindow);
+
+        if(!(flags & (SDL_WINDOW_MINIMIZED | SDL_WINDOW_MAXIMIZED)))
+        {
+            return State::Normal;
+        }
+
+        if(flags & SDL_WINDOW_MAXIMIZED)
+        {
+            return State::Maximized;
+        }
+        
+        if(flags & SDL_WINDOW_MINIMIZED)
+        {
+            return State::Minimized;
+        }
+    }
+
     void Window::Show()
     {
         SDL_ShowWindow(_sdlWindow);
@@ -107,17 +127,17 @@ namespace Sgl
 
     void Window::Close()
     {
-        Scenes.Clear();
+        Scenes.UnloadAll();
     }
 
     void Window::Render()
     {        
-        if(Scenes.Empty() || !IsVisible())
+        if(Scenes.IsEmpty() || !IsVisible())
         {
             return;
         }
         
-        Scenes.Current()->OnRender(GetRenderContext());
+        Scenes.Active()->OnRender(GetRenderContext());
         SDL_RenderPresent(_renderContext);
     }    
 
@@ -158,5 +178,13 @@ namespace Sgl
         }
 
         SDL_SetWindowSize(_sdlWindow, _width, _height);
+    }
+
+    void Window::OnStateChanged(const EventArgs& e)
+    {
+        if(StateChanged)
+        {
+            StateChanged(this, e);
+        }
     }
 }

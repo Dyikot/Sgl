@@ -19,7 +19,7 @@ namespace Sgl
 		std::vector<Panel*> Panels;
 	private:
 		Panel* _mouseOverPanel = nullptr;
-		bool _isClosed = false;
+		bool _isRunning = true;
 	public:
 		Scene() = default;
 		Scene(const Style& style) noexcept;
@@ -30,7 +30,7 @@ namespace Sgl
 
 		void OnRender(RenderContext& renderContext) const override;
 		void Close();
-		bool IsClosed() const noexcept;
+		bool IsClosed() const;
 	protected:
 		void OnMouseMove(const MouseButtonEventArgs& e) override;
 		virtual void OnLoaded(const EventArgs& e);
@@ -52,7 +52,7 @@ namespace Sgl
 				   mousePosition.y <= position.y + height;
 		}
 
-		friend class SceneCollection;
+		friend class SceneManager;
 		friend class Application;
 	};
 }

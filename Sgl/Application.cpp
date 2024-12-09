@@ -50,9 +50,10 @@ namespace Sgl
 		_activeCursor = &cursor;
 	}
 
-	void Application::SetMaxFrameRate(uint32_t value)
+	void Application::SetMaxFrameRate(size_t value)
 	{
 		_maxFrameRate = value > MaxFrameRate? MaxFrameRate : value;
+		_maxFrameTime = 1000.f / _maxFrameRate.value();
 	}
 
 	const Cursor& Application::GetCursor() const
@@ -62,187 +63,37 @@ namespace Sgl
 
 	void Application::Run(Window& window)
 	{
-		MainWindow = &window;
+		if(_isRunning)
+		{
+			return;
+		}
 
+		_window = &window;
 		OnStartup(EventArgs());
 
-		while(!window.Scenes.Empty())
+		while(_isRunning)
 		{
-			auto currentScene = window.Scenes.Current();
-			_start = SDL_GetPerformanceCounter();
+			_stopwatch.Restart();
 
-			for(SDL_Event* e = nullptr; SDL_PollEvent(e);)
+			HandleEvents(window.Scenes.Active());
+
+			if(window.Scenes.Active()->IsClosed())
 			{
-				switch(e->type)
+				window.Scenes.UnloadActive();
+				if(window.Scenes.IsEmpty() && ShutdownMode == ShutdownMode::OnLastSceneClose)
 				{
-					case SDL_QUIT: 
-					{
-						Shutdown();
-						break;
-					}
-
-					case SDL_WINDOWEVENT:
-					{
-						window.OnStateChanged();
-						break;
-					}
-
-					case SDL_KEYDOWN:
-					{
-						currentScene->OnKeyDown(
-							KeyEventArgs
-							{
-								.IsDown = true,
-								.IsUp = false,
-								.Key = e->key.keysym
-							}
-						);
-
-						break;
-					}
-
-					case SDL_KEYUP:
-					{
-						currentScene->OnKeyUp(
-							KeyEventArgs
-							{
-								.IsDown = false,
-								.IsUp = true,
-								.Key = e->key.keysym
-							}
-						);
-
-						break;
-					}
-
-					case SDL_TEXTEDITING:
-					{
-						currentScene->OnTextChanged(
-							TextChangedEventArgs
-							{
-								.Text = e->edit.text,
-								.SelectionLength = static_cast<size_t>(e->edit.length),
-								.SelectionStart = e->edit.start
-							}
-						);
-
-						break;
-					}
-
-					case SDL_TEXTEDITING_EXT:
-					{
-						currentScene->OnTextChanged(
-							TextChangedEventArgs
-							{
-								.Text = e->editExt.text,
-								.SelectionLength = static_cast<size_t>(e->editExt.length),
-								.SelectionStart = e->editExt.start
-							}
-						);
-						SDL_free(e->editExt.text);
-
-						break;
-					}
-
-					case SDL_TEXTINPUT:
-					{
-						currentScene->OnTextInput(
-							TextInputEventArgs
-							{
-								.Text = e->text.text
-							}
-						);
-
-						break;
-					}
-
-					case SDL_MOUSEBUTTONDOWN:
-					{
-						currentScene->OnMouseDown(
-							MouseButtonEventArgs
-							{
-								.Button = ToMouseButton(e->button.button),
-								.ButtonState = ToMouseButtonState(e->button.state),
-								.ClickCount = e->button.clicks,
-								.Position = 
-								{ 
-									.x = static_cast<float>(e->button.x),
-									.y = static_cast<float>(e->button.y)
-								}
-							}
-						);
-
-						break;
-					}
-
-					case SDL_MOUSEBUTTONUP:
-					{
-						currentScene->OnMouseUp(
-							MouseButtonEventArgs
-							{
-								.Button = ToMouseButton(e->button.button),
-								.ButtonState = ToMouseButtonState(e->button.state),
-								.ClickCount = e->button.clicks,
-								.Position =
-								{
-									.x = static_cast<float>(e->button.x),
-									.y = static_cast<float>(e->button.y)
-								}
-							}
-						);
-
-						break;
-					}
-
-					case SDL_MOUSEMOTION:
-					{
-						currentScene->OnMouseMove(
-							MouseButtonEventArgs
-							{
-								.Position =
-								{
-									.x = static_cast<float>(e->button.x),
-									.y = static_cast<float>(e->button.y)
-								}
-							}
-						);
-
-						break;
-					}
-
-					case SDL_MOUSEWHEEL:
-					{
-						currentScene->OnMouseWheel(
-							MouseWheelEventArgs
-							{
-								.Position = 
-								{
-									.x = static_cast<float>(e->button.x),
-									.y = static_cast<float>(e->button.y)
-								},
-								.ScrolledHorizontally = e->wheel.preciseX,
-								.ScrolledVertically = e->wheel.preciseY,
-								.Direction = SDL_MouseWheelDirection(e->wheel.direction)
-							}
-						);
-
-						break;
-					}
+					Shutdown();
 				}
-			}
 
-			if(currentScene->IsClosed())
-			{
-				window.Scenes.Pop();
 				continue;
 			}
 
-			currentScene->Process(ElapsedMs());
+			window.Scenes.Active()->Process(_stopwatch.Elapsed());
 			window.Render();
 
 			if(_maxFrameRate)
 			{
-				SDL_Delay(MaxFrameTimeMs() - ElapsedMs());
+				SDL_Delay(_maxFrameTime.value() - _stopwatch.Elapsed());
 			}
 		}
 
@@ -257,14 +108,12 @@ namespace Sgl
 
 	void Application::Shutdown() noexcept
 	{
-		if(MainWindow != nullptr)
-		{
-			MainWindow->Close();
-		}
+		_isRunning = false;
 	}
 
 	void Application::OnStartup(const EventArgs& e)
 	{
+		_isRunning = true;
 		if(Startup)
 		{
 			Startup(this, e);
@@ -277,5 +126,169 @@ namespace Sgl
 		{
 			Quit(this, e);
 		}		
+	}
+
+	void Application::HandleEvents(Scene* scene)
+	{		
+		SDL_Event e;
+		while(SDL_PollEvent(&e))
+		{
+			switch(e.type)
+			{
+				case SDL_QUIT:
+				{
+					Shutdown();
+					break;
+				}
+
+				case SDL_WINDOWEVENT:
+				{
+					_window->OnStateChanged(EventArgs());
+					break;
+				}
+
+				case SDL_KEYDOWN:
+				{
+					scene->OnKeyDown(
+						KeyEventArgs
+						{
+							.IsDown = true,
+							.IsUp = false,
+							.Key = e.key.keysym
+						}
+					);
+
+					break;
+				}
+
+				case SDL_KEYUP:
+				{
+					scene->OnKeyUp(
+						KeyEventArgs
+						{
+							.IsDown = false,
+							.IsUp = true,
+							.Key = e.key.keysym
+						}
+					);
+
+					break;
+				}
+
+				case SDL_TEXTEDITING:
+				{
+					scene->OnTextChanged(
+						TextChangedEventArgs
+						{
+							.Text = e.edit.text,
+							.SelectionLength = static_cast<size_t>(e.edit.length),
+							.SelectionStart = e.edit.start
+						}
+					);
+
+					break;
+				}
+
+				case SDL_TEXTEDITING_EXT:
+				{
+					scene->OnTextChanged(
+						TextChangedEventArgs
+						{
+							.Text = e.editExt.text,
+							.SelectionLength = static_cast<size_t>(e.editExt.length),
+							.SelectionStart = e.editExt.start
+						}
+					);
+					SDL_free(e.editExt.text);
+
+					break;
+				}
+
+				case SDL_TEXTINPUT:
+				{
+					scene->OnTextInput(
+						TextInputEventArgs
+						{
+							.Text = e.text.text
+						}
+					);
+
+					break;
+				}
+
+				case SDL_MOUSEBUTTONDOWN:
+				{
+					scene->OnMouseDown(
+						MouseButtonEventArgs
+						{
+							.Button = ToMouseButton(e.button.button),
+							.ButtonState = ToMouseButtonState(e.button.state),
+							.ClickCount = e.button.clicks,
+							.Position =
+							{
+								.x = static_cast<float>(e.button.x),
+								.y = static_cast<float>(e.button.y)
+							}
+						}
+					);
+
+					break;
+				}
+
+				case SDL_MOUSEBUTTONUP:
+				{
+					scene->OnMouseUp(
+						MouseButtonEventArgs
+						{
+							.Button = ToMouseButton(e.button.button),
+							.ButtonState = ToMouseButtonState(e.button.state),
+							.ClickCount = e.button.clicks,
+							.Position =
+							{
+								.x = static_cast<float>(e.button.x),
+								.y = static_cast<float>(e.button.y)
+							}
+						}
+					);
+
+					break;
+				}
+
+				case SDL_MOUSEMOTION:
+				{
+					scene->OnMouseMove(
+						MouseButtonEventArgs
+						{
+							.Position =
+							{
+								.x = static_cast<float>(e.button.x),
+								.y = static_cast<float>(e.button.y)
+							}
+						}
+					);
+
+					break;
+				}
+
+				case SDL_MOUSEWHEEL:
+				{
+					scene->OnMouseWheel(
+						MouseWheelEventArgs
+						{
+							.Position =
+							{
+								.x = static_cast<float>(e.button.x),
+								.y = static_cast<float>(e.button.y)
+							},
+							.ScrolledHorizontally = e.wheel.preciseX,
+							.ScrolledVertically = e.wheel.preciseY,
+							.Direction = SDL_MouseWheelDirection(e.wheel.direction)
+						}
+					);
+
+					break;
+				}
+			}
+		}
 	}
 }

@@ -35,6 +35,12 @@ namespace Sgl
 		_thread = std::thread(wait);
 	}
 
+	void Timer::Restart() noexcept
+	{
+		Reset();
+		Start();
+	}
+
 	void Timer::Pause()
 	{
 		_isPaused = true;

@@ -3,7 +3,7 @@
 #include <stack>
 #include <filesystem>
 #include <iostream>
-#include "Collections/SceneCollection.h"
+#include "Collections/SceneManager.h"
 #include "UI/Scene.h"
 #include "Render/RenderContext.h"
 #include "Appearance/Style/Style.h"
@@ -20,6 +20,11 @@ namespace Sgl
 			Window, BorderlessWindow, Fullscreen
 		};
 
+		enum class State
+		{
+			Normal, Minimized, Maximized
+		};
+
 		struct WindowProperties
 		{
 			std::string_view Title = "Window";
@@ -31,9 +36,10 @@ namespace Sgl
 			SDL_WindowFlags Flags = SDL_WindowFlags::SDL_WINDOW_SHOWN;
 		};
 		
+		using WindowEventHandler = EventHandler<Window, EventArgs>;
 		using WindowSizeChangedEventHandler = EventHandler<Window, SizeChangedEventArgs>;
 
-		SceneCollection Scenes;
+		SceneManager Scenes;
 	protected:
 		SDL_Window* const _sdlWindow;
 		RenderContext _renderContext;
@@ -44,8 +50,11 @@ namespace Sgl
 	public:
 		Window() noexcept;
 		Window(const WindowProperties& properties) noexcept;
+		Window(const Window&) = delete;
+		Window(Window&&) = delete;
 		~Window() noexcept { SDL_DestroyWindow(_sdlWindow); }
 
+		Event<WindowEventHandler> StateChanged;
 		Event<WindowSizeChangedEventHandler> SizeChanged;
 		
 		void SetWidth(size_t width) noexcept;
@@ -62,6 +71,7 @@ namespace Sgl
 		std::pair<size_t, size_t> GetLogicalSize() const;
 		std::string_view GetTitle() const { SDL_GetWindowTitle(_sdlWindow); }
 		SDL_Point GetPosition() const;
+		State GetWindowState() const;
 		virtual RenderContext& GetRenderContext() { return _renderContext; }
 
 		void Show();
@@ -75,7 +85,7 @@ namespace Sgl
 		operator SDL_Window* () const { return _sdlWindow; }
 	protected:
 		virtual void OnSizeChanged(const SizeChangedEventArgs& e);
-		virtual void OnStateChanged() {};
+		virtual void OnStateChanged(const EventArgs& e);
 
 		void Render();
 	private:

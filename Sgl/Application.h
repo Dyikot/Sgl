@@ -6,35 +6,47 @@
 #include "Tools/Log.h"
 #include "Audio/AudioManager.h"
 #include "Window.h"
+#include "Tools/Stopwatch.h"
 
 namespace Sgl
 {
+	enum class ShutdownMode
+	{
+		OnLastSceneClose, OnExplicitShutdown
+	};
+
 	class Application
 	{
 	public:
 		using ApplicationEventHandler = EventHandler<Application, EventArgs>;
+
 		AudioManager AudioManager;
-		Window* MainWindow = nullptr;
+		ShutdownMode ShutdownMode = ShutdownMode::OnLastSceneClose;
 	protected:
-		static constexpr uint32_t MaxFrameRate = 360;
-		std::optional<uint32_t> _maxFrameRate = std::nullopt;
-		size_t _start = 0;
+		static constexpr size_t MaxFrameRate = 360;
+
+		Stopwatch _stopwatch;
+		std::optional<size_t> _maxFrameRate = std::nullopt;
+		std::optional<TimeSpan> _maxFrameTime = std::nullopt;
 		const Cursor* _appicationCursor = &Cursors::Arrow;
 		const Cursor* _activeCursor = _appicationCursor;
 	private:
 		inline static Application* _current = nullptr;
+		Window* _window = nullptr;
+		bool _isRunning = false;
 	public:
-		static Application* const Current() { return _current; }
+		static Application* Current() { return _current; }
 
 		Application() noexcept;
 		~Application() noexcept;
 
 		void SetApplicationCursor();
 		void SetCursor(const Cursor& cursor);
-		void SetMaxFrameRate(uint32_t value);
+		void SetMaxFrameRate(size_t value);
 
+		Window* GetWindow() const { return _window; }
 		const Cursor& GetCursor() const;
-		std::optional<uint32_t> GetMaxFrameRate() const { return _maxFrameRate; }
+		std::optional<size_t> GetMaxFrameRate() const { return _maxFrameRate; }
 
 		Event<ApplicationEventHandler> Startup;
 		Event<ApplicationEventHandler> Quit;
@@ -46,11 +58,6 @@ namespace Sgl
 		virtual void OnStartup(const EventArgs& e);
 		virtual void OnQuit(const EventArgs& e);
 
-		float ElapsedMs() const 
-		{
-			return 1000.f * static_cast<float>(SDL_GetPerformanceCounter() - _start)
-						  / SDL_GetPerformanceFrequency();
-		}
-		float MaxFrameTimeMs() const { return 1000.f / _maxFrameRate.value(); }
+		void HandleEvents(Scene* scene);
 	};
 } 

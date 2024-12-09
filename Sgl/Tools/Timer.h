@@ -33,6 +33,7 @@ namespace Sgl
 		Event<TimeElapsedHandler> Elapsed;
 
 		void Start() noexcept;
+		void Restart() noexcept;
 		void Pause();
 		void Reset() noexcept;
 		bool IsPaused() const noexcept { return _isPaused; }
