@@ -39,11 +39,11 @@ namespace Sgl
 	class Any
 	{
 	public:
-		template<typename TValue, typename... TArgs>
+		template<typename TType, typename... TArgs>
 		static Any New(TArgs&&... args)
 		{
 			Any value;
-			value._value = new ValueContainer<TValue>(std::forward<TArgs>(args)...);
+			value._value = new ValueContainer<TType>(std::forward<TArgs>(args)...);
 			return value;
 		}
 
@@ -77,7 +77,7 @@ namespace Sgl
 		template<typename T>
 		T* TryAs() const { return Is<T>() ? &_value->Get<T>() : nullptr; }
 	
-		bool HasValue() const { return _value != nullptr; }
+		bool HasValue() const { return _value; }
 
 		Any& operator=(const Any& any)
 		{

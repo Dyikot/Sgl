@@ -3,6 +3,11 @@
 
 namespace Sgl
 {
+	SceneManager::~SceneManager()
+	{
+		UnloadAll();
+	}
+
 	void SceneManager::Load(Scene* scene)
 	{
 		scene->OnLoaded(EventArgs());

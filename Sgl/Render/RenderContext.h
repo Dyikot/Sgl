@@ -1,11 +1,18 @@
 #pragma once
 
+#include <span>
+#include <string_view>
 #include "SDL/SDL_render.h"
 #include "../Appearance/Texture.h"
-#include "GeometryFigures.h"
+#include <variant>
 
 namespace Sgl
 {
+	using Point = SDL_FPoint;
+	using Rectangle = SDL_FRect;
+	using Vertex = SDL_Vertex;
+	using Paint = std::variant<const Color*, const Texture*>;
+
 	class RenderContext
 	{
 	protected:
@@ -14,41 +21,41 @@ namespace Sgl
 		RenderContext(SDL_Renderer* const renderer) noexcept;
 		virtual ~RenderContext() noexcept { SDL_DestroyRenderer(_renderer); }
 
-		void Draw(const Line& line) const;
-		void Draw(const Lines& lines) const;
-		void Draw(const Rectangle& rectange) const;
-		void Draw(const Rectangles& rectanges) const;
-		void Draw(const FillRectangle& rectange) const;
-		void Draw(const FillRectangles& rectanges) const;
-		void Draw(const TextureRectangle& rectange) const;
-		void Draw(const Figure& figure) const;
-		void Draw(const Ellipse& ellipse) const;
-		void DrawSceneBackground(const Brush& background) const;
+		void DrawLine(Point start, Point end, Color color);
+		void DrawLines(std::span<Point> points, Color color);
+		void DrawRectangle(const Rectangle& rectange, Color color);
+		void DrawRectanges(std::span<Rectangle> rectanges, Color color);
+		void DrawFillRectangle(const Rectangle& rectange, Color background);
+		void DrawFillRectanges(std::span<Rectangle> rectanges, Color background);
+		void DrawTexture(Texture& texture, const Rectangle& rectangle);
+		void DrawTexture(Texture& texture, const Rectangle& rectangle, const Rectangle& clip);
+		void DrawFigure(std::span<Vertex> vertices, std::span<int> order, Texture& texture);
+		void DrawEllipse(Point position, int width, int height, Color color);
+		void DrawSceneBackground(const Paint& background);
 		void SetBlendMode(SDL_BlendMode blendMode);
-		SDL_Texture* CreateTexture(std::string_view path) const;
+		Texture CreateTexture(std::string_view path);
 
 		operator SDL_Renderer* () const { return _renderer; }
 	protected:
-		void SetRenderColor(ColorBrush brush) const noexcept
+		void SetDrawColor(Color color) const noexcept
 		{
-			SDL_SetRenderDrawColor(_renderer, brush.R, brush.G, brush.B, brush.A);
+			SDL_SetRenderDrawColor(_renderer, color.R, color.G, color.B, color.A);
 		}
-
-		void SetRenderColor(const TextureBrush& brush) const noexcept
+		void SetTextureColor(const Texture& texture) const noexcept
 		{
-			if(brush != Colors::White)
+			if(texture.Color != Colors::White)
 			{
-				SDL_SetTextureColorMod(brush.RawTexture, brush.R, brush.G, brush.B);
+				SDL_SetTextureColorMod(texture, texture.Color.R, texture.Color.G, texture.Color.B);
 			}
 
-			if(!brush.IsTransparent())
+			if(!texture.Color.IsTransparent())
 			{
-				SDL_SetTextureAlphaMod(brush.RawTexture, brush.A);
+				SDL_SetTextureAlphaMod(texture, texture.Color.A);
 			}
 		}
-
-		void SetSceneBackground(const ColorBrush& brush) const noexcept;
-		void SetSceneBackground(const TextureBrush& brush) const noexcept;
+	private:
+		void CalculateEllipseVertices(std::span<Point> vertices, Point position, 
+									  int width, int height);
 	};
 }
 

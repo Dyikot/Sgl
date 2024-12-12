@@ -35,8 +35,8 @@ namespace Sgl
 		float _minHeight = 0;
 		float _maxWidth = 0;
 		float _maxHeight = 0;
-		SDL_FPoint _position = {};
-		Thikness _margin = {};
+		Point _position = {};
+		Thikness _margin;
 		HorizontalAlignment _horizontalAlignment = HorizontalAlignment::Stretch;
 		VerticalAligment _verticalAlignment = VerticalAligment::Stretch;
 	private:

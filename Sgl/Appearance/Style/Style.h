@@ -3,6 +3,8 @@
 #include "Property.h"
 #include "../../Events/Event.h"
 #include "../../Any.h"
+#include <format>
+#include <iostream>
 
 namespace Sgl
 {
@@ -18,17 +20,24 @@ namespace Sgl
 		{
 			if(!IsTypeCorrect(id, object))
 			{
-				throw std::invalid_argument("Id type and property type is equal!");
+				throw std::invalid_argument(
+					std::format("Property type <{}> is not equal object type <{}>\n",
+								PropertyManager::GetTypeNameOf(id),
+								object.Type().name()));
 			}
 
 			_propertyMap.emplace(id, std::move(object));
+
 		}
 
 		void Add(PropertyId id, const Any& object)
 		{
 			if(!IsTypeCorrect(id, object))
 			{
-				throw std::invalid_argument("Id type and property type is equal!");
+				throw std::invalid_argument(
+					std::format("Property type <{}> is not equal object type <{}>\n",
+								PropertyManager::GetTypeNameOf(id),
+								object.Type().name()));
 			}
 
 			_propertyMap.emplace(id, object);
@@ -41,30 +50,25 @@ namespace Sgl
 		size_t Count() const noexcept;
 
 		template<typename T>
-		void TryCopyTo(PropertyId id, T& value) const
+		bool TryInit(PropertyId id, T& value) const
 		{
 			if(_propertyMap.contains(id))
 			{
 				value = _propertyMap.at(id).As<T>();
+				return true;
 			}
+			return false;
 		}
 
 		template<typename T>
-		void TryMoveTo(PropertyId id, T& value) const
-		{
-			if(_propertyMap.contains(id))
-			{
-				value = std::move(_propertyMap.at(id).As<T>());
-			}
-		}
-
-		template<typename T>
-		void TryAddHandlerToEvent(PropertyId id, Event<T>& event) const
+		bool TryInitEvent(PropertyId id, Event<T>& event) const
 		{
 			if(_propertyMap.contains(id))
 			{
 				event += _propertyMap.at(id).As<T>();
+				return true;
 			}
+			return false;
 		}
 
 		Any& operator[](PropertyId id);

@@ -5,28 +5,27 @@
 
 namespace Sgl
 {
-	struct KeyEventArgs: EventArgs
-	{
-		bool IsDown;
-		bool IsUp;
-		SDL_Keysym Key;
-	};
-
-	enum class MouseButtonState
+	enum class ButtonState
 	{
 		Release, Pressed
 	};
 
+	struct KeyEventArgs: EventArgs
+	{
+		ButtonState State;
+		SDL_Keysym Key;
+	};
+
 	enum class MouseButton
 	{
-		Left, Middle, Right
+		Left = 1, Middle, Right
 	};
 
 	struct MouseButtonEventArgs : EventArgs
 	{
 		MouseButton Button;
-		MouseButtonState ButtonState;
-		Uint8 ClickCount;
+		ButtonState State;
+		uint8_t ClicksCount;
 		SDL_FPoint Position;
 	};
 
@@ -43,25 +42,6 @@ namespace Sgl
 		int Width;
 		int Height;
 	};
-
-	static MouseButton ToMouseButton(uint8_t sdlButton) noexcept
-	{
-		switch(sdlButton)
-		{
-			case SDL_BUTTON_LEFT: return MouseButton::Left;
-			case SDL_BUTTON_RIGHT: return MouseButton::Right;
-			case SDL_BUTTON_MIDDLE: return MouseButton::Middle;
-		}
-	}
-
-	static MouseButtonState ToMouseButtonState(uint8_t state) noexcept
-	{
-		switch(state)
-		{
-			case SDL_PRESSED: return MouseButtonState::Pressed;
-			case SDL_RELEASED: return MouseButtonState::Release;
-		}
-	}
 
 	struct TextChangedEventArgs: EventArgs
 	{

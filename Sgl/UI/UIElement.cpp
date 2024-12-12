@@ -4,11 +4,11 @@ namespace Sgl
 {
 	UIElement::UIElement(const Style& style) noexcept
 	{
-		style.TryAddHandlerToEvent(MouseDownProperty, MouseDown);
-		style.TryAddHandlerToEvent(MouseUpProperty, MouseUp);
-		style.TryAddHandlerToEvent(MouseMoveProperty, MouseMove);
-		style.TryAddHandlerToEvent(KeyUpProperty, KeyUp);
-		style.TryAddHandlerToEvent(KeyDownProperty, KeyDown);
+		style.TryInitEvent(MouseDownProperty, MouseDown);
+		style.TryInitEvent(MouseUpProperty, MouseUp);
+		style.TryInitEvent(MouseMoveProperty, MouseMove);
+		style.TryInitEvent(KeyUpProperty, KeyUp);
+		style.TryInitEvent(KeyDownProperty, KeyDown);
 	}
 
 	void UIElement::OnMouseDown(const MouseButtonEventArgs& e)

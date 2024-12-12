@@ -6,9 +6,9 @@ namespace Sgl
 	Scene::Scene(const Style& style) noexcept:
 		UIElement(style)
 	{
-		style.TryAddHandlerToEvent(LoadedProperty, Loaded);
-		style.TryAddHandlerToEvent(UnloadedProperty, Unloaded);
-		style.TryCopyTo(Control::BackgroundProperty, Background);
+		style.TryInit(Control::BackgroundProperty, Background);
+		style.TryInitEvent(LoadedProperty, Loaded);
+		style.TryInitEvent(UnloadedProperty, Unloaded);
 	}
 
 	void Scene::OnRender(RenderContext& renderContext) const
@@ -30,7 +30,7 @@ namespace Sgl
 	{
 		UIElement::OnMouseMove(e);
 
-		if(_mouseOverPanel && TryUpdatePanelMouseMoveEvents(*_mouseOverPanel, e))
+		if(_mouseOverPanel && _mouseOverPanel->TryRaiseMouseMoveEvents(e))
 		{
 			return;
 		}
@@ -42,7 +42,7 @@ namespace Sgl
 				continue;
 			}
 
-			if(TryUpdatePanelMouseMoveEvents(*panel, e))
+			if(panel->TryRaiseMouseMoveEvents(e))
 			{
 				_mouseOverPanel = panel;
 				return;
@@ -50,48 +50,24 @@ namespace Sgl
 		}
 	}
 
-	bool Scene::TryUpdatePanelMouseMoveEvents(Panel& panel, const MouseButtonEventArgs& e)
+	void Scene::OnMouseDown(const MouseButtonEventArgs& e)
 	{
-		if(auto child = panel.MouseOverControl; child && IsMouseOverControl(*child, e.Position))
+		UIElement::OnMouseDown(e);
+
+		if(_mouseOverPanel)
 		{
-			child->OnMouseMove(e);
-
-			if(child->ControlPanel != nullptr)
-			{
-				TryUpdatePanelMouseMoveEvents(*child->ControlPanel, e);
-			}
-
-			return true;
+			_mouseOverPanel->RaiseMouseDownEvents(e);
 		}
+	}
 
-		for(Control* child : panel.Children)
+	void Scene::OnMouseUp(const MouseButtonEventArgs& e)
+	{
+		UIElement::OnMouseUp(e);
+
+		if(_mouseOverPanel)
 		{
-			if(child == panel.MouseOverControl)
-			{
-				continue;
-			}
-
-			if(IsMouseOverControl(*child, e.Position))
-			{
-				if(panel.MouseOverControl != nullptr)
-				{
-					child->OnMouseLeave(e);
-				}
-				
-				panel.MouseOverControl = child;
-				child->OnMouseEnter(e);
-				child->OnMouseMove(e);
-
-				if(child->ControlPanel != nullptr)
-				{
-					TryUpdatePanelMouseMoveEvents(*child->ControlPanel, e);
-				}
-
-				return true;
-			}
+			_mouseOverPanel->RaiseMouseUpEvents(e);
 		}
-
-		return false;
 	}
 
 	void Scene::OnLoaded(const EventArgs& e)

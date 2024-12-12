@@ -11,20 +11,20 @@ namespace Sgl
         _position(position),
         UIElement(style)
     {
-        style.TryCopyTo(WidthProperty, _width);
-        style.TryCopyTo(HeightProperty, _height);
-        style.TryCopyTo(MaxWidthProperty, _maxWidth);
-        style.TryCopyTo(MaxHeightProperty, _maxHeight);
-        style.TryCopyTo(MinWidthProperty, _minWidth);
-        style.TryCopyTo(MinHeightProperty, _minHeight);
-        style.TryCopyTo(MarginProperty, _margin);
-        style.TryCopyTo(CursorProperty, ObjectCursor);
-        style.TryCopyTo(ToolTipProperty, ToolTip);
-        style.TryCopyTo(VerticalAligmentProperty, _verticalAlignment);
-        style.TryCopyTo(HorizontalAlignmentProperty, _horizontalAlignment);
-        style.TryAddHandlerToEvent(MouseEnterProperty, MouseEnter);
-        style.TryAddHandlerToEvent(MouseLeaveProperty, MouseLeave);
-        style.TryAddHandlerToEvent(SizeChangedProperty, SizeChanged);
+        style.TryInit(WidthProperty, _width);
+        style.TryInit(HeightProperty, _height);
+        style.TryInit(MaxWidthProperty, _maxWidth);
+        style.TryInit(MaxHeightProperty, _maxHeight);
+        style.TryInit(MinWidthProperty, _minWidth);
+        style.TryInit(MinHeightProperty, _minHeight);
+        style.TryInit(MarginProperty, _margin);
+        style.TryInit(CursorProperty, ObjectCursor);
+        style.TryInit(ToolTipProperty, ToolTip);
+        style.TryInit(VerticalAligmentProperty, _verticalAlignment);
+        style.TryInit(HorizontalAlignmentProperty, _horizontalAlignment);
+        style.TryInitEvent(MouseEnterProperty, MouseEnter);
+        style.TryInitEvent(MouseLeaveProperty, MouseLeave);
+        style.TryInitEvent(SizeChangedProperty, SizeChanged);
     }
 
     Object::Object(const Style& style) noexcept:

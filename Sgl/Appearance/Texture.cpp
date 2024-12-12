@@ -2,6 +2,16 @@
 
 namespace Sgl
 {
+	Texture::Texture(SDL_Texture* texture) noexcept:
+		_texture(texture)
+	{}
+
+	Texture::Texture(Texture&& texture) noexcept:
+		_texture(texture._texture)
+	{
+		texture._texture = nullptr;
+	}
+
 	Texture::~Texture() noexcept
 	{
 		if(_texture)
@@ -10,11 +20,11 @@ namespace Sgl
 		}
 	}
 
-	std::pair<size_t, size_t> Texture::QuerySize() const noexcept
+	std::pair<int, int> Texture::Size() const
 	{
 		int width = 0, height = 0;
 		SDL_QueryTexture(_texture, nullptr, nullptr, &width, &height);
-		return std::pair<size_t, size_t>(width, height);
+		return { width, height };
 	}
 
 	Texture& Texture::operator=(SDL_Texture* texture)

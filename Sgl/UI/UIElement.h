@@ -21,7 +21,7 @@ namespace Sgl
 		static inline const PropertyId KeyDownProperty = PropertyManager::Register<KeyEventHandler>("KeyDown");
 		static inline const PropertyId KeyUpProperty = PropertyManager::Register<KeyEventHandler>("KeyUp");
 
-		std::unordered_map<std::string, Style> StyleMap;
+		std::unordered_map<std::string, Any> Resources;
 	public:
 		UIElement() = default;
 		UIElement(const Style& style) noexcept;

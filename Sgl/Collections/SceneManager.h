@@ -9,6 +9,8 @@ namespace Sgl
 	class SceneManager: protected std::stack<Scene*>
 	{
 	public:
+		~SceneManager();
+
 		void Load(Scene* scene);
 		void UnloadActive();
 		bool IsEmpty() const { return empty(); }

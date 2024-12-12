@@ -5,8 +5,8 @@ namespace Sgl
 	Control::Control(const Style& style) noexcept:
 		Object(style)
 	{
-		style.TryCopyTo(BackgroundProperty, _backgound);
-		style.TryAddHandlerToEvent(MouseDoubleClickProperty, MouseDoubleClick);
+		style.TryInit(BackgroundProperty, _backgound);
+		style.TryInitEvent(MouseDoubleClickProperty, MouseDoubleClick);
 	}
 
 	void Control::OnMouseDoubleClick(const MouseButtonEventArgs& e)

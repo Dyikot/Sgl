@@ -10,18 +10,12 @@
 
 namespace Sgl
 {
-	enum class ShutdownMode
-	{
-		OnLastSceneClose, OnExplicitShutdown
-	};
-
 	class Application
 	{
 	public:
 		using ApplicationEventHandler = EventHandler<Application, EventArgs>;
 
 		AudioManager AudioManager;
-		ShutdownMode ShutdownMode = ShutdownMode::OnLastSceneClose;
 	protected:
 		static constexpr size_t MaxFrameRate = 360;
 

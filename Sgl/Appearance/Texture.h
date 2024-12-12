@@ -1,26 +1,26 @@
 #pragma once
 
-#include "Brushes.h"
+#include "Color.h"
+#include <utility>
 
 namespace Sgl
 {
 	class Texture
 	{
-	protected:
-		SDL_Texture* _texture;
+	private:
+		SDL_Texture* _texture = nullptr;
 	public:
-		Texture(SDL_Texture* texture) noexcept:
-			_texture(texture)
-		{}
-		Texture(Texture&& texture) noexcept:
-			_texture(texture._texture)
-		{
-			texture._texture = nullptr;
-		}
+		Color Color = Colors::White;
+	public:
+		Texture() = delete;
+		Texture(SDL_Texture* texture) noexcept;
+		Texture(Texture&& texture) noexcept;
+		Texture(const Texture&) = delete;
 		~Texture() noexcept;
 
-		std::pair<size_t, size_t> QuerySize() const noexcept;
+		std::pair<int, int> Size() const;
 		Texture& operator=(SDL_Texture* texture);
+		Texture& operator=(const Texture&) = delete;
 		Texture& operator=(Texture&& texture) noexcept;
 		operator SDL_Texture* () const { return _texture; }
 	};

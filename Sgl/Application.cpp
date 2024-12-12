@@ -73,6 +73,12 @@ namespace Sgl
 
 		while(_isRunning)
 		{
+			if(window.Scenes.IsEmpty())
+			{
+				Shutdown();
+				break;
+			}
+
 			_stopwatch.Restart();
 
 			HandleEvents(window.Scenes.Active());
@@ -80,11 +86,6 @@ namespace Sgl
 			if(window.Scenes.Active()->IsClosed())
 			{
 				window.Scenes.UnloadActive();
-				if(window.Scenes.IsEmpty() && ShutdownMode == ShutdownMode::OnLastSceneClose)
-				{
-					Shutdown();
-				}
-
 				continue;
 			}
 
@@ -152,8 +153,7 @@ namespace Sgl
 					scene->OnKeyDown(
 						KeyEventArgs
 						{
-							.IsDown = true,
-							.IsUp = false,
+							.State = static_cast<ButtonState>(e.key.state),
 							.Key = e.key.keysym
 						}
 					);
@@ -163,11 +163,11 @@ namespace Sgl
 
 				case SDL_KEYUP:
 				{
+				
 					scene->OnKeyUp(
 						KeyEventArgs
 						{
-							.IsDown = false,
-							.IsUp = true,
+							.State = static_cast<ButtonState>(e.key.state),
 							.Key = e.key.keysym
 						}
 					);
@@ -221,9 +221,9 @@ namespace Sgl
 					scene->OnMouseDown(
 						MouseButtonEventArgs
 						{
-							.Button = ToMouseButton(e.button.button),
-							.ButtonState = ToMouseButtonState(e.button.state),
-							.ClickCount = e.button.clicks,
+							.Button = static_cast<MouseButton>(e.button.button),
+							.State = static_cast<ButtonState>(e.button.state),
+							.ClicksCount = e.button.clicks,
 							.Position =
 							{
 								.x = static_cast<float>(e.button.x),
@@ -240,9 +240,9 @@ namespace Sgl
 					scene->OnMouseUp(
 						MouseButtonEventArgs
 						{
-							.Button = ToMouseButton(e.button.button),
-							.ButtonState = ToMouseButtonState(e.button.state),
-							.ClickCount = e.button.clicks,
+							.Button = static_cast<MouseButton>(e.button.button),
+							.State = static_cast<ButtonState>(e.button.state),
+							.ClicksCount = e.button.clicks,
 							.Position =
 							{
 								.x = static_cast<float>(e.button.x),
