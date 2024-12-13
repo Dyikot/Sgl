@@ -15,7 +15,11 @@ namespace Sgl
 			mousePosition.y <= position.y + height;
 	}
 
-    bool Panel::TryRaiseMouseMoveEvents(const MouseButtonEventArgs& e)
+	Panel::Panel(const Style& style):
+		Object(style)
+	{}
+
+	bool Panel::TryRaiseMouseMoveEvents(const MouseButtonEventArgs& e)
     {
 		if(MouseOverControl && IsMouseOverControl(*MouseOverControl, e.Position))
 		{

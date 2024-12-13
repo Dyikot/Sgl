@@ -48,13 +48,13 @@ namespace Sgl
 		SDL_RenderFillRectsF(_renderer, rectanges.data(), rectanges.size());
 	}
 
-	void RenderContext::DrawTexture(Texture& texture, const Rectangle& rectangle)
+	void RenderContext::DrawTexture(const Texture& texture, const Rectangle& rectangle)
 	{
 		SetTextureColor(texture);
 		SDL_RenderCopyF(_renderer, texture, nullptr, &rectangle);
 	}
 
-	void RenderContext::DrawTexture(Texture& texture,
+	void RenderContext::DrawTexture(const Texture& texture,
 									const Rectangle& rectangle,
 									const Rectangle& clip)
 	{
@@ -65,7 +65,7 @@ namespace Sgl
 
 	void RenderContext::DrawFigure(std::span<Vertex> vertices, 
 								   std::span<int> order, 
-								   Texture& texture)
+								   const Texture& texture)
 	{
 		SetTextureColor(texture);
 		SDL_RenderGeometry(_renderer, texture, 
@@ -83,7 +83,7 @@ namespace Sgl
 		SDL_RenderDrawLinesF(_renderer, points.data(), PointNumber);
 	}
 
-	void RenderContext::DrawSceneBackground(const Paint& background)
+	void RenderContext::PaintSceneBackground(const Paint& background)
 	{
 		std::visit([this](const auto& paint)
 		{
@@ -102,9 +102,26 @@ namespace Sgl
 		}, background);
 	}
 
-	void RenderContext::SetBlendMode(SDL_BlendMode blendMode)
+	void RenderContext::PaintBackground(const Rectangle& reactangle, const Paint& background)
 	{
-		SDL_SetRenderDrawBlendMode(_renderer, blendMode);
+		std::visit([this, &reactangle](const auto& paint)
+		{
+			using T = std::decay_t<decltype(paint)>;
+
+			if constexpr(std::is_same_v<T, const Color*>)
+			{
+				DrawFillRectangle(reactangle, *paint);
+			}
+			else if constexpr(std::is_same_v<T, const Texture*>)
+			{
+				DrawTexture(*paint, reactangle);
+			}
+		}, background);
+	}
+
+	void RenderContext::SetBlendMode(SDL_BlendMode mode)
+	{
+		SDL_SetRenderDrawBlendMode(_renderer, mode);
 	}
 
 	Texture RenderContext::CreateTexture(std::string_view path)
@@ -115,7 +132,7 @@ namespace Sgl
 			PrintSDLError();
 		}
 
-		return texture;
+		return Texture(texture);
 	}
 
 	void RenderContext::CalculateEllipseVertices(std::span<Point> vertices, Point position,

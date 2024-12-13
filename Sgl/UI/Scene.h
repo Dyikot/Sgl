@@ -1,6 +1,6 @@
 #pragma once
 
-#include <list>
+#include <set>
 #include <chrono>
 #include "../Appearance/Color.h"
 #include "../Appearance/Texture.h"
@@ -16,7 +16,7 @@ namespace Sgl
 		static inline const PropertyId UnloadedProperty = PropertyManager::Register<UIEventHandler>("Unloaded");
 		
 		Paint Background = &Colors::Black;
-		std::vector<Panel*> Panels;
+		std::set<Panel*, PanelComparer> Panels;
 	private:
 		Panel* _mouseOverPanel = nullptr;
 		bool _isRunning = true;

@@ -7,11 +7,11 @@ namespace Sgl
 {
 	struct Thikness
 	{
-		Thikness(uint32_t top, uint32_t right, uint32_t bottom, uint32_t left):
+		constexpr Thikness(uint32_t top, uint32_t right, uint32_t bottom, uint32_t left) noexcept:
 			Top(top), Right(right), Bottom(bottom), Left(left)
 		{}
 
-		Thikness(uint32_t lenght = 0):
+		constexpr Thikness(uint32_t lenght = 0) noexcept:
 			Thikness(lenght, lenght, lenght, lenght) 
 		{}
 
@@ -22,25 +22,22 @@ namespace Sgl
 	};
 
 	class FontFamily
-	{
+	{		
 	public:
-		static constexpr std::string_view DefaultFamilyName = "Segoe UI";
-
-		std::string Name;
 		std::filesystem::path Path;
+		std::string Name;
 	public:
-		FontFamily(std::string_view familyName, const std::filesystem::path& path):
-			Name(familyName), Path(path) 
+		FontFamily():
+			FontFamily("Segoe UI")
+		{}
+		explicit FontFamily(std::string_view name):
+			Path(TryGetPathByName(name)), Name(name)
+		{}
+		FontFamily(const std::filesystem::path& path, std::string_view name):
+			Path(path), Name(name)
 		{}
 
-		FontFamily(std::string_view familyName = DefaultFamilyName):
-			FontFamily(familyName, GetPathBy(familyName)) 
-		{}
-	private:
-		std::filesystem::path GetPathBy(std::string_view familyName)
-		{
-			return std::format("Resources/Fonts/{}.ttf", familyName);
-		}
+		static std::filesystem::path TryGetPathByName(std::string_view name);
 	};
 
 	enum class FontWeight
@@ -66,5 +63,10 @@ namespace Sgl
 	enum class VerticalAligment
 	{
 		Bottom, Center, Top, Stretch
+	};
+
+	enum class Visibility
+	{
+		Visible, Hidden, Collapsed
 	};
 }

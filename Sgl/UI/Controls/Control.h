@@ -10,42 +10,43 @@ namespace Sgl
 	{
 	public:
 		static inline const PropertyId BackgroundProperty = PropertyManager::Register<Paint>("Background");
-		static inline const PropertyId BorderProperty = PropertyManager::Register<Color>("Border");
+		static inline const PropertyId BorderColorProperty = PropertyManager::Register<Color>("BorderColor");
 		static inline const PropertyId BorderThiknessProperty = PropertyManager::Register<Thikness>("BorderThikness");
 		static inline const PropertyId FontFamilyProperty = PropertyManager::Register<FontFamily>("FontFamily");
 		static inline const PropertyId FontWeightProperty = PropertyManager::Register<FontWeight>("FontWeight");
 		static inline const PropertyId FontColorProperty = PropertyManager::Register<Color>("FontColor");
 		static inline const PropertyId FontSizeProperty = PropertyManager::Register<uint16_t>("FontSize");
 		static inline const PropertyId MouseDoubleClickProperty = PropertyManager::Register<MouseEventHandler>("MouseDoubleClick");
+		static constexpr size_t DefaultFontSize = 14;
 
 		Panel* ControlPanel = nullptr;
-	private:
+	protected:
 		Paint _backgound = &Colors::Transparent;
 		Color _borderColor = Colors::Transparent;
 		Thikness _borderThickness;
 		FontFamily _fontFamily;
-		FontWeight _fontWeight;
+		FontWeight _fontWeight = FontWeight::Normal;
 		Color _fontColor = Colors::Black;
-		uint16_t _fontSize;
+		size_t _fontSize = DefaultFontSize;
 	public:
 		Control() = default;
 		Control(const Style& style) noexcept;
 
-		virtual void SetBackgound(const Paint& value) { _backgound = value; }
-		virtual void SetBorderColor(Color value) { _borderColor = value; }
-		virtual void SetFontColor(Color value) { _fontColor = value; }
-		virtual void SetBorderThikness(const Thikness& value) { _borderThickness = value; }
-		virtual void SetFontFamily(const FontFamily& value) { _fontFamily = value; }
-		virtual void SetFontSize(uint16_t value) { _fontSize = value; }
-		virtual void SetFontWeight(FontWeight value) { _fontWeight = value; }
+		void SetBackgound(const Paint& value) { _backgound = value; }
+		void SetBorderColor(Color value) { _borderColor = value; }
+		void SetFontColor(Color value) { _fontColor = value; }
+		void SetBorderThikness(const Thikness& value) { _borderThickness = value; }
+		void SetFontFamily(const FontFamily& value) { _fontFamily = value; }
+		void SetFontSize(uint16_t value) { _fontSize = value; }
+		void SetFontWeight(FontWeight value) { _fontWeight = value; }
 		
-		virtual const Paint& GetBackgound() const { return _backgound; }
-		virtual Color GetBorderColor() const { return _borderColor; }
-		virtual Color GetFontColor() const { return _fontColor; }
-		virtual const Thikness& GetBorderThikness() const { return _borderThickness; }
-		virtual const FontFamily& GetFontFamily() const { return _fontFamily; }
-		virtual uint16_t GetFontSize() const { return _fontSize; }
-		virtual FontWeight GetFontWeight() const { return _fontWeight; }
+		const Paint& GetBackgound() const { return _backgound; }
+		Color GetBorderColor() const { return _borderColor; }
+		Color GetFontColor() const { return _fontColor; }
+		const Thikness& GetBorderThikness() const { return _borderThickness; }
+		const FontFamily& GetFontFamily() const { return _fontFamily; }
+		uint16_t GetFontSize() const { return _fontSize; }
+		FontWeight GetFontWeight() const { return _fontWeight; }
 
 		Event<MouseEventHandler> MouseDoubleClick;
 	protected:

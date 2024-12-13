@@ -1,7 +1,7 @@
 #pragma once
 
 #include "UIElement.h"
-#include "../Appearance/ControlAppearance.h"
+#include "../Appearance/UIAppearance.h"
 #include "../Appearance/Cursor.h"
 
 namespace Sgl
@@ -35,10 +35,11 @@ namespace Sgl
 		float _minHeight = 0;
 		float _maxWidth = 0;
 		float _maxHeight = 0;
-		Point _position = {};
+		Point _position = { 0, 0 };
 		Thikness _margin;
 		HorizontalAlignment _horizontalAlignment = HorizontalAlignment::Stretch;
 		VerticalAligment _verticalAlignment = VerticalAligment::Stretch;
+		Visibility _visibility = Visibility::Visible;
 	private:
 		bool _isMouseOver = false;
 	public:
@@ -48,27 +49,29 @@ namespace Sgl
 		Object(const Style& style) noexcept;
 		virtual ~Object() = default;
 
-		virtual void SetWidth(float value) { _width = value; }
-		virtual void SetHeight(float value) { _height = value; }
-		virtual void SetMinWidth(float value) { _minWidth = value; }
-		virtual void SetMinHeight(float value) { _minHeight = value; }
-		virtual void SetMaxWidth(float value) { _maxWidth = value; }
-		virtual void SetMaxHeight(float value) { _maxHeight = value; }
-		virtual void SetPosition(SDL_FPoint value) { _position = value; }
-		virtual void SetMargin(const Thikness& value) { _margin = value; }
-		virtual void SetHorizontalAlignment(HorizontalAlignment value) { _horizontalAlignment = value; }
-		virtual void SetVerticalAlignment(VerticalAligment value) { _verticalAlignment = value; }
+		void SetWidth(float value) { _width = value; }
+		void SetHeight(float value) { _height = value; }
+		void SetMinWidth(float value) { _minWidth = value; }
+		void SetMinHeight(float value) { _minHeight = value; }
+		void SetMaxWidth(float value) { _maxWidth = value; }
+		void SetMaxHeight(float value) { _maxHeight = value; }
+		void SetPosition(SDL_FPoint value) { _position = value; }
+		void SetMargin(const Thikness& value) { _margin = value; }
+		void SetHorizontalAlignment(HorizontalAlignment value) { _horizontalAlignment = value; }
+		void SetVerticalAlignment(VerticalAligment value) { _verticalAlignment = value; }
+		void SetVisibility(Visibility value) { _visibility = value; }
 
-		virtual float GetWidth() const { return _width; }
-		virtual float GetHeight() const { return _height; }
-		virtual float GetMinWidth() const { return _minWidth; }
-		virtual float GetMinHeight() const { return _minHeight; }
-		virtual float GetMaxWidth() const { return _maxWidth; }
-		virtual float GetMaxHeight() const { return _maxHeight; }
-		virtual SDL_FPoint GetPosition() const { return _position; }
-		virtual const Thikness& GetMargin() const { return _margin; }
-		virtual HorizontalAlignment GetHorizontalAlignment() const { return _horizontalAlignment; }
-		virtual VerticalAligment GetVerticalAlignment() const { return _verticalAlignment; }
+		float GetWidth() const { return _width; }
+		float GetHeight() const { return _height; }
+		float GetMinWidth() const { return _minWidth; }
+		float GetMinHeight() const { return _minHeight; }
+		float GetMaxWidth() const { return _maxWidth; }
+		float GetMaxHeight() const { return _maxHeight; }
+		SDL_FPoint GetPosition() const { return _position; }
+		const Thikness& GetMargin() const { return _margin; }
+		HorizontalAlignment GetHorizontalAlignment() const { return _horizontalAlignment; }
+		VerticalAligment GetVerticalAlignment() const { return _verticalAlignment; }
+		Visibility GetVisibility() const { return _visibility; }
 
 		Event<MouseEventHandler> MouseEnter;
 		Event<MouseEventHandler> MouseLeave;
@@ -80,7 +83,5 @@ namespace Sgl
 		virtual void OnMouseEnter(const MouseButtonEventArgs& e);
 		virtual void OnMouseLeave(const MouseButtonEventArgs& e);
 		virtual void OnSizeChanged(IVisual* sender, const SizeChangedEventArgs& e);
-	private:
-		friend class Scene;
 	};
 }

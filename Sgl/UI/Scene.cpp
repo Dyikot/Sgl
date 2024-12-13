@@ -13,7 +13,7 @@ namespace Sgl
 
 	void Scene::OnRender(RenderContext& renderContext) const
 	{
-		renderContext.DrawSceneBackground(Background);
+		renderContext.PaintSceneBackground(Background);
 	}
 
 	void Scene::Close()

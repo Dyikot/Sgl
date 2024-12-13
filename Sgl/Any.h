@@ -39,11 +39,11 @@ namespace Sgl
 	class Any
 	{
 	public:
-		template<typename TType, typename... TArgs>
+		template<typename TValue, typename... TArgs>
 		static Any New(TArgs&&... args)
 		{
 			Any value;
-			value._value = new ValueContainer<TType>(std::forward<TArgs>(args)...);
+			value._value = new ValueContainer<TValue>(std::forward<TArgs>(args)...);
 			return value;
 		}
 

@@ -18,7 +18,7 @@ namespace Sgl
 	protected:
 		SDL_Renderer* const _renderer;
 	public:
-		RenderContext(SDL_Renderer* const renderer) noexcept;
+		explicit RenderContext(SDL_Renderer* const renderer) noexcept;
 		virtual ~RenderContext() noexcept { SDL_DestroyRenderer(_renderer); }
 
 		void DrawLine(Point start, Point end, Color color);
@@ -27,12 +27,13 @@ namespace Sgl
 		void DrawRectanges(std::span<Rectangle> rectanges, Color color);
 		void DrawFillRectangle(const Rectangle& rectange, Color background);
 		void DrawFillRectanges(std::span<Rectangle> rectanges, Color background);
-		void DrawTexture(Texture& texture, const Rectangle& rectangle);
-		void DrawTexture(Texture& texture, const Rectangle& rectangle, const Rectangle& clip);
-		void DrawFigure(std::span<Vertex> vertices, std::span<int> order, Texture& texture);
+		void DrawTexture(const Texture& texture, const Rectangle& rectangle);
+		void DrawTexture(const Texture& texture, const Rectangle& rectangle, const Rectangle& clip);
+		void DrawFigure(std::span<Vertex> vertices, std::span<int> order, const Texture& texture);
 		void DrawEllipse(Point position, int width, int height, Color color);
-		void DrawSceneBackground(const Paint& background);
-		void SetBlendMode(SDL_BlendMode blendMode);
+		void PaintSceneBackground(const Paint& background);
+		void PaintBackground(const Rectangle& reactangle, const Paint& background);
+		void SetBlendMode(SDL_BlendMode mode);
 		Texture CreateTexture(std::string_view path);
 
 		operator SDL_Renderer* () const { return _renderer; }

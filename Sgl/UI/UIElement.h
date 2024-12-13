@@ -40,7 +40,5 @@ namespace Sgl
 		virtual void OnMouseWheel(const MouseWheelEventArgs& e);
 		virtual void OnKeyDown(const KeyEventArgs& e);
 		virtual void OnKeyUp(const KeyEventArgs& e);
-	private:
-		friend class Scene;
 	};
 }

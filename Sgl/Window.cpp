@@ -62,9 +62,15 @@ namespace Sgl
         SDL_SetWindowPosition(_sdlWindow, value.x, value.y);
     }
 
-    void Window::SetIcon(Icon&& icon)
+    void Window::SetIcon(Surface&& icon)
     {
         _icon = std::move(icon);
+        SDL_SetWindowIcon(_sdlWindow, _icon.value());
+    }
+
+    void Window::SetIcon(const Surface& icon)
+    {
+        _icon = icon;
         SDL_SetWindowIcon(_sdlWindow, _icon.value());
     }
 

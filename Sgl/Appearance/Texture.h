@@ -13,7 +13,7 @@ namespace Sgl
 		Color Color = Colors::White;
 	public:
 		Texture() = delete;
-		Texture(SDL_Texture* texture) noexcept;
+		explicit Texture(SDL_Texture* texture) noexcept;
 		Texture(Texture&& texture) noexcept;
 		Texture(const Texture&) = delete;
 		~Texture() noexcept;

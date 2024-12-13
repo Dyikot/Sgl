@@ -8,7 +8,7 @@
 #include "Render/RenderContext.h"
 #include "Appearance/Style/Style.h"
 #include "Events/EventArgs.h"
-#include "Appearance/Icon.h"
+#include "Appearance/Surface.h"
 
 namespace Sgl
 {
@@ -43,7 +43,7 @@ namespace Sgl
 	protected:
 		SDL_Window* const _sdlWindow;
 		RenderContext _renderContext;
-		std::optional<Icon> _icon = std::nullopt;
+		std::optional<Surface> _icon = std::nullopt;
 		int _width;
 		int _height;
 		bool _isVsyncEnable = false;
@@ -63,7 +63,8 @@ namespace Sgl
 		void SetMaxSize(size_t width, size_t height);
 		void SetTitle(std::string_view value);
 		void SetPosition(SDL_Point value);
-		void SetIcon(Icon&& icon);
+		void SetIcon(Surface&& icon);
+		void SetIcon(const Surface& icon);
 		void SetDisplayMode(DiplayMode displayMode);
 
 		int	GetWidth() const noexcept { return _width; }
