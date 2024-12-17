@@ -39,7 +39,7 @@ namespace Sgl
 		bool IsPaused() const noexcept { return _isPaused; }
 		bool IsElapsed() const noexcept { return _isElapsed; }
 	private:
-		void WaitOnSeparateThread();
+		void Wait();
 		void OnTimerElapsed(Timer* sender, const TimeElapsedEventArgs& e);
 	};
 }

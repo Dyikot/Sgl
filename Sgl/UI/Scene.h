@@ -15,7 +15,7 @@ namespace Sgl
 		static inline const PropertyId LoadedProperty = PropertyManager::Register<UIEventHandler>("Loaded");
 		static inline const PropertyId UnloadedProperty = PropertyManager::Register<UIEventHandler>("Unloaded");
 		
-		Paint Background = &Colors::Black;
+		Fill Background = &Colors::Black;
 		std::set<Panel*, PanelComparer> Panels;
 	private:
 		Panel* _mouseOverPanel = nullptr;
@@ -28,7 +28,7 @@ namespace Sgl
 		Event<UIEventHandler> Loaded;
 		Event<UIEventHandler> Unloaded;
 
-		void OnRender(RenderContext& renderContext) const override;
+		void OnRender(RenderContext& renderContext) override;
 		void Close();
 		bool IsClosed() const;
 	protected:

@@ -11,9 +11,9 @@ namespace Sgl
 		style.TryInitEvent(UnloadedProperty, Unloaded);
 	}
 
-	void Scene::OnRender(RenderContext& renderContext) const
+	void Scene::OnRender(RenderContext& renderContext)
 	{
-		renderContext.PaintSceneBackground(Background);
+		renderContext.FillScene(Background);
 	}
 
 	void Scene::Close()

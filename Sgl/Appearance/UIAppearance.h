@@ -7,18 +7,18 @@ namespace Sgl
 {
 	struct Thikness
 	{
-		constexpr Thikness(uint32_t top, uint32_t right, uint32_t bottom, uint32_t left) noexcept:
-			Top(top), Right(right), Bottom(bottom), Left(left)
-		{}
-
-		constexpr Thikness(uint32_t lenght = 0) noexcept:
-			Thikness(lenght, lenght, lenght, lenght) 
-		{}
-
+	public:
 		uint32_t Top;
 		uint32_t Right;
 		uint32_t Bottom;
 		uint32_t Left;
+	public:
+		constexpr Thikness(uint32_t top, uint32_t right, uint32_t bottom, uint32_t left) noexcept:
+			Top(top), Right(right), Bottom(bottom), Left(left)
+		{}
+		constexpr Thikness(uint32_t lenght = 0) noexcept:
+			Thikness(lenght, lenght, lenght, lenght) 
+		{}
 	};
 
 	class FontFamily

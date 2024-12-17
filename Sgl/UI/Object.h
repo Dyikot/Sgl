@@ -26,7 +26,7 @@ namespace Sgl
 		static inline const PropertyId MouseLeaveProperty = PropertyManager::Register<MouseEventHandler>("MouseLeave");
 		static inline const PropertyId SizeChangedProperty = PropertyManager::Register<SizeChangedEventHandler>("SizeChanged");
 
-		Cursor* ObjectCursor = nullptr;
+		Cursor* Cursor = nullptr;
 		IVisual* ToolTip = nullptr;
 	protected:
 		float _width = 0;
@@ -35,7 +35,7 @@ namespace Sgl
 		float _minHeight = 0;
 		float _maxWidth = 0;
 		float _maxHeight = 0;
-		Point _position = { 0, 0 };
+		SDL_FPoint _position = { 0, 0 };
 		Thikness _margin;
 		HorizontalAlignment _horizontalAlignment = HorizontalAlignment::Stretch;
 		VerticalAligment _verticalAlignment = VerticalAligment::Stretch;
@@ -77,7 +77,7 @@ namespace Sgl
 		Event<MouseEventHandler> MouseLeave;
 		Event<SizeChangedEventHandler> SizeChanged;
 
-		void OnRender(RenderContext& renderContext) const override;
+		void OnRender(RenderContext& renderContext) override;
 		bool IsMouseOver() const noexcept { return _isMouseOver; }
 	protected:
 		virtual void OnMouseEnter(const MouseButtonEventArgs& e);

@@ -36,7 +36,7 @@ namespace Sgl
 		template <AudioPtr T>
 		void SetMusicVolume(const Music& music, const AudioCollection<T>& collection)
 		{
-			Mix_VolumeMusic(ToMixVolume(music.AudioVolume, MusicVolume, collection.AudioVolume));
+			Mix_VolumeMusic(ToMixVolume(music.Volume, MusicVolume, collection.Volume));
 		}
 	protected:
 		uint8_t ToMixVolume(Volume volume, Volume audioTypeVolume, Volume groupVolume = Volume::Max) const

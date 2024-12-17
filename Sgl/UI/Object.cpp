@@ -18,7 +18,7 @@ namespace Sgl
         style.TryInit(MinWidthProperty, _minWidth);
         style.TryInit(MinHeightProperty, _minHeight);
         style.TryInit(MarginProperty, _margin);
-        style.TryInit(CursorProperty, ObjectCursor);
+        style.TryInit(CursorProperty, Cursor);
         style.TryInit(ToolTipProperty, ToolTip);
         style.TryInit(VerticalAligmentProperty, _verticalAlignment);
         style.TryInit(HorizontalAlignmentProperty, _horizontalAlignment);
@@ -31,7 +31,7 @@ namespace Sgl
         Object(SDL_FPoint{}, style)
     {}
 
-    void Object::OnRender(RenderContext& renderContext) const
+    void Object::OnRender(RenderContext& renderContext)
     {
         if(_isMouseOver && ToolTip)
         {
@@ -43,9 +43,9 @@ namespace Sgl
     {
         _isMouseOver = true;
 
-        if(ObjectCursor)
+        if(Cursor)
         {
-            Application::Current()->SetCursor(*ObjectCursor);
+            Application::Current()->SetCursor(*Cursor);
         }
 
         if(MouseEnter)
@@ -58,7 +58,7 @@ namespace Sgl
     {
         _isMouseOver = false;
 
-        if(ObjectCursor)
+        if(Cursor)
         {
             Application::Current()->SetApplicationCursor();
         }

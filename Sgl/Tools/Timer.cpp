@@ -31,7 +31,7 @@ namespace Sgl
 		}
 
 		_isPaused = false;
-		auto wait = std::bind_front(&Timer::WaitOnSeparateThread, this);
+		auto wait = std::bind_front(&Timer::Wait, this);
 		_thread = std::thread(wait);
 	}
 
@@ -55,7 +55,7 @@ namespace Sgl
 		_timeElapsed = 0ms;
 	}
 
-	void Timer::WaitOnSeparateThread()
+	void Timer::Wait()
 	{
 		std::mutex mutex;
 

@@ -32,19 +32,19 @@ namespace Sgl
 
 	void AudioManager::SetMusicVolume(const Music& music)
 	{
-		Mix_VolumeMusic(ToMixVolume(music.AudioVolume, MusicVolume, Volume::Max));
+		Mix_VolumeMusic(ToMixVolume(music.Volume, MusicVolume, Volume::Max));
 	}
 
 	void AudioManager::SetSoundEffectVolume(const SoundEffect& soundEffect)
 	{
 		Mix_VolumeChunk(soundEffect,
-						ToMixVolume(soundEffect.AudioVolume, SoundEffectsVolume, Volume::Max));
+						ToMixVolume(soundEffect.Volume, SoundEffectsVolume, Volume::Max));
 	}
 
 	void AudioManager::SetSoundEffectVolume(const SoundEffect& soundEffect, const AudioGroup& group)
 	{
 		Mix_VolumeChunk(soundEffect, 
-						ToMixVolume(soundEffect.AudioVolume, SoundEffectsVolume, group.AudioVolume));
+						ToMixVolume(soundEffect.Volume, SoundEffectsVolume, group.Volume));
 	}
 
 	void AudioManager::PlaySoundEffect(const SoundEffect& soundEffect, int channel, int loops)

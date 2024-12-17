@@ -25,9 +25,9 @@ namespace Sgl
 		{
 			MouseOverControl->OnMouseMove(e);
 
-			if(MouseOverControl->ControlPanel)
+			if(MouseOverControl->Panel)
 			{
-				MouseOverControl->ControlPanel->TryRaiseMouseMoveEvents(e);
+				MouseOverControl->Panel->TryRaiseMouseMoveEvents(e);
 			}
 
 			return true;
@@ -51,9 +51,9 @@ namespace Sgl
 				child->OnMouseEnter(e);
 				child->OnMouseMove(e);
 
-				if(child->ControlPanel != nullptr)
+				if(child->Panel != nullptr)
 				{
-					child->ControlPanel->TryRaiseMouseMoveEvents(e);
+					child->Panel->TryRaiseMouseMoveEvents(e);
 				}
 
 				return true;
@@ -70,9 +70,9 @@ namespace Sgl
         if(MouseOverControl)
         {
             MouseOverControl->OnMouseDown(e);
-            if(MouseOverControl->ControlPanel)
+            if(MouseOverControl->Panel)
             {
-                MouseOverControl->ControlPanel->RaiseMouseDownEvents(e);
+                MouseOverControl->Panel->RaiseMouseDownEvents(e);
             }
         }
     }
@@ -84,9 +84,9 @@ namespace Sgl
         if(MouseOverControl)
         {
             MouseOverControl->OnMouseUp(e);
-            if(MouseOverControl->ControlPanel)
+            if(MouseOverControl->Panel)
             {
-                MouseOverControl->ControlPanel->RaiseMouseUpEvents(e);
+                MouseOverControl->Panel->RaiseMouseUpEvents(e);
             }
         }
     }	

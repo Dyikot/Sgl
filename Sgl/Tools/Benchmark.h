@@ -36,7 +36,7 @@ namespace Sgl
 		}
 
 		template<typename... TArgs> requires std::invocable<TFunction, TArgs...>
-		void Run(TArgs... args)
+		void Run(TArgs&&... args)
 		{
 			using namespace std::chrono;
 			using namespace std::chrono_literals;
@@ -44,7 +44,7 @@ namespace Sgl
 			auto start = high_resolution_clock::now();
 			for(size_t i = 0; i < _number; i++)
 			{
-				_function(args...);
+				_function(std::forward<TArgs>(args)...);
 			}
 			auto end = high_resolution_clock::now();
 			auto avg = (end - start) / _number;

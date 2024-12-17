@@ -9,7 +9,7 @@ namespace Sgl
 	class Control: public Object
 	{
 	public:
-		static inline const PropertyId BackgroundProperty = PropertyManager::Register<Paint>("Background");
+		static inline const PropertyId BackgroundProperty = PropertyManager::Register<Fill>("Background");
 		static inline const PropertyId BorderColorProperty = PropertyManager::Register<Color>("BorderColor");
 		static inline const PropertyId BorderThiknessProperty = PropertyManager::Register<Thikness>("BorderThikness");
 		static inline const PropertyId FontFamilyProperty = PropertyManager::Register<FontFamily>("FontFamily");
@@ -19,9 +19,9 @@ namespace Sgl
 		static inline const PropertyId MouseDoubleClickProperty = PropertyManager::Register<MouseEventHandler>("MouseDoubleClick");
 		static constexpr size_t DefaultFontSize = 14;
 
-		Panel* ControlPanel = nullptr;
+		Panel* Panel = nullptr;
 	protected:
-		Paint _backgound = &Colors::Transparent;
+		Fill _backgound = &Colors::Transparent;
 		Color _borderColor = Colors::Transparent;
 		Thikness _borderThickness;
 		FontFamily _fontFamily;
@@ -32,7 +32,7 @@ namespace Sgl
 		Control() = default;
 		Control(const Style& style) noexcept;
 
-		void SetBackgound(const Paint& value) { _backgound = value; }
+		void SetBackgound(const Fill& value) { _backgound = value; }
 		void SetBorderColor(Color value) { _borderColor = value; }
 		void SetFontColor(Color value) { _fontColor = value; }
 		void SetBorderThikness(const Thikness& value) { _borderThickness = value; }
@@ -40,7 +40,7 @@ namespace Sgl
 		void SetFontSize(uint16_t value) { _fontSize = value; }
 		void SetFontWeight(FontWeight value) { _fontWeight = value; }
 		
-		const Paint& GetBackgound() const { return _backgound; }
+		const Fill& GetBackgound() const { return _backgound; }
 		Color GetBorderColor() const { return _borderColor; }
 		Color GetFontColor() const { return _fontColor; }
 		const Thikness& GetBorderThikness() const { return _borderThickness; }

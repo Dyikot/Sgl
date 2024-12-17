@@ -30,10 +30,10 @@ namespace Sgl
 	class AudioBase
 	{
 	public:
-		Volume AudioVolume;
+		Volume Volume;
 	public:
-		AudioBase(Volume audioVolume):
-			AudioVolume(audioVolume)
+		AudioBase(Sgl::Volume volume):
+			Volume(volume)
 		{}		
 		virtual ~AudioBase() = default;
 	};
@@ -43,7 +43,7 @@ namespace Sgl
 	protected:
 		Mix_Music* _music;
 	public:
-		Music(std::string_view path, Volume volume = Volume::Max) noexcept:
+		Music(std::string_view path, Sgl::Volume volume = Volume::Max) noexcept:
 			_music(Mix_LoadMUS(path.data())), AudioBase(volume)
 		{
 			if(_music == nullptr)
@@ -61,7 +61,7 @@ namespace Sgl
 	protected:
 		Mix_Chunk* _soundChunk;
 	public:
-		SoundEffect(std::string_view path, Volume volume = Volume::Max) noexcept:
+		SoundEffect(std::string_view path, Sgl::Volume volume = Volume::Max) noexcept:
 			_soundChunk(Mix_LoadWAV(path.data())), AudioBase(volume)
 		{
 			if(_soundChunk == nullptr)
@@ -82,11 +82,11 @@ namespace Sgl
 	class AudioCollection: public std::vector<T>
 	{
 	public:
-		Volume AudioVolume;
+		Volume Volume;
 	public:
-		AudioCollection(Volume volume = Volume::Max):
+		AudioCollection(Sgl::Volume volume = Volume::Max):
 			std::vector<T>(),
-			AudioVolume(volume)
+			Volume(volume)
 		{}
 	};
 
@@ -97,11 +97,11 @@ namespace Sgl
 	private:
 		PlayList::iterator _current;
 	public:
-		PlayList(Volume volume = Volume::Max):
+		PlayList(Sgl::Volume volume = Volume::Max):
 			AudioCollection<Music*>(volume)
 		{}
 
-		Music* const Current() const { return empty() ? nullptr : *_current; }
+		Music* Current() const { return empty() ? nullptr : *_current; }
 		void SetCurrentToBegin() { _current = begin(); }
 		void SetCurrentToEnd() { _current = end(); }
 		void SetCurrentToNext() { _current++; }

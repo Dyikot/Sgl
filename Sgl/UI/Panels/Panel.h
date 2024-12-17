@@ -13,16 +13,16 @@ namespace Sgl
 		Control* MouseOverControl = nullptr;
 		std::set<Control*> Children;
 	protected:
-		Paint _background = &Colors::Black;
+		Fill _background = &Colors::Black;
 		size_t _zindex = 1;
 	public:
 		Panel() = default;
 		Panel(const Style& style);
 
-		void SetBackground(const Paint& value) { _background = value; }
+		void SetBackground(const Fill& value) { _background = value; }
 		void SetZIndex(size_t value) { _zindex = value; }
 
-		const Paint& GetBackground() const { return _background; }
+		const Fill& GetBackground() const { return _background; }
 		size_t GetZIndex() const { return _zindex; }
 
 		bool TryRaiseMouseMoveEvents(const MouseButtonEventArgs& e);
