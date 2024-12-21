@@ -97,8 +97,8 @@ namespace Sgl
 	public:
 		WindowBuilder& Title(std::string&& value) { _title = std::move(value); return *this; }
 		WindowBuilder& Position(SDL_Point value) { _position = value; return *this; }
-		WindowBuilder& Width(size_t value) { _width = value; return *this; }
-		WindowBuilder& Height(size_t value) { _height = value; return *this; }
+		WindowBuilder& Width(size_t value) { _width = value; _logicalWidth = value;  return *this; }
+		WindowBuilder& Height(size_t value) { _height = value; _logicalHeight = value; return *this; }
 		WindowBuilder& LogicalWidth(size_t value) { _logicalWidth = value; return *this; }
 		WindowBuilder& LogicalHeight(size_t value) { _logicalHeight = value; return *this; }
 		WindowBuilder& Flags(SDL_WindowFlags value) { _flags = value; return *this; }

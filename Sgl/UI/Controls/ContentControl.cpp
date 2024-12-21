@@ -6,9 +6,9 @@ namespace Sgl
 	{
 		Control::OnRender(renderContext);
 
-		if(ContentVisualizer)
+		if(_contentVisualizer)
 		{
-			ContentVisualizer->OnRender(renderContext);
+			_contentVisualizer->OnRender(renderContext);
 		}
 	}
 }

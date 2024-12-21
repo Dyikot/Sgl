@@ -78,7 +78,7 @@ namespace Sgl
 		const T& As() const { return _value->Get<T>(); }
 
 		template<typename T>
-		T* TryAs() const { return Is<T>() ? &_value->Get<T>() : nullptr; }
+		T* TryAs() const { return HasValue() && Is<T>() ? &_value->Get<T>() : nullptr; }
 	
 		bool HasValue() const { return _value; }
 
