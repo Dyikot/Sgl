@@ -18,6 +18,7 @@ namespace Sgl
 		Benchmark(TFunction&& function):
 			_function(std::forward<TFunction>(function))
 		{}
+
 		template <typename TInvokable>
 		Benchmark(TInvokable&& function):
 			_function(std::forward<TInvokable>(function))
@@ -55,15 +56,15 @@ namespace Sgl
 			auto end = high_resolution_clock::now();
 			auto avg = (end - start) / _number;
 
-			if(auto result = duration_cast<nanoseconds>(avg); result < 1000ns)
+			if (auto result = duration_cast<nanoseconds>(avg); result < 1000ns)
 			{
 				Print(result);
 			}
-			else if(auto result = duration_cast<microseconds>(avg); result < 1000us)
+			else if (auto result = duration_cast<microseconds>(avg); result < 1000us)
 			{
 				Print(result);
 			}
-			else if(auto result = duration_cast<milliseconds>(avg); result < 1000ms)
+			else if (auto result = duration_cast<milliseconds>(avg); result < 1000ms)
 			{
 				Print(result);
 			}

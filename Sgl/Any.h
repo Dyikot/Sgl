@@ -42,12 +42,12 @@ namespace Sgl
 		template<typename TValue, typename... TArgs>
 		static Any New(TArgs&&... args)
 		{
-			Any value;
-			value._value = new ValueContainer<TValue>(std::forward<TArgs>(args)...);
-			return value;
+			Any any;
+			any._value = new ValueContainer<TValue>(std::forward<TArgs>(args)...);
+			return any;
 		}
 
-		Any() = default;
+		Any() noexcept = default;
 
 		template<typename T>
 		Any(T&& value):
@@ -78,9 +78,12 @@ namespace Sgl
 		const T& As() const { return _value->Get<T>(); }
 
 		template<typename T>
-		T* TryAs() const { return HasValue() && Is<T>() ? &_value->Get<T>() : nullptr; }
+		T* TryAs() { return HasValue() && Is<T>() ? &_value->Get<T>() : nullptr; }
+
+		template<typename T>
+		const T* TryAs() const { return HasValue() && Is<T>() ? &_value->Get<T>() : nullptr; }
 	
-		bool HasValue() const { return _value; }
+		bool HasValue() const noexcept { return _value; }
 
 		Any& operator=(const Any& any)
 		{

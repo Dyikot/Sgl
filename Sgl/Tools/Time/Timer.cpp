@@ -31,8 +31,7 @@ namespace Sgl
 		}
 
 		_isPaused = false;
-		auto wait = std::bind_front(&Timer::Wait, this);
-		_thread = std::thread(wait);
+		_thread = std::thread(std::bind_front(&Timer::Wait, this));
 	}
 
 	void Timer::Restart() noexcept

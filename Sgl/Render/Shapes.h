@@ -40,7 +40,7 @@ namespace Sgl
 		Color Color;
 	public:
 		Line(float x1, float y1, float x2, float y2, Sgl::Color color):
-			ShapeBase({x1, x2}),
+			ShapeBase(SDL_FPoint(x1, x2)),
 			Start{ x1, y1 },
 			End{ x2, y2 },
 			Color(color)
@@ -206,21 +206,18 @@ namespace Sgl
 		{
 			auto points = Math::ComputeEllipsePoints(position, width, height);
 
-			std::visit([this, &points, position](const auto& fill)
-			{
-				using T = std::decay_t<decltype(fill)>;
-
-				if constexpr(std::is_same_v<T, const Color*>)
+			Filler(
+				[this, &position, &points](const Color& color)
 				{
-					Math::PointsToVertexRange(points, Vertices, *fill);
-					Vertices.back() = SDL_Vertex(position, static_cast<SDL_Color>(*fill), SDL_FPoint());
+					Math::PointsToVertexRange(points, Vertices, color);
+					Vertices.back() = SDL_Vertex(position, static_cast<SDL_Color>(color), SDL_FPoint());
+				},
+				[this, &position, &points](const Texture& texture)
+				{
+					Math::PointsToVertexRange(points, Vertices, texture.Color);
+					Vertices.back() = SDL_Vertex(position, static_cast<SDL_Color>(texture.Color), SDL_FPoint());
 				}
-				else if constexpr(std::is_same_v<T, const Texture*>)
-				{					
-					Math::PointsToVertexRange(points, Vertices, fill->Color);
-					Vertices.back() = SDL_Vertex(position, static_cast<SDL_Color>(fill->Color), SDL_FPoint());
-				}
-			}, Fill);
+			).FillWith(Fill);
 
 			Order = Math::Triangulate(points, position);
 		}

@@ -13,8 +13,8 @@ namespace Sgl
 
 		TimeSpan Elapsed()
 		{
-			return 1000.f * static_cast<float>(SDL_GetPerformanceCounter() - _start)
-				/ SDL_GetPerformanceFrequency();
+			return TimeSpan(1000.f * static_cast<float>(SDL_GetPerformanceCounter() - _start)
+							/ SDL_GetPerformanceFrequency());
 		}		
 	};
 }

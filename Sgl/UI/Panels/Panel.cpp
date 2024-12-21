@@ -3,7 +3,7 @@
 
 namespace Sgl
 {
-	static inline bool IsMouseOverControl(Control& control, SDL_FPoint mousePosition)
+	inline bool IsMouseOverControl(Control& control, SDL_FPoint mousePosition)
 	{
 		auto position = control.GetPosition();
 		auto width = control.GetWidth();

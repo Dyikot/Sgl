@@ -54,7 +54,7 @@ namespace Sgl
 	void Application::SetMaxFrameRate(size_t value)
 	{
 		_maxFrameRate = value > MaxFrameRate? MaxFrameRate : value;
-		_maxFrameTime = 1000.f / _maxFrameRate.value();
+		_maxFrameTime = TimeSpan(1000.f / _maxFrameRate.value());
 	}
 
 	const Cursor& Application::GetCursor() const
