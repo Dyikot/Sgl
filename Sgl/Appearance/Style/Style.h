@@ -16,33 +16,8 @@ namespace Sgl
 		Style() noexcept;
 		Style(const Style& style) noexcept;
 		
-		void Add(PropertyId id, Any&& object)
-		{
-			if(!IsTypeCorrect(id, object))
-			{
-				throw std::invalid_argument(
-					std::format("Property type <{}> is not equal object type <{}>\n",
-								PropertyManager::GetTypeNameOf(id),
-								object.Type().name()));
-			}
-
-			_propertyMap.emplace(id, std::move(object));
-
-		}
-
-		void Add(PropertyId id, const Any& object)
-		{
-			if(!IsTypeCorrect(id, object))
-			{
-				throw std::invalid_argument(
-					std::format("Property type <{}> is not equal object type <{}>\n",
-								PropertyManager::GetTypeNameOf(id),
-								object.Type().name()));
-			}
-
-			_propertyMap.emplace(id, object);
-		}
-
+		void Add(PropertyId id, Any&& object);
+		void Add(PropertyId id, const Any& object);
 		void Add(const Style& style);
 		void Remove(PropertyId id) noexcept;
 		bool Contains(PropertyId id) const noexcept;
@@ -57,6 +32,7 @@ namespace Sgl
 				value = _propertyMap.at(id).As<T>();
 				return true;
 			}
+
 			return false;
 		}
 
@@ -68,6 +44,7 @@ namespace Sgl
 				event += _propertyMap.at(id).As<T>();
 				return true;
 			}
+
 			return false;
 		}
 

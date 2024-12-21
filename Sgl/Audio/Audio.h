@@ -16,15 +16,15 @@ namespace Sgl
 	protected:
 		uint8_t _value;
 	public:
-		Volume(uint8_t value):
+		constexpr Volume(uint8_t value):
 			_value(Adjust(value))
 		{}
 
-		operator uint8_t() { return _value; }
-		uint8_t operator*(Volume volume) const { return _value * volume._value; }
-		uint8_t operator*(uint8_t value) const { return _value * value; }
+		constexpr operator uint8_t() { return _value; }
+		constexpr uint8_t operator*(Volume volume) const { return _value * volume._value; }
+		constexpr uint8_t operator*(uint8_t value) const { return _value * value; }
 	private:
-		static uint8_t Adjust(uint8_t value) { return value > Max ? Max : value; }
+		static constexpr uint8_t Adjust(uint8_t value) { return value > Max ? Max : value; }
 	};
 
 	class AudioBase
@@ -75,10 +75,10 @@ namespace Sgl
 	};
 
 	template<typename T>
-	concept AudioPtr = std::is_pointer_v<T> &&
-					   std::derived_from<std::remove_pointer_t<T>, AudioBase>;
+	concept AudioBasePointer = std::is_pointer_v<T> &&
+							   std::derived_from<std::remove_pointer_t<T>, AudioBase>;
 
-	template<AudioPtr T>
+	template<typename T> requires AudioBasePointer<T>
 	class AudioCollection: public std::vector<T>
 	{
 	public:

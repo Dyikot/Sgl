@@ -29,6 +29,12 @@ namespace Sgl
 			return *this;
 		}
 
+		Benchmark& Name(std::string&& name)
+		{
+			_name = std::move(name);
+			return *this;
+		}
+
 		Benchmark& Name(const std::string& name)
 		{
 			_name = name;

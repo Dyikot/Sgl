@@ -16,6 +16,9 @@ namespace Sgl
 
 		template<typename T>
 		T& Get() { return static_cast<ValueContainer<T>*>(this)->Value; }
+
+		template<typename T>
+		const T& Get() const { return static_cast<const ValueContainer<T>*>(this)->Value; }
 	};
 
 	template<typename T>
@@ -27,9 +30,6 @@ namespace Sgl
 		template<typename... TArgs>
 		ValueContainer(TArgs&&... args):
 			Value(std::forward<TArgs>(args)...)
-		{}
-		ValueContainer(const T& value):
-			Value(value)
 		{}
 
 		IValueContainer* Copy() const override { return new ValueContainer<T>(*this); }
@@ -47,23 +47,23 @@ namespace Sgl
 			return value;
 		}
 
-		Any() noexcept = default;
-		template<typename T>
-		Any(const T& value):
-			_value(new ValueContainer<T>(value))
-		{}
+		Any() = default;
+
 		template<typename T>
 		Any(T&& value):
 			_value(new ValueContainer<T>(std::forward<T>(value)))
 		{}
+
 		Any(const Any& any):
 			_value(any._value->Copy())
 		{}
+
 		Any(Any&& any) noexcept
 		{
 			_value = any._value;
 			any._value = nullptr;
 		}
+
 		~Any() noexcept { delete _value; }
 
 		const std::type_info& Type() const { return _value->Type(); }
@@ -72,7 +72,10 @@ namespace Sgl
 		bool Is() const { return Type() == typeid(T); }
 
 		template<typename T>
-		T& As() const { return _value->Get<T>(); }
+		T& As() { return _value->Get<T>(); }
+
+		template<typename T>
+		const T& As() const { return _value->Get<T>(); }
 
 		template<typename T>
 		T* TryAs() const { return Is<T>() ? &_value->Get<T>() : nullptr; }
@@ -85,6 +88,7 @@ namespace Sgl
 			_value = any._value->Copy();
 			return *this;
 		}
+
 		Any& operator=(Any&& any) noexcept
 		{
 			delete _value;

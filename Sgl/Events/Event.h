@@ -1,6 +1,6 @@
 #pragma once
 
-#include <list>
+#include <forward_list>
 #include <functional>
 
 namespace Sgl
@@ -14,11 +14,11 @@ namespace Sgl
 	class Event
 	{
 	protected:
-		std::list<THandler> _handlers;
+		std::forward_list<THandler> _handlers;
 	public:
 		void operator+=(auto&& handler) 
 		{ 
-			_handlers.emplace_back(std::forward<decltype(handler)>(handler));
+			_handlers.emplace_front(std::forward<decltype(handler)>(handler));
 		}
 
 		void operator-=(auto&& handler) 

@@ -5,7 +5,6 @@
 #include <string>
 #include <typeinfo>
 #include <stdexcept>
-#include <functional>
 
 namespace Sgl
 {
@@ -14,8 +13,8 @@ namespace Sgl
 	class PropertyManager
 	{
 	private:
-		static inline std::unordered_map<PropertyId, std::string> _propertyIdMap = {};
-		static inline std::unordered_set<std::string> _propertiesNames = {};
+		static inline std::unordered_map<PropertyId, std::string> _propertyIdMap;
+		static inline std::unordered_set<std::string> _propertiesNames;
 	public:
 		template<typename T>
 		static const PropertyId Register(std::string&& name)

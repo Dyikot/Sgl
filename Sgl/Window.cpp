@@ -4,30 +4,40 @@
 namespace Sgl
 {
     Window::Window() noexcept: 
-        Window(WindowProperties{})
+        Window
+        { 
+            "Window",
+            SDL_Point{ SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED },
+            1280, 720,
+            1280, 720,
+            SDL_WINDOW_SHOWN 
+        }
     {}
 
-    Window::Window(const WindowProperties & properties) noexcept:
-        _width(properties.Width),
-        _height(properties.Height),
-        _sdlWindow(SDL_CreateWindow(properties.Title.data(),
-                                   properties.Position.x, properties.Position.y,
-                                   properties.Width, properties.Height,
-                                   properties.Flags)),
+    Window::Window(std::string_view title, SDL_Point position,
+                   size_t width, size_t height, 
+                   size_t logicalWidth, size_t logicalHeight,
+                   SDL_WindowFlags flags) noexcept:
+        _width(width),
+        _height(height),
+        _sdlWindow(SDL_CreateWindow(title.data(),
+                                    position.x, position.y,
+                                    width, height,
+                                    flags)),
         _renderContext(SDL_CreateRenderer(_sdlWindow, -1, SDL_RENDERER_ACCELERATED))
     {
         if(_sdlWindow == nullptr)
         {
             PrintSDLError();
         }
-        
+
         if(_renderContext == nullptr)
         {
             PrintSDLError();
         }
 
         _renderContext.SetBlendMode(SDL_BLENDMODE_BLEND);
-        SetLogicalSize(properties.LogicalWidth, properties.LogicalHeight);
+        SetLogicalSize(logicalWidth, logicalHeight);
     }
 
     void Window::SetWidth(size_t width) noexcept
@@ -78,11 +88,11 @@ namespace Sgl
     {
         switch(displayMode)
         {
-            case Sgl::Window::DiplayMode::Window: 
+            case DiplayMode::Window: 
                 SDL_SetWindowFullscreen(_sdlWindow, 0); break;
-            case Sgl::Window::DiplayMode::BorderlessWindow:
+            case DiplayMode::BorderlessWindow:
                 SDL_SetWindowFullscreen(_sdlWindow, SDL_WINDOW_FULLSCREEN_DESKTOP); break;
-            case Sgl::Window::DiplayMode::Fullscreen:
+            case DiplayMode::Fullscreen:
                 SDL_SetWindowFullscreen(_sdlWindow, SDL_WINDOW_FULLSCREEN); break;
         }
     }
@@ -101,24 +111,35 @@ namespace Sgl
         return position;
     }
 
-    Window::State Window::GetWindowState() const
+    WindowState Window::GetWindowState() const
     {
         const auto flags = SDL_GetWindowFlags(_sdlWindow);
 
         if(!(flags & (SDL_WINDOW_MINIMIZED | SDL_WINDOW_MAXIMIZED)))
         {
-            return State::Normal;
+            return WindowState::Normal;
         }
 
         if(flags & SDL_WINDOW_MAXIMIZED)
         {
-            return State::Maximized;
+            return WindowState::Maximized;
         }
         
         if(flags & SDL_WINDOW_MINIMIZED)
         {
-            return State::Minimized;
+            return WindowState::Minimized;
         }
+    }
+
+    void Window::Render()
+    {
+        if(!IsVisible())
+        {
+            return;
+        }
+
+        Scenes.Active()->OnRender(GetRenderContext());
+        SDL_RenderPresent(_renderContext);
     }
 
     void Window::Show()
@@ -135,17 +156,6 @@ namespace Sgl
     {
         Scenes.UnloadAll();
     }
-
-    void Window::Render()
-    {        
-        if(Scenes.IsEmpty() || !IsVisible())
-        {
-            return;
-        }
-        
-        Scenes.Active()->OnRender(GetRenderContext());
-        SDL_RenderPresent(_renderContext);
-    }    
 
     bool Window::IsVisible() const
     {

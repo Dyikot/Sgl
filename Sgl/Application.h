@@ -6,7 +6,7 @@
 #include "Tools/Log.h"
 #include "Audio/AudioManager.h"
 #include "Window.h"
-#include "Tools/Stopwatch.h"
+#include "Tools/Time/Stopwatch.h"
 
 namespace Sgl
 {

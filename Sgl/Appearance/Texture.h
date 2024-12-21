@@ -18,7 +18,7 @@ namespace Sgl
 		Texture(const Texture&) = delete;
 		~Texture() noexcept;
 
-		std::pair<int, int> Size() const;
+		std::pair<size_t, size_t> Size() const;
 		Texture& operator=(SDL_Texture* texture);
 		Texture& operator=(const Texture&) = delete;
 		Texture& operator=(Texture&& texture) noexcept;

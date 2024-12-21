@@ -12,6 +12,32 @@ namespace Sgl
 		Add(style);
 	}
 
+	void Style::Add(PropertyId id, Any&& object)
+	{
+		if(!IsTypeCorrect(id, object))
+		{
+			throw std::invalid_argument(
+				std::format("Property type <{}> is not equal object type <{}>\n",
+							PropertyManager::GetTypeNameOf(id),
+							object.Type().name()));
+		}
+
+		_propertyMap.emplace(id, std::move(object));
+	}
+
+	void Style::Add(PropertyId id, const Any& object)
+	{
+		if(!IsTypeCorrect(id, object))
+		{
+			throw std::invalid_argument(
+				std::format("Property type <{}> is not equal object type <{}>\n",
+							PropertyManager::GetTypeNameOf(id),
+							object.Type().name()));
+		}
+
+		_propertyMap.emplace(id, object);
+	}
+
 	void Style::Add(const Style& style)
 	{
 		for(auto& [id, object] : style._propertyMap)

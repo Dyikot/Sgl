@@ -16,7 +16,7 @@ namespace Sgl
 		Surface(Surface&& surface) noexcept;
 		~Surface() noexcept { SDL_FreeSurface(_surface); }
 
-		std::pair<int, int> Size() const;
+		std::pair<size_t, size_t> Size() const;
 
 		operator SDL_Surface* () const { return _surface; }
 		Surface& operator=(Surface&& surface) noexcept;

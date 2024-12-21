@@ -1,5 +1,4 @@
 #include "Shapes.h"
-#include "../Math/Math.h"
 #include <algorithm>
 #include <ranges>
 #include <list>
@@ -12,9 +11,39 @@ namespace Sgl
 		renderContext.DrawLine(Start, End, Color);
 	}
 
+	void Line::Translate(float dx, float dy)
+	{
+		Start.x += dx;
+		Start.y += dy;
+		End.x += dx;
+		End.y += dy;
+	}
+
+	void Line::Rotate(size_t degree)
+	{
+		End = RotatePoint(End, RotationCenter, degree);
+	}
+
 	void Polyline::OnRender(RenderContext& renderContext)
 	{
 		renderContext.DrawLines(Points, Color);
+	}
+
+	void Polyline::Translate(float dx, float dy)
+	{
+		for(auto& point : Points)
+		{
+			point.x += dx;
+			point.y += dy;
+		}
+	}
+
+	void Polyline::Rotate(size_t degree)
+	{
+		for(auto& point : Points)
+		{
+			point = RotatePoint(point, RotationCenter, degree);
+		}
 	}
 
 	void Polygon::OnRender(RenderContext& renderContext)
@@ -23,87 +52,43 @@ namespace Sgl
 		renderContext.DrawLine(Points.back(), Points.front(), Color);
 	}
 
+	void Polygon::Translate(float dx, float dy)
+	{
+		for(auto& point : Points)
+		{
+			point.x += dx;
+			point.y += dy;
+		}
+	}
+
+	void Polygon::Rotate(size_t degree)
+	{
+		for(auto& point : Points)
+		{
+			point = RotatePoint(point, RotationCenter, degree);
+		}
+	}
+
 	void FillPolygon::OnRender(RenderContext& renderContext)
 	{
 		renderContext.DrawShape(Vertices, Order);
 	}
 
-	std::vector<SDL_Vertex> FillPolygon::ToVertexVector(std::span<SDL_FPoint> points,
-														Sgl::Color color)
+	void FillPolygon::Translate(float dx, float dy)
 	{
-		std::vector<SDL_Vertex> vertices(points.size());
-		auto toVertex = [&color](const SDL_FPoint& point) { return SDL_Vertex{ point, color, {} }; };
-		std::transform(points.begin(), points.end(), vertices.begin(), toVertex);
-		return vertices;
+		for(auto& vertex : Vertices)
+		{
+			vertex.position.x += dx;
+			vertex.position.y += dy;
+		}
 	}
 
-	std::vector<int> FillPolygon::Triangulate(std::span<SDL_FPoint> points)
+	void FillPolygon::Rotate(size_t degree)
 	{
-		constexpr size_t MinVerticesNumber = 3;
-		std::list<int> order(points.size());
-		std::iota(order.begin(), order.end(), 0);
-		std::vector<int> resultOrder;
-		resultOrder.reserve(points.size());
-
-		auto previous = order.begin();
-		auto current = std::next(previous, 1);
-		auto next = std::next(current, 1);
-		auto IsTriangleContainsPoint = [](SDL_FPoint a, SDL_FPoint b, 
-										  SDL_FPoint c, SDL_FPoint point)
+		for(auto& vertex : Vertices)
 		{
-			return Math::TriangleArea(a, b, c) == (Math::TriangleArea(point, a, b) +
-												   Math::TriangleArea(point, b, c) +
-												   Math::TriangleArea(point, a, c));
-		};
-
-		while(order.size() > MinVerticesNumber)
-		{		
-			bool isConvex = Math::VectorProductZValue(points[*previous], 
-													  points[*current],
-													  points[*next]) < 0;
-			bool isTriangleContainsPoint = false;
-
-			if(isConvex)
-			{
-				for(int i = 0; !isTriangleContainsPoint && i < *previous; i++)
-				{
-					isTriangleContainsPoint = IsTriangleContainsPoint(
-						points[*previous], points[*current], points[*next], points[i]);
-				}
-
-				if(auto afterNext = std::next(next, 1); afterNext != order.end())
-				{
-					for(int i = *afterNext; !isTriangleContainsPoint && i < points.size(); i++)
-					{
-						isTriangleContainsPoint = IsTriangleContainsPoint(
-							points[*previous], points[*current], points[*next], points[i]);
-					}
-				}
-			}
-
-			if(isTriangleContainsPoint || !isConvex)
-			{
-				previous = current;				
-			}
-
-			if(!isTriangleContainsPoint)
-			{
-				resultOrder.push_back(*previous);
-				resultOrder.push_back(*current);
-				resultOrder.push_back(*next);
-				order.remove(*current);
-			}
-
-			current = next;
-			next++;
-
-			if(next == order.end())
-			{
-				next = order.begin();
-			}
+			vertex.position = RotatePoint(vertex.position, RotationCenter, degree);
 		}
-
-		return resultOrder;
 	}
 
 	void Rectangle::OnRender(RenderContext& renderContext)
@@ -111,25 +96,81 @@ namespace Sgl
 		renderContext.DrawRectangle(Rect, Color);
 	}
 
+	void Rectangle::Translate(float dx, float dy)
+	{
+		Rect.x += dx;
+		Rect.y += dy;
+	}
+
+	void Rectangle::Rotate(size_t degree)
+	{
+		
+	}
+
 	void FillRectangle::OnRender(RenderContext& renderContext)
 	{
-		std::visit([&renderContext, this](const auto& paint)
-		{
-			using T = std::decay_t<decltype(paint)>;
-
-			if constexpr(std::is_same_v<T, const Color*>)
+		Filler(
+			[&](const Color& color)
 			{
-				renderContext.DrawFillRectangle(Rect, *paint);
-			}
-			else if constexpr(std::is_same_v<T, const Texture*>)
+				renderContext.DrawFillRectangle(Rect, color);
+			},
+			[&](const Texture& texture)
 			{
-				renderContext.DrawTexture(*paint, Rect);
+				renderContext.DrawTexture(texture, Rect);
 			}
-		}, Fill);
+		).FillWith(Fill);
 	}
 	
 	void Ellipse::OnRender(RenderContext& renderContext)
 	{
-		renderContext.DrawEllipse(Position, Width, Height, Color);
+		renderContext.DrawLines(Points, Color);
+	}
+
+	void Ellipse::Translate(float dx, float dy)
+	{
+		for(auto& point : Points)
+		{
+			point.x += dx;
+			point.y += dy;
+		}
+	}
+
+	void Ellipse::Rotate(size_t degree)
+	{
+		for(auto& point : Points)
+		{
+			point = RotatePoint(point, RotationCenter, degree);
+		}
+	}
+
+	void FillEllipse::OnRender(RenderContext& renderContext)
+	{
+		Filler(
+			[&](const Color& color)
+			{
+				renderContext.DrawShape(Vertices, Order);
+			},
+			[&](const Texture& texture)
+			{
+				renderContext.DrawShape(Vertices, Order, texture);
+			}
+		).FillWith(Fill);
+	}
+
+	void FillEllipse::Translate(float dx, float dy)
+	{
+		for(auto& vertex : Vertices)
+		{
+			vertex.position.x += dx;
+			vertex.position.y += dy;
+		}
+	}
+
+	void FillEllipse::Rotate(size_t degree)
+	{
+		for(auto& vertex : Vertices)
+		{
+			vertex.position = RotatePoint(vertex.position, RotationCenter, degree);
+		}
 	}
 }

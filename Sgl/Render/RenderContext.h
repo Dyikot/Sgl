@@ -1,7 +1,7 @@
 #pragma once
 
 #include "SDL/SDL_render.h"
-#include "../Appearance/Texture.h"
+#include "../Appearance/Fill.h"
 #include <span>
 #include <string_view>
 #include <variant>
@@ -9,8 +9,6 @@
 
 namespace Sgl
 {
-	using Fill = std::variant<const Color*, const Texture*>;
-
 	class RenderContext
 	{
 	protected:
@@ -30,11 +28,12 @@ namespace Sgl
 		void DrawTexture(const Texture& texture, const SDL_FRect& rectangle);
 		void DrawTexture(const Texture& texture, const SDL_FRect& rectangle, const SDL_Rect& clip);
 		void DrawEllipse(SDL_FPoint position, int width, int height, Color color);
+		void DrawEllipseFill(SDL_FPoint position, int width, int height, Color color);
 		void DrawShape(std::span<SDL_Vertex> vertices);
 		void DrawShape(std::span<SDL_Vertex> vertices, const Texture& texture);
 		void DrawShape(std::span<SDL_Vertex> vertices, std::span<int> order);
 		void DrawShape(std::span<SDL_Vertex> vertices, std::span<int> order, const Texture& texture);
-		void FillScene(const Fill& background);
+		void FillSceneBackground(const Fill& fill);
 		void SetBlendMode(SDL_BlendMode mode);
 		Texture CreateTexture(std::string_view path);
 
@@ -44,6 +43,7 @@ namespace Sgl
 		{
 			SDL_SetRenderDrawColor(_renderer, color.R, color.G, color.B, color.A);
 		}
+
 		void SetTextureColor(const Texture& texture) const noexcept
 		{
 			if(texture.Color != Colors::White)

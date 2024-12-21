@@ -20,7 +20,7 @@ namespace Sgl
 		}
 	}
 
-	std::pair<int, int> Texture::Size() const
+	std::pair<size_t, size_t> Texture::Size() const
 	{
 		int width = 0, height = 0;
 		SDL_QueryTexture(_texture, nullptr, nullptr, &width, &height);

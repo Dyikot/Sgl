@@ -36,17 +36,17 @@ namespace Sgl
 	class Cursors
 	{
 	public:
-		static inline Cursor Arrow = Cursor(SDL_SYSTEM_CURSOR_ARROW);
-		static inline Cursor Ibeam = Cursor(SDL_SYSTEM_CURSOR_IBEAM);
-		static inline Cursor Wait = Cursor(SDL_SYSTEM_CURSOR_WAIT);
-		static inline Cursor Crosshair = Cursor(SDL_SYSTEM_CURSOR_CROSSHAIR);
-		static inline Cursor WaitArrow = Cursor(SDL_SYSTEM_CURSOR_WAITARROW);
-		static inline Cursor ArrowNWSE = Cursor(SDL_SYSTEM_CURSOR_SIZENWSE);
-		static inline Cursor ArrowNESW = Cursor(SDL_SYSTEM_CURSOR_SIZENESW);
-		static inline Cursor ArrowWE = Cursor(SDL_SYSTEM_CURSOR_SIZEWE);
-		static inline Cursor ArrowNS = Cursor(SDL_SYSTEM_CURSOR_SIZENS);
-		static inline Cursor ArrowAll = Cursor(SDL_SYSTEM_CURSOR_SIZEALL);
-		static inline Cursor No = Cursor(SDL_SYSTEM_CURSOR_NO);
-		static inline Cursor Hand = Cursor(SDL_SYSTEM_CURSOR_HAND);
+		static inline const Cursor Arrow = Cursor(SDL_SYSTEM_CURSOR_ARROW);
+		static inline const Cursor Ibeam = Cursor(SDL_SYSTEM_CURSOR_IBEAM);
+		static inline const Cursor Wait = Cursor(SDL_SYSTEM_CURSOR_WAIT);
+		static inline const Cursor Crosshair = Cursor(SDL_SYSTEM_CURSOR_CROSSHAIR);
+		static inline const Cursor WaitArrow = Cursor(SDL_SYSTEM_CURSOR_WAITARROW);
+		static inline const Cursor ArrowNWSE = Cursor(SDL_SYSTEM_CURSOR_SIZENWSE);
+		static inline const Cursor ArrowNESW = Cursor(SDL_SYSTEM_CURSOR_SIZENESW);
+		static inline const Cursor ArrowWE = Cursor(SDL_SYSTEM_CURSOR_SIZEWE);
+		static inline const Cursor ArrowNS = Cursor(SDL_SYSTEM_CURSOR_SIZENS);
+		static inline const Cursor ArrowAll = Cursor(SDL_SYSTEM_CURSOR_SIZEALL);
+		static inline const Cursor No = Cursor(SDL_SYSTEM_CURSOR_NO);
+		static inline const Cursor Hand = Cursor(SDL_SYSTEM_CURSOR_HAND);
 	};
 }

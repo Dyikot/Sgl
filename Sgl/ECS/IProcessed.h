@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Tools/Stopwatch.h"
+#include "../Tools/Time/TimeSpan.h"
 
 namespace Sgl
 {

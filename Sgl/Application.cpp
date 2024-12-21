@@ -77,7 +77,7 @@ namespace Sgl
 			if(window.Scenes.IsEmpty())
 			{
 				Shutdown();
-				break;
+				continue;
 			}
 
 			_stopwatch.Restart();

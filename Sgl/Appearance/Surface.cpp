@@ -25,7 +25,7 @@ namespace Sgl
 		surface._surface = nullptr;
 	}
 
-	std::pair<int, int> Surface::Size() const
+	std::pair<size_t, size_t> Surface::Size() const
 	{
 		return { _surface->w, _surface->h };
 	}

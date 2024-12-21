@@ -33,7 +33,7 @@ namespace Sgl
 		void SetSoundEffectVolume(const SoundEffect& soundEffect, const AudioGroup& group);
 
 		void SetMusicVolume(const Music& music);
-		template <AudioPtr T>
+		template <AudioBasePointer T>
 		void SetMusicVolume(const Music& music, const AudioCollection<T>& collection)
 		{
 			Mix_VolumeMusic(ToMixVolume(music.Volume, MusicVolume, collection.Volume));

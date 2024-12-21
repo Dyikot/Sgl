@@ -1,8 +1,7 @@
 #include "RenderContext.h"
 #include "../Tools/Log.h"
-#include <SDL/SDL_image.h>
-#include <numbers>
 #include "../Math/Math.h"
+#include <SDL/SDL_image.h>
 
 namespace Sgl
 {
@@ -73,9 +72,18 @@ namespace Sgl
 
 	void RenderContext::DrawEllipse(SDL_FPoint position, int width, int height, Color color)
 	{		
-		auto points = Math::CalculateEllipsePoints(position, width, height);
-		SetDrawColor(color);
-		SDL_RenderDrawLinesF(_renderer, points.data(), points.size());
+		auto points = Math::ComputeEllipsePoints(position, width, height);
+		DrawLines(points, color);
+	}
+
+	void RenderContext::DrawEllipseFill(SDL_FPoint position, int width, int height, Color color)
+	{
+		auto points = Math::ComputeEllipsePoints(position, width, height);
+		auto order = Math::Triangulate(points);
+		std::array<SDL_Vertex, 100> vertices = {};
+		Math::PointsToVertexRange(points, vertices, color);
+
+		DrawShape(vertices, order);
 	}
 
 	void RenderContext::DrawShape(std::span<SDL_Vertex> vertices)
@@ -110,23 +118,20 @@ namespace Sgl
 						   order.data(), order.size());
 	}
 
-	void RenderContext::FillScene(const Fill& background)
+	void RenderContext::FillSceneBackground(const Fill& fill)
 	{
-		std::visit([this](const auto& paint)
-		{
-			using T = std::decay_t<decltype(paint)>;
-
-			if constexpr(std::is_same_v<T, const Color*>)
+		Filler(
+			[this](const Color& color)
 			{
-				SetDrawColor(*paint);
+				SetDrawColor(color);
 				SDL_RenderClear(_renderer);
-			}
-			else if constexpr(std::is_same_v<T, const Texture*>)
+			},
+			[this](const Texture& texture)
 			{
-				SetTextureColor(*paint);
-				SDL_RenderCopy(_renderer, *paint, nullptr, nullptr);
+				SetTextureColor(texture);
+				SDL_RenderCopy(_renderer, texture, nullptr, nullptr);
 			}
-		}, background);
+		).FillWith(fill);
 	}
 
 	void RenderContext::SetBlendMode(SDL_BlendMode mode)
