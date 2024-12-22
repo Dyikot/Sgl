@@ -39,7 +39,7 @@ namespace Sgl
 	public:
 		Any Content;
 	private:
-		std::unique_ptr<ContentVisualizer> _contentVisualizer = nullptr;
+		std::unique_ptr<ContentVisualizer> _contentVisualizer;
 	public:
 		void OnRender(RenderContext& renderContext) override;
 

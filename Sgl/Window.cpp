@@ -138,7 +138,7 @@ namespace Sgl
             return;
         }
 
-        Scenes.Active()->OnRender(GetRenderContext());
+        Scenes.Current()->OnRender(GetRenderContext());
         SDL_RenderPresent(_renderContext);
     }
 
@@ -154,7 +154,7 @@ namespace Sgl
 
     void Window::Close()
     {
-        Scenes.UnloadAll();
+        Scenes.Clear();
     }
 
     bool Window::IsVisible() const

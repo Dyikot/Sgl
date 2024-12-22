@@ -74,7 +74,7 @@ namespace Sgl
 
 		while(_isRunning)
 		{
-			if(window.Scenes.IsEmpty())
+			if(window.Scenes.Any())
 			{
 				Shutdown();
 				continue;
@@ -82,15 +82,14 @@ namespace Sgl
 
 			_stopwatch.Restart();
 
-			HandleEvents(window.Scenes.Active());
+			HandleEvents(window.Scenes.Current());
 
-			if(window.Scenes.Active()->IsClosed())
+			if(window.Scenes.IsCurrentClosed())
 			{
-				window.Scenes.UnloadActive();
 				continue;
 			}
 
-			window.Scenes.Active()->Process(_stopwatch.Elapsed());
+			window.Scenes.Current()->Process(_stopwatch.Elapsed());
 			window.Render();
 
 			if(_maxFrameRate)
@@ -163,8 +162,7 @@ namespace Sgl
 				}
 
 				case SDL_KEYUP:
-				{
-				
+				{				
 					scene->OnKeyUp(
 						KeyEventArgs
 						{

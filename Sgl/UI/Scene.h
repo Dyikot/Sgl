@@ -19,7 +19,7 @@ namespace Sgl
 		std::set<Panel*, PanelComparer> Panels;
 	private:
 		Panel* _mouseOverPanel = nullptr;
-		bool _isRunning = true;
+		bool _isActive = true;
 	public:
 		Scene() = default;
 		Scene(const Style& style) noexcept;
@@ -40,7 +40,7 @@ namespace Sgl
 		virtual void OnTextChanged(const TextChangedEventArgs& e) {};
 		virtual void OnTextInput(const TextInputEventArgs& e) {};
 	private:
-		friend class SceneManager;
+		friend class SceneStack;
 		friend class Application;
 	};
 }

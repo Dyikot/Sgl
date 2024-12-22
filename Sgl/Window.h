@@ -3,8 +3,7 @@
 #include <stack>
 #include <filesystem>
 #include <iostream>
-#include "Collections/SceneManager.h"
-#include "UI/Scene.h"
+#include "Collections/SceneStack.h"
 #include "Render/RenderContext.h"
 #include "Appearance/Style/Style.h"
 #include "Events/EventArgs.h"
@@ -28,7 +27,7 @@ namespace Sgl
 		using WindowEventHandler = EventHandler<Window, EventArgs>;
 		using WindowSizeChangedEventHandler = EventHandler<Window, SizeChangedEventArgs>;
 
-		SceneManager Scenes;
+		SceneStack Scenes;
 	protected:
 		SDL_Window* const _sdlWindow;
 		RenderContext _renderContext;

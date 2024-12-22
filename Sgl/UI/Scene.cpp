@@ -18,12 +18,12 @@ namespace Sgl
 
 	void Scene::Close()
 	{
-		_isRunning = false;
+		_isActive = false;
 	}
 
 	bool Scene::IsClosed() const
 	{
-		return !_isRunning;
+		return !_isActive;
 	}
 
 	void Scene::OnMouseMove(const MouseButtonEventArgs& e)
