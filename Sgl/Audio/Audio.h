@@ -74,31 +74,27 @@ namespace Sgl
 		operator Mix_Chunk* () const { return _soundChunk; }
 	};
 
-	template<typename T>
-	concept AudioBasePointer = std::is_pointer_v<T> &&
-							   std::derived_from<std::remove_pointer_t<T>, AudioBase>;
-
-	template<typename T> requires AudioBasePointer<T>
-	class AudioCollection: public std::vector<T>
+	template<typename T> requires std::derived_from<T, AudioBase>
+	class AudioCollection: public std::vector<T*>
 	{
 	public:
 		Volume Volume;
 	public:
 		AudioCollection(Sgl::Volume volume = Volume::Max):
-			std::vector<T>(),
+			std::vector<T*>(),
 			Volume(volume)
 		{}
 	};
 
-	using AudioGroup = AudioCollection<AudioBase*>;
+	using AudioGroup = AudioCollection<AudioBase>;
 
-	class PlayList: public AudioCollection<Music*>
+	class PlayList: public AudioCollection<Music>
 	{
 	private:
 		PlayList::iterator _current;
 	public:
 		PlayList(Sgl::Volume volume = Volume::Max):
-			AudioCollection<Music*>(volume)
+			AudioCollection<Music>(volume)
 		{}
 
 		Music* Current() const { return empty() ? nullptr : *_current; }

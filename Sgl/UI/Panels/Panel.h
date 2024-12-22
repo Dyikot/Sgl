@@ -1,41 +1,29 @@
 #pragma once
 
 #include "../Object.h"
-#include <set>
+#include "../../Collections/ObjestSet.h"
+#include "../Controls/Control.h"
 
 namespace Sgl
 {
-	class Control;
-
 	class Panel: public Object
 	{
 	public:
 		Control* MouseOverControl = nullptr;
-		std::set<Control*> Children;
+		ObjestSet<Control> Children;
 	protected:
-		Fill _background = &Colors::Black;
-		size_t _zindex = 1;
+		Fill _background = &Colors::Black;		
 	public:
 		Panel() = default;
 		Panel(const Style& style);
 
 		void SetBackground(const Fill& value) { _background = value; }
-		void SetZIndex(size_t value) { _zindex = value; }
 
 		const Fill& GetBackground() const { return _background; }
-		size_t GetZIndex() const { return _zindex; }
 
 		bool TryRaiseMouseMoveEvents(const MouseButtonEventArgs& e);
 		void RaiseMouseDownEvents(const MouseButtonEventArgs& e);
 		void RaiseMouseUpEvents(const MouseButtonEventArgs& e);
 	private:
-	};
-
-	struct PanelComparer
-	{
-		bool operator()(const Panel* left, const Panel* right) const
-		{
-			left->GetZIndex() < right->GetZIndex();
-		}
-	};
+	};	
 }

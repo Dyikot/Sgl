@@ -1,11 +1,13 @@
 #pragma once
 
 #include "SDL/SDL_ttf.h"
-#include "../Panels/Panel.h"
+#include "../Object.h"
 #include "../../Appearance/Color.h"
 
 namespace Sgl
 {
+	class Panel;
+
 	class Control: public Object
 	{
 	public:

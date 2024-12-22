@@ -33,7 +33,8 @@ namespace Sgl
 		void SetSoundEffectVolume(const SoundEffect& soundEffect, const AudioGroup& group);
 
 		void SetMusicVolume(const Music& music);
-		template <AudioBasePointer T>
+
+		template <typename T> requires std::derived_from<T, AudioBase>
 		void SetMusicVolume(const Music& music, const AudioCollection<T>& collection)
 		{
 			Mix_VolumeMusic(ToMixVolume(music.Volume, MusicVolume, collection.Volume));

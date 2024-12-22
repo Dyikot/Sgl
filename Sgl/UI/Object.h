@@ -35,6 +35,7 @@ namespace Sgl
 		float _minHeight = 0;
 		float _maxWidth = 0;
 		float _maxHeight = 0;
+		size_t _zindex = 1;
 		SDL_FPoint _position = { 0, 0 };
 		Thikness _margin;
 		HorizontalAlignment _horizontalAlignment = HorizontalAlignment::Stretch;
@@ -56,6 +57,7 @@ namespace Sgl
 		void SetMaxWidth(float value) { _maxWidth = value; }
 		void SetMaxHeight(float value) { _maxHeight = value; }
 		void SetPosition(SDL_FPoint value) { _position = value; }
+		void SetZIndex(size_t value) { _zindex = value; }
 		void SetMargin(const Thikness& value) { _margin = value; }
 		void SetHorizontalAlignment(HorizontalAlignment value) { _horizontalAlignment = value; }
 		void SetVerticalAlignment(VerticalAligment value) { _verticalAlignment = value; }
@@ -68,6 +70,7 @@ namespace Sgl
 		float GetMaxWidth() const { return _maxWidth; }
 		float GetMaxHeight() const { return _maxHeight; }
 		SDL_FPoint GetPosition() const { return _position; }
+		size_t GetZIndex() const { return _zindex; }
 		const Thikness& GetMargin() const { return _margin; }
 		HorizontalAlignment GetHorizontalAlignment() const { return _horizontalAlignment; }
 		VerticalAligment GetVerticalAlignment() const { return _verticalAlignment; }
@@ -83,5 +86,13 @@ namespace Sgl
 		virtual void OnMouseEnter(const MouseButtonEventArgs& e);
 		virtual void OnMouseLeave(const MouseButtonEventArgs& e);
 		virtual void OnSizeChanged(IVisual* sender, const SizeChangedEventArgs& e);
+	};
+
+	struct ZIndexComparer
+	{
+		bool operator()(const Object* left, const Object* right) const
+		{
+			return left->GetZIndex() < right->GetZIndex();
+		}
 	};
 }

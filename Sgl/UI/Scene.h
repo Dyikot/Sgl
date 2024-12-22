@@ -5,7 +5,7 @@
 #include "../Appearance/Color.h"
 #include "../Appearance/Texture.h"
 #include "../ECS/IProcessed.h"
-#include "Controls/Control.h"
+#include "Panels/Panel.h"
 
 namespace Sgl
 {	
@@ -16,7 +16,7 @@ namespace Sgl
 		static inline const PropertyId UnloadedProperty = PropertyManager::Register<UIEventHandler>("Unloaded");
 		
 		Fill Background = &Colors::Black;
-		std::set<Panel*, PanelComparer> Panels;
+		ObjestSet<Panel> Panels;
 	private:
 		Panel* _mouseOverPanel = nullptr;
 		bool _isActive = true;
