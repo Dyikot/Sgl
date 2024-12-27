@@ -6,9 +6,9 @@ namespace Sgl
 	Scene::Scene(const Style& style) noexcept:
 		UIElement(style)
 	{
-		style.TryInit(Control::BackgroundProperty, Background);
+		/*style.TryInit(Control::BackgroundProperty, Background);
 		style.TryInitEvent(LoadedProperty, Loaded);
-		style.TryInitEvent(UnloadedProperty, Unloaded);
+		style.TryInitEvent(UnloadedProperty, Unloaded);*/
 	}
 
 	void Scene::OnRender(RenderContext& renderContext)

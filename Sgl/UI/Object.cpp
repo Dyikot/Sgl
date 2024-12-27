@@ -3,33 +3,120 @@
 
 namespace Sgl
 {
+    Object::Object()
+    {
+        _properties[WidthProperty] = Any::New<float>();
+        _properties[HeightProperty] = Any::New<float>();
+        _properties[MinWidthProperty] = Any::New<float>();
+        _properties[MinHeightProperty] = Any::New<float>();
+        _properties[MaxWidthProperty] = Any::New<float>();
+        _properties[MaxHeightProperty] = Any::New<float>();
+        _properties[ZIndexProperty] = Any::New<size_t>(1);
+        _properties[MarginProperty] = Any::New<Thikness>();
+        /*_propertyMap[CursorProperty] = Any::New<Cursor*>(nullptr);
+        _propertyMap[ToolTipProperty] = Any::New<IVisual*>(nullptr);*/
+        _properties[HorizontalAlignmentProperty] = HorizontalAlignment::Stretch;
+        _properties[VerticalAligmentProperty] = VerticalAligment::Stretch;
+        _properties[VisibilityProperty] = Visibility::Visible;
+
+        _propertyChangedEventMap[WidthProperty] = Event<PropertyChangedEventHandler>();
+        _propertyChangedEventMap[HeightProperty] = Event<PropertyChangedEventHandler>();
+        _propertyChangedEventMap[MinWidthProperty] = Event<PropertyChangedEventHandler>();
+        _propertyChangedEventMap[MinHeightProperty] = Event<PropertyChangedEventHandler>();
+        _propertyChangedEventMap[MaxWidthProperty] = Event<PropertyChangedEventHandler>();
+        _propertyChangedEventMap[MaxHeightProperty] = Event<PropertyChangedEventHandler>();
+        _propertyChangedEventMap[ZIndexProperty] = Event<PropertyChangedEventHandler>();
+        _propertyChangedEventMap[MarginProperty] = Event<PropertyChangedEventHandler>();
+        _propertyChangedEventMap[CursorProperty] = Event<PropertyChangedEventHandler>();
+        _propertyChangedEventMap[ToolTipProperty] = Event<PropertyChangedEventHandler>();
+        _propertyChangedEventMap[HorizontalAlignmentProperty] = Event<PropertyChangedEventHandler>();
+        _propertyChangedEventMap[VerticalAligmentProperty] = Event<PropertyChangedEventHandler>();
+        _propertyChangedEventMap[VisibilityProperty] = Event<PropertyChangedEventHandler>();
+    }
+
     Object::Object(SDL_FPoint position) noexcept:
-        _position(position)
-    {}
+        Object()
+    {
+        Position = position;
+    }
 
     Object::Object(SDL_FPoint position, const Style& style) noexcept:
-        _position(position),
-        UIElement(style)
+        Object()
     {
-        style.TryInit(WidthProperty, _width);
-        style.TryInit(HeightProperty, _height);
-        style.TryInit(MaxWidthProperty, _maxWidth);
-        style.TryInit(MaxHeightProperty, _maxHeight);
-        style.TryInit(MinWidthProperty, _minWidth);
-        style.TryInit(MinHeightProperty, _minHeight);
-        style.TryInit(MarginProperty, _margin);
-        style.TryInit(CursorProperty, Cursor);
-        style.TryInit(ToolTipProperty, ToolTip);
-        style.TryInit(VerticalAligmentProperty, _verticalAlignment);
-        style.TryInit(HorizontalAlignmentProperty, _horizontalAlignment);
-        style.TryInitEvent(MouseEnterProperty, MouseEnter);
-        style.TryInitEvent(MouseLeaveProperty, MouseLeave);
-        style.TryInitEvent(SizeChangedProperty, SizeChanged);
+        Position = position;
+        InitEvents(style);
+        _properties = style.Setters;
     }
 
     Object::Object(const Style& style) noexcept:
         Object(SDL_FPoint{}, style)
     {}
+
+    void Object::SetWidth(float value)
+    {
+        _properties[WidthProperty].As<float>() = value;
+        OnPropertyChanged(WidthProperty);
+    }
+
+    void Object::SetHeight(float value)
+    {
+        _properties[HeightProperty].As<float>() = value;
+        OnPropertyChanged(HeightProperty);
+    }
+
+    void Object::SetMinWidth(float value)
+    {
+        _properties[MinWidthProperty].As<float>() = value;
+        OnPropertyChanged(MinWidthProperty);
+    }
+
+    void Object::SetMinHeight(float value)
+    {
+        _properties[MinHeightProperty].As<float>() = value;
+        OnPropertyChanged(MinHeightProperty);
+    }
+
+    void Object::SetMaxWidth(float value)
+    {
+        _properties[MaxWidthProperty].As<float>() = value;
+        OnPropertyChanged(MaxWidthProperty);
+    }
+
+    void Object::SetMaxHeight(float value)
+    {
+        _properties[MaxHeightProperty].As<float>() = value;
+        OnPropertyChanged(MaxHeightProperty);
+    }
+
+    void Object::SetZIndex(size_t value)
+    {
+        _properties[ZIndexProperty].As<size_t>() = value;
+        OnPropertyChanged(ZIndexProperty);
+    }
+
+    void Object::SetMargin(const Thikness & value)
+    {
+        _properties[MarginProperty].As<Thikness>() = value;
+        OnPropertyChanged(MarginProperty);
+    }
+
+    void Object::SetHorizontalAlignment(HorizontalAlignment value)
+    {
+        _properties[HorizontalAlignmentProperty].As<HorizontalAlignment>() = value;
+        OnPropertyChanged(HorizontalAlignmentProperty);
+    }
+
+    void Object::SetVerticalAlignment(VerticalAligment value)
+    {
+        _properties[VerticalAligmentProperty].As<VerticalAligment>() = value;
+        OnPropertyChanged(VerticalAligmentProperty);
+    }
+
+    void Object::SetVisibility(Visibility value)
+    {
+        _properties[VisibilityProperty].As<Visibility>() = value;
+        OnPropertyChanged(VisibilityProperty);
+    }
 
     void Object::OnRender(RenderContext& renderContext)
     {
@@ -69,11 +156,13 @@ namespace Sgl
         }
     }
 
-    void Object::OnSizeChanged(IVisual* sender, const SizeChangedEventArgs& e)
+    void Object::OnPropertyChanged(PropertyId id)
     {
-        if(SizeChanged)
+        const auto& PropertyChanged = _propertyChangedEventMap[id];
+
+        if(PropertyChanged)
         {
-            SizeChanged(sender, e);
+            PropertyChanged(this, EventArgs());
         }
     }
 }

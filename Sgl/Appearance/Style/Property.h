@@ -8,23 +8,37 @@
 
 namespace Sgl
 {
-	using PropertyId = size_t;	
+	#define CreateSizeType(typeName) \
+	class typeName \
+	{ \
+	private:\
+		size_t _value;\
+	public:\
+		constexpr typeName(size_t value):\
+			_value(value)\
+		{}\
+		constexpr operator size_t() const { return _value; }\
+	}\
 
-	class PropertyManager
+	CreateSizeType(PropertyId);
+	CreateSizeType(EventId);
+
+	template<typename TId>
+	class UniquePropertyManager
 	{
 	private:
-		static inline std::unordered_map<PropertyId, std::string> _propertyIdMap;
+		static inline std::unordered_map<TId, std::string> _propertTypeNamesMap;
 		static inline std::unordered_set<std::string> _propertiesNames;
 	public:
 		template<typename T>
-		static const PropertyId Register(std::string&& name)
+		static const TId Register(std::string&& name)
 		{
 			auto [_, isInserted] = _propertiesNames.insert(std::move(name));
 			
 			if(isInserted)
 			{
-				PropertyId id = _propertiesNames.size() - 1;
-				_propertyIdMap.emplace(id, typeid(T).name());
+				TId id = _propertiesNames.size() - 1;
+				_propertTypeNamesMap.emplace(id, typeid(T).name());
 				return id;
 			}
 			else
@@ -33,9 +47,30 @@ namespace Sgl
 			}
 		}
 
-		static std::string_view GetTypeNameOf(PropertyId id)
+		static std::string_view GetTypeNameOf(TId id)
 		{
-			return _propertyIdMap.at(id);
+			return _propertTypeNamesMap.at(id);
 		}
-	};	
+	};
+
+	using PropertyManager = UniquePropertyManager<PropertyId>;
+	using EventManager = UniquePropertyManager<EventId>;
 }
+
+template<>
+struct std::hash<Sgl::PropertyId>
+{
+	size_t operator()(const Sgl::PropertyId& id) const
+	{
+		return std::hash<size_t>()(id);
+	}
+};
+
+template<>
+struct std::hash<Sgl::EventId>
+{
+	size_t operator()(const Sgl::EventId& id) const
+	{
+		return std::hash<size_t>()(id);
+	}
+};

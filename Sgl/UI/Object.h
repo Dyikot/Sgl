@@ -1,15 +1,17 @@
 #pragma once
 
+#include <unordered_map>
 #include "UIElement.h"
 #include "../Appearance/UIAppearance.h"
 #include "../Appearance/Cursor.h"
+#include "../Events/Delegates.h"
 
 namespace Sgl
 {
 	class Object: public UIElement
 	{
 	public:
-		using SizeChangedEventHandler = EventHandler<IVisual, SizeChangedEventArgs>;
+		using PropertyChangedEventHandler = EventHandler<Object, EventArgs>;
 
 		static inline const PropertyId WidthProperty = PropertyManager::Register<float>("Width");
 		static inline const PropertyId HeightProperty = PropertyManager::Register<float>("Height");
@@ -17,75 +19,84 @@ namespace Sgl
 		static inline const PropertyId MinHeightProperty = PropertyManager::Register<float>("MinHeight");
 		static inline const PropertyId MaxWidthProperty = PropertyManager::Register<float>("MaxWidth");
 		static inline const PropertyId MaxHeightProperty = PropertyManager::Register<float>("MaxHeight");
+		static inline const PropertyId ZIndexProperty = PropertyManager::Register<size_t>("ZIndex");
 		static inline const PropertyId MarginProperty = PropertyManager::Register<Thikness>("Margin");
 		static inline const PropertyId CursorProperty = PropertyManager::Register<Cursor*>("Cursor");
 		static inline const PropertyId ToolTipProperty = PropertyManager::Register<IVisual*>("ToolTip");
 		static inline const PropertyId HorizontalAlignmentProperty = PropertyManager::Register<HorizontalAlignment>("HorizontalAlignment");
 		static inline const PropertyId VerticalAligmentProperty = PropertyManager::Register<VerticalAligment>("VerticalAligment");
-		static inline const PropertyId MouseEnterProperty = PropertyManager::Register<MouseEventHandler>("MouseEnter");
-		static inline const PropertyId MouseLeaveProperty = PropertyManager::Register<MouseEventHandler>("MouseLeave");
-		static inline const PropertyId SizeChangedProperty = PropertyManager::Register<SizeChangedEventHandler>("SizeChanged");
+		static inline const PropertyId VisibilityProperty = PropertyManager::Register<Visibility>("Visibility");
+		static inline const EventId MouseEnterProperty = EventManager::Register<MouseEventHandler>("MouseEnter");
+		static inline const EventId MouseLeaveProperty = EventManager::Register<MouseEventHandler>("MouseLeave");
 
+		SDL_FPoint Position = { 0, 0 };
 		Cursor* Cursor = nullptr;
 		IVisual* ToolTip = nullptr;
 	protected:
-		float _width = 0;
-		float _height = 0;
-		float _minWidth = 0;
-		float _minHeight = 0;
-		float _maxWidth = 0;
-		float _maxHeight = 0;
-		size_t _zindex = 1;
-		SDL_FPoint _position = { 0, 0 };
-		Thikness _margin;
-		HorizontalAlignment _horizontalAlignment = HorizontalAlignment::Stretch;
-		VerticalAligment _verticalAlignment = VerticalAligment::Stretch;
-		Visibility _visibility = Visibility::Visible;
+		std::unordered_map<PropertyId, Event<PropertyChangedEventHandler>> _propertyChangedEventMap;
 	private:
+		static inline bool _isStaticDataInitialized = false;
 		bool _isMouseOver = false;
 	public:
-		Object() = default;
+		Object();
 		Object(SDL_FPoint position) noexcept;
 		Object(SDL_FPoint position, const Style& style) noexcept;
 		Object(const Style& style) noexcept;
 		virtual ~Object() = default;
 
-		void SetWidth(float value) { _width = value; }
-		void SetHeight(float value) { _height = value; }
-		void SetMinWidth(float value) { _minWidth = value; }
-		void SetMinHeight(float value) { _minHeight = value; }
-		void SetMaxWidth(float value) { _maxWidth = value; }
-		void SetMaxHeight(float value) { _maxHeight = value; }
-		void SetPosition(SDL_FPoint value) { _position = value; }
-		void SetZIndex(size_t value) { _zindex = value; }
-		void SetMargin(const Thikness& value) { _margin = value; }
-		void SetHorizontalAlignment(HorizontalAlignment value) { _horizontalAlignment = value; }
-		void SetVerticalAlignment(VerticalAligment value) { _verticalAlignment = value; }
-		void SetVisibility(Visibility value) { _visibility = value; }
+		void SetWidth(float value);
+		void SetHeight(float value);
+		void SetMinWidth(float value);
+		void SetMinHeight(float value);
+		void SetMaxWidth(float value);
+		void SetMaxHeight(float value);
+		void SetZIndex(size_t value);
+		void SetMargin(const Thikness& value);
+		void SetHorizontalAlignment(HorizontalAlignment value);
+		void SetVerticalAlignment(VerticalAligment value);
+		void SetVisibility(Visibility value);
 
-		float GetWidth() const { return _width; }
-		float GetHeight() const { return _height; }
-		float GetMinWidth() const { return _minWidth; }
-		float GetMinHeight() const { return _minHeight; }
-		float GetMaxWidth() const { return _maxWidth; }
-		float GetMaxHeight() const { return _maxHeight; }
-		SDL_FPoint GetPosition() const { return _position; }
-		size_t GetZIndex() const { return _zindex; }
-		const Thikness& GetMargin() const { return _margin; }
-		HorizontalAlignment GetHorizontalAlignment() const { return _horizontalAlignment; }
-		VerticalAligment GetVerticalAlignment() const { return _verticalAlignment; }
-		Visibility GetVisibility() const { return _visibility; }
+		float GetWidth() const { return _properties.at(WidthProperty).As<float>(); }
+		float GetHeight() const { return _properties.at(HeightProperty).As<float>(); }
+		float GetMinWidth() const { return _properties.at(MinWidthProperty).As<float>(); }
+		float GetMinHeight() const { return _properties.at(MinHeightProperty).As<float>(); }
+		float GetMaxWidth() const { return _properties.at(MaxWidthProperty).As<float>(); }
+		float GetMaxHeight() const { return _properties.at(MaxHeightProperty).As<float>(); }
+		size_t GetZIndex() const { return _properties.at(ZIndexProperty).As<size_t>(); }
+		const Thikness& GetMargin() const { return _properties.at(MarginProperty).As<Thikness>(); }
+		HorizontalAlignment GetHorizontalAlignment() const { return _properties.at(HorizontalAlignmentProperty).As<HorizontalAlignment>(); }
+		VerticalAligment GetVerticalAlignment() const { return _properties.at(VerticalAligmentProperty).As<VerticalAligment>(); }
+		Visibility GetVisibility() const { return _properties.at(VisibilityProperty).As<Visibility>(); }
 
 		Event<MouseEventHandler> MouseEnter;
 		Event<MouseEventHandler> MouseLeave;
-		Event<SizeChangedEventHandler> SizeChanged;
 
 		void OnRender(RenderContext& renderContext) override;
 		bool IsMouseOver() const noexcept { return _isMouseOver; }
+
+		void AddPropertyChangedHandler(PropertyId id, auto&& handler)
+		{
+			_propertyChangedEventMap[id] += std::forward<decltype(handler)>(handler);
+		}
+
+		void RemovePropertyChangedHandler(PropertyId id, auto&& handler)
+		{
+			_propertyChangedEventMap[id] -= std::forward<decltype(handler)>(handler);
+		}
+
+		template<typename T>
+		void Bind(PropertyId id, T& item)
+		{
+			_propertyChangedEventMap[id] +=
+				[&item, property = &_properties[id].As<T>()] (Object* sender, const EventArgs& e)
+				{
+					item = *property;
+				};
+		}
 	protected:
 		virtual void OnMouseEnter(const MouseButtonEventArgs& e);
 		virtual void OnMouseLeave(const MouseButtonEventArgs& e);
-		virtual void OnSizeChanged(IVisual* sender, const SizeChangedEventArgs& e);
+		void OnPropertyChanged(PropertyId id);
 	};
 
 	struct ZIndexComparer
