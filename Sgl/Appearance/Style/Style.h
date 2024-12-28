@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../Collections/SetterMap.h"
+#include "Setters.h"
 
 namespace Sgl
 {

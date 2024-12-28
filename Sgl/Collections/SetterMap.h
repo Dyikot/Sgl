@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../Appearance/Style/Property.h"
 #include "../Events/Event.h"
 #include "../Any.h"
+#include "../Appearance/Style/UniquePropertyManager.h"
 #include <format>
 
 namespace Sgl
@@ -84,23 +84,5 @@ namespace Sgl
 		{
 			return UniquePropertyManager<TId>::GetTypeNameOf(id) == object.Type().name();
 		}
-	};
-
-	class EventSetterMap: public SetterMap<EventId>
-	{
-	public:
-		template<typename THanlder>
-		bool TrySetEvent(EventId id, Event<THanlder>& event) const
-		{
-			if(Contains(id))
-			{
-				event += At(id).As<THanlder>();
-				return true;
-			}
-
-			return false;
-		}
-	};
-
-	using PropertySetterMap = SetterMap<PropertyId>;
+	};	
 }

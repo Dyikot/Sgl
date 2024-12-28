@@ -12,8 +12,8 @@ namespace Sgl
 	class Scene: public UIElement, public IProcessed
 	{
 	public:		
-		static inline const PropertyId LoadedProperty = PropertyManager::Register<UIEventHandler>("Loaded");
-		static inline const PropertyId UnloadedProperty = PropertyManager::Register<UIEventHandler>("Unloaded");
+		static inline const EventId LoadedProperty = EventManager::Register<UIEventHandler>("Loaded");
+		static inline const EventId UnloadedProperty = EventManager::Register<UIEventHandler>("Unloaded");
 		
 		Fill Background = &Colors::Black;
 		ObjestSet<Panel> Panels;

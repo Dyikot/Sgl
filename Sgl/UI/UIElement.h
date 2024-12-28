@@ -5,6 +5,7 @@
 #include "../Events/EventArgs.h"
 #include "../Events/Delegates.h"
 #include "../Appearance/Style/Style.h"
+#include "../Appearance/Style/PropertyManagers.h"
 
 namespace Sgl
 {

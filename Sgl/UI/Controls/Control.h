@@ -11,15 +11,16 @@ namespace Sgl
 	class Control: public Object
 	{
 	public:
-		static inline const PropertyId BackgroundProperty = PropertyManager::Register<Fill>("Background");
-		static inline const PropertyId BorderColorProperty = PropertyManager::Register<Color>("BorderColor");
+		static constexpr size_t DefaultFontSize = 14;
+		
+		static inline const PropertyId BackgroundProperty = PropertyManager::Register<Fill>("Background", &Colors::Transparent);
+		static inline const PropertyId BorderColorProperty = PropertyManager::Register<Color>("BorderColor", Colors::Transparent);
 		static inline const PropertyId BorderThiknessProperty = PropertyManager::Register<Thikness>("BorderThikness");
 		static inline const PropertyId FontFamilyProperty = PropertyManager::Register<FontFamily>("FontFamily");
-		static inline const PropertyId FontWeightProperty = PropertyManager::Register<FontWeight>("FontWeight");
-		static inline const PropertyId FontColorProperty = PropertyManager::Register<Color>("FontColor");
-		static inline const PropertyId FontSizeProperty = PropertyManager::Register<uint16_t>("FontSize");
+		static inline const PropertyId FontWeightProperty = PropertyManager::Register<FontWeight>("FontWeight", FontWeight::Normal);
+		static inline const PropertyId FontColorProperty = PropertyManager::Register<Color>("FontColor", Colors::Black);
+		static inline const PropertyId FontSizeProperty = PropertyManager::Register<uint16_t>("FontSize", DefaultFontSize);
 		static inline const EventId MouseDoubleClickEvent = EventManager::Register<MouseEventHandler>("MouseDoubleClick");
-		static constexpr size_t DefaultFontSize = 14;
 
 		Panel* Panel = nullptr;
 	protected:

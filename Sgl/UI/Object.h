@@ -21,13 +21,13 @@ namespace Sgl
 		static inline const PropertyId MinHeightProperty = PropertyManager::Register<float>("MinHeight");
 		static inline const PropertyId MaxWidthProperty = PropertyManager::Register<float>("MaxWidth");
 		static inline const PropertyId MaxHeightProperty = PropertyManager::Register<float>("MaxHeight");
-		static inline const PropertyId ZIndexProperty = PropertyManager::Register<size_t>("ZIndex");
+		static inline const PropertyId ZIndexProperty = PropertyManager::Register<size_t>("ZIndex", 1);
 		static inline const PropertyId MarginProperty = PropertyManager::Register<Thikness>("Margin");
-		static inline const PropertyId CursorProperty = PropertyManager::Register<Cursor*>("Cursor");
-		static inline const PropertyId ToolTipProperty = PropertyManager::Register<IVisual*>("ToolTip");
-		static inline const PropertyId HorizontalAlignmentProperty = PropertyManager::Register<HorizontalAlignment>("HorizontalAlignment");
-		static inline const PropertyId VerticalAligmentProperty = PropertyManager::Register<VerticalAligment>("VerticalAligment");
-		static inline const PropertyId VisibilityProperty = PropertyManager::Register<Visibility>("Visibility");
+		static inline const PropertyId CursorProperty = PropertyManager::Register<Cursor*>("Cursor", nullptr);
+		static inline const PropertyId ToolTipProperty = PropertyManager::Register<IVisual*>("ToolTip", nullptr);
+		static inline const PropertyId HorizontalAlignmentProperty = PropertyManager::Register<HorizontalAlignment>("HorizontalAlignment", HorizontalAlignment::Stretch);
+		static inline const PropertyId VerticalAligmentProperty = PropertyManager::Register<VerticalAligment>("VerticalAligment", VerticalAligment::Stretch);
+		static inline const PropertyId VisibilityProperty = PropertyManager::Register<Visibility>("Visibility", Visibility::Visible);
 		static inline const EventId MouseEnterEvent = EventManager::Register<MouseEventHandler>("MouseEnter");
 		static inline const EventId MouseLeaveEvent = EventManager::Register<MouseEventHandler>("MouseLeave");
 
@@ -35,7 +35,7 @@ namespace Sgl
 		Cursor* Cursor = nullptr;
 		IVisual* ToolTip = nullptr;
 	protected:
-		PropertySetterMap _properties;
+		PropertySetterMap _properties = PropertyManager::GetDefaultProperties();
 		std::unordered_map<PropertyId, Event<PropertyChangedEventHandler>> _propertyChangedEventMap;
 	private:
 		bool _isMouseOver = false;
@@ -98,7 +98,6 @@ namespace Sgl
 		virtual void OnMouseLeave(const MouseButtonEventArgs& e);
 		void OnPropertyChanged(PropertyId id);
 	private:
-		void InitProperties();
 		void InitPropertyChangedMap();
 	};
 

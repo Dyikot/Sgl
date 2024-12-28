@@ -5,7 +5,6 @@ namespace Sgl
 {
     Object::Object()
     {
-        InitProperties();
         InitPropertyChangedMap();
     }
 
@@ -13,12 +12,11 @@ namespace Sgl
         UIElement(style),
         Position(position)
     {
-        InitProperties();
         InitPropertyChangedMap();
 
         _properties = style.Setters;
         style.EventSetters.TrySetEvent(MouseEnterEvent, MouseEnter);
-        style.EventSetters.TrySetEvent(MouseLeaveEvent, MouseLeave);
+        style.EventSetters.TrySetEvent(MouseLeaveEvent, MouseLeave);        
     }
 
     void Object::SetWidth(float value)
@@ -133,23 +131,6 @@ namespace Sgl
         {
             PropertyChanged(this, EventArgs());
         }
-    }
-
-    void Object::InitProperties()
-    {
-        _properties[WidthProperty] = Any::New<float>();
-        _properties[HeightProperty] = Any::New<float>();
-        _properties[MinWidthProperty] = Any::New<float>();
-        _properties[MinHeightProperty] = Any::New<float>();
-        _properties[MaxWidthProperty] = Any::New<float>();
-        _properties[MaxHeightProperty] = Any::New<float>();
-        _properties[ZIndexProperty] = Any::New<size_t>(1);
-        _properties[MarginProperty] = Any::New<Thikness>();
-        /*_propertyMap[CursorProperty] = Any::New<Cursor*>(nullptr);
-        _propertyMap[ToolTipProperty] = Any::New<IVisual*>(nullptr);*/
-        _properties[HorizontalAlignmentProperty] = HorizontalAlignment::Stretch;
-        _properties[VerticalAligmentProperty] = VerticalAligment::Stretch;
-        _properties[VisibilityProperty] = Visibility::Visible;
     }
 
     void Object::InitPropertyChangedMap()
