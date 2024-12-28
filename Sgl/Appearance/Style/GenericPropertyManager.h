@@ -9,7 +9,7 @@
 namespace Sgl
 {
 	template<typename TId>
-	class UniquePropertyManager
+	class GenericPropertyManager
 	{
 	protected:
 		static inline std::unordered_map<TId, std::string> _propertTypeNamesMap;

@@ -2,7 +2,7 @@
 
 #include "../Events/Event.h"
 #include "../Any.h"
-#include "../Appearance/Style/UniquePropertyManager.h"
+#include "../Appearance/Style/GenericPropertyManager.h"
 #include <format>
 
 namespace Sgl
@@ -30,7 +30,7 @@ namespace Sgl
 			{
 				throw std::invalid_argument(
 					std::format("Property type <{}> is not equal object type <{}>\n",
-								UniquePropertyManager<TId>::GetTypeNameOf(id),
+								GenericPropertyManager<TId>::GetTypeNameOf(id),
 								object.Type().name()));
 			}
 
@@ -43,7 +43,7 @@ namespace Sgl
 			{
 				throw std::invalid_argument(
 					std::format("Property type <{}> is not equal object type <{}>\n",
-								UniquePropertyManager<TId>::GetTypeNameOf(id),
+								GenericPropertyManager<TId>::GetTypeNameOf(id),
 								object.Type().name()));
 			}
 
@@ -82,7 +82,7 @@ namespace Sgl
 	private:
 		bool IsTypeCorrect(TId id, const Any& object) const
 		{
-			return UniquePropertyManager<TId>::GetTypeNameOf(id) == object.Type().name();
+			return GenericPropertyManager<TId>::GetTypeNameOf(id) == object.Type().name();
 		}
 	};	
 }

@@ -35,7 +35,7 @@ namespace Sgl
 		Cursor* Cursor = nullptr;
 		IVisual* ToolTip = nullptr;
 	protected:
-		PropertySetterMap _properties = PropertyManager::GetDefaultProperties();
+		PropertySetterMap _properties = PropertyManager::DefaultValuesMap;
 		std::unordered_map<PropertyId, Event<PropertyChangedEventHandler>> _propertyChangedEventMap;
 	private:
 		bool _isMouseOver = false;
@@ -74,14 +74,24 @@ namespace Sgl
 		void OnRender(RenderContext& renderContext) override;
 		bool IsMouseOver() const noexcept { return _isMouseOver; }
 
-		void AddPropertyChangedHandler(PropertyId id, auto&& handler)
+		void AddPropertyChangedHandler(PropertyId id, PropertyChangedEventHandler&& handler)
 		{
-			_propertyChangedEventMap[id] += std::forward<decltype(handler)>(handler);
+			_propertyChangedEventMap[id] += std::move(handler);
 		}
 
-		void RemovePropertyChangedHandler(PropertyId id, auto&& handler)
+		void AddPropertyChangedHandler(PropertyId id, const PropertyChangedEventHandler& handler)
 		{
-			_propertyChangedEventMap[id] -= std::forward<decltype(handler)>(handler);
+			_propertyChangedEventMap[id] += handler;
+		}
+		
+		void RemovePropertyChangedHandler(PropertyId id, PropertyChangedEventHandler&& handler)
+		{
+			_propertyChangedEventMap[id] -= std::move(handler);
+		}
+
+		void RemovePropertyChangedHandler(PropertyId id, const PropertyChangedEventHandler& handler)
+		{
+			_propertyChangedEventMap[id] -= handler;
 		}
 
 		template<typename T>

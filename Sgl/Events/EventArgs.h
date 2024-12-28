@@ -1,7 +1,7 @@
 #pragma once
 
 #include "SDL/SDL.h"
-#include "Event.h"
+#include "EventHandler.h"
 
 namespace Sgl
 {

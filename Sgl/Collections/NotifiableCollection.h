@@ -25,18 +25,23 @@ namespace Sgl
 		using NofityEventHandler = EventHandler<void, NotifyEventArgs>;
 	public:
 		NotifiableCollection() = default;
+
 		NotifiableCollection(const NotifiableCollection& collection):
 			Base(collection)
 		{}
+
 		NotifiableCollection(NotifiableCollection&& collection) noexcept:
 			Base(std::move(collection))
 		{}
+
 		NotifiableCollection(size_t count, const T& value):
 			Base(count, value)
 		{}
+
 		NotifiableCollection(std::initializer_list<T> initList):
 			Base(initList)
 		{}
+
 		template<typename TIterator> requires std::_Is_iterator_v<TIterator>
 		NotifiableCollection(TIterator first, TIterator last):
 			Base(first, last)
