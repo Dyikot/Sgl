@@ -18,7 +18,7 @@ namespace Sgl
 		static inline const PropertyId FontWeightProperty = PropertyManager::Register<FontWeight>("FontWeight");
 		static inline const PropertyId FontColorProperty = PropertyManager::Register<Color>("FontColor");
 		static inline const PropertyId FontSizeProperty = PropertyManager::Register<uint16_t>("FontSize");
-		static inline const PropertyId MouseDoubleClickProperty = PropertyManager::Register<MouseEventHandler>("MouseDoubleClick");
+		static inline const EventId MouseDoubleClickEvent = EventManager::Register<MouseEventHandler>("MouseDoubleClick");
 		static constexpr size_t DefaultFontSize = 14;
 
 		Panel* Panel = nullptr;
@@ -32,7 +32,7 @@ namespace Sgl
 		size_t _fontSize = DefaultFontSize;
 	public:
 		Control() = default;
-		Control(const Style& style) noexcept;
+		explicit Control(const Style& style, SDL_FPoint position = {0, 0}) noexcept;
 
 		void SetBackgound(const Fill& value) { _backgound = value; }
 		void SetBorderColor(Color value) { _borderColor = value; }

@@ -8,9 +8,34 @@ namespace Sgl
 	struct EventArgs {};
 
 	template<typename TObject, typename TEventArgs> requires std::derived_from<TEventArgs, EventArgs>
-	using EventHandler = std::function<void(TObject*, const TEventArgs&)>;
+	class EventHandler: public std::function<void(TObject*, const TEventArgs&)>
+	{
+	public:
+		using Base = std::function<void(TObject*, const TEventArgs&)>;
+		using Object = TObject;
+		using EventArgs = TEventArgs;
+	public:
+		EventHandler(auto&& handler):
+			Base(std::forward<decltype(handler)>(handler))
+		{}
 
-	template<typename THandler>
+		EventHandler& operator=(auto&& handler)
+		{
+			Base::operator=(std::forward<decltype(handler)>(handler));
+			return *this;
+		}
+
+		bool operator==(const EventHandler& eventHandler) const noexcept
+		{
+			return this->target_type() == eventHandler.target_type();
+		}
+	};
+
+	template<typename THandler> 
+	concept	IsEventHandler = std::same_as<THandler, EventHandler<typename THandler::Object,
+																 typename THandler::EventArgs>>;
+
+	template<typename THandler> requires IsEventHandler<THandler>
 	class Event
 	{
 	protected:
@@ -31,8 +56,7 @@ namespace Sgl
 			return !_handlers.empty();
 		}
 
-		template<typename TObject, typename TEventArgs> requires std::derived_from<TEventArgs, EventArgs>
-		void operator()(TObject* sender, const TEventArgs& e) const
+		void operator()(THandler::Object* sender, const THandler::EventArgs& e) const
 		{
 			for(const THandler& handler : _handlers)
 			{
@@ -46,10 +70,10 @@ namespace Sgl
 		}
 	};	
 
-	template <typename THandler>
+	/*template <typename THandler>
 	static bool operator==(const std::function<THandler>& lhs, 
 						   const std::function<THandler>& rhs) noexcept
 	{
 		return lhs.target_type() == rhs.target_type();
-	}
+	}*/
 }

@@ -7,8 +7,8 @@ namespace Sgl
 	class Style
 	{
 	public:
-		SetterMap<PropertyId> Setters;
-		SetterMap<EventId> EventSetters;
+		PropertySetterMap Setters;
+		EventSetterMap EventSetters;
 	public:
 		Style() = default;
 		Style(const Style& basedOn) = default;

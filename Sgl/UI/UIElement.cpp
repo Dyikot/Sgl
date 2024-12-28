@@ -2,22 +2,14 @@
 
 namespace Sgl
 {
-	UIElement::UIElement()
-	{
-		if(!_isStaticInitialised)
-		{
-			_eventInitializersMap[MouseDownEvent] = std::bind_front(InitEvent<MouseEventHandler>, MouseDownEvent);
-			_eventInitializersMap[MouseUpEvent] = std::bind_front(InitEvent<MouseEventHandler>, MouseUpEvent);
-			_eventInitializersMap[MouseMoveEvent] = std::bind_front(InitEvent<MouseEventHandler>, MouseMoveEvent);
-			_eventInitializersMap[MouseWheelEvent] = std::bind_front(InitEvent<MouseWheelEventHandler>, MouseWheelEvent);
-			_eventInitializersMap[KeyDownEvent] = std::bind_front(InitEvent<KeyEventHandler>, KeyDownEvent);
-			_eventInitializersMap[KeyUpEvent] = std::bind_front(InitEvent<KeyEventHandler>, KeyUpEvent);
-		}
-	}
-
 	UIElement::UIElement(const Style& style) noexcept
 	{
-		InitEvents(style);
+		style.EventSetters.TrySetEvent(MouseDownEvent, MouseDown);
+		style.EventSetters.TrySetEvent(MouseUpEvent, MouseUp);
+		style.EventSetters.TrySetEvent(MouseMoveEvent, MouseMove);
+		style.EventSetters.TrySetEvent(MouseWheelEvent, MouseWheel);
+		style.EventSetters.TrySetEvent(KeyDownEvent, KeyDown);
+		style.EventSetters.TrySetEvent(KeyUpEvent, KeyUp);
 	}
 
 	void UIElement::OnMouseDown(const MouseButtonEventArgs& e)
@@ -66,26 +58,5 @@ namespace Sgl
 		{
 			KeyUp(this, e);
 		}
-	}
-
-	void UIElement::InitEvents(const Style& style)
-	{
-		for(auto& [id, handler] : style.EventSetters)
-		{
-			_eventInitializersMap[id](_events[id], handler);
-		}
-	}
-
-	SetterMap<EventId> UIElement::CreateEvents()
-	{
-		SetterMap<EventId> events;
-		events[MouseDownEvent] = Any::New<Event<MouseEventHandler>>();
-		events[MouseUpEvent] = Any::New<Event<MouseEventHandler>>();
-		events[MouseMoveEvent] = Any::New<Event<MouseEventHandler>>();
-		events[MouseWheelEvent] = Any::New<Event<MouseWheelEventHandler>>();
-		events[KeyDownEvent] = Any::New<Event<KeyEventHandler>>();
-		events[KeyUpEvent] = Any::New<Event<KeyEventHandler>>();
-
-		return events;
 	}
 }
