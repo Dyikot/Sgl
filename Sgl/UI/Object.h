@@ -21,13 +21,13 @@ namespace Sgl
 		static inline const PropertyId MinHeightProperty = PropertyManager::Register<float>("MinHeight");
 		static inline const PropertyId MaxWidthProperty = PropertyManager::Register<float>("MaxWidth");
 		static inline const PropertyId MaxHeightProperty = PropertyManager::Register<float>("MaxHeight");
-		static inline const PropertyId ZIndexProperty = PropertyManager::Register<size_t>("ZIndex", 1);
+		static inline const PropertyId ZIndexProperty = PropertyManager::Register<size_t>("ZIndex");
 		static inline const PropertyId MarginProperty = PropertyManager::Register<Thikness>("Margin");
-		static inline const PropertyId CursorProperty = PropertyManager::Register<Cursor*>("Cursor", nullptr);
-		static inline const PropertyId ToolTipProperty = PropertyManager::Register<IVisual*>("ToolTip", nullptr);
-		static inline const PropertyId HorizontalAlignmentProperty = PropertyManager::Register<HorizontalAlignment>("HorizontalAlignment", HorizontalAlignment::Stretch);
-		static inline const PropertyId VerticalAligmentProperty = PropertyManager::Register<VerticalAligment>("VerticalAligment", VerticalAligment::Stretch);
-		static inline const PropertyId VisibilityProperty = PropertyManager::Register<Visibility>("Visibility", Visibility::Visible);
+		static inline const PropertyId CursorProperty = PropertyManager::Register<Cursor*>("Cursor");
+		static inline const PropertyId ToolTipProperty = PropertyManager::Register<IVisual*>("ToolTip");
+		static inline const PropertyId HorizontalAlignmentProperty = PropertyManager::Register<HorizontalAlignment>("HorizontalAlignment");
+		static inline const PropertyId VerticalAligmentProperty = PropertyManager::Register<VerticalAligment>("VerticalAligment");
+		static inline const PropertyId VisibilityProperty = PropertyManager::Register<Visibility>("Visibility");
 		static inline const EventId MouseEnterEvent = EventManager::Register<MouseEventHandler>("MouseEnter");
 		static inline const EventId MouseLeaveEvent = EventManager::Register<MouseEventHandler>("MouseLeave");
 
@@ -35,13 +35,13 @@ namespace Sgl
 		Cursor* Cursor = nullptr;
 		IVisual* ToolTip = nullptr;
 	protected:
-		PropertySetterMap _properties = PropertyManager::DefaultValuesMap;
+		PropertySetterMap _properties;
 		std::unordered_map<PropertyId, Event<PropertyChangedEventHandler>> _propertyChangedEventMap;
 	private:
 		bool _isMouseOver = false;
 	public:
 		Object();
-		explicit Object(const Style& style, SDL_FPoint position = {0, 0}) noexcept;
+		explicit Object(SDL_FPoint position) noexcept;
 		virtual ~Object() = default;
 
 		void SetWidth(float value);
@@ -55,6 +55,7 @@ namespace Sgl
 		void SetHorizontalAlignment(HorizontalAlignment value);
 		void SetVerticalAlignment(VerticalAligment value);
 		void SetVisibility(Visibility value);
+		void SetStyle(const Style& style) override;
 
 		float GetWidth() const { return _properties.At(WidthProperty).As<float>(); }
 		float GetHeight() const { return _properties.At(HeightProperty).As<float>(); }
@@ -70,29 +71,13 @@ namespace Sgl
 
 		Event<MouseEventHandler> MouseEnter;
 		Event<MouseEventHandler> MouseLeave;
-
+		
 		void OnRender(RenderContext& renderContext) override;
 		bool IsMouseOver() const noexcept { return _isMouseOver; }
-
-		void AddPropertyChangedHandler(PropertyId id, PropertyChangedEventHandler&& handler)
-		{
-			_propertyChangedEventMap[id] += std::move(handler);
-		}
-
-		void AddPropertyChangedHandler(PropertyId id, const PropertyChangedEventHandler& handler)
-		{
-			_propertyChangedEventMap[id] += handler;
-		}
-		
-		void RemovePropertyChangedHandler(PropertyId id, PropertyChangedEventHandler&& handler)
-		{
-			_propertyChangedEventMap[id] -= std::move(handler);
-		}
-
-		void RemovePropertyChangedHandler(PropertyId id, const PropertyChangedEventHandler& handler)
-		{
-			_propertyChangedEventMap[id] -= handler;
-		}
+		void AddPropertyChangedHandler(PropertyId id, PropertyChangedEventHandler&& handler);
+		void AddPropertyChangedHandler(PropertyId id, const PropertyChangedEventHandler& handler);		
+		void RemovePropertyChangedHandler(PropertyId id, PropertyChangedEventHandler&& handler);
+		void RemovePropertyChangedHandler(PropertyId id, const PropertyChangedEventHandler& handler);
 
 		template<typename T>
 		void Bind(PropertyId id, T& item)
@@ -108,7 +93,8 @@ namespace Sgl
 		virtual void OnMouseLeave(const MouseButtonEventArgs& e);
 		void OnPropertyChanged(PropertyId id);
 	private:
-		void InitPropertyChangedMap();
+		void InitProperties();
+		void InitPropertyChangedEvents();
 	};
 
 	struct ZIndexComparer

@@ -22,8 +22,9 @@ namespace Sgl
 		bool _isActive = true;
 	public:
 		Scene() = default;
-		Scene(const Style& style) noexcept;
 		virtual ~Scene() = default;
+
+		void SetStyle(const Style& style) override;
 
 		Event<UIEventHandler> Loaded;
 		Event<UIEventHandler> Unloaded;

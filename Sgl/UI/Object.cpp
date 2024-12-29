@@ -3,20 +3,14 @@
 
 namespace Sgl
 {
-    Object::Object()
-    {
-        InitPropertyChangedMap();
-    }
+    Object::Object():
+        Object(SDL_FPoint())
+    {}
 
-    Object::Object(const Style& style, SDL_FPoint position) noexcept:
-        UIElement(style),
-        Position(position)
+    Object::Object(SDL_FPoint position) noexcept
     {
-        InitPropertyChangedMap();
-
-        _properties = style.Setters;
-        style.EventSetters.TrySetEvent(MouseEnterEvent, MouseEnter);
-        style.EventSetters.TrySetEvent(MouseLeaveEvent, MouseLeave);        
+        InitProperties();
+        InitPropertyChangedEvents();
     }
 
     void Object::SetWidth(float value)
@@ -85,12 +79,41 @@ namespace Sgl
         OnPropertyChanged(VisibilityProperty);
     }
 
+    void Object::SetStyle(const Style& style)
+    {
+        UIElement::SetStyle(style);
+
+        _properties = style.Setters;
+        style.EventSetters.TrySetEvent(MouseEnterEvent, MouseEnter);
+        style.EventSetters.TrySetEvent(MouseLeaveEvent, MouseLeave);
+    }
+
     void Object::OnRender(RenderContext& renderContext)
     {
         if(_isMouseOver && ToolTip)
         {
             ToolTip->OnRender(renderContext);
         }
+    }
+
+    void Object::AddPropertyChangedHandler(PropertyId id, PropertyChangedEventHandler&& handler)
+    {
+        _propertyChangedEventMap[id] += std::move(handler);
+    }
+
+    void Object::AddPropertyChangedHandler(PropertyId id, const PropertyChangedEventHandler& handler)
+    {
+        _propertyChangedEventMap[id] += handler;
+    }
+
+    void Object::RemovePropertyChangedHandler(PropertyId id, PropertyChangedEventHandler&& handler)
+    {
+        _propertyChangedEventMap[id] -= std::move(handler);
+    }
+
+    void Object::RemovePropertyChangedHandler(PropertyId id, const PropertyChangedEventHandler& handler)
+    {
+        _propertyChangedEventMap[id] -= handler;
     }
 
     void Object::OnMouseEnter(const MouseButtonEventArgs& e)
@@ -133,7 +156,24 @@ namespace Sgl
         }
     }
 
-    void Object::InitPropertyChangedMap()
+    void Object::InitProperties()
+    {
+        _properties.Add<float>(WidthProperty);
+        _properties.Add<float>(HeightProperty);
+        _properties.Add<float>(MinWidthProperty);
+        _properties.Add<float>(MinHeightProperty);
+        _properties.Add<float>(MaxWidthProperty);
+        _properties.Add<float>(MinHeightProperty);
+        _properties.Add<size_t>(ZIndexProperty, 1);
+        _properties.Add<Thikness>(MarginProperty);
+        _properties.Add<Sgl::Cursor*>(CursorProperty, nullptr);
+        _properties.Add<IVisual*>(ToolTipProperty, nullptr);
+        _properties.Add<HorizontalAlignment>(HorizontalAlignmentProperty, HorizontalAlignment::Stretch);
+        _properties.Add<VerticalAligment>(VerticalAligmentProperty, VerticalAligment::Stretch);
+        _properties.Add<Visibility>(VisibilityProperty, Visibility::Visible);
+    }
+
+    void Object::InitPropertyChangedEvents()
     {
         _propertyChangedEventMap[WidthProperty] = Event<PropertyChangedEventHandler>();
         _propertyChangedEventMap[HeightProperty] = Event<PropertyChangedEventHandler>();

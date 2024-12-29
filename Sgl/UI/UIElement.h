@@ -31,8 +31,9 @@ namespace Sgl
 		static inline std::unordered_map<EventId, Action<Any&, const Any&>> _eventInitializersMap;
 	public:
 		UIElement() = default;
-		explicit UIElement(const Style& style) noexcept;
 		virtual ~UIElement() = default;
+
+		virtual void SetStyle(const Style& style);
 
 		Event<MouseEventHandler> MouseDown;
 		Event<MouseEventHandler> MouseUp;

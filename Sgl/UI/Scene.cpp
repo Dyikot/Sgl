@@ -3,12 +3,10 @@
 
 namespace Sgl
 {
-	Scene::Scene(const Style& style) noexcept:
-		UIElement(style)
+	void Scene::SetStyle(const Style& style)
 	{
-		/*style.TryInit(Control::BackgroundProperty, Background);
-		style.TryInitEvent(LoadedProperty, Loaded);
-		style.TryInitEvent(UnloadedProperty, Unloaded);*/
+		style.EventSetters.TrySetEvent(LoadedProperty, Loaded);
+		style.EventSetters.TrySetEvent(UnloadedProperty, Unloaded);
 	}
 
 	void Scene::OnRender(RenderContext& renderContext)

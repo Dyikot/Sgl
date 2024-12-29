@@ -2,8 +2,15 @@
 
 namespace Sgl
 {
-	Control::Control(const Style& style, SDL_FPoint position) noexcept:
-		Object(style, position)
+	Control::Control():
+		Control(SDL_FPoint())
+	{}
+
+	Control::Control(SDL_FPoint position) noexcept:
+		Object(position)
+	{}
+
+	void Control::SetStyle(const Style& style)
 	{
 		style.EventSetters.TrySetEvent(MouseDoubleClickEvent, MouseDoubleClick);
 	}

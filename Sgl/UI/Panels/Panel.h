@@ -15,8 +15,8 @@ namespace Sgl
 		Fill _background = &Colors::Black;		
 	public:
 		Panel() = default;
-		Panel(const Style& style);
 
+		void SetStyle(const Style& style) override;
 		void SetBackground(const Fill& value) { _background = value; }
 
 		const Fill& GetBackground() const { return _background; }
