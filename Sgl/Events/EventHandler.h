@@ -6,7 +6,8 @@ namespace Sgl
 {
 	struct EventArgs {};
 
-	template<typename TObject, typename TEventArgs> requires std::derived_from<TEventArgs, EventArgs>
+	template<typename TObject, typename TEventArgs> 
+		requires std::derived_from<TEventArgs, EventArgs>
 	class EventHandler: public std::function<void(TObject*, const TEventArgs&)>
 	{
 	public:
@@ -16,35 +17,37 @@ namespace Sgl
 	public:
 		EventHandler() = default;
 
-		template<typename THandler> requires std::constructible_from<Base, THandler>
-		EventHandler(THandler&& handler):
-			Base(std::forward<THandler>(handler))
+		template<typename TCallable> 
+			requires !std::is_same_v<std::decay_t<TCallable>, EventHandler>
+		EventHandler(TCallable&& callable):
+			Base(std::forward<TCallable>(callable))
 		{}
 
 		EventHandler(const EventHandler& handler):
-			Base(handler)
+			Base(static_cast<const Base&>(handler))
 		{}
 
 		EventHandler(EventHandler&& handler) noexcept:
-			Base(std::move(handler))
+			Base(static_cast<Base&&>(handler))
 		{}
 
-		template<typename THandler> requires std::constructible_from<Base, THandler>
-		EventHandler& operator=(THandler&& handler)
+		template<typename TCallable> 
+			requires !std::is_same_v<std::decay_t<TCallable>, EventHandler>
+		EventHandler& operator=(TCallable&& callable)
 		{
-			Base::operator=(std::forward<THandler>(handler));
+			Base::operator=(std::forward<TCallable>(callable));
 			return *this;
 		}
 
 		EventHandler& operator=(const EventHandler& handler)
 		{
-			Base::operator=(handler);
+			Base::operator=(static_cast<const Base&>(handler));
 			return *this;
 		}
 
 		EventHandler& operator=(EventHandler&& handler) noexcept
 		{
-			Base::operator=(std::move(handler));
+			Base::operator=(static_cast<Base&&>(handler));
 			return *this;
 		}
 
@@ -58,8 +61,4 @@ namespace Sgl
 			return !operator==(eventHandler);
 		}
 	};
-
-	template<typename THandler>
-	concept	IsEventHandler = std::same_as<THandler, EventHandler<typename THandler::Object,
-		typename THandler::EventArgs>>;
 }
