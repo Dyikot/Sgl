@@ -22,8 +22,8 @@ namespace Sgl
 		Stopwatch _stopwatch;
 		std::optional<size_t> _maxFrameRate = std::nullopt;
 		std::optional<TimeSpan> _maxFrameTime = std::nullopt;
-		const Cursor* _appicationCursor = &Cursors::Arrow;
-		const Cursor* _activeCursor = _appicationCursor;
+		std::reference_wrapper<const Cursor> _defaultCursor = Cursors::Arrow;
+		std::reference_wrapper<const Cursor> _activeCursor = _defaultCursor;
 	private:
 		inline static Application* _current = nullptr;
 		Window* _window = nullptr;
@@ -34,7 +34,7 @@ namespace Sgl
 		Application() noexcept;
 		~Application() noexcept;
 
-		void SetApplicationCursor();
+		void SetDefaultCursor();
 		void SetCursor(const Cursor& cursor);
 		void SetMaxFrameRate(size_t value);
 

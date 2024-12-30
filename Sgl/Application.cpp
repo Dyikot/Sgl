@@ -36,19 +36,19 @@ namespace Sgl
 		SDL_Quit();
 	}
 
-	void Application::SetApplicationCursor()
+	void Application::SetDefaultCursor()
 	{
-		SetCursor(*_appicationCursor);
+		SetCursor(_defaultCursor);
 	}
 
 	void Application::SetCursor(const Cursor& cursor)
 	{
-		if(_activeCursor != &cursor)
+		if(_activeCursor.get() != cursor)
 		{
 			SDL_SetCursor(cursor);
 		}
 
-		_activeCursor = &cursor;
+		_activeCursor = cursor;
 	}
 
 	void Application::SetMaxFrameRate(size_t value)
@@ -59,7 +59,7 @@ namespace Sgl
 
 	const Cursor& Application::GetCursor() const
 	{
-		return *_activeCursor;
+		return _activeCursor;
 	}
 
 	void Application::Run(Window& window)

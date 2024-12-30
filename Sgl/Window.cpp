@@ -43,13 +43,13 @@ namespace Sgl
     void Window::SetWidth(size_t width) noexcept
     {
         _width = width;
-        OnSizeChanged({ .Width = _width, .Height = _height });
+        OnSizeChanged(SizeChangedEventArgs{ .Width= _width, .Height = _height });
     }
 
     void Window::SetHeight(size_t height) noexcept
     {
         _height = height;
-        OnSizeChanged({ .Width = _width, .Height = _height });
+        OnSizeChanged(SizeChangedEventArgs{ .Width = _width, .Height = _height });
     }
 
     void Window::SetLogicalSize(size_t width, size_t height)

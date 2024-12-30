@@ -1,5 +1,6 @@
 #pragma once
 #include <typeinfo>
+#include <type_traits>
 
 namespace Sgl
 {
@@ -49,7 +50,7 @@ namespace Sgl
 
 		Any() noexcept = default;
 
-		template<typename T>
+		template<typename T> requires !std::is_same_v<std::decay_t<T>, Any>
 		Any(T&& value):
 			_value(new ValueContainer<T>(std::forward<T>(value)))
 		{}
@@ -84,6 +85,14 @@ namespace Sgl
 		const T* TryAs() const { return HasValue() && Is<T>() ? &_value->Get<T>() : nullptr; }
 	
 		bool HasValue() const noexcept { return _value; }
+
+		template<typename T> requires !std::is_same_v<std::decay_t<T>, Any>
+		Any& operator=(T&& value)
+		{
+			delete _value;
+			_value = new ValueContainer<T>(std::forward<T>(value));
+			return *this;
+		}
 
 		Any& operator=(const Any& any)
 		{

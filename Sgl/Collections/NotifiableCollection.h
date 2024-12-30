@@ -17,12 +17,13 @@ namespace Sgl
 		int64_t EndIndex;
 	};
 
+	using NofityEventHandler = EventHandler<void, NotifyEventArgs>;
+
 	template<typename T>
 	class NotifiableCollection: public std::vector<T>
 	{
 	public:
 		using Base = std::vector<T>;
-		using NofityEventHandler = EventHandler<void, NotifyEventArgs>;
 	public:
 		NotifiableCollection() = default;
 

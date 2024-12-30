@@ -10,12 +10,12 @@ namespace Sgl
 	class EventSetterMap: public SetterMap<EventId>
 	{
 	public:
-		template<typename THanlder>
-		bool TrySetEvent(EventId id, Event<THanlder>& event) const
+		template<typename TEventHanlder>
+		bool TrySetEvent(EventId id, Event<TEventHanlder>& event) const
 		{
 			if(Contains(id))
 			{
-				event += At(id).As<THanlder>();
+				event += At(id).As<TEventHanlder>();
 				return true;
 			}
 

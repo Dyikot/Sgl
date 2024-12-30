@@ -33,16 +33,16 @@ namespace Sgl
 			return;
 		}
 
-		for(auto panel : Panels)
+		for(Panel& panel : Panels)
 		{
-			if(panel == _mouseOverPanel)
+			if(&panel == _mouseOverPanel)
 			{
 				continue;
 			}
 
-			if(panel->TryRaiseMouseMoveEvents(e))
+			if(panel.TryRaiseMouseMoveEvents(e))
 			{
-				_mouseOverPanel = panel;
+				_mouseOverPanel = &panel;
 				return;
 			}
 		}

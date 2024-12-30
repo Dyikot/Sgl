@@ -9,14 +9,14 @@ namespace Sgl
 	class PropertySerializer
 	{
 	public:
-		template <typename T>
+		template <typename T> requires std::default_initializable<T>
 		void Serialize(std::ostream& stream, const T& object, auto T::*... properties) const
 		{
 			((stream << object.*properties << '\t'), ...);
 			stream << '\n';
 		};
 
-		template <typename T>
+		template <typename T> requires std::default_initializable<T>
 		void Serialize(std::ostream& stream, std::span<T> objects, auto T::*... properties) const
 		{
 			for(auto& object : objects)
@@ -26,7 +26,7 @@ namespace Sgl
 			}
 		};
 
-		template <typename T>
+		template <typename T> requires std::default_initializable<T>
 		T Deserialize(std::istream& stream, auto T::*... properties) const
 		{
 			T object = {};			
@@ -34,7 +34,7 @@ namespace Sgl
 			return object;
 		};
 
-		template <typename T, size_t Size>
+		template <typename T, size_t Size> requires std::default_initializable<T>
 		std::array<T, Size> Deserialize(std::istream& stream, auto T::*... properties) const
 		{
 			std::array<T, Size> objects;

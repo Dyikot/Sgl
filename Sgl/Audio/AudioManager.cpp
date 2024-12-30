@@ -9,6 +9,7 @@ namespace Sgl
 	AudioManager::AudioManager(Volume masterVolume, Volume musicVolume, Volume soundEffectsVolume) noexcept:
 		MasterVolume(masterVolume), MusicVolume(musicVolume), SoundEffectsVolume(soundEffectsVolume)
 	{}
+
 	void AudioManager::PlayMusic(const Music& music, int loops)
 	{
 		Mix_PlayMusic(music, loops);
@@ -18,7 +19,7 @@ namespace Sgl
 	{
 		if(Resources)
 		{
-			PlayMusic(*Resources->MusicTracks.at(music), loops);
+			PlayMusic(Resources->MusicTracks.at(music), loops);
 		}
 	}
 
@@ -56,7 +57,7 @@ namespace Sgl
 	{
 		if(Resources)
 		{
-			PlaySoundEffect(*Resources->SoundEffects.at(soundEffect), channel, loops);
+			PlaySoundEffect(Resources->SoundEffects.at(soundEffect), channel, loops);
 		}
 	}
 

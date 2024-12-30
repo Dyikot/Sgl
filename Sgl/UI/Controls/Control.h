@@ -24,7 +24,7 @@ namespace Sgl
 
 		Panel* Panel = nullptr;
 	protected:
-		Fill _backgound = &Colors::Transparent;
+		Fill _backgound = Colors::Transparent;
 		Color _borderColor = Colors::Transparent;
 		Thikness _borderThickness;
 		FontFamily _fontFamily;

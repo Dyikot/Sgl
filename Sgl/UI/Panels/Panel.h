@@ -12,7 +12,7 @@ namespace Sgl
 		Control* MouseOverControl = nullptr;
 		ObjestSet<Control> Children;
 	protected:
-		Fill _background = &Colors::Black;		
+		Fill _background = Colors::Black;		
 	public:
 		Panel() = default;
 

@@ -75,13 +75,13 @@ namespace Sgl
 	};
 
 	template<typename T> requires std::derived_from<T, AudioBase>
-	class AudioCollection: public std::vector<T*>
+	class AudioCollection: public std::vector<std::reference_wrapper<T>>
 	{
 	public:
 		Volume Volume;
 	public:
 		AudioCollection(Sgl::Volume volume = Volume::Max):
-			std::vector<T*>(),
+			std::vector<std::reference_wrapper<T>>(),
 			Volume(volume)
 		{}
 	};
@@ -97,7 +97,7 @@ namespace Sgl
 			AudioCollection<Music>(volume)
 		{}
 
-		Music* Current() const { return empty() ? nullptr : *_current; }
+		Music* Current() const { return empty() ? nullptr : &(*_current).get(); }
 		void SetCurrentToBegin() { _current = begin(); }
 		void SetCurrentToEnd() { _current = end(); }
 		void SetCurrentToNext() { _current++; }
@@ -107,10 +107,8 @@ namespace Sgl
 
 	struct AudioResources
 	{
-		~AudioResources();
-
-		std::unordered_map<std::string, SoundEffect*> SoundEffects;
-		std::unordered_map<std::string, Music*> MusicTracks;
+		std::unordered_map<std::string, std::reference_wrapper<SoundEffect>> SoundEffects;
+		std::unordered_map<std::string, std::reference_wrapper<Music>> MusicTracks;
 		std::unordered_map<std::string, AudioGroup> Groups;
 		std::unordered_map<std::string, PlayList> PlayLists;
 	};

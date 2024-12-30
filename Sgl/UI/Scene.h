@@ -15,7 +15,7 @@ namespace Sgl
 		static inline const EventId LoadedProperty = EventManager::Register<UIEventHandler>("Loaded");
 		static inline const EventId UnloadedProperty = EventManager::Register<UIEventHandler>("Unloaded");
 		
-		Fill Background = &Colors::Black;
+		Fill Background = Colors::Black;
 		ObjestSet<Panel> Panels;
 	private:
 		Panel* _mouseOverPanel = nullptr;

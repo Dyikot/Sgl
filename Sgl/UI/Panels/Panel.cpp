@@ -5,14 +5,10 @@ namespace Sgl
 {
 	inline bool IsMouseOverControl(Control& control, SDL_FPoint mousePosition)
 	{
-		auto position = control.Position;
-		auto width = control.GetWidth();
-		auto height = control.GetHeight();
-
-		return mousePosition.x >= position.x &&
-			mousePosition.x <= position.x + width &&
-			mousePosition.y >= position.y &&
-			mousePosition.y <= position.y + height;
+		return mousePosition.x >= control.Position.x &&
+			mousePosition.x <= control.Position.x + control.GetWidth() &&
+			mousePosition.y >= control.Position.y &&
+			mousePosition.y <= control.Position.y + control.GetHeight();
 	}
 
 	void Panel::SetStyle(const Style& style)
@@ -34,27 +30,27 @@ namespace Sgl
 			return true;
 		}
 
-		for(Control* child : Children)
+		for(Control& child : Children)
 		{
-			if(child == MouseOverControl)
+			if(&child == MouseOverControl)
 			{
 				continue;
 			}
 
-			if(IsMouseOverControl(*child, e.Position))
+			if(IsMouseOverControl(child, e.Position))
 			{
 				if(MouseOverControl)
 				{
 					MouseOverControl->OnMouseLeave(e);
 				}
 
-				MouseOverControl = child;
-				child->OnMouseEnter(e);
-				child->OnMouseMove(e);
+				MouseOverControl = &child;
+				child.OnMouseEnter(e);
+				child.OnMouseMove(e);
 
-				if(child->Panel != nullptr)
+				if(child.Panel != nullptr)
 				{
-					child->Panel->TryRaiseMouseMoveEvents(e);
+					child.Panel->TryRaiseMouseMoveEvents(e);
 				}
 
 				return true;

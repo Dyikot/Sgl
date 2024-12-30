@@ -2,7 +2,7 @@
 
 #include <functional>
 #include "../Render/IVisual.h"
-#include "../Events/EventArgs.h"
+#include "../Events/Event.h"
 #include "../Events/Delegates.h"
 #include "../Appearance/Style/Style.h"
 #include "../Appearance/Style/PropertyManagers.h"

@@ -1,10 +1,12 @@
 #pragma once
 
 #include "SDL/SDL.h"
-#include "EventHandler.h"
+#include <string>
 
 namespace Sgl
 {
+	struct EventArgs {};
+
 	enum class ButtonState
 	{
 		Release, Pressed

@@ -23,7 +23,7 @@ namespace Sgl
 		static inline const PropertyId MaxHeightProperty = PropertyManager::Register<float>("MaxHeight");
 		static inline const PropertyId ZIndexProperty = PropertyManager::Register<size_t>("ZIndex");
 		static inline const PropertyId MarginProperty = PropertyManager::Register<Thikness>("Margin");
-		static inline const PropertyId CursorProperty = PropertyManager::Register<Cursor*>("Cursor");
+		static inline const PropertyId CursorProperty = PropertyManager::Register<const Cursor*>("Cursor");
 		static inline const PropertyId ToolTipProperty = PropertyManager::Register<IVisual*>("ToolTip");
 		static inline const PropertyId HorizontalAlignmentProperty = PropertyManager::Register<HorizontalAlignment>("HorizontalAlignment");
 		static inline const PropertyId VerticalAligmentProperty = PropertyManager::Register<VerticalAligment>("VerticalAligment");
@@ -32,7 +32,7 @@ namespace Sgl
 		static inline const EventId MouseLeaveEvent = EventManager::Register<MouseEventHandler>("MouseLeave");
 
 		SDL_FPoint Position = { 0, 0 };
-		Cursor* Cursor = nullptr;
+		const Cursor* Cursor = nullptr;
 		IVisual* ToolTip = nullptr;
 	protected:
 		PropertySetterMap _properties;
@@ -83,9 +83,10 @@ namespace Sgl
 		void Bind(PropertyId id, T& item)
 		{
 			_propertyChangedEventMap[id] +=
-				[&item, property = &_properties[id].As<T>()] (Object* sender, const EventArgs& e)
+				[&item, property = std::cref(_properties[id].As<T>())] 
+				(Object* sender, const EventArgs& e)
 				{
-					item = *property;
+					item = property;
 				};
 		}
 	protected:
@@ -99,9 +100,9 @@ namespace Sgl
 
 	struct ZIndexComparer
 	{
-		bool operator()(const Object* left, const Object* right) const
+		bool operator()(const Object& left, const Object& right) const
 		{
-			return left->GetZIndex() < right->GetZIndex();
+			return left.GetZIndex() < right.GetZIndex();
 		}
 	};
 }

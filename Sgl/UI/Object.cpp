@@ -55,7 +55,7 @@ namespace Sgl
         OnPropertyChanged(ZIndexProperty);
     }
 
-    void Object::SetMargin(const Thikness & value)
+    void Object::SetMargin(const Thikness& value)
     {
         _properties[MarginProperty].As<Thikness>() = value;
         OnPropertyChanged(MarginProperty);
@@ -137,7 +137,7 @@ namespace Sgl
 
         if(Cursor)
         {
-            Application::Current()->SetApplicationCursor();
+            Application::Current()->SetDefaultCursor();
         }
 
         if(MouseLeave)
@@ -166,7 +166,7 @@ namespace Sgl
         _properties.Add<float>(MinHeightProperty);
         _properties.Add<size_t>(ZIndexProperty, 1);
         _properties.Add<Thikness>(MarginProperty);
-        _properties.Add<Sgl::Cursor*>(CursorProperty, nullptr);
+        _properties.Add<const Sgl::Cursor*>(CursorProperty, nullptr);
         _properties.Add<IVisual*>(ToolTipProperty, nullptr);
         _properties.Add<HorizontalAlignment>(HorizontalAlignmentProperty, HorizontalAlignment::Stretch);
         _properties.Add<VerticalAligment>(VerticalAligmentProperty, VerticalAligment::Stretch);
