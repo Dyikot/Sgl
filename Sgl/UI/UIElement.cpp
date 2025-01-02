@@ -2,14 +2,22 @@
 
 namespace Sgl
 {
+	UIElement::UIElement():
+		_isEventsInitialized(InitializeEvents()),
+		MouseDown(GetEventValue<MouseEventHandler>(MouseDownEvent)),
+		MouseUp(GetEventValue<MouseEventHandler>(MouseUpEvent)),
+		MouseMove(GetEventValue<MouseEventHandler>(MouseMoveEvent)),
+		MouseWheel(GetEventValue<MouseWheelEventHandler>(MouseWheelEvent)),
+		KeyDown(GetEventValue<KeyEventHandler>(KeyDownEvent)),
+		KeyUp(GetEventValue<KeyEventHandler>(KeyUpEvent))
+	{}
+
 	void UIElement::SetStyle(const Style& style)
 	{
-		style.EventSetters.TrySetEvent(MouseDownEvent, MouseDown);
-		style.EventSetters.TrySetEvent(MouseUpEvent, MouseUp);
-		style.EventSetters.TrySetEvent(MouseMoveEvent, MouseMove);
-		style.EventSetters.TrySetEvent(MouseWheelEvent, MouseWheel);
-		style.EventSetters.TrySetEvent(KeyDownEvent, KeyDown);
-		style.EventSetters.TrySetEvent(KeyUpEvent, KeyUp);
+		for(auto& [id, eventHanlder] : style.EventSetters)
+		{
+			SetEvent(id, eventHanlder);
+		}
 	}
 
 	void UIElement::OnMouseDown(const MouseButtonEventArgs& e)
@@ -58,5 +66,17 @@ namespace Sgl
 		{
 			KeyUp(this, e);
 		}
+	}
+
+	bool UIElement::InitializeEvents()
+	{
+		AddEvent<MouseEventHandler>(MouseDownEvent);
+		AddEvent<MouseEventHandler>(MouseUpEvent);
+		AddEvent<MouseEventHandler>(MouseMoveEvent);
+		AddEvent<MouseWheelEventHandler>(MouseWheelEvent);
+		AddEvent<KeyEventHandler>(KeyDownEvent);
+		AddEvent<KeyEventHandler>(KeyUpEvent);
+
+		return true;
 	}
 }

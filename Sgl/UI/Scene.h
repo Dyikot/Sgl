@@ -24,8 +24,6 @@ namespace Sgl
 		Scene() = default;
 		virtual ~Scene() = default;
 
-		void SetStyle(const Style& style) override;
-
 		Event<UIEventHandler> Loaded;
 		Event<UIEventHandler> Unloaded;
 

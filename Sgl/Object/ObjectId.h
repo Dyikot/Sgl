@@ -4,7 +4,7 @@
 
 namespace Sgl
 {
-	#define CreateSizeType(typeName) \
+	#define CreateObjectId(typeName) \
 	class typeName \
 	{ \
 	private:\
@@ -16,8 +16,8 @@ namespace Sgl
 		constexpr operator size_t() const { return _value; }\
 	}\
 
-	CreateSizeType(PropertyId);
-	CreateSizeType(EventId);	
+	CreateObjectId(PropertyId);
+	CreateObjectId(EventId);	
 }
 
 template<>

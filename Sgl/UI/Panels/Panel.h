@@ -1,12 +1,12 @@
 #pragma once
 
-#include "../Object.h"
+#include "../Component.h"
 #include "../../Collections/ObjestSet.h"
 #include "../Controls/Control.h"
 
 namespace Sgl
 {
-	class Panel: public Object
+	class Panel: public Component
 	{
 	public:
 		Control* MouseOverControl = nullptr;

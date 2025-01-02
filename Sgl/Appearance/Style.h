@@ -1,14 +1,15 @@
 #pragma once
 
-#include "Setters.h"
+#include "../Object/ObjectId.h"
+#include "../Collections/SetterMap.h"
 
 namespace Sgl
 {
 	class Style
 	{
 	public:
-		PropertySetterMap Setters;
-		EventSetterMap EventSetters;
+		SetterMap<PropertyId> Setters;
+		SetterMap<EventId> EventSetters;
 	public:
 		Style() = default;
 		Style(const Style& basedOn) = default;

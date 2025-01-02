@@ -14,12 +14,13 @@ namespace Sgl
 
 		virtual const std::type_info& Type() const = 0;
 		virtual IValueContainer* Copy() const = 0;
+		virtual void CopyFrom(IValueContainer& valueContainer) = 0;
 
 		template<typename T>
 		T& Get() { return static_cast<ValueContainer<T>*>(this)->Value; }
 
 		template<typename T>
-		const T& Get() const { return static_cast<const ValueContainer<T>*>(this)->Value; }
+		const T& Get() const { return static_cast<ValueContainer<T>*>(this)->Value; }
 	};
 
 	template<typename T>
@@ -33,11 +34,16 @@ namespace Sgl
 			Value(std::forward<TArgs>(args)...)
 		{}
 
-		IValueContainer* Copy() const override { return new ValueContainer<T>(*this); }
 		const std::type_info& Type() const override { return typeid(Value); }
+		IValueContainer* Copy() const override { return new ValueContainer<T>(*this); }
+
+		void CopyFrom(IValueContainer& valueContainer) override
+		{
+			Value = valueContainer.Get<T>();
+		}
 	};
 
-	class Any
+	class Any final
 	{
 	public:
 		template<typename TValue, typename... TArgs>
@@ -50,9 +56,9 @@ namespace Sgl
 
 		Any() noexcept = default;
 
-		template<typename T> requires !std::is_same_v<std::decay_t<T>, Any>
+		template<typename T> requires (!std::is_same_v<std::decay_t<T>, Any>)
 		Any(T&& value):
-			_value(new ValueContainer<T>(std::forward<T>(value)))
+			_value(new ValueContainer<std::decay_t<T>>(std::forward<T>(value)))
 		{}
 
 		Any(const Any& any):
@@ -86,7 +92,23 @@ namespace Sgl
 	
 		bool HasValue() const noexcept { return _value; }
 
-		template<typename T> requires !std::is_same_v<std::decay_t<T>, Any>
+		void CopyValue(const Any& object)
+		{
+			_value->CopyFrom(*object._value);
+		}
+
+		bool TryCopyValue(const Any& object) noexcept
+		{
+			if(object.HasValue() && object.Type() == Type())
+			{
+				_value->CopyFrom(*object._value);
+				return true;
+			}
+
+			return false;
+		}
+
+		template<typename T> requires (!std::is_same_v<std::decay_t<T>, Any>)
 		Any& operator=(T&& value)
 		{
 			delete _value;

@@ -3,9 +3,8 @@
 #include <functional>
 #include "../Render/IVisual.h"
 #include "../Events/Event.h"
-#include "../Events/Delegates.h"
-#include "../Appearance/Style/Style.h"
-#include "../Appearance/Style/PropertyManagers.h"
+#include "../Appearance/Style.h"
+#include "../Object/Object.h"
 
 namespace Sgl
 {
@@ -16,7 +15,7 @@ namespace Sgl
 	using MouseWheelEventHandler = EventHandler<UIElement, MouseWheelEventArgs>;
 	using KeyEventHandler = EventHandler<UIElement, KeyEventArgs>;
 
-	class UIElement: public IVisual
+	class UIElement: public Object, public IVisual
 	{
 	public:
 		static inline const EventId MouseDownEvent = EventManager::Register<MouseEventHandler>("MouseDown");
@@ -26,21 +25,21 @@ namespace Sgl
 		static inline const EventId KeyDownEvent = EventManager::Register<KeyEventHandler>("KeyDown");
 		static inline const EventId KeyUpEvent = EventManager::Register<KeyEventHandler>("KeyUp");
 
-		std::unordered_map<std::string, Any> Resources;
-	protected:
-		static inline std::unordered_map<EventId, Action<Any&, const Any&>> _eventInitializersMap;
+		AnyMap<std::string> Resources;
+	private:
+		bool _isEventsInitialized = false;
 	public:
-		UIElement() = default;
+		UIElement();
 		virtual ~UIElement() = default;
 
 		virtual void SetStyle(const Style& style);
 
-		Event<MouseEventHandler> MouseDown;
-		Event<MouseEventHandler> MouseUp;
-		Event<MouseEventHandler> MouseMove;
-		Event<MouseWheelEventHandler> MouseWheel;
-		Event<KeyEventHandler> KeyDown;
-		Event<KeyEventHandler> KeyUp;
+		Event<MouseEventHandler>& MouseDown;
+		Event<MouseEventHandler>& MouseUp;
+		Event<MouseEventHandler>& MouseMove;
+		Event<MouseWheelEventHandler>& MouseWheel;
+		Event<KeyEventHandler>& KeyDown;
+		Event<KeyEventHandler>& KeyUp;
 	protected:
 		virtual void OnMouseDown(const MouseButtonEventArgs& e);
 		virtual void OnMouseUp(const MouseButtonEventArgs& e);
@@ -48,5 +47,7 @@ namespace Sgl
 		virtual void OnMouseWheel(const MouseWheelEventArgs& e);
 		virtual void OnKeyDown(const KeyEventArgs& e);
 		virtual void OnKeyUp(const KeyEventArgs& e);
+	private:
+		bool InitializeEvents();
 	};
 }

@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../UI/Object.h"
+#include "../UI/Component.h"
 #include <set>
 
 namespace Sgl
 {
-	template<typename T> requires std::derived_from<T, Object>
+	template<typename T> requires std::derived_from<T, Component>
 	class ObjestSet: public std::multiset<std::reference_wrapper<T>, ZIndexComparer>
 	{
 	public:

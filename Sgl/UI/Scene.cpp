@@ -3,12 +3,6 @@
 
 namespace Sgl
 {
-	void Scene::SetStyle(const Style& style)
-	{
-		style.EventSetters.TrySetEvent(LoadedProperty, Loaded);
-		style.EventSetters.TrySetEvent(UnloadedProperty, Unloaded);
-	}
-
 	void Scene::OnRender(RenderContext& renderContext)
 	{
 		renderContext.FillSceneBackground(Background);

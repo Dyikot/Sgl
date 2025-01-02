@@ -9,21 +9,21 @@
 namespace Sgl
 {
 	template<typename TId>
-	class GenericPropertyManager
+	class ObjectManager
 	{
 	protected:
-		static inline std::unordered_map<TId, std::string> _propertTypeNamesMap;
-		static inline std::unordered_set<std::string> _propertiesNames;
+		static inline std::unordered_map<TId, std::string> _objectTypeMap;
+		static inline std::unordered_set<std::string> _objectNames;
 	public:
 		template<typename T>
 		static const TId Register(std::string&& name)
 		{
-			auto [_, isInserted] = _propertiesNames.insert(std::move(name));
+			auto [_, isInserted] = _objectNames.insert(std::move(name));
 
 			if(isInserted)
 			{
-				TId id = _propertiesNames.size() - 1;
-				_propertTypeNamesMap.emplace(id, typeid(T).name());
+				TId id = _objectNames.size() - 1;
+				_objectTypeMap.emplace(id, typeid(T).name());
 				return id;
 			}
 			else
@@ -34,7 +34,7 @@ namespace Sgl
 
 		static std::string_view GetTypeNameOf(TId id)
 		{
-			return _propertTypeNamesMap.at(id);
+			return _objectTypeMap.at(id);
 		}
 	};
 }

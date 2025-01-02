@@ -5,14 +5,11 @@
 #include "../Appearance/UIAppearance.h"
 #include "../Appearance/Cursor.h"
 #include "../Events/Delegates.h"
+#include "../Binding/INotifyPropertyChange.h"
 
 namespace Sgl
 {
-	class Object;
-
-	using PropertyChangedEventHandler = EventHandler<Object, EventArgs>;
-
-	class Object: public UIElement
+	class Component: public UIElement
 	{
 	public:
 		static inline const PropertyId WidthProperty = PropertyManager::Register<float>("Width");
@@ -34,15 +31,13 @@ namespace Sgl
 		SDL_FPoint Position = { 0, 0 };
 		const Cursor* Cursor = nullptr;
 		IVisual* ToolTip = nullptr;
-	protected:
-		PropertySetterMap _properties;
-		std::unordered_map<PropertyId, Event<PropertyChangedEventHandler>> _propertyChangedEventMap;
 	private:
+		bool _isEventsInitialized = false;
 		bool _isMouseOver = false;
 	public:
-		Object();
-		explicit Object(SDL_FPoint position) noexcept;
-		virtual ~Object() = default;
+		Component();
+		explicit Component(SDL_FPoint position) noexcept;
+		virtual ~Component() = default;
 
 		void SetWidth(float value);
 		void SetHeight(float value);
@@ -57,50 +52,39 @@ namespace Sgl
 		void SetVisibility(Visibility value);
 		void SetStyle(const Style& style) override;
 
-		float GetWidth() const { return _properties.At(WidthProperty).As<float>(); }
-		float GetHeight() const { return _properties.At(HeightProperty).As<float>(); }
-		float GetMinWidth() const { return _properties.At(MinWidthProperty).As<float>(); }
-		float GetMinHeight() const { return _properties.At(MinHeightProperty).As<float>(); }
-		float GetMaxWidth() const { return _properties.At(MaxWidthProperty).As<float>(); }
-		float GetMaxHeight() const { return _properties.At(MaxHeightProperty).As<float>(); }
-		size_t GetZIndex() const { return _properties.At(ZIndexProperty).As<size_t>(); }
-		const Thikness& GetMargin() const { return _properties.At(MarginProperty).As<Thikness>(); }
-		HorizontalAlignment GetHorizontalAlignment() const { return _properties.At(HorizontalAlignmentProperty).As<HorizontalAlignment>(); }
-		VerticalAligment GetVerticalAlignment() const { return _properties.At(VerticalAligmentProperty).As<VerticalAligment>(); }
-		Visibility GetVisibility() const { return _properties.At(VisibilityProperty).As<Visibility>(); }
+		float GetWidth() const { return GetPropertyValue<float>(WidthProperty); }
+		float GetHeight() const { return GetPropertyValue<float>(HeightProperty); }
+		float GetMinWidth() const { return GetPropertyValue<float>(MinWidthProperty); }
+		float GetMinHeight() const { return GetPropertyValue<float>(MinHeightProperty); }
+		float GetMaxWidth() const { return GetPropertyValue<float>(MaxWidthProperty); }
+		float GetMaxHeight() const { return GetPropertyValue<float>(MaxHeightProperty); }
+		size_t GetZIndex() const { return GetPropertyValue<size_t>(ZIndexProperty); }
+		const Thikness& GetMargin() const { return GetPropertyValue<Thikness>(MarginProperty); }
+		HorizontalAlignment GetHorizontalAlignment() const { return GetPropertyValue<HorizontalAlignment>(HorizontalAlignmentProperty); }
+		VerticalAligment GetVerticalAlignment() const { return GetPropertyValue<VerticalAligment>(VerticalAligmentProperty); }
+		Visibility GetVisibility() const { return GetPropertyValue<Visibility>(VisibilityProperty); }
 
-		Event<MouseEventHandler> MouseEnter;
-		Event<MouseEventHandler> MouseLeave;
+		Event<MouseEventHandler>& MouseEnter;
+		Event<MouseEventHandler>& MouseLeave;
 		
 		void OnRender(RenderContext& renderContext) override;
 		bool IsMouseOver() const noexcept { return _isMouseOver; }
-		void AddPropertyChangedHandler(PropertyId id, PropertyChangedEventHandler&& handler);
-		void AddPropertyChangedHandler(PropertyId id, const PropertyChangedEventHandler& handler);		
-		void RemovePropertyChangedHandler(PropertyId id, PropertyChangedEventHandler&& handler);
-		void RemovePropertyChangedHandler(PropertyId id, const PropertyChangedEventHandler& handler);
 
 		template<typename T>
 		void Bind(PropertyId id, T& item)
 		{
-			_propertyChangedEventMap[id] +=
-				[&item, property = std::cref(_properties[id].As<T>())] 
-				(Object* sender, const EventArgs& e)
-				{
-					item = property;
-				};
+			
 		}
 	protected:
 		virtual void OnMouseEnter(const MouseButtonEventArgs& e);
 		virtual void OnMouseLeave(const MouseButtonEventArgs& e);
-		void OnPropertyChanged(PropertyId id);
 	private:
-		void InitProperties();
-		void InitPropertyChangedEvents();
+		bool InitializeEvents();
 	};
 
 	struct ZIndexComparer
 	{
-		bool operator()(const Object& left, const Object& right) const
+		bool operator()(const Component& left, const Component& right) const
 		{
 			return left.GetZIndex() < right.GetZIndex();
 		}

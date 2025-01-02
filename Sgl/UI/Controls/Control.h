@@ -1,17 +1,17 @@
 #pragma once
 
 #include "SDL/SDL_ttf.h"
-#include "../Object.h"
+#include "../Component.h"
 #include "../../Appearance/Color.h"
 
 namespace Sgl
 {
 	class Panel;
 
-	class Control: public Object
+	class Control: public Component
 	{
 	public:
-		static constexpr size_t DefaultFontSize = 14;
+		static constexpr uint16_t DefaultFontSize = 14;
 		
 		static inline const PropertyId BackgroundProperty = PropertyManager::Register<Fill>("Background");
 		static inline const PropertyId BorderColorProperty = PropertyManager::Register<Color>("BorderColor");
@@ -23,39 +23,34 @@ namespace Sgl
 		static inline const EventId MouseDoubleClickEvent = EventManager::Register<MouseEventHandler>("MouseDoubleClick");
 
 		Panel* Panel = nullptr;
-	protected:
-		Fill _backgound = Colors::Transparent;
-		Color _borderColor = Colors::Transparent;
-		Thikness _borderThickness;
-		FontFamily _fontFamily;
-		FontWeight _fontWeight = FontWeight::Normal;
-		Color _fontColor = Colors::Black;
-		size_t _fontSize = DefaultFontSize;
+	private:
+		bool _isEventsInitialized = false;
 	public:
 		Control();
 		explicit Control(SDL_FPoint position) noexcept;
 
-		void SetBackgound(const Fill& value) { _backgound = value; }
-		void SetBorderColor(Color value) { _borderColor = value; }
-		void SetFontColor(Color value) { _fontColor = value; }
-		void SetBorderThikness(const Thikness& value) { _borderThickness = value; }
-		void SetFontFamily(const FontFamily& value) { _fontFamily = value; }
-		void SetFontSize(uint16_t value) { _fontSize = value; }
-		void SetFontWeight(FontWeight value) { _fontWeight = value; }
-		void SetStyle(const Style& style) override;
+		void SetBackgound(const Fill& value);
+		void SetBorderColor(Color value);
+		void SetFontColor(Color value);
+		void SetBorderThikness(const Thikness& value);
+		void SetFontFamily(const FontFamily& value);
+		void SetFontSize(uint16_t value);
+		void SetFontWeight(FontWeight value);
 		
-		const Fill& GetBackgound() const { return _backgound; }
-		Color GetBorderColor() const { return _borderColor; }
-		Color GetFontColor() const { return _fontColor; }
-		const Thikness& GetBorderThikness() const { return _borderThickness; }
-		const FontFamily& GetFontFamily() const { return _fontFamily; }
-		uint16_t GetFontSize() const { return _fontSize; }
-		FontWeight GetFontWeight() const { return _fontWeight; }
+		const Fill& GetBackgound() const { return GetPropertyValue<Fill>(BackgroundProperty); }
+		Color GetBorderColor() const { return GetPropertyValue<Color>(BorderColorProperty); }
+		Color GetFontColor() const { return GetPropertyValue<Color>(FontColorProperty); }
+		const Thikness& GetBorderThikness() const { return GetPropertyValue<Thikness>(BorderThiknessProperty); }
+		const FontFamily& GetFontFamily() const { return GetPropertyValue<FontFamily>(FontFamilyProperty); }
+		uint16_t GetFontSize() const { return GetPropertyValue<uint16_t>(FontSizeProperty); }
+		FontWeight GetFontWeight() const { return GetPropertyValue<FontWeight>(FontWeightProperty); }
 
-		Event<MouseEventHandler> MouseDoubleClick;
+		Event<MouseEventHandler>& MouseDoubleClick;
 	protected:
 		virtual void OnMouseDoubleClick(const MouseButtonEventArgs& e);
 	private:
+		bool InitializeEvents();
+
 		friend class Panel;
 	};
 }

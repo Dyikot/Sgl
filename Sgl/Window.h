@@ -5,7 +5,7 @@
 #include <iostream>
 #include "Collections/SceneStack.h"
 #include "Render/RenderContext.h"
-#include "Appearance/Style/Style.h"
+#include "Appearance/Style.h"
 #include "Events/EventArgs.h"
 #include "Appearance/Surface.h"
 
