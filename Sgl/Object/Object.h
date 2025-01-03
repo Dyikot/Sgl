@@ -13,14 +13,39 @@ namespace Sgl
 
 		AnyMap<EventId> _events;
 		AnyMap<PropertyId> _properties;
-	protected:
-		/* Events */
+	public:
+		/* Properties */
 
-		template<typename TEventHandler>
-		void AddEvent(EventId id)
+		template<typename TValue>
+		const TValue& GetPropertyValue(PropertyId id) const
 		{
-			_events.Add<Event<TEventHandler>>(id); 
+			return _properties.at(id).As<TValue>();
 		}
+
+		template<typename TValue>
+		TValue& GetPropertyValue(PropertyId id)
+		{
+			return _properties[id].As<TValue>();
+		}
+
+		Any& GetProperty(PropertyId id)
+		{
+			return _properties[id];
+		}
+
+		const Any& GetProperty(PropertyId id) const
+		{
+			return _properties.at(id);
+		}
+
+		template<typename TValue>
+		void SetProperty(PropertyId id, const TValue& value)
+		{
+			_properties[id].As<TValue>() = value;
+			OnPropertyChanged(id);
+		}
+
+		/* Events */
 
 		template<typename TEventHandler>
 		Event<TEventHandler>& GetEventValue(EventId id)
@@ -39,8 +64,8 @@ namespace Sgl
 			return _events[id];
 		}
 
-		const Any& GetEvent(EventId id) const 
-		{ 
+		const Any& GetEvent(EventId id) const
+		{
 			return _events.at(id);
 		}
 
@@ -48,41 +73,17 @@ namespace Sgl
 		{
 			_eventInitializersMap.at(id)(_events[id], eventHandler);
 		}
-
-		/* Properties */
+	protected:
+		template<typename TEventHandler>
+		void AddEvent(EventId id)
+		{
+			_events.Add<Event<TEventHandler>>(id); 
+		}
 
 		template<typename TValue, typename... TArgs>
 		void AddProperty(PropertyId id, TArgs&&... args)
 		{
 			_properties.Add<TValue>(id, std::forward<TArgs>(args)...);
-		}
-
-		template<typename TValue>
-		const TValue& GetPropertyValue(PropertyId id) const
-		{ 
-			return _properties.at(id).As<TValue>();
-		}
-
-		template<typename TValue>
-		TValue& GetPropertyValue(PropertyId id) 
-		{ 
-			return _properties[id].As<TValue>();
-		}
-
-		Any& GetProperty(PropertyId id)
-		{ 
-			return _properties[id];
-		}
-
-		const Any& GetProperty(PropertyId id) const
-		{ 
-			return _properties.at(id);
-		}
-
-		template<typename TValue>
-		void SetProperty(PropertyId id, const TValue& value)
-		{ 
-			_properties[id].As<TValue>() = value;
 		}
 
 		virtual void OnPropertyChanged(PropertyId id) {};

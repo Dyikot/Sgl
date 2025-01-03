@@ -28,72 +28,6 @@ namespace Sgl
         AddProperty<Visibility>(VisibilityProperty, Visibility::Visible);
     }
 
-    void Component::SetWidth(float value)
-    {
-        SetProperty(WidthProperty, value);
-        OnPropertyChanged(WidthProperty);
-    }
-
-    void Component::SetHeight(float value)
-    {
-        SetProperty(HeightProperty, value);
-        OnPropertyChanged(HeightProperty);
-    }
-
-    void Component::SetMinWidth(float value)
-    {
-        SetProperty(MinWidthProperty, value);
-        OnPropertyChanged(MinWidthProperty);
-    }
-
-    void Component::SetMinHeight(float value)
-    {
-        SetProperty(MinHeightProperty, value);
-        OnPropertyChanged(MinHeightProperty);
-    }
-
-    void Component::SetMaxWidth(float value)
-    {
-        SetProperty(MaxWidthProperty, value);
-        OnPropertyChanged(MaxWidthProperty);
-    }
-
-    void Component::SetMaxHeight(float value)
-    {
-        SetProperty(MaxHeightProperty, value);
-        OnPropertyChanged(MaxHeightProperty);
-    }
-
-    void Component::SetZIndex(size_t value)
-    {
-        SetProperty(ZIndexProperty, value);
-        OnPropertyChanged(ZIndexProperty);
-    }
-
-    void Component::SetMargin(const Thikness& value)
-    {
-        SetProperty(MarginProperty, value);
-        OnPropertyChanged(MarginProperty);
-    }
-
-    void Component::SetHorizontalAlignment(HorizontalAlignment value)
-    {
-        SetProperty(HorizontalAlignmentProperty, value);
-        OnPropertyChanged(HorizontalAlignmentProperty);
-    }
-
-    void Component::SetVerticalAlignment(VerticalAligment value)
-    {
-        SetProperty(VerticalAligmentProperty, value);
-        OnPropertyChanged(VerticalAligmentProperty);
-    }
-
-    void Component::SetVisibility(Visibility value)
-    {
-        SetProperty(VisibilityProperty, value);
-        OnPropertyChanged(VisibilityProperty);
-    }
-
     void Component::SetStyle(const Style& style)
     {
         UIElement::SetStyle(style);
@@ -115,6 +49,16 @@ namespace Sgl
     void Component::OnPropertyChanged(PropertyId id)
     {
         _bindings.UpdateSource(id);
+    }
+
+    void Component::ClearBinding(PropertyId id)
+    {
+        _bindings.erase(id);
+    }
+
+    void Component::ClearBindings()
+    {
+        _bindings.clear();
     }
 
     void Component::OnMouseEnter(const MouseButtonEventArgs& e)

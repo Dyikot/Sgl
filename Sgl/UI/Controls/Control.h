@@ -29,13 +29,13 @@ namespace Sgl
 		Control();
 		explicit Control(SDL_FPoint position) noexcept;
 
-		void SetBackgound(const Fill& value);
-		void SetBorderColor(Color value);
-		void SetFontColor(Color value);
-		void SetBorderThikness(const Thikness& value);
-		void SetFontFamily(const FontFamily& value);
-		void SetFontSize(uint16_t value);
-		void SetFontWeight(FontWeight value);
+		void SetBackgound(const Fill& value) { SetProperty(BackgroundProperty, value); }
+		void SetBorderColor(Color value) { SetProperty(BorderColorProperty, value); }
+		void SetFontColor(Color value) { SetProperty(FontColorProperty, value); }
+		void SetBorderThikness(const Thikness& value) { SetProperty(BorderThiknessProperty, value); }
+		void SetFontFamily(const FontFamily& value) { SetProperty(FontFamilyProperty, value); }
+		void SetFontSize(uint16_t value) { SetProperty(FontSizeProperty, value); }
+		void SetFontWeight(FontWeight value) { SetProperty(FontWeightProperty, value); }
 		
 		const Fill& GetBackgound() const { return GetPropertyValue<Fill>(BackgroundProperty); }
 		Color GetBorderColor() const { return GetPropertyValue<Color>(BorderColorProperty); }

@@ -12,13 +12,14 @@ namespace Sgl
 
 	using PropertyChangedEventHanlder = EventHandler<void, PropertyChangedEventArgs>;
 
-	class INotifyPropertyChange
+	class Component;
+
+	class ISupportDataBinding
 	{
 	public:
-		static constexpr auto GetMember(const std::string_view name) {}
-
-		virtual ~INotifyPropertyChange() = default;
+		virtual ~ISupportDataBinding() = default;
 
 		virtual Event<PropertyChangedEventHanlder>& GetPropertyChangedEvent() = 0;
+		virtual void SetBindings(Component& component) = 0;
 	};
 }

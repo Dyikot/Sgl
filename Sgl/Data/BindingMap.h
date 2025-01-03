@@ -11,17 +11,37 @@ namespace Sgl
 	private:
 		std::unordered_map<std::string, size_t> _membersMap;
 	public:
-		template<typename TBinding> requires std::derived_from<TBinding, BindingBase>
-		void Add(PropertyId id, TBinding* binding)
+		template<typename TData, typename TMember>
+			requires std::derived_from<TData, ISupportDataBinding>
+		void Add(PropertyId id,
+				 TMember& target,
+				 ISupportDataBinding& source,
+				 TMember TData::* member)
 		{
-			operator[](id) = std::shared_ptr<TBinding>(binding);
+			operator[](id) = std::make_shared<Binding<TMember, TData>>(
+				source, target, member, BindingMode::OneWayToSource
+			);
 		}
 
-		template<typename TBinding> requires std::derived_from<TBinding, BindingBase>
-		void Add(PropertyId id, const std::string_view memberName, TBinding* binding)
+		template<typename TData, typename TMember>
+			requires std::derived_from<TData, ISupportDataBinding>
+		void Add(PropertyId id,
+				 TMember& target,
+				 ISupportDataBinding& source,
+				 TMember TData::* member,
+				 std::string_view memberName,
+				 BindingMode mode = BindingMode::OneWayToSource)
 		{
-			Add(id, binding);
+			operator[](id) = std::make_shared<Binding<TMember, TData>>(
+				source, target, member, mode
+			);
 			_membersMap[std::string(memberName.data())] = id;
+
+			if(mode != BindingMode::OneWayToSource)
+			{
+				source.GetPropertyChangedEvent() +=
+					std::bind_front(&BindingMap::OnTargetUpdate, this);
+			}
 		}
 
 		void UpdateSource(PropertyId id)

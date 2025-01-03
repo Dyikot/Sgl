@@ -1,6 +1,6 @@
 #pragma once
 
-#include "INotifyPropertyChange.h"
+#include "ISupportDataBinding.h"
 #include "../Object/PropertyManagers.h"
 
 namespace Sgl
@@ -32,11 +32,11 @@ namespace Sgl
 		TMember TData::* Member;
 		BindingMode Mode;
 	public:
-		Binding(TData& source, 
+		Binding(ISupportDataBinding& source, 
 				TMember& target,
 				TMember TData::* member,
 				BindingMode mode = BindingMode::OneWayToSource):
-			Source(source),
+			Source(static_cast<TData&>(source)),
 			Target(target),
 			Member(member),
 			Mode(mode)

@@ -41,17 +41,17 @@ namespace Sgl
 		explicit Component(SDL_FPoint position) noexcept;
 		virtual ~Component() = default;
 
-		void SetWidth(float value);
-		void SetHeight(float value);
-		void SetMinWidth(float value);
-		void SetMinHeight(float value);
-		void SetMaxWidth(float value);
-		void SetMaxHeight(float value);
-		void SetZIndex(size_t value);
-		void SetMargin(const Thikness& value);
-		void SetHorizontalAlignment(HorizontalAlignment value);
-		void SetVerticalAlignment(VerticalAligment value);
-		void SetVisibility(Visibility value);
+		void SetWidth(float value) { SetProperty(WidthProperty, value); }
+		void SetHeight(float value) { SetProperty(HeightProperty, value); }
+		void SetMinWidth(float value) { SetProperty(MinWidthProperty, value); }
+		void SetMinHeight(float value) { SetProperty(MinHeightProperty, value); }
+		void SetMaxWidth(float value) { SetProperty(MaxWidthProperty, value); }
+		void SetMaxHeight(float value) { SetProperty(MaxHeightProperty, value); }
+		void SetZIndex(size_t value) { SetProperty(ZIndexProperty, value); }
+		void SetMargin(const Thikness& value) { SetProperty(MarginProperty, value); }
+		void SetHorizontalAlignment(HorizontalAlignment value) { SetProperty(HorizontalAlignmentProperty, value); }
+		void SetVerticalAlignment(VerticalAligment value) { SetProperty(VerticalAligmentProperty, value); }
+		void SetVisibility(Visibility value) { SetProperty(VisibilityProperty, value); }
 		void SetStyle(const Style& style) override;
 
 		float GetWidth() const { return GetPropertyValue<float>(WidthProperty); }
@@ -73,31 +73,26 @@ namespace Sgl
 		bool IsMouseOver() const noexcept { return _isMouseOver; }
 		void OnPropertyChanged(PropertyId id) override;
 
-		template<typename TMember, typename TData>
-		void Bind(PropertyId id,
-				  TData& source, 
-				  TMember TData::* member,
-				  BindingMode mode = BindingMode::OneWayToSource)
+		template<typename TData, typename TMember>
+			requires std::derived_from<TData, ISupportDataBinding>
+		void Bind(PropertyId id, ISupportDataBinding& source, TMember TData::* member)
 		{
-			_bindings.Add(id, new Binding<TMember, TData>(
-				source, GetPropertyValue<TMember>(id), member, mode));
+			_bindings.Add(id, GetPropertyValue<TMember>(id), source, member);
 		}
 
-		template<typename TMember, typename TData> requires std::derived_from<TData, INotifyPropertyChange>
-		void Bind(PropertyId id,
-				  TData& source,
-				  const std::string_view member,
+		template<typename TData, typename TMember>
+			requires std::derived_from<TData, ISupportDataBinding>
+		void Bind(PropertyId id, 
+				  ISupportDataBinding& source,
+				  TMember TData::* member, 
+				  std::string_view memberName,
 				  BindingMode mode = BindingMode::OneWayToSource)
 		{
-			_bindings.Add(id, member, new Binding<TMember, TData>(
-				source, GetPropertyValue<TMember>(id), TData::GetMember(member), mode));
-			
-			if(mode != BindingMode::OneWayToSource)
-			{
-				source.GetPropertyChangedEvent() += 
-					std::bind_front(&BindingMap::OnTargetUpdate, &_bindings);
-			}
+			_bindings.Add(id, GetPropertyValue<TMember>(id), source, member, memberName, mode);
 		}
+
+		void ClearBinding(PropertyId id);
+		void ClearBindings();
 	protected:
 		virtual void OnMouseEnter(const MouseButtonEventArgs& e);
 		virtual void OnMouseLeave(const MouseButtonEventArgs& e);
