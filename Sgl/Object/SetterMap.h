@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../Events/Event.h"
-#include "../Any.h"
-#include "../Object/ObjectManager.h"
+#include "../Data/Any.h"
+#include "ObjectManager.h"
 #include <format>
 
 namespace Sgl

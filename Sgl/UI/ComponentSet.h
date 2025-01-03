@@ -6,7 +6,7 @@
 namespace Sgl
 {
 	template<typename T> requires std::derived_from<T, Component>
-	class ObjestSet: public std::multiset<std::reference_wrapper<T>, ZIndexComparer>
+	class ComponentSet: public std::multiset<std::reference_wrapper<T>, ZIndexComparer>
 	{
 	public:
 		template<typename TPredicate>

@@ -5,7 +5,7 @@
 #include "../Appearance/UIAppearance.h"
 #include "../Appearance/Cursor.h"
 #include "../Events/Delegates.h"
-#include "../Binding/INotifyPropertyChange.h"
+#include "../Data/BindingMap.h"
 
 namespace Sgl
 {
@@ -31,6 +31,8 @@ namespace Sgl
 		SDL_FPoint Position = { 0, 0 };
 		const Cursor* Cursor = nullptr;
 		IVisual* ToolTip = nullptr;
+	protected:
+		BindingMap _bindings;
 	private:
 		bool _isEventsInitialized = false;
 		bool _isMouseOver = false;
@@ -69,11 +71,32 @@ namespace Sgl
 		
 		void OnRender(RenderContext& renderContext) override;
 		bool IsMouseOver() const noexcept { return _isMouseOver; }
+		void OnPropertyChanged(PropertyId id) override;
 
-		template<typename T>
-		void Bind(PropertyId id, T& item)
+		template<typename TMember, typename TData>
+		void Bind(PropertyId id,
+				  TData& source, 
+				  TMember TData::* member,
+				  BindingMode mode = BindingMode::OneWayToSource)
 		{
+			_bindings.Add(id, new Binding<TMember, TData>(
+				source, GetPropertyValue<TMember>(id), member, mode));
+		}
+
+		template<typename TMember, typename TData> requires std::derived_from<TData, INotifyPropertyChange>
+		void Bind(PropertyId id,
+				  TData& source,
+				  const std::string_view member,
+				  BindingMode mode = BindingMode::OneWayToSource)
+		{
+			_bindings.Add(id, member, new Binding<TMember, TData>(
+				source, GetPropertyValue<TMember>(id), TData::GetMember(member), mode));
 			
+			if(mode != BindingMode::OneWayToSource)
+			{
+				source.GetPropertyChangedEvent() += 
+					std::bind_front(&BindingMap::OnTargetUpdate, &_bindings);
+			}
 		}
 	protected:
 		virtual void OnMouseEnter(const MouseButtonEventArgs& e);

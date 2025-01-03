@@ -143,6 +143,28 @@ namespace Sgl
 		}
 	}
 
+	FillEllipse::FillEllipse(SDL_FPoint position, int width, int height, Sgl::Fill fill):
+		ShapeBase(position),
+		Fill(fill)
+	{
+		auto points = Math::ComputeEllipsePoints(position, width, height);
+
+		Filler(
+			[this, &position, &points](const Color& color)
+			{
+				Math::PointsToVertexRange(points, Vertices, color);
+				Vertices.back() = SDL_Vertex(position, static_cast<SDL_Color>(color), SDL_FPoint());
+			},
+			[this, &position, &points](const Texture& texture)
+			{
+				Math::PointsToVertexRange(points, Vertices, texture.Color);
+				Vertices.back() = SDL_Vertex(position, static_cast<SDL_Color>(texture.Color), SDL_FPoint());
+			}
+		).FillWith(Fill);
+
+		Order = Math::Triangulate(points, position);
+	}
+
 	void FillEllipse::OnRender(RenderContext& renderContext)
 	{
 		Filler(

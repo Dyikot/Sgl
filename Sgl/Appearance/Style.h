@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Object/ObjectId.h"
-#include "../Collections/SetterMap.h"
+#include "../Object/SetterMap.h"
 
 namespace Sgl
 {

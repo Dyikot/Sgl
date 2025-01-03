@@ -45,6 +45,7 @@ namespace Sgl
 			End{ x2, y2 },
 			Color(color)
 		{}
+
 		Line(SDL_FPoint start, SDL_FPoint end, Sgl::Color color):
 			ShapeBase(start),
 			Start(start), 
@@ -68,6 +69,7 @@ namespace Sgl
 			Points(points.begin(), points.end()),
 			Color(color)
 		{}
+
 		Polyline(std::vector<SDL_FPoint>&& points, Sgl::Color color):
 			ShapeBase(points.front()),
 			Points(std::move(points)),
@@ -90,6 +92,7 @@ namespace Sgl
 			Points(points.begin(), points.end()),
 			Color(color)
 		{}
+
 		Polygon(std::vector<SDL_FPoint>&& points, Sgl::Color color):
 			ShapeBase(points.front()),
 			Points(std::move(points)),
@@ -116,6 +119,7 @@ namespace Sgl
 			Vertices.reserve(points.size());
 			Math::PointsToVertexRange(points, Vertices, color);
 		}
+
 		FillPolygon(std::array<SDL_FPoint, 100>&& points, Sgl::Color color):
 			ShapeBase(points.front()),
 			Order(Math::Triangulate(points)),
@@ -141,11 +145,13 @@ namespace Sgl
 			Rect{ x, y, width, height },
 			Color(color)
 		{}
+
 		Rectangle(SDL_FPoint position, float width, float height, Sgl::Color color):
 			ShapeBase(SDL_FPoint(position.x + width / 2, position.y + height / 2)),
 			Rect{ position.x, position.y, width, height },
 			Color(color)
 		{}
+
 		Rectangle(SDL_FRect rect, Sgl::Color color):
 			ShapeBase(SDL_FPoint(rect.x + rect.w / 2, rect.y + rect.h / 2)),
 			Rect(rect),
@@ -166,9 +172,11 @@ namespace Sgl
 		FillRectangle(float x, float y, float width, float height, Sgl::Fill paint):
 			Rect{ x, y, width, height }, Fill(paint)
 		{}
+
 		FillRectangle(SDL_FPoint position, float width, float height, Sgl::Fill paint):
 			Rect{ position.x, position.y, width, height }, Fill(paint)
 		{}
+
 		FillRectangle(const SDL_FRect& rect, Sgl::Fill paint):
 			Rect(rect), Fill(paint)
 		{}
@@ -200,27 +208,7 @@ namespace Sgl
 		std::vector<int> Order;
 		Fill Fill;
 	public:
-		FillEllipse(SDL_FPoint position, int width, int height, Sgl::Fill fill):
-			ShapeBase(position),
-			Fill(fill)
-		{
-			auto points = Math::ComputeEllipsePoints(position, width, height);
-
-			Filler(
-				[this, &position, &points](const Color& color)
-				{
-					Math::PointsToVertexRange(points, Vertices, color);
-					Vertices.back() = SDL_Vertex(position, static_cast<SDL_Color>(color), SDL_FPoint());
-				},
-				[this, &position, &points](const Texture& texture)
-				{
-					Math::PointsToVertexRange(points, Vertices, texture.Color);
-					Vertices.back() = SDL_Vertex(position, static_cast<SDL_Color>(texture.Color), SDL_FPoint());
-				}
-			).FillWith(Fill);
-
-			Order = Math::Triangulate(points, position);
-		}
+		FillEllipse(SDL_FPoint position, int width, int height, Sgl::Fill fill);
 
 		void OnRender(RenderContext& renderContext) override;
 		void Translate(float dx, float dy) override;

@@ -112,6 +112,11 @@ namespace Sgl
         }
     }
 
+    void Component::OnPropertyChanged(PropertyId id)
+    {
+        _bindings.UpdateSource(id);
+    }
+
     void Component::OnMouseEnter(const MouseButtonEventArgs& e)
     {
         _isMouseOver = true;

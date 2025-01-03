@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Component.h"
-#include "../../Collections/ObjestSet.h"
+#include "../ComponentSet.h"
 #include "../Controls/Control.h"
 
 namespace Sgl
@@ -10,7 +10,7 @@ namespace Sgl
 	{
 	public:
 		Control* MouseOverControl = nullptr;
-		ObjestSet<Control> Children;
+		ComponentSet<Control> Children;
 	protected:
 		Fill _background = Colors::Black;		
 	public:

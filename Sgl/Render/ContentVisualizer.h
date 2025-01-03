@@ -1,7 +1,7 @@
 #pragma once
 
 #include "IVisual.h"
-#include "../Any.h"
+#include "../Data/Any.h"
 #include <stdexcept>
 
 namespace Sgl

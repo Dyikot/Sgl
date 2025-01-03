@@ -3,7 +3,7 @@
 #include <stack>
 #include <filesystem>
 #include <iostream>
-#include "Collections/SceneStack.h"
+#include "UI/SceneStack.h"
 #include "Render/RenderContext.h"
 #include "Appearance/Style.h"
 #include "Events/EventArgs.h"
@@ -19,6 +19,17 @@ namespace Sgl
 	enum class WindowState
 	{
 		Normal, Minimized, Maximized
+	};
+
+	struct WindowProperties
+	{
+		std::string_view Title = "Window";
+		SDL_Point Position = SDL_Point{ SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED };
+		size_t Width = 1280;
+		size_t Height = 720;
+		size_t LogicalWidth = 1280;
+		size_t LogicalHeight = 720;
+		SDL_WindowFlags Flags = SDL_WINDOW_SHOWN;
 	};
 
 	class Window
@@ -37,10 +48,7 @@ namespace Sgl
 		bool _isVsyncEnable = false;
 	public:
 		Window() noexcept;
-		Window(std::string_view title, SDL_Point position, 
-			   size_t width, size_t height,
-			   size_t logicalWidth, size_t logicalHeight,
-			   SDL_WindowFlags flags) noexcept;
+		Window(const WindowProperties& properties) noexcept;
 		Window(const Window&) = delete;
 		Window(Window&&) = delete;
 		~Window() noexcept { SDL_DestroyWindow(_sdlWindow); }
@@ -81,29 +89,5 @@ namespace Sgl
 		virtual void OnStateChanged(const EventArgs& e);
 	private:
 		friend class Application;
-	};
-
-	class WindowBuilder
-	{
-	private:
-		std::string _title = "Window";
-		SDL_Point _position = SDL_Point{ SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED };
-		size_t _width = 1280;
-		size_t _height = 720;
-		size_t _logicalWidth = 1280;
-		size_t _logicalHeight = 720;
-		SDL_WindowFlags _flags = SDL_WINDOW_SHOWN;
-	public:
-		WindowBuilder& Title(std::string&& value) { _title = std::move(value); return *this; }
-		WindowBuilder& Position(SDL_Point value) { _position = value; return *this; }
-		WindowBuilder& Width(size_t value) { _width = value; _logicalWidth = value;  return *this; }
-		WindowBuilder& Height(size_t value) { _height = value; _logicalHeight = value; return *this; }
-		WindowBuilder& LogicalWidth(size_t value) { _logicalWidth = value; return *this; }
-		WindowBuilder& LogicalHeight(size_t value) { _logicalHeight = value; return *this; }
-		WindowBuilder& Flags(SDL_WindowFlags value) { _flags = value; return *this; }
-		Window Build()
-		{
-			return Window(_title, _position, _width, _height, _logicalWidth, _logicalHeight, _flags);
-		}
 	};
 }
