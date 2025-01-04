@@ -27,7 +27,7 @@ namespace Sgl
 
 		AnyMap<std::string> Resources;
 	private:
-		bool _isEventsInitialized = false;
+		bool _isMembersInitialized = false;
 	public:
 		UIElement();
 		virtual ~UIElement() = default;
@@ -48,6 +48,6 @@ namespace Sgl
 		virtual void OnKeyDown(const KeyEventArgs& e);
 		virtual void OnKeyUp(const KeyEventArgs& e);
 	private:
-		bool InitializeEvents();
+		bool InitializeMembers();
 	};
 }

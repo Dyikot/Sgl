@@ -74,7 +74,7 @@ namespace Sgl
 
 		while(_isRunning)
 		{
-			if(window.Scenes.Any())
+			if(!window.Scenes.Any())
 			{
 				Shutdown();
 				continue;

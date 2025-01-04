@@ -14,6 +14,8 @@ namespace Sgl
 		AnyMap<EventId> _events;
 		AnyMap<PropertyId> _properties;
 	public:
+		virtual ~Object() = default;
+
 		/* Properties */
 
 		template<typename TValue>

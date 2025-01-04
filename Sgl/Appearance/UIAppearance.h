@@ -19,6 +19,19 @@ namespace Sgl
 		constexpr Thikness(uint32_t lenght = 0) noexcept:
 			Thikness(lenght, lenght, lenght, lenght) 
 		{}
+
+		constexpr bool operator==(const Thikness& other) const
+		{
+			return Top == other.Top &&
+				   Right == other.Right &&
+				   Bottom == other.Bottom &&
+				   Left == other.Left;
+		}
+
+		constexpr bool operator!=(const Thikness& other) const
+		{
+			return !operator==(other);
+		}
 	};
 
 	class FontFamily

@@ -7,26 +7,12 @@ namespace Sgl
         Component(SDL_FPoint())
     {}
 
-    Component::Component(SDL_FPoint position) noexcept:
+    Component::Component(SDL_FPoint position):
         Position(position),
-        _isEventsInitialized(InitializeEvents()),
+        _isMembersInitialized(InitializeMembers()),
         MouseEnter(GetEventValue<MouseEventHandler>(MouseEnterEvent)),
         MouseLeave(GetEventValue<MouseEventHandler>(MouseLeaveEvent))
-    {
-        AddProperty<float>(WidthProperty);
-        AddProperty<float>(HeightProperty);
-        AddProperty<float>(MinWidthProperty);
-        AddProperty<float>(MinHeightProperty);
-        AddProperty<float>(MaxWidthProperty);
-        AddProperty<float>(MinHeightProperty);
-        AddProperty<size_t>(ZIndexProperty, 1);
-        AddProperty<Thikness>(MarginProperty);
-        AddProperty<const Sgl::Cursor*>(CursorProperty, nullptr);
-        AddProperty<IVisual*>(ToolTipProperty, nullptr);
-        AddProperty<HorizontalAlignment>(HorizontalAlignmentProperty, HorizontalAlignment::Stretch);
-        AddProperty<VerticalAligment>(VerticalAligmentProperty, VerticalAligment::Stretch);
-        AddProperty<Visibility>(VisibilityProperty, Visibility::Visible);
-    }
+    {}
 
     void Component::SetStyle(const Style& style)
     {
@@ -40,9 +26,11 @@ namespace Sgl
 
     void Component::OnRender(RenderContext& renderContext)
     {
-        if(_isMouseOver && ToolTip)
+        auto tooltip = GetPropertyValue<IVisual*>(ToolTipProperty);
+
+        if(_isMouseOver && tooltip)
         {
-            ToolTip->OnRender(renderContext);
+            tooltip->OnRender(renderContext);
         }
     }
 
@@ -65,9 +53,9 @@ namespace Sgl
     {
         _isMouseOver = true;
 
-        if(Cursor)
+        if(auto cursor = GetCursor(); cursor)
         {
-            Application::Current()->SetCursor(*Cursor);
+            Application::Current()->SetCursor(*cursor);
         }
 
         if(MouseEnter)
@@ -80,7 +68,7 @@ namespace Sgl
     {
         _isMouseOver = false;
 
-        if(Cursor)
+        if(GetCursor())
         {
             Application::Current()->SetDefaultCursor();
         }
@@ -91,10 +79,24 @@ namespace Sgl
         }
     }
 
-    bool Component::InitializeEvents()
+    bool Component::InitializeMembers()
     {
         AddEvent<MouseEventHandler>(MouseEnterEvent);
         AddEvent<MouseEventHandler>(MouseLeaveEvent);
+
+        AddProperty<float>(WidthProperty);
+        AddProperty<float>(HeightProperty);
+        AddProperty<float>(MinWidthProperty);
+        AddProperty<float>(MinHeightProperty);
+        AddProperty<float>(MaxWidthProperty);
+        AddProperty<float>(MinHeightProperty);
+        AddProperty<size_t>(ZIndexProperty, 1);
+        AddProperty<Thikness>(MarginProperty);
+        AddProperty<const Sgl::Cursor*>(CursorProperty);
+        AddProperty<IVisual*>(ToolTipProperty);
+        AddProperty<HorizontalAlignment>(HorizontalAlignmentProperty, HorizontalAlignment::Stretch);
+        AddProperty<VerticalAligment>(VerticalAligmentProperty, VerticalAligment::Stretch);
+        AddProperty<Visibility>(VisibilityProperty, Visibility::Visible);
 
         return true;
     }

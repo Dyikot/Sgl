@@ -2,6 +2,7 @@
 
 #include "SDL/SDL_mouse.h"
 #include "SDL/SDL_image.h"
+#include "../Tools/Log.h"
 #include <string>
 
 namespace Sgl
@@ -16,10 +17,21 @@ namespace Sgl
 		{}
 		explicit Cursor(std::string_view path):
 			_cursor(SDL_CreateColorCursor(IMG_Load(path.data()), 0, 0))
-		{}
+		{
+			if(!_cursor)
+			{
+				PrintSDLError();
+			}
+		}
+
 		explicit Cursor(SDL_SystemCursor id) noexcept:
 			_cursor(SDL_CreateSystemCursor(id))
-		{}
+		{
+			if(!_cursor)
+			{
+				PrintSDLError();
+			}
+		}
 		Cursor(const Cursor&) = delete;
 		Cursor(Cursor&&) = delete;
 		~Cursor() noexcept

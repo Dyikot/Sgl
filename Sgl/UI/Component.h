@@ -29,17 +29,15 @@ namespace Sgl
 		static inline const EventId MouseLeaveEvent = EventManager::Register<MouseEventHandler>("MouseLeave");
 
 		SDL_FPoint Position = { 0, 0 };
-		const Cursor* Cursor = nullptr;
-		IVisual* ToolTip = nullptr;
 	protected:
 		BindingMap _bindings;
 	private:
-		bool _isEventsInitialized = false;
+		bool _isMembersInitialized = false;
 		bool _isMouseOver = false;
 	public:
 		Component();
-		explicit Component(SDL_FPoint position) noexcept;
-		virtual ~Component() = default;
+		explicit Component(SDL_FPoint position);
+		virtual ~Component() = default;		
 
 		void SetWidth(float value) { SetProperty(WidthProperty, value); }
 		void SetHeight(float value) { SetProperty(HeightProperty, value); }
@@ -52,19 +50,23 @@ namespace Sgl
 		void SetHorizontalAlignment(HorizontalAlignment value) { SetProperty(HorizontalAlignmentProperty, value); }
 		void SetVerticalAlignment(VerticalAligment value) { SetProperty(VerticalAligmentProperty, value); }
 		void SetVisibility(Visibility value) { SetProperty(VisibilityProperty, value); }
+		void SetCursor(const Sgl::Cursor* value) { SetProperty(CursorProperty, value); }
+		void SetToolTip(IVisual* value) { SetProperty(ToolTipProperty, value); }
 		void SetStyle(const Style& style) override;
 
-		float GetWidth() const { return GetPropertyValue<float>(WidthProperty); }
-		float GetHeight() const { return GetPropertyValue<float>(HeightProperty); }
-		float GetMinWidth() const { return GetPropertyValue<float>(MinWidthProperty); }
-		float GetMinHeight() const { return GetPropertyValue<float>(MinHeightProperty); }
-		float GetMaxWidth() const { return GetPropertyValue<float>(MaxWidthProperty); }
-		float GetMaxHeight() const { return GetPropertyValue<float>(MaxHeightProperty); }
-		size_t GetZIndex() const { return GetPropertyValue<size_t>(ZIndexProperty); }
+		const float& GetWidth() const { return GetPropertyValue<float>(WidthProperty); }
+		const float& GetHeight() const { return GetPropertyValue<float>(HeightProperty); }
+		const float& GetMinWidth() const { return GetPropertyValue<float>(MinWidthProperty); }
+		const float& GetMinHeight() const { return GetPropertyValue<float>(MinHeightProperty); }
+		const float& GetMaxWidth() const { return GetPropertyValue<float>(MaxWidthProperty); }
+		const float& GetMaxHeight() const { return GetPropertyValue<float>(MaxHeightProperty); }
+		const size_t& GetZIndex() const { return GetPropertyValue<size_t>(ZIndexProperty); }
 		const Thikness& GetMargin() const { return GetPropertyValue<Thikness>(MarginProperty); }
-		HorizontalAlignment GetHorizontalAlignment() const { return GetPropertyValue<HorizontalAlignment>(HorizontalAlignmentProperty); }
-		VerticalAligment GetVerticalAlignment() const { return GetPropertyValue<VerticalAligment>(VerticalAligmentProperty); }
-		Visibility GetVisibility() const { return GetPropertyValue<Visibility>(VisibilityProperty); }
+		const HorizontalAlignment& GetHorizontalAlignment() const { return GetPropertyValue<HorizontalAlignment>(HorizontalAlignmentProperty); }
+		const VerticalAligment& GetVerticalAlignment() const { return GetPropertyValue<VerticalAligment>(VerticalAligmentProperty); }
+		const Visibility& GetVisibility() const { return GetPropertyValue<Visibility>(VisibilityProperty); }
+		const Cursor* const& GetCursor() const { return GetPropertyValue<const Cursor*>(CursorProperty); }
+		const IVisual* const& GetToolTip() const { return GetPropertyValue<IVisual*>(ToolTipProperty); }
 
 		Event<MouseEventHandler>& MouseEnter;
 		Event<MouseEventHandler>& MouseLeave;
@@ -97,7 +99,7 @@ namespace Sgl
 		virtual void OnMouseEnter(const MouseButtonEventArgs& e);
 		virtual void OnMouseLeave(const MouseButtonEventArgs& e);
 	private:
-		bool InitializeEvents();
+		bool InitializeMembers();
 	};
 
 	struct ZIndexComparer

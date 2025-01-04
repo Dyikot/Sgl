@@ -22,7 +22,7 @@ namespace Sgl
 		static inline const PropertyId FontSizeProperty = PropertyManager::Register<uint16_t>("FontSize");
 		static inline const EventId MouseDoubleClickEvent = EventManager::Register<MouseEventHandler>("MouseDoubleClick");
 
-		Panel* Panel = nullptr;
+		Panel* Panel;
 	private:
 		bool _isEventsInitialized = false;
 	public:

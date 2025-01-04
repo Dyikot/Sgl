@@ -6,4 +6,4 @@ namespace Sgl
 	{
 		return std::filesystem::path();
 	}
-}
+}	

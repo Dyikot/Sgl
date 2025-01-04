@@ -3,7 +3,7 @@
 namespace Sgl
 {
 	UIElement::UIElement():
-		_isEventsInitialized(InitializeEvents()),
+		_isMembersInitialized(InitializeMembers()),
 		MouseDown(GetEventValue<MouseEventHandler>(MouseDownEvent)),
 		MouseUp(GetEventValue<MouseEventHandler>(MouseUpEvent)),
 		MouseMove(GetEventValue<MouseEventHandler>(MouseMoveEvent)),
@@ -68,7 +68,7 @@ namespace Sgl
 		}
 	}
 
-	bool UIElement::InitializeEvents()
+	bool UIElement::InitializeMembers()
 	{
 		AddEvent<MouseEventHandler>(MouseDownEvent);
 		AddEvent<MouseEventHandler>(MouseUpEvent);
