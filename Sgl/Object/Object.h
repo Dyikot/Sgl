@@ -88,6 +88,6 @@ namespace Sgl
 			_properties.Add<TValue>(id, std::forward<TArgs>(args)...);
 		}
 
-		virtual void OnPropertyChanged(PropertyId id) {};
+		virtual void OnPropertyChanged(PropertyId id) {}
 	};
 }

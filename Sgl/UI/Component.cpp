@@ -36,17 +36,10 @@ namespace Sgl
 
     void Component::OnPropertyChanged(PropertyId id)
     {
-        _bindings.UpdateSource(id);
-    }
-
-    void Component::ClearBinding(PropertyId id)
-    {
-        _bindings.erase(id);
-    }
-
-    void Component::ClearBindings()
-    {
-        _bindings.clear();
+        if(auto found = _bindings.find(id); found != _bindings.end())
+        {
+            found->second.NotifyTarget(GetProperty(id));
+        }
     }
 
     void Component::OnMouseEnter(const MouseButtonEventArgs& e)

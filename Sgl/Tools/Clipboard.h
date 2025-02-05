@@ -1,6 +1,7 @@
 #pragma once
 #include "SDL/SDL_clipboard.h"
 #include <string_view>
+#include <string>
 
 namespace Sgl
 {

@@ -5,7 +5,7 @@
 #include "../Appearance/UIAppearance.h"
 #include "../Appearance/Cursor.h"
 #include "../Events/Delegates.h"
-#include "../Data/BindingMap.h"
+#include "../Data/Binding.h"
 
 namespace Sgl
 {
@@ -30,7 +30,7 @@ namespace Sgl
 
 		SDL_FPoint Position = { 0, 0 };
 	protected:
-		BindingMap _bindings;
+		std::unordered_map<PropertyId, Binding> _bindings;
 	private:
 		bool _isMembersInitialized = false;
 		bool _isMouseOver = false;
@@ -46,7 +46,7 @@ namespace Sgl
 		void SetMaxWidth(float value) { SetProperty(MaxWidthProperty, value); }
 		void SetMaxHeight(float value) { SetProperty(MaxHeightProperty, value); }
 		void SetZIndex(size_t value) { SetProperty(ZIndexProperty, value); }
-		void SetMargin(const Thikness& value) { SetProperty(MarginProperty, value); }
+		void SetMargin(Thikness value) { SetProperty(MarginProperty, value); }
 		void SetHorizontalAlignment(HorizontalAlignment value) { SetProperty(HorizontalAlignmentProperty, value); }
 		void SetVerticalAlignment(VerticalAligment value) { SetProperty(VerticalAligmentProperty, value); }
 		void SetVisibility(Visibility value) { SetProperty(VisibilityProperty, value); }
@@ -67,7 +67,7 @@ namespace Sgl
 		const Visibility& GetVisibility() const { return GetPropertyValue<Visibility>(VisibilityProperty); }
 		const Cursor* const& GetCursor() const { return GetPropertyValue<const Cursor*>(CursorProperty); }
 		const IVisual* const& GetToolTip() const { return GetPropertyValue<IVisual*>(ToolTipProperty); }
-
+		
 		Event<MouseEventHandler>& MouseEnter;
 		Event<MouseEventHandler>& MouseLeave;
 		
@@ -75,26 +75,44 @@ namespace Sgl
 		bool IsMouseOver() const noexcept { return _isMouseOver; }
 		void OnPropertyChanged(PropertyId id) override;
 
-		template<typename TData, typename TMember>
-			requires std::derived_from<TData, ISupportDataBinding>
-		void Bind(PropertyId id, ISupportDataBinding& source, TMember TData::* member)
+		template<typename T>
+		void Bind(PropertyId id, T& member)
 		{
-			_bindings.Add(id, GetPropertyValue<TMember>(id), source, member);
+			Binding& binding = _bindings[id];
+			binding.Target = [&member](const Any& value)
+			{
+				member = value.As<T>();
+			};
 		}
 
-		template<typename TData, typename TMember>
-			requires std::derived_from<TData, ISupportDataBinding>
-		void Bind(PropertyId id, 
-				  ISupportDataBinding& source,
-				  TMember TData::* member, 
-				  std::string_view memberName,
-				  BindingMode mode = BindingMode::OneWayToSource)
-		{
-			_bindings.Add(id, GetPropertyValue<TMember>(id), source, member, memberName, mode);
-		}
+		template<typename TTarget, typename TMember>
+		void Bind(PropertyId id, void (TTarget::* setter)(const TMember&), TTarget& target,
+				  BindingMode mode = BindingMode::OneWayToTarget)
+		{	
+			Binding& binding = _bindings[id];
 
-		void ClearBinding(PropertyId id);
-		void ClearBindings();
+			if(mode == BindingMode::OneWayToTarget || mode == BindingMode::TwoWay)
+			{
+				binding.Target = [set = std::bind_front(setter, &target)] (const Any& value)
+				{
+					set(value.As<TMember>());
+				};
+			}
+			
+			if(mode == BindingMode::OneWayToTarget)
+			{
+				return;
+			}
+
+			if constexpr(std::is_base_of_v<ISupportSourceBinding, TTarget>)
+			{
+				binding.Source = [this](PropertyId id, const Any& value)
+				{
+					SetProperty(id, value.As<TMember>());
+				};
+				target.GetNotifySource() = std::bind_front(&Binding::NotifySource, &binding);
+			}
+		}
 	protected:
 		virtual void OnMouseEnter(const MouseButtonEventArgs& e);
 		virtual void OnMouseLeave(const MouseButtonEventArgs& e);

@@ -1,77 +1,53 @@
 #pragma once
 
-#include "ISupportDataBinding.h"
-#include "../Object/PropertyManagers.h"
+#include "../Object/ObjectId.h"
+#include "../Events/Delegates.h"
+#include <string>
 
 namespace Sgl
 {
+	using NotifySource = Action<PropertyId, const Any&>;
+	using NotifyTarget = Action<const Any&>;
+
+	class ISupportSourceBinding
+	{
+	public:
+		virtual ~ISupportSourceBinding() = default;
+
+		virtual NotifySource& GetNotifySource() = 0;
+	};
+
 	enum class BindingMode
 	{
 		OneWayToTarget,
 		OneWayToSource,
 		TwoWay
 	};
-
-	class BindingBase
+	
+	class Binding
 	{
 	public:
-		virtual void UpdateSource() = 0;
-		virtual void UpdateTarget() = 0;
-		virtual bool TryUpdateSource() = 0;
-		virtual bool TryUpdateTarget() = 0;
-
-		virtual ~BindingBase() = default;
-	};
-
-	template<typename TMember, typename TData>
-	class Binding: public BindingBase
-	{
+		NotifySource Source;
+		NotifyTarget Target;
+	private:
+		bool _beingTargetNotified = false;
 	public:
-		std::reference_wrapper<TData> Source;
-		std::reference_wrapper<TMember> Target;
-		TMember TData::* Member;
-		BindingMode Mode;
-	public:
-		Binding(ISupportDataBinding& source, 
-				TMember& target,
-				TMember TData::* member,
-				BindingMode mode = BindingMode::OneWayToSource):
-			Source(static_cast<TData&>(source)),
-			Target(target),
-			Member(member),
-			Mode(mode)
-		{}
-
-		void UpdateSource() override
+		void NotifyTarget(const Any& value)
 		{
-			Source.get().*Member = Target;
-		}
-
-		void UpdateTarget() override
-		{
-			Target.get() = Source.get().*Member;
-		}
-
-		bool TryUpdateSource() override
-		{
-			if(Mode != BindingMode::OneWayToTarget)
+			if(Target)
 			{
-				UpdateSource();
-				return true;
+				_beingTargetNotified = true;
+				Target(value);
+				_beingTargetNotified = false;
 			}
-
-			return false;
 		}
 
-		bool TryUpdateTarget() override
+		void NotifySource(PropertyId id, const Any& value)
 		{
-			if(Mode != BindingMode::OneWayToSource)
+			if(Source && !_beingTargetNotified)
 			{
-				UpdateTarget();
-				return true;
+				Source(id, value);
 			}
-
-			return false;
 		}
 	};
 }
