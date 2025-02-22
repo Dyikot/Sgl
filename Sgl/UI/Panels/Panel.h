@@ -10,20 +10,14 @@ namespace Sgl
 	{
 	public:
 		Control* MouseOverControl = nullptr;
-		ComponentSet<Control> Children;
-	protected:
-		Fill _background = Colors::Black;		
+		ComponentSet<Control> Children;	
 	public:
 		Panel() = default;
 
 		void SetStyle(const Style& style) override;
-		void SetBackground(const Fill& value) { _background = value; }
-
-		const Fill& GetBackground() const { return _background; }
 
 		bool TryRaiseMouseMoveEvents(const MouseButtonEventArgs& e);
 		void RaiseMouseDownEvents(const MouseButtonEventArgs& e);
 		void RaiseMouseUpEvents(const MouseButtonEventArgs& e);
-	private:
 	};	
 }

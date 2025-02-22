@@ -5,7 +5,15 @@ namespace Sgl
 {
 	void Scene::OnRender(RenderContext& renderContext)
 	{
-		renderContext.FillSceneBackground(Background);
+		if(BackgroundTexture)
+		{
+			BackgroundTexture->Color = BackgroundColor;
+			renderContext.SetSceneBackgroundTexture(*BackgroundTexture);
+		}
+		else
+		{
+			renderContext.SetSceneBackgroundColor(BackgroundColor);
+		}
 	}
 
 	void Scene::Close()

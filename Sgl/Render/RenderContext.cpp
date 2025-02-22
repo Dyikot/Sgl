@@ -7,54 +7,90 @@ namespace Sgl
 {
 	RenderContext::RenderContext(SDL_Renderer* const renderer) noexcept:
 		_renderer(renderer)
-	{}
+	{
+		_instance = this;
+	}
+
+	Texture RenderContext::CreateTexture(std::string_view path)
+	{
+		auto texture = IMG_LoadTexture(_instance->_renderer, path.data());
+		if(texture == nullptr)
+		{
+			PrintSDLError();
+		}
+
+		return Texture(texture);
+	}
 
 	void RenderContext::DrawPoint(SDL_FPoint point, Color color)
 	{
-		SetDrawColor(color);
+		SetColor(color);
 		SDL_RenderDrawPointF(_renderer, point.x, point.y);
 	}
 
 	void RenderContext::DrawPoints(std::span<SDL_FPoint> points, Color color)
 	{
-		SetDrawColor(color);
+		SetColor(color);
 		SDL_RenderDrawPointsF(_renderer, points.data(), points.size());
 	}
 
 	void RenderContext::DrawLine(SDL_FPoint start, SDL_FPoint end, Color color)
 	{
-		SetDrawColor(color);
+		SetColor(color);
 		SDL_RenderDrawLineF(_renderer, start.x, start.y, end.x, end.y);
 	}
 
 	void RenderContext::DrawLines(std::span<SDL_FPoint> points, Color color)
 	{	
-		SetDrawColor(color);
+		SetColor(color);
 		SDL_RenderDrawLinesF(_renderer, points.data(), points.size());
 	}
 
 	void RenderContext::DrawRectangle(const SDL_FRect& rectange, Color color)
 	{
-		SetDrawColor(color);
+		SetColor(color);
 		SDL_RenderDrawRectF(_renderer, &rectange);
 	}
 
 	void RenderContext::DrawRectangles(std::span<SDL_FRect> rectanges, Color color)
 	{
-		SetDrawColor(color);
+		SetColor(color);
 		SDL_RenderDrawRectsF(_renderer, rectanges.data(), rectanges.size());
 	}
 
 	void RenderContext::DrawFillRectangle(const SDL_FRect& rectange, Color background)
 	{
-		SetDrawColor(background);
+		SetColor(background);
 		SDL_RenderFillRectF(_renderer, &rectange);		
 	}
 
 	void RenderContext::DrawFillRectangles(std::span<SDL_FRect> rectanges, Color background)
 	{
-		SetDrawColor(background);
+		SetColor(background);
 		SDL_RenderFillRectsF(_renderer, rectanges.data(), rectanges.size());
+	}
+
+	void RenderContext::DrawImage(std::string_view path, const SDL_FRect& rectangle)
+	{
+		DrawTexture(Texture(CreateTexture(path)), rectangle);
+	}
+
+	void RenderContext::DrawImage(std::string_view path, const SDL_FRect& rectangle, const SDL_Rect& clip)
+	{
+		DrawTexture(Texture(CreateTexture(path)), rectangle, clip);
+	}
+
+	void RenderContext::DrawImage(std::string_view path, SDL_FPoint position, int width, int height)
+	{
+		auto texture = CreateTexture(path);
+		auto points = Math::ComputeEllipsePoints(position, width, height);
+		auto order = Math::Triangulate(points, position);
+		std::array<SDL_Vertex, 100> vertices = {};
+
+		Math::PointsToVertexRange(points, vertices, texture.Color);
+		vertices.back() = SDL_Vertex(position, static_cast<SDL_Color>(texture.Color), SDL_FPoint());
+
+		DrawShape(vertices, order, texture);
 	}
 
 	void RenderContext::DrawTexture(const Texture& texture, const SDL_FRect& rectangle)
@@ -118,35 +154,20 @@ namespace Sgl
 						   order.data(), order.size());
 	}
 
-	void RenderContext::FillSceneBackground(const Fill& fill)
+	void RenderContext::SetSceneBackgroundColor(Color color)
 	{
-		Filler(
-			[this](const Color& color)
-			{
-				SetDrawColor(color);
-				SDL_RenderClear(_renderer);
-			},
-			[this](const Texture& texture)
-			{
-				SetTextureColor(texture);
-				SDL_RenderCopy(_renderer, texture, nullptr, nullptr);
-			}
-		).FillWith(fill);
+		SetColor(color);
+		SDL_RenderClear(_renderer);
+	}
+
+	void RenderContext::SetSceneBackgroundTexture(const Texture& texture)
+	{
+		SetTextureColor(texture);
+		SDL_RenderCopy(_renderer, texture, nullptr, nullptr);
 	}
 
 	void RenderContext::SetBlendMode(SDL_BlendMode mode)
 	{
 		SDL_SetRenderDrawBlendMode(_renderer, mode);
-	}
-
-	Texture RenderContext::CreateTexture(std::string_view path)
-	{
-		auto texture = IMG_LoadTexture(_renderer, path.data());
-		if(texture == nullptr)
-		{
-			PrintSDLError();
-		}
-
-		return Texture(texture);
 	}
 }

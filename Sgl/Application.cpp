@@ -26,6 +26,8 @@ namespace Sgl
 		{
 			PrintSDLError();
 		}
+
+		Cursors::Initialize();
 	}
 
 	Application::~Application() noexcept

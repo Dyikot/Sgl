@@ -13,7 +13,6 @@ namespace Sgl
 	public:
 		static constexpr uint16_t DefaultFontSize = 14;
 		
-		static inline const PropertyId BackgroundProperty = PropertyManager::Register<Fill>("Background");
 		static inline const PropertyId BorderColorProperty = PropertyManager::Register<Color>("BorderColor");
 		static inline const PropertyId BorderThiknessProperty = PropertyManager::Register<Thikness>("BorderThikness");
 		static inline const PropertyId FontFamilyProperty = PropertyManager::Register<FontFamily>("FontFamily");
@@ -27,7 +26,6 @@ namespace Sgl
 	public:
 		explicit Control(SDL_FPoint position = {}) noexcept;
 
-		void SetBackgound(const Fill& value) { SetProperty(BackgroundProperty, value); }
 		void SetBorderColor(Color value) { SetProperty(BorderColorProperty, value); }
 		void SetFontColor(Color value) { SetProperty(FontColorProperty, value); }
 		void SetBorderThikness(const Thikness& value) { SetProperty(BorderThiknessProperty, value); }
@@ -35,7 +33,6 @@ namespace Sgl
 		void SetFontSize(uint16_t value) { SetProperty(FontSizeProperty, value); }
 		void SetFontWeight(FontWeight value) { SetProperty(FontWeightProperty, value); }
 		
-		const Fill& GetBackgound() const { return GetPropertyValue<Fill>(BackgroundProperty); }
 		Color GetBorderColor() const { return GetPropertyValue<Color>(BorderColorProperty); }
 		Color GetFontColor() const { return GetPropertyValue<Color>(FontColorProperty); }
 		const Thikness& GetBorderThikness() const { return GetPropertyValue<Thikness>(BorderThiknessProperty); }

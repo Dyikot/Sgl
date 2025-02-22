@@ -21,7 +21,7 @@ namespace Sgl
 		Normal, Minimized, Maximized
 	};
 
-	struct WindowProperties
+	struct WindowConfiguration
 	{
 		std::string_view Title = "Window";
 		SDL_Point Position = SDL_Point{ SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED };
@@ -48,9 +48,14 @@ namespace Sgl
 		bool _isVsyncEnable = false;
 	public:
 		Window() noexcept;
-		Window(const WindowProperties& properties) noexcept;
+		Window(std::string_view title,
+			   SDL_Point position,
+			   size_t width,
+			   size_t height,
+			   SDL_WindowFlags flags) noexcept;
 		Window(const Window&) = delete;
 		Window(Window&&) = delete;
+		
 		~Window() noexcept { SDL_DestroyWindow(_sdlWindow); }
 
 		Event<WindowEventHandler> StateChanged;
@@ -89,5 +94,6 @@ namespace Sgl
 		virtual void OnStateChanged(const EventArgs& e);
 	private:
 		friend class Application;
+		friend class WindowBuilder;
 	};
 }

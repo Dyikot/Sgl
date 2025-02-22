@@ -109,16 +109,23 @@ namespace Sgl
 
 	void FillRectangle::OnRender(RenderContext& renderContext)
 	{
-		Filler(
-			[&](const Color& color)
-			{
-				renderContext.DrawFillRectangle(Rect, color);
-			},
-			[&](const Texture& texture)
-			{
-				renderContext.DrawTexture(texture, Rect);
-			}
-		).FillWith(Fill);
+		renderContext.DrawFillRectangle(Rect, Color);
+	}
+
+	void FillRectangle::Translate(float dx, float dy)
+	{
+		Rect.x += dx;
+		Rect.y += dy;
+	}
+
+	void FillRectangle::Rotate(size_t degree)
+	{
+		
+	}
+
+	void TexturedRectangle::OnRender(RenderContext& renderContext)
+	{
+		renderContext.DrawTexture(Texture, Rect);
 	}
 	
 	void Ellipse::OnRender(RenderContext& renderContext)
@@ -143,40 +150,19 @@ namespace Sgl
 		}
 	}
 
-	FillEllipse::FillEllipse(SDL_FPoint position, int width, int height, Sgl::Fill fill):
+	FillEllipse::FillEllipse(SDL_FPoint position, int width, int height, Sgl::Color color):
 		ShapeBase(position),
-		Fill(fill)
+		Color(color)
 	{
 		auto points = Math::ComputeEllipsePoints(position, width, height);
-
-		Filler(
-			[this, &position, &points](const Color& color)
-			{
-				Math::PointsToVertexRange(points, Vertices, color);
-				Vertices.back() = SDL_Vertex(position, static_cast<SDL_Color>(color), SDL_FPoint());
-			},
-			[this, &position, &points](const Texture& texture)
-			{
-				Math::PointsToVertexRange(points, Vertices, texture.Color);
-				Vertices.back() = SDL_Vertex(position, static_cast<SDL_Color>(texture.Color), SDL_FPoint());
-			}
-		).FillWith(Fill);
-
-		Order = Math::Triangulate(points, position);
+		Math::PointsToVertexRange(points, Vertices, color);
+		Vertices.back() = SDL_Vertex(position, static_cast<SDL_Color>(color), SDL_FPoint());
+		Order = Math::Triangulate(points, position);		
 	}
 
 	void FillEllipse::OnRender(RenderContext& renderContext)
 	{
-		Filler(
-			[&](const Color& color)
-			{
-				renderContext.DrawShape(Vertices, Order);
-			},
-			[&](const Texture& texture)
-			{
-				renderContext.DrawShape(Vertices, Order, texture);
-			}
-		).FillWith(Fill);
+		renderContext.DrawShape(Vertices, Order);
 	}
 
 	void FillEllipse::Translate(float dx, float dy)
@@ -189,6 +175,40 @@ namespace Sgl
 	}
 
 	void FillEllipse::Rotate(size_t degree)
+	{
+		for(auto& vertex : Vertices)
+		{
+			vertex.position = RotatePoint(vertex.position, RotationCenter, degree);
+		}
+	}
+
+	TexturedEllipse::TexturedEllipse(SDL_FPoint position,
+									 int width, int height,
+									 const Sgl::Texture& texture):
+		ShapeBase(position),
+		Texture(texture)
+	{
+		auto points = Math::ComputeEllipsePoints(position, width, height);
+		Math::PointsToVertexRange(points, Vertices, texture.Color);
+		Vertices.back() = SDL_Vertex(position, static_cast<SDL_Color>(texture.Color), SDL_FPoint());
+		Order = Math::Triangulate(points, position);
+	}
+
+	void TexturedEllipse::OnRender(RenderContext& renderContext)
+	{
+		renderContext.DrawShape(Vertices, Order, Texture);
+	}
+
+	void TexturedEllipse::Translate(float dx, float dy)
+	{
+		for(auto& vertex : Vertices)
+		{
+			vertex.position.x += dx;
+			vertex.position.y += dy;
+		}
+	}
+
+	void TexturedEllipse::Rotate(size_t degree)
 	{
 		for(auto& vertex : Vertices)
 		{

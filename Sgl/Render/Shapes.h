@@ -10,7 +10,7 @@ namespace Sgl
 	class ShapeBase: public IVisual
 	{
 	public:
-		SDL_FPoint RotationCenter;
+		SDL_FPoint RotationCenter = {};
 	protected:
 		static inline const std::array<float, 361> Sin = Math::ComputeSin<361>();
 		static inline const std::array<float, 361> Cos = Math::ComputeCos<361>();
@@ -163,22 +163,51 @@ namespace Sgl
 		void Rotate(size_t degree) override;
 	};
 
-	class FillRectangle: public IVisual
+	class FillRectangle: public ShapeBase
 	{
 	public:
 		SDL_FRect Rect;
-		Fill Fill;
+		Color Color;
 	public:
-		FillRectangle(float x, float y, float width, float height, Sgl::Fill paint):
-			Rect{ x, y, width, height }, Fill(paint)
+		FillRectangle(float x, float y, float width, float height, Sgl::Color color):
+			ShapeBase(SDL_FPoint(x + width / 2, y + height / 2)),
+			Rect{ x, y, width, height }, Color(color)
 		{}
 
-		FillRectangle(SDL_FPoint position, float width, float height, Sgl::Fill paint):
-			Rect{ position.x, position.y, width, height }, Fill(paint)
+		FillRectangle(SDL_FPoint position, float width, float height, Sgl::Color color):
+			ShapeBase(SDL_FPoint(position.x + width / 2, position.y + height / 2)),
+			Rect{ position.x, position.y, width, height }, Color(color)
 		{}
 
-		FillRectangle(const SDL_FRect& rect, Sgl::Fill paint):
-			Rect(rect), Fill(paint)
+		FillRectangle(const SDL_FRect& rect, Sgl::Color color):
+			ShapeBase(SDL_FPoint(rect.x + rect.w / 2, rect.y + rect.h / 2)),
+			Rect(rect), Color(color)
+		{}
+
+		void OnRender(RenderContext& renderContext) override;
+		void Translate(float dx, float dy) override;
+		void Rotate(size_t degree) override;
+	};
+
+	class TexturedRectangle: public ShapeBase
+	{
+	public:
+		SDL_FRect Rect;
+		const Texture& Texture;
+	public:
+		TexturedRectangle(float x, float y, float width, float height, const Sgl::Texture& texture):
+			ShapeBase(SDL_FPoint(x + width / 2, y + height / 2)),
+			Rect{ x, y, width, height }, Texture(texture)
+		{}
+
+		TexturedRectangle(SDL_FPoint position, float width, float height, const Sgl::Texture& texture):
+			ShapeBase(SDL_FPoint(position.x + width / 2, position.y + height / 2)),
+			Rect{ position.x, position.y, width, height }, Texture(texture)
+		{}
+
+		TexturedRectangle(const SDL_FRect& rect, const Sgl::Texture& texture):
+			ShapeBase(SDL_FPoint(rect.x + rect.w / 2, rect.y + rect.h / 2)),
+			Rect(rect), Texture(texture)
 		{}
 
 		void OnRender(RenderContext& renderContext) override;
@@ -206,9 +235,23 @@ namespace Sgl
 	public:
 		std::array<SDL_Vertex, 101> Vertices;
 		std::vector<int> Order;
-		Fill Fill;
+		Sgl::Color Color;
 	public:
-		FillEllipse(SDL_FPoint position, int width, int height, Sgl::Fill fill);
+		FillEllipse(SDL_FPoint position, int width, int height, Sgl::Color color);
+
+		void OnRender(RenderContext& renderContext) override;
+		void Translate(float dx, float dy) override;
+		void Rotate(size_t degree) override;
+	};
+
+	class TexturedEllipse: public ShapeBase
+	{
+	public:
+		std::array<SDL_Vertex, 101> Vertices;
+		std::vector<int> Order;
+		const Sgl::Texture& Texture;
+	public:
+		TexturedEllipse(SDL_FPoint position, int width, int height, const Sgl::Texture& texture);
 
 		void OnRender(RenderContext& renderContext) override;
 		void Translate(float dx, float dy) override;

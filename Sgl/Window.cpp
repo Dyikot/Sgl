@@ -3,17 +3,19 @@
 
 namespace Sgl
 {
-    Window::Window() noexcept: 
-        Window(WindowProperties())
+    Window::Window() noexcept:
+        Window("Window", SDL_Point{ 0, 0 }, 1280, 720, SDL_WINDOW_SHOWN)
     {}
 
-    Window::Window(const WindowProperties& properties) noexcept:
-        _width(properties.Width),
-        _height(properties.Height),
-        _sdlWindow(SDL_CreateWindow(properties.Title.data(),
-                                    properties.Position.x, properties.Position.y,
-                                    properties.Width, properties.Height,
-                                    properties.Flags)),
+    Window::Window(std::string_view title,
+                   SDL_Point position, 
+                   size_t width, 
+                   size_t height, 
+                   SDL_WindowFlags flags) noexcept:
+        _width(width),
+        _height(height),
+        _sdlWindow(SDL_CreateWindow(title.data(), position.x, position.y,
+                                    width, height, flags)),
         _renderContext(SDL_CreateRenderer(_sdlWindow, -1, SDL_RENDERER_ACCELERATED))
     {
         if(_sdlWindow == nullptr)
@@ -27,7 +29,7 @@ namespace Sgl
         }
 
         _renderContext.SetBlendMode(SDL_BLENDMODE_BLEND);
-        SetLogicalSize(properties.LogicalWidth, properties.LogicalHeight);
+        SetLogicalSize(width, height);
     }
 
     void Window::SetWidth(size_t width) noexcept

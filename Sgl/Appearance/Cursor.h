@@ -15,6 +15,7 @@ namespace Sgl
 		Cursor() noexcept:
 			Cursor(SDL_SYSTEM_CURSOR_ARROW)
 		{}
+
 		explicit Cursor(std::string_view path):
 			_cursor(SDL_CreateColorCursor(IMG_Load(path.data()), 0, 0))
 		{
@@ -32,8 +33,10 @@ namespace Sgl
 				PrintSDLError();
 			}
 		}
+
 		Cursor(const Cursor&) = delete;
 		Cursor(Cursor&&) = delete;
+
 		~Cursor() noexcept
 		{
 			if(_cursor)
@@ -47,18 +50,37 @@ namespace Sgl
 
 	class Cursors
 	{
+	private:
+		static inline Cursors* _instance;
+
+		Cursor _arrow = Cursor(SDL_SYSTEM_CURSOR_ARROW);
+		Cursor _ibeam = Cursor(SDL_SYSTEM_CURSOR_IBEAM);
+		Cursor _wait = Cursor(SDL_SYSTEM_CURSOR_WAIT);
+		Cursor _crosshair = Cursor(SDL_SYSTEM_CURSOR_CROSSHAIR);
+		Cursor _waitArrow = Cursor(SDL_SYSTEM_CURSOR_WAITARROW);
+		Cursor _arrowNWSE = Cursor(SDL_SYSTEM_CURSOR_SIZENWSE);
+		Cursor _arrowNESW = Cursor(SDL_SYSTEM_CURSOR_SIZENESW);
+		Cursor _arrowWE = Cursor(SDL_SYSTEM_CURSOR_SIZEWE);
+		Cursor _arrowNS = Cursor(SDL_SYSTEM_CURSOR_SIZENS);
+		Cursor _arrowAll = Cursor(SDL_SYSTEM_CURSOR_SIZEALL);
+		Cursor _no = Cursor(SDL_SYSTEM_CURSOR_NO);
+		Cursor _hand = Cursor(SDL_SYSTEM_CURSOR_HAND);
 	public:
-		static inline const Cursor Arrow = Cursor(SDL_SYSTEM_CURSOR_ARROW);
-		static inline const Cursor Ibeam = Cursor(SDL_SYSTEM_CURSOR_IBEAM);
-		static inline const Cursor Wait = Cursor(SDL_SYSTEM_CURSOR_WAIT);
-		static inline const Cursor Crosshair = Cursor(SDL_SYSTEM_CURSOR_CROSSHAIR);
-		static inline const Cursor WaitArrow = Cursor(SDL_SYSTEM_CURSOR_WAITARROW);
-		static inline const Cursor ArrowNWSE = Cursor(SDL_SYSTEM_CURSOR_SIZENWSE);
-		static inline const Cursor ArrowNESW = Cursor(SDL_SYSTEM_CURSOR_SIZENESW);
-		static inline const Cursor ArrowWE = Cursor(SDL_SYSTEM_CURSOR_SIZEWE);
-		static inline const Cursor ArrowNS = Cursor(SDL_SYSTEM_CURSOR_SIZENS);
-		static inline const Cursor ArrowAll = Cursor(SDL_SYSTEM_CURSOR_SIZEALL);
-		static inline const Cursor No = Cursor(SDL_SYSTEM_CURSOR_NO);
-		static inline const Cursor Hand = Cursor(SDL_SYSTEM_CURSOR_HAND);
+		static void Initialize() { _instance = new Cursors(); }
+
+		static const Cursor& Arrow() { return _instance->_arrow; }
+		static const Cursor& Ibeam() { return _instance->_ibeam; }
+		static const Cursor& Wait() { return _instance->_wait; }
+		static const Cursor& Crosshair() { return _instance->_crosshair; }
+		static const Cursor& WaitArrow() { return _instance->_waitArrow; }
+		static const Cursor& ArrowNWSE() { return _instance->_arrowNWSE; }
+		static const Cursor& ArrowNESW() { return _instance->_arrowNESW; }
+		static const Cursor& ArrowWE() { return _instance->_arrowWE; }
+		static const Cursor& ArrowNS() { return _instance->_arrowNS; }
+		static const Cursor& ArrowAll() { return _instance->_arrowAll; }
+		static const Cursor& No() { return _instance->_no; }
+		static const Cursor& Hand() { return _instance->_hand; }
+	private:
+		Cursors() = default;
 	};
 }

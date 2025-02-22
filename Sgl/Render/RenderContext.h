@@ -1,11 +1,11 @@
 #pragma once
 
-#include "SDL/SDL_render.h"
-#include "../Appearance/Fill.h"
 #include <span>
 #include <string_view>
 #include <variant>
 #include <array>
+#include "SDL/SDL_render.h"
+#include "../Appearance/Texture.h"
 
 namespace Sgl
 {
@@ -13,9 +13,13 @@ namespace Sgl
 	{
 	protected:
 		SDL_Renderer* const _renderer;
+	private:
+		static inline RenderContext* _instance;
 	public:
 		explicit RenderContext(SDL_Renderer* const renderer) noexcept;
 		virtual ~RenderContext() noexcept { SDL_DestroyRenderer(_renderer); }
+
+		static Texture CreateTexture(std::string_view path);
 
 		void DrawPoint(SDL_FPoint point, Color color);
 		void DrawPoints(std::span<SDL_FPoint> points, Color color);
@@ -25,6 +29,9 @@ namespace Sgl
 		void DrawRectangles(std::span<SDL_FRect> rectanges, Color color);
 		void DrawFillRectangle(const SDL_FRect& rectange, Color background);
 		void DrawFillRectangles(std::span<SDL_FRect> rectanges, Color background);
+		void DrawImage(std::string_view path, const SDL_FRect& rectangle);
+		void DrawImage(std::string_view path, const SDL_FRect& rectangle, const SDL_Rect& clip);
+		void DrawImage(std::string_view path, SDL_FPoint position, int width, int height);
 		void DrawTexture(const Texture& texture, const SDL_FRect& rectangle);
 		void DrawTexture(const Texture& texture, const SDL_FRect& rectangle, const SDL_Rect& clip);
 		void DrawEllipse(SDL_FPoint position, int width, int height, Color color);
@@ -33,13 +40,12 @@ namespace Sgl
 		void DrawShape(std::span<SDL_Vertex> vertices, const Texture& texture);
 		void DrawShape(std::span<SDL_Vertex> vertices, std::span<int> order);
 		void DrawShape(std::span<SDL_Vertex> vertices, std::span<int> order, const Texture& texture);
-		void FillSceneBackground(const Fill& fill);
+		void SetSceneBackgroundColor(Color color);
+		void SetSceneBackgroundTexture(const Texture& texture);
 		void SetBlendMode(SDL_BlendMode mode);
-		Texture CreateTexture(std::string_view path);
+		
 
-		operator SDL_Renderer* () const { return _renderer; }
-	protected:
-		void SetDrawColor(Color color) const noexcept
+		void SetColor(Color color) const noexcept
 		{
 			SDL_SetRenderDrawColor(_renderer, color.R, color.G, color.B, color.A);
 		}
@@ -56,6 +62,8 @@ namespace Sgl
 				SDL_SetTextureAlphaMod(texture, texture.Color.A);
 			}
 		}
+
+		operator SDL_Renderer* () const { return _renderer; }
 	};
 }
 

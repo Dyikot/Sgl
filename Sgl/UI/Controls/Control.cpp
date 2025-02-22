@@ -5,7 +5,6 @@ namespace Sgl
 	Control::Control(SDL_FPoint position) noexcept:
 		Component(position)
 	{
-		AddProperty<Fill>(BackgroundProperty, Colors::Transparent);
 		AddProperty<Color>(BorderColorProperty, Colors::Transparent);
 		AddProperty<Thikness>(BorderThiknessProperty);
 		AddProperty<FontFamily>(FontFamilyProperty);

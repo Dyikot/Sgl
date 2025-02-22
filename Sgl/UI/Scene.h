@@ -11,8 +11,7 @@ namespace Sgl
 {	
 	class Scene: public UIElement, public IProcessed
 	{
-	public:		
-		Fill Background = Colors::Black;
+	public:				
 		ComponentSet<Panel> Panels;
 	private:
 		Panel* _mouseOverPanel = nullptr;

@@ -18,6 +18,8 @@ namespace Sgl
 	class UIElement: public BindableObject, public IVisual
 	{
 	public:
+		Color BackgroundColor = Colors::Black;
+		Texture* BackgroundTexture = nullptr;
 		AnyMap<std::string> Resources;
 	public:
 		virtual ~UIElement() = default;
