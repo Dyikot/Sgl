@@ -2,22 +2,9 @@
 
 namespace Sgl
 {
-	UIElement::UIElement():
-		_isMembersInitialized(InitializeMembers()),
-		MouseDown(GetEventValue<MouseEventHandler>(MouseDownEvent)),
-		MouseUp(GetEventValue<MouseEventHandler>(MouseUpEvent)),
-		MouseMove(GetEventValue<MouseEventHandler>(MouseMoveEvent)),
-		MouseWheel(GetEventValue<MouseWheelEventHandler>(MouseWheelEvent)),
-		KeyDown(GetEventValue<KeyEventHandler>(KeyDownEvent)),
-		KeyUp(GetEventValue<KeyEventHandler>(KeyUpEvent))
-	{}
-
 	void UIElement::SetStyle(const Style& style)
 	{
-		for(auto& [id, eventHanlder] : style.EventSetters)
-		{
-			SetEvent(id, eventHanlder);
-		}
+		
 	}
 
 	void UIElement::OnMouseDown(const MouseButtonEventArgs& e)
@@ -68,15 +55,11 @@ namespace Sgl
 		}
 	}
 
-	bool UIElement::InitializeMembers()
+	void UIElement::OnMouseDoubleClick(const MouseButtonEventArgs& e)
 	{
-		AddEvent<MouseEventHandler>(MouseDownEvent);
-		AddEvent<MouseEventHandler>(MouseUpEvent);
-		AddEvent<MouseEventHandler>(MouseMoveEvent);
-		AddEvent<MouseWheelEventHandler>(MouseWheelEvent);
-		AddEvent<KeyEventHandler>(KeyDownEvent);
-		AddEvent<KeyEventHandler>(KeyUpEvent);
-
-		return true;
+		if(MouseDoubleClick)
+		{
+			MouseDoubleClick(this, e);
+		}
 	}
 }

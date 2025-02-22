@@ -20,14 +20,12 @@ namespace Sgl
 		static inline const PropertyId FontWeightProperty = PropertyManager::Register<FontWeight>("FontWeight");
 		static inline const PropertyId FontColorProperty = PropertyManager::Register<Color>("FontColor");
 		static inline const PropertyId FontSizeProperty = PropertyManager::Register<uint16_t>("FontSize");
-		static inline const EventId MouseDoubleClickEvent = EventManager::Register<MouseEventHandler>("MouseDoubleClick");
 
 		Panel* Panel;
 	private:
 		bool _isEventsInitialized = false;
 	public:
-		Control();
-		explicit Control(SDL_FPoint position) noexcept;
+		explicit Control(SDL_FPoint position = {}) noexcept;
 
 		void SetBackgound(const Fill& value) { SetProperty(BackgroundProperty, value); }
 		void SetBorderColor(Color value) { SetProperty(BorderColorProperty, value); }
@@ -44,13 +42,7 @@ namespace Sgl
 		const FontFamily& GetFontFamily() const { return GetPropertyValue<FontFamily>(FontFamilyProperty); }
 		uint16_t GetFontSize() const { return GetPropertyValue<uint16_t>(FontSizeProperty); }
 		FontWeight GetFontWeight() const { return GetPropertyValue<FontWeight>(FontWeightProperty); }
-
-		Event<MouseEventHandler>& MouseDoubleClick;
-	protected:
-		virtual void OnMouseDoubleClick(const MouseButtonEventArgs& e);
 	private:
-		bool InitializeEvents();
-
 		friend class Panel;
 	};
 }

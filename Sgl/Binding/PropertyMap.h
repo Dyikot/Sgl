@@ -1,49 +1,47 @@
 #pragma once
 
-#include "../Events/Event.h"
-#include "../Data/Any.h"
-#include "ObjectManager.h"
 #include <format>
+#include "../Events/Event.h"
+#include "PropertyManagers.h"
 
 namespace Sgl
 {
-	template<typename TId>
-	class SetterMap: protected std::unordered_map<TId, Any>
+	class PropertyMap: protected std::unordered_map<PropertyId, Any>
 	{
 	public:
-		using Base = std::unordered_map<TId, Any>;
+		using Base = std::unordered_map<PropertyId, Any>;
 	public:
 		Base::iterator begin() { return Base::begin(); }
 		Base::iterator end() { return Base::end(); }
 		Base::const_iterator begin() const { return Base::begin(); }
 		Base::const_iterator end() const { return Base::end(); }
-		Any& At(TId id) { return Base::at(id); }
-		const Any& At(TId id) const { return Base::at(id); }
+		Any& At(PropertyId id) { return Base::at(id); }
+		const Any& At(PropertyId id) const { return Base::at(id); }
 		bool Empty() const { return Base::empty(); }
 		size_t Count() const { return Base::size(); }
-		bool Contains(TId id) const { return Base::contains(id); }
-		void Remove(TId id) { Base::erase(id); }
+		bool Contains(PropertyId id) const { return Base::contains(id); }
+		void Remove(PropertyId id) { Base::erase(id); }
 
-		void Add(TId id, Any&& object)
+		void Add(PropertyId id, Any&& object)
 		{
 			if(!IsTypeCorrect(id, object))
 			{
 				throw std::invalid_argument(
 					std::format("Property type <{}> is not equal object type <{}>\n",
-								ObjectManager<TId>::GetTypeNameOf(id),
+								PropertyManager::GetTypeNameBy(id),
 								object.Type().name()));
 			}
 
 			Base::emplace(id, std::move(object));
 		}
 
-		void Add(TId id, const Any& object)
+		void Add(PropertyId id, const Any& object)
 		{
 			if(!IsTypeCorrect(id, object))
 			{
 				throw std::invalid_argument(
 					std::format("Property type <{}> is not equal object type <{}>\n",
-								ObjectManager<TId>::GetTypeNameOf(id),
+								PropertyManager::GetTypeNameBy(id),
 								object.Type().name()));
 			}
 
@@ -51,13 +49,13 @@ namespace Sgl
 		}
 
 		template<typename TValue, typename... TArgs>
-		void Add(TId id, TArgs&&... args)
+		void Add(PropertyId id, TArgs&&... args)
 		{
 			Add(id, Any::New<TValue>(std::forward<TArgs>(args)...));
 		}
 
 		template<typename TValue>
-		bool TryGetValue(TId id, TValue& value) const
+		bool TryGetValue(PropertyId id, TValue& value) const
 		{
 			if(Contains(id))
 			{
@@ -68,11 +66,11 @@ namespace Sgl
 			return false;
 		}
 
-		Any& operator[](const TId& id) { return Base::operator[](id); }
+		Any& operator[](const PropertyId& id) { return Base::operator[](id); }
 	private:
-		bool IsTypeCorrect(TId id, const Any& object) const
+		bool IsTypeCorrect(PropertyId id, const Any& object) const
 		{
-			return ObjectManager<TId>::GetTypeNameOf(id) == object.Type().name();
+			return PropertyManager::GetTypeNameBy(id) == object.Type().name();
 		}
 	};	
 }

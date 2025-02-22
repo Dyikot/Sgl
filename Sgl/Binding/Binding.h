@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../Object/ObjectId.h"
-#include "../Events/Delegates.h"
 #include <string>
+#include "BindableObject.h"
+#include "../Events/Delegates.h"
 
 namespace Sgl
 {

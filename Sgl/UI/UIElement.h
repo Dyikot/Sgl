@@ -4,7 +4,7 @@
 #include "../Render/IVisual.h"
 #include "../Events/Event.h"
 #include "../Appearance/Style.h"
-#include "../Object/Object.h"
+#include "../Binding/BindableObject.h"
 
 namespace Sgl
 {
@@ -15,31 +15,22 @@ namespace Sgl
 	using MouseWheelEventHandler = EventHandler<UIElement, MouseWheelEventArgs>;
 	using KeyEventHandler = EventHandler<UIElement, KeyEventArgs>;
 
-	class UIElement: public Object, public IVisual
+	class UIElement: public BindableObject, public IVisual
 	{
 	public:
-		static inline const EventId MouseDownEvent = EventManager::Register<MouseEventHandler>("MouseDown");
-		static inline const EventId MouseUpEvent = EventManager::Register<MouseEventHandler>("MouseUp");
-		static inline const EventId MouseMoveEvent = EventManager::Register<MouseEventHandler>("MouseMove");
-		static inline const EventId MouseWheelEvent = EventManager::Register<MouseWheelEventHandler>("MouseWheel");
-		static inline const EventId KeyDownEvent = EventManager::Register<KeyEventHandler>("KeyDown");
-		static inline const EventId KeyUpEvent = EventManager::Register<KeyEventHandler>("KeyUp");
-
 		AnyMap<std::string> Resources;
-	private:
-		bool _isMembersInitialized = false;
 	public:
-		UIElement();
 		virtual ~UIElement() = default;
 
-		virtual void SetStyle(const Style& style);
+		Event<MouseEventHandler> MouseDown;
+		Event<MouseEventHandler> MouseUp;
+		Event<MouseEventHandler> MouseMove;
+		Event<MouseWheelEventHandler> MouseWheel;
+		Event<KeyEventHandler> KeyDown;
+		Event<KeyEventHandler> KeyUp;
+		Event<MouseEventHandler> MouseDoubleClick;
 
-		Event<MouseEventHandler>& MouseDown;
-		Event<MouseEventHandler>& MouseUp;
-		Event<MouseEventHandler>& MouseMove;
-		Event<MouseWheelEventHandler>& MouseWheel;
-		Event<KeyEventHandler>& KeyDown;
-		Event<KeyEventHandler>& KeyUp;
+		virtual void SetStyle(const Style& style);
 	protected:
 		virtual void OnMouseDown(const MouseButtonEventArgs& e);
 		virtual void OnMouseUp(const MouseButtonEventArgs& e);
@@ -47,7 +38,6 @@ namespace Sgl
 		virtual void OnMouseWheel(const MouseWheelEventArgs& e);
 		virtual void OnKeyDown(const KeyEventArgs& e);
 		virtual void OnKeyUp(const KeyEventArgs& e);
-	private:
-		bool InitializeMembers();
+		virtual void OnMouseDoubleClick(const MouseButtonEventArgs& e);
 	};
 }

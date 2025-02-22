@@ -5,7 +5,7 @@
 #include "../Appearance/UIAppearance.h"
 #include "../Appearance/Cursor.h"
 #include "../Events/Delegates.h"
-#include "../Data/Binding.h"
+#include "../Binding/Binding.h"
 
 namespace Sgl
 {
@@ -25,19 +25,18 @@ namespace Sgl
 		static inline const PropertyId HorizontalAlignmentProperty = PropertyManager::Register<HorizontalAlignment>("HorizontalAlignment");
 		static inline const PropertyId VerticalAligmentProperty = PropertyManager::Register<VerticalAligment>("VerticalAligment");
 		static inline const PropertyId VisibilityProperty = PropertyManager::Register<Visibility>("Visibility");
-		static inline const EventId MouseEnterEvent = EventManager::Register<MouseEventHandler>("MouseEnter");
-		static inline const EventId MouseLeaveEvent = EventManager::Register<MouseEventHandler>("MouseLeave");
 
 		SDL_FPoint Position = { 0, 0 };
 	protected:
 		std::unordered_map<PropertyId, Binding> _bindings;
 	private:
-		bool _isMembersInitialized = false;
 		bool _isMouseOver = false;
 	public:
-		Component();
-		explicit Component(SDL_FPoint position);
+		explicit Component(SDL_FPoint position = {});
 		virtual ~Component() = default;		
+
+		Event<MouseEventHandler> MouseEnter;
+		Event<MouseEventHandler> MouseLeave;
 
 		void SetWidth(float value) { SetProperty(WidthProperty, value); }
 		void SetHeight(float value) { SetProperty(HeightProperty, value); }
@@ -67,9 +66,6 @@ namespace Sgl
 		const Visibility& GetVisibility() const { return GetPropertyValue<Visibility>(VisibilityProperty); }
 		const Cursor* const& GetCursor() const { return GetPropertyValue<const Cursor*>(CursorProperty); }
 		const IVisual* const& GetToolTip() const { return GetPropertyValue<IVisual*>(ToolTipProperty); }
-		
-		Event<MouseEventHandler>& MouseEnter;
-		Event<MouseEventHandler>& MouseLeave;
 		
 		void OnRender(RenderContext& renderContext) override;
 		bool IsMouseOver() const noexcept { return _isMouseOver; }
@@ -116,8 +112,6 @@ namespace Sgl
 	protected:
 		virtual void OnMouseEnter(const MouseButtonEventArgs& e);
 		virtual void OnMouseLeave(const MouseButtonEventArgs& e);
-	private:
-		bool InitializeMembers();
 	};
 
 	struct ZIndexComparer

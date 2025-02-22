@@ -3,16 +3,23 @@
 
 namespace Sgl
 {
-    Component::Component():
-        Component(SDL_FPoint())
-    {}
-
     Component::Component(SDL_FPoint position):
-        Position(position),
-        _isMembersInitialized(InitializeMembers()),
-        MouseEnter(GetEventValue<MouseEventHandler>(MouseEnterEvent)),
-        MouseLeave(GetEventValue<MouseEventHandler>(MouseLeaveEvent))
-    {}
+        Position(position)
+    {
+        AddProperty<float>(WidthProperty);
+        AddProperty<float>(HeightProperty);
+        AddProperty<float>(MinWidthProperty);
+        AddProperty<float>(MinHeightProperty);
+        AddProperty<float>(MaxWidthProperty);
+        AddProperty<float>(MinHeightProperty);
+        AddProperty<size_t>(ZIndexProperty, 1);
+        AddProperty<Thikness>(MarginProperty);
+        AddProperty<const Sgl::Cursor*>(CursorProperty);
+        AddProperty<IVisual*>(ToolTipProperty);
+        AddProperty<HorizontalAlignment>(HorizontalAlignmentProperty, HorizontalAlignment::Stretch);
+        AddProperty<VerticalAligment>(VerticalAligmentProperty, VerticalAligment::Stretch);
+        AddProperty<Visibility>(VisibilityProperty, Visibility::Visible);
+    }
 
     void Component::SetStyle(const Style& style)
     {
@@ -70,27 +77,5 @@ namespace Sgl
         {
             MouseLeave(this, e);
         }
-    }
-
-    bool Component::InitializeMembers()
-    {
-        AddEvent<MouseEventHandler>(MouseEnterEvent);
-        AddEvent<MouseEventHandler>(MouseLeaveEvent);
-
-        AddProperty<float>(WidthProperty);
-        AddProperty<float>(HeightProperty);
-        AddProperty<float>(MinWidthProperty);
-        AddProperty<float>(MinHeightProperty);
-        AddProperty<float>(MaxWidthProperty);
-        AddProperty<float>(MinHeightProperty);
-        AddProperty<size_t>(ZIndexProperty, 1);
-        AddProperty<Thikness>(MarginProperty);
-        AddProperty<const Sgl::Cursor*>(CursorProperty);
-        AddProperty<IVisual*>(ToolTipProperty);
-        AddProperty<HorizontalAlignment>(HorizontalAlignmentProperty, HorizontalAlignment::Stretch);
-        AddProperty<VerticalAligment>(VerticalAligmentProperty, VerticalAligment::Stretch);
-        AddProperty<Visibility>(VisibilityProperty, Visibility::Visible);
-
-        return true;
     }
 }
