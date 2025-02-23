@@ -2,8 +2,8 @@
 
 namespace Sgl
 {
-	Control::Control(SDL_FPoint position) noexcept:
-		Component(position)
+	Control::Control(UIElement& parent) noexcept:
+		Component(parent)
 	{
 		AddProperty<Color>(BorderColorProperty, Colors::Transparent);
 		AddProperty<Thikness>(BorderThiknessProperty);

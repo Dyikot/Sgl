@@ -3,8 +3,8 @@
 
 namespace Sgl
 {
-    Component::Component(SDL_FPoint position):
-        Position(position)
+    Component::Component(UIElement& parent):
+        Parent(parent)
     {
         AddProperty<float>(WidthProperty);
         AddProperty<float>(HeightProperty);

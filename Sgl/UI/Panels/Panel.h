@@ -11,7 +11,7 @@ namespace Sgl
 		Control* MouseOverControl = nullptr;
 		ComponentSet<Control> Children;	
 	public:
-		Panel() = default;
+		explicit Panel(UIElement& parent);
 
 		void SetStyle(const Style& style) override;
 

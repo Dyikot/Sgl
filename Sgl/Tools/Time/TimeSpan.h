@@ -15,30 +15,29 @@ namespace Sgl
 		constexpr float Seconds() const { return _milliseconds / 1000; }
 		constexpr float Microseconds() const { return _milliseconds * 1000; }
 
-		constexpr operator unsigned int() const { return _milliseconds; }
-
-		constexpr TimeSpan& operator+(TimeSpan other)
+		friend constexpr TimeSpan operator+(TimeSpan left, TimeSpan right)
 		{
-			_milliseconds += other._milliseconds;
-			return *this;
+			return TimeSpan(left._milliseconds + right._milliseconds);
 		}
 
-		constexpr TimeSpan& operator-(TimeSpan other)
+		friend constexpr TimeSpan operator-(TimeSpan left, TimeSpan right)
 		{
-			_milliseconds -= other._milliseconds;
-			return *this;
+			return TimeSpan(left._milliseconds - right._milliseconds);
 		}
 
-		constexpr TimeSpan& operator*(TimeSpan other)
+		friend constexpr TimeSpan operator*(TimeSpan left, TimeSpan right)
 		{
-			_milliseconds *= other._milliseconds;
-			return *this;
+			return TimeSpan(left._milliseconds * right._milliseconds);
 		}
 
-		constexpr TimeSpan& operator/(TimeSpan other)
+		friend constexpr TimeSpan operator/(TimeSpan left, TimeSpan right)
 		{
-			_milliseconds /= other._milliseconds;
-			return *this;
+			return TimeSpan(left._milliseconds / right._milliseconds);
+		}
+
+		friend constexpr auto operator<=>(TimeSpan left, TimeSpan right)
+		{
+			return left._milliseconds <=> right._milliseconds;
 		}
 
 		constexpr TimeSpan& operator+=(TimeSpan other)
@@ -63,36 +62,6 @@ namespace Sgl
 		{
 			_milliseconds /= other._milliseconds;
 			return *this;
-		}
-
-		constexpr bool operator>(TimeSpan other) const
-		{
-			return _milliseconds > other._milliseconds;
-		}
-
-		constexpr bool operator<(TimeSpan other) const
-		{
-			return !operator>(other);
-		}
-
-		constexpr bool operator>=(TimeSpan other) const
-		{
-			return _milliseconds >= other._milliseconds;
-		}
-
-		constexpr bool operator<=(TimeSpan other) const
-		{
-			return !operator>=(other);
-		}
-
-		constexpr bool operator==(TimeSpan other) const
-		{
-			return _milliseconds == other._milliseconds;
-		}
-
-		constexpr bool operator!=(TimeSpan other) const
-		{
-			return !operator==(other);
-		}
+		}		
 	};
 }

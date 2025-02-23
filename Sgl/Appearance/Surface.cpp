@@ -6,7 +6,10 @@ namespace Sgl
 	Surface::Surface(std::string_view path):
 		_surface(IMG_Load(path.data()))
 	{
-		PrintSDLError();
+		if(_surface == nullptr)
+		{
+			PrintSDLError();
+		}
 	}
 
 	Surface::Surface(SDL_Surface* surface):
@@ -16,7 +19,10 @@ namespace Sgl
 	Surface::Surface(const Surface& surface):
 		_surface(SDL_DuplicateSurface(surface._surface))
 	{
-		PrintSDLError();
+		if(_surface == nullptr)
+		{
+			PrintSDLError();
+		}
 	}
 
 	Surface::Surface(Surface&& surface) noexcept:

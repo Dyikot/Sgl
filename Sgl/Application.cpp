@@ -1,5 +1,7 @@
 #include "Application.h"
 #include "Render/Shapes.h"
+#include "Window.h"
+#include "Tools/Log.h"
 
 namespace Sgl
 {
@@ -32,6 +34,7 @@ namespace Sgl
 
 	Application::~Application() noexcept
 	{
+		_current = nullptr;
 		TTF_Quit();
 		IMG_Quit();
 		Mix_Quit();
@@ -59,54 +62,30 @@ namespace Sgl
 		_maxFrameTime = TimeSpan(1000.f / _maxFrameRate.value());
 	}
 
+	Window* Application::GetWindow() const
+	{
+		return _window;
+	}
+
 	const Cursor& Application::GetCursor() const
 	{
 		return _activeCursor;
 	}
 
-	void Application::Run(Window& window)
+	void Application::Run()
 	{
 		if(_running)
 		{
 			return;
 		}
 
+		Window window(*this);
 		_window = &window;
+		WindowInitializer(window);
+
 		OnStartup(EventArgs());
-
-		while(_running)
-		{
-			if(!window.Scenes.Any())
-			{
-				Shutdown();
-				continue;
-			}
-
-			_stopwatch.Restart();
-
-			HandleEvents(window.Scenes.Current());
-
-			if(window.Scenes.IsCurrentClosed())
-			{
-				continue;
-			}
-
-			window.Scenes.Current()->Process(_stopwatch.Elapsed());
-			window.Render();
-
-			if(_maxFrameRate)
-			{
-				SDL_Delay(_maxFrameTime.value() - _stopwatch.Elapsed());
-			}
-		}
-
+		Start();
 		OnQuit(EventArgs());
-	}
-
-	void Application::Run()
-	{
-		Window mainWindow;
-		Run(mainWindow);
 	}
 
 	void Application::Shutdown() noexcept
@@ -117,6 +96,7 @@ namespace Sgl
 	void Application::OnStartup(const EventArgs& e)
 	{
 		_running = true;
+
 		if(Startup)
 		{
 			Startup(this, e);
@@ -125,13 +105,16 @@ namespace Sgl
 
 	void Application::OnQuit(const EventArgs& e)
 	{
+		_window = nullptr;
+		_running = false;
+
 		if(Quit)
 		{
 			Quit(this, e);
 		}		
 	}
 
-	void Application::HandleEvents(Scene* scene)
+	void Application::HandleEvents()
 	{		
 		SDL_Event e;
 		while(SDL_PollEvent(&e))
@@ -150,144 +133,43 @@ namespace Sgl
 					break;
 				}
 
-				case SDL_KEYDOWN:
+				default:
 				{
-					scene->OnKeyDown(
-						KeyEventArgs
-						{
-							.State = static_cast<ButtonState>(e.key.state),
-							.Key = e.key.keysym
-						}
-					);
-
+					_window->SceneManager.HandleSceneEvents(e);
 					break;
 				}
+			}
+		}
+	}
 
-				case SDL_KEYUP:
-				{				
-					scene->OnKeyUp(
-						KeyEventArgs
-						{
-							.State = static_cast<ButtonState>(e.key.state),
-							.Key = e.key.keysym
-						}
-					);
-
+	void Application::Start()
+	{
+		while(_running)
+		{
+			switch(_window->SceneManager.UpdateState())
+			{
+				case SceneState::Loading:
+					continue;
+				case SceneState::Loaded:
 					break;
-				}
+				case SceneState::Unloaded:
+					return;
+			}
 
-				case SDL_TEXTEDITING:
+			_stopwatch.Restart();
+			HandleEvents();
+			if(_window->IsVisible())
+			{
+				_window->SceneManager.ProcessScene(_stopwatch.Elapsed());
+				_window->SceneManager.RenderScene();
+			}
+
+			if(_maxFrameRate)
+			{
+				auto delay = _maxFrameTime.value() - _stopwatch.Elapsed();	
+				if(delay.Milliseconds() > 0)
 				{
-					scene->OnTextChanged(
-						TextChangedEventArgs
-						{
-							.Text = e.edit.text,
-							.SelectionLength = static_cast<size_t>(e.edit.length),
-							.SelectionStart = e.edit.start
-						}
-					);
-
-					break;
-				}
-
-				case SDL_TEXTEDITING_EXT:
-				{
-					scene->OnTextChanged(
-						TextChangedEventArgs
-						{
-							.Text = e.editExt.text,
-							.SelectionLength = static_cast<size_t>(e.editExt.length),
-							.SelectionStart = e.editExt.start
-						}
-					);
-					SDL_free(e.editExt.text);
-
-					break;
-				}
-
-				case SDL_TEXTINPUT:
-				{
-					scene->OnTextInput(
-						TextInputEventArgs
-						{
-							.Text = e.text.text
-						}
-					);
-
-					break;
-				}
-
-				case SDL_MOUSEBUTTONDOWN:
-				{
-					scene->OnMouseDown(
-						MouseButtonEventArgs
-						{
-							.Button = static_cast<MouseButton>(e.button.button),
-							.State = static_cast<ButtonState>(e.button.state),
-							.ClicksCount = e.button.clicks,
-							.Position =
-							{
-								.x = static_cast<float>(e.button.x),
-								.y = static_cast<float>(e.button.y)
-							}
-						}
-					);
-
-					break;
-				}
-
-				case SDL_MOUSEBUTTONUP:
-				{
-					scene->OnMouseUp(
-						MouseButtonEventArgs
-						{
-							.Button = static_cast<MouseButton>(e.button.button),
-							.State = static_cast<ButtonState>(e.button.state),
-							.ClicksCount = e.button.clicks,
-							.Position =
-							{
-								.x = static_cast<float>(e.button.x),
-								.y = static_cast<float>(e.button.y)
-							}
-						}
-					);
-
-					break;
-				}
-
-				case SDL_MOUSEMOTION:
-				{
-					scene->OnMouseMove(
-						MouseButtonEventArgs
-						{
-							.Position =
-							{
-								.x = static_cast<float>(e.button.x),
-								.y = static_cast<float>(e.button.y)
-							}
-						}
-					);
-
-					break;
-				}
-
-				case SDL_MOUSEWHEEL:
-				{
-					scene->OnMouseWheel(
-						MouseWheelEventArgs
-						{
-							.Position =
-							{
-								.x = static_cast<float>(e.button.x),
-								.y = static_cast<float>(e.button.y)
-							},
-							.ScrolledHorizontally = e.wheel.preciseX,
-							.ScrolledVertically = e.wheel.preciseY,
-							.Direction = SDL_MouseWheelDirection(e.wheel.direction)
-						}
-					);
-
-					break;
+					SDL_Delay(delay.Milliseconds());
 				}
 			}
 		}

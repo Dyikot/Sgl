@@ -9,6 +9,6 @@ namespace Sgl
 	public:
 		virtual ~IProcessed() = default;
 
-		virtual void Process(TimeSpan elapsed) = 0;
+		virtual void OnProcessing(TimeSpan elapsed) = 0;
 	};
 }

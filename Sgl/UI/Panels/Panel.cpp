@@ -11,6 +11,10 @@ namespace Sgl
 			mousePosition.y <= control.Position.y + control.GetHeight();
 	}
 
+	Panel::Panel(UIElement& parent):
+		Component(parent)
+	{}
+
 	void Panel::SetStyle(const Style& style)
 	{
 	

@@ -8,6 +8,11 @@ namespace Sgl
 	RenderContext::RenderContext(SDL_Renderer* const renderer) noexcept:
 		_renderer(renderer)
 	{
+		if(_renderer == nullptr)
+		{
+			PrintSDLError();
+		}
+
 		_instance = this;
 	}
 

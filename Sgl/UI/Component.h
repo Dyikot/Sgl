@@ -26,13 +26,14 @@ namespace Sgl
 		static inline const PropertyId VerticalAligmentProperty = PropertyManager::Register<VerticalAligment>("VerticalAligment");
 		static inline const PropertyId VisibilityProperty = PropertyManager::Register<Visibility>("Visibility");
 
+		UIElement& Parent;
 		SDL_FPoint Position = { 0, 0 };
 	protected:
 		std::unordered_map<PropertyId, Binding> _bindings;
 	private:
 		bool _mouseOver = false;
 	public:
-		explicit Component(SDL_FPoint position = {});
+		explicit Component(UIElement& parent);
 		virtual ~Component() = default;		
 
 		Event<MouseEventHandler> MouseEnter;

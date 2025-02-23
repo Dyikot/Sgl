@@ -24,7 +24,7 @@ namespace Sgl
 	private:
 		bool _isEventsInitialized = false;
 	public:
-		explicit Control(SDL_FPoint position = {}) noexcept;
+		explicit Control(UIElement& parent) noexcept;
 
 		void SetBorderColor(Color value) { SetProperty(BorderColorProperty, value); }
 		void SetFontColor(Color value) { SetProperty(FontColorProperty, value); }

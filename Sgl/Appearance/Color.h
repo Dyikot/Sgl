@@ -18,7 +18,7 @@ namespace Sgl
 			Color(r, g, b, Opaque)
 		{}
 		constexpr explicit Color(uint32_t rgba):
-			R(rgba), G(rgba >> 8), B(rgba >> 16), A(rgba >> 24)
+			R(rgba >> 24), G(rgba >> 16), B(rgba >> 8), A(rgba)
 		{}
 
 		constexpr bool IsTransparent() const noexcept { return A == Transparent; }
@@ -34,7 +34,7 @@ namespace Sgl
 	namespace Colors
 	{
 		inline constexpr Color Transparent = Color(0x00000000);
-		inline constexpr Color Black = Color(0x141414ff);
+		inline constexpr Color Black = Color(0x000000ff);
 		inline constexpr Color Green = Color(0x008000ff);
 		inline constexpr Color Blue = Color(0x1e90ffff);
 		inline constexpr Color Red = Color(0xd22b2bff);

@@ -1,35 +1,23 @@
 #include "Window.h"
-#include "Application.h"
 
 namespace Sgl
 {
-    Window::Window() noexcept:
-        Window("Window", SDL_Point{ 0, 0 }, 1280, 720, SDL_WINDOW_SHOWN)
+    Window::Window(Application& app) noexcept:
+        Window(app, SDL_WINDOW_SHOWN)
     {}
 
-    Window::Window(std::string_view title,
-                   SDL_Point position, 
-                   size_t width, 
-                   size_t height, 
-                   SDL_WindowFlags flags) noexcept:
-        _width(width),
-        _height(height),
-        _sdlWindow(SDL_CreateWindow(title.data(), position.x, position.y,
-                                    width, height, flags)),
-        _renderContext(SDL_CreateRenderer(_sdlWindow, -1, SDL_RENDERER_ACCELERATED))
+    Window::Window(Application& app, SDL_WindowFlags flags) noexcept:
+        App(app),
+        _sdlWindow(SDL_CreateWindow(Title, Position.x, Position.y, Width, Height, flags)),
+        _renderContext(new RenderContext(SDL_CreateRenderer(_sdlWindow, -1, SDL_RENDERER_ACCELERATED)))
     {
         if(_sdlWindow == nullptr)
         {
             PrintSDLError();
         }
 
-        if(_renderContext == nullptr)
-        {
-            PrintSDLError();
-        }
-
-        _renderContext.SetBlendMode(SDL_BLENDMODE_BLEND);
-        SetLogicalSize(width, height);
+        _renderContext->SetBlendMode(SDL_BLENDMODE_BLEND);
+        SetLogicalSize(Width, Height);
     }
 
     void Window::SetWidth(size_t width) noexcept
@@ -46,7 +34,7 @@ namespace Sgl
 
     void Window::SetLogicalSize(size_t width, size_t height)
     {
-        SDL_RenderSetLogicalSize(_renderContext, width, height);
+        SDL_RenderSetLogicalSize(GetRenderContext(), width, height);
     }
 
     void Window::SetMaxSize(size_t width, size_t height)
@@ -86,13 +74,15 @@ namespace Sgl
                 SDL_SetWindowFullscreen(_sdlWindow, SDL_WINDOW_FULLSCREEN_DESKTOP); break;
             case DiplayMode::Fullscreen:
                 SDL_SetWindowFullscreen(_sdlWindow, SDL_WINDOW_FULLSCREEN); break;
+            default:
+                throw std::invalid_argument("Selected display mode does not exist!");
         }
     }
 
     std::pair<size_t, size_t> Window::GetLogicalSize() const
     {
         int width, height;
-        SDL_RenderGetLogicalSize(_renderContext, &width, &height);
+        SDL_RenderGetLogicalSize(GetRenderContext(), &width, &height);
         return { width, height };
     }
 
@@ -123,15 +113,9 @@ namespace Sgl
         }
     }
 
-    void Window::Render()
+    RenderContext& Window::GetRenderContext() const
     {
-        if(!IsVisible())
-        {
-            return;
-        }
-
-        Scenes.Current()->OnRender(GetRenderContext());
-        SDL_RenderPresent(_renderContext);
+        return *_renderContext;
     }
 
     void Window::Show()
@@ -144,19 +128,14 @@ namespace Sgl
         SDL_HideWindow(_sdlWindow);
     }
 
-    void Window::Close()
-    {
-        Scenes.Clear();
-    }
-
     bool Window::IsVisible() const
     {
-        return SDL_GetWindowFlags(_sdlWindow) & (SDL_WINDOW_MINIMIZED | SDL_WINDOW_HIDDEN);
+        return SDL_GetWindowFlags(_sdlWindow) & SDL_WINDOW_SHOWN;
     }
 
     void Window::EnableVsync()
     {
-        if(!SDL_RenderSetVSync(_renderContext, 1))
+        if(!SDL_RenderSetVSync(GetRenderContext(), 1))
         {
             _vsyncEnabled = true;
         }
@@ -168,7 +147,7 @@ namespace Sgl
 
     void Window::DisableVsync()
     {
-        if(!SDL_RenderSetVSync(_renderContext, 0))
+        if(!SDL_RenderSetVSync(GetRenderContext(), 0))
         {
             _vsyncEnabled = false;
         }
