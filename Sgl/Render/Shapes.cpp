@@ -157,7 +157,7 @@ namespace Sgl
 		auto points = Math::ComputeEllipsePoints(position, width, height);
 		Math::PointsToVertexRange(points, Vertices, color);
 		Vertices.back() = SDL_Vertex(position, static_cast<SDL_Color>(color), SDL_FPoint());
-		Order = Math::Triangulate(points, position);		
+		Order = Math::TriangulateConvexShape(points, position);		
 	}
 
 	void FillEllipse::OnRender(RenderContext& renderContext)
@@ -191,7 +191,7 @@ namespace Sgl
 		auto points = Math::ComputeEllipsePoints(position, width, height);
 		Math::PointsToVertexRange(points, Vertices, texture.Color);
 		Vertices.back() = SDL_Vertex(position, static_cast<SDL_Color>(texture.Color), SDL_FPoint());
-		Order = Math::Triangulate(points, position);
+		Order = Math::TriangulateConvexShape(points, position);
 	}
 
 	void TexturedEllipse::OnRender(RenderContext& renderContext)

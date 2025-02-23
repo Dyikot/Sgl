@@ -44,7 +44,6 @@ namespace Sgl
 		void SetSceneBackgroundTexture(const Texture& texture);
 		void SetBlendMode(SDL_BlendMode mode);
 		
-
 		void SetColor(Color color) const noexcept
 		{
 			SDL_SetRenderDrawColor(_renderer, color.R, color.G, color.B, color.A);

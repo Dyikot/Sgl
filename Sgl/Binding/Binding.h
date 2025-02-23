@@ -1,13 +1,13 @@
 #pragma once
 
 #include <string>
+#include <functional>
 #include "BindableObject.h"
-#include "../Events/Delegates.h"
 
 namespace Sgl
 {
-	using NotifySource = Action<PropertyId, const Any&>;
-	using NotifyTarget = Action<const Any&>;
+	using NotifySource = std::function<void(PropertyId, const Any&)>;
+	using NotifyTarget = std::function<void(const Any&)>;
 
 	class ISupportSourceBinding
 	{
@@ -30,21 +30,21 @@ namespace Sgl
 		NotifySource Source;
 		NotifyTarget Target;
 	private:
-		bool _beingTargetNotified = false;
+		bool _targetNotifying = false;
 	public:
 		void NotifyTarget(const Any& value)
 		{
 			if(Target)
 			{
-				_beingTargetNotified = true;
+				_targetNotifying = true;
 				Target(value);
-				_beingTargetNotified = false;
+				_targetNotifying = false;
 			}
 		}
 
 		void NotifySource(PropertyId id, const Any& value)
 		{
-			if(Source && !_beingTargetNotified)
+			if(Source && !_targetNotifying)
 			{
 				Source(id, value);
 			}

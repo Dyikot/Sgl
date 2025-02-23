@@ -66,7 +66,7 @@ namespace Sgl
 
 	void Application::Run(Window& window)
 	{
-		if(_isRunning)
+		if(_running)
 		{
 			return;
 		}
@@ -74,7 +74,7 @@ namespace Sgl
 		_window = &window;
 		OnStartup(EventArgs());
 
-		while(_isRunning)
+		while(_running)
 		{
 			if(!window.Scenes.Any())
 			{
@@ -111,12 +111,12 @@ namespace Sgl
 
 	void Application::Shutdown() noexcept
 	{
-		_isRunning = false;
+		_running = false;
 	}
 
 	void Application::OnStartup(const EventArgs& e)
 	{
-		_isRunning = true;
+		_running = true;
 		if(Startup)
 		{
 			Startup(this, e);

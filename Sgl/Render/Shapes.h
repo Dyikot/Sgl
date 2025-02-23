@@ -10,12 +10,12 @@ namespace Sgl
 	class ShapeBase: public IVisual
 	{
 	public:
-		SDL_FPoint RotationCenter = {};
+		SDL_FPoint RotationCenter;
 	protected:
 		static inline const std::array<float, 361> Sin = Math::ComputeSin<361>();
 		static inline const std::array<float, 361> Cos = Math::ComputeCos<361>();
 	public:
-		ShapeBase(SDL_FPoint rotationCenter):
+		ShapeBase(SDL_FPoint rotationCenter = {}):
 			RotationCenter(RotationCenter)
 		{}
 
@@ -113,7 +113,7 @@ namespace Sgl
 	public:
 		FillPolygon(std::span<SDL_FPoint> points, Sgl::Color color):
 			ShapeBase(points.front()),
-			Order(Math::Triangulate(points)),
+			Order(Math::TriangulateConvexShape(points)),
 			Color(color)
 		{
 			Vertices.reserve(points.size());
@@ -122,7 +122,7 @@ namespace Sgl
 
 		FillPolygon(std::array<SDL_FPoint, 100>&& points, Sgl::Color color):
 			ShapeBase(points.front()),
-			Order(Math::Triangulate(points)),
+			Order(Math::TriangulateConvexShape(points)),
 			Color(color)
 		{
 			Vertices.reserve(points.size());

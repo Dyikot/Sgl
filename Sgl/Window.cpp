@@ -158,7 +158,7 @@ namespace Sgl
     {
         if(!SDL_RenderSetVSync(_renderContext, 1))
         {
-            _isVsyncEnable = true;
+            _vsyncEnabled = true;
         }
         else
         {
@@ -170,7 +170,7 @@ namespace Sgl
     {
         if(!SDL_RenderSetVSync(_renderContext, 0))
         {
-            _isVsyncEnable = false;
+            _vsyncEnabled = false;
         }
         else
         {

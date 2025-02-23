@@ -17,8 +17,8 @@ namespace Sgl
 		using TimeElapsedHandler = EventHandler<Timer, TimeElapsedEventArgs>;
 		const std::chrono::milliseconds Duration;
 	private:
-		bool _isPaused = true;
-		bool _isElapsed = false;
+		bool _paused = true;
+		bool _elapsed = false;
 		std::chrono::milliseconds _timeElapsed;
 		std::chrono::steady_clock::time_point _start;
 		std::thread _thread;
@@ -36,8 +36,8 @@ namespace Sgl
 		void Restart() noexcept;
 		void Pause();
 		void Reset() noexcept;
-		bool IsPaused() const noexcept { return _isPaused; }
-		bool IsElapsed() const noexcept { return _isElapsed; }
+		bool IsPaused() const noexcept { return _paused; }
+		bool IsElapsed() const noexcept { return _elapsed; }
 	private:
 		void Wait();
 		void OnTimerElapsed(Timer* sender, const TimeElapsedEventArgs& e);

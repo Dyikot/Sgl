@@ -6,22 +6,9 @@
 
 namespace Sgl
 {
-	class PropertyMap: protected std::unordered_map<PropertyId, Any>
+	class PropertyMap: public std::unordered_map<PropertyId, Any>
 	{
 	public:
-		using Base = std::unordered_map<PropertyId, Any>;
-	public:
-		Base::iterator begin() { return Base::begin(); }
-		Base::iterator end() { return Base::end(); }
-		Base::const_iterator begin() const { return Base::begin(); }
-		Base::const_iterator end() const { return Base::end(); }
-		Any& At(PropertyId id) { return Base::at(id); }
-		const Any& At(PropertyId id) const { return Base::at(id); }
-		bool Empty() const { return Base::empty(); }
-		size_t Count() const { return Base::size(); }
-		bool Contains(PropertyId id) const { return Base::contains(id); }
-		void Remove(PropertyId id) { Base::erase(id); }
-
 		void Add(PropertyId id, Any&& object)
 		{
 			if(!IsTypeCorrect(id, object))
@@ -32,7 +19,7 @@ namespace Sgl
 								object.Type().name()));
 			}
 
-			Base::emplace(id, std::move(object));
+			emplace(id, std::move(object));
 		}
 
 		void Add(PropertyId id, const Any& object)
@@ -45,7 +32,7 @@ namespace Sgl
 								object.Type().name()));
 			}
 
-			Base::emplace(id, object);
+			emplace(id, object);
 		}
 
 		template<typename TValue, typename... TArgs>
@@ -57,16 +44,14 @@ namespace Sgl
 		template<typename TValue>
 		bool TryGetValue(PropertyId id, TValue& value) const
 		{
-			if(Contains(id))
+			if(contains(id))
 			{
-				value = At(id).As<TValue>();
+				value = at(id).As<TValue>();
 				return true;
 			}
 
 			return false;
 		}
-
-		Any& operator[](const PropertyId& id) { return Base::operator[](id); }
 	private:
 		bool IsTypeCorrect(PropertyId id, const Any& object) const
 		{

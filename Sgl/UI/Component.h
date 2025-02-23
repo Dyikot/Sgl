@@ -1,10 +1,10 @@
 #pragma once
 
 #include <unordered_map>
+#include <set>
 #include "UIElement.h"
-#include "../Appearance/UIAppearance.h"
+#include "../Appearance/Component.style.h"
 #include "../Appearance/Cursor.h"
-#include "../Events/Delegates.h"
 #include "../Binding/Binding.h"
 
 namespace Sgl
@@ -30,7 +30,7 @@ namespace Sgl
 	protected:
 		std::unordered_map<PropertyId, Binding> _bindings;
 	private:
-		bool _isMouseOver = false;
+		bool _mouseOver = false;
 	public:
 		explicit Component(SDL_FPoint position = {});
 		virtual ~Component() = default;		
@@ -68,7 +68,7 @@ namespace Sgl
 		const IVisual* const& GetToolTip() const { return GetPropertyValue<IVisual*>(ToolTipProperty); }
 		
 		void OnRender(RenderContext& renderContext) override;
-		bool IsMouseOver() const noexcept { return _isMouseOver; }
+		bool IsMouseOver() const noexcept { return _mouseOver; }
 		void OnPropertyChanged(PropertyId id) override;
 
 		template<typename T>
@@ -121,4 +121,7 @@ namespace Sgl
 			return left.GetZIndex() < right.GetZIndex();
 		}
 	};
+
+	template<typename T>
+	using ComponentSet = std::multiset<std::reference_wrapper<T>, ZIndexComparer>;
 }

@@ -21,16 +21,16 @@ namespace Sgl
 
 	void Timer::Start() noexcept
 	{
-		if(_isElapsed)
+		if(_elapsed)
 		{
 			Reset();
 		}
-		else if(!_isPaused)
+		else if(!_paused)
 		{
 			return;
 		}
 
-		_isPaused = false;
+		_paused = false;
 		_thread = std::thread(std::bind_front(&Timer::Wait, this));
 	}
 
@@ -42,7 +42,7 @@ namespace Sgl
 
 	void Timer::Pause()
 	{
-		_isPaused = true;
+		_paused = true;
 		_conditionVariable.notify_one();
 		_thread.join();
 	}
@@ -50,7 +50,7 @@ namespace Sgl
 	void Timer::Reset() noexcept
 	{
 		Pause();
-		_isElapsed = false;
+		_elapsed = false;
 		_timeElapsed = 0ms;
 	}
 
@@ -65,9 +65,9 @@ namespace Sgl
 								   std::bind_front(&Timer::IsPaused, this));
 
 		_timeElapsed += duration_cast<milliseconds>(high_resolution_clock::now() - _start);
-		_isElapsed = !_isPaused;
+		_elapsed = !_paused;
 
-		if(_isElapsed)
+		if(_elapsed)
 		{
 			OnTimerElapsed(this, TimeElapsedEventArgs{ .Duration = Duration });
 		}

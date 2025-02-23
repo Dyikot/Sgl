@@ -27,7 +27,7 @@ namespace Sgl
 	private:
 		inline static Application* _current = nullptr;
 		Window* _window = nullptr;
-		bool _isRunning = false;
+		bool _running = false;
 	public:
 		static Application* Current() { return _current; }
 

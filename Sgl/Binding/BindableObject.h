@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Data/AnyMap.h"
+#include "../Data/Any.h"
 
 namespace Sgl
 {

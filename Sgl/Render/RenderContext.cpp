@@ -84,7 +84,7 @@ namespace Sgl
 	{
 		auto texture = CreateTexture(path);
 		auto points = Math::ComputeEllipsePoints(position, width, height);
-		auto order = Math::Triangulate(points, position);
+		auto order = Math::TriangulateConvexShape(points, position);
 		std::array<SDL_Vertex, 100> vertices = {};
 
 		Math::PointsToVertexRange(points, vertices, texture.Color);
@@ -115,7 +115,7 @@ namespace Sgl
 	void RenderContext::DrawEllipseFill(SDL_FPoint position, int width, int height, Color color)
 	{
 		auto points = Math::ComputeEllipsePoints(position, width, height);
-		auto order = Math::Triangulate(points);
+		auto order = Math::TriangulateConvexShape(points);
 		std::array<SDL_Vertex, 100> vertices = {};
 		Math::PointsToVertexRange(points, vertices, color);
 

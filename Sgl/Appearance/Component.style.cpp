@@ -1,4 +1,4 @@
-#include "UIAppearance.h"
+#include "Component.style.h"
 
 namespace Sgl
 {

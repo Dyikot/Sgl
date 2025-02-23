@@ -45,7 +45,7 @@ namespace Sgl
 		std::optional<Surface> _icon = std::nullopt;
 		int _width;
 		int _height;
-		bool _isVsyncEnable = false;
+		bool _vsyncEnabled = false;
 	public:
 		Window() noexcept;
 		Window(std::string_view title,
@@ -86,7 +86,7 @@ namespace Sgl
 		bool IsVisible() const;
 		void EnableVsync();
 		void DisableVsync();
-		bool IsVsyncEnable() const { _isVsyncEnable; }
+		bool IsVsyncEnable() const { _vsyncEnabled; }
 
 		operator SDL_Window* () const { return _sdlWindow; }
 	protected:

@@ -35,7 +35,7 @@ namespace Sgl
     {
         auto tooltip = GetPropertyValue<IVisual*>(ToolTipProperty);
 
-        if(_isMouseOver && tooltip)
+        if(_mouseOver && tooltip)
         {
             tooltip->OnRender(renderContext);
         }
@@ -51,7 +51,7 @@ namespace Sgl
 
     void Component::OnMouseEnter(const MouseButtonEventArgs& e)
     {
-        _isMouseOver = true;
+        _mouseOver = true;
 
         if(auto cursor = GetCursor(); cursor)
         {
@@ -66,7 +66,7 @@ namespace Sgl
 
     void Component::OnMouseLeave(const MouseButtonEventArgs& e)
     {
-        _isMouseOver = false;
+        _mouseOver = false;
 
         if(GetCursor())
         {

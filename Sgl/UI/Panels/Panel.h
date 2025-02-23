@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../Component.h"
-#include "../ComponentSet.h"
 #include "../Controls/Control.h"
 
 namespace Sgl

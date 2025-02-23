@@ -2,15 +2,16 @@
 
 namespace Sgl
 {
-	void Math::PointsToVertexRange(std::span<SDL_FPoint> points,
-								   std::span<SDL_Vertex> vertices, 
-								   Sgl::Color color)
+	inline float IsTriangleContainsPoint(SDL_FPoint a, SDL_FPoint b,
+										 SDL_FPoint c, SDL_FPoint point)
 	{
-		auto ToVertex = [color](const SDL_FPoint& point) { return SDL_Vertex{ point, color, {} }; };
-		std::transform(points.begin(), points.end(), vertices.begin(), ToVertex);
-	}
+		return fabsf(Math::TriangleArea(a, b, c) 
+					 - Math::TriangleArea(point, a, b) 
+					 + Math::TriangleArea(point, b, c) 
+					 + Math::TriangleArea(point, a, c)) < 1e-5f;
+	};
 
-    std::vector<int> Math::Triangulate(std::span<SDL_FPoint> points)
+    std::vector<int> Math::TriangulateConvexShape(std::span<SDL_FPoint> points)
     {
 		constexpr size_t MinVerticesNumber = 3;
 		std::list<int> order(points.size());
@@ -21,13 +22,7 @@ namespace Sgl
 		auto previous = order.begin();
 		auto current = std::next(previous, 1);
 		auto next = std::next(current, 1);
-		auto IsTriangleContainsPoint = [](SDL_FPoint a, SDL_FPoint b,
-										  SDL_FPoint c, SDL_FPoint point)
-		{
-			return Math::TriangleArea(a, b, c) == (Math::TriangleArea(point, a, b) +
-												   Math::TriangleArea(point, b, c) +
-												   Math::TriangleArea(point, a, c));
-		};
+		
 
 		while(order.size() > MinVerticesNumber)
 		{
@@ -79,7 +74,7 @@ namespace Sgl
 		return resultOrder;
     }
 
-	std::vector<int> Math::Triangulate(std::span<SDL_FPoint> points, SDL_FPoint center)
+	std::vector<int> Math::TriangulateConvexShape(std::span<SDL_FPoint> points, SDL_FPoint center)
 	{
 		std::vector<int> resultOrder;
 		resultOrder.reserve((points.size()) * 3);
