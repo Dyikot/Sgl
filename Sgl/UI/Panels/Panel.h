@@ -13,7 +13,7 @@ namespace Sgl
 	public:
 		explicit Panel(UIElement& parent);
 
-		void SetStyle(const Style& style) override;
+		void AddStyle(const Style& style) override;
 
 		bool TryRaiseMouseMoveEvents(const MouseButtonEventArgs& e);
 		void RaiseMouseDownEvents(const MouseButtonEventArgs& e);

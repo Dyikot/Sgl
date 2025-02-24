@@ -11,13 +11,25 @@ namespace Sgl
 	{
 		if(BackgroundTexture)
 		{
-			BackgroundTexture->Color = BackgroundColor;
-			renderContext.SetSceneBackgroundTexture(*BackgroundTexture);
+			renderContext.FillSceneBackgroundWithTexture(*BackgroundTexture, BackgroundColor);
 		}
 		else
 		{
-			renderContext.SetSceneBackgroundColor(BackgroundColor);
+			renderContext.FillSceneBackgroundWithColor(BackgroundColor);
 		}
+	}
+
+	void Scene::SwitchCursorOn(const Cursor& cursor)
+	{
+		if(SDL_GetCursor() != cursor)
+		{			
+			SDL_SetCursor(cursor);
+		}
+	}
+
+	void Scene::SwitchCursorOnDefault()
+	{
+		SwitchCursorOn(GetCursor());
 	}
 
 	void Scene::OnMouseMove(const MouseButtonEventArgs& e)
@@ -66,6 +78,8 @@ namespace Sgl
 
 	void Scene::OnLoaded(const EventArgs& e)
 	{
+		SwitchCursorOnDefault();
+
 		if(Loaded)
 		{
 			Loaded(this, e);

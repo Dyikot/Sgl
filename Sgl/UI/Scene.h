@@ -2,8 +2,8 @@
 
 #include <stack>
 #include <queue>
-#include "../Appearance/Color.h"
-#include "../Appearance/Texture.h"
+#include "../Graphic/Color.h"
+#include "../Graphic/Texture.h"
 #include "../ECS/IProcessed.h"
 #include "Panels/Panel.h"
 
@@ -18,7 +18,6 @@ namespace Sgl
 		Sgl::Window& Window;
 	private:
 		Panel* _mouseOverPanel = nullptr;
-		bool _unload = false;
 	public:
 		explicit Scene(Sgl::Window& window);
 		virtual ~Scene() = default;
@@ -27,6 +26,8 @@ namespace Sgl
 		Event<UIEventHandler> Unloaded;
 
 		void OnRender(RenderContext& renderContext) override;
+		void SwitchCursorOn(const Cursor& cursor) override;
+		void SwitchCursorOnDefault() override;
 	protected:
 		void OnMouseMove(const MouseButtonEventArgs& e) override;
 		void OnMouseDown(const MouseButtonEventArgs& e) override;
@@ -57,10 +58,17 @@ namespace Sgl
 		SceneManager(Sgl::Window& window);
 		~SceneManager();
 
-		template<typename TScene, typename... TArgs> requires std::derived_from<TScene, Scene>
-		void Load(TArgs&&... args)
+		template<typename TScene> requires std::derived_from<TScene, Scene>
+		void Load()
 		{
-			_scenesQueue.push(std::make_shared<TScene>(Window, std::forward<TArgs>(args)...));
+			_scenesQueue.push(std::make_shared<TScene>(Window));
+		}
+
+		template<typename TScene> requires std::derived_from<TScene, Scene>
+		void Load(const std::function<void(Scene&)>& configurator)
+		{
+			_scenesQueue.push(std::make_shared<TScene>(Window));
+			configurator(*_scenesQueue.back());
 		}
 
 		void Unload();

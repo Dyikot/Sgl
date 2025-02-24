@@ -5,7 +5,9 @@
 #include <variant>
 #include <array>
 #include "SDL/SDL_render.h"
-#include "../Appearance/Texture.h"
+#include "../Graphic/Color.h"
+#include "../Graphic/Texture.h"
+#include "../Graphic/Surface.h"
 
 namespace Sgl
 {
@@ -29,37 +31,36 @@ namespace Sgl
 		void DrawRectangles(std::span<SDL_FRect> rectanges, Color color);
 		void DrawFillRectangle(const SDL_FRect& rectange, Color background);
 		void DrawFillRectangles(std::span<SDL_FRect> rectanges, Color background);
-		void DrawImage(std::string_view path, const SDL_FRect& rectangle);
-		void DrawImage(std::string_view path, const SDL_FRect& rectangle, const SDL_Rect& clip);
-		void DrawImage(std::string_view path, SDL_FPoint position, int width, int height);
-		void DrawTexture(const Texture& texture, const SDL_FRect& rectangle);
-		void DrawTexture(const Texture& texture, const SDL_FRect& rectangle, const SDL_Rect& clip);
+		void DrawImage(std::string_view path, const SDL_FRect& rectangle, Color color);
+		void DrawImage(std::string_view path, const SDL_FRect& rectangle, const SDL_Rect& clip, Color color);
+		void DrawImage(std::string_view path, SDL_FPoint position, int width, int height, Color color);
+		void DrawTexture(const Texture& texture, const SDL_FRect& rectangle, Color color);
+		void DrawTexture(const Texture& texture, const SDL_FRect& rectangle, const SDL_Rect& clip, Color color);
 		void DrawEllipse(SDL_FPoint position, int width, int height, Color color);
 		void DrawEllipseFill(SDL_FPoint position, int width, int height, Color color);
 		void DrawShape(std::span<SDL_Vertex> vertices);
-		void DrawShape(std::span<SDL_Vertex> vertices, const Texture& texture);
+		void DrawShape(std::span<SDL_Vertex> vertices, const Texture& texture, Color color);
 		void DrawShape(std::span<SDL_Vertex> vertices, std::span<int> order);
-		void DrawShape(std::span<SDL_Vertex> vertices, std::span<int> order, const Texture& texture);
-		void SetSceneBackgroundColor(Color color);
-		void SetSceneBackgroundTexture(const Texture& texture);
+		void DrawShape(std::span<SDL_Vertex> vertices, std::span<int> order, const Texture& texture, Color color);
+		void FillSceneBackgroundWithColor(Color color);
+		void FillSceneBackgroundWithTexture(const Texture& texture, Color color);
 		void SetBlendMode(SDL_BlendMode mode);
 		
-		void SetColor(Color color) const noexcept
+		void SetRenderColor(Color color) const noexcept
 		{
 			SDL_SetRenderDrawColor(_renderer, color.R, color.G, color.B, color.A);
 		}
 
-		void SetTextureColor(const Texture& texture) const noexcept
+		void SetTextureColor(const Texture& texture, Color color) const noexcept
 		{
-			if(texture.Color != Colors::White)
-			{
-				SDL_SetTextureColorMod(texture, texture.Color.R, texture.Color.G, texture.Color.B);
-			}
+			SDL_SetTextureColorMod(texture, color.R, color.G, color.B);
+			SDL_SetTextureAlphaMod(texture, color.A);
+		}
 
-			if(!texture.Color.IsTransparent())
-			{
-				SDL_SetTextureAlphaMod(texture, texture.Color.A);
-			}
+		void SetSurfaceColor(const Surface& surface, Color color) const noexcept
+		{
+			SDL_SetSurfaceColorMod(surface, color.R, color.G, color.B);
+			SDL_SetSurfaceAlphaMod(surface, color.A);
 		}
 
 		operator SDL_Renderer* () const { return _renderer; }

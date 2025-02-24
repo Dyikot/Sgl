@@ -3,9 +3,9 @@
 #include <filesystem>
 #include <iostream>
 #include "Application.h"
-#include "Render/RenderContext.h"
-#include "Appearance/Style.h"
-#include "Appearance/Surface.h"
+#include "Graphic/RenderContext.h"
+#include "Style/Style.h"
+#include "Graphic/Surface.h"
 
 namespace Sgl
 {
@@ -33,9 +33,9 @@ namespace Sgl
 		int _width = Width;
 		int _height = Height;
 		bool _vsyncEnabled = false;
-		SDL_Window* const _sdlWindow;
+		SDL_Window* const _this;
 		std::unique_ptr<RenderContext> _renderContext;
-		std::optional<Surface> _icon = std::nullopt;
+		const Surface* _icon = nullptr;
 	private:
 		/* Configuration */
 		static constexpr const char* Title = "Window";
@@ -48,7 +48,7 @@ namespace Sgl
 		Window(const Window&) = delete;
 		Window(Window&&) = delete;
 		
-		~Window() noexcept { SDL_DestroyWindow(_sdlWindow); }
+		~Window() noexcept { SDL_DestroyWindow(_this); }
 
 		Event<WindowEventHandler> StateChanged;
 		Event<WindowSizeChangedEventHandler> SizeChanged;
@@ -57,9 +57,9 @@ namespace Sgl
 		void SetHeight(size_t height) noexcept;
 		void SetLogicalSize(size_t width, size_t height);
 		void SetMaxSize(size_t width, size_t height);
+		void SetMinSize(size_t width, size_t height);
 		void SetTitle(std::string_view value);
 		void SetPosition(SDL_Point value);
-		void SetIcon(Surface&& icon);
 		void SetIcon(const Surface& icon);
 		void SetDisplayMode(DiplayMode displayMode);
 		template<typename TRenderContext> requires std::derived_from<TRenderContext, RenderContext>
@@ -68,14 +68,14 @@ namespace Sgl
 			if(!App.IsRunning())
 			{
 				_renderContext = std::make_unique<TRenderContext>(
-					SDL_CreateRenderer(_sdlWindow, -1, SDL_RENDERER_ACCELERATED));
+					SDL_CreateRenderer(_this, -1, SDL_RENDERER_ACCELERATED));
 			}
 		}
 
-		int	GetWidth() const noexcept { return _width; }
-		int	GetHeight() const noexcept { return _height; }
+		int GetWidth() const noexcept { return _width; }
+		int GetHeight() const noexcept { return _height; }
 		std::pair<size_t, size_t> GetLogicalSize() const;
-		std::string_view GetTitle() const { SDL_GetWindowTitle(_sdlWindow); }
+		std::string_view GetTitle() const { SDL_GetWindowTitle(_this); }
 		SDL_Point GetPosition() const;
 		WindowState GetWindowState() const;
 		RenderContext& GetRenderContext() const;
@@ -87,7 +87,7 @@ namespace Sgl
 		void DisableVsync();
 		bool IsVsyncEnable() const { return _vsyncEnabled; }
 
-		operator SDL_Window* () const { return _sdlWindow; }
+		operator SDL_Window* () const { return _this; }
 	protected:
 		virtual void OnSizeChanged(const SizeChangedEventArgs& e);
 		virtual void OnStateChanged(const EventArgs& e);

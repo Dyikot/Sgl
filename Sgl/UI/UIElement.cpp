@@ -2,7 +2,12 @@
 
 namespace Sgl
 {
-	void UIElement::SetStyle(const Style& style)
+	UIElement::UIElement()
+	{
+		AddProperty<std::reference_wrapper<const Cursor>>(CursorProperty, Cursors::Arrow());
+	}
+
+	void UIElement::AddStyle(const Style& style)
 	{
 		
 	}

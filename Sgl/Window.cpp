@@ -8,10 +8,10 @@ namespace Sgl
 
     Window::Window(Application& app, SDL_WindowFlags flags) noexcept:
         App(app),
-        _sdlWindow(SDL_CreateWindow(Title, Position.x, Position.y, Width, Height, flags)),
-        _renderContext(new RenderContext(SDL_CreateRenderer(_sdlWindow, -1, SDL_RENDERER_ACCELERATED)))
+        _this(SDL_CreateWindow(Title, Position.x, Position.y, Width, Height, flags)),
+        _renderContext(new RenderContext(SDL_CreateRenderer(_this, -1, SDL_RENDERER_ACCELERATED)))
     {
-        if(_sdlWindow == nullptr)
+        if(_this == nullptr)
         {
             PrintSDLError();
         }
@@ -39,29 +39,29 @@ namespace Sgl
 
     void Window::SetMaxSize(size_t width, size_t height)
     {
-        SDL_SetWindowMaximumSize(_sdlWindow, width, height);
+        SDL_SetWindowMaximumSize(_this, width, height);
+    }
+
+    void Window::SetMinSize(size_t width, size_t height)
+    {
+        
+        SDL_SetWindowMinimumSize(_this, width, height);
     }
 
     void Window::SetTitle(std::string_view value)
     {
-        SDL_SetWindowTitle(_sdlWindow, value.data());
+        SDL_SetWindowTitle(_this, value.data());
     }
 
     void Window::SetPosition(SDL_Point value)
     {
-        SDL_SetWindowPosition(_sdlWindow, value.x, value.y);
-    }
-
-    void Window::SetIcon(Surface&& icon)
-    {
-        _icon = std::move(icon);
-        SDL_SetWindowIcon(_sdlWindow, _icon.value());
+        SDL_SetWindowPosition(_this, value.x, value.y);
     }
 
     void Window::SetIcon(const Surface& icon)
     {
-        _icon = icon;
-        SDL_SetWindowIcon(_sdlWindow, _icon.value());
+        _icon = &icon;
+        SDL_SetWindowIcon(_this, icon);
     }
 
     void Window::SetDisplayMode(DiplayMode displayMode)
@@ -69,11 +69,11 @@ namespace Sgl
         switch(displayMode)
         {
             case DiplayMode::Window: 
-                SDL_SetWindowFullscreen(_sdlWindow, 0); break;
+                SDL_SetWindowFullscreen(_this, 0); break;
             case DiplayMode::BorderlessWindow:
-                SDL_SetWindowFullscreen(_sdlWindow, SDL_WINDOW_FULLSCREEN_DESKTOP); break;
+                SDL_SetWindowFullscreen(_this, SDL_WINDOW_FULLSCREEN_DESKTOP); break;
             case DiplayMode::Fullscreen:
-                SDL_SetWindowFullscreen(_sdlWindow, SDL_WINDOW_FULLSCREEN); break;
+                SDL_SetWindowFullscreen(_this, SDL_WINDOW_FULLSCREEN); break;
             default:
                 throw std::invalid_argument("Selected display mode does not exist!");
         }
@@ -89,13 +89,13 @@ namespace Sgl
     SDL_Point Window::GetPosition() const
     {
         SDL_Point position;
-        SDL_GetWindowPosition(_sdlWindow, &position.x, &position.y);
+        SDL_GetWindowPosition(_this, &position.x, &position.y);
         return position;
     }
 
     WindowState Window::GetWindowState() const
     {
-        const auto flags = SDL_GetWindowFlags(_sdlWindow);
+        const auto flags = SDL_GetWindowFlags(_this);
 
         if(!(flags & (SDL_WINDOW_MINIMIZED | SDL_WINDOW_MAXIMIZED)))
         {
@@ -120,17 +120,17 @@ namespace Sgl
 
     void Window::Show()
     {
-        SDL_ShowWindow(_sdlWindow);
+        SDL_ShowWindow(_this);
     }
 
     void Window::Hide()
     {
-        SDL_HideWindow(_sdlWindow);
+        SDL_HideWindow(_this);
     }
 
     bool Window::IsVisible() const
     {
-        return SDL_GetWindowFlags(_sdlWindow) & SDL_WINDOW_SHOWN;
+        return SDL_GetWindowFlags(_this) & SDL_WINDOW_SHOWN;
     }
 
     void Window::EnableVsync()
@@ -164,7 +164,7 @@ namespace Sgl
             SizeChanged(this, e);
         }
 
-        SDL_SetWindowSize(_sdlWindow, _width, _height);
+        SDL_SetWindowSize(_this, _width, _height);
     }
 
     void Window::OnStateChanged(const EventArgs& e)

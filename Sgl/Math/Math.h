@@ -11,7 +11,7 @@
 #include <algorithm>
 #include "SDL/SDL_rect.h"
 #include "SDL/SDL_render.h"
-#include "../Appearance/Color.h"
+#include "../Graphic/Color.h"
 
 namespace Sgl
 {

@@ -1,5 +1,5 @@
 #include "Application.h"
-#include "Render/Shapes.h"
+#include "Graphic/Shapes.h"
 #include "Window.h"
 #include "Tools/Log.h"
 
@@ -41,21 +41,6 @@ namespace Sgl
 		SDL_Quit();
 	}
 
-	void Application::SetDefaultCursor()
-	{
-		SetCursor(_defaultCursor);
-	}
-
-	void Application::SetCursor(const Cursor& cursor)
-	{
-		if(_activeCursor.get() != cursor)
-		{
-			SDL_SetCursor(cursor);
-		}
-
-		_activeCursor = cursor;
-	}
-
 	void Application::SetMaxFrameRate(size_t value)
 	{
 		_maxFrameRate = value > MaxFrameRate? MaxFrameRate : value;
@@ -67,11 +52,6 @@ namespace Sgl
 		return _window;
 	}
 
-	const Cursor& Application::GetCursor() const
-	{
-		return _activeCursor;
-	}
-
 	void Application::Run()
 	{
 		if(_running)
@@ -81,7 +61,7 @@ namespace Sgl
 
 		Window window(*this);
 		_window = &window;
-		WindowInitializer(window);
+		WindowConfigurator(window);
 
 		OnStartup(EventArgs());
 		Start();
@@ -166,11 +146,8 @@ namespace Sgl
 
 			if(_maxFrameRate)
 			{
-				auto delay = _maxFrameTime.value() - _stopwatch.Elapsed();	
-				if(delay.Milliseconds() > 0)
-				{
-					SDL_Delay(delay.Milliseconds());
-				}
+				auto delayMs = (_maxFrameTime.value() - _stopwatch.Elapsed()).Milliseconds();	
+				SDL_Delay(delayMs > 0 ? delayMs : 0);
 			}
 		}
 	}

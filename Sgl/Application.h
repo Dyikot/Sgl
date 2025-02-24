@@ -6,7 +6,7 @@
 #include "Audio/AudioManager.h"
 #include "Tools/Time/Stopwatch.h"
 #include "Events/Event.h"
-#include "Appearance/Cursor.h"
+#include "Graphic/Cursor.h"
 #include "UI/Scene.h"
 
 namespace Sgl
@@ -20,15 +20,13 @@ namespace Sgl
 	{
 	public:
 		AudioManager AudioManager;
-		std::function<void(Window&)> WindowInitializer;
+		std::function<void(Window&)> WindowConfigurator;
 	protected:
 		static constexpr size_t MaxFrameRate = 360;
 
 		Stopwatch _stopwatch;
 		std::optional<size_t> _maxFrameRate = std::nullopt;
 		std::optional<TimeSpan> _maxFrameTime = std::nullopt;
-		std::reference_wrapper<const Cursor> _defaultCursor = Cursors::Arrow();
-		std::reference_wrapper<const Cursor> _activeCursor = _defaultCursor;
 	private:
 		inline static Application* _current = nullptr;
 		Window* _window = nullptr;
@@ -39,12 +37,9 @@ namespace Sgl
 
 		static Application* Current() { return _current; }
 
-		void SetDefaultCursor();
-		void SetCursor(const Cursor& cursor);
 		void SetMaxFrameRate(size_t value);
 
 		Window* GetWindow() const;
-		const Cursor& GetCursor() const;
 		std::optional<size_t> GetMaxFrameRate() const { return _maxFrameRate; }
 
 		Event<ApplicationEventHandler> Startup;

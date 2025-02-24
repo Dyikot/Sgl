@@ -3,8 +3,7 @@
 #include <unordered_map>
 #include <set>
 #include "UIElement.h"
-#include "../Appearance/Component.style.h"
-#include "../Appearance/Cursor.h"
+#include "../Style/Properties.h"
 #include "../Binding/Binding.h"
 
 namespace Sgl
@@ -20,7 +19,6 @@ namespace Sgl
 		static inline const PropertyId MaxHeightProperty = PropertyManager::Register<float>("MaxHeight");
 		static inline const PropertyId ZIndexProperty = PropertyManager::Register<size_t>("ZIndex");
 		static inline const PropertyId MarginProperty = PropertyManager::Register<Thikness>("Margin");
-		static inline const PropertyId CursorProperty = PropertyManager::Register<const Cursor*>("Cursor");
 		static inline const PropertyId ToolTipProperty = PropertyManager::Register<IVisual*>("ToolTip");
 		static inline const PropertyId HorizontalAlignmentProperty = PropertyManager::Register<HorizontalAlignment>("HorizontalAlignment");
 		static inline const PropertyId VerticalAligmentProperty = PropertyManager::Register<VerticalAligment>("VerticalAligment");
@@ -50,9 +48,7 @@ namespace Sgl
 		void SetHorizontalAlignment(HorizontalAlignment value) { SetProperty(HorizontalAlignmentProperty, value); }
 		void SetVerticalAlignment(VerticalAligment value) { SetProperty(VerticalAligmentProperty, value); }
 		void SetVisibility(Visibility value) { SetProperty(VisibilityProperty, value); }
-		void SetCursor(const Sgl::Cursor* value) { SetProperty(CursorProperty, value); }
 		void SetToolTip(IVisual* value) { SetProperty(ToolTipProperty, value); }
-		void SetStyle(const Style& style) override;
 
 		const float& GetWidth() const { return GetPropertyValue<float>(WidthProperty); }
 		const float& GetHeight() const { return GetPropertyValue<float>(HeightProperty); }
@@ -65,10 +61,12 @@ namespace Sgl
 		const HorizontalAlignment& GetHorizontalAlignment() const { return GetPropertyValue<HorizontalAlignment>(HorizontalAlignmentProperty); }
 		const VerticalAligment& GetVerticalAlignment() const { return GetPropertyValue<VerticalAligment>(VerticalAligmentProperty); }
 		const Visibility& GetVisibility() const { return GetPropertyValue<Visibility>(VisibilityProperty); }
-		const Cursor* const& GetCursor() const { return GetPropertyValue<const Cursor*>(CursorProperty); }
 		const IVisual* const& GetToolTip() const { return GetPropertyValue<IVisual*>(ToolTipProperty); }
 		
 		void OnRender(RenderContext& renderContext) override;
+		void AddStyle(const Style& style) override;
+		void SwitchCursorOn(const Cursor& cursor) override;
+		void SwitchCursorOnDefault() override;
 		bool IsMouseOver() const noexcept { return _mouseOver; }
 		void OnPropertyChanged(PropertyId id) override;
 

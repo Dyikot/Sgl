@@ -1,4 +1,4 @@
-#include "Component.style.h"
+#include "Properties.h"
 
 namespace Sgl
 {

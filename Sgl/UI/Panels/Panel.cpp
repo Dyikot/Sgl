@@ -15,9 +15,9 @@ namespace Sgl
 		Component(parent)
 	{}
 
-	void Panel::SetStyle(const Style& style)
+	void Panel::AddStyle(const Style& style)
 	{
-	
+		Component::AddStyle(style);
 	}
 
 	bool Panel::TryRaiseMouseMoveEvents(const MouseButtonEventArgs& e)

@@ -2,7 +2,7 @@
 
 #include "SDL/SDL_ttf.h"
 #include "../Component.h"
-#include "../../Appearance/Color.h"
+#include "../../Graphic/Color.h"
 
 namespace Sgl
 {

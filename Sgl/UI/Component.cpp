@@ -14,21 +14,25 @@ namespace Sgl
         AddProperty<float>(MinHeightProperty);
         AddProperty<size_t>(ZIndexProperty, 1);
         AddProperty<Thikness>(MarginProperty);
-        AddProperty<const Sgl::Cursor*>(CursorProperty);
         AddProperty<IVisual*>(ToolTipProperty);
         AddProperty<HorizontalAlignment>(HorizontalAlignmentProperty, HorizontalAlignment::Stretch);
         AddProperty<VerticalAligment>(VerticalAligmentProperty, VerticalAligment::Stretch);
         AddProperty<Visibility>(VisibilityProperty, Visibility::Visible);
     }
 
-    void Component::SetStyle(const Style& style)
+    void Component::AddStyle(const Style& style)
     {
-        UIElement::SetStyle(style);
+        UIElement::AddStyle(style);
+    }
 
-        for(auto& [id, object] : style.Setters)
-        {
-            GetProperty(id).CopyValue(object);
-        }
+    void Component::SwitchCursorOn(const Cursor& cursor)
+    {
+        Parent.SwitchCursorOn(cursor);
+    }
+
+    void Component::SwitchCursorOnDefault()
+    {
+        Parent.SwitchCursorOnDefault();
     }
 
     void Component::OnRender(RenderContext& renderContext)
@@ -52,11 +56,7 @@ namespace Sgl
     void Component::OnMouseEnter(const MouseButtonEventArgs& e)
     {
         _mouseOver = true;
-
-        if(auto cursor = GetCursor(); cursor)
-        {
-            Application::Current()->SetCursor(*cursor);
-        }
+        SwitchCursorOn(GetCursor());
 
         if(MouseEnter)
         {
@@ -68,10 +68,6 @@ namespace Sgl
     {
         _mouseOver = false;
 
-        if(GetCursor())
-        {
-            Application::Current()->SetDefaultCursor();
-        }
 
         if(MouseLeave)
         {
