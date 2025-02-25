@@ -9,10 +9,10 @@ namespace Sgl
 	using NotifySource = std::function<void(PropertyId, const Any&)>;
 	using NotifyTarget = std::function<void(const Any&)>;
 
-	class ISupportSourceBinding
+	class ISupportComponentBinding
 	{
 	public:
-		virtual ~ISupportSourceBinding() = default;
+		virtual ~ISupportComponentBinding() = default;
 
 		virtual NotifySource& GetNotifySource() = 0;
 	};

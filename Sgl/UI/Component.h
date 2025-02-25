@@ -73,7 +73,7 @@ namespace Sgl
 		template<typename T>
 		void Bind(PropertyId id, T& member)
 		{
-			Binding& binding = _bindings[id];
+			auto& binding = _bindings[id];
 			binding.Target = [&member](const Any& value)
 			{
 				member = value.As<T>();
@@ -84,7 +84,7 @@ namespace Sgl
 		void Bind(PropertyId id, void (TTarget::* setter)(const TMember&), TTarget& target,
 				  BindingMode mode = BindingMode::OneWayToTarget)
 		{	
-			Binding& binding = _bindings[id];
+			auto& binding = _bindings[Component::WidthProperty];
 
 			if(mode == BindingMode::OneWayToTarget || mode == BindingMode::TwoWay)
 			{
@@ -92,14 +92,14 @@ namespace Sgl
 				{
 					set(value.As<TMember>());
 				};
-			}
-			
-			if(mode == BindingMode::OneWayToTarget)
-			{
-				return;
+
+				if(mode == BindingMode::OneWayToTarget)
+				{
+					return;
+				}
 			}
 
-			if constexpr(std::is_base_of_v<ISupportSourceBinding, TTarget>)
+			if constexpr(std::is_base_of_v<ISupportComponentBinding, TTarget>)
 			{
 				binding.Source = [this](PropertyId id, const Any& value)
 				{

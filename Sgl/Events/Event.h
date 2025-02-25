@@ -23,11 +23,24 @@ namespace Sgl
 		void Clear() noexcept { _eventHandlers.clear(); }
 
 		template<typename TCallable> 
-			requires !std::is_same_v<std::decay_t<TCallable>, EventHandler> &&
-					  std::constructible_from<EventHandler, TCallable>
+			requires std::invocable<TCallable, TObject*, const TEventArgs&>
 		void operator+=(TCallable&& callable)
 		{
 			_eventHandlers.emplace_front(std::forward<TCallable>(callable));
+		}
+
+		template<typename TCallable>
+			requires std::invocable<TCallable, const TEventArgs&>
+		void operator+=(TCallable&& callable)
+		{
+			_eventHandlers.emplace_front([callable](TObject* object, const TEventArgs& e) { callable(e); });
+		}
+
+		template<typename TCallable>
+			requires std::invocable<TCallable>
+		void operator+=(TCallable&& callable)
+		{
+			_eventHandlers.emplace_front([callable](TObject* object, const TEventArgs& e) { callable(); });
 		}
 
 		void operator+=(EventHandler&& eventHandler)
@@ -40,9 +53,8 @@ namespace Sgl
 			_eventHandlers.push_front(eventHandler);
 		}
 
-		template<typename TCallable> 
-			requires !std::is_same_v<std::decay_t<TCallable>, EventHandler> &&
-					  std::constructible_from<EventHandler, TCallable>
+		template<typename TCallable>
+			requires std::invocable<TCallable, TObject*, const TEventArgs&>
 		void operator-=(TCallable&& callable)
 		{
 			_eventHandlers.remove(std::forward<TCallable>(callable));
