@@ -6,47 +6,40 @@
 
 namespace Sgl
 {
-	using NotifySource = std::function<void(PropertyId, const Any&)>;
-	using NotifyTarget = std::function<void(const Any&)>;
+	using SourceNotifier = std::function<void(PropertyId)>;
+	using TargetNotifier = std::function<void(const Any&)>;
 
 	class ISupportComponentBinding
 	{
 	public:
 		virtual ~ISupportComponentBinding() = default;
 
-		virtual NotifySource& GetNotifySource() = 0;
-	};
-
-	enum class BindingMode
-	{
-		OneWayToTarget,
-		OneWayToSource,
-		TwoWay
+		virtual SourceNotifier& GetSourceNotifier() = 0;
 	};
 	
 	class Binding
 	{
 	public:
-		NotifySource Source;
-		NotifyTarget Target;
+		SourceNotifier Source;
+		TargetNotifier Target;
 	private:
-		bool _targetNotifying = false;
+		bool _lock = false;
 	public:
 		void NotifyTarget(const Any& value)
 		{
 			if(Target)
 			{
-				_targetNotifying = true;
+				_lock = true;
 				Target(value);
-				_targetNotifying = false;
+				_lock = false;
 			}
 		}
 
-		void NotifySource(PropertyId id, const Any& value)
+		void NotifySource(PropertyId id)
 		{
-			if(Source && !_targetNotifying)
+			if(Source && !_lock)
 			{
-				Source(id, value);
+				Source(id);
 			}
 		}
 	};

@@ -47,10 +47,7 @@ namespace Sgl
 
     void Component::OnPropertyChanged(PropertyId id)
     {
-        if(auto found = _bindings.find(id); found != _bindings.end())
-        {
-            found->second.NotifyTarget(GetProperty(id));
-        }
+        NotifyTarget(id, GetProperty(id));
     }
 
     void Component::OnMouseEnter(const MouseButtonEventArgs& e)
@@ -72,6 +69,28 @@ namespace Sgl
         if(MouseLeave)
         {
             MouseLeave(this, e);
+        }
+    }
+
+    void Component::NotifySource(PropertyId id)
+    {
+        if(_dataContext)
+        {
+            if(auto found = _bindings.find(id); found != _bindings.end())
+            {
+                found->second.NotifySource(id);
+            }
+        }
+    }
+
+    void Component::NotifyTarget(PropertyId id, const Any& value)
+    {
+        if(_dataContext)
+        {
+            if(auto found = _bindings.find(id); found != _bindings.end())
+            {
+                found->second.NotifyTarget(value);
+            }
         }
     }
 }

@@ -26,10 +26,10 @@ namespace Sgl
 
 		UIElement& Parent;
 		SDL_FPoint Position = { 0, 0 };
-	protected:
-		std::unordered_map<PropertyId, Binding> _bindings;
 	private:
 		bool _mouseOver = false;
+		void* _dataContext = nullptr;
+		std::unordered_map<PropertyId, Binding> _bindings;
 	public:
 		explicit Component(UIElement& parent);
 		virtual ~Component() = default;		
@@ -68,49 +68,64 @@ namespace Sgl
 		void SwitchCursorOn(const Cursor& cursor) override;
 		void SwitchCursorOnDefault() override;
 		bool IsMouseOver() const noexcept { return _mouseOver; }
-		void OnPropertyChanged(PropertyId id) override;
+		void OnPropertyChanged(PropertyId id) override;	
 
-		template<typename T>
-		void Bind(PropertyId id, T& member)
+		template<typename TObject, typename TMember>
+		void Bind(PropertyId id, void (TObject::* setter)(const TMember&))
 		{
 			auto& binding = _bindings[id];
-			binding.Target = [&member](const Any& value)
+
+			binding.Target = [this, setter](const Any& value)
 			{
-				member = value.As<T>();
+				(*static_cast<TObject*>(_dataContext).*setter)(value.As<TMember>());
 			};
 		}
 
-		template<typename TTarget, typename TMember>
-		void Bind(PropertyId id, void (TTarget::* setter)(const TMember&), TTarget& target,
-				  BindingMode mode = BindingMode::OneWayToTarget)
-		{	
-			auto& binding = _bindings[Component::WidthProperty];
+		template<typename TObject, typename TMember>
+			requires std::derived_from<TObject, ISupportComponentBinding>
+		void Bind(PropertyId id, const TMember& (TObject::* getter)() const)
+		{
+			auto& binding = _bindings[id];
 
-			if(mode == BindingMode::OneWayToTarget || mode == BindingMode::TwoWay)
+			binding.Source = [this, getter](PropertyId id)
 			{
-				binding.Target = [set = std::bind_front(setter, &target)] (const Any& value)
-				{
-					set(value.As<TMember>());
-				};
+				SetProperty<TMember>(id, (*static_cast<TObject*>(_dataContext).*getter)());
+			};
+		}
 
-				if(mode == BindingMode::OneWayToTarget)
+		template<typename TObject, typename TMember>
+		void Bind(PropertyId id,
+				  void (TObject::* setter)(const TMember&),
+				  const TMember& (TObject::* getter)() const)
+		{
+			Bind(id, setter);
+			Bind(id, getter);
+		}
+
+		template<typename TObject>
+		void SetDataContext(TObject& object)
+		{
+			if constexpr(std::is_base_of_v<ISupportComponentBinding, TObject>)
+			{
+				if(_dataContext)
 				{
-					return;
+					static_cast<TObject*>(_dataContext)->GetSourceNotifier() = nullptr;
 				}
 			}
 
-			if constexpr(std::is_base_of_v<ISupportComponentBinding, TTarget>)
+			_dataContext = &object;
+
+			if constexpr(std::is_base_of_v<ISupportComponentBinding, TObject>)
 			{
-				binding.Source = [this](PropertyId id, const Any& value)
-				{
-					SetProperty(id, value.As<TMember>());
-				};
-				target.GetNotifySource() = std::bind_front(&Binding::NotifySource, &binding);
+				object.GetSourceNotifier() = std::bind_front(&Component::NotifySource, this);
 			}
 		}
 	protected:
 		virtual void OnMouseEnter(const MouseButtonEventArgs& e);
 		virtual void OnMouseLeave(const MouseButtonEventArgs& e);
+	private:
+		void NotifySource(PropertyId id);
+		void NotifyTarget(PropertyId id, const Any& value);
 	};
 
 	struct ZIndexComparer
