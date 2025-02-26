@@ -18,7 +18,7 @@ namespace Sgl
 	private:
 		static inline RenderContext* _instance;
 	public:
-		explicit RenderContext(SDL_Renderer* const renderer) noexcept;
+		explicit RenderContext(SDL_Renderer* renderer) noexcept;
 		virtual ~RenderContext() noexcept { SDL_DestroyRenderer(_renderer); }
 
 		static Texture CreateTexture(std::string_view path);

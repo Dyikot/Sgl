@@ -58,10 +58,11 @@ namespace Sgl
 		{
 			return;
 		}
-
+		
 		Window window(*this);
 		_window = &window;
 		WindowConfigurator(window);
+		window.Show();
 
 		OnStartup(EventArgs());
 		Start();
@@ -107,12 +108,6 @@ namespace Sgl
 					break;
 				}
 
-				case SDL_WINDOWEVENT:
-				{
-					_window->OnStateChanged(EventArgs());
-					break;
-				}
-
 				default:
 				{
 					_window->SceneManager.HandleSceneEvents(e);
@@ -138,9 +133,9 @@ namespace Sgl
 
 			_stopwatch.Restart();
 			HandleEvents();
-			if(_window->IsVisible())
+			_window->SceneManager.ProcessScene(_stopwatch.Elapsed());
+			if(_window->IsVisible() || _window->AllowRenderMinimizedWindow)
 			{
-				_window->SceneManager.ProcessScene(_stopwatch.Elapsed());
 				_window->SceneManager.RenderScene();
 			}
 

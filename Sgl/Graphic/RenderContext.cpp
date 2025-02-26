@@ -5,7 +5,7 @@
 
 namespace Sgl
 {
-	RenderContext::RenderContext(SDL_Renderer* const renderer) noexcept:
+	RenderContext::RenderContext(SDL_Renderer* renderer) noexcept:
 		_renderer(renderer)
 	{
 		if(_renderer == nullptr)

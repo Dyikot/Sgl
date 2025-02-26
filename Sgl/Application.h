@@ -25,8 +25,8 @@ namespace Sgl
 		static constexpr size_t MaxFrameRate = 360;
 
 		Stopwatch _stopwatch;
-		std::optional<size_t> _maxFrameRate = std::nullopt;
-		std::optional<TimeSpan> _maxFrameTime = std::nullopt;
+		std::optional<size_t> _maxFrameRate;
+		std::optional<TimeSpan> _maxFrameTime;
 	private:
 		inline static Application* _current = nullptr;
 		Window* _window = nullptr;
