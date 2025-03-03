@@ -7,7 +7,7 @@ namespace Sgl
 		Window(window)
 	{}
 
-	void Scene::OnRender(RenderContext& renderContext)
+	void Scene::OnRender(RenderContext& renderContext) const
 	{
 		if(BackgroundTexture)
 		{
@@ -17,6 +17,8 @@ namespace Sgl
 		{
 			renderContext.FillSceneBackgroundWithColor(BackgroundColor);
 		}
+
+		Components.OnRender(renderContext);
 	}
 
 	void Scene::SwitchCursorOn(const Cursor& cursor)
@@ -35,45 +37,19 @@ namespace Sgl
 	void Scene::OnMouseMove(const MouseButtonEventArgs& e)
 	{
 		UIElement::OnMouseMove(e);
-
-		if(_mouseOverPanel && _mouseOverPanel->TryRaiseMouseMoveEvents(e))
-		{
-			return;
-		}
-
-		for(Panel& panel : Panels)
-		{
-			if(&panel == _mouseOverPanel)
-			{
-				continue;
-			}
-
-			if(panel.TryRaiseMouseMoveEvents(e))
-			{
-				_mouseOverPanel = &panel;
-				return;
-			}
-		}
+		Components.OnMouseMove(e);
 	}
 
 	void Scene::OnMouseDown(const MouseButtonEventArgs& e)
 	{
 		UIElement::OnMouseDown(e);
-
-		if(_mouseOverPanel)
-		{
-			_mouseOverPanel->RaiseMouseDownEvents(e);
-		}
+		Components.OnMouseDown(e);
 	}
 
 	void Scene::OnMouseUp(const MouseButtonEventArgs& e)
 	{
 		UIElement::OnMouseUp(e);
-
-		if(_mouseOverPanel)
-		{
-			_mouseOverPanel->RaiseMouseUpEvents(e);
-		}
+		Components.OnMouseUp(e);
 	}
 
 	void Scene::OnLoaded(const EventArgs& e)

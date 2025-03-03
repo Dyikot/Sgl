@@ -33,7 +33,7 @@ namespace Sgl
 		Color(color)
 	{}
 
-	void Line::OnRender(RenderContext& renderContext)
+	void Line::OnRender(RenderContext& renderContext) const
 	{
 		renderContext.DrawLine(Start, End, Color);
 	}
@@ -63,7 +63,7 @@ namespace Sgl
 		Color(color)
 	{}
 
-	void Polyline::OnRender(RenderContext& renderContext)
+	void Polyline::OnRender(RenderContext& renderContext) const
 	{
 		renderContext.DrawLines(Points, Color);
 	}
@@ -97,7 +97,7 @@ namespace Sgl
 		Color(color)
 	{}
 
-	void Polygon::OnRender(RenderContext& renderContext)
+	void Polygon::OnRender(RenderContext& renderContext) const
 	{
 		renderContext.DrawLines(Points, Color);
 		renderContext.DrawLine(Points.back(), Points.front(), Color);
@@ -138,7 +138,7 @@ namespace Sgl
 		Math::PointsToVertexRange(points, Vertices, color);
 	}
 
-	void FillPolygon::OnRender(RenderContext& renderContext)
+	void FillPolygon::OnRender(RenderContext& renderContext) const
 	{
 		renderContext.DrawShape(Vertices, Order);
 	}
@@ -178,7 +178,7 @@ namespace Sgl
 		Color(color)
 	{}
 
-	void Rectangle::OnRender(RenderContext& renderContext)
+	void Rectangle::OnRender(RenderContext& renderContext) const
 	{
 		renderContext.DrawRectangle(Rect, Color);
 	}
@@ -209,7 +209,7 @@ namespace Sgl
 		Rect(rect), Color(color)
 	{}
 
-	void FillRectangle::OnRender(RenderContext& renderContext)
+	void FillRectangle::OnRender(RenderContext& renderContext) const
 	{
 		renderContext.DrawFillRectangle(Rect, Color);
 	}
@@ -248,7 +248,7 @@ namespace Sgl
 		Rect(rect), Texture(texture), Color(color)
 	{}
 
-	void TexturedRectangle::OnRender(RenderContext& renderContext)
+	void TexturedRectangle::OnRender(RenderContext& renderContext) const
 	{
 		renderContext.DrawTexture(Texture, Rect, Color);
 	}
@@ -259,7 +259,7 @@ namespace Sgl
 		Color(color)
 	{}
 
-	void Ellipse::OnRender(RenderContext& renderContext)
+	void Ellipse::OnRender(RenderContext& renderContext) const
 	{
 		renderContext.DrawLines(Points, Color);
 	}
@@ -291,7 +291,7 @@ namespace Sgl
 		Order = Math::TriangulateConvexShape(points, position);		
 	}
 
-	void FillEllipse::OnRender(RenderContext& renderContext)
+	void FillEllipse::OnRender(RenderContext& renderContext) const
 	{
 		renderContext.DrawShape(Vertices, Order);
 	}
@@ -325,7 +325,7 @@ namespace Sgl
 		Order = Math::TriangulateConvexShape(points, position);
 	}
 
-	void TexturedEllipse::OnRender(RenderContext& renderContext)
+	void TexturedEllipse::OnRender(RenderContext& renderContext) const
 	{
 		renderContext.DrawShape(Vertices, Order, Texture, Color);
 	}

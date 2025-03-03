@@ -33,7 +33,7 @@ namespace Sgl
 		Line(float x1, float y1, float x2, float y2, Sgl::Color color);
 		Line(SDL_FPoint start, SDL_FPoint end, Sgl::Color color);
 
-		void OnRender(RenderContext& renderContext) override;
+		void OnRender(RenderContext& renderContext) const override;
 		void Translate(float dx, float dy) override;
 		void Rotate(size_t degree) override;
 	};
@@ -47,7 +47,7 @@ namespace Sgl
 		Polyline(std::span<SDL_FPoint> points, Sgl::Color color);
 		Polyline(std::vector<SDL_FPoint>&& points, Sgl::Color color);
 
-		void OnRender(RenderContext& renderContext) override;
+		void OnRender(RenderContext& renderContext) const override;
 		void Translate(float dx, float dy) override;
 		void Rotate(size_t degree) override;
 	};
@@ -61,7 +61,7 @@ namespace Sgl
 		Polygon(std::span<SDL_FPoint> points, Sgl::Color color);
 		Polygon(std::vector<SDL_FPoint>&& points, Sgl::Color color);
 
-		void OnRender(RenderContext& renderContext) override;
+		void OnRender(RenderContext& renderContext) const override;
 		void Translate(float dx, float dy) override;
 		void Rotate(size_t degree) override;
 	};
@@ -76,7 +76,7 @@ namespace Sgl
 		FillPolygon(std::span<SDL_FPoint> points, Sgl::Color color);
 		FillPolygon(std::array<SDL_FPoint, 100>&& points, Sgl::Color color);
 
-		void OnRender(RenderContext& renderContext) override;
+		void OnRender(RenderContext& renderContext) const override;
 		void Translate(float dx, float dy) override;
 		void Rotate(size_t degree) override;
 	};
@@ -91,7 +91,7 @@ namespace Sgl
 		Rectangle(SDL_FPoint position, float width, float height, Sgl::Color color);
 		Rectangle(SDL_FRect rect, Sgl::Color color);
 
-		void OnRender(RenderContext& renderContext) override;
+		void OnRender(RenderContext& renderContext) const override;
 		void Translate(float dx, float dy) override;
 		void Rotate(size_t degree) override;
 	};
@@ -106,7 +106,7 @@ namespace Sgl
 		FillRectangle(SDL_FPoint position, float width, float height, Sgl::Color color);
 		FillRectangle(const SDL_FRect& rect, Sgl::Color color);
 
-		void OnRender(RenderContext& renderContext) override;
+		void OnRender(RenderContext& renderContext) const override;
 		void Translate(float dx, float dy) override;
 		void Rotate(size_t degree) override;
 	};
@@ -128,7 +128,7 @@ namespace Sgl
 						  Sgl::Color color);
 		TexturedRectangle(const SDL_FRect& rect, const Sgl::Texture& texture, Sgl::Color color);
 
-		void OnRender(RenderContext& renderContext) override;
+		void OnRender(RenderContext& renderContext) const override;
 	};
 
 	class Ellipse: public ShapeBase
@@ -139,7 +139,7 @@ namespace Sgl
 	public:
 		Ellipse(SDL_FPoint position, int width, int height, Sgl::Color color);
 
-		void OnRender(RenderContext& renderContext) override;
+		void OnRender(RenderContext& renderContext) const override;
 		void Translate(float dx, float dy) override;
 		void Rotate(size_t degree) override;
 	};
@@ -153,7 +153,7 @@ namespace Sgl
 	public:
 		FillEllipse(SDL_FPoint position, int width, int height, Sgl::Color color);
 
-		void OnRender(RenderContext& renderContext) override;
+		void OnRender(RenderContext& renderContext) const override;
 		void Translate(float dx, float dy) override;
 		void Rotate(size_t degree) override;
 	};
@@ -170,7 +170,7 @@ namespace Sgl
 						int width, int height, 
 						const Sgl::Texture& texture, Sgl::Color color);
 
-		void OnRender(RenderContext& renderContext) override;
+		void OnRender(RenderContext& renderContext) const override;
 		void Translate(float dx, float dy) override;
 		void Rotate(size_t degree) override;
 	};

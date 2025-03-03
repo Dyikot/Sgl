@@ -45,7 +45,7 @@ namespace Sgl
 		SDL_RenderDrawLineF(_renderer, start.x, start.y, end.x, end.y);
 	}
 
-	void RenderContext::DrawLines(std::span<SDL_FPoint> points, Color color)
+	void RenderContext::DrawLines(std::span<const SDL_FPoint> points, Color color)
 	{	
 		SetRenderColor(color);
 		SDL_RenderDrawLinesF(_renderer, points.data(), points.size());
@@ -57,7 +57,7 @@ namespace Sgl
 		SDL_RenderDrawRectF(_renderer, &rectange);
 	}
 
-	void RenderContext::DrawRectangles(std::span<SDL_FRect> rectanges, Color color)
+	void RenderContext::DrawRectangles(std::span<const SDL_FRect> rectanges, Color color)
 	{
 		SetRenderColor(color);
 		SDL_RenderDrawRectsF(_renderer, rectanges.data(), rectanges.size());
@@ -69,7 +69,7 @@ namespace Sgl
 		SDL_RenderFillRectF(_renderer, &rectange);		
 	}
 
-	void RenderContext::DrawFillRectangles(std::span<SDL_FRect> rectanges, Color background)
+	void RenderContext::DrawFillRectangles(std::span<const SDL_FRect> rectanges, Color background)
 	{
 		SetRenderColor(background);
 		SDL_RenderFillRectsF(_renderer, rectanges.data(), rectanges.size());
@@ -127,25 +127,25 @@ namespace Sgl
 		DrawShape(vertices, order);
 	}
 
-	void RenderContext::DrawShape(std::span<SDL_Vertex> vertices)
+	void RenderContext::DrawShape(std::span<const SDL_Vertex> vertices)
 	{
 		SDL_RenderGeometry(_renderer, nullptr, vertices.data(), vertices.size(), nullptr, 0);
 	}
 
-	void RenderContext::DrawShape(std::span<SDL_Vertex> vertices, const Texture& texture, Color color)
+	void RenderContext::DrawShape(std::span<const SDL_Vertex> vertices, const Texture& texture, Color color)
 	{
 		SetTextureColor(texture, color);
 		SDL_RenderGeometry(_renderer, texture, vertices.data(), vertices.size(), nullptr, 0);
 	
 	}
 
-	void RenderContext::DrawShape(std::span<SDL_Vertex> vertices, std::span<int> order)
+	void RenderContext::DrawShape(std::span<const SDL_Vertex> vertices, std::span<const int> order)
 	{
 		SDL_RenderGeometry(_renderer, nullptr, vertices.data(), vertices.size(),
 						   order.data(), order.size());
 	}
 
-	void RenderContext::DrawShape(std::span<SDL_Vertex> vertices, std::span<int> order, const Texture& texture, Color color)
+	void RenderContext::DrawShape(std::span<const SDL_Vertex> vertices, std::span<const int> order, const Texture& texture, Color color)
 	{
 		SetTextureColor(texture, color);
 		SDL_RenderGeometry(_renderer, texture, vertices.data(), vertices.size(),

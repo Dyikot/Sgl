@@ -5,7 +5,7 @@
 #include "../Graphic/Color.h"
 #include "../Graphic/Texture.h"
 #include "../ECS/IProcessed.h"
-#include "Panels/Panel.h"
+#include "Component.h"
 
 namespace Sgl
 {	
@@ -14,10 +14,8 @@ namespace Sgl
 	class Scene: public UIElement, public IProcessed
 	{
 	public:				
-		ComponentSet<Panel> Panels;
 		Sgl::Window& Window;
-	private:
-		Panel* _mouseOverPanel = nullptr;
+		ComponentsCollection Components;
 	public:
 		explicit Scene(Sgl::Window& window);
 		virtual ~Scene() = default;
@@ -25,7 +23,7 @@ namespace Sgl
 		Event<UIEventHandler> Loaded;
 		Event<UIEventHandler> Unloaded;
 
-		void OnRender(RenderContext& renderContext) override;
+		void OnRender(RenderContext& renderContext) const override;
 		void SwitchCursorOn(const Cursor& cursor) override;
 		void SwitchCursorOnDefault() override;
 	protected:

@@ -36,7 +36,7 @@ namespace Sgl
 		Event<KeyEventHandler> KeyDown;
 		Event<KeyEventHandler> KeyUp;
 
-		void SetCursor(const Sgl::Cursor& value) { SetProperty<std::reference_wrapper<const Cursor>>(CursorProperty, value); }
+		void SetCursor(const Sgl::Cursor& value) { SetProperty(CursorProperty, std::ref(value)); }
 
 		const Cursor& GetCursor() const { return GetPropertyValue<std::reference_wrapper<const Cursor>>(CursorProperty); }
 
