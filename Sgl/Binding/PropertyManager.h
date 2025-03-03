@@ -5,7 +5,7 @@
 #include <string>
 #include <typeinfo>
 #include <stdexcept>
-#include "BindableObject.h"
+#include "PropertyId.h"
 
 namespace Sgl
 {

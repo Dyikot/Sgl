@@ -4,7 +4,6 @@
 #include <set>
 #include "UIElement.h"
 #include "../Style/Properties.h"
-#include "../Binding/Binding.h"
 
 namespace Sgl
 {
@@ -28,8 +27,6 @@ namespace Sgl
 		SDL_FPoint Position = { 0, 0 };
 	private:
 		bool _mouseOver = false;
-		void* _dataContext = nullptr;
-		std::unordered_map<PropertyId, Binding> _bindings;
 	public:
 		explicit Component(UIElement& parent);
 		virtual ~Component() = default;		
@@ -68,64 +65,9 @@ namespace Sgl
 		void SwitchCursorOn(const Cursor& cursor) override;
 		void SwitchCursorOnDefault() override;
 		bool IsMouseOver() const noexcept { return _mouseOver; }
-		void OnPropertyChanged(PropertyId id) override;	
-
-		template<typename TObject, typename TMember>
-		void Bind(PropertyId id, void (TObject::* setter)(const TMember&))
-		{
-			auto& binding = _bindings[id];
-
-			binding.Target = [this, setter](const Any& value)
-			{
-				(*static_cast<TObject*>(_dataContext).*setter)(value.As<TMember>());
-			};
-		}
-
-		template<typename TObject, typename TMember>
-			requires std::derived_from<TObject, ISupportComponentBinding>
-		void Bind(PropertyId id, const TMember& (TObject::* getter)() const)
-		{
-			auto& binding = _bindings[id];
-
-			binding.Source = [this, getter](PropertyId id)
-			{
-				SetProperty<TMember>(id, (*static_cast<TObject*>(_dataContext).*getter)());
-			};
-		}
-
-		template<typename TObject, typename TMember>
-		void Bind(PropertyId id,
-				  void (TObject::* setter)(const TMember&),
-				  const TMember& (TObject::* getter)() const)
-		{
-			Bind(id, setter);
-			Bind(id, getter);
-		}
-
-		template<typename TObject>
-		void SetDataContext(TObject& object)
-		{
-			if constexpr(std::is_base_of_v<ISupportComponentBinding, TObject>)
-			{
-				if(_dataContext)
-				{
-					static_cast<TObject*>(_dataContext)->GetSourceNotifier() = nullptr;
-				}
-			}
-
-			_dataContext = &object;
-
-			if constexpr(std::is_base_of_v<ISupportComponentBinding, TObject>)
-			{
-				object.GetSourceNotifier() = std::bind_front(&Component::NotifySource, this);
-			}
-		}
 	protected:
 		virtual void OnMouseEnter(const MouseButtonEventArgs& e);
 		virtual void OnMouseLeave(const MouseButtonEventArgs& e);
-	private:
-		void NotifySource(PropertyId id);
-		void NotifyTarget(PropertyId id, const Any& value);
 	};
 
 	struct ZIndexComparer

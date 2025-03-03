@@ -1,8 +1,10 @@
 #pragma once
 
 #include <format>
+#include <cassert>
 #include "../Events/Event.h"
-#include "PropertyManagers.h"
+#include "PropertyManager.h"
+#include "../Data/Any.h"
 
 namespace Sgl
 {
@@ -11,26 +13,14 @@ namespace Sgl
 	public:
 		void Add(PropertyId id, Any&& object)
 		{
-			if(!IsTypeCorrect(id, object))
-			{
-				throw std::invalid_argument(
-					std::format("Property type <{}> is not equal object type <{}>\n",
-								PropertyManager::GetTypeNameBy(id),
-								object.Type().name()));
-			}
+			assert(PropertyManager::GetTypeNameBy(id) == object.Type().name());
 
 			emplace(id, std::move(object));
 		}
 
 		void Add(PropertyId id, const Any& object)
 		{
-			if(!IsTypeCorrect(id, object))
-			{
-				throw std::invalid_argument(
-					std::format("Property type <{}> is not equal object type <{}>\n",
-								PropertyManager::GetTypeNameBy(id),
-								object.Type().name()));
-			}
+			assert(PropertyManager::GetTypeNameBy(id) == object.Type().name());
 
 			emplace(id, object);
 		}
@@ -51,11 +41,6 @@ namespace Sgl
 			}
 
 			return false;
-		}
-	private:
-		bool IsTypeCorrect(PropertyId id, const Any& object) const
-		{
-			return PropertyManager::GetTypeNameBy(id) == object.Type().name();
 		}
 	};	
 }
