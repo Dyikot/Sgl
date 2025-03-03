@@ -70,7 +70,7 @@ namespace Sgl
 		{
 			assert(PropertyManager::GetTypeNameBy(id) == typeid(TMember).name());
 
-			data.AddObserver(*this);
+			data.AddSource(*this);
 
 			_bindings[id].UpdateSource = [this, getter, &data, id]()
 			{
@@ -90,9 +90,9 @@ namespace Sgl
 		template<typename TData>
 		void Unbind(PropertyId id, TData& data)
 		{
-			if constexpr(std::is_base_of_v<IBindingSource, TData>)
+			if constexpr(std::is_base_of_v<IBindingTarget, TData>)
 			{
-				data.RemoveObserver(*this);
+				data.RemoveSource(*this);
 			}
 
 			_bindings.erase(id);

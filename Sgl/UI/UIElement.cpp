@@ -36,6 +36,14 @@ namespace Sgl
 		}
 	}
 
+	void UIElement::OnMouseDoubleClick(const MouseButtonEventArgs& e)
+	{
+		if(MouseDoubleClick)
+		{
+			MouseDoubleClick(this, e);
+		}
+	}
+
 	void UIElement::OnMouseWheel(const MouseWheelEventArgs& e)
 	{
 		if(MouseWheel)
@@ -57,14 +65,6 @@ namespace Sgl
 		if(KeyUp)
 		{
 			KeyUp(this, e);
-		}
-	}
-
-	void UIElement::OnMouseDoubleClick(const MouseButtonEventArgs& e)
-	{
-		if(MouseDoubleClick)
-		{
-			MouseDoubleClick(this, e);
 		}
 	}
 }

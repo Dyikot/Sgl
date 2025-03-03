@@ -31,10 +31,10 @@ namespace Sgl
 		Event<MouseEventHandler> MouseDown;
 		Event<MouseEventHandler> MouseUp;
 		Event<MouseEventHandler> MouseMove;
+		Event<MouseEventHandler> MouseDoubleClick;
 		Event<MouseWheelEventHandler> MouseWheel;
 		Event<KeyEventHandler> KeyDown;
 		Event<KeyEventHandler> KeyUp;
-		Event<MouseEventHandler> MouseDoubleClick;
 
 		void SetCursor(const Sgl::Cursor& value) { SetProperty<std::reference_wrapper<const Cursor>>(CursorProperty, value); }
 
@@ -47,9 +47,9 @@ namespace Sgl
 		virtual void OnMouseDown(const MouseButtonEventArgs& e);
 		virtual void OnMouseUp(const MouseButtonEventArgs& e);
 		virtual void OnMouseMove(const MouseButtonEventArgs& e);
+		virtual void OnMouseDoubleClick(const MouseButtonEventArgs& e);
 		virtual void OnMouseWheel(const MouseWheelEventArgs& e);
 		virtual void OnKeyDown(const KeyEventArgs& e);
 		virtual void OnKeyUp(const KeyEventArgs& e);
-		virtual void OnMouseDoubleClick(const MouseButtonEventArgs& e);
 	};
 }
