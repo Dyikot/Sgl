@@ -111,9 +111,7 @@ namespace Sgl
 
     void Component::OnRender(RenderContext& renderContext) const
     {
-        auto tooltip = GetPropertyValue<const Component*>(ToolTipProperty);
-
-        if(_hover && tooltip)
+        if(auto tooltip = GetToolTip(); _hover && tooltip)
         {
             tooltip->OnRender(renderContext);
         }
@@ -123,20 +121,12 @@ namespace Sgl
     {
         _hover = true;
         SwitchCursorOn(GetCursor());
-
-        if(MouseEnter)
-        {
-            MouseEnter(this, e);
-        }        
+        MouseEnter.TryInvoke(this, e);
     }
 
     void Component::OnMouseLeave(const MouseButtonEventArgs& e)
     {
         _hover = false;
-
-        if(MouseLeave)
-        {
-            MouseLeave(this, e);
-        }
+        MouseLeave.TryInvoke(this, e);
     }
 }

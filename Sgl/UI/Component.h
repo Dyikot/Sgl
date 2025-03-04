@@ -92,7 +92,7 @@ namespace Sgl
 		const HorizontalAlignment& GetHorizontalAlignment() const { return GetPropertyValue<HorizontalAlignment>(HorizontalAlignmentProperty); }
 		const VerticalAligment& GetVerticalAlignment() const { return GetPropertyValue<VerticalAligment>(VerticalAligmentProperty); }
 		const Visibility& GetVisibility() const { return GetPropertyValue<Visibility>(VisibilityProperty); }
-		const Component* const& GetToolTip() const { return GetPropertyValue<const Component*>(ToolTipProperty); }
+		const Component* GetToolTip() const { return GetPropertyValue<const Component*>(ToolTipProperty); }
 		Color GetBorderColor() const { return GetPropertyValue<Color>(BorderColorProperty); }
 		Color GetFontColor() const { return GetPropertyValue<Color>(FontColorProperty); }
 		const Thikness& GetBorderThikness() const { return GetPropertyValue<Thikness>(BorderThiknessProperty); }

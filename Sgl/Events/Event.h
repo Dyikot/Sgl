@@ -22,6 +22,14 @@ namespace Sgl
 	public:
 		void Clear() noexcept { _eventHandlers.clear(); }
 
+		void TryInvoke(TObject* sender, const TEventArgs& e) const noexcept
+		{
+			if(operator bool())
+			{
+				operator()(sender, e);
+			}
+		}
+
 		template<typename TCallable> 
 			requires std::invocable<TCallable, TObject*, const TEventArgs&>
 		void operator+=(TCallable&& callable)

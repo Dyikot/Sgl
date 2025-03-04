@@ -77,22 +77,14 @@ namespace Sgl
 	void Application::OnStartup(const EventArgs& e)
 	{
 		_running = true;
-
-		if(Startup)
-		{
-			Startup(this, e);
-		}
+		Startup.TryInvoke(this, e);
 	}
 
 	void Application::OnQuit(const EventArgs& e)
 	{
 		_window = nullptr;
 		_running = false;
-
-		if(Quit)
-		{
-			Quit(this, e);
-		}		
+		Quit.TryInvoke(this, e);
 	}
 
 	void Application::HandleEvents()

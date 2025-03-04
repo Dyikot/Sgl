@@ -56,18 +56,12 @@ namespace Sgl
 	{
 		SwitchCursorOnDefault();
 
-		if(Loaded)
-		{
-			Loaded(this, e);
-		}
+		Loaded.TryInvoke(this, e);
 	}
 
 	void Scene::OnUnloaded(const EventArgs& e)
 	{
-		if(Unloaded)
-		{
-			Unloaded(this, e);
-		}
+		Unloaded.TryInvoke(this, e);
 	}
 
 	SceneManager::SceneManager(Sgl::Window& window):
