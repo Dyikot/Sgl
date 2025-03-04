@@ -2,6 +2,7 @@
 #include <unordered_map>
 #include <typeinfo>
 #include <type_traits>
+#include <string_view>
 
 namespace Sgl
 {
@@ -79,6 +80,10 @@ namespace Sgl
 		template<typename T>
 		bool Is() const { return Type() == typeid(T); }
 
+		bool Is(const std::type_info& type) const { return Type() == type; }
+
+		bool Is(std::string_view type) const { return Type().name() == type; }
+
 		template<typename T>
 		T& As() { return _value->Get<T>(); }
 
@@ -90,6 +95,19 @@ namespace Sgl
 
 		template<typename T>
 		const T* TryAs() const { return HasValue() && Is<T>() ? &_value->Get<T>() : nullptr; }
+
+		template<typename T>
+		const T& TryAs(T&& defaultValue) const
+		{
+			if(const T* result = TryAs<T>(); result)
+			{
+				return *result;
+			}
+			else
+			{
+				return defaultValue;
+			}
+		}
 	
 		bool HasValue() const noexcept { return _value; }
 
@@ -100,7 +118,7 @@ namespace Sgl
 
 		bool TryCopyValue(const Any& object) noexcept
 		{
-			if(object.HasValue() && object.Type() == Type())
+			if(object.HasValue() && object.Is(Type()))
 			{
 				_value->CopyFrom(*object._value);
 				return true;

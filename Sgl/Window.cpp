@@ -14,7 +14,7 @@ namespace Sgl
     {
         if(_this == nullptr)
         {
-            PrintSDLError();
+            Log::PrintSDLError();
         }
 
         _renderContext->SetBlendMode(SDL_BLENDMODE_BLEND);
@@ -184,7 +184,7 @@ namespace Sgl
         }
         else
         {
-            PrintSDLError();
+            Log::PrintSDLError();
         }
     }
 
@@ -201,7 +201,7 @@ namespace Sgl
         }
         else
         {
-            PrintSDLError();
+            Log::PrintSDLError();
         }
     }
 

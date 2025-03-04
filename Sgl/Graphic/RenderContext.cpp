@@ -10,7 +10,7 @@ namespace Sgl
 	{
 		if(_renderer == nullptr)
 		{
-			PrintSDLError();
+			Log::PrintSDLError();
 		}
 
 		_instance = this;
@@ -21,7 +21,7 @@ namespace Sgl
 		auto texture = IMG_LoadTexture(_instance->_renderer, path.data());
 		if(texture == nullptr)
 		{
-			PrintSDLError();
+			Log::PrintSDLError();
 		}
 
 		return Texture(texture);

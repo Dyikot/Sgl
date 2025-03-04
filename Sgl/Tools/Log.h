@@ -4,7 +4,11 @@
 #include <format>
 #include "SDL/SDL_error.h"
 
-namespace Sgl
+class Log
 {
-	#define PrintSDLError() std::cout << std::format("SDL error: {}\n", SDL_GetError());
-}
+public:
+	static void PrintSDLError()
+	{
+		std::cout << std::format("SDL error: {}\n", SDL_GetError());
+	}
+};

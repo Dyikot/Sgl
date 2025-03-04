@@ -8,7 +8,7 @@ namespace Sgl
 	{
 		if(_surface == nullptr)
 		{
-			PrintSDLError();
+			Log::PrintSDLError();
 		}
 	}
 

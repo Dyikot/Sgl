@@ -4,7 +4,6 @@
 #include <assert.h>
 #include "../Data/Any.h"
 #include "PropertyManager.h"
-#include "../Tools/Log.h"
 
 namespace Sgl
 {
@@ -61,7 +60,7 @@ namespace Sgl
 
 			_bindings[id].UpdateTarget = [this, setter, &data, id]()
 			{
-				(data.*setter)(GetPropertyValue<TMember>(id));
+				std::invoke(setter, data, std::cref(GetPropertyValue<TMember>(id)));
 			};
 		}
 
@@ -74,7 +73,7 @@ namespace Sgl
 
 			_bindings[id].UpdateSource = [this, getter, &data, id]()
 			{
-				_properties[id].As<TMember>() = (data.*getter)();
+				_properties[id].As<TMember>() = std::invoke(getter, std::ref(data));
 			};
 		}
 

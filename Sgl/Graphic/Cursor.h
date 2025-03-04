@@ -4,6 +4,8 @@
 #include "SDL/SDL_image.h"
 #include "../Tools/Log.h"
 #include <string>
+#include "../Tools/Log.h"
+#include "../Tools/Log.h"
 
 namespace Sgl
 {
@@ -21,7 +23,7 @@ namespace Sgl
 		{
 			if(!_cursor)
 			{
-				PrintSDLError();
+				Log::PrintSDLError();
 			}
 		}
 
@@ -30,7 +32,7 @@ namespace Sgl
 		{
 			if(!_cursor)
 			{
-				PrintSDLError();
+				Log::PrintSDLError();
 			}
 		}
 

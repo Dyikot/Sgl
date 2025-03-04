@@ -13,14 +13,14 @@ namespace Sgl
 	public:
 		void Add(PropertyId id, Any&& object)
 		{
-			assert(PropertyManager::GetTypeNameBy(id) == object.Type().name());
+			assert(object.Is(PropertyManager::GetTypeNameBy(id)));
 
 			emplace(id, std::move(object));
 		}
 
 		void Add(PropertyId id, const Any& object)
 		{
-			assert(PropertyManager::GetTypeNameBy(id) == object.Type().name());
+			assert(object.Is(PropertyManager::GetTypeNameBy(id)));
 
 			emplace(id, object);
 		}
