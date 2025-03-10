@@ -11,10 +11,10 @@ namespace Sgl
 	public:
 		void Restart() { _start = SDL_GetPerformanceCounter(); }
 
-		TimeSpan Elapsed()
+		TimeSpan Elapsed() const
 		{
-			return TimeSpan(1000.f * static_cast<float>(SDL_GetPerformanceCounter() - _start)
-							/ SDL_GetPerformanceFrequency());
-		}		
+			return TimeSpan::FromMilliseconds(static_cast<float>(SDL_GetPerformanceCounter() - _start) 
+											  / SDL_GetPerformanceFrequency());
+		}
 	};
 }

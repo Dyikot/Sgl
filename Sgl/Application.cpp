@@ -1,5 +1,4 @@
 #include "Application.h"
-#include "Graphic/Shapes.h"
 #include "Window.h"
 #include "Tools/Log.h"
 
@@ -41,8 +40,8 @@ namespace Sgl
 
 	void Application::SetMaxFrameRate(size_t value)
 	{
-		_maxFrameRate = value > MaxFrameRate? MaxFrameRate : value;
-		_maxFrameTime = TimeSpan(1000.f / _maxFrameRate.value());
+		_maxFrameRate = value > MaxFrameRate ? MaxFrameRate : value;
+		_maxFrameTime = TimeSpan::FromMilliseconds(1000.f / _maxFrameRate.value());
 	}
 
 	Window* Application::GetWindow() const

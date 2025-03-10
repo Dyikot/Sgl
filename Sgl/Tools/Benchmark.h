@@ -7,21 +7,16 @@
 
 namespace Sgl
 {
-	template<typename TFunction>
+	template<typename T>
 	class Benchmark
 	{
 	private:
-		std::function<TFunction> _function;
+		std::function<T> _function;
 		size_t _number = 1;
 		std::string _name = "Benchmark";
 	public:
-		Benchmark(TFunction&& function):
-			_function(std::forward<TFunction>(function))
-		{}
-
-		template <typename TInvokable>
-		Benchmark(TInvokable&& function):
-			_function(std::forward<TInvokable>(function))
+		Benchmark(const std::function<T>& function):
+			_function(function)
 		{}
 
 		Benchmark& Number(size_t number)
@@ -42,7 +37,7 @@ namespace Sgl
 			return *this;
 		}
 
-		template<typename... TArgs> requires std::invocable<TFunction, TArgs...>
+		template<typename... TArgs> requires std::invocable<T, TArgs...>
 		void Run(TArgs&&... args)
 		{
 			using namespace std::chrono;
@@ -54,29 +49,14 @@ namespace Sgl
 				_function(std::forward<TArgs>(args)...);
 			}
 			auto end = high_resolution_clock::now();
-			auto avg = (end - start) / _number;
-
-			if (auto result = duration_cast<nanoseconds>(avg); result < 1000ns)
-			{
-				Print(result);
-			}
-			else if (auto result = duration_cast<microseconds>(avg); result < 1000us)
-			{
-				Print(result);
-			}
-			else if (auto result = duration_cast<milliseconds>(avg); result < 1000ms)
-			{
-				Print(result);
-			}
-			else
-			{
-				Print(duration_cast<seconds>(avg));
-			}
+			auto average = (end - start) / _number;
+			
+			Print(TimeSpan(average.count()));
 		}
 	private:
-		void Print(auto&& duration)
+		void Print(TimeSpan duration)
 		{
-			std::cout << std::format("{}\t{}\n", _name, duration);
+			std::cout << std::format("{}\t{}\n", _name, duration.ToString());
 		}
 	};
 }

@@ -77,22 +77,20 @@ namespace Sgl
 
 	void RenderContext::DrawImage(std::string_view path, const SDL_FRect& rectangle, Color color)
 	{
-		DrawTexture(Texture(CreateTexture(path)), rectangle, color);
+		DrawTexture(CreateTexture(path), rectangle, color);
 	}
 
 	void RenderContext::DrawImage(std::string_view path, const SDL_FRect & rectangle, const SDL_Rect & clip, Color color)
 	{
-		DrawTexture(Texture(CreateTexture(path)), rectangle, clip, color);
+		DrawTexture(CreateTexture(path), rectangle, clip, color);
 	}
 
 	void RenderContext::DrawImage(std::string_view path, SDL_FPoint position, int width, int height, Color color)
 	{
 		auto texture = CreateTexture(path);
-		auto points = Math::ComputeEllipsePoints(position, width, height);
+		auto points = Math::Compute90EllipsePoints(position, width, height);
 		auto order = Math::TriangulateConvexShape(points, position);
-		std::array<SDL_Vertex, 100> vertices = {};
-
-		Math::PointsToVertexRange(points, vertices,color);
+		auto vertices = Math::ToSDLVertexVector(points, color);		
 		vertices.back() = SDL_Vertex(position, static_cast<SDL_Color>(color), SDL_FPoint());
 
 		DrawShape(vertices, order, texture, color);
@@ -113,17 +111,15 @@ namespace Sgl
 
 	void RenderContext::DrawEllipse(SDL_FPoint position, int width, int height, Color color)
 	{		
-		auto points = Math::ComputeEllipsePoints(position, width, height);
+		auto points = Math::Compute90EllipsePoints(position, width, height);
 		DrawLines(points, color);
 	}
 
 	void RenderContext::DrawEllipseFill(SDL_FPoint position, int width, int height, Color color)
 	{
-		auto points = Math::ComputeEllipsePoints(position, width, height);
+		auto points = Math::Compute90EllipsePoints(position, width, height);
 		auto order = Math::TriangulateConvexShape(points);
-		std::array<SDL_Vertex, 100> vertices = {};
-		Math::PointsToVertexRange(points, vertices, color);
-
+		auto vertices = Math::ToSDLVertexVector(points, color);
 		DrawShape(vertices, order);
 	}
 
@@ -135,8 +131,7 @@ namespace Sgl
 	void RenderContext::DrawShape(std::span<const SDL_Vertex> vertices, const Texture& texture, Color color)
 	{
 		SetTextureColor(texture, color);
-		SDL_RenderGeometry(_renderer, texture, vertices.data(), vertices.size(), nullptr, 0);
-	
+		SDL_RenderGeometry(_renderer, texture, vertices.data(), vertices.size(), nullptr, 0);	
 	}
 
 	void RenderContext::DrawShape(std::span<const SDL_Vertex> vertices, std::span<const int> order)

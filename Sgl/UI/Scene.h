@@ -10,8 +10,8 @@
 namespace Sgl
 {	
 	class Window;
-
-	class Scene: public UIElement, public IProcessed
+	
+	class Scene: public UIElement, public ECS::IProcessed
 	{
 	public:				
 		Sgl::Window& Window;

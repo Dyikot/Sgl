@@ -93,4 +93,80 @@ namespace Sgl
 
 		return resultOrder;
 	}
+
+	std::vector<SDL_FPoint> Math::Compute90EllipsePoints(SDL_FPoint position, int width, int height)
+	{
+		return ComputeEllipsePoints(90, position, width, height);
+	}
+
+	std::vector<SDL_FPoint> Math::Compute180EllipsePoints(SDL_FPoint position, int width, int height)
+	{
+		return ComputeEllipsePoints(180, position, width, height);
+	}
+
+	std::vector<SDL_FPoint> Math::Compute360EllipsePoints(SDL_FPoint position, int width, int height)
+	{
+		return ComputeEllipsePoints(360, position, width, height);
+	}
+
+	const std::vector<float>& Math::GetSin360()
+	{
+		if(_sin360.empty())
+		{
+			ComputeSin(360, _sin360);
+		}
+
+		return _sin360;
+	}
+
+	const std::vector<float>& Math::GetCos360()
+	{
+		if(_cos360.empty())
+		{
+			ComputeCos(360, _cos360);
+		}
+
+		return _cos360;
+	}
+
+	void Math::ComputeSin(size_t number, std::vector<float>& source)
+	{
+		source.resize(number);
+		const float Step = 2 * std::numbers::pi / number;
+		for(int i = 0; i < number; i++)
+		{
+			source[i] = sinf(Step * i);
+		}
+	}
+
+	void Math::ComputeCos(size_t number, std::vector<float>& source)
+	{
+		source.resize(number);
+		const float Step = 2 * std::numbers::pi / number;
+		for(int i = 0; i < number; i++)
+		{
+			source[i] = cosf(Step * i);
+		}
+	}
+
+	std::vector<SDL_FPoint> Math::ComputeEllipsePoints(size_t number, SDL_FPoint position,
+													   int width, int height)
+	{
+		const auto& sin = GetSin360();
+		const auto& cos = GetCos360();
+		const size_t AngleStep = 360 / number;
+		const float Step = 2 * std::numbers::pi / number;
+		size_t angle = 0;
+		std::vector<SDL_FPoint> points;
+		points.resize(number);
+
+		for(int i = 0; i < number; i++)
+		{
+			angle = i * AngleStep;
+			points[i].x = position.x + width * cos[angle];
+			points[i].y = position.y + height * sin[angle];
+		}
+
+		return points;
+	}
 }

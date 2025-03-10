@@ -2,7 +2,7 @@
 
 #include "../Tools/Time/TimeSpan.h"
 
-namespace Sgl
+namespace Sgl::ECS
 {
 	class IProcessed
 	{
