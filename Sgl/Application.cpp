@@ -108,6 +108,9 @@ namespace Sgl
 
 	void Application::Start()
 	{
+		Stopwatch delayStopwatch, sceneStopwatch;
+		sceneStopwatch.Restart();
+
 		while(_running)
 		{
 			switch(_window->SceneManager.UpdateState())
@@ -119,10 +122,11 @@ namespace Sgl
 				case SceneState::Unloaded:
 					return;
 			}
-
-			_stopwatch.Restart();
+			
+			delayStopwatch.Restart();
 			HandleEvents();
-			_window->SceneManager.ProcessScene(_stopwatch.Elapsed());
+			_window->SceneManager.ProcessScene(sceneStopwatch.GetElapsedAndRestart());
+
 			if(_window->IsVisible() || _window->AllowRenderMinimizedWindow)
 			{
 				_window->SceneManager.RenderScene();
@@ -130,8 +134,11 @@ namespace Sgl
 
 			if(_maxFrameRate)
 			{
-				auto delayMs = (_maxFrameTime.value() - _stopwatch.Elapsed()).Milliseconds();	
-				SDL_Delay(delayMs > 0 ? delayMs : 0);
+				auto delay = (_maxFrameTime.value() - delayStopwatch.Elapsed()).Milliseconds();	
+				if(delay > 0)
+				{
+					SDL_Delay(delay);
+				}
 			}
 		}
 	}

@@ -13,8 +13,15 @@ namespace Sgl
 
 		TimeSpan Elapsed() const
 		{
-			return TimeSpan::FromMilliseconds(static_cast<float>(SDL_GetPerformanceCounter() - _start) 
+			return TimeSpan::FromMilliseconds(1000.f * static_cast<float>(SDL_GetPerformanceCounter() - _start) 
 											  / SDL_GetPerformanceFrequency());
+		}
+
+		TimeSpan GetElapsedAndRestart()
+		{
+			auto elapsed = Elapsed();
+			Restart();
+			return elapsed;
 		}
 	};
 }

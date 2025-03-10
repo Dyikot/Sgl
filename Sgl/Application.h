@@ -24,7 +24,6 @@ namespace Sgl
 	protected:
 		static constexpr size_t MaxFrameRate = 360;
 
-		Stopwatch _stopwatch;
 		std::optional<size_t> _maxFrameRate;
 		std::optional<TimeSpan> _maxFrameTime;
 	private:
