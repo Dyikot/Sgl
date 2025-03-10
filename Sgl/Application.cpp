@@ -28,8 +28,6 @@ namespace Sgl
 		{
 			Log::PrintSDLError();
 		}
-
-		Cursors::Initialize();
 	}
 
 	Application::~Application() noexcept

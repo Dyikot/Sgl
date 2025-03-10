@@ -4,8 +4,7 @@
 #include "SDL/SDL_image.h"
 #include "../Tools/Log.h"
 #include <string>
-#include "../Tools/Log.h"
-#include "../Tools/Log.h"
+#include <optional>
 
 namespace Sgl
 {
@@ -36,8 +35,11 @@ namespace Sgl
 			}
 		}
 
-		Cursor(const Cursor&) = delete;
-		Cursor(Cursor&&) = delete;
+		Cursor(Cursor&& cursor) noexcept:
+			_cursor(cursor._cursor)
+		{
+			cursor._cursor = nullptr;
+		}
 
 		~Cursor() noexcept
 		{
@@ -48,41 +50,148 @@ namespace Sgl
 		}
 
 		operator SDL_Cursor* () const { return _cursor; }
+		Cursor& operator=(Cursor&& cursor) noexcept
+		{
+			_cursor = cursor._cursor;
+			cursor._cursor = nullptr;
+			return *this;
+		}
 	};
 
 	class Cursors
 	{
 	private:
-		static inline Cursors* _instance;
-
-		Cursor _arrow = Cursor(SDL_SYSTEM_CURSOR_ARROW);
-		Cursor _ibeam = Cursor(SDL_SYSTEM_CURSOR_IBEAM);
-		Cursor _wait = Cursor(SDL_SYSTEM_CURSOR_WAIT);
-		Cursor _crosshair = Cursor(SDL_SYSTEM_CURSOR_CROSSHAIR);
-		Cursor _waitArrow = Cursor(SDL_SYSTEM_CURSOR_WAITARROW);
-		Cursor _arrowNWSE = Cursor(SDL_SYSTEM_CURSOR_SIZENWSE);
-		Cursor _arrowNESW = Cursor(SDL_SYSTEM_CURSOR_SIZENESW);
-		Cursor _arrowWE = Cursor(SDL_SYSTEM_CURSOR_SIZEWE);
-		Cursor _arrowNS = Cursor(SDL_SYSTEM_CURSOR_SIZENS);
-		Cursor _arrowAll = Cursor(SDL_SYSTEM_CURSOR_SIZEALL);
-		Cursor _no = Cursor(SDL_SYSTEM_CURSOR_NO);
-		Cursor _hand = Cursor(SDL_SYSTEM_CURSOR_HAND);
+		static inline std::optional<Cursor> _arrow = std::nullopt;
+		static inline std::optional<Cursor> _ibeam = std::nullopt;
+		static inline std::optional<Cursor> _wait = std::nullopt;
+		static inline std::optional<Cursor> _crosshair = std::nullopt;
+		static inline std::optional<Cursor> _waitArrow = std::nullopt;
+		static inline std::optional<Cursor> _arrowNWSE = std::nullopt;
+		static inline std::optional<Cursor> _arrowNESW = std::nullopt;
+		static inline std::optional<Cursor> _arrowWE = std::nullopt;
+		static inline std::optional<Cursor> _arrowNS = std::nullopt;
+		static inline std::optional<Cursor> _arrowAll = std::nullopt;
+		static inline std::optional<Cursor> _no = std::nullopt;
+		static inline std::optional<Cursor> _hand = std::nullopt;
 	public:
-		static void Initialize() { _instance = new Cursors(); }
+		static const Cursor& Arrow()
+		{
+			if(!_arrow)
+			{
+				_arrow = Cursor(SDL_SYSTEM_CURSOR_ARROW);
+			}
 
-		static const Cursor& Arrow() { return _instance->_arrow; }
-		static const Cursor& Ibeam() { return _instance->_ibeam; }
-		static const Cursor& Wait() { return _instance->_wait; }
-		static const Cursor& Crosshair() { return _instance->_crosshair; }
-		static const Cursor& WaitArrow() { return _instance->_waitArrow; }
-		static const Cursor& ArrowNWSE() { return _instance->_arrowNWSE; }
-		static const Cursor& ArrowNESW() { return _instance->_arrowNESW; }
-		static const Cursor& ArrowWE() { return _instance->_arrowWE; }
-		static const Cursor& ArrowNS() { return _instance->_arrowNS; }
-		static const Cursor& ArrowAll() { return _instance->_arrowAll; }
-		static const Cursor& No() { return _instance->_no; }
-		static const Cursor& Hand() { return _instance->_hand; }
-	private:
-		Cursors() = default;
+			return _arrow.value();
+		}
+
+		static const Cursor& Ibeam()
+		{
+			if(!_ibeam)
+			{
+				_ibeam = Cursor(SDL_SYSTEM_CURSOR_IBEAM);
+			}
+
+			return _ibeam.value();
+		}
+
+		static const Cursor& Wait()
+		{
+			if(!_wait)
+			{
+				_wait = Cursor(SDL_SYSTEM_CURSOR_WAIT);
+			}
+
+			return _wait.value();
+		}
+
+		static const Cursor& Crosshair()
+		{
+			if(!_crosshair)
+			{
+				_crosshair = Cursor(SDL_SYSTEM_CURSOR_CROSSHAIR);
+			}
+
+			return _crosshair.value();
+		}
+
+		static const Cursor& WaitArrow()
+		{
+			if(!_waitArrow)
+			{
+				_waitArrow = Cursor(SDL_SYSTEM_CURSOR_WAITARROW);
+			}
+
+			return _waitArrow.value();
+		}
+
+		static const Cursor& ArrowNWSE()
+		{
+			if(!_arrowNWSE)
+			{
+				_arrowNWSE = Cursor(SDL_SYSTEM_CURSOR_SIZENWSE);
+			}
+
+			return _arrowNWSE.value();
+		}
+
+		static const Cursor& ArrowNESW()
+		{
+			if(!_arrowNESW)
+			{
+				_arrowNESW = Cursor(SDL_SYSTEM_CURSOR_SIZENESW);
+			}
+
+			return _arrowNESW.value();
+		}
+
+		static const Cursor& ArrowWE()
+		{
+			if(!_arrowWE)
+			{
+				_arrowWE = Cursor(SDL_SYSTEM_CURSOR_SIZEWE);
+			}
+
+			return _arrowWE.value();
+		}
+
+		static const Cursor& ArrowNS()
+		{
+			if(!_arrowNS)
+			{
+				_arrowNS = Cursor(SDL_SYSTEM_CURSOR_SIZENS);
+			}
+
+			return _arrowNS.value();
+		}
+
+		static const Cursor& ArrowAll()
+		{
+			if(!_arrowAll)
+			{
+				_arrowAll = Cursor(SDL_SYSTEM_CURSOR_SIZEALL);
+			}
+
+			return _arrowAll.value();
+		}
+
+		static const Cursor& No()
+		{
+			if(!_no)
+			{
+				_no = Cursor(SDL_SYSTEM_CURSOR_NO);
+			}
+
+			return _no.value();
+		}
+
+		static const Cursor& Hand()
+		{
+			if(!_hand)
+			{
+				_hand = Cursor(SDL_SYSTEM_CURSOR_HAND);
+			}
+
+			return _hand.value();
+		}
 	};
 }
