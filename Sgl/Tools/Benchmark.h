@@ -14,18 +14,9 @@ namespace Sgl
 		std::string _name = "Benchmark";
 	public:
 		static Benchmark New() { return Benchmark(); }
-
-		Benchmark& SetLoopNumber(size_t number)
-		{
-			_loops = number;
-			return *this;
-		}
-
-		Benchmark& SetName(const std::string& name)
-		{
-			_name = name;
-			return *this;
-		}
+		static Benchmark New(size_t loops) { return Benchmark(loops); }
+		static Benchmark New(const std::string name) { return Benchmark(name); }
+		static Benchmark New(const std::string name, size_t loops) { return Benchmark(name, loops); }
 
 		template<typename TInvocable, typename... TArgs> 
 			requires std::invocable<TInvocable, TArgs...>
@@ -45,12 +36,20 @@ namespace Sgl
 		}
 	private:
 		Benchmark() = default;
+
+		Benchmark(const std::string& name):
+			_name(name)
+		{}
+
+		Benchmark(size_t loops):
+			_loops(loops)
+		{}
+
+		Benchmark(const std::string& name, size_t loops):
+			_name(name), _loops(loops)
+		{}
+
 		Benchmark(const Benchmark&) = delete;
 		Benchmark(Benchmark&&) = delete;
-
-		void Print(TimeSpan duration)
-		{
-			std::cout << std::format("{}: {}\n", _name, duration.ToString());
-		}
 	};
 }
