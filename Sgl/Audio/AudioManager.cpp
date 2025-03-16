@@ -2,25 +2,9 @@
 
 namespace Sgl
 {
-	AudioManager::AudioManager():
-		AudioManager(Volume::Max, Volume::Max, Volume::Max)
-	{}
-
-	AudioManager::AudioManager(Volume masterVolume, Volume musicVolume, Volume soundEffectsVolume) noexcept:
-		MasterVolume(masterVolume), MusicVolume(musicVolume), SoundEffectsVolume(soundEffectsVolume)
-	{}
-
-	void AudioManager::PlayMusic(const Music& music, int loops)
+	void AudioManager::Play(const Music& music, int loops)
 	{
 		Mix_PlayMusic(music, loops);
-	}
-
-	void AudioManager::PlayMusic(const std::string& music, int loops)
-	{
-		if(Resources)
-		{
-			PlayMusic(Resources->MusicTracks.at(music), loops);
-		}
 	}
 
 	void AudioManager::PauseMusic() const noexcept
@@ -31,65 +15,56 @@ namespace Sgl
 		}
 	}
 
-	void AudioManager::SetMusicVolume(const Music& music)
+	void AudioManager::SetVolume(const Music& music)
 	{
-		Mix_VolumeMusic(ToMixVolume(music.Volume, MusicVolume, Volume::Max));
+		auto volume = MasterVolume * MusicVolume * music.GetVolume();
+		Mix_VolumeMusic(volume.ToMixVolume());
 	}
 
-	void AudioManager::SetSoundEffectVolume(const SoundEffect& soundEffect)
+	void AudioManager::SetVolume(const Music& music, Volume additional)
 	{
-		Mix_VolumeChunk(soundEffect,
-						ToMixVolume(soundEffect.Volume, SoundEffectsVolume, Volume::Max));
+		auto volume = MasterVolume * MusicVolume * music.GetVolume() * additional;
+		Mix_VolumeMusic(volume.ToMixVolume());
 	}
 
-	void AudioManager::SetSoundEffectVolume(const SoundEffect& soundEffect, const AudioGroup& group)
+	void AudioManager::SetVolume(const SoundEffect& soundEffect)
 	{
-		Mix_VolumeChunk(soundEffect, 
-						ToMixVolume(soundEffect.Volume, SoundEffectsVolume, group.Volume));
+		auto volume = MasterVolume * SoundEffectsVolume * soundEffect.GetVolume();
+		Mix_VolumeChunk(soundEffect, volume.ToMixVolume());
 	}
 
-	void AudioManager::PlaySoundEffect(const SoundEffect& soundEffect, int channel, int loops)
+	void AudioManager::SetVolume(const SoundEffect& soundEffect, Volume additional)
+	{
+		auto volume = MasterVolume * SoundEffectsVolume * soundEffect.GetVolume() * additional;
+		Mix_VolumeChunk(soundEffect, volume.ToMixVolume());
+	}
+
+	void AudioManager::Play(const SoundEffect& soundEffect, int channel, int loops)
 	{
 		Mix_PlayChannel(channel, soundEffect, loops);
 	}
 
-	void AudioManager::PlaySoundEffect(const std::string& soundEffect, int channel, int loops)
+	void AudioManager::Play(IPlayList& playlist)
 	{
-		if(Resources)
+		if(!Mix_PlayingMusic() && playlist.GetCurrent() != nullptr)
 		{
-			PlaySoundEffect(Resources->SoundEffects.at(soundEffect), channel, loops);
-		}
-	}
-
-	void AudioManager::PlayPlayList(PlayList& playlist)
-	{
-		if(playlist.empty())
-		{
-			return;
-		}
-
-		if(!Mix_PlayingMusic())
-		{
-			if(playlist.IsOver())
+			if(playlist.HasEnded())
 			{
-				playlist.Shuffle();
+				if(playlist.IsShuffleble())
+				{
+					playlist.Shuffle();
+				}
+
+				playlist.MoveCurrentToBegin();
 			}
 			
-			SetMusicVolume(*playlist.Current(), playlist);
-			PlayMusic(*playlist.Current());
-			playlist.SetCurrentToNext();
+			SetVolume(*playlist.GetCurrent(), playlist.GetVolume());
+			Play(*playlist.GetCurrent());
+			playlist.MoveCurrentToNext();
 		}
 		else if(Mix_PausedMusic())
 		{
 			ResumeMusic();
-		}
-	}
-
-	void AudioManager::PlayPlayList(const std::string& playlist)
-	{
-		if(Resources)
-		{
-			PlayPlayList(Resources->PlayLists.at(playlist));
 		}
 	}
 }

@@ -3,7 +3,7 @@
 #include <chrono>
 #include <future>
 #include "../../Events/Event.h"
-#include "TimeSpan.h"
+#include "Stopwatch.h"
 
 namespace Sgl
 {
@@ -19,11 +19,10 @@ namespace Sgl
 	private:
 		bool _paused = true;
 		bool _elapsed = false;
-		std::chrono::milliseconds _timeElapsed;
-		std::chrono::milliseconds _duration;
+		Stopwatch _stopwatch;
+		const TimeSpan _duration;
 		std::thread _thread;
 		std::condition_variable _conditionVariable;
-		std::chrono::steady_clock::time_point _start;
 	public:
 		Timer(TimeSpan timespan) noexcept;
 		Timer(const Timer& timer) = delete;

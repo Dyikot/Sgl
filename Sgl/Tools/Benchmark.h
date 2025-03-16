@@ -7,56 +7,50 @@
 
 namespace Sgl
 {
-	template<typename T>
 	class Benchmark
 	{
 	private:
-		std::function<T> _function;
-		size_t _number = 1;
+		size_t _loops = 1;
 		std::string _name = "Benchmark";
 	public:
-		Benchmark(const std::function<T>& function):
-			_function(function)
-		{}
+		static Benchmark New() { return Benchmark(); }
 
-		Benchmark& Number(size_t number)
+		Benchmark& SetLoopNumber(size_t number)
 		{
-			_number = number;
+			_loops = number;
 			return *this;
 		}
 
-		Benchmark& Name(std::string&& name)
-		{
-			_name = std::move(name);
-			return *this;
-		}
-
-		Benchmark& Name(const std::string& name)
+		Benchmark& SetName(const std::string& name)
 		{
 			_name = name;
 			return *this;
 		}
 
-		template<typename... TArgs> requires std::invocable<T, TArgs...>
-		void Run(TArgs&&... args)
+		template<typename TInvocable, typename... TArgs> 
+			requires std::invocable<TInvocable, TArgs...>
+		void Run(TInvocable&& invocable, TArgs&&... args)
 		{
-			using namespace std::chrono;
-			using namespace std::chrono_literals;
-			
-			auto start = high_resolution_clock::now();
-			for(size_t i = 0; i < _number; i++)
+			Stopwatch stopwatch;
+			stopwatch.Start();
+
+			for(size_t i = 0; i < _loops; i++)
 			{
-				_function(std::forward<TArgs>(args)...);
+				std::invoke(invocable, std::forward<TArgs>(args)...);
 			}
-			auto end = high_resolution_clock::now();
-			auto average = (end - start) / _number;
-			
-			Print(TimeSpan(average.count()));
+
+			stopwatch.Pause();
+			auto elapsed = stopwatch.Elapsed() / _loops;
+			std::cout << std::format("{}: {}\n", _name, elapsed.ToString());
 		}
 	private:
+		Benchmark() = default;
+		Benchmark(const Benchmark&) = delete;
+		Benchmark(Benchmark&&) = delete;
+
 		void Print(TimeSpan duration)
 		{
-			std::cout << std::format("{}\t{}\n", _name, duration.ToString());
+			std::cout << std::format("{}: {}\n", _name, duration.ToString());
 		}
 	};
 }

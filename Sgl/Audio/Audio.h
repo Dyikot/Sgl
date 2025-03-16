@@ -3,10 +3,8 @@
 #include <vector>
 #include <string_view>
 #include <iostream>
-#include <unordered_map>
+#include <span>
 #include "SDL/SDL_mixer.h"
-#include "../Tools/Log.h"
-#include "../Tools/Log.h"
 #include "../Tools/Log.h"
 
 namespace Sgl
@@ -14,104 +12,126 @@ namespace Sgl
 	class Volume
 	{
 	public:
-		static constexpr uint8_t Max = 100;
-	protected:
-		uint8_t _value;
+		static constexpr Volume Max() { return Volume(1); }
+		static constexpr Volume Zero() { return Volume(0); }
+	private:
+		static constexpr float MaxValue = 1;
+
+		float _value;
 	public:
-		constexpr Volume(uint8_t value):
-			_value(Adjust(value))
+		explicit constexpr Volume(float value):
+			_value(Adjust(std::abs(value)))
 		{}
 
-		constexpr operator uint8_t() { return _value; }
-		constexpr uint8_t operator*(Volume volume) const { return _value * volume._value; }
-		constexpr uint8_t operator*(uint8_t value) const { return _value * value; }
+		int ToMixVolume() const { return _value * MIX_MAX_VOLUME; }
+
+		friend constexpr Volume operator+(Volume left, Volume right)
+		{
+			return Volume(left._value + right._value);
+		}
+
+		friend constexpr Volume operator-(Volume left, Volume right)
+		{
+			return Volume(left._value - right._value);
+		}
+
+		friend constexpr Volume operator*(Volume left, Volume right)
+		{
+			return Volume(left._value * right._value); 
+		}
+
+		friend constexpr Volume operator/(Volume left, Volume right)
+		{
+			return Volume(left._value / right._value);
+		}
+
+		friend constexpr auto operator<=>(Volume left, Volume right)
+		{
+			return left._value <=> right._value;
+		}
+
+		constexpr Volume& operator+=(Volume volume)
+		{
+			_value = Adjust(_value + volume._value);
+			return *this;
+		}
+
+		constexpr Volume& operator-=(Volume volume)
+		{
+			_value = Adjust(_value - volume._value);
+			return *this;
+		}
+
+		constexpr Volume& operator*=(Volume volume)
+		{
+			_value = Adjust(_value * volume._value);
+			return *this;
+		}
+
+		constexpr Volume& operator/=(Volume volume)
+		{
+			_value = Adjust(_value / volume._value);
+			return *this;
+		}
 	private:
-		static constexpr uint8_t Adjust(uint8_t value) { return value > Max ? Max : value; }
+		static constexpr float Adjust(float value) { return value > MaxValue ? MaxValue : value; }
 	};
 
-	class AudioBase
+	class IAudio
 	{
-	public:
-		Volume Volume;
-	public:
-		AudioBase(Sgl::Volume volume):
-			Volume(volume)
-		{}		
-		virtual ~AudioBase() = default;
+	public:	
+		virtual ~IAudio() = default;
+
+		virtual void SetVolume(Volume value) = 0;
+		virtual Volume GetVolume() const = 0;
 	};
 
-	class Music: public AudioBase
+	class Music: public IAudio
 	{
+	private:
+		Volume _volume = Volume::Max();
 	protected:
 		Mix_Music* _music;
 	public:
-		Music(std::string_view path, Sgl::Volume volume = Volume::Max) noexcept:
-			_music(Mix_LoadMUS(path.data())), AudioBase(volume)
-		{
-			if(_music == nullptr)
-			{
-				std::cout << "Music: " << SDL_GetError() << '\n';
-			}
-		}
+		Music(std::string_view path) noexcept;
+		Music(const Music&) = delete;
+		Music(Music&&) = delete;
 		~Music() noexcept { Mix_FreeMusic(_music); }
+
+		void SetVolume(Volume value) override { _volume = value; }
+		Volume GetVolume() const override { return _volume; }
 
 		operator Mix_Music* () const { return _music; }
 	};
 
-	class SoundEffect: public AudioBase
+	class SoundEffect: public IAudio
 	{
+	private:
+		Volume _volume = Volume::Max();
 	protected:
 		Mix_Chunk* _soundChunk;
 	public:
-		SoundEffect(std::string_view path, Sgl::Volume volume = Volume::Max) noexcept:
-			_soundChunk(Mix_LoadWAV(path.data())), AudioBase(volume)
-		{
-			if(_soundChunk == nullptr)
-			{
-				Log::PrintSDLError();
-			}
-		}
+		SoundEffect(std::string_view path) noexcept;
+		SoundEffect(const SoundEffect&) = delete;
+		SoundEffect(SoundEffect&&) = delete;
 		~SoundEffect() noexcept { Mix_FreeChunk(_soundChunk); }
+
+		void SetVolume(Volume value) override { _volume = value; }
+		Volume GetVolume() const override { return _volume; }
 
 		operator Mix_Chunk* () const { return _soundChunk; }
 	};
-
-	template<typename T> requires std::derived_from<T, AudioBase>
-	class AudioCollection: public std::vector<std::reference_wrapper<T>>
+	
+	class IPlayList: public IAudio
 	{
 	public:
-		Volume Volume;
-	public:
-		AudioCollection(Sgl::Volume volume = Volume::Max):
-			std::vector<std::reference_wrapper<T>>(),
-			Volume(volume)
-		{}
-	};
+		virtual ~IPlayList() = default;
 
-	using AudioGroup = AudioCollection<AudioBase>;
-
-	class PlayList: public AudioCollection<Music>
-	{
-	private:
-		PlayList::iterator _current;
-	public:
-		PlayList(Sgl::Volume volume = Volume::Max):
-			AudioCollection<Music>(volume)
-		{}
-
-		Music* Current() const { return empty() ? nullptr : &(*_current).get(); }
-		void SetCurrentToBegin() { _current = begin(); }
-		void SetCurrentToEnd() { _current = end(); }
-		void SetCurrentToNext() { _current++; }
-		void Shuffle();
-		bool IsOver() const { return _current == end(); }
-	};
-
-	struct AudioResources
-	{
-		std::unordered_map<std::string, std::reference_wrapper<SoundEffect>> SoundEffects;
-		std::unordered_map<std::string, std::reference_wrapper<Music>> MusicTracks;
-		std::unordered_map<std::string, AudioGroup> Groups;
-		std::unordered_map<std::string, PlayList> PlayLists;
+		virtual Music* GetCurrent() const = 0;
+		virtual void MoveCurrentToBegin() = 0;
+		virtual void MoveCurrentToNext() = 0;
+		virtual void Shuffle() = 0;
+		virtual bool IsShuffleble() const = 0;
+		virtual bool HasEnded() const = 0;
 	};
 }

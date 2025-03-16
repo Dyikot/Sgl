@@ -41,7 +41,7 @@ namespace Sgl
 	void Application::SetMaxFrameRate(size_t value)
 	{
 		_maxFrameRate = value > MaxFrameRate ? MaxFrameRate : value;
-		_maxFrameTime = TimeSpan::FromMilliseconds(1000.f / _maxFrameRate.value());
+		_maxFrameTime = TimeSpan::FromMilliseconds(1000.0 / _maxFrameRate.value());
 	}
 
 	Window* Application::GetWindow() const
@@ -109,7 +109,7 @@ namespace Sgl
 	void Application::Start()
 	{
 		Stopwatch delayStopwatch, sceneStopwatch;
-		sceneStopwatch.Restart();
+		sceneStopwatch.Start();
 
 		while(_running)
 		{
@@ -125,7 +125,8 @@ namespace Sgl
 			
 			delayStopwatch.Restart();
 			HandleEvents();
-			_window->SceneManager.ProcessScene(sceneStopwatch.GetElapsedAndRestart());
+			_window->SceneManager.ProcessScene(sceneStopwatch.Elapsed());
+			sceneStopwatch.Reset();
 
 			if(_window->IsVisible() || _window->AllowRenderMinimizedWindow)
 			{
@@ -134,12 +135,16 @@ namespace Sgl
 
 			if(_maxFrameRate)
 			{
-				auto delay = (_maxFrameTime.value() - delayStopwatch.Elapsed()).Milliseconds();	
-				if(delay > 0)
-				{
-					SDL_Delay(delay);
-				}
+				SleepFor(_maxFrameTime.value() - delayStopwatch.Elapsed());
 			}
+		}
+	}
+
+	void Application::SleepFor(TimeSpan timespan)
+	{
+		if(timespan.Milliseconds() > 0)
+		{
+			SDL_Delay(timespan.Milliseconds());
 		}
 	}
 }

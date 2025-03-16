@@ -6,8 +6,7 @@ using namespace std::chrono;
 namespace Sgl
 {
 	Timer::Timer(TimeSpan timespan) noexcept:
-		_duration(milliseconds(static_cast<int>(timespan.Milliseconds()))),
-		_timeElapsed(0ms)
+		_duration(timespan)
 	{}
 
 	Timer::~Timer()
@@ -47,25 +46,26 @@ namespace Sgl
 	{
 		Pause();
 		_elapsed = false;
-		_timeElapsed = 0ms;
+		_stopwatch.Reset();
 	}
 
 	void Timer::Wait()
 	{
 		std::mutex mutex;
 
-		_start = high_resolution_clock::now();
+		_stopwatch.Start();
+		nanoseconds waitDuration((_duration - _stopwatch.Elapsed()).Nanoseconds());
 
 		std::unique_lock<std::mutex> lock(mutex);
-		_conditionVariable.wait_for(lock, _duration - _timeElapsed,
-								   std::bind_front(&Timer::IsPaused, this));
+		_conditionVariable.wait_for(lock, waitDuration,
+								    std::bind_front(&Timer::IsPaused, this));
 
-		_timeElapsed += duration_cast<milliseconds>(high_resolution_clock::now() - _start);
+		_stopwatch.Pause();
 		_elapsed = !_paused;
 
 		if(_elapsed)
 		{
-			Elapsed.TryInvoke(this, TimeElapsedEventArgs{.Duration = TimeSpan::FromMilliseconds(_duration.count()) });
+			Elapsed.TryInvoke(this, TimeElapsedEventArgs{.Duration = _duration });
 		}
 	}
 }

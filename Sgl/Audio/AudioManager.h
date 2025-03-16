@@ -9,41 +9,22 @@ namespace Sgl
 	class AudioManager
 	{
 	public:
-		Volume MasterVolume;
-		Volume MusicVolume;
-		Volume SoundEffectsVolume;		
-		AudioResources* Resources = nullptr;
-	protected:
+		Volume MasterVolume = Volume::Max();
+		Volume MusicVolume = Volume::Max();
+		Volume SoundEffectsVolume = Volume::Max();
+	private:
 		static constexpr int FreeChannel = -1;
 	public:
-		AudioManager();
-		AudioManager(Volume masterVolume, Volume musicVolume, Volume soundEffectsVolume) noexcept;
-
-		void PlayMusic(const Music& music, int loops = 0);
-		void PlayMusic(const std::string& music, int loops = 0);
-		void PlaySoundEffect(const SoundEffect& soundEffect, int channel = FreeChannel, int loops = 0);
-		void PlaySoundEffect(const std::string& soundEffect, int channel = FreeChannel, int loops = 0);
-		void PlayPlayList(PlayList& playlist);
-		void PlayPlayList(const std::string& playlist);
+		void Play(const Music& music, int loops = 0);
+		void Play(const SoundEffect& soundEffect, int channel = FreeChannel, int loops = 0);
+		void Play(IPlayList& playlist);
 		void PauseMusic() const noexcept;
 		void ResumeMusic() const noexcept { Mix_ResumeMusic(); }
 		void RewindMusic() const noexcept { Mix_RewindMusic(); }
 		void HaltMusic() const noexcept { Mix_HaltMusic(); }
-		void SetSoundEffectVolume(const SoundEffect& soundEffect);
-		void SetSoundEffectVolume(const SoundEffect& soundEffect, const AudioGroup& group);
-
-		void SetMusicVolume(const Music& music);
-
-		template <typename T> requires std::derived_from<T, AudioBase>
-		void SetMusicVolume(const Music& music, const AudioCollection<T>& collection)
-		{
-			Mix_VolumeMusic(ToMixVolume(music.Volume, MusicVolume, collection.Volume));
-		}
-	protected:
-		uint8_t ToMixVolume(Volume volume, Volume audioTypeVolume, Volume groupVolume = Volume::Max) const
-		{
-			return (MasterVolume * audioTypeVolume * volume * groupVolume) 
-				   / std::pow(Volume::Max, 4) * MIX_MAX_VOLUME;
-		}
+		void SetVolume(const SoundEffect& soundEffect);
+		void SetVolume(const SoundEffect& soundEffect, Volume additional);
+		void SetVolume(const Music& music);
+		void SetVolume(const Music& music, Volume additional);
 	};
 }

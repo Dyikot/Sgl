@@ -1,27 +1,23 @@
 #pragma once
-#include <SDL/SDL_timer.h>
 #include "TimeSpan.h"
+#include <chrono>
 
 namespace Sgl
 {
 	class Stopwatch
 	{
 	private:
-		size_t _start = 0;
+		bool _running = false;
+		TimeSpan _elapsed = TimeSpan::Zero();
+		std::chrono::steady_clock::time_point _start;
 	public:
-		void Restart() { _start = SDL_GetPerformanceCounter(); }
-
-		TimeSpan Elapsed() const
-		{
-			return TimeSpan::FromMilliseconds(1000.f * static_cast<float>(SDL_GetPerformanceCounter() - _start) 
-											  / SDL_GetPerformanceFrequency());
-		}
-
-		TimeSpan GetElapsedAndRestart()
-		{
-			auto elapsed = Elapsed();
-			Restart();
-			return elapsed;
-		}
+		void Start();
+		void Restart();
+		void Reset();
+		void Pause();
+		bool IsRunning() const;
+		TimeSpan Elapsed();
+	private:
+		TimeSpan GetEplapsedTime();
 	};
 }

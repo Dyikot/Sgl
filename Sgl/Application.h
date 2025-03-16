@@ -47,6 +47,7 @@ namespace Sgl
 		void Run();
 		void Shutdown() noexcept;
 		bool IsRunning() const { return _running; }
+		void SleepFor(TimeSpan timespan);
 	protected:
 		virtual void OnStartup(const EventArgs& e);
 		virtual void OnQuit(const EventArgs& e);
