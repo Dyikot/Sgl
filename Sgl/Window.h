@@ -35,7 +35,7 @@ namespace Sgl
 
 		Application& App;
 		SceneManager SceneManager = Sgl::SceneManager(*this);
-		bool AllowRenderMinimizedWindow = false;
+		bool CanRenderInMinimizedMode = false;
 	private:
 		SDL_Window* _this;
 		bool _vsyncEnabled = false;

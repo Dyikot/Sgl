@@ -1,6 +1,8 @@
 #include "Application.h"
 #include "Window.h"
+#include "Tools/Time/Timer.h"
 #include "Tools/Log.h"
+#include "Tools/Time/Delay.h"
 
 namespace Sgl
 {
@@ -41,7 +43,7 @@ namespace Sgl
 	void Application::SetMaxFrameRate(size_t value)
 	{
 		_maxFrameRate = value > MaxFrameRate ? MaxFrameRate : value;
-		_maxFrameTime = TimeSpan::FromMilliseconds(1000.0 / _maxFrameRate.value());
+		_maxFrameTime = TimeSpan(1e9 / _maxFrameRate.value());
 	}
 
 	Window* Application::GetWindow() const
@@ -128,7 +130,7 @@ namespace Sgl
 			_window->SceneManager.ProcessScene(sceneStopwatch.Elapsed());
 			sceneStopwatch.Reset();
 
-			if(_window->IsVisible() || _window->AllowRenderMinimizedWindow)
+			if(_window->IsVisible() || _window->CanRenderInMinimizedMode)
 			{
 				_window->SceneManager.RenderScene();
 			}
@@ -137,14 +139,6 @@ namespace Sgl
 			{
 				SleepFor(_maxFrameTime.value() - delayStopwatch.Elapsed());
 			}
-		}
-	}
-
-	void Application::SleepFor(TimeSpan timespan)
-	{
-		if(timespan.Milliseconds() > 0)
-		{
-			SDL_Delay(timespan.Milliseconds());
 		}
 	}
 }
