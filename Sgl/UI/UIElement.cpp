@@ -4,7 +4,7 @@ namespace Sgl
 {
 	UIElement::UIElement()
 	{
-		AddProperty<std::reference_wrapper<const Cursor>>(CursorProperty, Cursors::Arrow());
+		AddProperty<std::reference_wrapper<const Cursor>>(CursorProperty, Cursors::Arrow.Value());
 	}
 
 	void UIElement::AddStyle(const Style& style)

@@ -3,8 +3,8 @@
 #include "SDL/SDL_mouse.h"
 #include "SDL/SDL_image.h"
 #include "../Tools/Log.h"
+#include "../Data/Lazy.h"
 #include <string>
-#include <optional>
 
 namespace Sgl
 {
@@ -60,138 +60,18 @@ namespace Sgl
 
 	class Cursors
 	{
-	private:
-		static inline std::optional<Cursor> _arrow = std::nullopt;
-		static inline std::optional<Cursor> _ibeam = std::nullopt;
-		static inline std::optional<Cursor> _wait = std::nullopt;
-		static inline std::optional<Cursor> _crosshair = std::nullopt;
-		static inline std::optional<Cursor> _waitArrow = std::nullopt;
-		static inline std::optional<Cursor> _arrowNWSE = std::nullopt;
-		static inline std::optional<Cursor> _arrowNESW = std::nullopt;
-		static inline std::optional<Cursor> _arrowWE = std::nullopt;
-		static inline std::optional<Cursor> _arrowNS = std::nullopt;
-		static inline std::optional<Cursor> _arrowAll = std::nullopt;
-		static inline std::optional<Cursor> _no = std::nullopt;
-		static inline std::optional<Cursor> _hand = std::nullopt;
 	public:
-		static const Cursor& Arrow()
-		{
-			if(!_arrow)
-			{
-				_arrow = Cursor(SDL_SYSTEM_CURSOR_ARROW);
-			}
-
-			return _arrow.value();
-		}
-
-		static const Cursor& Ibeam()
-		{
-			if(!_ibeam)
-			{
-				_ibeam = Cursor(SDL_SYSTEM_CURSOR_IBEAM);
-			}
-
-			return _ibeam.value();
-		}
-
-		static const Cursor& Wait()
-		{
-			if(!_wait)
-			{
-				_wait = Cursor(SDL_SYSTEM_CURSOR_WAIT);
-			}
-
-			return _wait.value();
-		}
-
-		static const Cursor& Crosshair()
-		{
-			if(!_crosshair)
-			{
-				_crosshair = Cursor(SDL_SYSTEM_CURSOR_CROSSHAIR);
-			}
-
-			return _crosshair.value();
-		}
-
-		static const Cursor& WaitArrow()
-		{
-			if(!_waitArrow)
-			{
-				_waitArrow = Cursor(SDL_SYSTEM_CURSOR_WAITARROW);
-			}
-
-			return _waitArrow.value();
-		}
-
-		static const Cursor& ArrowNWSE()
-		{
-			if(!_arrowNWSE)
-			{
-				_arrowNWSE = Cursor(SDL_SYSTEM_CURSOR_SIZENWSE);
-			}
-
-			return _arrowNWSE.value();
-		}
-
-		static const Cursor& ArrowNESW()
-		{
-			if(!_arrowNESW)
-			{
-				_arrowNESW = Cursor(SDL_SYSTEM_CURSOR_SIZENESW);
-			}
-
-			return _arrowNESW.value();
-		}
-
-		static const Cursor& ArrowWE()
-		{
-			if(!_arrowWE)
-			{
-				_arrowWE = Cursor(SDL_SYSTEM_CURSOR_SIZEWE);
-			}
-
-			return _arrowWE.value();
-		}
-
-		static const Cursor& ArrowNS()
-		{
-			if(!_arrowNS)
-			{
-				_arrowNS = Cursor(SDL_SYSTEM_CURSOR_SIZENS);
-			}
-
-			return _arrowNS.value();
-		}
-
-		static const Cursor& ArrowAll()
-		{
-			if(!_arrowAll)
-			{
-				_arrowAll = Cursor(SDL_SYSTEM_CURSOR_SIZEALL);
-			}
-
-			return _arrowAll.value();
-		}
-
-		static const Cursor& No()
-		{
-			if(!_no)
-			{
-				_no = Cursor(SDL_SYSTEM_CURSOR_NO);
-			}
-
-			return _no.value();
-		}
-
-		static const Cursor& Hand()
-		{
-			if(!_hand)
-			{
-				_hand = Cursor(SDL_SYSTEM_CURSOR_HAND);
-			}
-
-			return _hand.value();
-		}
+		static inline Lazy<Cursor> Arrow = [] { return Cursor(SDL_SYSTEM_CURSOR_ARROW); };
+		static inline Lazy<Cursor> IBeam = [] { return Cursor(SDL_SYSTEM_CURSOR_IBEAM); };
+		static inline Lazy<Cursor> Wait = [] { return Cursor(SDL_SYSTEM_CURSOR_WAIT); };
+		static inline Lazy<Cursor> Crosshair = [] { return Cursor(SDL_SYSTEM_CURSOR_CROSSHAIR); };
+		static inline Lazy<Cursor> WaitArrow = [] { return Cursor(SDL_SYSTEM_CURSOR_WAITARROW); };
+		static inline Lazy<Cursor> ArrowNWSE = [] { return Cursor(SDL_SYSTEM_CURSOR_SIZENWSE); };
+		static inline Lazy<Cursor> ArrowNESW = [] { return Cursor(SDL_SYSTEM_CURSOR_SIZENESW); };
+		static inline Lazy<Cursor> ArrowWE = [] { return Cursor(SDL_SYSTEM_CURSOR_SIZEWE); };
+		static inline Lazy<Cursor> ArrowNS = [] { return  Cursor(SDL_SYSTEM_CURSOR_SIZENS); };
+		static inline Lazy<Cursor> ArrowAll = [] { return Cursor(SDL_SYSTEM_CURSOR_SIZEALL); };
+		static inline Lazy<Cursor> No = [] { return Cursor(SDL_SYSTEM_CURSOR_NO); };
+		static inline Lazy<Cursor> Hand = [] { return Cursor(SDL_SYSTEM_CURSOR_HAND); };
 	};
 }
