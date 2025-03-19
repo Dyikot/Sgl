@@ -3,6 +3,7 @@
 #include <typeinfo>
 #include <type_traits>
 #include <string_view>
+#include "Nullable.h"
 
 namespace Sgl
 {
@@ -16,7 +17,6 @@ namespace Sgl
 
 		virtual const std::type_info& Type() const = 0;
 		virtual IValueContainer* Copy() const = 0;
-		virtual void CopyFrom(IValueContainer& valueContainer) = 0;
 
 		template<typename T>
 		T& Get() { return static_cast<ValueContainer<T>*>(this)->Value; }
@@ -38,11 +38,6 @@ namespace Sgl
 
 		const std::type_info& Type() const override { return typeid(Value); }
 		IValueContainer* Copy() const override { return new ValueContainer<T>(*this); }
-
-		void CopyFrom(IValueContainer& valueContainer) override
-		{
-			Value = valueContainer.Get<T>();
-		}
 	};
 
 	class Any final
@@ -79,9 +74,7 @@ namespace Sgl
 
 		template<typename T>
 		bool Is() const { return Type() == typeid(T); }
-
 		bool Is(const std::type_info& type) const { return Type() == type; }
-
 		bool Is(std::string_view type) const { return Type().name() == type; }
 
 		template<typename T>
@@ -91,10 +84,16 @@ namespace Sgl
 		const T& As() const { return _value->Get<T>(); }
 
 		template<typename T>
-		T* TryAs() { return HasValue() && Is<T>() ? &_value->Get<T>() : nullptr; }
+		Nullable<T> TryAs()
+		{
+			return HasValue() && Is<T>() ? &_value->Get<T>() : nullptr;
+		}
 
 		template<typename T>
-		const T* TryAs() const { return HasValue() && Is<T>() ? &_value->Get<T>() : nullptr; }
+		Nullable<const T> TryAs() const
+		{ 
+			return HasValue() && Is<T>() ? &_value->Get<T>() : nullptr;
+		}
 
 		template<typename T>
 		const T& TryAs(T&& defaultValue) const
@@ -110,22 +109,6 @@ namespace Sgl
 		}
 	
 		bool HasValue() const noexcept { return _value; }
-
-		void CopyValue(const Any& object)
-		{
-			_value->CopyFrom(*object._value);
-		}
-
-		bool TryCopyValue(const Any& object) noexcept
-		{
-			if(object.HasValue() && object.Is(Type()))
-			{
-				_value->CopyFrom(*object._value);
-				return true;
-			}
-
-			return false;
-		}
 
 		template<typename T> requires (!std::is_same_v<std::decay_t<T>, Any>)
 		Any& operator=(T&& value)
@@ -145,8 +128,7 @@ namespace Sgl
 		Any& operator=(Any&& any) noexcept
 		{
 			delete _value;
-			_value = any._value;
-			any._value = nullptr;
+			_value = std::exchange(any._value, nullptr);
 			return *this;
 		}
 

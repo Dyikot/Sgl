@@ -7,7 +7,7 @@ namespace Sgl
 	{
 	public:
 		uint8_t R, G, B, A;
-	protected:
+	private:
 		static constexpr uint8_t Opaque = 0xff;
 		static constexpr uint8_t Transparent = 0x00;
 	public:
@@ -27,6 +27,7 @@ namespace Sgl
 		{
 			return R == color.R && G == color.G && B == color.B;
 		}
+
 		constexpr bool operator!=(Color color) const { return !operator==(color); }
 		constexpr operator SDL_Color() const { return SDL_Color{ R, G, B, A }; }
 	};
