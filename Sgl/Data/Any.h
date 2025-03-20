@@ -62,11 +62,9 @@ namespace Sgl
 			_value(any._value->Copy())
 		{}
 
-		Any(Any&& any) noexcept
-		{
-			_value = any._value;
-			any._value = nullptr;
-		}
+		Any(Any&& any) noexcept:
+			_value(std::exchange(any._value, nullptr))
+		{}
 
 		~Any() noexcept { delete _value; }
 
@@ -84,28 +82,15 @@ namespace Sgl
 		const T& As() const { return _value->Get<T>(); }
 
 		template<typename T>
-		Nullable<T> TryAs()
+		Nullable<T> TryAs() noexcept
 		{
 			return HasValue() && Is<T>() ? &_value->Get<T>() : nullptr;
 		}
 
 		template<typename T>
-		Nullable<const T> TryAs() const
+		Nullable<const T> TryAs() const noexcept
 		{ 
 			return HasValue() && Is<T>() ? &_value->Get<T>() : nullptr;
-		}
-
-		template<typename T>
-		const T& TryAs(T&& defaultValue) const
-		{
-			if(const T* result = TryAs<T>(); result)
-			{
-				return *result;
-			}
-			else
-			{
-				return defaultValue;
-			}
 		}
 	
 		bool HasValue() const noexcept { return _value; }
@@ -114,7 +99,7 @@ namespace Sgl
 		Any& operator=(T&& value)
 		{
 			delete _value;
-			_value = new ValueContainer<T>(std::forward<T>(value));
+			_value = new ValueContainer<std::decay_t<T>>(std::forward<T>(value));
 			return *this;
 		}
 

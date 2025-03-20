@@ -4,7 +4,7 @@
 #include "../Graphic/IVisual.h"
 #include "../Events/Event.h"
 #include "../Style/Style.h"
-#include "../Binding/BindableObject.h"
+#include "../Data/Binding/BindableObject.h"
 #include "../Graphic/Cursor.h"
 
 namespace Sgl
