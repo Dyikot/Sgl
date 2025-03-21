@@ -7,7 +7,7 @@
 namespace Sgl
 {
 	template<typename TObject, typename TEventArgs> requires std::derived_from<TEventArgs, EventArgs>
-	using EventHandler = std::function<void(TObject*, const TEventArgs&)>;
+	using EventHandler = std::function<void(TObject&, const TEventArgs&)>;
 
 	template<typename T>
 	class Event;
@@ -22,7 +22,7 @@ namespace Sgl
 	public:
 		void Clear() noexcept { _eventHandlers.clear(); }
 
-		void TryInvoke(TObject* sender, const TEventArgs& e) const noexcept
+		void TryInvoke(TObject& sender, const TEventArgs& e) const noexcept
 		{
 			if(operator bool())
 			{
@@ -80,7 +80,7 @@ namespace Sgl
 
 		operator bool() const noexcept { return !_eventHandlers.empty(); }
 
-		void operator()(TObject* sender, const TEventArgs& e) const
+		void operator()(TObject& sender, const TEventArgs& e) const
 		{
 			for(const EventHandler& eventHandler : _eventHandlers)
 			{

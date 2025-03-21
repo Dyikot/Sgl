@@ -101,14 +101,14 @@ namespace Sgl
 	void Application::OnStartup(const EventArgs& e)
 	{
 		_running = true;
-		Startup.TryInvoke(this, e);
+		Startup.TryInvoke(*this, e);
 	}
 
 	void Application::OnQuit(const EventArgs& e)
 	{
 		_window = nullptr;
 		_running = false;
-		Quit.TryInvoke(this, e);
+		Quit.TryInvoke(*this, e);
 	}
 
 	void Application::HandleEvents()

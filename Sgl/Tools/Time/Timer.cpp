@@ -65,7 +65,7 @@ namespace Sgl
 
 		if(_elapsed)
 		{
-			Elapsed.TryInvoke(this, TimeElapsedEventArgs{.Duration = _duration });
+			Elapsed.TryInvoke(*this, TimeElapsedEventArgs{.Duration = _duration });
 		}
 	}
 }
