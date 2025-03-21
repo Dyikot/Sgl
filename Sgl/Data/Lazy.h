@@ -1,6 +1,6 @@
 #pragma once
 
-#include <optional>
+#include <memory>
 #include <functional>
 
 namespace Sgl
@@ -9,12 +9,15 @@ namespace Sgl
 	class Lazy
 	{
 	private:
-		mutable std::optional<T> _value;
+		mutable std::unique_ptr<T> _value;
 		std::function<T()> _valueFactory;
 	public:
 		Lazy():
 			_valueFactory([] { return T{}; })
 		{}
+
+		Lazy(const Lazy&) = delete;
+		Lazy(Lazy&&) = delete;
 
 		template<typename TInvocable>
 			requires std::is_invocable_r_v<T, TInvocable>
@@ -23,33 +26,28 @@ namespace Sgl
 		{}
 
 		template<typename TValue>
-			requires std::constructible_from<T, TValue> && !std::is_reference_v<TValue>
+			requires std::constructible_from<T, TValue> && (!std::is_reference_v<TValue>)
 		Lazy(TValue&& value) :
 			_valueFactory([v = std::forward<TValue>(value)] { return v; })
 		{}
 
-		Lazy(Lazy&& other) noexcept:
-			_value(std::exchange(other._value, std::nullopt)),
-			_valueFactory(std::move(other._valueFactory))
-		{}
-
-		const T& Value() const
+		T& Value()
 		{
 			if(!_value)
 			{
-				_value = _valueFactory();
+				_value = std::make_unique<T>(_valueFactory());
 			}
 
-			return _value.value();
+			return *_value;
 		}
 
+		const T& Value() const { return Value(); }
 		bool IsValueCreated() const { return _value; }
 
-		Lazy& operator=(Lazy&& other) noexcept
-		{
-			_value = std::exchange(other._value, std::nullopt);
-			_valueFactory = std::move(other._valueFactory);
-			return *this;
-		}
+		operator T& () { return Value(); }
+		operator const T& () const { return Value(); }
+
+		T* operator->() { return &Value(); }
+		const T* operator->() const { return &Value(); }
 	};
 }
