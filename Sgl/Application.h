@@ -20,7 +20,6 @@ namespace Sgl
 	{
 	public:
 		AudioManager AudioManager;
-		std::function<void(Window&)> WindowConfigurator;
 	protected:
 		static constexpr size_t MaxFrameRate = 360;
 
@@ -45,6 +44,8 @@ namespace Sgl
 		Event<ApplicationEventHandler> Quit;
 
 		void Run();
+		void Run(Window& window);
+		void Run(const std::function<void(Window&)>& windowFactory);
 		void Shutdown() noexcept;
 		bool IsRunning() const { return _running; }
 	protected:
@@ -54,5 +55,6 @@ namespace Sgl
 		void HandleEvents();
 	private:
 		void Start();
+		void OnRun();
 	};
 } 

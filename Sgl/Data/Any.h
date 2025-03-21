@@ -7,41 +7,39 @@
 
 namespace Sgl
 {
-	template<typename T>
-	class ValueContainer;
-
-	class IValueContainer
-	{
-	public:
-		virtual ~IValueContainer() = default;
-
-		virtual const std::type_info& Type() const = 0;
-		virtual IValueContainer* Copy() const = 0;
-
-		template<typename T>
-		T& Get() { return static_cast<ValueContainer<T>*>(this)->Value; }
-
-		template<typename T>
-		const T& Get() const { return static_cast<ValueContainer<T>*>(this)->Value; }
-	};
-
-	template<typename T>
-	class ValueContainer: public IValueContainer
-	{
-	public:
-		T Value;
-	public:
-		template<typename... TArgs>
-		ValueContainer(TArgs&&... args):
-			Value(std::forward<TArgs>(args)...)
-		{}
-
-		const std::type_info& Type() const override { return typeid(Value); }
-		IValueContainer* Copy() const override { return new ValueContainer<T>(*this); }
-	};
-
 	class Any final
 	{
+	private:
+		template<typename T>
+		struct ValueContainer;
+
+		struct IValueContainer
+		{
+			virtual ~IValueContainer() = default;
+
+			virtual const std::type_info& Type() const = 0;
+			virtual IValueContainer* Copy() const = 0;
+
+			template<typename T>
+			T& Get() { return static_cast<ValueContainer<T>*>(this)->Value; }
+
+			template<typename T>
+			const T& Get() const { return static_cast<ValueContainer<T>*>(this)->Value; }
+		};
+
+		template<typename T>
+		struct ValueContainer: public IValueContainer
+		{
+			T Value;
+
+			template<typename... TArgs>
+			ValueContainer(TArgs&&... args):
+				Value(std::forward<TArgs>(args)...)
+			{}
+
+			const std::type_info& Type() const override { return typeid(Value); }
+			IValueContainer* Copy() const override { return new ValueContainer<T>(*this); }
+		};
 	public:
 		template<typename TValue, typename... TArgs>
 		static Any New(TArgs&&... args)

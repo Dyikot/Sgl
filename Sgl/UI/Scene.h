@@ -63,10 +63,10 @@ namespace Sgl
 		}
 
 		template<typename TScene> requires std::derived_from<TScene, Scene>
-		void Load(const std::function<void(Scene&)>& configurator)
+		void Load(const std::function<void(Scene&)>& sceneFactory)
 		{
 			_scenesQueue.push(std::make_shared<TScene>(Window));
-			configurator(*_scenesQueue.back());
+			sceneFactory(*_scenesQueue.back());
 		}
 
 		void Unload();

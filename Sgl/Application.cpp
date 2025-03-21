@@ -57,15 +57,40 @@ namespace Sgl
 		{
 			return;
 		}
-		
+
 		Window window(*this);
 		_window = &window;
-		WindowConfigurator(window);
 		window.Show();
 
-		OnStartup(EventArgs());
-		Start();
-		OnQuit(EventArgs());
+		OnRun();
+	}
+
+	void Application::Run(Window& window)
+	{
+		if(_running)
+		{
+			return;
+		}
+
+		_window = &window;
+		window.Show();
+
+		OnRun();
+	}
+
+	void Application::Run(const std::function<void(Window&)>& windowFactory)
+	{
+		if(_running)
+		{
+			return;
+		}
+
+		Window window(*this);
+		_window = &window;
+		windowFactory(window);
+		window.Show();
+
+		OnRun();
 	}
 
 	void Application::Shutdown() noexcept
@@ -140,5 +165,12 @@ namespace Sgl
 				SleepFor(_maxFrameTime.value() - delayStopwatch.Elapsed());
 			}
 		}
+	}
+
+	void Application::OnRun()
+	{
+		OnStartup(EventArgs());
+		Start();
+		OnQuit(EventArgs());
 	}
 }

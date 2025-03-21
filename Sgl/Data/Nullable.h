@@ -3,7 +3,7 @@
 namespace Sgl
 {
 	template<typename T>
-	class Nullable
+	class Nullable final
 	{
 	private:
 		T* _value = nullptr;
