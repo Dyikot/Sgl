@@ -32,8 +32,6 @@ namespace Sgl
                 return;
             }
         }
-
-        return;
     }
 
     void ComponentsCollection::OnMouseDown(const MouseButtonEventArgs& e)

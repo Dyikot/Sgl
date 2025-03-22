@@ -18,7 +18,7 @@ namespace Sgl
 								public IVisual
 	{
 	public:
-		Component* HoverComponent = nullptr;
+		Nullable<Component> HoverComponent;
 	public:
 		void OnMouseMove(const MouseButtonEventArgs& e);
 		void OnMouseDown(const MouseButtonEventArgs& e);

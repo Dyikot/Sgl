@@ -109,51 +109,35 @@ namespace Sgl
 		return ComputeEllipsePoints(360, position, width, height);
 	}
 
-	const std::vector<float>& Math::GetSin360()
+	std::vector<float> Math::ComputeSin(size_t number)
 	{
-		if(_sin360.empty())
-		{
-			ComputeSin(360, _sin360);
-		}
-
-		return _sin360;
-	}
-
-	const std::vector<float>& Math::GetCos360()
-	{
-		if(_cos360.empty())
-		{
-			ComputeCos(360, _cos360);
-		}
-
-		return _cos360;
-	}
-
-	void Math::ComputeSin(size_t number, std::vector<float>& source)
-	{
-		source.resize(number);
+		std::vector<float> result(number);
 		const float Step = 2 * std::numbers::pi / number;
 		for(int i = 0; i < number; i++)
 		{
-			source[i] = sinf(Step * i);
+			result[i] = sinf(Step * i);
 		}
+
+		return result;
 	}
 
-	void Math::ComputeCos(size_t number, std::vector<float>& source)
+	std::vector<float> Math::ComputeCos(size_t number)
 	{
-		source.resize(number);
+		std::vector<float> result(number);
 		const float Step = 2 * std::numbers::pi / number;
 		for(int i = 0; i < number; i++)
 		{
-			source[i] = cosf(Step * i);
+			result[i] = cosf(Step * i);
 		}
+
+		return result;
 	}
 
 	std::vector<SDL_FPoint> Math::ComputeEllipsePoints(size_t number, SDL_FPoint position,
 													   int width, int height)
 	{
-		const auto& sin = GetSin360();
-		const auto& cos = GetCos360();
+		const std::vector<float>& sin = Sin360;
+		const std::vector<float>& cos = Cos360;
 		const size_t AngleStep = 360 / number;
 		const float Step = 2 * std::numbers::pi / number;
 		size_t angle = 0;

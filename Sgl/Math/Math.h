@@ -13,22 +13,20 @@
 #include "SDL/SDL_rect.h"
 #include "SDL/SDL_render.h"
 #include "../Graphic/Color.h"
+#include "../Data/Lazy.h"
 
 namespace Sgl
 {
 	class Math
 	{		
-	private:
-		static inline std::vector<float> _sin360;
-		static inline std::vector<float> _cos360;
 	public:
 		static std::vector<int> TriangulateConvexShape(std::span<SDL_FPoint> points);
 		static std::vector<int> TriangulateConvexShape(std::span<SDL_FPoint> points, SDL_FPoint center);
 		static std::vector<SDL_FPoint> Compute90EllipsePoints(SDL_FPoint position, int width, int height);
 		static std::vector<SDL_FPoint> Compute180EllipsePoints(SDL_FPoint position, int width, int height);
 		static std::vector<SDL_FPoint> Compute360EllipsePoints(SDL_FPoint position, int width, int height);
-		static const std::vector<float>& GetSin360();
-		static const std::vector<float>& GetCos360();
+		static std::vector<float> ComputeSin(size_t number);
+		static std::vector<float> ComputeCos(size_t number);
 
 		static std::vector<SDL_Vertex> ToSDLVertexVector(std::span<SDL_FPoint> points, Sgl::Color color)
 		{
@@ -49,11 +47,12 @@ namespace Sgl
 		static constexpr float TriangleArea(SDL_FPoint a, SDL_FPoint b, SDL_FPoint c)
 		{
 			return (a.x * (b.y - c.y) + b.x * (c.y - a.y) + c.x * (a.y - b.y)) / 2.f;
-		}
+		}		
 	private:
-		static void ComputeSin(size_t number, std::vector<float>& source);
-		static void ComputeCos(size_t number, std::vector<float>& source);
 		static std::vector<SDL_FPoint> ComputeEllipsePoints(size_t number, SDL_FPoint position,
 															int width, int height);
+	public:
+		static inline Lazy<std::vector<float>> Sin360 = std::bind_front(&Math::ComputeSin, 360);
+		static inline Lazy<std::vector<float>> Cos360 = std::bind_front(&Math::ComputeCos, 360);
 	};
 }
