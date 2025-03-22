@@ -35,11 +35,10 @@ namespace Sgl
 			}
 		}
 
-		Cursor(Cursor&& cursor) noexcept:
-			_cursor(cursor._cursor)
-		{
-			cursor._cursor = nullptr;
-		}
+		Cursor(const Cursor&) = delete;
+		Cursor(Cursor&& other) noexcept:
+			_cursor(std::exchange(other._cursor, nullptr))
+		{}
 
 		~Cursor() noexcept
 		{
@@ -50,10 +49,10 @@ namespace Sgl
 		}
 
 		operator SDL_Cursor* () const { return _cursor; }
-		Cursor& operator=(Cursor&& cursor) noexcept
+
+		Cursor& operator=(Cursor&& other) noexcept
 		{
-			_cursor = cursor._cursor;
-			cursor._cursor = nullptr;
+			_cursor = std::exchange(other._cursor, nullptr);
 			return *this;
 		}
 	};

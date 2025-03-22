@@ -12,11 +12,12 @@ namespace Sgl
 		explicit Surface(std::string_view path);
 		explicit Surface(SDL_Surface* surface);
 		Surface(const Surface& surface) = delete;
-		Surface(Surface&& surface) = delete;
+		Surface(Surface&& other) noexcept;
 		~Surface() noexcept;
 
 		std::pair<size_t, size_t> Size() const;
 
 		operator SDL_Surface* () const { return _surface; }
+		Surface& operator=(Surface&& other) noexcept;
 	};
 }

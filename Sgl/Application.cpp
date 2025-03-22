@@ -42,40 +42,18 @@ namespace Sgl
 
 	void Application::SetMaxFrameRate(size_t value)
 	{
-		_maxFrameRate = value > MaxFrameRate ? MaxFrameRate : value;
+		_maxFrameRate = value;
 		_maxFrameTime = TimeSpan(1e9 / _maxFrameRate.value());
 	}
 
-	Window* Application::GetWindow() const
+	Nullable<Window> Application::GetWindow() const
 	{
 		return _window;
 	}
 
 	void Application::Run()
 	{
-		if(_running)
-		{
-			return;
-		}
-
-		Window window(*this);
-		_window = &window;
-		window.Show();
-
-		OnRun();
-	}
-
-	void Application::Run(Window& window)
-	{
-		if(_running)
-		{
-			return;
-		}
-
-		_window = &window;
-		window.Show();
-
-		OnRun();
+		Run(nullptr);
 	}
 
 	void Application::Run(const std::function<void(Window&)>& windowFactory)
@@ -87,10 +65,17 @@ namespace Sgl
 
 		Window window(*this);
 		_window = &window;
-		windowFactory(window);
+		
+		if(windowFactory)
+		{
+			windowFactory(window);
+		}
+
 		window.Show();
 
-		OnRun();
+		OnStartup(EventArgs());
+		Start();
+		OnQuit(EventArgs());
 	}
 
 	void Application::Shutdown() noexcept
@@ -165,12 +150,5 @@ namespace Sgl
 				SleepFor(_maxFrameTime.value() - delayStopwatch.Elapsed());
 			}
 		}
-	}
-
-	void Application::OnRun()
-	{
-		OnStartup(EventArgs());
-		Start();
-		OnQuit(EventArgs());
 	}
 }

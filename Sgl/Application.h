@@ -21,30 +21,27 @@ namespace Sgl
 	public:
 		AudioManager AudioManager;
 	protected:
-		static constexpr size_t MaxFrameRate = 360;
-
 		std::optional<size_t> _maxFrameRate;
 		std::optional<TimeSpan> _maxFrameTime;
 	private:
-		inline static Application* _current = nullptr;
-		Window* _window = nullptr;
+		inline static Nullable<Application> _current;
+		Nullable<Window> _window;
 		bool _running = false;
 	public:
 		Application() noexcept;
 		~Application() noexcept;
 
-		static Application* Current() { return _current; }
+		static Nullable<Application> Current() { return _current; }
 
 		void SetMaxFrameRate(size_t value);
 
-		Window* GetWindow() const;
+		Nullable<Window> GetWindow() const;
 		std::optional<size_t> GetMaxFrameRate() const { return _maxFrameRate; }
 
 		Event<ApplicationEventHandler> Startup;
 		Event<ApplicationEventHandler> Quit;
 
 		void Run();
-		void Run(Window& window);
 		void Run(const std::function<void(Window&)>& windowFactory);
 		void Shutdown() noexcept;
 		bool IsRunning() const { return _running; }
@@ -55,6 +52,5 @@ namespace Sgl
 		void HandleEvents();
 	private:
 		void Start();
-		void OnRun();
 	};
 } 

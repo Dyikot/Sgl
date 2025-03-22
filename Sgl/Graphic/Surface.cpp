@@ -16,6 +16,10 @@ namespace Sgl
 		_surface(surface)
 	{}
 
+	Surface::Surface(Surface&& other) noexcept:
+		_surface(std::exchange(other._surface, nullptr))
+	{}
+
 	Surface::~Surface() noexcept
 	{
 		if(_surface)
@@ -27,5 +31,11 @@ namespace Sgl
 	std::pair<size_t, size_t> Surface::Size() const
 	{
 		return std::pair{ _surface->w, _surface->h };
+	}
+
+	Surface& Surface::operator=(Surface&& other) noexcept
+	{
+		_surface = std::exchange(other._surface, nullptr);
+		return *this;
 	}
 }
