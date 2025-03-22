@@ -17,12 +17,11 @@ namespace Sgl
 		int64_t EndIndex;
 	};
 
-	using NofityEventHandler = EventHandler<void, NotifyEventArgs>;
-
 	template<typename T>
 	class NotifiableCollection: public std::vector<T>
 	{
 	public:
+		using NofityEventHandler = EventHandler<NotifiableCollection<T>, NotifyEventArgs>;
 		using Base = std::vector<T>;
 	public:
 		NotifiableCollection() = default;
@@ -43,7 +42,7 @@ namespace Sgl
 			Base(initList)
 		{}
 
-		template<typename TIterator> requires std::_Is_iterator_v<TIterator>
+		template<typename TIterator>
 		NotifiableCollection(TIterator first, TIterator last):
 			Base(first, last)
 		{}
@@ -282,10 +281,7 @@ namespace Sgl
 	protected:
 		void OnChanged(const NotifyEventArgs& e)
 		{
-			if(Changed)
-			{
-				Changed(this, e);
-			}
+			Changed.TryInvoke(*this, e);
 		}
 	};
 }

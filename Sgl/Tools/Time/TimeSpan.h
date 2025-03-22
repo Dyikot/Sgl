@@ -19,27 +19,27 @@ namespace Sgl
 
 		static constexpr TimeSpan FromMicroseconds(long long value)
 		{
-			return TimeSpan(value * 1e3f);
+			return TimeSpan(value * 1e3);
 		}
 
 		static constexpr TimeSpan FromMilliseconds(long long value)
 		{
-			return TimeSpan(value * 1e6f);
+			return TimeSpan(value * 1e6);
 		}
 
 		static constexpr TimeSpan FromSeconds(long long value)
 		{
-			return TimeSpan(value * 1e9f);
+			return TimeSpan(value * 1e9);
 		}
 
 		static constexpr TimeSpan FromMinutes(long long value)
 		{
-			return TimeSpan(value * 60e9f);
+			return TimeSpan(value * 60e9);
 		}
 
 		static constexpr TimeSpan FromHours(long long value)
 		{
-			return TimeSpan(value * 3600e9f);
+			return TimeSpan(value * 3600e9);
 		}
 
 		static constexpr TimeSpan Zero() { return TimeSpan(0); }

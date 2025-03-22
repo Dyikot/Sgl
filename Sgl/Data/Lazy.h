@@ -19,11 +19,7 @@ namespace Sgl
 		struct ValueFactory: public IValueFactory
 		{
 			TInvocable Invocable;
-
-			ValueFactory(TInvocable&& invocable):
-				Invocable(std::forward<TInvocable>(invocable))
-			{}
-
+			ValueFactory(TInvocable&& invocable): Invocable(std::forward<TInvocable>(invocable)) {}
 			T operator()() const override { return Invocable(); }
 		};
 
@@ -50,8 +46,8 @@ namespace Sgl
 		Lazy(TValue&& value)
 		{
 			auto f = [v = std::forward<TValue>(value)] { return v; };
-			_valueFactory = std::make_unique<ValueFactory<decltype(f)>>(
-				std::forward<decltype(f)>(f));
+			using F = decltype(f);
+			_valueFactory = std::make_unique<ValueFactory<F>>(std::forward<F>(f));
 		}
 
 		T& Value()

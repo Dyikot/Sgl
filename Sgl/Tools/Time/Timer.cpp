@@ -6,7 +6,7 @@ using namespace std::chrono;
 namespace Sgl
 {
 	Timer::Timer(TimeSpan timespan) noexcept:
-		_duration(timespan)
+		Duration(timespan)
 	{}
 
 	Timer::~Timer()
@@ -54,7 +54,7 @@ namespace Sgl
 		std::mutex mutex;
 
 		_stopwatch.Start();
-		nanoseconds waitDuration((_duration - _stopwatch.Elapsed()).Nanoseconds());
+		nanoseconds waitDuration((Duration - _stopwatch.Elapsed()).Nanoseconds());
 
 		std::unique_lock<std::mutex> lock(mutex);
 		_conditionVariable.wait_for(lock, waitDuration,
@@ -65,7 +65,7 @@ namespace Sgl
 
 		if(_elapsed)
 		{
-			Elapsed.TryInvoke(*this, TimeElapsedEventArgs{.Duration = _duration });
+			Elapsed.TryInvoke(*this, TimeElapsedEventArgs{.Duration = Duration });
 		}
 	}
 }

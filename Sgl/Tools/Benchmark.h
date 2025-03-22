@@ -1,9 +1,8 @@
 #pragma once
 
-#include <chrono>
 #include <format>
 #include <iostream>
-#include <functional>
+#include "Time/Stopwatch.h"
 
 namespace Sgl
 {
@@ -14,9 +13,9 @@ namespace Sgl
 		std::string _name = "Benchmark";
 	public:
 		static Benchmark New() { return Benchmark(); }
-		static Benchmark New(size_t loops) { return Benchmark(loops); }
-		static Benchmark New(const std::string name) { return Benchmark(name); }
-		static Benchmark New(const std::string name, size_t loops) { return Benchmark(name, loops); }
+		static Benchmark New(size_t loops) { return Benchmark("Benchmark", loops); }
+		static Benchmark New(const std::string& name) { return Benchmark(name, 1); }
+		static Benchmark New(const std::string& name, size_t loops) { return Benchmark(name, loops); }
 
 		template<typename TInvocable, typename... TArgs> 
 			requires std::invocable<TInvocable, TArgs...>
@@ -36,20 +35,11 @@ namespace Sgl
 		}
 	private:
 		Benchmark() = default;
-
-		Benchmark(const std::string& name):
-			_name(name)
-		{}
-
-		Benchmark(size_t loops):
-			_loops(loops)
-		{}
+		Benchmark(const Benchmark&) = delete;
+		Benchmark(Benchmark&&) = delete;
 
 		Benchmark(const std::string& name, size_t loops):
 			_name(name), _loops(loops)
-		{}
-
-		Benchmark(const Benchmark&) = delete;
-		Benchmark(Benchmark&&) = delete;
+		{}		
 	};
 }

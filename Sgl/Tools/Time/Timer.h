@@ -1,6 +1,5 @@
 #pragma once
 
-#include <chrono>
 #include <future>
 #include "../../Events/Event.h"
 #include "Stopwatch.h"
@@ -12,15 +11,17 @@ namespace Sgl
 		TimeSpan Duration;
 	};
 
+	class Timer;
+	using TimeElapsedHandler = EventHandler<Timer, TimeElapsedEventArgs>;
+
 	class Timer
 	{
 	public:
-		using TimeElapsedHandler = EventHandler<Timer, TimeElapsedEventArgs>;
+		const TimeSpan Duration;
 	private:
 		bool _paused = true;
 		bool _elapsed = false;
 		Stopwatch _stopwatch;
-		const TimeSpan _duration;
 		std::thread _thread;
 		std::condition_variable _conditionVariable;
 	public:

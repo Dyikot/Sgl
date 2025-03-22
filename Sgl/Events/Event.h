@@ -41,14 +41,14 @@ namespace Sgl
 			requires std::invocable<TCallable, const TEventArgs&>
 		void operator+=(TCallable&& callable)
 		{
-			_eventHandlers.emplace_front([callable](TObject* object, const TEventArgs& e) { callable(e); });
+			_eventHandlers.emplace_front([callable](TObject& sender, const TEventArgs& e) { callable(e); });
 		}
 
 		template<typename TCallable>
 			requires std::invocable<TCallable>
 		void operator+=(TCallable&& callable)
 		{
-			_eventHandlers.emplace_front([callable](TObject* object, const TEventArgs& e) { callable(); });
+			_eventHandlers.emplace_front([callable](TObject& sender, const TEventArgs& e) { callable(); });
 		}
 
 		void operator+=(EventHandler&& eventHandler)

@@ -9,6 +9,8 @@ class Log
 public:
 	static void PrintSDLError()
 	{
+		#ifdef _DEBUG
 		std::cout << std::format("SDL error: {}\n", SDL_GetError());
+		#endif // _DEBUG
 	}
 };

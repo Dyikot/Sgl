@@ -1,4 +1,5 @@
 #pragma once
+
 #include "TimeSpan.h"
 #include <chrono>
 

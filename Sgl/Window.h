@@ -94,6 +94,5 @@ namespace Sgl
 		operator SDL_Window* () const { return _this; }
 	private:
 		friend class Application;
-		friend class WindowBuilder;
 	};
 }
