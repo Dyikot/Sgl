@@ -29,24 +29,24 @@ namespace Sgl
 	class Component: public UIElement
 	{
 	public:
-		static inline const PropertyId WidthProperty = PropertyManager::Register<float>("Width");
-		static inline const PropertyId HeightProperty = PropertyManager::Register<float>("Height");
-		static inline const PropertyId MinWidthProperty = PropertyManager::Register<float>("MinWidth");
-		static inline const PropertyId MinHeightProperty = PropertyManager::Register<float>("MinHeight");
-		static inline const PropertyId MaxWidthProperty = PropertyManager::Register<float>("MaxWidth");
-		static inline const PropertyId MaxHeightProperty = PropertyManager::Register<float>("MaxHeight");
-		static inline const PropertyId ZIndexProperty = PropertyManager::Register<size_t>("ZIndex");
-		static inline const PropertyId MarginProperty = PropertyManager::Register<Thikness>("Margin");
-		static inline const PropertyId ToolTipProperty = PropertyManager::Register<const Component*>("ToolTip");
-		static inline const PropertyId HorizontalAlignmentProperty = PropertyManager::Register<HorizontalAlignment>("HorizontalAlignment");
-		static inline const PropertyId VerticalAligmentProperty = PropertyManager::Register<VerticalAligment>("VerticalAligment");
-		static inline const PropertyId VisibilityProperty = PropertyManager::Register<Visibility>("Visibility");
-		static inline const PropertyId BorderColorProperty = PropertyManager::Register<Color>("BorderColor");
-		static inline const PropertyId BorderThiknessProperty = PropertyManager::Register<Thikness>("BorderThikness");
-		static inline const PropertyId FontFamilyProperty = PropertyManager::Register<FontFamily>("FontFamily");
-		static inline const PropertyId FontWeightProperty = PropertyManager::Register<FontWeight>("FontWeight");
-		static inline const PropertyId FontColorProperty = PropertyManager::Register<Color>("FontColor");
-		static inline const PropertyId FontSizeProperty = PropertyManager::Register<uint16_t>("FontSize");
+		static constexpr PropertyId WidthProperty = PropertyId::Register<float>("Width");
+		static constexpr PropertyId HeightProperty = PropertyId::Register<float>("Height");
+		static constexpr PropertyId MinWidthProperty = PropertyId::Register<float>("MinWidth");
+		static constexpr PropertyId MinHeightProperty = PropertyId::Register<float>("MinHeight");
+		static constexpr PropertyId MaxWidthProperty = PropertyId::Register<float>("MaxWidth");
+		static constexpr PropertyId MaxHeightProperty = PropertyId::Register<float>("MaxHeight");
+		static constexpr PropertyId ZIndexProperty = PropertyId::Register<size_t>("ZIndex");
+		static constexpr PropertyId MarginProperty = PropertyId::Register<Thikness>("Margin");
+		static constexpr PropertyId ToolTipProperty = PropertyId::Register<const Component*>("ToolTip");
+		static constexpr PropertyId HorizontalAlignmentProperty = PropertyId::Register<HorizontalAlignment>("HorizontalAlignment");
+		static constexpr PropertyId VerticalAligmentProperty = PropertyId::Register<VerticalAligment>("VerticalAligment");
+		static constexpr PropertyId VisibilityProperty = PropertyId::Register<Visibility>("Visibility");
+		static constexpr PropertyId BorderColorProperty = PropertyId::Register<Color>("BorderColor");
+		static constexpr PropertyId BorderThiknessProperty = PropertyId::Register<Thikness>("BorderThikness");
+		static constexpr PropertyId FontFamilyProperty = PropertyId::Register<FontFamily>("FontFamily");
+		static constexpr PropertyId FontWeightProperty = PropertyId::Register<FontWeight>("FontWeight");
+		static constexpr PropertyId FontColorProperty = PropertyId::Register<Color>("FontColor");
+		static constexpr PropertyId FontSizeProperty = PropertyId::Register<uint16_t>("FontSize");
 
 		static constexpr uint16_t DefaultFontSize = 14;
 

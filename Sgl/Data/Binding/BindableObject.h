@@ -3,7 +3,7 @@
 #include <functional>
 #include <assert.h>
 #include "../Any.h"
-#include "PropertyManager.h"
+#include "PropertyId.h"
 
 namespace Sgl
 {
@@ -12,7 +12,7 @@ namespace Sgl
 	public:
 		virtual ~IBindingSource() = default;
 
-		virtual void Update(PropertyId id) = 0;
+		virtual void Update(const PropertyId& id) = 0;
 	};
 
 	class IBindingTarget
@@ -45,7 +45,7 @@ namespace Sgl
 	public:
 		virtual ~BindableObject() = default;
 
-		void Update(PropertyId id)
+		void Update(const PropertyId& id)
 		{
 			if(auto found = _bindings.find(id); found != _bindings.end() && !found->second.IsLock)
 			{
@@ -54,9 +54,9 @@ namespace Sgl
 		}
 
 		template<typename TData, typename TMember>
-		void Bind(PropertyId id, TData& data, Setter<TData, TMember> setter)
+		void Bind(const PropertyId& id, TData& data, Setter<TData, TMember> setter)
 		{
-			assert(PropertyManager::GetTypeNameBy(id) == typeid(TMember).name());
+			static_assert(id.Type == typeid(TMember));
 
 			_bindings[id].UpdateTarget = [this, setter, &data, id]()
 			{
@@ -65,9 +65,9 @@ namespace Sgl
 		}
 
 		template<typename TData, typename TMember> requires std::derived_from<TData, IBindingTarget>
-		void Bind(PropertyId id, TData& data, Getter<TData, TMember> getter)
+		void Bind(const PropertyId& id, TData& data, Getter<TData, TMember> getter)
 		{
-			assert(PropertyManager::GetTypeNameBy(id) == typeid(TMember).name());
+			static_assert(id.Type == typeid(TMember));
 
 			data.AddSource(*this);
 
@@ -78,7 +78,7 @@ namespace Sgl
 		}
 
 		template<typename TData, typename TMember>
-		void Bind(PropertyId id, TData& data, 
+		void Bind(const PropertyId& id, TData& data, 
 				  Setter<TData, TMember> setter,
 				  Getter<TData, TMember> getter)
 		{
@@ -87,7 +87,7 @@ namespace Sgl
 		}
 
 		template<typename TData>
-		void Unbind(PropertyId id, TData& data)
+		void Unbind(const PropertyId& id, TData& data)
 		{
 			if constexpr(std::is_base_of_v<IBindingTarget, TData>)
 			{
@@ -98,33 +98,35 @@ namespace Sgl
 		}
 	protected:
 		template<typename TValue>
-		const TValue& GetPropertyValue(PropertyId id) const
+		const TValue& GetPropertyValue(const PropertyId& id) const
 		{
 			return _properties.at(id).As<TValue>();
 		}
 
 		template<typename TValue>
-		TValue& GetPropertyValue(PropertyId id)
+		TValue& GetPropertyValue(const PropertyId& id)
 		{
 			return _properties[id].As<TValue>();
 		}
 
-		Any& GetProperty(PropertyId id) { return _properties[id]; }
-		const Any& GetProperty(PropertyId id) const { return _properties.at(id); }
+		Any& GetProperty(const PropertyId& id) { return _properties[id]; }
+		const Any& GetProperty(const PropertyId& id) const { return _properties.at(id); }
 
 		template<typename TValue>
-		void SetProperty(PropertyId id, const TValue& value)
+		void SetProperty(const PropertyId& id, const TValue& value)
 		{
 			_properties[id].As<TValue>() = value;
 			OnPropertyChanged(id);
 		}
 
 		template<typename TValue, typename... TArgs>
-		void AddProperty(PropertyId id, TArgs&&... args)
+		void AddProperty(const PropertyId& id, TArgs&&... args)
 		{
+			assert(typeid(TValue) == id.Type);
+
 			_properties.Add<TValue>(id, std::forward<TArgs>(args)...);
 		}
 
-		void OnPropertyChanged(PropertyId id);
+		void OnPropertyChanged(const PropertyId& id);
 	};
 }

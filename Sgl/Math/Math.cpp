@@ -21,8 +21,7 @@ namespace Sgl
 
 		auto previous = order.begin();
 		auto current = std::next(previous, 1);
-		auto next = std::next(current, 1);
-		
+		auto next = std::next(current, 1);		
 
 		while(order.size() > MinVerticesNumber)
 		{
@@ -33,7 +32,7 @@ namespace Sgl
 
 			if(isConvex)
 			{
-				for(int i = 0; !isTriangleContainsPoint && i < *previous; i++)
+				for(size_t i = 0; !isTriangleContainsPoint && i < *previous; i++)
 				{
 					isTriangleContainsPoint = IsTriangleContainsPoint(
 						points[*previous], points[*current], points[*next], points[i]);
@@ -113,7 +112,7 @@ namespace Sgl
 	{
 		std::vector<float> result(number);
 		const float Step = 2 * std::numbers::pi / number;
-		for(int i = 0; i < number; i++)
+		for(size_t i = 0; i < number; i++)
 		{
 			result[i] = sinf(Step * i);
 		}
@@ -125,9 +124,21 @@ namespace Sgl
 	{
 		std::vector<float> result(number);
 		const float Step = 2 * std::numbers::pi / number;
-		for(int i = 0; i < number; i++)
+		for(size_t i = 0; i < number; i++)
 		{
 			result[i] = cosf(Step * i);
+		}
+
+		return result;
+	}
+
+	std::vector<SDL_Vertex> Math::CreateVertexVector(std::span<SDL_FPoint> points, Sgl::Color color)
+	{
+		std::vector<SDL_Vertex> result(points.size());
+
+		for(size_t i = 0; i < points.size(); i++)
+		{
+			result[i] = SDL_Vertex{ points[i], color, {} };
 		}
 
 		return result;
@@ -140,11 +151,11 @@ namespace Sgl
 		const std::vector<float>& cos = Cos360;
 		const size_t AngleStep = 360 / number;
 		const float Step = 2 * std::numbers::pi / number;
-		size_t angle = 0;
-		std::vector<SDL_FPoint> points;
-		points.resize(number);
 
-		for(int i = 0; i < number; i++)
+		std::vector<SDL_FPoint> points(number);
+		size_t angle = 0;
+
+		for(size_t i = 0; i < number; i++)
 		{
 			angle = i * AngleStep;
 			points[i].x = position.x + width * cos[angle];

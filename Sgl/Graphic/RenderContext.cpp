@@ -90,7 +90,7 @@ namespace Sgl
 		auto texture = CreateTexture(path);
 		auto points = Math::Compute90EllipsePoints(position, width, height);
 		auto order = Math::TriangulateConvexShape(points, position);
-		auto vertices = Math::ToSDLVertexVector(points, color);		
+		auto vertices = Math::CreateVertexVector(points, color);		
 		vertices.back() = SDL_Vertex(position, static_cast<SDL_Color>(color), SDL_FPoint());
 
 		DrawShape(vertices, order, texture, color);
@@ -119,7 +119,7 @@ namespace Sgl
 	{
 		auto points = Math::Compute90EllipsePoints(position, width, height);
 		auto order = Math::TriangulateConvexShape(points);
-		auto vertices = Math::ToSDLVertexVector(points, color);
+		auto vertices = Math::CreateVertexVector(points, color);
 		DrawShape(vertices, order);
 	}
 

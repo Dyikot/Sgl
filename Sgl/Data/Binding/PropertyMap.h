@@ -2,37 +2,37 @@
 
 #include <format>
 #include <cassert>
-#include "../Events/Event.h"
-#include "PropertyManager.h"
-#include "../Data/Any.h"
+#include "../../Events/Event.h"
+#include "PropertyId.h"
+#include "../Any.h"
 
 namespace Sgl
 {
 	class PropertyMap: public std::unordered_map<PropertyId, Any>
 	{
 	public:
-		void Add(PropertyId id, Any&& object)
+		void Add(const PropertyId& id, Any&& object)
 		{
-			assert(object.Is(PropertyManager::GetTypeNameBy(id)));
+			assert(object.Is(id.Type));
 
 			emplace(id, std::move(object));
 		}
 
-		void Add(PropertyId id, const Any& object)
+		void Add(const PropertyId& id, const Any& object)
 		{
-			assert(object.Is(PropertyManager::GetTypeNameBy(id)));
+			assert(object.Is(id.Type));
 
 			emplace(id, object);
 		}
 
 		template<typename TValue, typename... TArgs>
-		void Add(PropertyId id, TArgs&&... args)
+		void Add(const PropertyId& id, TArgs&&... args)
 		{
 			Add(id, Any::New<TValue>(std::forward<TArgs>(args)...));
 		}
 
 		template<typename TValue>
-		bool TryGetValue(PropertyId id, TValue& value) const
+		bool TryGetValue(const PropertyId& id, TValue& value) const
 		{
 			if(contains(id))
 			{

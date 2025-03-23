@@ -2,7 +2,7 @@
 
 namespace Sgl
 {
-	void BindableObject::OnPropertyChanged(PropertyId id)
+	void BindableObject::OnPropertyChanged(const PropertyId& id)
 	{
 		if(auto found = _bindings.find(id); found != _bindings.end())
 		{

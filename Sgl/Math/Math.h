@@ -8,8 +8,6 @@
 #include <list>
 #include <span>
 #include <ranges>
-#include <algorithm>
-#include <functional>
 #include "SDL/SDL_rect.h"
 #include "SDL/SDL_render.h"
 #include "../Graphic/Color.h"
@@ -27,17 +25,7 @@ namespace Sgl
 		static std::vector<SDL_FPoint> Compute360EllipsePoints(SDL_FPoint position, int width, int height);
 		static std::vector<float> ComputeSin(size_t number);
 		static std::vector<float> ComputeCos(size_t number);
-
-		static std::vector<SDL_Vertex> ToSDLVertexVector(std::span<SDL_FPoint> points, Sgl::Color color)
-		{
-			std::vector<SDL_Vertex> result(points.size());
-			std::ranges::transform(points, result.begin(), [color](const SDL_FPoint& point)
-			{
-				return SDL_Vertex{ point, color, {} };
-			});
-			
-			return result;
-		}
+		static std::vector<SDL_Vertex> CreateVertexVector(std::span<SDL_FPoint> points, Sgl::Color color);
 
 		static constexpr float VectorProductKValue(SDL_FPoint a, SDL_FPoint b, SDL_FPoint c)
 		{

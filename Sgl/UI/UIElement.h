@@ -19,7 +19,7 @@ namespace Sgl
 	class UIElement: public BindableObject, public IVisual
 	{
 	public:
-		static inline const PropertyId CursorProperty = PropertyManager::Register<std::reference_wrapper<const Cursor>>("Cursor");
+		static constexpr PropertyId CursorProperty = PropertyId::Register<std::reference_wrapper<const Cursor>>("Cursor");
 
 		Color BackgroundColor = Colors::Black;
 		Texture* BackgroundTexture = nullptr;
