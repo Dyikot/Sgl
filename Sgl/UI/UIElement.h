@@ -4,7 +4,7 @@
 #include "../Graphic/IVisual.h"
 #include "../Events/Event.h"
 #include "../Style/Style.h"
-#include "../Data/Binding/BindableObject.h"
+#include "../Data/BindableObject.h"
 #include "../Graphic/Cursor.h"
 
 namespace Sgl
@@ -19,7 +19,7 @@ namespace Sgl
 	class UIElement: public BindableObject, public IVisual
 	{
 	public:
-		static constexpr PropertyId CursorProperty = PropertyId::Register<std::reference_wrapper<const Cursor>>("Cursor");
+		static constexpr PropertyId CursorProperty = PropertyId::New<std::reference_wrapper<const Cursor>>("Cursor");
 
 		Color BackgroundColor = Colors::Black;
 		Texture* BackgroundTexture = nullptr;
@@ -37,12 +37,12 @@ namespace Sgl
 		Event<KeyEventHandler> KeyUp;
 
 		void SetCursor(const Sgl::Cursor& value) { SetProperty(CursorProperty, std::ref(value)); }
-
 		const Cursor& GetCursor() const { return GetPropertyValue<std::reference_wrapper<const Cursor>>(CursorProperty); }
 
 		virtual void AddStyle(const Style& style);
 		virtual void SwitchCursorOn(const Cursor& cursor) = 0;
 		virtual void SwitchCursorOnDefault() = 0;
+		virtual UIElement& GetRootElement() = 0;
 	protected:
 		virtual void OnMouseDown(const MouseButtonEventArgs& e);
 		virtual void OnMouseUp(const MouseButtonEventArgs& e);

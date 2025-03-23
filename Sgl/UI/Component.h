@@ -8,6 +8,7 @@
 namespace Sgl
 {
 	class Component;
+	class Scene;
 
 	struct ZIndexComparer
 	{
@@ -29,27 +30,28 @@ namespace Sgl
 	class Component: public UIElement
 	{
 	public:
-		static constexpr PropertyId WidthProperty = PropertyId::Register<float>("Width");
-		static constexpr PropertyId HeightProperty = PropertyId::Register<float>("Height");
-		static constexpr PropertyId MinWidthProperty = PropertyId::Register<float>("MinWidth");
-		static constexpr PropertyId MinHeightProperty = PropertyId::Register<float>("MinHeight");
-		static constexpr PropertyId MaxWidthProperty = PropertyId::Register<float>("MaxWidth");
-		static constexpr PropertyId MaxHeightProperty = PropertyId::Register<float>("MaxHeight");
-		static constexpr PropertyId ZIndexProperty = PropertyId::Register<size_t>("ZIndex");
-		static constexpr PropertyId MarginProperty = PropertyId::Register<Thikness>("Margin");
-		static constexpr PropertyId ToolTipProperty = PropertyId::Register<const Component*>("ToolTip");
-		static constexpr PropertyId HorizontalAlignmentProperty = PropertyId::Register<HorizontalAlignment>("HorizontalAlignment");
-		static constexpr PropertyId VerticalAligmentProperty = PropertyId::Register<VerticalAligment>("VerticalAligment");
-		static constexpr PropertyId VisibilityProperty = PropertyId::Register<Visibility>("Visibility");
-		static constexpr PropertyId BorderColorProperty = PropertyId::Register<Color>("BorderColor");
-		static constexpr PropertyId BorderThiknessProperty = PropertyId::Register<Thikness>("BorderThikness");
-		static constexpr PropertyId FontFamilyProperty = PropertyId::Register<FontFamily>("FontFamily");
-		static constexpr PropertyId FontWeightProperty = PropertyId::Register<FontWeight>("FontWeight");
-		static constexpr PropertyId FontColorProperty = PropertyId::Register<Color>("FontColor");
-		static constexpr PropertyId FontSizeProperty = PropertyId::Register<uint16_t>("FontSize");
+		static constexpr PropertyId WidthProperty = PropertyId::New<float>("Width");
+		static constexpr PropertyId HeightProperty = PropertyId::New<float>("Height");
+		static constexpr PropertyId MinWidthProperty = PropertyId::New<float>("MinWidth");
+		static constexpr PropertyId MinHeightProperty = PropertyId::New<float>("MinHeight");
+		static constexpr PropertyId MaxWidthProperty = PropertyId::New<float>("MaxWidth");
+		static constexpr PropertyId MaxHeightProperty = PropertyId::New<float>("MaxHeight");
+		static constexpr PropertyId ZIndexProperty = PropertyId::New<size_t>("ZIndex");
+		static constexpr PropertyId MarginProperty = PropertyId::New<Thikness>("Margin");
+		static constexpr PropertyId ToolTipProperty = PropertyId::New<const Component*>("ToolTip");
+		static constexpr PropertyId HorizontalAlignmentProperty = PropertyId::New<HorizontalAlignment>("HorizontalAlignment");
+		static constexpr PropertyId VerticalAligmentProperty = PropertyId::New<VerticalAligment>("VerticalAligment");
+		static constexpr PropertyId VisibilityProperty = PropertyId::New<Visibility>("Visibility");
+		static constexpr PropertyId BorderColorProperty = PropertyId::New<Color>("BorderColor");
+		static constexpr PropertyId BorderThiknessProperty = PropertyId::New<Thikness>("BorderThikness");
+		static constexpr PropertyId FontFamilyProperty = PropertyId::New<FontFamily>("FontFamily");
+		static constexpr PropertyId FontWeightProperty = PropertyId::New<FontWeight>("FontWeight");
+		static constexpr PropertyId FontColorProperty = PropertyId::New<Color>("FontColor");
+		static constexpr PropertyId FontSizeProperty = PropertyId::New<uint16_t>("FontSize");
 
 		static constexpr uint16_t DefaultFontSize = 14;
 
+		Scene& Scene;
 		UIElement& Parent;
 		ComponentsCollection Children;
 		SDL_FPoint Position = { 0, 0 };
@@ -104,6 +106,7 @@ namespace Sgl
 		void AddStyle(const Style& style) override;
 		void SwitchCursorOn(const Cursor& cursor) override;
 		void SwitchCursorOnDefault() override;
+		UIElement& GetRootElement() override;
 		bool IsPointIn(SDL_FPoint point) const;
 	protected:
 		virtual void OnMouseEnter(const MouseButtonEventArgs& e);

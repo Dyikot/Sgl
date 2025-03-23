@@ -14,7 +14,7 @@ namespace Sgl
 			: Name(name), Type(type) {}
 
 		template<typename T>
-		static constexpr PropertyId Register(std::string_view name)
+		static constexpr PropertyId New(std::string_view name)
 		{ 
 			return PropertyId(name, typeid(T));
 		}

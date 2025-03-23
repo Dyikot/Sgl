@@ -2,7 +2,7 @@
 
 #include <functional>
 #include <assert.h>
-#include "../Any.h"
+#include "Any.h"
 #include "PropertyId.h"
 
 namespace Sgl

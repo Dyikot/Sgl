@@ -1,4 +1,5 @@
 #include "Component.h"
+#include "Scene.h"
 
 namespace Sgl
 {
@@ -61,8 +62,8 @@ namespace Sgl
         }
     }
 
-    Component::Component(UIElement& parent):
-        Parent(parent)
+    Component::Component(UIElement& parent)
+        : Parent(parent), Scene(static_cast<Sgl::Scene&>(parent.GetRootElement()))
     {
         AddProperty<float>(WidthProperty);
         AddProperty<float>(HeightProperty);
@@ -91,12 +92,17 @@ namespace Sgl
 
     void Component::SwitchCursorOn(const Cursor& cursor)
     {
-        Parent.SwitchCursorOn(cursor);
+        Scene.SwitchCursorOn(cursor);
     }
 
     void Component::SwitchCursorOnDefault()
     {
-        Parent.SwitchCursorOnDefault();
+        Scene.SwitchCursorOnDefault();
+    }
+
+    UIElement& Component::GetRootElement()
+    {
+        return Scene;
     }
 
     bool Component::IsPointIn(SDL_FPoint point) const

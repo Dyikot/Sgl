@@ -26,6 +26,7 @@ namespace Sgl
 		void OnRender(RenderContext& renderContext) const override;
 		void SwitchCursorOn(const Cursor& cursor) override;
 		void SwitchCursorOnDefault() override;
+		UIElement& GetRootElement() override { return *this; }
 	protected:
 		void OnMouseMove(const MouseButtonEventArgs& e) override;
 		void OnMouseDown(const MouseButtonEventArgs& e) override;
