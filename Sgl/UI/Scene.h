@@ -45,6 +45,9 @@ namespace Sgl
 		Loading, Loaded, Unloaded
 	};
 
+	template<typename TScene>
+	concept CScene = std::derived_from<TScene, Scene>;
+
 	class SceneManager
 	{
 	public:
@@ -57,14 +60,14 @@ namespace Sgl
 		SceneManager(Sgl::Window& window);
 		~SceneManager();
 
-		template<typename TScene> requires std::derived_from<TScene, Scene>
+		template<CScene TScene>
 		void Load()
 		{
 			_scenesQueue.push(std::make_shared<TScene>(Window));
 		}
 
-		template<typename TScene> requires std::derived_from<TScene, Scene>
-		void Load(const std::function<void(Scene&)>& sceneFactory)
+		template<CScene TScene>
+		void Load(std::invocable<Scene&> auto&& sceneFactory)
 		{
 			_scenesQueue.push(std::make_shared<TScene>(Window));
 			sceneFactory(*_scenesQueue.back());

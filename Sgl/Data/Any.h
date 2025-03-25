@@ -51,7 +51,7 @@ namespace Sgl
 
 		Any() noexcept = default;
 
-		template<typename T> requires (!std::is_same_v<std::decay_t<T>, Any>)
+		template<typename T> requires (!std::same_as<std::decay_t<T>, Any>)
 		Any(T&& value):
 			_value(new ValueContainer<std::decay_t<T>>(std::forward<T>(value)))
 		{}
@@ -93,7 +93,7 @@ namespace Sgl
 	
 		bool HasValue() const noexcept { return _value; }
 
-		template<typename T> requires (!std::is_same_v<std::decay_t<T>, Any>)
+		template<typename T> requires (!std::same_as<std::decay_t<T>, Any>)
 		Any& operator=(T&& value)
 		{
 			delete _value;

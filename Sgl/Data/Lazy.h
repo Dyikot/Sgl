@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <functional>
+#include "../Tools/Delegates.h"
 
 namespace Sgl
 {
@@ -15,12 +16,12 @@ namespace Sgl
 			virtual T operator()() const = 0;
 		};
 
-		template<typename TInvocable>
+		template<Func<T> TFunc>
 		struct ValueFactory: public IValueFactory
 		{
-			TInvocable Invocable;
-			ValueFactory(TInvocable&& invocable): Invocable(std::forward<TInvocable>(invocable)) {}
-			T operator()() const override { return Invocable(); }
+			TFunc Function;
+			ValueFactory(TFunc&& factory): Function(std::forward<TFunc>(factory)) {}
+			T operator()() const override { return Function(); }
 		};
 
 		mutable std::unique_ptr<T> _value;
@@ -33,12 +34,11 @@ namespace Sgl
 		Lazy(const Lazy&) = delete;
 		Lazy(Lazy&&) = delete;
 
-		template<typename TFactory>
-			requires std::is_invocable_r_v<T, TFactory>
-		Lazy(TFactory&& valueFactory)
+		template<Func<T> TFunc>
+		Lazy(TFunc&& valueFactory)
 		{
-			_valueFactory = std::make_unique<ValueFactory<TFactory>>(
-				std::forward<TFactory>(valueFactory));
+			_valueFactory = std::make_unique<ValueFactory<TFunc>>(
+				std::forward<TFunc>(valueFactory));
 		}
 
 		template<typename TValue>

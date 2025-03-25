@@ -64,7 +64,7 @@ namespace Sgl
 			};
 		}
 
-		template<typename TData, typename TMember> requires std::derived_from<TData, IBindingTarget>
+		template<std::derived_from<IBindingTarget> TData, typename TMember>
 		void Bind(const PropertyId& id, TData& data, Getter<TData, TMember> getter)
 		{
 			static_assert(id.Type == typeid(TMember));

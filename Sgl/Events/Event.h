@@ -6,13 +6,24 @@
 
 namespace Sgl
 {
-	template<typename TObject, typename TEventArgs> requires std::derived_from<TEventArgs, EventArgs>
+	template<typename TEventArgs>
+	concept CEventArgs = std::derived_from<TEventArgs, EventArgs>;
+
+	template<typename TInvocable, typename TObject, typename TEventArgs>
+	concept CEventHandler = CEventArgs<TEventArgs> &&
+							std::invocable<TInvocable, TObject&, const TEventArgs&>;
+
+	template<typename TInvocable, typename TEventArgs>
+	concept CArgsEventHandler = CEventArgs<TEventArgs> &&
+								std::invocable<TInvocable, const TEventArgs&>;
+
+	template<typename TObject, CEventArgs TEventArgs>
 	using EventHandler = std::function<void(TObject&, const TEventArgs&)>;
 
 	template<typename T>
 	class Event;
 
-	template<typename TObject, typename TEventArgs> requires std::derived_from<TEventArgs, EventArgs>
+	template<typename TObject, CEventArgs TEventArgs>
 	class Event<EventHandler<TObject, TEventArgs>> final
 	{
 	public:
@@ -30,25 +41,19 @@ namespace Sgl
 			}
 		}
 
-		template<typename TCallable> 
-			requires std::invocable<TCallable, TObject*, const TEventArgs&>
-		void operator+=(TCallable&& callable)
+		void operator+=(CEventHandler<TObject, TEventArgs> auto&& handler)
 		{
-			_eventHandlers.emplace_front(std::forward<TCallable>(callable));
+			_eventHandlers.emplace_front(std::forward<decltype(handler)>(handler));
 		}
 
-		template<typename TCallable>
-			requires std::invocable<TCallable, const TEventArgs&>
-		void operator+=(TCallable&& callable)
+		void operator+=(CArgsEventHandler<TEventArgs> auto&& handler)
 		{
-			_eventHandlers.emplace_front([callable](TObject& sender, const TEventArgs& e) { callable(e); });
+			_eventHandlers.emplace_front([handler](TObject& sender, const TEventArgs& e) { handler(e); });
 		}
 
-		template<typename TCallable>
-			requires std::invocable<TCallable>
-		void operator+=(TCallable&& callable)
+		void operator+=(std::invocable auto&& handler)
 		{
-			_eventHandlers.emplace_front([callable](TObject& sender, const TEventArgs& e) { callable(); });
+			_eventHandlers.emplace_front([handler](TObject& sender, const TEventArgs& e) { handler(); });
 		}
 
 		void operator+=(EventHandler&& eventHandler)
@@ -61,11 +66,9 @@ namespace Sgl
 			_eventHandlers.push_front(eventHandler);
 		}
 
-		template<typename TCallable>
-			requires std::invocable<TCallable, TObject*, const TEventArgs&>
-		void operator-=(TCallable&& callable)
+		void operator-=(CEventHandler auto&& hanlder)
 		{
-			_eventHandlers.remove(std::forward<TCallable>(callable));
+			_eventHandlers.remove(std::forward<decltype(hanlder)>(hanlder));
 		}
 
 		void operator-=(EventHandler&& eventHandler)

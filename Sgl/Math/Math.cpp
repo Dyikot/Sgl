@@ -93,45 +93,6 @@ namespace Sgl
 		return resultOrder;
 	}
 
-	std::vector<SDL_FPoint> Math::Compute90EllipsePoints(SDL_FPoint position, int width, int height)
-	{
-		return ComputeEllipsePoints(90, position, width, height);
-	}
-
-	std::vector<SDL_FPoint> Math::Compute180EllipsePoints(SDL_FPoint position, int width, int height)
-	{
-		return ComputeEllipsePoints(180, position, width, height);
-	}
-
-	std::vector<SDL_FPoint> Math::Compute360EllipsePoints(SDL_FPoint position, int width, int height)
-	{
-		return ComputeEllipsePoints(360, position, width, height);
-	}
-
-	std::vector<float> Math::ComputeSin(size_t number)
-	{
-		std::vector<float> result(number);
-		const float Step = 2 * std::numbers::pi / number;
-		for(size_t i = 0; i < number; i++)
-		{
-			result[i] = sinf(Step * i);
-		}
-
-		return result;
-	}
-
-	std::vector<float> Math::ComputeCos(size_t number)
-	{
-		std::vector<float> result(number);
-		const float Step = 2 * std::numbers::pi / number;
-		for(size_t i = 0; i < number; i++)
-		{
-			result[i] = cosf(Step * i);
-		}
-
-		return result;
-	}
-
 	std::vector<SDL_Vertex> Math::CreateVertexVector(std::span<SDL_FPoint> points, Sgl::Color color)
 	{
 		std::vector<SDL_Vertex> result(points.size());
@@ -142,26 +103,5 @@ namespace Sgl
 		}
 
 		return result;
-	}
-
-	std::vector<SDL_FPoint> Math::ComputeEllipsePoints(size_t number, SDL_FPoint position,
-													   int width, int height)
-	{
-		const std::vector<float>& sin = Sin360;
-		const std::vector<float>& cos = Cos360;
-		const size_t AngleStep = 360 / number;
-		const float Step = 2 * std::numbers::pi / number;
-
-		std::vector<SDL_FPoint> points(number);
-		size_t angle = 0;
-
-		for(size_t i = 0; i < number; i++)
-		{
-			angle = i * AngleStep;
-			points[i].x = position.x + width * cos[angle];
-			points[i].y = position.y + height * sin[angle];
-		}
-
-		return points;
 	}
 }
