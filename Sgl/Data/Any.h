@@ -3,6 +3,7 @@
 #include <typeinfo>
 #include <type_traits>
 #include <string_view>
+#include <stdexcept>
 #include "Nullable.h"
 
 namespace Sgl
@@ -80,16 +81,10 @@ namespace Sgl
 		const T& As() const { return _value->Get<T>(); }
 
 		template<typename T>
-		Nullable<T> TryAs() noexcept
-		{
-			return HasValue() && Is<T>() ? &_value->Get<T>() : nullptr;
-		}
+		Nullable<T> TryAs() noexcept { return HasValue() && Is<T>() ? &As<T>() : nullptr; }
 
 		template<typename T>
-		Nullable<const T> TryAs() const noexcept
-		{ 
-			return HasValue() && Is<T>() ? &_value->Get<T>() : nullptr;
-		}
+		Nullable<const T> TryAs() const noexcept { return HasValue() && Is<T>() ? &As<T>() : nullptr; }
 	
 		bool HasValue() const noexcept { return _value; }
 
@@ -118,6 +113,66 @@ namespace Sgl
 		operator bool() const noexcept { return HasValue(); }
 	private:
 		IValueContainer* _value = nullptr;
+	};
+
+	class AnyRef final
+	{
+	public:
+		template<typename T> 
+		AnyRef(T& value)
+			: _value(&value), _type(typeid(T))
+		{}
+
+		template<typename T>
+		bool Is() const { return _type == typeid(T); }
+		
+		template<typename T>
+		T& As() { return *static_cast<T*>(_value); }
+
+		template<typename T>
+		const T& As() const { return *static_cast<const T*>(_value); }
+
+		template<typename T>
+		Nullable<T> TryAs() noexcept { return Is<T>() ? &As<T>() : nullptr; }
+
+		template<typename T>
+		Nullable<const T> TryAs() const noexcept { return Is<T>() ? &As<T>() : nullptr; }
+
+		friend bool operator==(const AnyRef& left, const AnyRef& right)
+		{
+			return left._type == right._type;
+		}
+
+		friend bool operator!=(const AnyRef& left, const AnyRef& right)
+		{
+			return !operator==(left, right);
+		}
+
+		template<typename T>
+		AnyRef& operator=(T& value)
+		{
+			if(!Is<T>())
+			{
+				throw std::invalid_argument("Wrong reference type");
+			}
+
+			_value = &value;
+			return *this;
+		}
+
+		AnyRef& operator=(const AnyRef& ref)
+		{
+			if(*this != ref)
+			{
+				throw std::invalid_argument("Wrong reference type");
+			}
+
+			_value = ref._value;
+			return *this;
+		}
+	private:
+		const type_info& _type;
+		void* _value;
 	};
 
 	template<typename TKey>

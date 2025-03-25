@@ -11,7 +11,7 @@ namespace Sgl
 {
 	class UIElement;
 
-	using UIEventHandler = EventHandler<UIElement, EventArgs>;
+	using UIEventHandler = EventHandler<UIElement>;
 	using MouseEventHandler = EventHandler<UIElement, MouseButtonEventArgs>;
 	using MouseWheelEventHandler = EventHandler<UIElement, MouseWheelEventArgs>;
 	using KeyEventHandler = EventHandler<UIElement, KeyEventArgs>;

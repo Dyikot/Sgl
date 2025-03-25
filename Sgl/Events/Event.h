@@ -17,7 +17,7 @@ namespace Sgl
 	concept CArgsEventHandler = CEventArgs<TEventArgs> &&
 								std::invocable<TInvocable, const TEventArgs&>;
 
-	template<typename TObject, CEventArgs TEventArgs>
+	template<typename TObject, CEventArgs TEventArgs = EventArgs>
 	using EventHandler = std::function<void(TObject&, const TEventArgs&)>;
 
 	template<typename T>

@@ -56,22 +56,22 @@ namespace Sgl
 		T* operator->() { return _value; }
 		T& operator*() { return *_value; }
 
-		static friend Nullable<T> operator|(const Nullable<T>& left, const Nullable<T>& right)
+		friend Nullable<T> operator|(const Nullable<T>& left, const Nullable<T>& right)
 		{ 
 			return left ? left : right;
 		}
 
-		static friend const T& operator|(const Nullable<T>& left, const T& right)
+		friend const T& operator|(const Nullable<T>& left, const T& right)
 		{
 			return left ? *left : right;
 		}
 
-		static friend T operator|(const Nullable<T>& left, T&& right)
+		friend T operator|(const Nullable<T>& left, T&& right)
 		{
 			return left ? *left : right;
 		}
 
-		static friend T operator|(Nullable<T>&& left, T&& right)
+		friend T operator|(Nullable<T>&& left, T&& right)
 		{
 			return left ? *left : right;
 		}
