@@ -14,36 +14,36 @@ namespace Sgl
 
 	void UIElement::OnMouseDown(const MouseButtonEventArgs& e)
 	{
-		MouseDown.TryInvoke(*this, e);
+		MouseDown.TryRaise(*this, e);
 	}
 
 	void UIElement::OnMouseUp(const MouseButtonEventArgs& e)
 	{
-		MouseUp.TryInvoke(*this, e);
+		MouseUp.TryRaise(*this, e);
 	}
 
 	void UIElement::OnMouseMove(const MouseButtonEventArgs& e)
 	{
-		MouseMove.TryInvoke(*this, e);
+		MouseMove.TryRaise(*this, e);
 	}
 
 	void UIElement::OnMouseDoubleClick(const MouseButtonEventArgs& e)
 	{
-		MouseDoubleClick.TryInvoke(*this, e);
+		MouseDoubleClick.TryRaise(*this, e);
 	}
 
 	void UIElement::OnMouseWheel(const MouseWheelEventArgs& e)
 	{
-		MouseWheel.TryInvoke(*this, e);
+		MouseWheel.TryRaise(*this, e);
 	}
 
 	void UIElement::OnKeyDown(const KeyEventArgs& e)
 	{
-		KeyDown.TryInvoke(*this, e);
+		KeyDown.TryRaise(*this, e);
 	}
 
 	void UIElement::OnKeyUp(const KeyEventArgs& e)
 	{
-		KeyUp.TryInvoke(*this, e);
+		KeyUp.TryRaise(*this, e);
 	}
 }

@@ -4,7 +4,6 @@
 #include <iostream>
 #include "Application.h"
 #include "Graphic/RenderContext.h"
-#include "Style/Style.h"
 #include "Graphic/Surface.h"
 
 namespace Sgl
@@ -38,16 +37,16 @@ namespace Sgl
 		bool CanRenderInMinimizedMode = false;
 	private:
 		SDL_Window* _this;
+		SDL_Renderer* _renderer;
 		bool _vsyncEnabled = false;
-		std::unique_ptr<Surface> _icon;
-		std::unique_ptr<RenderContext> _renderContext;
+		std::optional<Surface> _icon;
 	public:
 		Window(Application& app) noexcept;
 		Window(Application& app, const Configuration& config) noexcept;
 		Window(const Window&) = delete;
 		Window(Window&&) = delete;
 		
-		~Window() noexcept { SDL_DestroyWindow(_this); }
+		~Window() noexcept;
 		
 		void SetWidth(size_t value) noexcept;
 		void SetHeight(size_t value) noexcept;
@@ -58,15 +57,6 @@ namespace Sgl
 		void SetPosition(SDL_Point value) noexcept;
 		void SetIcon(std::string_view path);
 		void SetDisplayMode(DiplayMode displayMode);
-		template<typename TRenderContext> requires std::derived_from<TRenderContext, RenderContext>
-		void SetRenderContext()
-		{
-			if(!App.IsRunning())
-			{
-				_renderContext = std::make_unique<TRenderContext>(
-					SDL_CreateRenderer(_this, -1, SDL_RENDERER_ACCELERATED));
-			}
-		}
 
 		size_t GetWidth() const noexcept;
 		size_t GetHeight() const noexcept;
@@ -79,7 +69,6 @@ namespace Sgl
 		std::string_view GetTitle() const noexcept;
 		SDL_Point GetPosition() const noexcept;
 		WindowState GetWindowState() const;
-		RenderContext& GetRenderContext() const { return *_renderContext; }
 
 		void Show();
 		void Hide();
@@ -89,7 +78,7 @@ namespace Sgl
 		void DisableVsync();
 		void DisableResize();
 		bool IsResizable() const;
-		bool IsVsyncEnable() const { return _vsyncEnabled; }
+		bool IsVsyncEnable() const;
 
 		operator SDL_Window* () const { return _this; }
 	private:

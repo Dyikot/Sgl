@@ -75,7 +75,7 @@ namespace Sgl
 
 		void Unload();
 		SceneState UpdateState();
-		void RenderScene();
+		void RenderScene(RenderContext& renderContext);
 		void ProcessScene(TimeSpan elapsed);
 		void HandleSceneEvents(SDL_Event& e);
 	protected:

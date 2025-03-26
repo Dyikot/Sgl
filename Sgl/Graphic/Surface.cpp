@@ -3,8 +3,8 @@
 
 namespace Sgl
 {
-	Surface::Surface(std::string_view path):
-		_surface(IMG_Load(path.data()))
+	Surface::Surface(std::string_view path)
+		: _surface(IMG_Load(path.data()))
 	{
 		if(_surface == nullptr)
 		{
@@ -12,12 +12,8 @@ namespace Sgl
 		}
 	}
 
-	Surface::Surface(SDL_Surface* surface):
-		_surface(surface)
-	{}
-
-	Surface::Surface(Surface&& other) noexcept:
-		_surface(std::exchange(other._surface, nullptr))
+	Surface::Surface(Surface&& other) noexcept
+		: _surface(std::exchange(other._surface, nullptr))
 	{}
 
 	Surface::~Surface() noexcept

@@ -30,6 +30,7 @@ namespace Sgl
 
 		operator bool() const { return _value; }
 		operator T* () { return _value; }
+		operator const T* () const { return _value; }
 
 		Nullable<T>& operator|=(T& right)
 		{

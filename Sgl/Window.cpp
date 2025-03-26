@@ -2,23 +2,28 @@
 
 namespace Sgl
 {
-    Window::Window(Application& app) noexcept:
-        Window(app, Configuration())
+    Window::Window(Application& app) noexcept
+        : Window(app, Configuration())
     {}
 
-    Window::Window(Application & app, const Configuration& config) noexcept:
-        App(app),
-        _this(SDL_CreateWindow(config.Title, config.Position.x, config.Position.y, 
+    Window::Window(Application & app, const Configuration& config) noexcept
+        : App(app),
+          _this(SDL_CreateWindow(config.Title, config.Position.x, config.Position.y, 
                                config.Width, config.Height, config.Flags)),
-        _renderContext(new RenderContext(SDL_CreateRenderer(_this, -1, SDL_RENDERER_ACCELERATED)))
+          _renderer(SDL_CreateRenderer(_this, -1, SDL_RENDERER_ACCELERATED))
     {
         if(_this == nullptr)
         {
             Log::PrintSDLError();
         }
 
-        _renderContext->SetBlendMode(SDL_BLENDMODE_BLEND);
         SetLogicalSize(config.Width, config.Height);
+    }
+
+    Window::~Window() noexcept
+    {
+        SDL_DestroyRenderer(_renderer);
+        SDL_DestroyWindow(_this);
     }
 
     void Window::SetWidth(size_t value) noexcept
@@ -33,7 +38,7 @@ namespace Sgl
 
     void Window::SetLogicalSize(size_t width, size_t height) noexcept
     {
-        SDL_RenderSetLogicalSize(GetRenderContext(), width, height);
+        SDL_RenderSetLogicalSize(_renderer, width, height);
     }
 
     void Window::SetMaxSize(size_t width, size_t height) noexcept
@@ -58,8 +63,8 @@ namespace Sgl
 
     void Window::SetIcon(std::string_view path)
     {
-        _icon = std::make_unique<Surface>(path);
-        SDL_SetWindowIcon(_this, *_icon);
+        _icon = Surface(path);
+        SDL_SetWindowIcon(_this, _icon.value());
     }
 
     void Window::SetDisplayMode(DiplayMode displayMode)
@@ -122,14 +127,14 @@ namespace Sgl
     size_t Window::GetLogicalWidth() const noexcept
     {
         int width = 0;
-        SDL_RenderGetLogicalSize(GetRenderContext(), &width, nullptr);
+        SDL_RenderGetLogicalSize(_renderer, &width, nullptr);
         return width;
     }
 
     size_t Window::GetLogicalHeight() const noexcept
     {
         int height = 0;
-        SDL_RenderGetLogicalSize(GetRenderContext(), nullptr, &height);
+        SDL_RenderGetLogicalSize(_renderer, nullptr, &height);
         return height;
     }
 
@@ -178,7 +183,7 @@ namespace Sgl
 
     void Window::EnableVsync()
     {
-        if(!SDL_RenderSetVSync(GetRenderContext(), 1))
+        if(!SDL_RenderSetVSync(_renderer, 1))
         {
             _vsyncEnabled = true;
         }
@@ -195,7 +200,7 @@ namespace Sgl
 
     void Window::DisableVsync()
     {
-        if(!SDL_RenderSetVSync(GetRenderContext(), 0))
+        if(!SDL_RenderSetVSync(_renderer, 0))
         {
             _vsyncEnabled = false;
         }
@@ -213,5 +218,10 @@ namespace Sgl
     bool Window::IsResizable() const
     {
         return SDL_GetWindowFlags(_this) & SDL_WINDOW_RESIZABLE;
+    }
+
+    bool Window::IsVsyncEnable() const
+    {
+        return _vsyncEnabled;
     }
 }

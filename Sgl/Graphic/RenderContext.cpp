@@ -5,8 +5,8 @@
 
 namespace Sgl
 {
-	RenderContext::RenderContext(SDL_Renderer* renderer) noexcept:
-		_renderer(renderer)
+	RenderContext::RenderContext(SDL_Renderer* renderer) noexcept
+		: _renderer(renderer)
 	{
 		if(_renderer == nullptr)
 		{
@@ -14,6 +14,14 @@ namespace Sgl
 		}
 
 		_instance = this;
+	}
+
+	RenderContext::~RenderContext() noexcept
+	{
+		if(_instance == this)
+		{
+			_instance = nullptr;
+		}
 	}
 
 	Texture RenderContext::CreateTexture(std::string_view path)

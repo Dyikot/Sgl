@@ -10,7 +10,6 @@ namespace Sgl
 		SDL_Surface* _surface = nullptr;
 	public:
 		explicit Surface(std::string_view path);
-		explicit Surface(SDL_Surface* surface);
 		Surface(const Surface& surface) = delete;
 		Surface(Surface&& other) noexcept;
 		~Surface() noexcept;

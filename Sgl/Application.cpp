@@ -86,14 +86,14 @@ namespace Sgl
 	void Application::OnStartup(const EventArgs& e)
 	{
 		_running = true;
-		Startup.TryInvoke(*this, e);
+		Startup.TryRaise(*this, e);
 	}
 
 	void Application::OnQuit(const EventArgs& e)
 	{
 		_window = nullptr;
 		_running = false;
-		Quit.TryInvoke(*this, e);
+		Quit.TryRaise(*this, e);
 	}
 
 	void Application::HandleEvents()
@@ -121,6 +121,9 @@ namespace Sgl
 	void Application::Start()
 	{
 		Stopwatch delayStopwatch, sceneStopwatch;
+		RenderContext renderContext(_window->_renderer);
+
+		renderContext.SetBlendMode(SDL_BLENDMODE_BLEND);
 		sceneStopwatch.Start();
 
 		while(_running)
@@ -142,7 +145,7 @@ namespace Sgl
 
 			if(_window->IsVisible() || _window->CanRenderInMinimizedMode)
 			{
-				_window->SceneManager.RenderScene();
+				_window->SceneManager.RenderScene(renderContext);
 			}
 
 			if(_maxFrameRate)

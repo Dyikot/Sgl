@@ -125,12 +125,12 @@ namespace Sgl
     {
         _hover = true;
         SwitchCursorOn(GetCursor());
-        MouseEnter.TryInvoke(*this, e);
+        MouseEnter.TryRaise(*this, e);
     }
 
     void Component::OnMouseLeave(const MouseButtonEventArgs& e)
     {
         _hover = false;
-        MouseLeave.TryInvoke(*this, e);
+        MouseLeave.TryRaise(*this, e);
     }
 }

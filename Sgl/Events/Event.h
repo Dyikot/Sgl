@@ -1,39 +1,27 @@
 #pragma once
 
 #include <forward_list>
-#include <functional>
-#include "EventArgs.h"
+#include "EventHandler.h"
 
 namespace Sgl
 {
-	template<typename TEventArgs>
-	concept CEventArgs = std::derived_from<TEventArgs, EventArgs>;
-
-	template<typename TInvocable, typename TObject, typename TEventArgs>
-	concept CEventHandler = CEventArgs<TEventArgs> &&
-							std::invocable<TInvocable, TObject&, const TEventArgs&>;
-
-	template<typename TInvocable, typename TEventArgs>
-	concept CArgsEventHandler = CEventArgs<TEventArgs> &&
-								std::invocable<TInvocable, const TEventArgs&>;
-
-	template<typename TObject, CEventArgs TEventArgs = EventArgs>
-	using EventHandler = std::function<void(TObject&, const TEventArgs&)>;
-
 	template<typename T>
 	class Event;
 
-	template<typename TObject, CEventArgs TEventArgs>
-	class Event<EventHandler<TObject, TEventArgs>> final
+	template<typename TSender, CEventArgs TEventArgs>
+	class Event<EventHandler<TSender, TEventArgs>> final
 	{
 	public:
-		using EventHandler = EventHandler<TObject, TEventArgs>;
+		using EventHandler = EventHandler<TSender, TEventArgs>;
 	protected:
 		std::forward_list<EventHandler> _eventHandlers;
 	public:
-		void Clear() noexcept { _eventHandlers.clear(); }
+		void Clear() noexcept
+		{ 
+			_eventHandlers.clear();
+		}
 
-		void TryInvoke(TObject& sender, const TEventArgs& e) const noexcept
+		void TryRaise(TSender& sender, const TEventArgs& e) const noexcept
 		{
 			if(operator bool())
 			{
@@ -41,49 +29,32 @@ namespace Sgl
 			}
 		}
 
-		void operator+=(CEventHandler<TObject, TEventArgs> auto&& handler)
+		void operator+=(CEventHandler<TSender, TEventArgs> auto&& handler)
 		{
 			_eventHandlers.emplace_front(std::forward<decltype(handler)>(handler));
 		}
 
 		void operator+=(CArgsEventHandler<TEventArgs> auto&& handler)
 		{
-			_eventHandlers.emplace_front([handler](TObject& sender, const TEventArgs& e) { handler(e); });
+			_eventHandlers.emplace_front([handler](TSender& sender, const TEventArgs& e) { handler(e); });
 		}
 
 		void operator+=(std::invocable auto&& handler)
 		{
-			_eventHandlers.emplace_front([handler](TObject& sender, const TEventArgs& e) { handler(); });
+			_eventHandlers.emplace_front([handler](TSender& sender, const TEventArgs& e) { handler(); });
 		}
 
-		void operator+=(EventHandler&& eventHandler)
+		void operator-=(CEventHandler<TSender, TEventArgs> auto&& handler)
 		{
-			_eventHandlers.push_front(std::move(eventHandler));
+			_eventHandlers.remove(std::forward<decltype(handler)>(handler));
 		}
 
-		void operator+=(const EventHandler& eventHandler)
-		{
-			_eventHandlers.push_front(eventHandler);
+		operator bool() const noexcept
+		{ 
+			return !_eventHandlers.empty();
 		}
 
-		void operator-=(CEventHandler auto&& hanlder)
-		{
-			_eventHandlers.remove(std::forward<decltype(hanlder)>(hanlder));
-		}
-
-		void operator-=(EventHandler&& eventHandler)
-		{
-			_eventHandlers.remove(std::move(eventHandler));
-		}
-
-		void operator-=(const EventHandler& eventHandler)
-		{
-			_eventHandlers.remove(eventHandler);
-		}
-
-		operator bool() const noexcept { return !_eventHandlers.empty(); }
-
-		void operator()(TObject& sender, const TEventArgs& e) const
+		void operator()(TSender& sender, const TEventArgs& e) const
 		{
 			for(const EventHandler& eventHandler : _eventHandlers)
 			{
@@ -91,16 +62,4 @@ namespace Sgl
 			}
 		}
 	};
-
-	template<typename T>
-	inline bool operator==(const std::function<T>& left, const std::function<T>& right) noexcept
-	{
-		return left.target_type() == right.target_type();
-	}
-
-	template<typename T>
-	inline bool operator!=(const std::function<T>& left, const std::function<T>& right) noexcept
-	{
-		return !operator==(left, right);
-	}
 }

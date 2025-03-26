@@ -56,12 +56,12 @@ namespace Sgl
 	{
 		SwitchCursorOnDefault();
 
-		Loaded.TryInvoke(*this, e);
+		Loaded.TryRaise(*this, e);
 	}
 
 	void Scene::OnUnloaded(const EventArgs& e)
 	{
-		Unloaded.TryInvoke(*this, e);
+		Unloaded.TryRaise(*this, e);
 	}
 
 	SceneManager::SceneManager(Sgl::Window& window):
@@ -106,13 +106,11 @@ namespace Sgl
 		}
 	}
 
-	void SceneManager::RenderScene()
+	void SceneManager::RenderScene(RenderContext& renderContext)
 	{
-		auto& renderContext = Window.GetRenderContext();
 		_scenes.top()->OnRender(renderContext);
 		SDL_RenderPresent(renderContext);
 	}
-
 
 	void SceneManager::ProcessScene(TimeSpan elapsed)
 	{

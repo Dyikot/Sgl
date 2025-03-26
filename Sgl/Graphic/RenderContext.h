@@ -8,18 +8,18 @@
 #include "../Graphic/Color.h"
 #include "../Graphic/Texture.h"
 #include "../Graphic/Surface.h"
+#include "../Data/Nullable.h"
 
 namespace Sgl
 {
 	class RenderContext
 	{
-	protected:
-		SDL_Renderer* const _renderer;
 	private:
-		static inline RenderContext* _instance;
+		SDL_Renderer* _renderer;
+		static inline Nullable<RenderContext> _instance;
 	public:
 		explicit RenderContext(SDL_Renderer* renderer) noexcept;
-		virtual ~RenderContext() noexcept { SDL_DestroyRenderer(_renderer); }
+		~RenderContext() noexcept;
 
 		static Texture CreateTexture(std::string_view path);
 
