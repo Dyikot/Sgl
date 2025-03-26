@@ -29,6 +29,11 @@ namespace Sgl
 			}
 		}
 
+		bool IsEmpty() const
+		{
+			return _eventHandlers.empty();
+		}
+
 		void operator+=(CEventHandler<TSender, TEventArgs> auto&& handler)
 		{
 			_eventHandlers.emplace_front(std::forward<decltype(handler)>(handler));
@@ -36,15 +41,25 @@ namespace Sgl
 
 		void operator+=(CArgsEventHandler<TEventArgs> auto&& handler)
 		{
-			_eventHandlers.emplace_front([handler](TSender& sender, const TEventArgs& e) { handler(e); });
+			_eventHandlers.emplace_front(std::forward<decltype(handler)>(handler));
 		}
 
 		void operator+=(std::invocable auto&& handler)
 		{
-			_eventHandlers.emplace_front([handler](TSender& sender, const TEventArgs& e) { handler(); });
+			_eventHandlers.emplace_front(std::forward<decltype(handler)>(handler));
 		}
 
 		void operator-=(CEventHandler<TSender, TEventArgs> auto&& handler)
+		{
+			_eventHandlers.remove(std::forward<decltype(handler)>(handler));
+		}
+
+		void operator-=(CArgsEventHandler<TEventArgs> auto&& handler)
+		{
+			_eventHandlers.remove(std::forward<decltype(handler)>(handler));
+		}
+
+		void operator-=(std::invocable auto&& handler)
 		{
 			_eventHandlers.remove(std::forward<decltype(handler)>(handler));
 		}

@@ -3,6 +3,7 @@
 #include <concepts>
 #include <functional>
 #include "EventArgs.h"
+#include "../Data/Nullable.h"
 
 namespace Sgl
 {
@@ -19,11 +20,22 @@ namespace Sgl
 	{
 	private:
 		std::function<void(TSender&, const TEventArgs&)> _handler;
+		Nullable<const std::type_info> _targetType;
 	public:
 		EventHandler() = default;
 
 		EventHandler(CEventHandler<TSender, TEventArgs> auto&& handler)
 			: _handler(std::forward<decltype(handler)>(handler))
+		{}
+
+		EventHandler(CArgsEventHandler<TEventArgs> auto&& handler)
+			: _handler([handler](TSender& sender, const TEventArgs& e) { handler(e); }),
+			_targetType(typeid(handler))
+		{}
+
+		EventHandler(std::invocable auto&& handler)
+			: _handler([handler](TSender& sender, const TEventArgs& e) { handler(); }),
+			_targetType(typeid(handler))
 		{}
 
 		bool IsEmpty() const noexcept
@@ -33,7 +45,7 @@ namespace Sgl
 
 		const std::type_info& TargetType() const noexcept
 		{
-			return _handler.target_type();
+			return _targetType | _handler.target_type();
 		}
 
 		void Invoke(TSender& sender, const TEventArgs& e) const
