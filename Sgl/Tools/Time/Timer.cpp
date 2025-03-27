@@ -54,7 +54,7 @@ namespace Sgl
 		std::mutex mutex;
 
 		_stopwatch.Start();
-		nanoseconds waitDuration((Duration - _stopwatch.Elapsed()).Nanoseconds());
+		nanoseconds waitDuration((Duration - _stopwatch.Elapsed()).ToNanoseconds());
 
 		std::unique_lock<std::mutex> lock(mutex);
 		_conditionVariable.wait_for(lock, waitDuration,
