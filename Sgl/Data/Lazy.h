@@ -20,17 +20,14 @@ namespace Sgl
 		struct ValueFactory: public IValueFactory
 		{
 			TFunc Function;
-			ValueFactory(TFunc&& factory): Function(std::forward<TFunc>(factory)) {}
+			ValueFactory(TFunc factory): Function(factory) {}
 			T operator()() const override { return Function(); }
 		};
 
 		mutable std::unique_ptr<T> _value;
 		mutable std::unique_ptr<IValueFactory> _valueFactory;
 	public:
-		Lazy():
-			Lazy([] { return T{}; })
-		{}
-
+		Lazy(): Lazy([] { return T{}; }) {}
 		Lazy(const Lazy&) = delete;
 		Lazy(Lazy&&) = delete;
 
