@@ -17,9 +17,8 @@ namespace Sgl
 		static Benchmark New(const std::string& name) { return Benchmark(name, 1); }
 		static Benchmark New(const std::string& name, size_t loops) { return Benchmark(name, loops); }
 
-		template<typename TInvocable, typename... TArgs> 
-			requires std::invocable<TInvocable, TArgs...>
-		void Run(TInvocable&& invocable, TArgs&&... args)
+		template<typename... TArgs> 
+		void Run(std::invocable<TArgs...> auto&& invocable, TArgs&&... args)
 		{
 			Stopwatch stopwatch;
 			stopwatch.Start();

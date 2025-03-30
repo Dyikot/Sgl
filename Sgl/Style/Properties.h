@@ -16,21 +16,17 @@ namespace Sgl
 		constexpr Thikness(uint32_t top, uint32_t right, uint32_t bottom, uint32_t left) noexcept:
 			Top(top), Right(right), Bottom(bottom), Left(left)
 		{}
+
 		constexpr Thikness(uint32_t lenght = 0) noexcept:
 			Thikness(lenght, lenght, lenght, lenght) 
 		{}
 
-		constexpr bool operator==(const Thikness& other) const
+		friend constexpr bool operator==(const Thikness& left, const Thikness& right)
 		{
-			return Top == other.Top &&
-				   Right == other.Right &&
-				   Bottom == other.Bottom &&
-				   Left == other.Left;
-		}
-
-		constexpr bool operator!=(const Thikness& other) const
-		{
-			return !operator==(other);
+			return left.Top == right.Top &&
+				   left.Right == right.Right &&
+				   left.Bottom == right.Bottom &&
+				   left.Left == right.Left;
 		}
 	};
 
@@ -43,14 +39,19 @@ namespace Sgl
 		FontFamily():
 			FontFamily("Segoe UI")
 		{}
+
 		explicit FontFamily(std::string_view name):
 			Path(TryGetPathByName(name)), Name(name)
 		{}
+
 		FontFamily(const std::filesystem::path& path, std::string_view name):
 			Path(path), Name(name)
 		{}
 
-		static std::filesystem::path TryGetPathByName(std::string_view name);
+		static std::filesystem::path TryGetPathByName(std::string_view name)
+		{
+			return std::filesystem::path();
+		}
 	};
 
 	enum class FontWeight

@@ -22,10 +22,16 @@ namespace Sgl
 			virtual IValueContainer* Copy() const = 0;
 
 			template<typename T>
-			T& Get() { return static_cast<ValueContainer<T>*>(this)->Value; }
+			T& Get()
+			{ 
+				return static_cast<ValueContainer<T>*>(this)->Value;
+			}
 
 			template<typename T>
-			const T& Get() const { return static_cast<ValueContainer<T>*>(this)->Value; }
+			const T& Get() const
+			{ 
+				return static_cast<ValueContainer<T>*>(this)->Value;
+			}
 		};
 
 		template<typename T>
@@ -38,8 +44,15 @@ namespace Sgl
 				Value(std::forward<TArgs>(args)...)
 			{}
 
-			const std::type_info& Type() const override { return typeid(Value); }
-			IValueContainer* Copy() const override { return new ValueContainer<T>(*this); }
+			const std::type_info& Type() const override 
+			{
+				return typeid(Value);
+			}
+
+			IValueContainer* Copy() const override 
+			{
+				return new ValueContainer<T>(*this);
+			}
 		};
 	public:
 		template<typename TValue, typename... TArgs>
@@ -65,28 +78,60 @@ namespace Sgl
 			_value(std::exchange(any._value, nullptr))
 		{}
 
-		~Any() noexcept { delete _value; }
+		~Any() noexcept
+		{
+			delete _value; 
+		}
 
-		const std::type_info& Type() const { return _value->Type(); }
-
-		template<typename T>
-		bool Is() const { return Type() == typeid(T); }
-		bool Is(const std::type_info& type) const { return Type() == type; }
-		bool Is(std::string_view type) const { return Type().name() == type; }
-
-		template<typename T>
-		T& As() { return _value->Get<T>(); }
+		const std::type_info& Type() const 
+		{
+			return _value->Type();
+		}
 
 		template<typename T>
-		const T& As() const { return _value->Get<T>(); }
+		bool Is() const
+		{
+			return Type() == typeid(T);
+		}
+
+		bool Is(const std::type_info& type) const
+		{ 
+			return Type() == type;
+		}
+
+		bool Is(std::string_view type) const 
+		{ 
+			return Type().name() == type;
+		}
 
 		template<typename T>
-		Nullable<T> TryAs() noexcept { return HasValue() && Is<T>() ? &As<T>() : nullptr; }
+		T& As() 
+		{ 
+			return _value->Get<T>();
+		}
 
 		template<typename T>
-		Nullable<const T> TryAs() const noexcept { return HasValue() && Is<T>() ? &As<T>() : nullptr; }
+		const T& As() const 
+		{ 
+			return _value->Get<T>();
+		}
+
+		template<typename T>
+		Nullable<T> TryAs() noexcept
+		{
+			return HasValue() && Is<T>() ? &As<T>() : nullptr;
+		}
+
+		template<typename T>
+		Nullable<const T> TryAs() const noexcept 
+		{
+			return HasValue() && Is<T>() ? &As<T>() : nullptr;
+		}
 	
-		bool HasValue() const noexcept { return _value; }
+		bool HasValue() const noexcept
+		{ 
+			return _value;
+		}
 
 		template<typename T> requires (!std::same_as<std::decay_t<T>, Any>)
 		Any& operator=(T&& value)
@@ -110,7 +155,10 @@ namespace Sgl
 			return *this;
 		}
 
-		operator bool() const noexcept { return HasValue(); }
+		operator bool() const noexcept 
+		{ 
+			return HasValue();
+		}
 	private:
 		IValueContainer* _value = nullptr;
 	};
@@ -119,24 +167,39 @@ namespace Sgl
 	{
 	public:
 		template<typename T> 
-		AnyRef(T& value)
-			: _value(&value), _type(typeid(T))
+		AnyRef(T& value):
+			_value(&value), _type(typeid(T))
 		{}
 
 		template<typename T>
-		bool Is() const { return _type == typeid(T); }
+		bool Is() const
+		{ 
+			return _type == typeid(T); 
+		}
 		
 		template<typename T>
-		T& As() { return *static_cast<T*>(_value); }
+		T& As() 
+		{ 
+			return *static_cast<T*>(_value);
+		}
 
 		template<typename T>
-		const T& As() const { return *static_cast<const T*>(_value); }
+		const T& As() const 
+		{ 
+			return *static_cast<const T*>(_value);
+		}
 
 		template<typename T>
-		Nullable<T> TryAs() noexcept { return Is<T>() ? &As<T>() : nullptr; }
+		Nullable<T> TryAs() noexcept 
+		{ 
+			return Is<T>() ? &As<T>() : nullptr;
+		}
 
 		template<typename T>
-		Nullable<const T> TryAs() const noexcept { return Is<T>() ? &As<T>() : nullptr; }
+		Nullable<const T> TryAs() const noexcept 
+		{ 
+			return Is<T>() ? &As<T>() : nullptr;
+		}
 
 		friend bool operator==(const AnyRef& left, const AnyRef& right)
 		{

@@ -63,7 +63,10 @@ namespace Sgl
 			SDL_SetSurfaceAlphaMod(surface, color.A);
 		}
 
-		operator SDL_Renderer* () const { return _renderer; }
+		operator SDL_Renderer* () const
+		{ 
+			return _renderer; 
+		}
 	};
 }
 

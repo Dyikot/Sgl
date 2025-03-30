@@ -14,22 +14,29 @@ namespace Sgl
 		constexpr Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a):
 			R(r), G(g), B(b), A(a)
 		{}
-		constexpr Color(uint8_t r, uint8_t g, uint8_t b) :
+
+		constexpr Color(uint8_t r, uint8_t g, uint8_t b):
 			Color(r, g, b, Opaque)
 		{}
+
 		constexpr explicit Color(uint32_t rgba):
 			R(rgba >> 24), G(rgba >> 16), B(rgba >> 8), A(rgba)
 		{}
 
-		constexpr bool IsTransparent() const noexcept { return A == Transparent; }
+		constexpr bool IsTransparent() const noexcept 
+		{
+			return A == Transparent;
+		}
 
 		constexpr bool operator==(Color color) const 
 		{
 			return R == color.R && G == color.G && B == color.B;
 		}
 
-		constexpr bool operator!=(Color color) const { return !operator==(color); }
-		constexpr operator SDL_Color() const { return SDL_Color{ R, G, B, A }; }
+		constexpr operator SDL_Color() const 
+		{ 
+			return SDL_Color{ R, G, B, A };
+		}
 	};
 
 	namespace Colors

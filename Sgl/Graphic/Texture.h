@@ -10,13 +10,40 @@ namespace Sgl
 	private:
 		SDL_Texture* _texture = nullptr;
 	public:
-		explicit Texture(SDL_Texture* texture) noexcept;
-		Texture(Texture&& other) noexcept;
-		Texture(const Texture&) = delete;
-		~Texture() noexcept;
+		explicit Texture(SDL_Texture* texture) noexcept:
+			_texture(texture)
+		{}
 
-		std::pair<size_t, size_t> Size() const;
-		operator SDL_Texture* () const { return _texture; }
-		Texture& operator=(Texture&& other) noexcept;
+		Texture(Texture&& other) noexcept:
+			_texture(std::exchange(other._texture, nullptr))
+		{}
+
+		Texture(const Texture&) = delete;
+
+		~Texture() noexcept
+		{
+			if(_texture)
+			{
+				SDL_DestroyTexture(_texture);
+			}
+		}
+
+		std::pair<size_t, size_t> Size() const
+		{
+			int width = 0, height = 0;
+			SDL_QueryTexture(_texture, nullptr, nullptr, &width, &height);
+			return { width, height };
+		}
+
+		operator SDL_Texture* () const 
+		{
+			return _texture; 
+		}
+
+		Texture& operator=(Texture&& other) noexcept
+		{
+			_texture = std::exchange(other._texture, nullptr);
+			return *this;
+		}
 	};
 }

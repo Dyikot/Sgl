@@ -24,17 +24,17 @@ namespace Sgl
 	public:
 		EventHandler() = default;
 
-		EventHandler(CEventHandler<TSender, TEventArgs> auto&& handler)
-			: _handler(std::forward<decltype(handler)>(handler))
+		EventHandler(CEventHandler<TSender, TEventArgs> auto&& handler):
+			_handler(std::forward<decltype(handler)>(handler))
 		{}
 
-		EventHandler(CArgsEventHandler<TEventArgs> auto&& handler)
-			: _handler([handler](TSender& sender, const TEventArgs& e) { handler(e); }),
+		EventHandler(CArgsEventHandler<TEventArgs> auto&& handler):
+			_handler([handler](TSender& sender, const TEventArgs& e) { handler(e); }),
 			_targetType(typeid(handler))
 		{}
 
-		EventHandler(std::invocable auto&& handler)
-			: _handler([handler](TSender& sender, const TEventArgs& e) { handler(); }),
+		EventHandler(std::invocable auto&& handler):
+			_handler([handler](TSender& sender, const TEventArgs& e) { handler(); }),
 			_targetType(typeid(handler))
 		{}
 

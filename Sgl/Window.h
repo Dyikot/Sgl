@@ -44,8 +44,7 @@ namespace Sgl
 		Window(Application& app) noexcept;
 		Window(Application& app, const Configuration& config) noexcept;
 		Window(const Window&) = delete;
-		Window(Window&&) = delete;
-		
+		Window(Window&&) = delete;		
 		~Window() noexcept;
 		
 		void SetWidth(size_t value) noexcept;

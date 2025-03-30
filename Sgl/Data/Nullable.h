@@ -22,15 +22,40 @@ namespace Sgl
 			_value(value)
 		{}
 
-		T& Value() { return *_value; }
-		const T& Value() const { return *_value; }
+		T& Value()
+		{
+			return *_value;
+		}
 
-		T* ValueOrNull() { return _value; }
-		const T* ValueOrNull() const { return _value; }
+		const T& Value() const
+		{
+			return *_value;
+		}
 
-		operator bool() const { return _value; }
-		operator T* () { return _value; }
-		operator const T* () const { return _value; }
+		T* ValueOrNull()
+		{ 
+			return _value;
+		}
+
+		const T* ValueOrNull() const 
+		{ 
+			return _value;
+		}
+
+		operator bool() const 
+		{ 
+			return _value;
+		}
+
+		operator T*() 
+		{ 
+			return _value;
+		}
+
+		operator const T*() const 
+		{ 
+			return _value;
+		}
 
 		Nullable<T>& operator|=(T& right)
 		{
@@ -54,6 +79,7 @@ namespace Sgl
 
 		const T* operator->() const { return _value; }
 		const T& operator*() const { return *_value; }
+
 		T* operator->() { return _value; }
 		T& operator*() { return *_value; }
 

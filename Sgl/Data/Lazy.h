@@ -20,8 +20,15 @@ namespace Sgl
 		struct ValueFactory: public IValueFactory
 		{
 			TFunc Function;
-			ValueFactory(TFunc factory): Function(factory) {}
-			T operator()() const override { return Function(); }
+
+			ValueFactory(TFunc factory):
+				Function(factory)
+			{}
+
+			T operator()() const override
+			{ 
+				return Function();
+			}
 		};
 
 		mutable std::unique_ptr<T> _value;
@@ -59,7 +66,10 @@ namespace Sgl
 			return *_value;
 		}
 
-		bool IsValueCreated() const { return _value; }
+		bool IsValueCreated() const 
+		{ 
+			return _value;
+		}
 
 		operator T& () { return Value(); }
 		operator const T& () const { return Value(); }

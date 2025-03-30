@@ -10,8 +10,9 @@ namespace Sgl
 		std::string_view Name;
 		const std::type_info& Type;
 	public:
-		constexpr PropertyId(std::string_view name,const std::type_info& type)
-			: Name(name), Type(type) {}
+		constexpr PropertyId(std::string_view name,const std::type_info& type):
+			Name(name), Type(type)
+		{}
 
 		template<typename T>
 		static constexpr PropertyId New(std::string_view name)
@@ -22,11 +23,6 @@ namespace Sgl
 		friend constexpr bool operator==(const PropertyId& left, const PropertyId& right)
 		{
 			return left.Name == right.Name;
-		}
-
-		friend constexpr bool operator!=(const PropertyId& left, const PropertyId& right)
-		{
-			return !operator==(left, right);
 		}
 	};
 }

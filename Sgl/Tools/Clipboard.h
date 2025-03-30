@@ -9,9 +9,27 @@ namespace Sgl
 	class Clipboard
 	{
 	public:
-		static void SetText(std::string_view text) { SDL_SetClipboardText(text.data()); }
-		static void Clear() { SetText(""); }
-		static std::string GetText();
-		static bool IsEmpty() { return SDL_HasClipboardText() == SDL_FALSE; }
+		static void SetText(std::string_view text)
+		{
+			SDL_SetClipboardText(text.data());
+		}
+
+		static std::string GetText()
+		{
+			auto rawText = SDL_GetClipboardText();
+			std::string text = rawText;
+			SDL_free(rawText);
+			return text;
+		}
+
+		static void Clear()
+		{ 
+			SetText(""); 
+		}
+
+		static bool IsEmpty()
+		{
+			return SDL_HasClipboardText() == SDL_FALSE;
+		}
 	};
 }

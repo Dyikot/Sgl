@@ -145,7 +145,7 @@ namespace Sgl::Ranges
 				sum += item;
 			}
 			
-			return sum / std::ranges::distance(range);
+			return sum / std::ranges::size(range);
 		}
 	};
 
@@ -155,21 +155,12 @@ namespace Sgl::Ranges
 	}
 
 	template<typename TResult>
-	struct _CastAdaptor: public RangeAdaptor<_CastAdaptor<TResult>>
-	{
-		constexpr auto operator()(std::ranges::range auto&& range) const
-		{
-			return range | std::views::transform([](const auto& item)
-			{
-				return static_cast<TResult>(item);
-			});
-		}
-	};
-
-	template<typename TResult>
 	inline constexpr auto Cast()
 	{
-		return _CastAdaptor<TResult>();
+		return std::views::transform([](const auto& item) 
+		{
+			return static_cast<TResult>(item);
+		});
 	}
 
 	struct _ChunkAdaptor: public RangeAdaptor<_ChunkAdaptor>
@@ -185,7 +176,7 @@ namespace Sgl::Ranges
 				throw std::invalid_argument("Chunk size must be more than 0");
 			}
 
-			const auto RangeSize = std::ranges::distance(range);
+			const auto RangeSize = std::ranges::size(range);
 			const auto ChunksNumber = RangeSize / Size;
 			std::vector<std::vector<std::ranges::range_value_t<decltype(range)>>> chunks(ChunksNumber);
 			auto it = range.begin();
@@ -217,13 +208,38 @@ namespace Sgl::Ranges
 	{
 		constexpr auto operator()(std::ranges::range auto&& range) const
 		{
-			return std::ranges::distance(range);
+			return std::ranges::size(range);
 		}
 	};
 
 	inline constexpr auto Count()
 	{
 		return _CountAdaptor();
+	}
+
+	template<size_t Size>
+	struct _ToArrayAdaptor: public RangeAdaptor<_ToArrayAdaptor<Size>>
+	{
+		constexpr auto operator()(std::ranges::range auto&& range) const
+		{
+			const auto RangeSize = std::ranges::size(range);
+			std::array<std::ranges::range_value_t<decltype(range)>, Size> result = {};
+			const auto MinSize = RangeSize < Size ? RangeSize : Size;
+			auto it = range.begin();
+
+			for(size_t i = 0; i < MinSize; i++, it++)
+			{
+				result[i] = *it;
+			}
+
+			return result;
+		}
+	};
+
+	template<size_t Size>
+	inline constexpr auto ToArray()
+	{
+		return _ToArrayAdaptor<Size>();
 	}
 
 	struct _ToVectorAdaptor: public RangeAdaptor<_ToVectorAdaptor>

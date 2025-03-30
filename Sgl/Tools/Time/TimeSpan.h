@@ -9,12 +9,12 @@ namespace Sgl
 	private:
 		long long _nanoseconds;
 	public:
-		constexpr explicit TimeSpan(long long nanoseconds)
-			: _nanoseconds(nanoseconds)
+		constexpr explicit TimeSpan(long long nanoseconds):
+			_nanoseconds(nanoseconds)
 		{}
 
-		constexpr TimeSpan(const TimeSpan& timespan)
-			: _nanoseconds(timespan._nanoseconds)
+		constexpr TimeSpan(const TimeSpan& timespan):
+			_nanoseconds(timespan._nanoseconds)
 		{}
 
 		static constexpr TimeSpan FromMicroseconds(long long value)
@@ -47,7 +47,10 @@ namespace Sgl
 			return TimeSpan(value * 864e11);
 		}
 
-		static constexpr TimeSpan Zero() { return TimeSpan(0); }
+		static constexpr TimeSpan Zero()
+		{
+			return TimeSpan(0);
+		}
 
 		constexpr long long ToNanoseconds() const { return _nanoseconds; }
 		constexpr double ToMicroseconds() const { return _nanoseconds / 1e3; }

@@ -4,7 +4,7 @@
 #include "SDL/SDL_image.h"
 #include "../Tools/Log.h"
 #include "../Data/Lazy.h"
-#include <string>
+#include <string_view>
 
 namespace Sgl
 {

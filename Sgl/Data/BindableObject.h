@@ -109,8 +109,15 @@ namespace Sgl
 			return _properties[id].As<TValue>();
 		}
 
-		Any& GetProperty(const PropertyId& id) { return _properties[id]; }
-		const Any& GetProperty(const PropertyId& id) const { return _properties.at(id); }
+		Any& GetProperty(const PropertyId& id)
+		{
+			return _properties[id];
+		}
+
+		const Any& GetProperty(const PropertyId& id) const 
+		{
+			return _properties.at(id);
+		}
 
 		template<typename TValue>
 		void SetProperty(const PropertyId& id, const TValue& value)
@@ -127,6 +134,16 @@ namespace Sgl
 			_properties.Add<TValue>(id, std::forward<TArgs>(args)...);
 		}
 
-		void OnPropertyChanged(const PropertyId& id);
+		void OnPropertyChanged(const PropertyId& id)
+		{
+			if(auto found = _bindings.find(id); found != _bindings.end())
+			{
+				auto& binding = found->second;
+
+				binding.IsLock = true;
+				binding.UpdateTarget();
+				binding.IsLock = false;
+			}
+		}
 	};
 }
