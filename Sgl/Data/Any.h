@@ -163,11 +163,11 @@ namespace Sgl
 		IValueContainer* _value = nullptr;
 	};
 
-	class AnyRef final
+	class AnyView final
 	{
 	public:
 		template<typename T> 
-		AnyRef(T& value):
+		AnyView(T& value):
 			_value(&value), _type(typeid(T))
 		{}
 
@@ -201,18 +201,18 @@ namespace Sgl
 			return Is<T>() ? &As<T>() : nullptr;
 		}
 
-		friend bool operator==(const AnyRef& left, const AnyRef& right)
+		friend bool operator==(const AnyView& left, const AnyView& right)
 		{
 			return left._type == right._type;
 		}
 
-		friend bool operator!=(const AnyRef& left, const AnyRef& right)
+		friend bool operator!=(const AnyView& left, const AnyView& right)
 		{
 			return !operator==(left, right);
 		}
 
 		template<typename T>
-		AnyRef& operator=(T& value)
+		AnyView& operator=(T& value)
 		{
 			if(!Is<T>())
 			{
@@ -223,7 +223,7 @@ namespace Sgl
 			return *this;
 		}
 
-		AnyRef& operator=(const AnyRef& ref)
+		AnyView& operator=(const AnyView& ref)
 		{
 			if(*this != ref)
 			{

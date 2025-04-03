@@ -1,14 +1,13 @@
 #pragma once
 
-#include <span>
 #include <string_view>
-#include <variant>
 #include <array>
 #include "SDL/SDL_render.h"
 #include "../Graphic/Color.h"
 #include "../Graphic/Texture.h"
 #include "../Graphic/Surface.h"
-#include "../Data/Nullable.h"
+#include "Ranges.h"
+#include "../Math/Math.h"
 
 namespace Sgl
 {
@@ -16,32 +15,27 @@ namespace Sgl
 	{
 	private:
 		SDL_Renderer* _renderer;
-		static inline Nullable<RenderContext> _instance;
 	public:
 		explicit RenderContext(SDL_Renderer* renderer) noexcept;
-		~RenderContext() noexcept;
-
-		static Texture CreateTexture(std::string_view path);
-
+		
 		void DrawPoint(SDL_FPoint point, Color color);
-		void DrawPoints(std::span<SDL_FPoint> points, Color color);
+		void DrawPoints(PointsView points, Color color);
 		void DrawLine(SDL_FPoint start, SDL_FPoint end, Color color);
-		void DrawLines(std::span<const SDL_FPoint> points, Color color);
+		void DrawLines(PointsView points, Color color);
 		void DrawRectangle(const SDL_FRect& rectange, Color color);
-		void DrawRectangles(std::span<const SDL_FRect> rectanges, Color color);
-		void DrawFillRectangle(const SDL_FRect& rectange, Color background);
-		void DrawFillRectangles(std::span<const SDL_FRect> rectanges, Color background);
-		void DrawImage(std::string_view path, const SDL_FRect& rectangle, Color color);
-		void DrawImage(std::string_view path, const SDL_FRect& rectangle, const SDL_Rect& clip, Color color);
-		void DrawImage(std::string_view path, SDL_FPoint position, int width, int height, Color color);
-		void DrawTexture(const Texture& texture, const SDL_FRect& rectangle, Color color);
-		void DrawTexture(const Texture& texture, const SDL_FRect& rectangle, const SDL_Rect& clip, Color color);
+		void DrawRectangles(RectanglesView rectanges, Color color);
+		void DrawFillRectangle(const SDL_FRect& rectange, Color fill);
+		void DrawFillRectangles(RectanglesView rectanges, Color fill);
+		void DrawTexture(const Texture& texture, const SDL_FRect& rectangle, Color fill);
+		void DrawTexture(const Texture& texture, const SDL_FRect& rectangle, const SDL_Rect& clip, Color fill);
+		void DrawEllipse(PointsView ellipse, Color color);
 		void DrawEllipse(SDL_FPoint position, int width, int height, Color color);
+		void DrawEllipseFill(PointsView ellipse, Color color);
 		void DrawEllipseFill(SDL_FPoint position, int width, int height, Color color);
-		void DrawShape(std::span<const SDL_Vertex> vertices);
-		void DrawShape(std::span<const SDL_Vertex> vertices, const Texture& texture, Color color);
-		void DrawShape(std::span<const SDL_Vertex> vertices, std::span<const int> order);
-		void DrawShape(std::span<const SDL_Vertex> vertices, std::span<const int> order, const Texture& texture, Color color);
+		void DrawShape(VerticesView vertices);
+		void DrawShape(VerticesView vertices, const Texture& texture, Color color);
+		void DrawShape(VerticesView vertices, std::span<const int> order);
+		void DrawShape(VerticesView vertices, std::span<const int> order, const Texture& texture, Color color);
 		void FillSceneBackgroundWithColor(Color color);
 		void FillSceneBackgroundWithTexture(const Texture& texture, Color color);
 		void SetBlendMode(SDL_BlendMode mode);
@@ -63,10 +57,7 @@ namespace Sgl
 			SDL_SetSurfaceAlphaMod(surface, color.A);
 		}
 
-		operator SDL_Renderer* () const
-		{ 
-			return _renderer; 
-		}
+		operator SDL_Renderer* () { return _renderer; }
 	};
 }
 

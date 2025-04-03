@@ -2,16 +2,7 @@
 
 namespace Sgl
 {
-	inline float IsTriangleContainsPoint(SDL_FPoint a, SDL_FPoint b,
-										 SDL_FPoint c, SDL_FPoint point)
-	{
-		return fabsf(Math::TriangleArea(a, b, c) 
-					 - Math::TriangleArea(point, a, b) 
-					 + Math::TriangleArea(point, b, c) 
-					 + Math::TriangleArea(point, a, c)) < 1e-5f;
-	};
-
-    std::vector<int> Math::TriangulateConvexShape(std::span<SDL_FPoint> points)
+    std::vector<int> Math::TriangulateConvexShape(PointsView points)
     {
 		constexpr size_t MinVerticesNumber = 3;
 		std::list<int> order(points.size());
@@ -73,7 +64,7 @@ namespace Sgl
 		return resultOrder;
     }
 
-	std::vector<int> Math::TriangulateConvexShape(std::span<SDL_FPoint> points, SDL_FPoint center)
+	std::vector<int> Math::TriangulateConvexShape(PointsView points, SDL_FPoint center)
 	{
 		std::vector<int> resultOrder;
 		resultOrder.reserve((points.size()) * 3);
@@ -91,17 +82,5 @@ namespace Sgl
 		resultOrder.push_back(0);
 
 		return resultOrder;
-	}
-
-	std::vector<SDL_Vertex> Math::CreateVertexVector(std::span<SDL_FPoint> points, Sgl::Color color)
-	{
-		std::vector<SDL_Vertex> result(points.size());
-
-		for(size_t i = 0; i < points.size(); i++)
-		{
-			result[i] = SDL_Vertex{ points[i], color, {} };
-		}
-
-		return result;
 	}
 }
