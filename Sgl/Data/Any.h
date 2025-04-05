@@ -19,7 +19,7 @@ namespace Sgl
 			virtual ~IValueContainer() = default;
 
 			virtual const std::type_info& Type() const = 0;
-			virtual IValueContainer* Copy() const = 0;
+			virtual std::shared_ptr<IValueContainer> Copy() const = 0;
 
 			template<typename T>
 			T& Get()
@@ -49,9 +49,9 @@ namespace Sgl
 				return typeid(Value);
 			}
 
-			IValueContainer* Copy() const override 
+			std::shared_ptr<IValueContainer> Copy() const override
 			{
-				return new ValueContainer<T>(*this);
+				return std::make_shared<ValueContainer<T>>(*this);
 			}
 		};
 	public:
@@ -59,7 +59,7 @@ namespace Sgl
 		static Any New(TArgs&&... args)
 		{
 			Any any;
-			any._value = new ValueContainer<TValue>(std::forward<TArgs>(args)...);
+			any._value = std::make_shared<ValueContainer<TValue>>(std::forward<TArgs>(args)...);
 			return any;
 		}
 
@@ -67,7 +67,7 @@ namespace Sgl
 
 		template<typename T> requires (!std::same_as<std::decay_t<T>, Any>)
 		Any(T&& value):
-			_value(new ValueContainer<std::decay_t<T>>(std::forward<T>(value)))
+			_value(std::make_shared<ValueContainer<std::decay_t<T>>>(std::forward<T>(value)))
 		{}
 
 		Any(const Any& any):
@@ -77,11 +77,6 @@ namespace Sgl
 		Any(Any&& any) noexcept:
 			_value(std::exchange(any._value, nullptr))
 		{}
-
-		~Any() noexcept
-		{
-			delete _value; 
-		}
 
 		const std::type_info& Type() const 
 		{
@@ -130,27 +125,24 @@ namespace Sgl
 	
 		bool HasValue() const noexcept
 		{ 
-			return _value;
+			return _value.operator bool();
 		}
 
 		template<typename T> requires (!std::same_as<std::decay_t<T>, Any>)
 		Any& operator=(T&& value)
 		{
-			delete _value;
-			_value = new ValueContainer<std::decay_t<T>>(std::forward<T>(value));
+			_value = std::make_shared<ValueContainer<std::decay_t<T>>>(std::forward<T>(value));
 			return *this;
 		}
 
 		Any& operator=(const Any& any)
 		{
-			delete _value;
 			_value = any._value->Copy();
 			return *this;
 		}
 
 		Any& operator=(Any&& any) noexcept
 		{
-			delete _value;
 			_value = std::exchange(any._value, nullptr);
 			return *this;
 		}
@@ -160,7 +152,7 @@ namespace Sgl
 			return HasValue();
 		}
 	private:
-		IValueContainer* _value = nullptr;
+		std::shared_ptr<IValueContainer> _value;
 	};
 
 	class AnyView final
@@ -168,13 +160,13 @@ namespace Sgl
 	public:
 		template<typename T> 
 		AnyView(T& value):
-			_value(&value), _type(typeid(T))
+			_value(&value), _getType(GetType<T>)
 		{}
 
 		template<typename T>
 		bool Is() const
 		{ 
-			return _type == typeid(T); 
+			return _getType() == typeid(T);
 		}
 		
 		template<typename T>
@@ -203,38 +195,28 @@ namespace Sgl
 
 		friend bool operator==(const AnyView& left, const AnyView& right)
 		{
-			return left._type == right._type;
-		}
-
-		friend bool operator!=(const AnyView& left, const AnyView& right)
-		{
-			return !operator==(left, right);
+			return left._value == right._value;
 		}
 
 		template<typename T>
 		AnyView& operator=(T& value)
 		{
-			if(!Is<T>())
-			{
-				throw std::invalid_argument("Wrong reference type");
-			}
-
+			_getType = GetType<T>;
 			_value = &value;
 			return *this;
 		}
 
 		AnyView& operator=(const AnyView& ref)
 		{
-			if(*this != ref)
-			{
-				throw std::invalid_argument("Wrong reference type");
-			}
-
+			_getType = ref._getType;
 			_value = ref._value;
 			return *this;
 		}
 	private:
-		const type_info& _type;
+		template<typename T>
+		static const type_info& GetType() { return typeid(T); }
+	private:
+		const type_info& (*_getType)();
 		void* _value;
 	};
 

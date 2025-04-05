@@ -1,6 +1,8 @@
 #pragma once
 
 #include <span>
+#include "SDL/SDL_rect.h"
+#include "SDL/SDL_render.h"
 
 namespace Sgl
 {

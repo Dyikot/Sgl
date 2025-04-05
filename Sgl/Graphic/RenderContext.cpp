@@ -1,6 +1,5 @@
 #include "RenderContext.h"
 #include "../Tools/Log.h"
-#include "../Math/Math.h"
 #include <SDL/SDL_image.h>
 
 namespace Sgl

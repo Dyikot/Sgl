@@ -7,7 +7,6 @@
 #include "../Graphic/Texture.h"
 #include "../Graphic/Surface.h"
 #include "Ranges.h"
-#include "../Math/Math.h"
 
 namespace Sgl
 {

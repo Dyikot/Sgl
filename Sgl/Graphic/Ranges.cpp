@@ -3,15 +3,11 @@
 
 namespace Sgl
 {
-	constexpr VerticesCollection::VerticesCollection():
-		base()
-	{}
-
-	constexpr VerticesCollection::VerticesCollection(size_t count):
+	VerticesCollection::VerticesCollection(size_t count):
 		base(count)
 	{}
 
-	constexpr VerticesCollection::VerticesCollection(PointsView points, Color color)
+	VerticesCollection::VerticesCollection(PointsView points, Color color)
 	{
 		reserve(points.size());
 
@@ -21,7 +17,7 @@ namespace Sgl
 		}
 	}
 
-	constexpr VerticesCollection::VerticesCollection(PointsView points, 
+	VerticesCollection::VerticesCollection(PointsView points, 
 													 PointsView textureCoordinates,
 													 Color color)
 	{

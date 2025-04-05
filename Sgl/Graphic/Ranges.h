@@ -2,9 +2,6 @@
 
 #include <array>
 #include <vector>
-#include "Color.h"
-#include "SDL/SDL_rect.h"
-#include "SDL/SDL_render.h"
 #include "../Math/Math.h"
 
 namespace Sgl
@@ -17,10 +14,10 @@ namespace Sgl
 	public:
 		using base = std::vector<SDL_Vertex>;
 
-		constexpr VerticesCollection();
-		constexpr explicit VerticesCollection(size_t count);
-		constexpr VerticesCollection(PointsView points, Color color);
-		constexpr VerticesCollection(PointsView points, PointsView textureCoordinates, Color color);
+		VerticesCollection() = default;
+		explicit VerticesCollection(size_t count);
+		VerticesCollection(PointsView points, Color color);
+		VerticesCollection(PointsView points, PointsView textureCoordinates, Color color);
 	};
 
 	template<size_t Points = 360>

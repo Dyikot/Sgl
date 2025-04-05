@@ -35,6 +35,7 @@ namespace Sgl
 
 		Application& App;
 		SceneManager SceneManager = Sgl::SceneManager(*this);
+		AnyMap<std::string> Resources;
 		bool CanRenderInMinimizedMode = false;
 	private:
 		SDL_Window* _this;
