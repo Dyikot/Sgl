@@ -9,7 +9,7 @@
 namespace Sgl
 {
 	class Any final
-	{
+	{		
 	private:
 		template<typename T>
 		struct ValueContainer;
@@ -23,13 +23,13 @@ namespace Sgl
 
 			template<typename T>
 			T& Get()
-			{ 
+			{
 				return static_cast<ValueContainer<T>*>(this)->Value;
 			}
 
 			template<typename T>
 			const T& Get() const
-			{ 
+			{
 				return static_cast<ValueContainer<T>*>(this)->Value;
 			}
 		};
@@ -44,7 +44,7 @@ namespace Sgl
 				Value(std::forward<TArgs>(args)...)
 			{}
 
-			const std::type_info& Type() const override 
+			const std::type_info& Type() const override
 			{
 				return typeid(Value);
 			}
@@ -55,14 +55,6 @@ namespace Sgl
 			}
 		};
 	public:
-		template<typename TValue, typename... TArgs>
-		static Any New(TArgs&&... args)
-		{
-			Any any;
-			any._value = std::make_shared<ValueContainer<TValue>>(std::forward<TArgs>(args)...);
-			return any;
-		}
-
 		Any() noexcept = default;
 
 		template<typename T> requires (!std::same_as<std::decay_t<T>, Any>)
@@ -77,6 +69,9 @@ namespace Sgl
 		Any(Any&& any) noexcept:
 			_value(std::exchange(any._value, nullptr))
 		{}
+
+		template<typename TValue, typename... TArgs>
+		friend Any CreateAny(TArgs&&... args);
 
 		const std::type_info& Type() const 
 		{
@@ -160,13 +155,13 @@ namespace Sgl
 	public:
 		template<typename T> 
 		AnyView(T& value):
-			_value(&value), _getType(GetType<T>)
+			_value(&value), _type(typeid(T))
 		{}
 
 		template<typename T>
 		bool Is() const
 		{ 
-			return _getType() == typeid(T);
+			return *_type == typeid(T);
 		}
 		
 		template<typename T>
@@ -201,22 +196,19 @@ namespace Sgl
 		template<typename T>
 		AnyView& operator=(T& value)
 		{
-			_getType = GetType<T>;
+			_type = typeid(T);
 			_value = &value;
 			return *this;
 		}
 
 		AnyView& operator=(const AnyView& ref)
 		{
-			_getType = ref._getType;
+			_type = ref._type;
 			_value = ref._value;
 			return *this;
 		}
 	private:
-		template<typename T>
-		static const type_info& GetType() { return typeid(T); }
-	private:
-		const type_info& (*_getType)();
+		Nullable<const std::type_info> _type;
 		void* _value;
 	};
 
@@ -229,7 +221,15 @@ namespace Sgl
 		template<typename TValue, typename... TArgs>
 		void Add(const TKey& key, TArgs&&... args)
 		{
-			Base::emplace(key, Any::New<TValue>(std::forward<TArgs>(args)...));
+			Base::emplace(key, CreateAny<TValue>(std::forward<TArgs>(args)...));
 		}
 	};
+
+	template<typename TValue, typename ...TArgs>
+	Any CreateAny(TArgs && ...args)
+	{
+		Any any;
+		any._value = std::make_shared<Any::ValueContainer<TValue>>(std::forward<TArgs>(args)...);
+		return any;
+	}
 }

@@ -4,6 +4,7 @@
 #include <assert.h>
 #include "Any.h"
 #include "PropertyId.h"
+#include "../Tools/Delegates.h"
 
 namespace Sgl
 {
@@ -22,14 +23,14 @@ namespace Sgl
 
 		virtual void AddSource(IBindingSource& source) = 0;
 		virtual void RemoveSource(IBindingSource& source) = 0;
-	};
+	};	
 
 	struct Binding
 	{
-		std::function<void()> UpdateSource;
-		std::function<void()> UpdateTarget;
+		Callable<Function<void>> UpdateTarget;
+		Callable<Function<void>> UpdateSource;
 		bool IsLock = false;
-	};	
+	};
 
 	class BindableObject: public IBindingSource
 	{
@@ -39,12 +40,52 @@ namespace Sgl
 
 		template<typename TData, typename TMember>
 		using Getter = const TMember& (TData::*)() const;
+
+		template<typename TData, typename TMember>
+		struct UpdateTarget: public Function<void>
+		{
+			BindableObject* Object;
+			Setter<TData, TMember> Setter;
+			TData* Data;
+			const PropertyId& Id;
+
+			UpdateTarget(BindableObject* obejct, BindableObject::Setter<TData, TMember> setter,
+						 TData* data, const PropertyId& id):
+				Object(obejct), Setter(setter), Data(data), Id(id)
+			{}
+
+			void operator()() override
+			{
+				std::invoke(Setter, Data, std::cref(Object->GetPropertyValue<TMember>(Id)));
+			}
+
+			void operator()() const override {}
+		};
+
+		template<typename TData, typename TMember>
+		struct UpdateSource: public Function<void>
+		{
+			BindableObject* Object;
+			Setter<TData, TMember> Getter;
+			TData* Data;
+			const PropertyId& Id;
+
+			UpdateSource(BindableObject* obejct, BindableObject::Getter<TData, TMember> getter,
+						 TData* data, const PropertyId& id):
+				Object(obejct), Getter(getter), Data(data), Id(id)
+			{}
+
+			void operator()() override
+			{
+				Object->_properties[Id].As<TMember>() = std::invoke(Getter, std::ref(Data));
+			}
+
+			void operator()() const override {}
+		};
 	private:
 		AnyMap<PropertyId> _properties;
 		std::unordered_map<PropertyId, Binding> _bindings;
 	public:
-		virtual ~BindableObject() = default;
-
 		void Update(const PropertyId& id)
 		{
 			if(auto found = _bindings.find(id); found != _bindings.end() && !found->second.IsLock)
@@ -56,25 +97,18 @@ namespace Sgl
 		template<typename TData, typename TMember>
 		void Bind(const PropertyId& id, TData& data, Setter<TData, TMember> setter)
 		{
-			static_assert(id.Type == typeid(TMember));
+			assert(id.Type == typeid(TMember));
 
-			_bindings[id].UpdateTarget = [this, setter, &data, id]()
-			{
-				std::invoke(setter, data, std::cref(GetPropertyValue<TMember>(id)));
-			};
+			_bindings[id].UpdateTarget = new UpdateTarget<TData, TMember>(this, setter, &data, id);
 		}
 
 		template<std::derived_from<IBindingTarget> TData, typename TMember>
 		void Bind(const PropertyId& id, TData& data, Getter<TData, TMember> getter)
 		{
-			static_assert(id.Type == typeid(TMember));
+			assert(id.Type == typeid(TMember));
 
 			data.AddSource(*this);
-
-			_bindings[id].UpdateSource = [this, getter, &data, id]()
-			{
-				_properties[id].As<TMember>() = std::invoke(getter, std::ref(data));
-			};
+			_bindings[id].UpdateSource = new UpdateSource<TData, TMember>(this, getter, &data, id);
 		}
 
 		template<typename TData, typename TMember>

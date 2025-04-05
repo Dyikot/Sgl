@@ -29,7 +29,7 @@ namespace Sgl
 		template<typename TValue, typename... TArgs>
 		void Add(const PropertyId& id, TArgs&&... args)
 		{
-			Add(id, Any::New<TValue>(std::forward<TArgs>(args)...));
+			Add(id, CreateAny<TValue>(std::forward<TArgs>(args)...));
 		}
 
 		template<typename TValue>

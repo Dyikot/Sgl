@@ -70,10 +70,5 @@ namespace Sgl
 		{
 			return left.TargetType() == right.TargetType();
 		}
-
-		friend bool operator!=(const EventHandler& left, const EventHandler& right) noexcept
-		{
-			return !operator==(left, right);
-		}
 	};
 }
