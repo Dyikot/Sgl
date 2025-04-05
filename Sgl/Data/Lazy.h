@@ -1,58 +1,53 @@
 #pragma once
 
 #include <memory>
-#include <functional>
+#include <optional>
 #include "../Tools/Delegates.h"
 
 namespace Sgl
 {
-	template <typename T>
+	template<typename T>
+	struct DefaulValueFactory
+	{
+		std::optional<T> Value;
+
+		constexpr DefaulValueFactory() = default;
+		constexpr DefaulValueFactory(std::convertible_to<T> auto&& value):
+			Value(std::forward<decltype(value)>(value))
+		{}
+
+		constexpr T operator()()
+		{
+			if(Value.has_value())
+			{
+				return Value.value();
+			}
+
+			return T{};
+		}
+	};
+
+	template <typename T, Func<T> TFactory = DefaulValueFactory<T>>
 	class Lazy final
 	{
 	private:
-		struct IValueFactory
-		{
-			virtual ~IValueFactory() = default;
-			virtual T operator()() const = 0;
-		};
-
-		template<Func<T> TFunc>
-		struct ValueFactory: public IValueFactory
-		{
-			TFunc Function;
-
-			ValueFactory(TFunc factory):
-				Function(factory)
-			{}
-
-			T operator()() const override
-			{ 
-				return Function();
-			}
-		};
-
 		mutable std::unique_ptr<T> _value;
-		mutable std::unique_ptr<IValueFactory> _valueFactory;
+		mutable TFactory _valueFactory;
 	public:
-		Lazy(): Lazy([] { return T{}; }) {}
+		Lazy() requires std::default_initializable<T>:
+			_valueFactory()
+		{}
+
+		Lazy(std::convertible_to<T> auto&& value):
+			_valueFactory(std::forward<decltype(value)>(value))
+		{}
+
+		Lazy(TFactory factory):
+			_valueFactory(std::move(factory))
+		{}
+
 		Lazy(const Lazy&) = delete;
 		Lazy(Lazy&&) = delete;
-
-		template<Func<T> TFunc>
-		Lazy(TFunc&& valueFactory)
-		{
-			_valueFactory = std::make_unique<ValueFactory<TFunc>>(
-				std::forward<TFunc>(valueFactory));
-		}
-
-		template<typename TValue>
-			requires std::constructible_from<T, TValue> && (!std::is_reference_v<TValue>)
-		Lazy(TValue&& value)
-		{
-			auto f = [v = std::forward<TValue>(value)] { return v; };
-			using F = decltype(f);
-			_valueFactory = std::make_unique<ValueFactory<F>>(std::forward<F>(f));
-		}
 
 		T& Value()
 		{
@@ -81,8 +76,14 @@ namespace Sgl
 		{
 			if(!_value)
 			{
-				_value = std::make_unique<T>((*_valueFactory)());
+				_value = std::make_unique<T>(_valueFactory());
 			}
 		}
 	};
+
+	template<std::invocable TFactory>
+	Lazy(TFactory) -> Lazy<std::invoke_result_t<TFactory>, std::decay_t<TFactory>>;
+
+	template<std::copy_constructible T> requires (!std::invocable<T>)
+	Lazy(T&&) -> Lazy<T>;
 }
