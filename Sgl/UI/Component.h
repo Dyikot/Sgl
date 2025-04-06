@@ -80,26 +80,26 @@ namespace Sgl
 		void SetToolTip(const Component& value) { SetProperty<const Component*>(ToolTipProperty, &value); }
 		void SetBorderColor(Color value) { SetProperty(BorderColorProperty, value); }
 		void SetFontColor(Color value) { SetProperty(FontColorProperty, value); }
-		void SetBorderThikness(const Thikness& value) { SetProperty(BorderThiknessProperty, value); }
+		void SetBorderThikness(Thikness value) { SetProperty(BorderThiknessProperty, value); }
 		void SetFontFamily(const FontFamily& value) { SetProperty(FontFamilyProperty, value); }
 		void SetFontSize(uint16_t value) { SetProperty(FontSizeProperty, value); }
 		void SetFontWeight(FontWeight value) { SetProperty(FontWeightProperty, value); }
 
-		const float& GetWidth() const { return GetPropertyValue<float>(WidthProperty); }
-		const float& GetHeight() const { return GetPropertyValue<float>(HeightProperty); }
-		const float& GetMinWidth() const { return GetPropertyValue<float>(MinWidthProperty); }
-		const float& GetMinHeight() const { return GetPropertyValue<float>(MinHeightProperty); }
-		const float& GetMaxWidth() const { return GetPropertyValue<float>(MaxWidthProperty); }
-		const float& GetMaxHeight() const { return GetPropertyValue<float>(MaxHeightProperty); }
-		const size_t& GetZIndex() const { return GetPropertyValue<size_t>(ZIndexProperty); }
-		const Thikness& GetMargin() const { return GetPropertyValue<Thikness>(MarginProperty); }
-		const HorizontalAlignment& GetHorizontalAlignment() const { return GetPropertyValue<HorizontalAlignment>(HorizontalAlignmentProperty); }
-		const VerticalAligment& GetVerticalAlignment() const { return GetPropertyValue<VerticalAligment>(VerticalAligmentProperty); }
-		const Visibility& GetVisibility() const { return GetPropertyValue<Visibility>(VisibilityProperty); }
+		float GetWidth() const { return GetPropertyValue<float>(WidthProperty); }
+		float GetHeight() const { return GetPropertyValue<float>(HeightProperty); }
+		float GetMinWidth() const { return GetPropertyValue<float>(MinWidthProperty); }
+		float GetMinHeight() const { return GetPropertyValue<float>(MinHeightProperty); }
+		float GetMaxWidth() const { return GetPropertyValue<float>(MaxWidthProperty); }
+		float GetMaxHeight() const { return GetPropertyValue<float>(MaxHeightProperty); }
+		size_t GetZIndex() const { return GetPropertyValue<size_t>(ZIndexProperty); }
+		Thikness GetMargin() const { return GetPropertyValue<Thikness>(MarginProperty); }
+		HorizontalAlignment GetHorizontalAlignment() const { return GetPropertyValue<HorizontalAlignment>(HorizontalAlignmentProperty); }
+		VerticalAligment GetVerticalAlignment() const { return GetPropertyValue<VerticalAligment>(VerticalAligmentProperty); }
+		Visibility GetVisibility() const { return GetPropertyValue<Visibility>(VisibilityProperty); }
 		const Component* GetToolTip() const { return GetPropertyValue<const Component*>(ToolTipProperty); }
 		Color GetBorderColor() const { return GetPropertyValue<Color>(BorderColorProperty); }
 		Color GetFontColor() const { return GetPropertyValue<Color>(FontColorProperty); }
-		const Thikness& GetBorderThikness() const { return GetPropertyValue<Thikness>(BorderThiknessProperty); }
+		Thikness GetBorderThikness() const { return GetPropertyValue<Thikness>(BorderThiknessProperty); }
 		const FontFamily& GetFontFamily() const { return GetPropertyValue<FontFamily>(FontFamilyProperty); }
 		uint16_t GetFontSize() const { return GetPropertyValue<uint16_t>(FontSizeProperty); }
 		FontWeight GetFontWeight() const { return GetPropertyValue<FontWeight>(FontWeightProperty); }

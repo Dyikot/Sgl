@@ -14,6 +14,7 @@ namespace Sgl
 	template<typename TInvocable, typename TResult, typename... TArgs>
 	concept CFunc = std::is_invocable_r_v<TResult, TInvocable, TArgs...>;
 
+
 	template<typename... TArgs>
 	using Action = std::function<void(TArgs...)>;
 

@@ -34,12 +34,6 @@ namespace Sgl
 
 	class BindableObject: public IBindingSource
 	{
-	public:
-		template<typename TData, typename TMember>
-		using Setter = void (TData::*)(const TMember&);
-
-		template<typename TData, typename TMember>
-		using Getter = const TMember& (TData::*)() const;
 	private:
 		AnyMap<PropertyId> _properties;
 		std::unordered_map<PropertyId, Binding> _bindings;
@@ -52,36 +46,36 @@ namespace Sgl
 			}
 		}
 
-		template<typename TData, typename TMember>
-		void Bind(const PropertyId& id, TData& data, Setter<TData, TMember> setter)
+		template<typename TMember, typename TData>
+		void Bind(const PropertyId& id, TData& data, CAction<TData*, TMember> auto&& setter)
 		{
 			assert(id.Type == typeid(TMember));
 
-			_bindings[id].UpdateTarget = [this, setter, &data, id]
+			_bindings[id].UpdateTarget = [this, setter = std::move(setter), &data, &id]
 			{
 				std::invoke(setter, data, std::cref(GetPropertyValue<TMember>(id)));
 			};
 		}
 
-		template<std::derived_from<IBindingTarget> TData, typename TMember>
-		void Bind(const PropertyId& id, TData& data, Getter<TData, TMember> getter)
+		template<typename TMember, std::derived_from<IBindingTarget> TData>
+		void Bind(const PropertyId& id, TData& data, CFunc<TMember, TData*> auto&& getter)
 		{
 			assert(id.Type == typeid(TMember));
 
 			data.AddSource(*this);
-			_bindings[id].UpdateSource = [this, getter, &data, id]
+			_bindings[id].UpdateSource = [this, getter = std::move(getter), &data, &id]
 			{
 				_properties[id].As<TMember>() = std::invoke(getter, std::ref(data));
 			};
 		}
 
-		template<typename TData, typename TMember>
+		template<typename TMember, typename TData>
 		void Bind(const PropertyId& id, TData& data, 
-				  Setter<TData, TMember> setter,
-				  Getter<TData, TMember> getter)
+				  CAction<TData*, TMember> auto&& setter,
+				  CFunc<TMember, TData*> auto&& getter)
 		{
-			Bind(id, data, setter);
-			Bind(id, data, getter);
+			Bind(id, data, std::forward<decltype(setter)>(setter));
+			Bind(id, data, std::forward<decltype(getter)>(getter));
 		}
 
 		template<typename TData>
