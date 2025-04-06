@@ -153,10 +153,22 @@ namespace Sgl
 	class AnyView final
 	{
 	public:
+		AnyView() = default;
+
 		template<typename T> 
 		AnyView(T& value):
 			_value(&value), _type(typeid(T))
 		{}
+
+		const std::type_info& TargetType() const
+		{
+			return _type.Value();
+		}
+
+		bool IsEmpty() const noexcept
+		{
+			return _value == nullptr;
+		}
 
 		template<typename T>
 		bool Is() const

@@ -4,7 +4,7 @@
 #include <assert.h>
 #include "Any.h"
 #include "PropertyId.h"
-#include "../Tools/Delegates.h"
+#include "Delegates.h"
 
 namespace Sgl
 {

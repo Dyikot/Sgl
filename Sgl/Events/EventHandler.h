@@ -2,7 +2,7 @@
 
 #include "EventArgs.h"
 #include "../Data/Nullable.h"
-#include "../Tools/Delegates.h"
+#include "../Data/Delegates.h"
 
 namespace Sgl
 {
@@ -18,7 +18,7 @@ namespace Sgl
 	class EventHandler
 	{
 	private:
-		Func<void, TSender&, const TEventArgs&> _handler;
+		Action<TSender&, const TEventArgs&> _handler;
 		Nullable<const std::type_info> _targetType;
 	public:
 		EventHandler() = default;

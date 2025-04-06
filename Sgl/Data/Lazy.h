@@ -2,7 +2,7 @@
 
 #include <memory>
 #include <optional>
-#include "../Tools/Delegates.h"
+#include "Delegates.h"
 
 namespace Sgl
 {
