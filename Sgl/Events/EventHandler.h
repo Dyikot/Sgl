@@ -1,9 +1,8 @@
 #pragma once
 
-#include <concepts>
-#include <functional>
 #include "EventArgs.h"
 #include "../Data/Nullable.h"
+#include "../Tools/Delegates.h"
 
 namespace Sgl
 {
@@ -19,7 +18,7 @@ namespace Sgl
 	class EventHandler
 	{
 	private:
-		std::function<void(TSender&, const TEventArgs&)> _handler;
+		Func<void, TSender&, const TEventArgs&> _handler;
 		Nullable<const std::type_info> _targetType;
 	public:
 		EventHandler() = default;
@@ -57,7 +56,7 @@ namespace Sgl
 		{
 			if(!IsEmpty())
 			{
-				Invoke(sender, e);
+				_handler(sender, e);
 			}
 		}
 

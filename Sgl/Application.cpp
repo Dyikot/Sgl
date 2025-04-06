@@ -56,7 +56,7 @@ namespace Sgl
 		Run(nullptr);
 	}
 
-	void Application::Run(const std::function<void(Window&)>& windowFactory)
+	void Application::Run(const Func<void, Window&>& windowFactory)
 	{
 		if(_running)
 		{

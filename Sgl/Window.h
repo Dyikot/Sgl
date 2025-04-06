@@ -11,6 +11,8 @@ namespace Sgl
 {
 	class Window;
 
+	using WindowEventHandler = EventHandler<Window, EventArgs>;
+
 	enum class DiplayMode
 	{
 		Window, BorderlessWindow, Fullscreen

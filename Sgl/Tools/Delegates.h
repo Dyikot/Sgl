@@ -1,57 +1,107 @@
 #pragma once
 
 #include <type_traits>
+#include <functional>
 
 namespace Sgl
 {
 	template<typename TInvocable, typename TResult, typename... TArgs>
-	concept Func = std::is_invocable_r_v<TResult, TInvocable, TArgs...>;
-
-	template<typename TReturn, typename... TArgs>
-	struct Function
-	{
-		virtual ~Function() = default;
-
-		virtual TReturn operator()(TArgs&&... args) {}
-		virtual TReturn operator()(TArgs&&... args) const {}
-	};
+	concept CFunc = std::is_invocable_r_v<TResult, TInvocable, TArgs...>;
 
 	template<typename T>
-	class Callable;
+	class Delegate;
 
 	template<typename TReturn, typename... TArgs>
-	class Callable<Function<TReturn, TArgs...>>
+	class Delegate<TReturn(TArgs...)>
 	{
+	private:
+		template<typename TReturn, typename... TArgs>
+		struct ICallable
+		{
+			virtual ~ICallable() = default;
+
+			virtual const std::type_info& TargetType() const = 0;
+			virtual TReturn operator()(TArgs... args) = 0;
+			virtual TReturn operator()(TArgs... args) const = 0;
+		};
+
+		template<CFunc<TReturn, TArgs...> TCallable>
+		struct Callable: public ICallable<TReturn, TArgs...>
+		{
+		private:
+			TCallable _callable;
+		public:
+			Callable(TCallable callable):
+				_callable(std::move(callable))
+			{}
+
+			const std::type_info& TargetType() const
+			{
+				return typeid(TCallable);
+			}
+
+			TReturn operator()(TArgs... args) override
+			{
+				return std::invoke(_callable, args...);
+			}
+
+			TReturn operator()(TArgs... args) const override
+			{
+				return std::invoke(_callable, args...);
+			}
+		};
 	public:
-		using Function = Function<TReturn, TArgs...>;
+		Delegate() = default;
 
-		Callable() = default;
-
-		template<std::derived_from<Function> TFunction>
-		Callable(TFunction* function):
-			_function(function)
+		template<CFunc<TReturn, TArgs...> TFunc>
+		Delegate(TFunc&& callable):
+			_callable(std::make_unique<Callable<TFunc>>(std::forward<TFunc>(callable)))
 		{}
 
-		TReturn Invoke(TArgs&&... args)
+		void Reset()
 		{
-			return (*_function)(std::forward<TArgs>(args)...);
+			_callable.reset();
 		}
 
-		TReturn Invoke(TArgs&&... args) const
+		bool IsEmpty() const noexcept
 		{
-			return (*_function)(std::forward<TArgs>(args)...);
+			return !_callable.operator bool();
 		}
 
-		TReturn operator()(TArgs&&... args)
+		const std::type_info& TargetType() const noexcept
 		{
-			return (*_function)(std::forward<TArgs>(args)...);
+			return _callable->TargetType();
 		}
 
-		TReturn operator()(TArgs&&... args) const
+		TReturn Invoke(TArgs... args)
 		{
-			return (*_function)(std::forward<TArgs>(args)...);
+			return (*_callable)(args...);
+		}
+
+		TReturn Invoke(TArgs... args) const
+		{
+			return (*_callable)(args...);
+		}
+
+		TReturn operator()(TArgs... args)
+		{
+			return (*_callable)(args...);
+		}
+
+		TReturn operator()(TArgs... args) const
+		{
+			return (*_callable)(args...);
 		}
 	private:
-		std::unique_ptr<Function> _function;
+		std::unique_ptr<ICallable<TReturn, TArgs...>> _callable;
 	};
+
+	template<typename... TArgs>
+	using Action = std::function<void(TArgs...)>;
+
+	template<typename... TArgs>
+	using Predicate = std::function<bool(TArgs...)>;
+
+	template<typename TResult, typename... TArgs>
+	using Func = std::function<TResult(TArgs...)>;
 }

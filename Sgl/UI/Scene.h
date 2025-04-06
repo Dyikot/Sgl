@@ -10,7 +10,13 @@
 namespace Sgl
 {	
 	class Window;
-	
+	class Scene;
+
+	template<typename TScene>
+	concept CScene = std::derived_from<TScene, Scene>;
+
+	using SceneEventHandler = EventHandler<Scene, EventArgs>;
+
 	class Scene: public UIElement, public ECS::IProcessed
 	{
 	public:				
@@ -20,8 +26,8 @@ namespace Sgl
 		explicit Scene(Sgl::Window& window);
 		virtual ~Scene() = default;
 
-		Event<UIEventHandler> Loaded;
-		Event<UIEventHandler> Unloaded;
+		Event<SceneEventHandler> Loaded;
+		Event<SceneEventHandler> Unloaded;
 
 		void OnRender(RenderContext& renderContext) const override;
 		void SwitchCursorOn(const Cursor& cursor) override;
@@ -44,9 +50,6 @@ namespace Sgl
 	{
 		Loading, Loaded, Unloaded
 	};
-
-	template<typename TScene>
-	concept CScene = std::derived_from<TScene, Scene>;
 
 	class SceneManager
 	{

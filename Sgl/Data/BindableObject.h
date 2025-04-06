@@ -27,8 +27,8 @@ namespace Sgl
 
 	struct Binding
 	{
-		Callable<Function<void>> UpdateTarget;
-		Callable<Function<void>> UpdateSource;
+		Func<void> UpdateTarget;
+		Func<void> UpdateSource;
 		bool IsLock = false;
 	};
 
@@ -40,48 +40,6 @@ namespace Sgl
 
 		template<typename TData, typename TMember>
 		using Getter = const TMember& (TData::*)() const;
-
-		template<typename TData, typename TMember>
-		struct UpdateTarget: public Function<void>
-		{
-			BindableObject* Object;
-			Setter<TData, TMember> Setter;
-			TData* Data;
-			const PropertyId& Id;
-
-			UpdateTarget(BindableObject* obejct, BindableObject::Setter<TData, TMember> setter,
-						 TData* data, const PropertyId& id):
-				Object(obejct), Setter(setter), Data(data), Id(id)
-			{}
-
-			void operator()() override
-			{
-				std::invoke(Setter, Data, std::cref(Object->GetPropertyValue<TMember>(Id)));
-			}
-
-			void operator()() const override {}
-		};
-
-		template<typename TData, typename TMember>
-		struct UpdateSource: public Function<void>
-		{
-			BindableObject* Object;
-			Setter<TData, TMember> Getter;
-			TData* Data;
-			const PropertyId& Id;
-
-			UpdateSource(BindableObject* obejct, BindableObject::Getter<TData, TMember> getter,
-						 TData* data, const PropertyId& id):
-				Object(obejct), Getter(getter), Data(data), Id(id)
-			{}
-
-			void operator()() override
-			{
-				Object->_properties[Id].As<TMember>() = std::invoke(Getter, std::ref(Data));
-			}
-
-			void operator()() const override {}
-		};
 	private:
 		AnyMap<PropertyId> _properties;
 		std::unordered_map<PropertyId, Binding> _bindings;
@@ -99,7 +57,10 @@ namespace Sgl
 		{
 			assert(id.Type == typeid(TMember));
 
-			_bindings[id].UpdateTarget = new UpdateTarget<TData, TMember>(this, setter, &data, id);
+			_bindings[id].UpdateTarget = [this, setter, &data, id]
+			{
+				std::invoke(setter, data, std::cref(GetPropertyValue<TMember>(id)));
+			};
 		}
 
 		template<std::derived_from<IBindingTarget> TData, typename TMember>
@@ -108,7 +69,10 @@ namespace Sgl
 			assert(id.Type == typeid(TMember));
 
 			data.AddSource(*this);
-			_bindings[id].UpdateSource = new UpdateSource<TData, TMember>(this, getter, &data, id);
+			_bindings[id].UpdateSource = [this, getter, &data, id]
+			{
+				_properties[id].As<TMember>() = std::invoke(getter, std::ref(data));
+			};
 		}
 
 		template<typename TData, typename TMember>

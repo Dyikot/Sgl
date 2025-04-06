@@ -10,6 +10,8 @@ namespace Sgl
 	class Component;
 	class Scene;
 
+	using ComponentEventHandler = EventHandler<Component, EventArgs>;
+
 	struct ZIndexComparer
 	{
 		bool operator()(const Component& left, const Component& right) const;

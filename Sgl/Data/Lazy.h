@@ -27,7 +27,7 @@ namespace Sgl
 		}
 	};
 
-	template <typename T, Func<T> TFactory = DefaulValueFactory<T>>
+	template <typename T, CFunc<T> TFactory = DefaulValueFactory<T>>
 	class Lazy final
 	{
 	private:

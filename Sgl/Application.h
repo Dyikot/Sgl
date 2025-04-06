@@ -42,7 +42,7 @@ namespace Sgl
 		Event<ApplicationEventHandler> Quit;
 
 		void Run();
-		void Run(const std::function<void(Window&)>& windowFactory);
+		void Run(const Func<void, Window&>& windowFactory);
 		void Shutdown() noexcept;
 		bool IsRunning() const { return _running; }
 	protected:
