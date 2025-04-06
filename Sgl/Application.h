@@ -8,6 +8,7 @@
 #include "Events/Event.h"
 #include "Graphic/Cursor.h"
 #include "UI/Scene.h"
+#include "Data/FunctionView.h"
 
 namespace Sgl
 {
@@ -42,7 +43,7 @@ namespace Sgl
 		Event<ApplicationEventHandler> Quit;
 
 		void Run();
-		void Run(const Func<void, Window&>& windowFactory);
+		void Run(const Action<Window&>& windowFactory);
 		void Shutdown() noexcept;
 		bool IsRunning() const { return _running; }
 	protected:

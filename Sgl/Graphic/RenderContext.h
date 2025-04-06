@@ -21,12 +21,12 @@ namespace Sgl
 		void DrawPoints(PointsView points, Color color);
 		void DrawLine(SDL_FPoint start, SDL_FPoint end, Color color);
 		void DrawLines(PointsView points, Color color);
-		void DrawRectangle(const SDL_FRect& rectange, Color color);
+		void DrawRectangle(SDL_FRect rectange, Color color);
 		void DrawRectangles(RectanglesView rectanges, Color color);
-		void DrawFillRectangle(const SDL_FRect& rectange, Color fill);
+		void DrawFillRectangle(SDL_FRect rectange, Color fill);
 		void DrawFillRectangles(RectanglesView rectanges, Color fill);
-		void DrawTexture(const Texture& texture, const SDL_FRect& rectangle, Color fill);
-		void DrawTexture(const Texture& texture, const SDL_FRect& rectangle, const SDL_Rect& clip, Color fill);
+		void DrawTexture(const Texture& texture, SDL_FRect rectangle, Color fill);
+		void DrawTexture(const Texture& texture, SDL_FRect rectangle, SDL_Rect clip, Color fill);
 		void DrawEllipse(PointsView ellipse, Color color);
 		void DrawEllipse(SDL_FPoint position, int width, int height, Color color);
 		void DrawEllipseFill(PointsView ellipse, Color color);

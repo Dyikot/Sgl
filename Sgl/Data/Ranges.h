@@ -27,7 +27,7 @@ namespace Sgl::Ranges
 		TFunc Function;
 
 		constexpr _AggregateAdaptor(TFunc&& func):
-			Function(std::forward<TFunc>(func)) {}
+			Function(std::move(func)) {}
 
 		constexpr auto operator()(std::ranges::range auto&& range) const
 		{
@@ -48,8 +48,8 @@ namespace Sgl::Ranges
 		TAccumulate Seed;
 
 		constexpr _AgregateAdaptor2(TFunc&& func, TAccumulate&& seed):
-			Function(std::forward<TFunc>(func)),
-			Seed(std::forward<TAccumulate>(seed))
+			Function(std::move(func)),
+			Seed(std::move(seed))
 		{}
 
 		constexpr TAccumulate operator()(std::ranges::range auto&& range) const
@@ -84,7 +84,7 @@ namespace Sgl::Ranges
 		TPredicate Predicate;
 
 		constexpr _AllAdaptor(TPredicate&& predicate):
-			Predicate(std::forward<TPredicate>(predicate)) {}
+			Predicate(std::move(predicate)) {}
 
 		constexpr bool operator()(std::ranges::range auto&& range) const
 		{
@@ -112,7 +112,7 @@ namespace Sgl::Ranges
 		TPredicate Predicate;
 
 		constexpr _AnyAdaptor(TPredicate&& predicate):
-			Predicate(std::forward<TPredicate>(predicate)) {}
+			Predicate(std::move(predicate)) {}
 
 		constexpr bool operator()(std::ranges::range auto&& range) const
 		{
@@ -167,7 +167,9 @@ namespace Sgl::Ranges
 	{
 		size_t Size;
 
-		constexpr _ChunkAdaptor(size_t size): Size(size) {}
+		constexpr _ChunkAdaptor(size_t size):
+			Size(size)
+		{}
 
 		constexpr auto operator()(std::ranges::range auto&& range) const
 		{

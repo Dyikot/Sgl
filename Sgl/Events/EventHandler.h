@@ -6,14 +6,6 @@
 
 namespace Sgl
 {
-	template<typename TInvocable, typename TSender, typename TEventArgs>
-	concept CEventHandler = CEventArgs<TEventArgs> &&
-		std::invocable<TInvocable, TSender&, const TEventArgs&>;
-
-	template<typename TInvocable, typename TEventArgs>
-	concept CArgsEventHandler = CEventArgs<TEventArgs> &&
-		std::invocable<TInvocable, const TEventArgs&>;
-
 	template<typename TSender, CEventArgs TEventArgs>
 	class EventHandler
 	{
@@ -23,16 +15,16 @@ namespace Sgl
 	public:
 		EventHandler() = default;
 
-		EventHandler(CEventHandler<TSender, TEventArgs> auto&& handler):
+		EventHandler(CAction<TSender, TEventArgs> auto&& handler):
 			_handler(std::forward<decltype(handler)>(handler))
 		{}
 
-		EventHandler(CArgsEventHandler<TEventArgs> auto&& handler):
+		EventHandler(CAction<TEventArgs> auto&& handler):
 			_handler([handler](TSender& sender, const TEventArgs& e) { handler(e); }),
 			_targetType(typeid(handler))
 		{}
 
-		EventHandler(std::invocable auto&& handler):
+		EventHandler(CAction auto&& handler):
 			_handler([handler](TSender& sender, const TEventArgs& e) { handler(); }),
 			_targetType(typeid(handler))
 		{}

@@ -60,17 +60,17 @@ namespace Sgl
 	class Cursors
 	{
 	public:
-		static inline Lazy Arrow = [] { return Cursor(SDL_SYSTEM_CURSOR_ARROW); };
-		static inline Lazy IBeam = [] { return Cursor(SDL_SYSTEM_CURSOR_IBEAM); };
-		static inline Lazy Wait = [] { return Cursor(SDL_SYSTEM_CURSOR_WAIT); };
-		static inline Lazy Crosshair = [] { return Cursor(SDL_SYSTEM_CURSOR_CROSSHAIR); };
-		static inline Lazy WaitArrow = [] { return Cursor(SDL_SYSTEM_CURSOR_WAITARROW); };
-		static inline Lazy ArrowNWSE = [] { return Cursor(SDL_SYSTEM_CURSOR_SIZENWSE); };
-		static inline Lazy ArrowNESW = [] { return Cursor(SDL_SYSTEM_CURSOR_SIZENESW); };
-		static inline Lazy ArrowWE = [] { return Cursor(SDL_SYSTEM_CURSOR_SIZEWE); };
-		static inline Lazy ArrowNS = [] { return  Cursor(SDL_SYSTEM_CURSOR_SIZENS); };
-		static inline Lazy ArrowAll = [] { return Cursor(SDL_SYSTEM_CURSOR_SIZEALL); };
-		static inline Lazy No = [] { return Cursor(SDL_SYSTEM_CURSOR_NO); };
-		static inline Lazy Hand = [] { return Cursor(SDL_SYSTEM_CURSOR_HAND); };
+		static inline Lazy<Cursor> Arrow = [] { return Cursor(SDL_SYSTEM_CURSOR_ARROW); };
+		static inline Lazy<Cursor> IBeam = [] { return Cursor(SDL_SYSTEM_CURSOR_IBEAM); };
+		static inline Lazy<Cursor> Wait = [] { return Cursor(SDL_SYSTEM_CURSOR_WAIT); };
+		static inline Lazy<Cursor> Crosshair = [] { return Cursor(SDL_SYSTEM_CURSOR_CROSSHAIR); };
+		static inline Lazy<Cursor> WaitArrow = [] { return Cursor(SDL_SYSTEM_CURSOR_WAITARROW); };
+		static inline Lazy<Cursor> ArrowNWSE = [] { return Cursor(SDL_SYSTEM_CURSOR_SIZENWSE); };
+		static inline Lazy<Cursor> ArrowNESW = [] { return Cursor(SDL_SYSTEM_CURSOR_SIZENESW); };
+		static inline Lazy<Cursor> ArrowWE = [] { return Cursor(SDL_SYSTEM_CURSOR_SIZEWE); };
+		static inline Lazy<Cursor> ArrowNS = [] { return  Cursor(SDL_SYSTEM_CURSOR_SIZENS); };
+		static inline Lazy<Cursor> ArrowAll = [] { return Cursor(SDL_SYSTEM_CURSOR_SIZEALL); };
+		static inline Lazy<Cursor> No = [] { return Cursor(SDL_SYSTEM_CURSOR_NO); };
+		static inline Lazy<Cursor> Hand = [] { return Cursor(SDL_SYSTEM_CURSOR_HAND); };
 	};
 }

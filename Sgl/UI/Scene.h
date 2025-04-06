@@ -6,6 +6,7 @@
 #include "../Graphic/Texture.h"
 #include "../ECS/IProcessed.h"
 #include "Component.h"
+#include "../Data/FunctionView.h"
 
 namespace Sgl
 {	
@@ -70,7 +71,7 @@ namespace Sgl
 		}
 
 		template<CScene TScene>
-		void Load(std::invocable<Scene&> auto&& sceneFactory)
+		void Load(ActionView<Scene&> sceneFactory)
 		{
 			_scenesQueue.push(std::make_shared<TScene>(Window));
 			sceneFactory(*_scenesQueue.back());

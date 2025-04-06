@@ -37,7 +37,7 @@ namespace Sgl
 		SDL_RenderDrawLinesF(_renderer, points.data(), points.size());
 	}
 
-	void RenderContext::DrawRectangle(const SDL_FRect& rectange, Color color)
+	void RenderContext::DrawRectangle(SDL_FRect rectange, Color color)
 	{
 		SetRenderColor(color);
 		SDL_RenderDrawRectF(_renderer, &rectange);
@@ -49,7 +49,7 @@ namespace Sgl
 		SDL_RenderDrawRectsF(_renderer, rectanges.data(), rectanges.size());
 	}
 
-	void RenderContext::DrawFillRectangle(const SDL_FRect& rectange, Color fill)
+	void RenderContext::DrawFillRectangle(SDL_FRect rectange, Color fill)
 	{
 		SetRenderColor(fill);
 		SDL_RenderFillRectF(_renderer, &rectange);		
@@ -61,14 +61,14 @@ namespace Sgl
 		SDL_RenderFillRectsF(_renderer, rectanges.data(), rectanges.size());
 	}
 
-	void RenderContext::DrawTexture(const Texture& texture, const SDL_FRect& rectangle, Color fill)
+	void RenderContext::DrawTexture(const Texture& texture, SDL_FRect rectangle, Color fill)
 	{
 		SetTextureColor(texture, fill);
 		SDL_RenderCopyF(_renderer, texture, nullptr, &rectangle);
 	}
 
-	void RenderContext::DrawTexture(const Texture& texture, const SDL_FRect& rectangle,
-									const SDL_Rect& clip, Color fill)
+	void RenderContext::DrawTexture(const Texture& texture, SDL_FRect rectangle,
+									SDL_Rect clip, Color fill)
 	{
 		SetTextureColor(texture, fill);
 		SDL_RenderCopyF(_renderer, texture, &clip, &rectangle);

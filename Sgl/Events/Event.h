@@ -34,32 +34,32 @@ namespace Sgl
 			return _eventHandlers.empty();
 		}
 
-		void operator+=(CEventHandler<TSender, TEventArgs> auto&& handler)
+		void operator+=(CAction<TSender, TEventArgs> auto&& handler)
 		{
 			_eventHandlers.emplace_front(std::forward<decltype(handler)>(handler));
 		}
 
-		void operator+=(CArgsEventHandler<TEventArgs> auto&& handler)
+		void operator+=(CAction<TEventArgs> auto&& handler)
 		{
 			_eventHandlers.emplace_front(std::forward<decltype(handler)>(handler));
 		}
 
-		void operator+=(std::invocable auto&& handler)
+		void operator+=(CAction auto&& handler)
 		{
 			_eventHandlers.emplace_front(std::forward<decltype(handler)>(handler));
 		}
 
-		void operator-=(CEventHandler<TSender, TEventArgs> auto&& handler)
+		void operator-=(CAction<TSender, TEventArgs> auto&& handler)
 		{
 			_eventHandlers.remove(std::forward<decltype(handler)>(handler));
 		}
 
-		void operator-=(CArgsEventHandler<TEventArgs> auto&& handler)
+		void operator-=(CAction<TEventArgs> auto&& handler)
 		{
 			_eventHandlers.remove(std::forward<decltype(handler)>(handler));
 		}
 
-		void operator-=(std::invocable auto&& handler)
+		void operator-=(CAction auto&& handler)
 		{
 			_eventHandlers.remove(std::forward<decltype(handler)>(handler));
 		}

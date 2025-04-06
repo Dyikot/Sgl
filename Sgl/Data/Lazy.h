@@ -6,44 +6,23 @@
 
 namespace Sgl
 {
-	template<typename T>
-	struct DefaulValueFactory
-	{
-		std::optional<T> Value;
-
-		constexpr DefaulValueFactory() = default;
-		constexpr DefaulValueFactory(std::convertible_to<T> auto&& value):
-			Value(std::forward<decltype(value)>(value))
-		{}
-
-		constexpr T operator()()
-		{
-			if(Value.has_value())
-			{
-				return Value.value();
-			}
-
-			return T{};
-		}
-	};
-
-	template <typename T, CFunc<T> TFactory = DefaulValueFactory<T>>
+	template <typename T>
 	class Lazy final
 	{
 	private:
 		mutable std::unique_ptr<T> _value;
-		mutable TFactory _valueFactory;
+		mutable Func<T> _valueFactory;
 	public:
 		Lazy() requires std::default_initializable<T>:
-			_valueFactory()
+			_valueFactory([] { return T{}; })
 		{}
 
-		Lazy(std::convertible_to<T> auto&& value):
-			_valueFactory(std::forward<decltype(value)>(value))
+		Lazy(T&& value):
+			_valueFactory([v = std::move(value)] { return v; })
 		{}
 
-		Lazy(TFactory factory):
-			_valueFactory(std::move(factory))
+		Lazy(CFunc<T> auto&& factory):
+			_valueFactory(std::forward<decltype(factory)>(factory))
 		{}
 
 		Lazy(const Lazy&) = delete;
@@ -80,10 +59,4 @@ namespace Sgl
 			}
 		}
 	};
-
-	template<std::invocable TFactory>
-	Lazy(TFactory) -> Lazy<std::invoke_result_t<TFactory>, std::decay_t<TFactory>>;
-
-	template<std::copy_constructible T> requires (!std::invocable<T>)
-	Lazy(T&&) -> Lazy<T>;
 }
