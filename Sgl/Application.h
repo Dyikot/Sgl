@@ -8,7 +8,7 @@
 #include "Events/Event.h"
 #include "Graphic/Cursor.h"
 #include "UI/Scene.h"
-#include "Data/FunctionView.h"
+#include "Data/CallableView.h"
 
 namespace Sgl
 {

@@ -5,30 +5,30 @@
 namespace Sgl
 {
 	template<typename T>
-	class FunctionView;
+	class CallableView;
 
 	template<typename TReturn, typename... TArgs>
-	class FunctionView<TReturn(TArgs...)>
+	class CallableView<TReturn(TArgs...)>
 	{
 	public:
 		template<CFunc<TReturn, TArgs...> TFunc>
-		FunctionView(TFunc& function):
+		CallableView(TFunc& function):
 			_target(&function),
 			_invocable(Invoke<TFunc>)
 		{}
 
 		template<CFunc<TReturn, TArgs...> TFunc>
-		FunctionView(TFunc&& function):
+		CallableView(TFunc&& function):
 			_target(&function),
 			_invocable(Invoke<TFunc>)
 		{}
 
-		FunctionView(const FunctionView& view):
+		CallableView(const CallableView& view):
 			_target(view._target),
 			_invocable(view._invocable)
 		{}
 
-		FunctionView(FunctionView&& view) = delete;
+		CallableView(CallableView&& view) = delete;
 
 		TReturn operator()(TArgs... args) const
 		{
@@ -46,11 +46,11 @@ namespace Sgl
 	};
 
 	template<typename... TArgs>
-	using ActionView = FunctionView<void(TArgs...)>;
+	using ActionView = CallableView<void(TArgs...)>;
 
 	template<typename... TArgs>
-	using PredicateView = FunctionView<bool(TArgs...)>;
+	using PredicateView = CallableView<bool(TArgs...)>;
 
 	template<typename TResult, typename... TArgs>
-	using FuncView = FunctionView<TResult(TArgs...)>;
+	using FuncView = CallableView<TResult(TArgs...)>;
 }

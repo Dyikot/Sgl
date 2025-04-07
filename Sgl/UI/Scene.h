@@ -6,7 +6,7 @@
 #include "../Graphic/Texture.h"
 #include "../ECS/IProcessed.h"
 #include "Component.h"
-#include "../Data/FunctionView.h"
+#include "../Data/CallableView.h"
 
 namespace Sgl
 {	

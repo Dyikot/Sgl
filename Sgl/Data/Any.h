@@ -2,7 +2,6 @@
 #include <unordered_map>
 #include <typeinfo>
 #include <type_traits>
-#include <string_view>
 #include <stdexcept>
 #include "Nullable.h"
 
@@ -14,12 +13,18 @@ namespace Sgl
 		template<typename T>
 		struct ValueContainer;
 
-		struct IValueContainer
+		struct ValueContainerBase
 		{
-			virtual ~IValueContainer() = default;
+		public:
+			const std::type_info& Type;
+		public:
+			ValueContainerBase(const std::type_info& type):
+				Type(type)
+			{}
 
-			virtual const std::type_info& Type() const = 0;
-			virtual std::shared_ptr<IValueContainer> Copy() const = 0;
+			virtual ~ValueContainerBase() = default;
+
+			virtual std::shared_ptr<ValueContainerBase> Copy() const = 0;
 
 			template<typename T>
 			T& Get()
@@ -35,21 +40,17 @@ namespace Sgl
 		};
 
 		template<typename T>
-		struct ValueContainer: public IValueContainer
+		struct ValueContainer: public ValueContainerBase
 		{
 			T Value;
 
 			template<typename... TArgs>
 			ValueContainer(TArgs&&... args):
+				ValueContainerBase(typeid(T)),
 				Value(std::forward<TArgs>(args)...)
 			{}
 
-			const std::type_info& Type() const override
-			{
-				return typeid(Value);
-			}
-
-			std::shared_ptr<IValueContainer> Copy() const override
+			std::shared_ptr<ValueContainerBase> Copy() const override
 			{
 				return std::make_shared<ValueContainer<T>>(*this);
 			}
@@ -73,25 +74,15 @@ namespace Sgl
 		template<typename TValue, typename... TArgs>
 		friend Any CreateAny(TArgs&&... args);
 
-		const std::type_info& Type() const 
-		{
-			return _value->Type();
-		}
-
 		template<typename T>
 		bool Is() const
 		{
-			return Type() == typeid(T);
+			return _value->Type == typeid(T);
 		}
 
 		bool Is(const std::type_info& type) const
 		{ 
-			return Type() == type;
-		}
-
-		bool Is(std::string_view type) const 
-		{ 
-			return Type().name() == type;
+			return _value->Type == type;
 		}
 
 		template<typename T>
@@ -147,7 +138,7 @@ namespace Sgl
 			return HasValue();
 		}
 	private:
-		std::shared_ptr<IValueContainer> _value;
+		std::shared_ptr<ValueContainerBase> _value;
 	};
 
 	class AnyView final
