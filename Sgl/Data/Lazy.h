@@ -56,6 +56,7 @@ namespace Sgl
 			if(!_value)
 			{
 				_value = std::make_unique<T>(_valueFactory());
+				_valueFactory = nullptr;
 			}
 		}
 	};

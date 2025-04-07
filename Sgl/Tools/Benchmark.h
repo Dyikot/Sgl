@@ -10,7 +10,7 @@ namespace Sgl
 	{
 	private:
 		size_t _loops = 1;
-		std::string_view _name = "Benchmark";
+		std::string _name = "Benchmark";
 	public:
 		static Benchmark New() { return Benchmark(); }
 		static Benchmark New(size_t loops) { return Benchmark("Benchmark", loops); }
@@ -18,14 +18,14 @@ namespace Sgl
 		static Benchmark New(std::string_view name, size_t loops) { return Benchmark(name, loops); }
 
 		template<typename... TArgs> 
-		void Run(std::invocable<TArgs...> auto&& invocable, TArgs&&... args)
+		void Run(CAction<TArgs...> auto&& action, TArgs&&... args)
 		{
 			Stopwatch stopwatch;
 			stopwatch.Start();
 
 			for(size_t i = 0; i < _loops; i++)
 			{
-				std::invoke(invocable, std::forward<TArgs>(args)...);
+				std::invoke(action, std::forward<TArgs>(args)...);
 			}
 
 			stopwatch.Pause();

@@ -2,7 +2,7 @@
 
 #include <functional>
 #include <assert.h>
-#include "Any.h"
+#include "Collections/PropertyMap.h"
 #include "PropertyId.h"
 #include "Delegates.h"
 
@@ -35,7 +35,7 @@ namespace Sgl
 	class BindableObject: public IBindingSource
 	{
 	private:
-		AnyMap<PropertyId> _properties;
+		PropertyMap _properties;
 		std::unordered_map<PropertyId, Binding> _bindings;
 	public:
 		void Update(const PropertyId& id)
@@ -121,8 +121,6 @@ namespace Sgl
 		template<typename TValue, typename... TArgs>
 		void AddProperty(const PropertyId& id, TArgs&&... args)
 		{
-			assert(typeid(TValue) == id.Type);
-
 			_properties.Add<TValue>(id, std::forward<TArgs>(args)...);
 		}
 

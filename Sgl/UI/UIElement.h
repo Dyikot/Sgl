@@ -22,7 +22,7 @@ namespace Sgl
 		static constexpr PropertyId CursorProperty = PropertyId::New<std::reference_wrapper<const Cursor>>("Cursor");
 
 		Color BackgroundColor = Colors::Black;
-		Texture* BackgroundTexture = nullptr;
+		Nullable<Texture> BackgroundTexture;
 		AnyMap<std::string> Resources;
 	public:
 		UIElement();

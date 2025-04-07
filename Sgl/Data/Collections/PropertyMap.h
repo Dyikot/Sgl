@@ -3,9 +3,8 @@
 #include <format>
 #include <cassert>
 #include <unordered_map>
-#include "../Events/Event.h"
-#include "Any.h"
-#include "PropertyId.h"
+#include "../PropertyId.h"
+#include "../Any.h"
 
 namespace Sgl
 {

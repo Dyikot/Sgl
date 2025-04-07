@@ -153,27 +153,15 @@ namespace Sgl
 	class AnyView final
 	{
 	public:
-		AnyView() = default;
-
 		template<typename T> 
 		AnyView(T& value):
 			_value(&value), _type(typeid(T))
 		{}
 
-		const std::type_info& TargetType() const
-		{
-			return _type.Value();
-		}
-
-		bool IsEmpty() const noexcept
-		{
-			return _value == nullptr;
-		}
-
 		template<typename T>
 		bool Is() const
 		{ 
-			return *_type == typeid(T);
+			return _type == typeid(T);
 		}
 		
 		template<typename T>
@@ -183,7 +171,7 @@ namespace Sgl
 		}
 
 		template<typename T>
-		const T& As() const 
+		const T& As() const
 		{ 
 			return *static_cast<const T*>(_value);
 		}
@@ -220,7 +208,7 @@ namespace Sgl
 			return *this;
 		}
 	private:
-		Nullable<const std::type_info> _type;
+		std::reference_wrapper<const std::type_info> _type;
 		void* _value;
 	};
 

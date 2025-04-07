@@ -13,20 +13,22 @@ namespace Sgl
 	public:
 		template<CFunc<TReturn, TArgs...> TFunc>
 		FunctionView(TFunc& function):
-			_target(std::addressof(function)),
-			_invocable(InvokeTarget<TFunc>)
+			_target(&function),
+			_invocable(Invoke<TFunc>)
 		{}
 
 		template<CFunc<TReturn, TArgs...> TFunc>
-		FunctionView(TFunc&& function) :
-			_target(std::addressof(function)),
-			_invocable(InvokeTarget<TFunc>)
+		FunctionView(TFunc&& function):
+			_target(&function),
+			_invocable(Invoke<TFunc>)
 		{}
 
-		TReturn Invoke(TArgs... args) const
-		{
-			return _invocable(_target, args...);
-		}
+		FunctionView(const FunctionView& view):
+			_target(view._target),
+			_invocable(view._invocable)
+		{}
+
+		FunctionView(FunctionView&& view) = delete;
 
 		TReturn operator()(TArgs... args) const
 		{
@@ -34,7 +36,7 @@ namespace Sgl
 		}
 	private:
 		template<typename T>
-		static TReturn InvokeTarget(void* target, TArgs... args)
+		static TReturn Invoke(void* target, TArgs... args)
 		{
 			return (*static_cast<T*>(target))(args...);
 		}
