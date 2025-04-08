@@ -31,12 +31,12 @@ namespace Sgl
 
 		bool IsEmpty() const noexcept
 		{ 
-			return _handler;
+			return _handler.IsEmpty();
 		}
 
 		const std::type_info& TargetType() const noexcept
 		{
-			return _targetType | _handler.target_type();
+			return _targetType | _handler.TargetType();
 		}
 
 		void Invoke(TSender& sender, const TEventArgs& e) const
