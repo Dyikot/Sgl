@@ -21,12 +21,17 @@ namespace Sgl
 			_eventHandlers.clear();
 		}
 
-		void TryRaise(TSender& sender, const TEventArgs& e) const noexcept
+		void TryRaise(TSender& sender, const TEventArgs& e) const
 		{
 			if(operator bool())
 			{
 				operator()(sender, e);
 			}
+		}
+
+		void Raise(TSender& sender, const TEventArgs& e) const
+		{
+			operator()(sender, e);
 		}
 
 		bool IsEmpty() const

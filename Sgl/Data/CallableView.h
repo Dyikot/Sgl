@@ -75,6 +75,21 @@ namespace Sgl
 		{
 			return _erased(_callable, std::forward<TArgs>(args)...);
 		}
+
+		template<CFunc<TReturn, TArgs...> TFunc>
+		CallableView& operator=(TFunc&& callable)
+		{
+			_callable = &callable;
+			_erased = OnErasedCall<std::remove_reference_t<TFunc>>;
+			return *this;
+		}
+
+		CallableView& operator=(const CallableView& view)
+		{
+			_callable = view._callable;
+			_erased = view._erased;
+			return *this;
+		}
 	private:
 		template<typename T>
 		static TReturn OnErasedCall(const void* callable, TArgs... args)

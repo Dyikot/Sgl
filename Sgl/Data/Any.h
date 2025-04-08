@@ -24,7 +24,7 @@ namespace Sgl
 
 			virtual ~ValueContainerBase() = default;
 
-			virtual std::shared_ptr<ValueContainerBase> Copy() const = 0;
+			virtual std::unique_ptr<ValueContainerBase> Copy() const = 0;
 
 			template<typename T>
 			T& Get()
@@ -42,17 +42,18 @@ namespace Sgl
 		template<typename T>
 		struct ValueContainer: public ValueContainerBase
 		{
+		public:
 			T Value;
-
+		public:
 			template<typename... TArgs>
 			ValueContainer(TArgs&&... args):
 				ValueContainerBase(typeid(T)),
 				Value(std::forward<TArgs>(args)...)
 			{}
 
-			std::shared_ptr<ValueContainerBase> Copy() const override
+			std::unique_ptr<ValueContainerBase> Copy() const override
 			{
-				return std::make_shared<ValueContainer<T>>(*this);
+				return std::make_unique<ValueContainer<T>>(*this);
 			}
 		};
 	public:
@@ -60,7 +61,7 @@ namespace Sgl
 
 		template<typename T> requires (!std::same_as<std::decay_t<T>, Any>)
 		Any(T&& value):
-			_value(std::make_shared<ValueContainer<std::decay_t<T>>>(std::forward<T>(value)))
+			_value(std::make_unique<ValueContainer<std::decay_t<T>>>(std::forward<T>(value)))
 		{}
 
 		Any(const Any& any):
@@ -117,7 +118,7 @@ namespace Sgl
 		template<typename T> requires (!std::same_as<std::decay_t<T>, Any>)
 		Any& operator=(T&& value)
 		{
-			_value = std::make_shared<ValueContainer<std::decay_t<T>>>(std::forward<T>(value));
+			_value = std::make_unique<ValueContainer<std::decay_t<T>>>(std::forward<T>(value));
 			return *this;
 		}
 
@@ -138,7 +139,7 @@ namespace Sgl
 			return HasValue();
 		}
 	private:
-		std::shared_ptr<ValueContainerBase> _value;
+		std::unique_ptr<ValueContainerBase> _value;
 	};
 
 	class AnyView final
@@ -220,7 +221,7 @@ namespace Sgl
 	Any CreateAny(TArgs && ...args)
 	{
 		Any any;
-		any._value = std::make_shared<Any::ValueContainer<TValue>>(std::forward<TArgs>(args)...);
+		any._value = std::make_unique<Any::ValueContainer<TValue>>(std::forward<TArgs>(args)...);
 		return any;
 	}
 }
