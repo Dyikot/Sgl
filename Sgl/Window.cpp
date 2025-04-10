@@ -166,6 +166,11 @@ namespace Sgl
         }
     }
 
+    TextureFactory Window::GetTextureFactory() const
+    {
+        return TextureFactory(_renderer);
+    }
+
     void Window::Show()
     {
         SDL_ShowWindow(_this);

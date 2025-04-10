@@ -46,4 +46,25 @@ namespace Sgl
 			return *this;
 		}
 	};
+
+	struct TextureFactory
+	{
+	private:
+		SDL_Renderer* _renderer;
+	public:
+		TextureFactory(SDL_Renderer* renderer) noexcept:
+			_renderer(renderer)
+		{}
+
+		Texture operator()(std::string_view path) const noexcept
+		{
+			auto texture = IMG_LoadTexture(_renderer, path.data());
+			if(texture == nullptr)
+			{
+				Log::PrintSDLError();
+			}
+
+			return Texture(texture);
+		}
+	};
 }

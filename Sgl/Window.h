@@ -72,7 +72,7 @@ namespace Sgl
 		std::string_view GetTitle() const noexcept;
 		SDL_Point GetPosition() const noexcept;
 		WindowState GetWindowState() const;
-		auto GetTextureFactory() const;
+		TextureFactory GetTextureFactory() const;
 
 		void Show();
 		void Hide();
@@ -88,18 +88,4 @@ namespace Sgl
 	private:
 		friend class Application;
 	};
-
-	inline auto Window::GetTextureFactory() const
-	{
-		return [this](std::string_view path)
-		{
-			auto texture = IMG_LoadTexture(_renderer, path.data());
-			if(texture == nullptr)
-			{
-				Log::PrintSDLError();
-			}
-
-			return Texture(texture);
-		};
-	}
 }
