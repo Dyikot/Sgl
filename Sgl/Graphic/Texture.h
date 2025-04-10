@@ -1,7 +1,10 @@
 #pragma once
 
 #include <utility>
+#include <string_view>
+#include "../Tools/Log.h"
 #include "SDL/SDL_render.h"
+#include "SDL/SDL_image.h"
 
 namespace Sgl
 {

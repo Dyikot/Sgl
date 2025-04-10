@@ -53,10 +53,10 @@ namespace Sgl
 
 	void Application::Run()
 	{
-		Run(nullptr);
+		Run([](Window&) {});
 	}
 
-	void Application::Run(const Action<Window&>& windowFactory)
+	void Application::Run(ActionView<Window&> windowConfigurer)
 	{
 		if(_running)
 		{
@@ -65,12 +65,7 @@ namespace Sgl
 
 		Window window(*this);
 		_window = &window;
-		
-		if(windowFactory)
-		{
-			windowFactory(window);
-		}
-
+		windowConfigurer(window);
 		window.Show();
 
 		OnStartup(EventArgs());

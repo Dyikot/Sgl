@@ -71,10 +71,10 @@ namespace Sgl
 		}
 
 		template<CScene TScene>
-		void Load(ActionView<Scene&> sceneFactory)
+		void Load(ActionView<Scene&> sceneConfigurer)
 		{
 			_scenesQueue.push(std::make_shared<TScene>(Window));
-			sceneFactory(*_scenesQueue.back());
+			sceneConfigurer(*_scenesQueue.back());
 		}
 
 		void Unload();
