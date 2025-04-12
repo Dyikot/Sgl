@@ -51,16 +51,15 @@ namespace Sgl::Ranges
 		TFunc Function;
 		TAccumulate Seed;
 
-		constexpr _AgregateAdaptor2(TFunc&& func, TAccumulate&& seed):
+		constexpr _AgregateAdaptor2(TFunc&& func, const TAccumulate& seed):
 			Function(std::move(func)),
-			Seed(std::move(seed))
+			Seed(seed)
 		{}
 
 		template<std::ranges::range TRange>
 		constexpr TAccumulate operator()(TRange&& range) const
 		{
 			TAccumulate result = Seed;
-
 			for(const auto& item : range)
 			{
 				result = Function(result, item);
@@ -71,16 +70,15 @@ namespace Sgl::Ranges
 	};
 
 	template<typename TFunc>
-	constexpr auto Aggregate(TFunc&& func)
+	constexpr auto Aggregate(TFunc func)
 	{
-		return _AggregateAdaptor<TFunc>(std::forward<TFunc>(func));
+		return _AggregateAdaptor<TFunc>(func);
 	}
 
 	template<typename TFunc, typename TAccumulate>
-	constexpr auto Aggregate(TFunc&& func, TAccumulate&& seed)
+	constexpr auto Aggregate(TFunc func, const TAccumulate& seed)
 	{
-		return _AgregateAdaptor2<TFunc, TAccumulate>(
-			std::forward<TFunc>(func), std::forward<TAccumulate>(seed));
+		return _AgregateAdaptor2<TFunc, TAccumulate>(std::move(func), seed);
 	}
 
 	template<typename TPredicate>
@@ -107,9 +105,9 @@ namespace Sgl::Ranges
 	};
 
 	template<typename TPredicate>
-	constexpr auto All(TPredicate&& predicate)
+	constexpr auto All(TPredicate predicate)
 	{
-		return _AllAdaptor<TPredicate>(std::forward<TPredicate>(predicate));
+		return _AllAdaptor<TPredicate>(std::move(predicate));
 	}
 
 	template<typename TPredicate>
@@ -136,9 +134,9 @@ namespace Sgl::Ranges
 	};
 
 	template<typename TPredicate>
-	constexpr auto Any(TPredicate&& predicate)
+	constexpr auto Any(TPredicate predicate)
 	{
-		return _AnyAdaptor<TPredicate>(std::forward<TPredicate>(predicate));
+		return _AnyAdaptor<TPredicate>(std::move(predicate));
 	}
 
 	struct _AverageAdaptor: public RangeAdaptor<_AverageAdaptor>
@@ -256,8 +254,8 @@ namespace Sgl::Ranges
 	{
 		T Value;
 
-		constexpr _ContainsAdaptor(T&& value):
-			Value(std::move(value))
+		constexpr _ContainsAdaptor(const T& value):
+			Value(value)
 		{}
 
 		template<std::ranges::range TRange>
@@ -276,10 +274,10 @@ namespace Sgl::Ranges
 		}
 	};
 
-	constexpr auto Contains(std::copyable auto&& value)
+	template<typename T>
+	constexpr auto Contains(const T& value)
 	{
-		using TValue = decltype(value);
-		return _ContainsAdaptor<TValue>(std::forward<TValue>(value));
+		return _ContainsAdaptor<T>(value);
 	}
 
 	/*struct _DistinctAdaptor: public RangeAdaptor<_DistinctAdaptor>
@@ -393,7 +391,116 @@ namespace Sgl::Ranges
 		return _FirstAdaptor();
 	}
 
-	// TODO: FisrtOrDefault
+	struct _FirstOrDefaultAdaptor: public RangeAdaptor<_FirstOrDefaultAdaptor>
+	{
+		template<std::ranges::range TRange>
+		constexpr auto operator()(TRange&& range) const
+			requires std::default_initializable<TRangeValue<TRange>>
+		{
+			if(range.begin() == range.end())
+			{
+				return TRangeValue<TRange>{};
+			}
+
+			return *range.begin();
+		}
+	};
+
+	template<typename T>
+	struct _FirstOrDefaultAdaptor2: public RangeAdaptor<_FirstOrDefaultAdaptor2<T>>
+	{
+		T DefaultValue;
+
+		constexpr _FirstOrDefaultAdaptor2(const T& defaultValue):
+			DefaultValue(defaultValue)
+		{}
+
+		template<std::ranges::range TRange>
+		constexpr auto operator()(TRange&& range) const
+		{
+			if(range.begin() == range.end())
+			{
+				return DefaultValue;
+			}
+
+			return *range.begin();
+		}
+	};
+
+	constexpr auto FirstOrDefault()
+	{
+		return _FirstOrDefaultAdaptor();
+	}
+
+	template<typename T>
+	constexpr auto FirstOrDefault(const T& defaultValue)
+	{
+		return _FirstOrDefaultAdaptor2<T>(defaultValue);
+	}
+
+	template<typename TPredicate>
+	struct _FisrtIfOrDefaultAdaptor: public RangeAdaptor<_FisrtIfOrDefaultAdaptor<TPredicate>>
+	{
+		TPredicate Predicate;
+
+		constexpr _FisrtIfOrDefaultAdaptor(TPredicate&& predicate):
+			Predicate(std::move(predicate))
+		{}
+
+		template<std::ranges::range TRange>
+		constexpr auto operator()(TRange&& range) const
+			requires std::default_initializable<TRangeValue<TRange>>
+		{
+			for(const auto& item : range)
+			{
+				if(Predicate(item))
+				{
+					return item;
+				}
+			}
+
+			return TRangeValue<TRange>{};
+		}
+	};
+
+	template<typename TPredicate, typename TDefaultValue>
+	struct _FisrtIfOrDefaultAdaptor2: public RangeAdaptor<_FisrtIfOrDefaultAdaptor2<TPredicate, TDefaultValue>>
+	{
+		TPredicate Predicate;
+		TDefaultValue DefaultValue;
+
+		constexpr _FisrtIfOrDefaultAdaptor2(TPredicate&& predicate, const TDefaultValue& defaultValue):
+			Predicate(std::move(predicate)),
+			DefaultValue(defaultValue)
+		{}
+
+		template<std::ranges::range TRange>
+		constexpr auto operator()(TRange&& range) const
+		{
+			for(const auto& item : range)
+			{
+				if(Predicate(item))
+				{
+					return item;
+				}
+			}
+
+			return DefaultValue;
+		}
+	};
+
+	template<typename TPredicate, typename TDefaultValue>
+	constexpr auto FirstIfOrDefault(TPredicate predicate, const TDefaultValue& defaultValue)
+	{
+		return _FisrtIfOrDefaultAdaptor2<TPredicate, TDefaultValue>(std::move(predicate), 
+																	defaultValue);
+	}
+
+	template<typename TPredicate>
+	constexpr auto FirstIfOrDefault(TPredicate predicate)
+	{
+		return _FisrtIfOrDefaultAdaptor<TPredicate>(std::move(predicate));
+	}
 
 	template<size_t Size>
 	struct _ToArrayAdaptor: public RangeAdaptor<_ToArrayAdaptor<Size>>
