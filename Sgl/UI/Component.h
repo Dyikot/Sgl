@@ -109,7 +109,14 @@ namespace Sgl
 		void SwitchCursorOn(const Cursor& cursor) override;
 		void SwitchCursorOnDefault() override;
 		UIElement& GetRootElement() override;
-		bool IsPointIn(SDL_FPoint point) const;
+
+		bool IsPointIn(SDL_FPoint point) const
+		{
+			return point.x >= Position.x &&
+				   point.x <= Position.x + GetWidth() &&
+				   point.y >= Position.y &&
+				   point.y <= Position.y + GetHeight();
+		}
 	protected:
 		virtual void OnMouseEnter(const MouseButtonEventArgs& e);
 		virtual void OnMouseLeave(const MouseButtonEventArgs& e);

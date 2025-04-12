@@ -49,7 +49,7 @@ namespace Sgl
         if(HoverComponent)
         {
             HoverComponent->OnMouseUp(e);
-            HoverComponent->Children.OnMouseDown(e);
+            HoverComponent->Children.OnMouseUp(e);
         }
     }
 
@@ -62,8 +62,9 @@ namespace Sgl
         }
     }
 
-    Component::Component(UIElement& parent)
-        : Parent(parent), Scene(static_cast<Sgl::Scene&>(parent.GetRootElement()))
+    Component::Component(UIElement& parent):
+        Parent(parent),
+        Scene(static_cast<Sgl::Scene&>(parent.GetRootElement()))
     {
         AddProperty<float>(WidthProperty);
         AddProperty<float>(HeightProperty);
@@ -103,14 +104,6 @@ namespace Sgl
     UIElement& Component::GetRootElement()
     {
         return Scene;
-    }
-
-    bool Component::IsPointIn(SDL_FPoint point) const
-    {
-        return point.x >= Position.x &&
-               point.x <= Position.x + GetWidth() &&
-               point.y >= Position.y &&
-               point.y <= Position.y + GetHeight();
     }
 
     void Component::OnRender(RenderContext& renderContext) const

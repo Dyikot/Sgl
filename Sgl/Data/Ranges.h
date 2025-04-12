@@ -6,6 +6,9 @@
 
 namespace Sgl::Ranges
 {
+	template<std::ranges::range TRange>
+	using TRangeValue = std::ranges::range_value_t<TRange>;
+
 	template<typename TAdaptor>
 	struct RangeAdaptor
 	{
@@ -14,10 +17,10 @@ namespace Sgl::Ranges
 			return static_cast<const TAdaptor&>(*this)(std::forward<decltype(range)>(range));
 		}
 
-		constexpr friend decltype(auto) operator|(std::ranges::range auto&& range,
-												  RangeAdaptor&& adaptor)
+		template<std::ranges::range TRange>
+		constexpr friend decltype(auto) operator|(TRange&& range, RangeAdaptor&& adaptor)
 		{
-			return adaptor(std::forward<decltype(range)>(range));
+			return adaptor(std::forward<TRange>(range));
 		}
 	};
 
@@ -29,9 +32,10 @@ namespace Sgl::Ranges
 		constexpr _AggregateAdaptor(TFunc&& func):
 			Function(std::move(func)) {}
 
-		constexpr auto operator()(std::ranges::range auto&& range) const
+		template<std::ranges::range TRange>
+		constexpr auto operator()(TRange&& range) const
 		{
-			std::ranges::range_value_t<decltype(range)> result = {};
+			TRangeValue<TRange> result = {};
 			for(const auto& item : range)
 			{
 				result = Function(result, item);
@@ -52,7 +56,8 @@ namespace Sgl::Ranges
 			Seed(std::move(seed))
 		{}
 
-		constexpr TAccumulate operator()(std::ranges::range auto&& range) const
+		template<std::ranges::range TRange>
+		constexpr TAccumulate operator()(TRange&& range) const
 		{
 			TAccumulate result = Seed;
 
@@ -66,13 +71,13 @@ namespace Sgl::Ranges
 	};
 
 	template<typename TFunc>
-	inline constexpr auto Aggregate(TFunc&& func)
+	constexpr auto Aggregate(TFunc&& func)
 	{
 		return _AggregateAdaptor<TFunc>(std::forward<TFunc>(func));
 	}
 
 	template<typename TFunc, typename TAccumulate>
-	inline constexpr auto Aggregate(TFunc&& func, TAccumulate&& seed)
+	constexpr auto Aggregate(TFunc&& func, TAccumulate&& seed)
 	{
 		return _AgregateAdaptor2<TFunc, TAccumulate>(
 			std::forward<TFunc>(func), std::forward<TAccumulate>(seed));
@@ -86,7 +91,8 @@ namespace Sgl::Ranges
 		constexpr _AllAdaptor(TPredicate&& predicate):
 			Predicate(std::move(predicate)) {}
 
-		constexpr bool operator()(std::ranges::range auto&& range) const
+		template<std::ranges::range TRange>
+		constexpr bool operator()(TRange&& range) const
 		{
 			for(const auto& item : range)
 			{
@@ -101,7 +107,7 @@ namespace Sgl::Ranges
 	};
 
 	template<typename TPredicate>
-	inline constexpr auto All(TPredicate&& predicate)
+	constexpr auto All(TPredicate&& predicate)
 	{
 		return _AllAdaptor<TPredicate>(std::forward<TPredicate>(predicate));
 	}
@@ -114,7 +120,8 @@ namespace Sgl::Ranges
 		constexpr _AnyAdaptor(TPredicate&& predicate):
 			Predicate(std::move(predicate)) {}
 
-		constexpr bool operator()(std::ranges::range auto&& range) const
+		template<std::ranges::range TRange>
+		constexpr bool operator()(TRange&& range) const
 		{
 			for(const auto& item : range)
 			{
@@ -129,14 +136,15 @@ namespace Sgl::Ranges
 	};
 
 	template<typename TPredicate>
-	inline constexpr auto Any(TPredicate&& predicate)
+	constexpr auto Any(TPredicate&& predicate)
 	{
 		return _AnyAdaptor<TPredicate>(std::forward<TPredicate>(predicate));
 	}
 
 	struct _AverageAdaptor: public RangeAdaptor<_AverageAdaptor>
 	{		
-		constexpr double operator()(std::ranges::range auto&& range) const
+		template<std::ranges::range TRange>
+		constexpr double operator()(TRange&& range) const
 		{
 			double sum = 0;
 
@@ -149,13 +157,13 @@ namespace Sgl::Ranges
 		}
 	};
 
-	inline constexpr auto Average()
+	constexpr auto Average()
 	{
 		return _AverageAdaptor();
 	}
 
 	template<typename TResult>
-	inline constexpr auto Cast()
+	constexpr auto Cast()
 	{
 		return std::views::transform([](const auto& item) 
 		{
@@ -171,7 +179,8 @@ namespace Sgl::Ranges
 			Size(size)
 		{}
 
-		constexpr auto operator()(std::ranges::range auto&& range) const
+		template<std::ranges::range TRange>
+		constexpr auto operator()(TRange&& range) const
 		{
 			if(Size == 0)
 			{
@@ -180,7 +189,7 @@ namespace Sgl::Ranges
 
 			const auto RangeSize = std::ranges::size(range);
 			const auto ChunksNumber = RangeSize / Size;
-			std::vector<std::vector<std::ranges::range_value_t<decltype(range)>>> chunks(ChunksNumber);
+			std::vector<std::vector<TRangeValue<TRange>>> chunks(ChunksNumber);
 			auto it = range.begin();
 
 			for(auto& chunk : chunks)
@@ -201,32 +210,200 @@ namespace Sgl::Ranges
 		}
 	};
 
-	inline constexpr auto Chunk(size_t size)
+	constexpr auto Chunk(size_t size)
 	{
 		return _ChunkAdaptor(size);
 	}
 
 	struct _CountAdaptor: public RangeAdaptor<_CountAdaptor>
 	{
-		constexpr auto operator()(std::ranges::range auto&& range) const
+		template<std::ranges::range TRange>
+		constexpr auto operator()(TRange&& range) const
 		{
 			return std::ranges::size(range);
 		}
 	};
 
-	inline constexpr auto Count()
+	constexpr auto Count()
 	{
 		return _CountAdaptor();
 	}
 
+	/*template<std::ranges::view TView>
+	struct _ConcatAdaptor: public RangeAdaptor<_ConcatAdaptor<TView>>
+	{
+		TView View;
+
+		constexpr _ConcatAdaptor(TView view):
+			View(view)
+		{}
+
+		template<std::ranges::range TRange>
+		constexpr auto operator()(TRange&& range) const
+		{
+			
+		}
+	};
+
+	constexpr auto Concat(std::ranges::viewable_range auto&& range)
+	{
+		auto view = std::views::all(std::forward<decltype(range)>(range));
+		return _ConcatAdaptor<decltype(view)>(view);
+	}*/
+
+	template<typename T>
+	struct _ContainsAdaptor: public RangeAdaptor<_ContainsAdaptor<T>>
+	{
+		T Value;
+
+		constexpr _ContainsAdaptor(T&& value):
+			Value(std::move(value))
+		{}
+
+		template<std::ranges::range TRange>
+		constexpr bool operator()(TRange&& range) const
+			requires std::convertible_to<TRangeValue<TRange>, T>
+		{
+			for(const auto& item : range)
+			{
+				if(item == Value)
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+	};
+
+	constexpr auto Contains(std::copyable auto&& value)
+	{
+		using TValue = decltype(value);
+		return _ContainsAdaptor<TValue>(std::forward<TValue>(value));
+	}
+
+	/*struct _DistinctAdaptor: public RangeAdaptor<_DistinctAdaptor>
+	{
+		template<std::ranges::range TRange>
+		constexpr auto operator()(TRange&& range) const
+		{
+			
+		}
+	};
+
+	constexpr auto Distinct()
+	{
+		return _DistinctAdaptor();
+	}*/
+
+	/*template<typename TKeySelector>
+	struct _DistinctByAdaptor: public RangeAdaptor<_DistinctByAdaptor>
+	{
+		TKeySelector KeySelector;
+
+		constexpr _DistinctByAdaptor(TKeySelector keySelector):
+			KeySelector(std::move(keySelector))
+		{}
+
+		template<std::ranges::range TRange>
+		constexpr auto operator()(TRange&& range) const
+		{
+
+		}
+	};
+
+	template<typename TKeySelector>
+	constexpr auto DistinctBy(TKeySelector keySelector)
+	{
+		return _DistinctByAdaptor<TKeySelector>(std::move(keySelector));
+	}*/
+
+	struct _ElementAtAdaptor: public RangeAdaptor<_ElementAtAdaptor>
+	{
+		size_t Position;
+
+		constexpr _ElementAtAdaptor(size_t position):
+			Position(position)
+		{}
+
+		template<std::ranges::range TRange>
+		constexpr auto operator()(TRange&& range) const
+		{
+			auto it = range.begin();
+			std::ranges::advance(it, Position);
+			return *it;
+		}
+	};
+
+	constexpr auto ElementAt(size_t position)
+	{
+		return _ElementAtAdaptor(position);
+	}
+
+	struct _ElementAtOrDefaultAdaptor: public RangeAdaptor<_ElementAtOrDefaultAdaptor>
+	{
+		size_t Position;
+
+		constexpr _ElementAtOrDefaultAdaptor(size_t position):
+			Position(position)
+		{}
+
+		template<std::ranges::range TRange>
+		constexpr auto operator()(TRange&& range) const
+			requires std::default_initializable<TRangeValue<TRange>>
+		{
+			if(std::ranges::size(range) <= Position)
+			{
+				return TRangeValue<TRange>{};
+			}
+			else
+			{
+				auto it = range.begin();
+				std::ranges::advance(it, Position);
+				return *it;
+			}
+		}
+	};
+
+	constexpr auto ElementAtOrDefault(size_t position)
+	{
+		return _ElementAtOrDefaultAdaptor(position);
+	}
+
+	template<typename T>
+	constexpr auto Empty()
+	{
+		return std::views::empty<T>;
+	}
+
+	// TODO: Except
+	// TODO: ExceptBy
+
+	struct _FirstAdaptor: public RangeAdaptor<_FirstAdaptor>
+	{
+		template<std::ranges::range TRange>
+		constexpr auto operator()(TRange&& range) const
+		{
+			return *range.begin();
+		}
+	};
+
+	constexpr auto Fisrt()
+	{
+		return _FirstAdaptor();
+	}
+
+	// TODO: FisrtOrDefault
+
 	template<size_t Size>
 	struct _ToArrayAdaptor: public RangeAdaptor<_ToArrayAdaptor<Size>>
 	{
-		constexpr auto operator()(std::ranges::range auto&& range) const
+		template<std::ranges::range TRange>
+		constexpr auto operator()(TRange&& range) const
 		{
 			const auto RangeSize = std::ranges::size(range);
 			const auto MinSize = RangeSize < Size ? RangeSize : Size;
-			std::array<std::ranges::range_value_t<decltype(range)>, Size> result = {};
+			std::array<TRangeValue<TRange>, Size> result = {};
 			auto it = range.begin();
 
 			for(size_t i = 0; i < MinSize; i++, it++)
@@ -239,20 +416,21 @@ namespace Sgl::Ranges
 	};
 
 	template<size_t Size>
-	inline constexpr auto ToArray()
+	constexpr auto ToArray()
 	{
 		return _ToArrayAdaptor<Size>();
 	}
 
 	struct _ToVectorAdaptor: public RangeAdaptor<_ToVectorAdaptor>
 	{
-		constexpr auto operator()(std::ranges::range auto&& range) const
+		template<std::ranges::range TRange>
+		constexpr auto operator()(TRange&& range) const
 		{
 			return std::vector(range.begin(), range.end());
 		}
 	};
 
-	inline constexpr auto ToVector()
+	constexpr auto ToVector()
 	{
 		return _ToVectorAdaptor();
 	}
