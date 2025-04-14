@@ -10,25 +10,10 @@ namespace Sgl
 	{
 		_current = this;
 
-		if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_AUDIO) < 0)
-		{
-			Log::PrintSDLError();
-		}
-
-		if(TTF_Init() < 0)
-		{
-			Log::PrintSDLError();
-		}
-
-		if(!IMG_Init(IMG_InitFlags::IMG_INIT_PNG | IMG_InitFlags::IMG_INIT_JPG))
-		{
-			Log::PrintSDLError();
-		}
-
-		if(Mix_OpenAudio(48000, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 2048) < 0)
-		{
-			Log::PrintSDLError();
-		}
+		PRINT_SDL_ERROR_IF(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_AUDIO) < 0);
+		PRINT_SDL_ERROR_IF(TTF_Init() < 0);
+		PRINT_SDL_ERROR_IF(!IMG_Init(IMG_InitFlags::IMG_INIT_PNG | IMG_InitFlags::IMG_INIT_JPG));
+		PRINT_SDL_ERROR_IF(Mix_OpenAudio(48000, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 2048) < 0);
 	}
 
 	Application::~Application() noexcept

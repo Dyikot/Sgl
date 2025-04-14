@@ -3,6 +3,7 @@
 #include <ranges>
 #include <algorithm>
 #include <functional>
+#include <optional>
 
 namespace Sgl::Ranges
 {
@@ -439,37 +440,42 @@ namespace Sgl::Ranges
 	}
 
 	template<typename TPredicate>
-	struct _FisrtIfOrDefaultAdaptor: public RangeAdaptor<_FisrtIfOrDefaultAdaptor<TPredicate>>
+	struct _FindFirstAdaptor: public RangeAdaptor<_FindFirstAdaptor<TPredicate>>
 	{
 		TPredicate Predicate;
 
-		constexpr _FisrtIfOrDefaultAdaptor(TPredicate&& predicate):
+		constexpr _FindFirstAdaptor(TPredicate&& predicate):
 			Predicate(std::move(predicate))
 		{}
 
 		template<std::ranges::range TRange>
-		constexpr auto operator()(TRange&& range) const
-			requires std::default_initializable<TRangeValue<TRange>>
+		constexpr std::optional<TRangeValue<TRange>> operator()(TRange&& range) const
 		{
 			for(const auto& item : range)
 			{
 				if(Predicate(item))
 				{
-					return item;
+					return std::optional<TRangeValue<TRange>>(item);
 				}
 			}
 
-			return TRangeValue<TRange>{};
+			return std::nullopt;
 		}
 	};
 
+	template<typename TPredicate>
+	constexpr auto FindFirst(TPredicate predicate)
+	{
+		return _FindFirstAdaptor<TPredicate>(std::move(predicate));
+	}
+
 	template<typename TPredicate, typename TDefaultValue>
-	struct _FisrtIfOrDefaultAdaptor2: public RangeAdaptor<_FisrtIfOrDefaultAdaptor2<TPredicate, TDefaultValue>>
+	struct _FindFirstOrDefaultAdaptor: public RangeAdaptor<_FindFirstOrDefaultAdaptor<TPredicate, TDefaultValue>>
 	{
 		TPredicate Predicate;
 		TDefaultValue DefaultValue;
 
-		constexpr _FisrtIfOrDefaultAdaptor2(TPredicate&& predicate, const TDefaultValue& defaultValue):
+		constexpr _FindFirstOrDefaultAdaptor(TPredicate&& predicate, const TDefaultValue& defaultValue):
 			Predicate(std::move(predicate)),
 			DefaultValue(defaultValue)
 		{}
@@ -490,16 +496,9 @@ namespace Sgl::Ranges
 	};
 
 	template<typename TPredicate, typename TDefaultValue>
-	constexpr auto FirstIfOrDefault(TPredicate predicate, const TDefaultValue& defaultValue)
+	constexpr auto FindFirstOrDefault(TPredicate predicate, const TDefaultValue& defaultValue)
 	{
-		return _FisrtIfOrDefaultAdaptor2<TPredicate, TDefaultValue>(std::move(predicate), 
-																	defaultValue);
-	}
-
-	template<typename TPredicate>
-	constexpr auto FirstIfOrDefault(TPredicate predicate)
-	{
-		return _FisrtIfOrDefaultAdaptor<TPredicate>(std::move(predicate));
+		return _FindFirstOrDefaultAdaptor<TPredicate, TDefaultValue>(std::move(predicate), defaultValue);
 	}
 
 	template<size_t Size>

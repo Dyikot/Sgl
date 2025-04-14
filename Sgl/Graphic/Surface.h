@@ -13,10 +13,7 @@ namespace Sgl
 		explicit Surface(std::string_view path):
 			_surface(IMG_Load(path.data()))
 		{
-			if(_surface == nullptr)
-			{
-				Log::PrintSDLError();
-			}
+			PRINT_SDL_ERROR_IF(_surface == nullptr);
 		}
 
 		Surface(const Surface& surface) = delete;

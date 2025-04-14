@@ -62,10 +62,7 @@ namespace Sgl
 		Texture operator()(std::string_view path) const noexcept
 		{
 			auto texture = IMG_LoadTexture(_renderer, path.data());
-			if(texture == nullptr)
-			{
-				Log::PrintSDLError();
-			}
+			PRINT_SDL_ERROR_IF(texture == nullptr);
 
 			return Texture(texture);
 		}

@@ -20,19 +20,13 @@ namespace Sgl
 		explicit Cursor(std::string_view path):
 			_cursor(SDL_CreateColorCursor(IMG_Load(path.data()), 0, 0))
 		{
-			if(!_cursor)
-			{
-				Log::PrintSDLError();
-			}
+			PRINT_SDL_ERROR_IF(!_cursor);
 		}
 
 		explicit Cursor(SDL_SystemCursor id) noexcept:
 			_cursor(SDL_CreateSystemCursor(id))
 		{
-			if(!_cursor)
-			{
-				Log::PrintSDLError();
-			}
+			PRINT_SDL_ERROR_IF(!_cursor);
 		}
 
 		Cursor(const Cursor&) = delete;

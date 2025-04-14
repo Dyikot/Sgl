@@ -12,11 +12,7 @@ namespace Sgl
                                config.Width, config.Height, config.Flags)),
           _renderer(SDL_CreateRenderer(_this, -1, SDL_RENDERER_ACCELERATED))
     {
-        if(_this == nullptr)
-        {
-            Log::PrintSDLError();
-        }
-
+        PRINT_SDL_ERROR_IF(_this == nullptr);
         SetLogicalSize(config.Width, config.Height);
     }
 
@@ -194,7 +190,7 @@ namespace Sgl
         }
         else
         {
-            Log::PrintSDLError();
+            PRINT_SDL_ERROR();
         }
     }
 
@@ -211,7 +207,7 @@ namespace Sgl
         }
         else
         {
-            Log::PrintSDLError();
+            PRINT_SDL_ERROR();
         }
     }
 
