@@ -67,8 +67,8 @@ namespace Sgl
 		static std::vector<int> TriangulateConvexShape(PointsView points);
 		static std::vector<int> TriangulateConvexShape(PointsView points, SDL_FPoint center);
 	public:
-		static inline const std::array<float, 360> Sin360 = ComputeSinArray<360>();
-		static inline const std::array<float, 360> Cos360 = ComputeCosArray<360>();
+		static inline const auto Sin360 = ComputeSinArray<360>();
+		static inline const auto Cos360 = ComputeCosArray<360>();
 	};
 	
 }

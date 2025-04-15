@@ -12,14 +12,14 @@ namespace Sgl
 	/// <param name="duration"> - sleep time duration</param>
 	inline void SleepFor(TimeSpan duration)
 	{
-		std::chrono::steady_clock::time_point start = std::chrono::high_resolution_clock::now();
-		std::chrono::steady_clock::time_point end = start + std::chrono::nanoseconds(duration.ToNanoseconds());
+		auto start = std::chrono::high_resolution_clock::now();
+		auto end = start + std::chrono::nanoseconds(duration.ToNanoseconds());
 
-		if(duration >= TimeSpan::FromMilliseconds(15))
+		if(duration >= TimeSpan::FromMilliseconds(15i64))
 		{
 			SDL_Delay(duration.ToMilliseconds());
 		}
-		else if(duration >= TimeSpan::FromMicroseconds(100))
+		else if(duration >= TimeSpan::FromMicroseconds(100i64))
 		{
 			while(std::chrono::high_resolution_clock::now() < end)
 			{

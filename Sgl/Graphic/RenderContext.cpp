@@ -7,7 +7,7 @@ namespace Sgl
 	RenderContext::RenderContext(SDL_Renderer* renderer) noexcept:
 		_renderer(renderer)
 	{
-		PRINT_SDL_ERROR_IF(_renderer == nullptr);
+		PrintSDLErrorIf(_renderer == nullptr);
 	}
 
 	void RenderContext::DrawPoint(SDL_FPoint point, Color color)

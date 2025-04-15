@@ -100,7 +100,7 @@ namespace Sgl
 		Music(std::string_view path) noexcept:
 			_music(Mix_LoadMUS(path.data()))
 		{
-			PRINT_SDL_ERROR_IF(_music == nullptr);
+			PrintSDLErrorIf(_music == nullptr);
 		}
 
 		Music(const Music&) = delete;
@@ -129,7 +129,7 @@ namespace Sgl
 		SoundEffect(std::string_view path) noexcept:
 			_soundChunk(Mix_LoadWAV(path.data()))
 		{
-			PRINT_SDL_ERROR_IF(_soundChunk == nullptr);
+			PrintSDLErrorIf(_soundChunk == nullptr);
 		}
 
 		SoundEffect(const SoundEffect&) = delete;

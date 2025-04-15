@@ -4,5 +4,22 @@
 #include <format>
 #include "SDL/SDL_error.h"
 
-#define PRINT_SDL_ERROR_IF(condition) if(condition) std::cout << std::format("SDL error: {}\n", SDL_GetError())
-#define PRINT_SDL_ERROR() std::cout << std::format("SDL error: {}\n", SDL_GetError())
+namespace Sgl
+{
+	inline void PrintSDLErrorIf(bool condition)
+	{
+		#ifndef NDEBUG
+		if(condition)
+		{
+			std::cout << std::format("SDL error: {}\n", SDL_GetError());
+		}
+		#endif // NDEBUG
+	}
+
+	inline void PrintSDLError()
+	{
+		#ifndef NDEBUG
+		std::cout << std::format("SDL error: {}\n", SDL_GetError());
+		#endif // NDEBUG
+	}
+}

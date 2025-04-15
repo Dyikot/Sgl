@@ -32,12 +32,12 @@ namespace Sgl
 		Application() noexcept;
 		~Application() noexcept;
 
-		static Nullable<Application> Current() { return _current; }
+		static auto Current() { return _current; }
 
 		void SetMaxFrameRate(size_t value);
 
-		Nullable<Window> GetWindow() const;
-		std::optional<size_t> GetMaxFrameRate() const { return _maxFrameRate; }
+		auto GetWindow() const { return _window; }
+		auto GetMaxFrameRate() const { return _maxFrameRate; }
 
 		Event<ApplicationEventHandler> Startup;
 		Event<ApplicationEventHandler> Quit;

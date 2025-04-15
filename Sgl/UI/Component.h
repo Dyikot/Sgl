@@ -85,24 +85,24 @@ namespace Sgl
 		void SetFontSize(uint16_t value) { SetProperty(FontSizeProperty, value); }
 		void SetFontWeight(FontWeight value) { SetProperty(FontWeightProperty, value); }
 
-		float GetWidth() const { return GetPropertyValue<float>(WidthProperty); }
-		float GetHeight() const { return GetPropertyValue<float>(HeightProperty); }
-		float GetMinWidth() const { return GetPropertyValue<float>(MinWidthProperty); }
-		float GetMinHeight() const { return GetPropertyValue<float>(MinHeightProperty); }
-		float GetMaxWidth() const { return GetPropertyValue<float>(MaxWidthProperty); }
-		float GetMaxHeight() const { return GetPropertyValue<float>(MaxHeightProperty); }
-		size_t GetZIndex() const { return GetPropertyValue<size_t>(ZIndexProperty); }
-		Thikness GetMargin() const { return GetPropertyValue<Thikness>(MarginProperty); }
-		HorizontalAlignment GetHorizontalAlignment() const { return GetPropertyValue<HorizontalAlignment>(HorizontalAlignmentProperty); }
-		VerticalAligment GetVerticalAlignment() const { return GetPropertyValue<VerticalAligment>(VerticalAligmentProperty); }
-		Visibility GetVisibility() const { return GetPropertyValue<Visibility>(VisibilityProperty); }
-		const Component* GetToolTip() const { return GetPropertyValue<const Component*>(ToolTipProperty); }
-		Color GetBorderColor() const { return GetPropertyValue<Color>(BorderColorProperty); }
-		Color GetFontColor() const { return GetPropertyValue<Color>(FontColorProperty); }
-		Thikness GetBorderThikness() const { return GetPropertyValue<Thikness>(BorderThiknessProperty); }
-		const FontFamily& GetFontFamily() const { return GetPropertyValue<FontFamily>(FontFamilyProperty); }
-		uint16_t GetFontSize() const { return GetPropertyValue<uint16_t>(FontSizeProperty); }
-		FontWeight GetFontWeight() const { return GetPropertyValue<FontWeight>(FontWeightProperty); }
+		auto GetWidth() const { return GetPropertyValue<float>(WidthProperty); }
+		auto GetHeight() const { return GetPropertyValue<float>(HeightProperty); }
+		auto GetMinWidth() const { return GetPropertyValue<float>(MinWidthProperty); }
+		auto GetMinHeight() const { return GetPropertyValue<float>(MinHeightProperty); }
+		auto GetMaxWidth() const { return GetPropertyValue<float>(MaxWidthProperty); }
+		auto GetMaxHeight() const { return GetPropertyValue<float>(MaxHeightProperty); }
+		auto GetZIndex() const { return GetPropertyValue<size_t>(ZIndexProperty); }
+		auto GetMargin() const { return GetPropertyValue<Thikness>(MarginProperty); }
+		auto GetHorizontalAlignment() const { return GetPropertyValue<HorizontalAlignment>(HorizontalAlignmentProperty); }
+		auto GetVerticalAlignment() const { return GetPropertyValue<VerticalAligment>(VerticalAligmentProperty); }
+		auto GetVisibility() const { return GetPropertyValue<Visibility>(VisibilityProperty); }
+		auto GetToolTip() const { return GetPropertyValue<const Component*>(ToolTipProperty); }
+		auto GetBorderColor() const { return GetPropertyValue<Color>(BorderColorProperty); }
+		auto GetFontColor() const { return GetPropertyValue<Color>(FontColorProperty); }
+		auto GetBorderThikness() const { return GetPropertyValue<Thikness>(BorderThiknessProperty); }
+		const auto& GetFontFamily() const { return GetPropertyValue<FontFamily>(FontFamilyProperty); }
+		auto GetFontSize() const { return GetPropertyValue<uint16_t>(FontSizeProperty); }
+		auto GetFontWeight() const { return GetPropertyValue<FontWeight>(FontWeightProperty); }
 
 		void OnRender(RenderContext& renderContext) const override;
 		void AddStyle(const Style& style) override;
