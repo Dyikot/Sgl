@@ -17,6 +17,8 @@ namespace Sgl
 	public:
 		explicit RenderContext(SDL_Renderer* renderer) noexcept;
 		
+		TextureFactory GetTextureFactory() const;
+
 		void DrawPoint(SDL_FPoint point, Color color);
 		void DrawPoints(PointsView points, Color color);
 		void DrawLine(SDL_FPoint start, SDL_FPoint end, Color color);
@@ -56,7 +58,7 @@ namespace Sgl
 			SDL_SetSurfaceAlphaMod(surface, color.A);
 		}
 
-		operator SDL_Renderer* () { return _renderer; }
+		operator SDL_Renderer* () const noexcept { return _renderer; }
 	};
 }
 

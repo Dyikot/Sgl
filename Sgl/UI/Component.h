@@ -26,7 +26,7 @@ namespace Sgl
 		void OnMouseMove(const MouseButtonEventArgs& e);
 		void OnMouseDown(const MouseButtonEventArgs& e);
 		void OnMouseUp(const MouseButtonEventArgs& e);
-		void OnRender(RenderContext& renderContext) const override;
+		void OnRender(RenderContext renderContext) const override;
 	};
 
 	class Component: public UIElement
@@ -104,7 +104,7 @@ namespace Sgl
 		auto GetFontSize() const { return GetPropertyValue<uint16_t>(FontSizeProperty); }
 		auto GetFontWeight() const { return GetPropertyValue<FontWeight>(FontWeightProperty); }
 
-		void OnRender(RenderContext& renderContext) const override;
+		void OnRender(RenderContext renderContext) const override;
 		void AddStyle(const Style& style) override;
 		void SwitchCursorOn(const Cursor& cursor) override;
 		void SwitchCursorOnDefault() override;

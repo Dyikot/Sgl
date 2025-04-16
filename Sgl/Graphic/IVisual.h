@@ -9,6 +9,6 @@ namespace Sgl
 	public:
 		virtual ~IVisual() = default;
 
-		virtual void OnRender(RenderContext& renderContext) const = 0;
+		virtual void OnRender(RenderContext renderContext) const = 0;
 	};
 }

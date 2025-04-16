@@ -10,6 +10,11 @@ namespace Sgl
 		PrintSDLErrorIf(_renderer == nullptr);
 	}
 
+	TextureFactory RenderContext::GetTextureFactory() const
+	{
+		return TextureFactory(_renderer);
+	}
+
 	void RenderContext::DrawPoint(SDL_FPoint point, Color color)
 	{
 		SetRenderColor(color);

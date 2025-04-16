@@ -7,7 +7,7 @@ namespace Sgl
 		Window(window)
 	{}
 
-	void Scene::OnRender(RenderContext& renderContext) const
+	void Scene::OnRender(RenderContext renderContext) const
 	{
 		if(BackgroundTexture)
 		{
@@ -106,7 +106,7 @@ namespace Sgl
 		}
 	}
 
-	void SceneManager::RenderScene(RenderContext& renderContext)
+	void SceneManager::RenderScene(RenderContext renderContext)
 	{
 		_scenes.top()->OnRender(renderContext);
 		SDL_RenderPresent(renderContext);

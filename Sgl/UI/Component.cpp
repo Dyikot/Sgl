@@ -53,7 +53,7 @@ namespace Sgl
         }
     }
 
-    void ComponentsCollection::OnRender(RenderContext& renderContext) const
+    void ComponentsCollection::OnRender(RenderContext renderContext) const
     {
         for(Component& component : *this)
         {
@@ -106,7 +106,7 @@ namespace Sgl
         return Scene;
     }
 
-    void Component::OnRender(RenderContext& renderContext) const
+    void Component::OnRender(RenderContext renderContext) const
     {
         if(auto tooltip = GetToolTip(); _hover && tooltip)
         {

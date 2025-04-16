@@ -2,15 +2,15 @@
 
 namespace Sgl
 {
-    Window::Window(Application& app) noexcept
-        : Window(app, Configuration())
+    Window::Window(Application& app) noexcept:
+        Window(app, Configuration())
     {}
 
-    Window::Window(Application & app, const Configuration& config) noexcept
-        : App(app),
-          _this(SDL_CreateWindow(config.Title, config.Position.x, config.Position.y, 
+    Window::Window(Application & app, const Configuration& config) noexcept:
+        App(app),
+        _this(SDL_CreateWindow(config.Title, config.Position.x, config.Position.y, 
                                config.Width, config.Height, config.Flags)),
-          _renderer(SDL_CreateRenderer(_this, -1, SDL_RENDERER_ACCELERATED))
+        _renderer(SDL_CreateRenderer(_this, -1, SDL_RENDERER_ACCELERATED))
     {
         PrintSDLErrorIf(_this == nullptr);
         SetLogicalSize(config.Width, config.Height);
@@ -162,9 +162,9 @@ namespace Sgl
         }
     }
 
-    TextureFactory Window::GetTextureFactory() const
+    RenderContext Window::GetRenderContext() const noexcept
     {
-        return TextureFactory(_renderer);
+        return RenderContext(_renderer);
     }
 
     void Window::Show()

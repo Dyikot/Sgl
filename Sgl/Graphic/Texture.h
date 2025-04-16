@@ -55,7 +55,7 @@ namespace Sgl
 	private:
 		SDL_Renderer* _renderer;
 	public:
-		TextureFactory(SDL_Renderer* renderer) noexcept:
+		explicit TextureFactory(SDL_Renderer* renderer) noexcept:
 			_renderer(renderer)
 		{}
 

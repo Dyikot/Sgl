@@ -96,7 +96,7 @@ namespace Sgl
 	void Application::Start()
 	{
 		Stopwatch delayStopwatch, sceneStopwatch;
-		RenderContext renderContext(_window->_renderer);
+		auto renderContext = _window->GetRenderContext();
 
 		renderContext.SetBlendMode(SDL_BLENDMODE_BLEND);
 		sceneStopwatch.Start();

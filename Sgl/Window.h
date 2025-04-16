@@ -72,7 +72,7 @@ namespace Sgl
 		std::string_view GetTitle() const noexcept;
 		SDL_Point GetPosition() const noexcept;
 		WindowState GetWindowState() const;
-		TextureFactory GetTextureFactory() const;
+		RenderContext GetRenderContext() const noexcept;
 
 		void Show();
 		void Hide();

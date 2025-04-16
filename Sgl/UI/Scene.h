@@ -30,7 +30,7 @@ namespace Sgl
 		Event<SceneEventHandler> Loaded;
 		Event<SceneEventHandler> Unloaded;
 
-		void OnRender(RenderContext& renderContext) const override;
+		void OnRender(RenderContext renderContext) const override;
 		void SwitchCursorOn(const Cursor& cursor) override;
 		void SwitchCursorOnDefault() override;
 		UIElement& GetRootElement() override { return *this; }
@@ -79,7 +79,7 @@ namespace Sgl
 
 		void Unload();
 		SceneState UpdateState();
-		void RenderScene(RenderContext& renderContext);
+		void RenderScene(RenderContext renderContext);
 		void ProcessScene(TimeSpan elapsed);
 		void HandleSceneEvents(SDL_Event& e);
 	protected:
