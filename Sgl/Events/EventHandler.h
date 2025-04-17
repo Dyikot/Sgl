@@ -15,11 +15,11 @@ namespace Sgl
 	public:
 		EventHandler() = default;
 
-		EventHandler(CAction<TSender, TEventArgs> auto&& handler):
+		EventHandler(CAction<TSender&, const TEventArgs&> auto&& handler):
 			_handler(std::forward<decltype(handler)>(handler))
 		{}
 
-		EventHandler(CAction<TEventArgs> auto&& handler):
+		EventHandler(CAction<const TEventArgs&> auto&& handler):
 			_handler([handler](TSender& sender, const TEventArgs& e) { handler(e); }),
 			_targetType(typeid(handler))
 		{}

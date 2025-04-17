@@ -10,34 +10,26 @@ namespace Sgl
 	private:
 		SDL_Surface* _surface = nullptr;
 	public:
-		explicit Surface(std::string_view path):
+		explicit Surface(SDL_Surface* surface):
+			_surface(surface)
+		{}
+
+		Surface(std::string_view path): 
 			_surface(IMG_Load(path.data()))
 		{
 			PrintSDLErrorIf(_surface == nullptr);
 		}
 
-		Surface(const Surface& surface) = delete;
-
 		Surface(Surface&& other) noexcept:
 			_surface(std::exchange(other._surface, nullptr))
 		{}
 
-		~Surface() noexcept
-		{
-			if(_surface)
-			{
-				SDL_FreeSurface(_surface);
-			}
-		}
+		Surface(const Surface& surface) = delete;
+		~Surface() { SDL_FreeSurface(_surface); }
 
-		std::pair<size_t, size_t> Size() const
+		auto Size() const
 		{
-			return std::pair{ _surface->w, _surface->h };
-		}
-
-		operator SDL_Surface*() const
-		{ 
-			return _surface;
+			return std::pair<size_t, size_t>(_surface->w, _surface->h);
 		}
 
 		Surface& operator=(Surface&& other) noexcept
@@ -45,5 +37,7 @@ namespace Sgl
 			_surface = std::exchange(other._surface, nullptr);
 			return *this;
 		}
+
+		operator SDL_Surface*() const noexcept { return _surface; }
 	};
 }

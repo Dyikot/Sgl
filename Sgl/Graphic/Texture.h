@@ -31,16 +31,11 @@ namespace Sgl
 			}
 		}
 
-		std::pair<size_t, size_t> Size() const
+		auto Size() const
 		{
 			int width = 0, height = 0;
 			SDL_QueryTexture(_texture, nullptr, nullptr, &width, &height);
-			return { width, height };
-		}
-
-		operator SDL_Texture* () const 
-		{
-			return _texture; 
+			return std::pair<size_t, size_t>(width, height);
 		}
 
 		Texture& operator=(Texture&& other) noexcept
@@ -48,6 +43,8 @@ namespace Sgl
 			_texture = std::exchange(other._texture, nullptr);
 			return *this;
 		}
+
+		operator SDL_Texture* () const noexcept { return _texture; }
 	};
 
 	struct TextureFactory

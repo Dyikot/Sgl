@@ -3,17 +3,13 @@
 namespace Sgl
 {
     Window::Window(Application& app) noexcept:
-        Window(app, Configuration())
-    {}
-
-    Window::Window(Application & app, const Configuration& config) noexcept:
         App(app),
-        _this(SDL_CreateWindow(config.Title, config.Position.x, config.Position.y, 
-                               config.Width, config.Height, config.Flags)),
+        _this(SDL_CreateWindow(DefaultTitle, DefaultPosition.x, DefaultPosition.y,
+                               DefaultWidth, DefaultHeight, SDL_WINDOW_HIDDEN)),
         _renderer(SDL_CreateRenderer(_this, -1, SDL_RENDERER_ACCELERATED))
     {
         PrintSDLErrorIf(_this == nullptr);
-        SetLogicalSize(config.Width, config.Height);
+        SetLogicalSize(DefaultWidth, DefaultHeight);
     }
 
     Window::~Window() noexcept
@@ -146,10 +142,10 @@ namespace Sgl
         return position;
     }
 
-    WindowState Window::GetWindowState() const
+    WindowState Window::GetWindowState() const noexcept
     {
-        const auto flags = SDL_GetWindowFlags(_this);
-        const auto state = flags & (SDL_WINDOW_MINIMIZED | SDL_WINDOW_MAXIMIZED);
+        auto flags = SDL_GetWindowFlags(_this);
+        auto state = SDL_WindowFlags(flags & (SDL_WINDOW_MINIMIZED | SDL_WINDOW_MAXIMIZED));
 
         switch(state)
         {

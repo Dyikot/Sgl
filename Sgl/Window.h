@@ -25,16 +25,12 @@ namespace Sgl
 
 	class Window
 	{
+	private:
+		static constexpr auto DefaultTitle = "Window";
+		static constexpr auto DefaultWidth = 1280;
+		static constexpr auto DefaultHeight = 720;
+		static constexpr auto DefaultPosition = SDL_Point(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 	public:
-		struct Configuration
-		{
-			const char* Title = "Window";
-			SDL_Point Position = { SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED };
-			size_t Width = 1280;
-			size_t Height = 720;
-			SDL_WindowFlags Flags = SDL_WINDOW_HIDDEN;
-		};
-
 		Application& App;
 		SceneManager SceneManager = Sgl::SceneManager(*this);
 		AnyMap<std::string> Resources;
@@ -46,9 +42,8 @@ namespace Sgl
 		std::optional<Surface> _icon;
 	public:
 		Window(Application& app) noexcept;
-		Window(Application& app, const Configuration& config) noexcept;
 		Window(const Window&) = delete;
-		Window(Window&&) = delete;		
+		Window(Window&&) = delete;
 		~Window() noexcept;
 		
 		void SetWidth(size_t value) noexcept;
@@ -71,7 +66,7 @@ namespace Sgl
 		size_t GetLogicalHeight() const noexcept;
 		std::string_view GetTitle() const noexcept;
 		SDL_Point GetPosition() const noexcept;
-		WindowState GetWindowState() const;
+		WindowState GetWindowState() const noexcept;
 		RenderContext GetRenderContext() const noexcept;
 
 		void Show();
