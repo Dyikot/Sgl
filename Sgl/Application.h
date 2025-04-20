@@ -3,7 +3,6 @@
 #include "SDL/SDL_ttf.h"
 #include "SDL/SDL_mixer.h"
 #include "SDL/SDL_image.h"
-#include "Audio/AudioManager.h"
 #include "Tools/Time/Stopwatch.h"
 #include "Events/Event.h"
 #include "Graphic/Cursor.h"
@@ -19,8 +18,6 @@ namespace Sgl
 
 	class Application
 	{
-	public:
-		AudioManager AudioManager;
 	protected:
 		std::optional<size_t> _maxFrameRate;
 		std::optional<TimeSpan> _maxFrameTime;

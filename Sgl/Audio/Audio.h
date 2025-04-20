@@ -1,10 +1,9 @@
 #pragma once
 
 #include <string_view>
-#include <iostream>
-#include <span>
 #include "SDL/SDL_mixer.h"
 #include "../Tools/Log.h"
+#include "../Tools/Time/TimeSpan.h"
 
 namespace Sgl
 {
@@ -17,11 +16,15 @@ namespace Sgl
 		static constexpr double MaxValue = 1;
 		double _value;
 	public:
+		constexpr Volume() noexcept:
+			_value(MaxValue)
+		{}
+
 		explicit constexpr Volume(double value):
 			_value(Adjust(std::abs(value)))
 		{}
 
-		constexpr int ToMixVolume() const
+		constexpr int ToMixVolume() const noexcept
 		{
 			return _value * MIX_MAX_VOLUME;
 		}
@@ -87,74 +90,46 @@ namespace Sgl
 		}
 	};
 
-	class IAudio
-	{
-	public:	
-		virtual ~IAudio() = default;
-
-		virtual void SetVolume(Volume value) = 0;
-		virtual Volume GetVolume() const = 0;
-	};
-
-	class Music: public IAudio
+	class Music
 	{
 	private:
-		Volume _volume = Volume::Max();
 		Mix_Music* _music;
 	public:
-		Music(std::string_view path) noexcept:
-			_music(Mix_LoadMUS(path.data()))
-		{
-			PrintSDLErrorIf(_music == nullptr);
-		}
-
+		Volume Volume;
+		const TimeSpan Duration;
+	public:
+		Music(std::string_view path) noexcept;
 		Music(const Music&) = delete;
 		Music(Music&&) = delete;
+		~Music() noexcept { Mix_FreeMusic(_music); }
 
-		~Music() noexcept
-		{ 
-			Mix_FreeMusic(_music);
-		}
-
-		void SetVolume(Volume value) override { _volume = value; }
-		Volume GetVolume() const override { return _volume; }
-
-		operator Mix_Music* () const noexcept { return _music; }
+		void Play(int loops = 0) const;
+		void Pause() noexcept;
+		void Resume() noexcept { Mix_ResumeMusic(); }
+		void Rewind() noexcept { Mix_RewindMusic(); }
+		void Halt() noexcept { Mix_HaltMusic(); }
+		bool IsPaused() noexcept { return Mix_PausedMusic(); }
+		bool IsPlaying() noexcept { return Mix_PlayingMusic(); }
+		Mix_Music* ToMix_Music() const noexcept { return _music; }
 	};
 
-	class SoundEffect: public IAudio
+	class SoundChunk
 	{
 	private:
-		Volume _volume = Volume::Max();
+		static constexpr int Auto = -1;
 		Mix_Chunk* _soundChunk;
 	public:
-		SoundEffect(std::string_view path) noexcept:
-			_soundChunk(Mix_LoadWAV(path.data()))
-		{
-			PrintSDLErrorIf(_soundChunk == nullptr);
-		}
-
-		SoundEffect(const SoundEffect&) = delete;
-		SoundEffect(SoundEffect&&) = delete;
-
-		~SoundEffect() noexcept
-		{ 
-			Mix_FreeChunk(_soundChunk);
-		}
-
-		void SetVolume(Volume value) override { _volume = value; }
-		Volume GetVolume() const override { return _volume; }
-
-		operator Mix_Chunk* () const noexcept { return _soundChunk; }
-	};
-
-	class IPlayList: public IAudio
-	{
+		Volume Volume;
 	public:
-		virtual ~IPlayList() = default;
+		SoundChunk(std::string_view path) noexcept;
+		SoundChunk(const SoundChunk&) = delete;
+		SoundChunk(SoundChunk&&) = delete;
+		~SoundChunk() noexcept { Mix_FreeChunk(_soundChunk); }
 
-		virtual void Shuffle() = 0;
-		virtual std::span<Music> Items() = 0;
-		virtual std::span<Music>::iterator Current() = 0;
+		void Play(int channel = Auto, int loops = 0) const;
+		Mix_Chunk* ToMix_Chunk() const noexcept { return _soundChunk; }
 	};
+
+	using MusicView = std::reference_wrapper<Music>;
+	using SoundChunkView = std::reference_wrapper<SoundChunk>;
 }
