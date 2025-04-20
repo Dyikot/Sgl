@@ -46,21 +46,20 @@ namespace Sgl
 
 	void AudioManager::Play(IPlayList& playlist)
 	{
-		if(!Mix_PlayingMusic() && playlist.GetCurrent() != nullptr)
+		if(!Mix_PlayingMusic())
 		{
-			if(playlist.HasEnded())
-			{
-				if(playlist.IsShuffleble())
-				{
-					playlist.Shuffle();
-				}
+			auto current = playlist.Current();
+			auto items = playlist.Items();
 
-				playlist.MoveCurrentToBegin();
+			if(current != items.end())
+			{
+				playlist.Shuffle();
+				current = items.begin();
 			}
 			
-			SetVolume(*playlist.GetCurrent(), playlist.GetVolume());
-			Play(*playlist.GetCurrent());
-			playlist.MoveCurrentToNext();
+			SetVolume(*current, playlist.GetVolume());
+			Play(*current);
+			current++;
 		}
 		else if(Mix_PausedMusic())
 		{

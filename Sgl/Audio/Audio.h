@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include <string_view>
 #include <iostream>
 #include <span>
@@ -15,14 +14,14 @@ namespace Sgl
 		static constexpr Volume Max() { return Volume(1); }
 		static constexpr Volume Zero() { return Volume(0); }
 	private:
-		static constexpr float MaxValue = 1;
-		float _value;
+		static constexpr double MaxValue = 1;
+		double _value;
 	public:
-		explicit constexpr Volume(float value):
+		explicit constexpr Volume(double value):
 			_value(Adjust(std::abs(value)))
 		{}
 
-		int ToMixVolume() const
+		constexpr int ToMixVolume() const
 		{
 			return _value * MIX_MAX_VOLUME;
 		}
@@ -66,19 +65,25 @@ namespace Sgl
 
 		constexpr Volume& operator*=(Volume volume)
 		{
-			_value = Adjust(_value * volume._value);
+			_value *= volume._value;
 			return *this;
 		}
 
-		constexpr Volume& operator/=(Volume volume)
+		constexpr Volume& operator*=(size_t value)
 		{
-			_value = Adjust(_value / volume._value);
+			_value = Adjust(_value * value);
+			return *this;
+		}
+
+		constexpr Volume& operator/=(size_t value)
+		{
+			_value = Adjust(_value / value);
 			return *this;
 		}
 	private:
-		static constexpr float Adjust(float value)
+		static constexpr double Adjust(double value)
 		{
-			return value > MaxValue ? MaxValue : value;
+			return std::min(value, MaxValue);
 		}
 	};
 
@@ -114,10 +119,7 @@ namespace Sgl
 		void SetVolume(Volume value) override { _volume = value; }
 		Volume GetVolume() const override { return _volume; }
 
-		operator Mix_Music* () const
-		{ 
-			return _music;
-		}
+		operator Mix_Music* () const noexcept { return _music; }
 	};
 
 	class SoundEffect: public IAudio
@@ -143,22 +145,16 @@ namespace Sgl
 		void SetVolume(Volume value) override { _volume = value; }
 		Volume GetVolume() const override { return _volume; }
 
-		operator Mix_Chunk* () const
-		{
-			return _soundChunk;
-		}
+		operator Mix_Chunk* () const noexcept { return _soundChunk; }
 	};
-	
+
 	class IPlayList: public IAudio
 	{
 	public:
 		virtual ~IPlayList() = default;
 
-		virtual Music* GetCurrent() const = 0;
-		virtual void MoveCurrentToBegin() = 0;
-		virtual void MoveCurrentToNext() = 0;
 		virtual void Shuffle() = 0;
-		virtual bool IsShuffleble() const = 0;
-		virtual bool HasEnded() const = 0;
+		virtual std::span<Music> Items() = 0;
+		virtual std::span<Music>::iterator Current() = 0;
 	};
 }

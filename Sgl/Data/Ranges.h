@@ -508,7 +508,7 @@ namespace Sgl::Ranges
 		constexpr auto operator()(TRange&& range) const
 		{
 			const auto RangeSize = std::ranges::size(range);
-			const auto MinSize = RangeSize < Size ? RangeSize : Size;
+			const auto MinSize = std::min(RangeSize, Size);
 			std::array<TRangeValue<TRange>, Size> result = {};
 			auto it = range.begin();
 

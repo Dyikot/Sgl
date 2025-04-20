@@ -13,10 +13,10 @@ namespace Sgl
 		Volume MusicVolume = Volume::Max();
 		Volume SoundEffectsVolume = Volume::Max();
 	private:
-		static constexpr int FreeChannel = -1;
+		static constexpr int Auto = -1;
 	public:
 		void Play(const Music& music, int loops = 0);
-		void Play(const SoundEffect& soundEffect, int channel = FreeChannel, int loops = 0);
+		void Play(const SoundEffect& soundEffect, int channel = Auto, int loops = 0);
 		void Play(IPlayList& playlist);
 		void PauseMusic() const noexcept;
 		void ResumeMusic() const noexcept { Mix_ResumeMusic(); }
