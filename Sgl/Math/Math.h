@@ -36,13 +36,13 @@ namespace Sgl
 			return (a.x * (b.y - c.y) + b.x * (c.y - a.y) + c.x * (a.y - b.y)) / 2.f;
 		}
 
-		template<size_t Number>
-		static std::array<float, Number> ComputeSinArray()
+		template<size_t number>
+		static std::array<float, number> ComputeSinArray()
 		{
-			std::array<float, Number> result;
-			constexpr float Step = 2 * std::numbers::pi / Number;
+			std::array<float, number> result;
+			constexpr float Step = 2 * std::numbers::pi / number;
 
-			for(size_t i = 0; i < Number; i++)
+			for(size_t i = 0; i < number; i++)
 			{
 				result[i] = sinf(Step * i);
 			}
@@ -50,13 +50,13 @@ namespace Sgl
 			return result;
 		}
 
-		template<size_t Number>
-		static std::array<float, Number> ComputeCosArray()
+		template<size_t number>
+		static std::array<float, number> ComputeCosArray()
 		{
-			std::array<float, Number> result;
-			constexpr float Step = 2 * std::numbers::pi / Number;
+			std::array<float, number> result;
+			constexpr float Step = 2 * std::numbers::pi / number;
 
-			for(size_t i = 0; i < Number; i++)
+			for(size_t i = 0; i < number; i++)
 			{
 				result[i] = cosf(Step * i);
 			}
@@ -67,8 +67,8 @@ namespace Sgl
 		static std::vector<int> TriangulateConvexShape(PointsView points);
 		static std::vector<int> TriangulateConvexShape(PointsView points, SDL_FPoint center);
 	public:
-		static inline const auto Sin360 = ComputeSinArray<360>();
-		static inline const auto Cos360 = ComputeCosArray<360>();
+		static inline const auto sin360 = ComputeSinArray<360>();
+		static inline const auto cos360 = ComputeCosArray<360>();
 	};
 	
 }

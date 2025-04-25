@@ -7,11 +7,11 @@ namespace Sgl
 	class PropertyId final
 	{
 	public:
-		std::string_view Name;
-		const std::type_info& Type;
+		std::string_view name;
+		const std::type_info& type;
 	public:
 		constexpr PropertyId(std::string_view name,const std::type_info& type):
-			Name(name), Type(type)
+			name(name), type(type)
 		{}
 
 		template<typename T>
@@ -22,7 +22,7 @@ namespace Sgl
 
 		friend constexpr bool operator==(const PropertyId& left, const PropertyId& right)
 		{
-			return left.Name == right.Name;
+			return left.name == right.name;
 		}
 	};
 }
@@ -34,7 +34,7 @@ namespace std
 	{
 		size_t operator()(const Sgl::PropertyId& id) const
 		{
-			return hash<std::string_view>()(id.Name);
+			return hash<std::string_view>()(id.name);
 		}
 	};
 }

@@ -4,21 +4,21 @@
 namespace Sgl
 {
 	Scene::Scene(Sgl::Window& window):
-		Window(window)
+		window(window)
 	{}
 
 	void Scene::OnRender(RenderContext renderContext) const
 	{
-		if(BackgroundTexture)
+		if(backgroundTexture)
 		{
-			renderContext.FillSceneBackgroundWithTexture(*BackgroundTexture, BackgroundColor);
+			renderContext.FillSceneBackgroundWithTexture(*backgroundTexture, backgroundColor);
 		}
 		else
 		{
-			renderContext.FillSceneBackgroundWithColor(BackgroundColor);
+			renderContext.FillSceneBackgroundWithColor(backgroundColor);
 		}
 
-		Components.OnRender(renderContext);
+		components.OnRender(renderContext);
 	}
 
 	void Scene::SwitchCursorOn(const Cursor& cursor)
@@ -37,19 +37,19 @@ namespace Sgl
 	void Scene::OnMouseMove(const MouseButtonEventArgs& e)
 	{
 		UIElement::OnMouseMove(e);
-		Components.OnMouseMove(e);
+		components.OnMouseMove(e);
 	}
 
 	void Scene::OnMouseDown(const MouseButtonEventArgs& e)
 	{
 		UIElement::OnMouseDown(e);
-		Components.OnMouseDown(e);
+		components.OnMouseDown(e);
 	}
 
 	void Scene::OnMouseUp(const MouseButtonEventArgs& e)
 	{
 		UIElement::OnMouseUp(e);
-		Components.OnMouseUp(e);
+		components.OnMouseUp(e);
 	}
 
 	void Scene::OnLoaded(const EventArgs& e)
@@ -65,7 +65,7 @@ namespace Sgl
 	}
 
 	SceneManager::SceneManager(Sgl::Window& window):
-		Window(window)
+		window(window)
 	{}
 
 	SceneManager::~SceneManager()
@@ -128,8 +128,8 @@ namespace Sgl
 				scene->OnKeyDown(
 					KeyEventArgs
 					{
-						.State = static_cast<ButtonState>(e.key.state),
-						.Key = e.key.keysym
+						.state = static_cast<ButtonState>(e.key.state),
+						.key = e.key.keysym
 					}
 				);
 
@@ -141,8 +141,8 @@ namespace Sgl
 				scene->OnKeyUp(
 					KeyEventArgs
 					{
-						.State = static_cast<ButtonState>(e.key.state),
-						.Key = e.key.keysym
+						.state = static_cast<ButtonState>(e.key.state),
+						.key = e.key.keysym
 					}
 				);
 
@@ -154,9 +154,9 @@ namespace Sgl
 				scene->OnTextChanged(
 					TextChangedEventArgs
 					{
-						.Text = e.edit.text,
-						.SelectionLength = static_cast<size_t>(e.edit.length),
-						.SelectionStart = e.edit.start
+						.text = e.edit.text,
+						.selectionLength = static_cast<size_t>(e.edit.length),
+						.selectionStart = e.edit.start
 					}
 				);
 
@@ -168,9 +168,9 @@ namespace Sgl
 				scene->OnTextChanged(
 					TextChangedEventArgs
 					{
-						.Text = e.editExt.text,
-						.SelectionLength = static_cast<size_t>(e.editExt.length),
-						.SelectionStart = e.editExt.start
+						.text = e.editExt.text,
+						.selectionLength = static_cast<size_t>(e.editExt.length),
+						.selectionStart = e.editExt.start
 					}
 				);
 				SDL_free(e.editExt.text);
@@ -183,7 +183,7 @@ namespace Sgl
 				scene->OnTextInput(
 					TextInputEventArgs
 					{
-						.Text = e.text.text
+						.text = e.text.text
 					}
 				);
 
@@ -195,10 +195,10 @@ namespace Sgl
 				scene->OnMouseDown(
 					MouseButtonEventArgs
 					{
-						.Button = static_cast<MouseButton>(e.button.button),
-						.State = static_cast<ButtonState>(e.button.state),
-						.ClicksCount = e.button.clicks,
-						.Position =
+						.button = static_cast<MouseButton>(e.button.button),
+						.state = static_cast<ButtonState>(e.button.state),
+						.clicksCount = e.button.clicks,
+						.position =
 						{
 							.x = static_cast<float>(e.button.x),
 							.y = static_cast<float>(e.button.y)
@@ -214,10 +214,10 @@ namespace Sgl
 				scene->OnMouseUp(
 					MouseButtonEventArgs
 					{
-						.Button = static_cast<MouseButton>(e.button.button),
-						.State = static_cast<ButtonState>(e.button.state),
-						.ClicksCount = e.button.clicks,
-						.Position =
+						.button = static_cast<MouseButton>(e.button.button),
+						.state = static_cast<ButtonState>(e.button.state),
+						.clicksCount = e.button.clicks,
+						.position =
 						{
 							.x = static_cast<float>(e.button.x),
 							.y = static_cast<float>(e.button.y)
@@ -233,7 +233,7 @@ namespace Sgl
 				scene->OnMouseMove(
 					MouseButtonEventArgs
 					{
-						.Position =
+						.position =
 						{
 							.x = static_cast<float>(e.button.x),
 							.y = static_cast<float>(e.button.y)
@@ -249,14 +249,14 @@ namespace Sgl
 				scene->OnMouseWheel(
 					MouseWheelEventArgs
 					{
-						.Position =
+						.position =
 						{
 							.x = static_cast<float>(e.button.x),
 							.y = static_cast<float>(e.button.y)
 						},
-						.ScrolledHorizontally = e.wheel.preciseX,
-						.ScrolledVertically = e.wheel.preciseY,
-						.Direction = SDL_MouseWheelDirection(e.wheel.direction)
+						.scrolledHorizontally = e.wheel.preciseX,
+						.scrolledVertically = e.wheel.preciseY,
+						.direction = SDL_MouseWheelDirection(e.wheel.direction)
 					}
 				);
 

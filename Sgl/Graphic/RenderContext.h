@@ -43,19 +43,19 @@ namespace Sgl
 		
 		void SetRenderColor(Color color) const noexcept
 		{
-			SDL_SetRenderDrawColor(_renderer, color.R, color.G, color.B, color.A);
+			SDL_SetRenderDrawColor(_renderer, color.r, color.g, color.b, color.a);
 		}
 
 		void SetTextureColor(const Texture& texture, Color color) const noexcept
 		{
-			SDL_SetTextureColorMod(texture, color.R, color.G, color.B);
-			SDL_SetTextureAlphaMod(texture, color.A);
+			SDL_SetTextureColorMod(texture, color.r, color.g, color.b);
+			SDL_SetTextureAlphaMod(texture, color.a);
 		}
 
 		void SetSurfaceColor(const Surface& surface, Color color) const noexcept
 		{
-			SDL_SetSurfaceColorMod(surface, color.R, color.G, color.B);
-			SDL_SetSurfaceAlphaMod(surface, color.A);
+			SDL_SetSurfaceColorMod(surface, color.r, color.g, color.b);
+			SDL_SetSurfaceAlphaMod(surface, color.a);
 		}
 
 		operator SDL_Renderer* () const noexcept { return _renderer; }

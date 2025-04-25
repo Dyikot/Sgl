@@ -54,17 +54,17 @@ namespace Sgl
 	class Cursors
 	{
 	public:
-		static inline Lazy<Cursor> Arrow = [] { return Cursor(SDL_SYSTEM_CURSOR_ARROW); };
-		static inline Lazy<Cursor> IBeam = [] { return Cursor(SDL_SYSTEM_CURSOR_IBEAM); };
-		static inline Lazy<Cursor> Wait = [] { return Cursor(SDL_SYSTEM_CURSOR_WAIT); };
-		static inline Lazy<Cursor> Crosshair = [] { return Cursor(SDL_SYSTEM_CURSOR_CROSSHAIR); };
-		static inline Lazy<Cursor> WaitArrow = [] { return Cursor(SDL_SYSTEM_CURSOR_WAITARROW); };
-		static inline Lazy<Cursor> ArrowNWSE = [] { return Cursor(SDL_SYSTEM_CURSOR_SIZENWSE); };
-		static inline Lazy<Cursor> ArrowNESW = [] { return Cursor(SDL_SYSTEM_CURSOR_SIZENESW); };
-		static inline Lazy<Cursor> ArrowWE = [] { return Cursor(SDL_SYSTEM_CURSOR_SIZEWE); };
-		static inline Lazy<Cursor> ArrowNS = [] { return  Cursor(SDL_SYSTEM_CURSOR_SIZENS); };
-		static inline Lazy<Cursor> ArrowAll = [] { return Cursor(SDL_SYSTEM_CURSOR_SIZEALL); };
-		static inline Lazy<Cursor> No = [] { return Cursor(SDL_SYSTEM_CURSOR_NO); };
-		static inline Lazy<Cursor> Hand = [] { return Cursor(SDL_SYSTEM_CURSOR_HAND); };
+		static inline Lazy<Cursor> arrow = [] { return Cursor(SDL_SYSTEM_CURSOR_ARROW); };
+		static inline Lazy<Cursor> iBeam = [] { return Cursor(SDL_SYSTEM_CURSOR_IBEAM); };
+		static inline Lazy<Cursor> wait = [] { return Cursor(SDL_SYSTEM_CURSOR_WAIT); };
+		static inline Lazy<Cursor> crosshair = [] { return Cursor(SDL_SYSTEM_CURSOR_CROSSHAIR); };
+		static inline Lazy<Cursor> waitArrow = [] { return Cursor(SDL_SYSTEM_CURSOR_WAITARROW); };
+		static inline Lazy<Cursor> arrowNWSE = [] { return Cursor(SDL_SYSTEM_CURSOR_SIZENWSE); };
+		static inline Lazy<Cursor> arrowNESW = [] { return Cursor(SDL_SYSTEM_CURSOR_SIZENESW); };
+		static inline Lazy<Cursor> arrowWE = [] { return Cursor(SDL_SYSTEM_CURSOR_SIZEWE); };
+		static inline Lazy<Cursor> arrowNS = [] { return  Cursor(SDL_SYSTEM_CURSOR_SIZENS); };
+		static inline Lazy<Cursor> arrowAll = [] { return Cursor(SDL_SYSTEM_CURSOR_SIZEALL); };
+		static inline Lazy<Cursor> no = [] { return Cursor(SDL_SYSTEM_CURSOR_NO); };
+		static inline Lazy<Cursor> hand = [] { return Cursor(SDL_SYSTEM_CURSOR_HAND); };
 	};
 }

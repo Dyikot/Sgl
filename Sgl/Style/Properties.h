@@ -8,13 +8,13 @@ namespace Sgl
 	struct Thikness
 	{
 	public:
-		uint32_t Top;
-		uint32_t Right;
-		uint32_t Bottom;
-		uint32_t Left;
+		uint32_t top;
+		uint32_t right;
+		uint32_t bottom;
+		uint32_t left;
 	public:
 		constexpr Thikness(uint32_t top, uint32_t right, uint32_t bottom, uint32_t left) noexcept:
-			Top(top), Right(right), Bottom(bottom), Left(left)
+			top(top), right(right), bottom(bottom), left(left)
 		{}
 
 		constexpr Thikness(uint32_t lenght = 0) noexcept:
@@ -23,29 +23,29 @@ namespace Sgl
 
 		friend constexpr bool operator==(const Thikness& left, const Thikness& right)
 		{
-			return left.Top == right.Top &&
-				   left.Right == right.Right &&
-				   left.Bottom == right.Bottom &&
-				   left.Left == right.Left;
+			return left.top == right.top &&
+				   left.right == right.right &&
+				   left.bottom == right.bottom &&
+				   left.left == right.left;
 		}
 	};
 
 	class FontFamily
 	{		
 	public:
-		std::filesystem::path Path;
-		std::string Name;
+		std::filesystem::path path;
+		std::string name;
 	public:
 		FontFamily():
 			FontFamily("Segoe UI")
 		{}
 
 		explicit FontFamily(std::string_view name):
-			Path(TryGetPathByName(name)), Name(name)
+			path(TryGetPathByName(name)), name(name)
 		{}
 
 		FontFamily(const std::filesystem::path& path, std::string_view name):
-			Path(path), Name(name)
+			path(path), name(name)
 		{}
 
 		static std::filesystem::path TryGetPathByName(std::string_view name)

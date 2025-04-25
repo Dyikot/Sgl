@@ -4,14 +4,14 @@ namespace Sgl
 {
 	Music::Music(std::string_view path) noexcept:
 		_music(Mix_LoadMUS(path.data())),
-		Duration(TimeSpan::FromSeconds(Mix_MusicDuration(_music)))
+		duration(TimeSpan::FromSeconds(Mix_MusicDuration(_music)))
 	{
 		PrintSDLErrorIf(_music == nullptr);
 	}
 
 	void Music::Play(int loops) const
 	{
-		Mix_VolumeMusic(Volume.ToMixVolume());
+		Mix_VolumeMusic(volume.ToMixVolume());
 		Mix_PlayMusic(_music, loops);
 	}
 
@@ -31,7 +31,7 @@ namespace Sgl
 
 	void SoundChunk::Play(int channel, int loops) const
 	{
-		Mix_VolumeChunk(_soundChunk, Volume.ToMixVolume());
+		Mix_VolumeChunk(_soundChunk, volume.ToMixVolume());
 		Mix_PlayChannel(channel, _soundChunk, loops);
 	}
 }

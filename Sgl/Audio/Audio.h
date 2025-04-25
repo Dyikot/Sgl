@@ -13,11 +13,11 @@ namespace Sgl
 		static constexpr Volume Max() { return Volume(1); }
 		static constexpr Volume Zero() { return Volume(0); }
 	private:
-		static constexpr double MaxValue = 1;
+		static constexpr double _maxValue = 1;
 		double _value;
 	public:
 		constexpr Volume() noexcept:
-			_value(MaxValue)
+			_value(_maxValue)
 		{}
 
 		explicit constexpr Volume(double value):
@@ -86,7 +86,7 @@ namespace Sgl
 	private:
 		static constexpr double Adjust(double value)
 		{
-			return std::min(value, MaxValue);
+			return std::min(value, _maxValue);
 		}
 	};
 
@@ -95,8 +95,8 @@ namespace Sgl
 	private:
 		Mix_Music* _music;
 	public:
-		Volume Volume;
-		const TimeSpan Duration;
+		Volume volume;
+		const TimeSpan duration;
 	public:
 		Music(std::string_view path) noexcept;
 		Music(const Music&) = delete;
@@ -119,7 +119,7 @@ namespace Sgl
 		static constexpr int Auto = -1;
 		Mix_Chunk* _soundChunk;
 	public:
-		Volume Volume;
+		Volume volume;
 	public:
 		SoundChunk(std::string_view path) noexcept;
 		SoundChunk(const SoundChunk&) = delete;

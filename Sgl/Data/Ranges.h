@@ -28,10 +28,10 @@ namespace Sgl::Ranges
 	template<typename TFunc>
 	struct _AggregateAdaptor: public RangeAdaptor<_AggregateAdaptor<TFunc>>
 	{
-		TFunc Function;
+		TFunc function;
 
 		constexpr _AggregateAdaptor(TFunc&& func):
-			Function(std::move(func)) {}
+			function(std::move(func)) {}
 
 		template<std::ranges::range TRange>
 		constexpr auto operator()(TRange&& range) const
@@ -39,7 +39,7 @@ namespace Sgl::Ranges
 			TRangeValue<TRange> result = {};
 			for(const auto& item : range)
 			{
-				result = Function(result, item);
+				result = function(result, item);
 			}
 
 			return result;
@@ -49,21 +49,21 @@ namespace Sgl::Ranges
 	template<typename TFunc, typename TAccumulate>
 	struct _AgregateAdaptor2: public RangeAdaptor<_AgregateAdaptor2<TFunc, TAccumulate>>
 	{
-		TFunc Function;
-		TAccumulate Seed;
+		TFunc function;
+		TAccumulate seed;
 
 		constexpr _AgregateAdaptor2(TFunc&& func, const TAccumulate& seed):
-			Function(std::move(func)),
-			Seed(seed)
+			function(std::move(func)),
+			seed(seed)
 		{}
 
 		template<std::ranges::range TRange>
 		constexpr TAccumulate operator()(TRange&& range) const
 		{
-			TAccumulate result = Seed;
+			TAccumulate result = seed;
 			for(const auto& item : range)
 			{
-				result = Function(result, item);
+				result = function(result, item);
 			}
 
 			return result;
@@ -85,17 +85,17 @@ namespace Sgl::Ranges
 	template<typename TPredicate>
 	struct _AllAdaptor: public RangeAdaptor<_AllAdaptor<TPredicate>>
 	{
-		TPredicate Predicate;
+		TPredicate predicate;
 
 		constexpr _AllAdaptor(TPredicate&& predicate):
-			Predicate(std::move(predicate)) {}
+			predicate(std::move(predicate)) {}
 
 		template<std::ranges::range TRange>
 		constexpr bool operator()(TRange&& range) const
 		{
 			for(const auto& item : range)
 			{
-				if(!Predicate(item))
+				if(!predicate(item))
 				{
 					return false;
 				}
@@ -114,17 +114,17 @@ namespace Sgl::Ranges
 	template<typename TPredicate>
 	struct _AnyAdaptor: public RangeAdaptor<_AnyAdaptor<TPredicate>>
 	{
-		TPredicate Predicate;
+		TPredicate predicate;
 
 		constexpr _AnyAdaptor(TPredicate&& predicate):
-			Predicate(std::move(predicate)) {}
+			predicate(std::move(predicate)) {}
 
 		template<std::ranges::range TRange>
 		constexpr bool operator()(TRange&& range) const
 		{
 			for(const auto& item : range)
 			{
-				if(Predicate(item))
+				if(predicate(item))
 				{
 					return true;
 				}
@@ -172,30 +172,30 @@ namespace Sgl::Ranges
 
 	struct _ChunkAdaptor: public RangeAdaptor<_ChunkAdaptor>
 	{
-		size_t Size;
+		size_t size;
 
 		constexpr _ChunkAdaptor(size_t size):
-			Size(size)
+			size(size)
 		{}
 
 		template<std::ranges::range TRange>
 		constexpr auto operator()(TRange&& range) const
 		{
-			if(Size == 0)
+			if(size == 0)
 			{
 				throw std::invalid_argument("Chunk size must be more than 0");
 			}
 
 			const auto RangeSize = std::ranges::size(range);
-			const auto ChunksNumber = RangeSize / Size;
+			const auto ChunksNumber = RangeSize / size;
 			std::vector<std::vector<TRangeValue<TRange>>> chunks(ChunksNumber);
 			auto it = range.begin();
 
 			for(auto& chunk : chunks)
 			{
-				auto c = std::views::counted(it, Size);
+				auto c = std::views::counted(it, size);
 				chunk = std::vector(c.begin(), c.end());
-				it += Size;
+				it += size;
 			}
 						
 			if(it != range.end())
@@ -253,10 +253,10 @@ namespace Sgl::Ranges
 	template<typename T>
 	struct _ContainsAdaptor: public RangeAdaptor<_ContainsAdaptor<T>>
 	{
-		T Value;
+		T value;
 
 		constexpr _ContainsAdaptor(const T& value):
-			Value(value)
+			value(value)
 		{}
 
 		template<std::ranges::range TRange>
@@ -265,7 +265,7 @@ namespace Sgl::Ranges
 		{
 			for(const auto& item : range)
 			{
-				if(item == Value)
+				if(item == value)
 				{
 					return true;
 				}
@@ -319,17 +319,17 @@ namespace Sgl::Ranges
 
 	struct _ElementAtAdaptor: public RangeAdaptor<_ElementAtAdaptor>
 	{
-		size_t Position;
+		size_t position;
 
 		constexpr _ElementAtAdaptor(size_t position):
-			Position(position)
+			position(position)
 		{}
 
 		template<std::ranges::range TRange>
 		constexpr auto operator()(TRange&& range) const
 		{
 			auto it = range.begin();
-			std::ranges::advance(it, Position);
+			std::ranges::advance(it, position);
 			return *it;
 		}
 	};
@@ -341,24 +341,24 @@ namespace Sgl::Ranges
 
 	struct _ElementAtOrDefaultAdaptor: public RangeAdaptor<_ElementAtOrDefaultAdaptor>
 	{
-		size_t Position;
+		size_t position;
 
 		constexpr _ElementAtOrDefaultAdaptor(size_t position):
-			Position(position)
+			position(position)
 		{}
 
 		template<std::ranges::range TRange>
 		constexpr auto operator()(TRange&& range) const
 			requires std::default_initializable<TRangeValue<TRange>>
 		{
-			if(std::ranges::size(range) <= Position)
+			if(std::ranges::size(range) <= position)
 			{
 				return TRangeValue<TRange>{};
 			}
 			else
 			{
 				auto it = range.begin();
-				std::ranges::advance(it, Position);
+				std::ranges::advance(it, position);
 				return *it;
 			}
 		}
@@ -410,10 +410,10 @@ namespace Sgl::Ranges
 	template<typename T>
 	struct _FirstOrDefaultAdaptor2: public RangeAdaptor<_FirstOrDefaultAdaptor2<T>>
 	{
-		T DefaultValue;
+		T defaultValue;
 
 		constexpr _FirstOrDefaultAdaptor2(const T& defaultValue):
-			DefaultValue(defaultValue)
+			defaultValue(defaultValue)
 		{}
 
 		template<std::ranges::range TRange>
@@ -421,7 +421,7 @@ namespace Sgl::Ranges
 		{
 			if(range.begin() == range.end())
 			{
-				return DefaultValue;
+				return defaultValue;
 			}
 
 			return *range.begin();
@@ -442,10 +442,10 @@ namespace Sgl::Ranges
 	template<typename TPredicate>
 	struct _FindFirstAdaptor: public RangeAdaptor<_FindFirstAdaptor<TPredicate>>
 	{
-		TPredicate Predicate;
+		TPredicate predicate;
 
 		constexpr _FindFirstAdaptor(TPredicate&& predicate):
-			Predicate(std::move(predicate))
+			predicate(std::move(predicate))
 		{}
 
 		template<std::ranges::range TRange>
@@ -453,7 +453,7 @@ namespace Sgl::Ranges
 		{
 			for(const auto& item : range)
 			{
-				if(Predicate(item))
+				if(predicate(item))
 				{
 					return std::optional<TRangeValue<TRange>>(item);
 				}
@@ -472,12 +472,12 @@ namespace Sgl::Ranges
 	template<typename TPredicate, typename TDefaultValue>
 	struct _FindFirstOrDefaultAdaptor: public RangeAdaptor<_FindFirstOrDefaultAdaptor<TPredicate, TDefaultValue>>
 	{
-		TPredicate Predicate;
-		TDefaultValue DefaultValue;
+		TPredicate predicate;
+		TDefaultValue defaultValue;
 
 		constexpr _FindFirstOrDefaultAdaptor(TPredicate&& predicate, const TDefaultValue& defaultValue):
-			Predicate(std::move(predicate)),
-			DefaultValue(defaultValue)
+			predicate(std::move(predicate)),
+			defaultValue(defaultValue)
 		{}
 
 		template<std::ranges::range TRange>
@@ -485,13 +485,13 @@ namespace Sgl::Ranges
 		{
 			for(const auto& item : range)
 			{
-				if(Predicate(item))
+				if(predicate(item))
 				{
 					return item;
 				}
 			}
 
-			return DefaultValue;
+			return defaultValue;
 		}
 	};
 
@@ -501,18 +501,17 @@ namespace Sgl::Ranges
 		return _FindFirstOrDefaultAdaptor<TPredicate, TDefaultValue>(std::move(predicate), defaultValue);
 	}
 
-	template<size_t Size>
-	struct _ToArrayAdaptor: public RangeAdaptor<_ToArrayAdaptor<Size>>
+	template<size_t size>
+	struct _ToArrayAdaptor: public RangeAdaptor<_ToArrayAdaptor<size>>
 	{
 		template<std::ranges::range TRange>
 		constexpr auto operator()(TRange&& range) const
 		{
-			const auto RangeSize = std::ranges::size(range);
-			const auto MinSize = std::min(RangeSize, Size);
-			std::array<TRangeValue<TRange>, Size> result = {};
+			const auto minSize = std::min(std::ranges::size(range), size);
+			std::array<TRangeValue<TRange>, size> result = {};
 			auto it = range.begin();
 
-			for(size_t i = 0; i < MinSize; i++, it++)
+			for(size_t i = 0; i < minSize; i++, it++)
 			{
 				result[i] = *it;
 			}
@@ -521,10 +520,10 @@ namespace Sgl::Ranges
 		}
 	};
 
-	template<size_t Size>
+	template<size_t size>
 	constexpr auto ToArray()
 	{
-		return _ToArrayAdaptor<Size>();
+		return _ToArrayAdaptor<size>();
 	}
 
 	struct _ToVectorAdaptor: public RangeAdaptor<_ToVectorAdaptor>

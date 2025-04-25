@@ -8,7 +8,7 @@ namespace Sgl
 {
 	struct TimeElapsedEventArgs: EventArgs
 	{
-		TimeSpan Duration;
+		TimeSpan duration;
 	};
 
 	class Timer;
@@ -17,7 +17,7 @@ namespace Sgl
 	class Timer
 	{
 	public:
-		const TimeSpan Duration;
+		const TimeSpan duration;
 	private:
 		bool _paused = true;
 		bool _elapsed = false;

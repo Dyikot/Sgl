@@ -26,15 +26,15 @@ namespace Sgl
 	class Window
 	{
 	private:
-		static constexpr auto DefaultTitle = "Window";
-		static constexpr auto DefaultWidth = 1280;
-		static constexpr auto DefaultHeight = 720;
-		static constexpr auto DefaultPosition = SDL_Point(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+		static constexpr auto _defaultTitle = "Window";
+		static constexpr auto _defaultWidth = 1280;
+		static constexpr auto _defaultHeight = 720;
+		static constexpr auto _defaultPosition = SDL_Point(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 	public:
-		Application& App;
-		SceneManager SceneManager = Sgl::SceneManager(*this);
-		AnyMap<std::string> Resources;
-		bool CanRenderInMinimizedMode = false;
+		Application& application;
+		SceneManager sceneManager = Sgl::SceneManager(*this);
+		AnyMap<std::string> resources;
+		bool canRenderInMinimizedMode = false;
 	private:
 		SDL_Window* _this;
 		SDL_Renderer* _renderer;

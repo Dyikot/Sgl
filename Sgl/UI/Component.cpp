@@ -10,26 +10,26 @@ namespace Sgl
 
     void ComponentsCollection::OnMouseMove(const MouseButtonEventArgs& e)
     {
-        if(HoverComponent && HoverComponent->IsPointIn(e.Position))
+        if(hoverComponent && hoverComponent->IsPointIn(e.position))
         {
-            HoverComponent->OnMouseMove(e);
-            HoverComponent->Children.OnMouseMove(e);
+            hoverComponent->OnMouseMove(e);
+            hoverComponent->children.OnMouseMove(e);
             return;
         }
 
         for(Component& component : *this)
         {
-            if(component.IsPointIn(e.Position))
+            if(component.IsPointIn(e.position))
             {
-                if(HoverComponent)
+                if(hoverComponent)
                 {
-                    HoverComponent->OnMouseLeave(e);
+                    hoverComponent->OnMouseLeave(e);
                 }
 
-                HoverComponent = &component;
+                hoverComponent = &component;
                 component.OnMouseEnter(e);
                 component.OnMouseMove(e);
-                component.Children.OnMouseMove(e);
+                component.children.OnMouseMove(e);
                 return;
             }
         }
@@ -37,19 +37,19 @@ namespace Sgl
 
     void ComponentsCollection::OnMouseDown(const MouseButtonEventArgs& e)
     {
-        if(HoverComponent)
+        if(hoverComponent)
         {
-            HoverComponent->OnMouseDown(e);
-            HoverComponent->Children.OnMouseDown(e);
+            hoverComponent->OnMouseDown(e);
+            hoverComponent->children.OnMouseDown(e);
         }
     }
 
     void ComponentsCollection::OnMouseUp(const MouseButtonEventArgs& e)
     {
-        if(HoverComponent)
+        if(hoverComponent)
         {
-            HoverComponent->OnMouseUp(e);
-            HoverComponent->Children.OnMouseUp(e);
+            hoverComponent->OnMouseUp(e);
+            hoverComponent->children.OnMouseUp(e);
         }
     }
 
@@ -58,32 +58,32 @@ namespace Sgl
         for(Component& component : *this)
         {
             component.OnRender(renderContext);
-            component.Children.OnRender(renderContext);
+            component.children.OnRender(renderContext);
         }
     }
 
     Component::Component(UIElement& parent):
-        Parent(parent),
-        Scene(static_cast<Sgl::Scene&>(parent.GetRootElement()))
+        parent(parent),
+        scene(static_cast<Sgl::Scene&>(parent.GetRootElement()))
     {
-        AddProperty<float>(WidthProperty);
-        AddProperty<float>(HeightProperty);
-        AddProperty<float>(MinWidthProperty);
-        AddProperty<float>(MinHeightProperty);
-        AddProperty<float>(MaxWidthProperty);
-        AddProperty<float>(MinHeightProperty);
-        AddProperty<size_t>(ZIndexProperty, 1);
-        AddProperty<Thikness>(MarginProperty);
-        AddProperty<const Component*>(ToolTipProperty);
-        AddProperty<HorizontalAlignment>(HorizontalAlignmentProperty, HorizontalAlignment::Stretch);
-        AddProperty<VerticalAligment>(VerticalAligmentProperty, VerticalAligment::Stretch);
-        AddProperty<Visibility>(VisibilityProperty, Visibility::Visible);
-        AddProperty<Color>(BorderColorProperty, Colors::Transparent);
-        AddProperty<Thikness>(BorderThiknessProperty);
-        AddProperty<FontFamily>(FontFamilyProperty);
-        AddProperty<FontWeight>(FontWeightProperty, FontWeight::Normal);
-        AddProperty<Color>(FontColorProperty, Colors::Black);
-        AddProperty<uint16_t>(FontSizeProperty, DefaultFontSize);
+        AddProperty<float>(widthProperty);
+        AddProperty<float>(heightProperty);
+        AddProperty<float>(minWidthProperty);
+        AddProperty<float>(minHeightProperty);
+        AddProperty<float>(maxWidthProperty);
+        AddProperty<float>(minHeightProperty);
+        AddProperty<size_t>(zIndexProperty, 1);
+        AddProperty<Thikness>(marginProperty);
+        AddProperty<const Component*>(toolTipProperty);
+        AddProperty<HorizontalAlignment>(horizontalAlignmentProperty, HorizontalAlignment::Stretch);
+        AddProperty<VerticalAligment>(verticalAligmentProperty, VerticalAligment::Stretch);
+        AddProperty<Visibility>(visibilityProperty, Visibility::Visible);
+        AddProperty<Color>(borderColorProperty, Colors::transparent);
+        AddProperty<Thikness>(borderThiknessProperty);
+        AddProperty<FontFamily>(fontFamilyProperty);
+        AddProperty<FontWeight>(fontWeightProperty, FontWeight::Normal);
+        AddProperty<Color>(fontColorProperty, Colors::black);
+        AddProperty<uint16_t>(fontSizeProperty, defaultFontSize);
     }
 
     void Component::AddStyle(const Style& style)
@@ -93,17 +93,17 @@ namespace Sgl
 
     void Component::SwitchCursorOn(const Cursor& cursor)
     {
-        Scene.SwitchCursorOn(cursor);
+        scene.SwitchCursorOn(cursor);
     }
 
     void Component::SwitchCursorOnDefault()
     {
-        Scene.SwitchCursorOnDefault();
+        scene.SwitchCursorOnDefault();
     }
 
     UIElement& Component::GetRootElement()
     {
-        return Scene;
+        return scene;
     }
 
     void Component::OnRender(RenderContext renderContext) const

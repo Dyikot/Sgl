@@ -27,9 +27,9 @@ namespace Sgl
 
 	struct Binding
 	{
-		Func<void> UpdateTarget;
-		Func<void> UpdateSource;
-		bool IsLock = false;
+		Func<void> updateTarget;
+		Func<void> updateSource;
+		bool isLock = false;
 	};
 
 	class BindableObject: public IBindingSource
@@ -40,18 +40,18 @@ namespace Sgl
 	public:
 		void Update(const PropertyId& id)
 		{
-			if(auto found = _bindings.find(id); found != _bindings.end() && !found->second.IsLock)
+			if(auto found = _bindings.find(id); found != _bindings.end() && !found->second.isLock)
 			{
-				found->second.UpdateSource();
+				found->second.updateSource();
 			}
 		}
 
 		template<typename TMember, typename TData>
 		void Bind(const PropertyId& id, TData& data, CAction<TData*, TMember> auto&& setter)
 		{
-			assert(id.Type == typeid(TMember));
+			assert(id.type == typeid(TMember));
 
-			_bindings[id].UpdateTarget = [this, setter = std::move(setter), &data, &id]
+			_bindings[id].updateTarget = [this, setter = std::move(setter), &data, &id]
 			{
 				std::invoke(setter, data, std::cref(GetPropertyValue<TMember>(id)));
 			};
@@ -60,10 +60,10 @@ namespace Sgl
 		template<typename TMember, std::derived_from<IBindingTarget> TData>
 		void Bind(const PropertyId& id, TData& data, CFunc<TMember, TData*> auto&& getter)
 		{
-			assert(id.Type == typeid(TMember));
+			assert(id.type == typeid(TMember));
 
 			data.AddSource(*this);
-			_bindings[id].UpdateSource = [this, getter = std::move(getter), &data, &id]
+			_bindings[id].updateSource = [this, getter = std::move(getter), &data, &id]
 			{
 				_properties[id].As<TMember>() = std::invoke(getter, std::ref(data));
 			};
@@ -130,9 +130,9 @@ namespace Sgl
 			{
 				auto& binding = found->second;
 
-				binding.IsLock = true;
-				binding.UpdateTarget();
-				binding.IsLock = false;
+				binding.isLock = true;
+				binding.updateTarget();
+				binding.isLock = false;
 			}
 		}
 	};

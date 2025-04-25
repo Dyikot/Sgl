@@ -13,14 +13,14 @@ namespace Sgl
 	public:
 		void Add(const PropertyId& id, Any&& object)
 		{
-			assert(object.Is(id.Type));
+			assert(object.Is(id.type));
 
 			emplace(id, std::move(object));
 		}
 
 		void Add(const PropertyId& id, const Any& object)
 		{
-			assert(object.Is(id.Type));
+			assert(object.Is(id.type));
 
 			emplace(id, object);
 		}

@@ -19,11 +19,10 @@ namespace Sgl
 	class UIElement: public BindableObject, public IVisual
 	{
 	public:
-		static constexpr PropertyId CursorProperty = PropertyId::New<std::reference_wrapper<const Cursor>>("Cursor");
-
-		Color BackgroundColor = Colors::Black;
-		Nullable<Texture> BackgroundTexture;
-		AnyMap<std::string> Resources;
+		static constexpr PropertyId cursorProperty = PropertyId::New<std::reference_wrapper<const Cursor>>("Cursor");
+		Color backgroundColor = Colors::black;
+		Nullable<Texture> backgroundTexture;
+		AnyMap<std::string> resources;
 	public:
 		UIElement();
 		virtual ~UIElement() = default;
@@ -36,8 +35,9 @@ namespace Sgl
 		Event<KeyEventHandler> KeyDown;
 		Event<KeyEventHandler> KeyUp;
 
-		void SetCursor(const Sgl::Cursor& value) { SetProperty(CursorProperty, std::ref(value)); }
-		const Cursor& GetCursor() const { return GetPropertyValue<std::reference_wrapper<const Cursor>>(CursorProperty); }
+		void SetCursor(const Sgl::Cursor& value) { SetProperty(cursorProperty, std::ref(value)); }
+
+		const Cursor& GetCursor() const { return GetPropertyValue<std::reference_wrapper<const Cursor>>(cursorProperty); }
 
 		virtual void AddStyle(const Style& style);
 		virtual void SwitchCursorOn(const Cursor& cursor) = 0;

@@ -28,13 +28,13 @@ namespace Sgl
 		Lazy(const Lazy&) = delete;
 		Lazy(Lazy&&) = delete;
 
-		T& Value()
+		T& Get()
 		{
 			TryCreateValue();
 			return *_value;
 		}
 
-		const T& Value() const
+		const T& Get() const
 		{
 			TryCreateValue();
 			return *_value;
@@ -45,11 +45,11 @@ namespace Sgl
 			return _value;
 		}
 
-		operator T& () { return Value(); }
-		operator const T& () const { return Value(); }
+		operator T& () { return Get(); }
+		operator const T& () const { return Get(); }
 
-		T* operator->() { return &Value(); }
-		const T* operator->() const { return &Value(); }
+		T* operator->() { return &Get(); }
+		const T* operator->() const { return &Get(); }
 	private:
 		void TryCreateValue() const
 		{

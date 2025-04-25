@@ -20,9 +20,9 @@ namespace Sgl
 
 	class Scene: public UIElement, public ECS::IProcessed
 	{
-	public:				
-		Sgl::Window& Window;
-		ComponentsCollection Components;
+	public:
+		Window& window;
+		ComponentsCollection components;
 	public:
 		explicit Scene(Sgl::Window& window);
 		virtual ~Scene() = default;
@@ -55,7 +55,7 @@ namespace Sgl
 	class SceneManager
 	{
 	public:
-		Sgl::Window& Window;
+		Sgl::Window& window;
 	protected:
 		std::stack<std::shared_ptr<Scene>> _scenes;
 		std::queue<std::shared_ptr<Scene>> _scenesQueue;
@@ -67,13 +67,13 @@ namespace Sgl
 		template<CScene TScene>
 		void Load()
 		{
-			_scenesQueue.push(std::make_shared<TScene>(Window));
+			_scenesQueue.push(std::make_shared<TScene>(window));
 		}
 
 		template<CScene TScene>
 		void Load(ActionView<Scene&> sceneConfigurer)
 		{
-			_scenesQueue.push(std::make_shared<TScene>(Window));
+			_scenesQueue.push(std::make_shared<TScene>(window));
 			sceneConfigurer(*_scenesQueue.back());
 		}
 

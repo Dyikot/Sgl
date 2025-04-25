@@ -25,10 +25,10 @@ namespace Sgl
 		struct CallableBase
 		{
 		public:
-			const std::type_info& Type;
+			const std::type_info& type;
 		public:
 			CallableBase(const std::type_info& type = typeid(nullptr)):
-				Type(type)
+				type(type)
 			{}
 
 			virtual ~CallableBase() = default;

@@ -13,9 +13,9 @@ namespace Sgl
 	class Playlist
 	{
 	public:
-		Volume Volume;
-		std::vector<MusicView> Items;
-		std::vector<MusicView>::iterator Current = Items.begin();
+		Volume volume;
+		std::vector<MusicView> items;
+		std::vector<MusicView>::iterator current = items.begin();
 	public:
 		Playlist() = default;
 		Playlist(const Playlist& other);

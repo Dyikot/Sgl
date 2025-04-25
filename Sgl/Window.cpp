@@ -3,13 +3,13 @@
 namespace Sgl
 {
     Window::Window(Application& app) noexcept:
-        App(app),
-        _this(SDL_CreateWindow(DefaultTitle, DefaultPosition.x, DefaultPosition.y,
-                               DefaultWidth, DefaultHeight, SDL_WINDOW_HIDDEN)),
+        application(app),
+        _this(SDL_CreateWindow(_defaultTitle, _defaultPosition.x, _defaultPosition.y,
+                               _defaultWidth, _defaultHeight, SDL_WINDOW_HIDDEN)),
         _renderer(SDL_CreateRenderer(_this, -1, SDL_RENDERER_ACCELERATED))
     {
         PrintSDLErrorIf(_this == nullptr);
-        SetLogicalSize(DefaultWidth, DefaultHeight);
+        SetLogicalSize(_defaultWidth, _defaultHeight);
     }
 
     Window::~Window() noexcept
