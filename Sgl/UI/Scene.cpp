@@ -1,37 +1,16 @@
 #include "Scene.h"
-#include "../Window.h"
 
 namespace Sgl
 {
-	Scene::Scene(Sgl::Window& window):
-		window(window)
-	{}
+	Scene::Scene()
+	{
+		
+	}
 
 	void Scene::OnRender(RenderContext renderContext) const
 	{
-		if(backgroundTexture)
-		{
-			renderContext.FillSceneBackgroundWithTexture(*backgroundTexture, backgroundColor);
-		}
-		else
-		{
-			renderContext.FillSceneBackgroundWithColor(backgroundColor);
-		}
-
+		renderContext.SetSceneBackground(*this);
 		components.OnRender(renderContext);
-	}
-
-	void Scene::SwitchCursorOn(const Cursor& cursor)
-	{
-		if(SDL_GetCursor() != cursor)
-		{			
-			SDL_SetCursor(cursor);
-		}
-	}
-
-	void Scene::SwitchCursorOnDefault()
-	{
-		SwitchCursorOn(GetCursor());
 	}
 
 	void Scene::OnMouseMove(const MouseButtonEventArgs& e)
@@ -51,22 +30,6 @@ namespace Sgl
 		UIElement::OnMouseUp(e);
 		components.OnMouseUp(e);
 	}
-
-	void Scene::OnLoaded(const EventArgs& e)
-	{
-		SwitchCursorOnDefault();
-
-		Loaded.TryRaise(*this, e);
-	}
-
-	void Scene::OnUnloaded(const EventArgs& e)
-	{
-		Unloaded.TryRaise(*this, e);
-	}
-
-	SceneManager::SceneManager(Sgl::Window& window):
-		window(window)
-	{}
 
 	SceneManager::~SceneManager()
 	{
@@ -91,7 +54,7 @@ namespace Sgl
 			UnloadScene();
 			return SceneState::Loading;
 		}
-		else if(!_scenesQueue.empty())
+		else if(!_scenesBuildersQueue.empty())
 		{
 			LoadScene();
 			return SceneState::Loading;
@@ -267,9 +230,8 @@ namespace Sgl
 
 	void SceneManager::LoadScene()
 	{
-		_scenes.push(_scenesQueue.front());
-		_scenes.top()->OnLoaded(EventArgs());
-		_scenesQueue.pop();
+		_scenes.push(_scenesBuildersQueue.front()());
+		_scenesBuildersQueue.pop();
 	}
 
 	void SceneManager::UnloadScene()
@@ -279,7 +241,6 @@ namespace Sgl
 			_scenesToUnload--;
 		}
 
-		_scenes.top()->OnUnloaded(EventArgs());
 		_scenes.pop();
 	}
 }

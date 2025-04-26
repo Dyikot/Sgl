@@ -4,7 +4,7 @@ namespace Sgl
 {
 	UIElement::UIElement()
 	{
-		AddProperty<std::reference_wrapper<const Cursor>>(cursorProperty, Cursors::arrow.Get());
+		AddProperty<std::reference_wrapper<const Cursor>>(cursorProperty, Cursors::Arrow());
 	}
 
 	void UIElement::AddStyle(const Style& style)
@@ -14,36 +14,36 @@ namespace Sgl
 
 	void UIElement::OnMouseDown(const MouseButtonEventArgs& e)
 	{
-		MouseDown.TryRaise(*this, e);
+		onMouseDown.TryRaise(*this, e);
 	}
 
 	void UIElement::OnMouseUp(const MouseButtonEventArgs& e)
 	{
-		MouseUp.TryRaise(*this, e);
+		onMouseUp.TryRaise(*this, e);
 	}
 
 	void UIElement::OnMouseMove(const MouseButtonEventArgs& e)
 	{
-		MouseMove.TryRaise(*this, e);
+		onMouseMove.TryRaise(*this, e);
 	}
 
 	void UIElement::OnMouseDoubleClick(const MouseButtonEventArgs& e)
 	{
-		MouseDoubleClick.TryRaise(*this, e);
+		onMouseDoubleClick.TryRaise(*this, e);
 	}
 
 	void UIElement::OnMouseWheel(const MouseWheelEventArgs& e)
 	{
-		MouseWheel.TryRaise(*this, e);
+		onMouseWheel.TryRaise(*this, e);
 	}
 
 	void UIElement::OnKeyDown(const KeyEventArgs& e)
 	{
-		KeyDown.TryRaise(*this, e);
+		onKeyDown.TryRaise(*this, e);
 	}
 
 	void UIElement::OnKeyUp(const KeyEventArgs& e)
 	{
-		KeyUp.TryRaise(*this, e);
+		onKeyUp.TryRaise(*this, e);
 	}
 }

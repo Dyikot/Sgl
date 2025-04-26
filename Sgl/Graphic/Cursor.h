@@ -54,17 +54,17 @@ namespace Sgl
 	class Cursors
 	{
 	public:
-		static inline Lazy<Cursor> arrow = [] { return Cursor(SDL_SYSTEM_CURSOR_ARROW); };
-		static inline Lazy<Cursor> iBeam = [] { return Cursor(SDL_SYSTEM_CURSOR_IBEAM); };
-		static inline Lazy<Cursor> wait = [] { return Cursor(SDL_SYSTEM_CURSOR_WAIT); };
-		static inline Lazy<Cursor> crosshair = [] { return Cursor(SDL_SYSTEM_CURSOR_CROSSHAIR); };
-		static inline Lazy<Cursor> waitArrow = [] { return Cursor(SDL_SYSTEM_CURSOR_WAITARROW); };
-		static inline Lazy<Cursor> arrowNWSE = [] { return Cursor(SDL_SYSTEM_CURSOR_SIZENWSE); };
-		static inline Lazy<Cursor> arrowNESW = [] { return Cursor(SDL_SYSTEM_CURSOR_SIZENESW); };
-		static inline Lazy<Cursor> arrowWE = [] { return Cursor(SDL_SYSTEM_CURSOR_SIZEWE); };
-		static inline Lazy<Cursor> arrowNS = [] { return  Cursor(SDL_SYSTEM_CURSOR_SIZENS); };
-		static inline Lazy<Cursor> arrowAll = [] { return Cursor(SDL_SYSTEM_CURSOR_SIZEALL); };
-		static inline Lazy<Cursor> no = [] { return Cursor(SDL_SYSTEM_CURSOR_NO); };
-		static inline Lazy<Cursor> hand = [] { return Cursor(SDL_SYSTEM_CURSOR_HAND); };
+		static const auto& Arrow() { static Cursor c(SDL_SYSTEM_CURSOR_ARROW); return c; }
+		static const auto& IBeam() { static Cursor c(SDL_SYSTEM_CURSOR_IBEAM); return c; }
+		static const auto& Wait() { static Cursor c(SDL_SYSTEM_CURSOR_WAIT); return c; }
+		static const auto& Crosshair() { static Cursor c(SDL_SYSTEM_CURSOR_CROSSHAIR); return c; }
+		static const auto& WaitArrow() { static Cursor c(SDL_SYSTEM_CURSOR_WAITARROW); return c; }
+		static const auto& ArrowNWSE() { static Cursor c(SDL_SYSTEM_CURSOR_SIZENWSE); return c; }
+		static const auto& ArrowNESW() { static Cursor c(SDL_SYSTEM_CURSOR_SIZENESW); return c; }
+		static const auto& ArrowWE() { static Cursor c(SDL_SYSTEM_CURSOR_SIZEWE); return c; }
+		static const auto& ArrowNS() { static Cursor c(SDL_SYSTEM_CURSOR_SIZENS); return c; }
+		static const auto& ArrowAll() { static Cursor c(SDL_SYSTEM_CURSOR_SIZEALL); return c; }
+		static const auto& No() { static Cursor c(SDL_SYSTEM_CURSOR_NO); return c; }
+		static const auto& Hand() { static Cursor c(SDL_SYSTEM_CURSOR_HAND); return c; }
 	};
 }

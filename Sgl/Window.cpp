@@ -2,8 +2,7 @@
 
 namespace Sgl
 {
-    Window::Window(Application& app) noexcept:
-        application(app),
+    Window::Window() noexcept:
         _this(SDL_CreateWindow(_defaultTitle, _defaultPosition.x, _defaultPosition.y,
                                _defaultWidth, _defaultHeight, SDL_WINDOW_HIDDEN)),
         _renderer(SDL_CreateRenderer(_this, -1, SDL_RENDERER_ACCELERATED))

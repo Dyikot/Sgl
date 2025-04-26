@@ -10,6 +10,8 @@
 
 namespace Sgl
 {
+	class Scene;
+
 	class RenderContext
 	{
 	private:
@@ -37,8 +39,7 @@ namespace Sgl
 		void DrawShape(VerticesView vertices, const Texture& texture, Color color);
 		void DrawShape(VerticesView vertices, std::span<const int> order);
 		void DrawShape(VerticesView vertices, std::span<const int> order, const Texture& texture, Color color);
-		void FillSceneBackgroundWithColor(Color color);
-		void FillSceneBackgroundWithTexture(const Texture& texture, Color color);
+		void SetSceneBackground(const Scene& scene);
 		void SetBlendMode(SDL_BlendMode mode);
 		
 		void SetRenderColor(Color color) const noexcept

@@ -1,11 +1,10 @@
 #pragma once
 
-#include <functional>
 #include "../Graphic/IVisual.h"
+#include "../Graphic/Cursor.h"
 #include "../Events/Event.h"
 #include "../Style/Style.h"
 #include "../Data/BindableObject.h"
-#include "../Graphic/Cursor.h"
 
 namespace Sgl
 {
@@ -20,29 +19,24 @@ namespace Sgl
 	{
 	public:
 		static constexpr PropertyId cursorProperty = PropertyId::New<std::reference_wrapper<const Cursor>>("Cursor");
-		Color backgroundColor = Colors::black;
+
+		Color backgroundColor = Colors::Black;
 		Nullable<Texture> backgroundTexture;
-		AnyMap<std::string> resources;
+		Event<KeyEventHandler> onKeyUp;
+		Event<KeyEventHandler> onKeyDown;
+		Event<MouseEventHandler> onMouseDown;
+		Event<MouseEventHandler> onMouseUp;
+		Event<MouseEventHandler> onMouseMove;
+		Event<MouseEventHandler> onMouseDoubleClick;
+		Event<MouseWheelEventHandler> onMouseWheel;
 	public:
 		UIElement();
 		virtual ~UIElement() = default;
 
-		Event<MouseEventHandler> MouseDown;
-		Event<MouseEventHandler> MouseUp;
-		Event<MouseEventHandler> MouseMove;
-		Event<MouseEventHandler> MouseDoubleClick;
-		Event<MouseWheelEventHandler> MouseWheel;
-		Event<KeyEventHandler> KeyDown;
-		Event<KeyEventHandler> KeyUp;
-
 		void SetCursor(const Sgl::Cursor& value) { SetProperty(cursorProperty, std::ref(value)); }
-
 		const Cursor& GetCursor() const { return GetPropertyValue<std::reference_wrapper<const Cursor>>(cursorProperty); }
 
 		virtual void AddStyle(const Style& style);
-		virtual void SwitchCursorOn(const Cursor& cursor) = 0;
-		virtual void SwitchCursorOnDefault() = 0;
-		virtual UIElement& GetRootElement() = 0;
 	protected:
 		virtual void OnMouseDown(const MouseButtonEventArgs& e);
 		virtual void OnMouseUp(const MouseButtonEventArgs& e);

@@ -2,10 +2,10 @@
 
 #include <filesystem>
 #include <iostream>
-#include "Application.h"
 #include "Graphic/RenderContext.h"
 #include "Graphic/Surface.h"
 #include "Graphic/Texture.h"
+#include "Events/Event.h"
 
 namespace Sgl
 {
@@ -31,9 +31,6 @@ namespace Sgl
 		static constexpr auto _defaultHeight = 720;
 		static constexpr auto _defaultPosition = SDL_Point(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 	public:
-		Application& application;
-		SceneManager sceneManager = Sgl::SceneManager(*this);
-		AnyMap<std::string> resources;
 		bool canRenderInMinimizedMode = false;
 	private:
 		SDL_Window* _this;
@@ -41,7 +38,7 @@ namespace Sgl
 		bool _vsyncEnabled = false;
 		std::optional<Surface> _icon;
 	public:
-		Window(Application& app) noexcept;
+		Window() noexcept;
 		Window(const Window&) = delete;
 		Window(Window&&) = delete;
 		~Window() noexcept;

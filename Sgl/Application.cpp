@@ -1,5 +1,4 @@
 #include "Application.h"
-#include "Window.h"
 #include "Tools/Time/Timer.h"
 #include "Tools/Log.h"
 #include "Tools/Time/Delay.h"
@@ -8,8 +7,6 @@ namespace Sgl
 {
 	Application::Application() noexcept
 	{
-		_current = this;
-
 		PrintSDLErrorIf(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_AUDIO) < 0);
 		PrintSDLErrorIf(TTF_Init() < 0);
 		PrintSDLErrorIf(!IMG_Init(IMG_InitFlags::IMG_INIT_PNG | IMG_InitFlags::IMG_INIT_JPG));
@@ -18,7 +15,6 @@ namespace Sgl
 
 	Application::~Application() noexcept
 	{
-		_current = nullptr;
 		TTF_Quit();
 		IMG_Quit();
 		Mix_Quit();
@@ -33,42 +29,22 @@ namespace Sgl
 
 	void Application::Run()
 	{
-		Run([](Window&) {});
-	}
-
-	void Application::Run(ActionView<Window&> windowConfigurer)
-	{
 		if(_running)
 		{
 			return;
 		}
+		
+		_running = true;
+		_window = std::make_unique<Window>();
+		onWindowInitialized.TryRaise(*_window, EventArgs());
+		_window->Show();
 
-		Window window(*this);
-		_window = &window;
-		windowConfigurer(window);
-		window.Show();
-
-		OnStartup(EventArgs());
 		Start();
-		OnQuit(EventArgs());
 	}
 
 	void Application::Shutdown() noexcept
 	{
 		_running = false;
-	}
-
-	void Application::OnStartup(const EventArgs& e)
-	{
-		_running = true;
-		Startup.TryRaise(*this, e);
-	}
-
-	void Application::OnQuit(const EventArgs& e)
-	{
-		_window = nullptr;
-		_running = false;
-		Quit.TryRaise(*this, e);
 	}
 
 	void Application::HandleEvents()
@@ -86,7 +62,7 @@ namespace Sgl
 
 				default:
 				{
-					_window->sceneManager.HandleSceneEvents(e);
+					sceneManager.HandleSceneEvents(e);
 					break;
 				}
 			}
@@ -103,7 +79,7 @@ namespace Sgl
 
 		while(_running)
 		{
-			switch(_window->sceneManager.UpdateState())
+			switch(sceneManager.UpdateState())
 			{
 				case SceneState::Loading:
 					continue;
@@ -115,12 +91,12 @@ namespace Sgl
 			
 			delayStopwatch.Restart();
 			HandleEvents();
-			_window->sceneManager.ProcessScene(sceneStopwatch.Elapsed());
+			sceneManager.ProcessScene(sceneStopwatch.Elapsed());
 			sceneStopwatch.Reset();
 
 			if(_window->IsVisible() || _window->canRenderInMinimizedMode)
 			{
-				_window->sceneManager.RenderScene(renderContext);
+				sceneManager.RenderScene(renderContext);
 			}
 
 			if(_maxFrameRate)

@@ -19,8 +19,8 @@ namespace Sgl
 			_handler(std::forward<decltype(handler)>(handler))
 		{}
 
-		EventHandler(CAction<const TEventArgs&> auto&& handler):
-			_handler([handler](TSender& sender, const TEventArgs& e) { handler(e); }),
+		EventHandler(CAction<TSender&> auto&& handler):
+			_handler([handler](TSender& sender, const TEventArgs& e) { handler(sender); }),
 			_targetType(typeid(handler))
 		{}
 

@@ -1,6 +1,7 @@
 #include "RenderContext.h"
-#include "../Tools/Log.h"
 #include <SDL/SDL_image.h>
+#include "../Tools/Log.h"
+#include "../UI/Scene.h"
 
 namespace Sgl
 {
@@ -124,16 +125,18 @@ namespace Sgl
 						   order.data(), order.size());		
 	}
 
-	void RenderContext::FillSceneBackgroundWithColor(Color color)
+	void RenderContext::SetSceneBackground(const Scene& scene)
 	{
-		SetRenderColor(color);
-		SDL_RenderClear(_renderer);
-	}
-
-	void RenderContext::FillSceneBackgroundWithTexture(const Texture& texture, Color color)
-	{
-		SetTextureColor(texture, color);
-		SDL_RenderCopy(_renderer, texture, nullptr, nullptr);
+		if(scene.backgroundTexture)
+		{
+			SetTextureColor(*scene.backgroundTexture, scene.backgroundColor);
+			SDL_RenderCopy(_renderer, *scene.backgroundTexture, nullptr, nullptr);
+		}
+		else
+		{
+			SetRenderColor(scene.backgroundColor);
+			SDL_RenderClear(_renderer);
+		}
 	}
 
 	void RenderContext::SetBlendMode(SDL_BlendMode mode)
