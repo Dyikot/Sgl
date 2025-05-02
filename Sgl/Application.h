@@ -14,10 +14,10 @@ namespace Sgl
 	class Application
 	{
 	public:
-		SceneManager sceneManager;
 		Event<WindowEventHandler> onWindowInitialized;
 	private:
 		bool _running = false;
+		SceneManager _sceneManager;
 		std::unique_ptr<Window> _window;
 		std::optional<size_t> _maxFrameRate;
 		std::optional<TimeSpan> _maxFrameTime;
@@ -27,6 +27,9 @@ namespace Sgl
 
 		void SetMaxFrameRate(size_t value);
 		auto GetMaxFrameRate() const { return _maxFrameRate; }
+
+		template<CScene TScene>
+		void SetScene() { _sceneManager.Load<TScene>(); }
 
 		void Run();
 		void Shutdown() noexcept;

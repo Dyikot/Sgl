@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "../../Events/Event.h"
+#include "../Events/Event.h"
 
 namespace Sgl
 {

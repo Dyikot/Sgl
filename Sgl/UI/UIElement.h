@@ -4,7 +4,7 @@
 #include "../Graphic/Cursor.h"
 #include "../Events/Event.h"
 #include "../Style/Style.h"
-#include "../Data/BindableObject.h"
+#include "../Style/StyleableObject.h"
 
 namespace Sgl
 {
@@ -15,10 +15,10 @@ namespace Sgl
 	using MouseWheelEventHandler = EventHandler<UIElement, MouseWheelEventArgs>;
 	using KeyEventHandler = EventHandler<UIElement, KeyEventArgs>;
 
-	class UIElement: public BindableObject, public IVisual
+	class UIElement: public StyleableObject, public IVisual
 	{
 	public:
-		static constexpr PropertyId cursorProperty = PropertyId::New<std::reference_wrapper<const Cursor>>("Cursor");
+		static inline const PropertyId& CursorProperty = PropertyManager::Register<std::reference_wrapper<const Cursor>>("Cursor");
 
 		Color backgroundColor = Colors::Black;
 		Nullable<Texture> backgroundTexture;
@@ -33,8 +33,8 @@ namespace Sgl
 		UIElement();
 		virtual ~UIElement() = default;
 
-		void SetCursor(const Sgl::Cursor& value) { SetProperty(cursorProperty, std::ref(value)); }
-		const Cursor& GetCursor() const { return GetPropertyValue<std::reference_wrapper<const Cursor>>(cursorProperty); }
+		void SetCursor(const Sgl::Cursor& value) { SetProperty(CursorProperty, std::ref(value)); }
+		const Cursor& GetCursor() const { return GetProperty<std::reference_wrapper<const Cursor>>(CursorProperty); }
 
 		virtual void AddStyle(const Style& style);
 	protected:

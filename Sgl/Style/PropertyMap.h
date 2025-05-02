@@ -3,8 +3,8 @@
 #include <format>
 #include <cassert>
 #include <unordered_map>
-#include "../PropertyId.h"
-#include "../Any.h"
+#include "PropertyManager.h"
+#include "../Data/Any.h"
 
 namespace Sgl
 {

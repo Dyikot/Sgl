@@ -62,7 +62,7 @@ namespace Sgl
 
 				default:
 				{
-					sceneManager.HandleSceneEvents(e);
+					_sceneManager.HandleSceneEvents(e);
 					break;
 				}
 			}
@@ -79,7 +79,7 @@ namespace Sgl
 
 		while(_running)
 		{
-			switch(sceneManager.UpdateState())
+			switch(_sceneManager.UpdateState())
 			{
 				case SceneState::Loading:
 					continue;
@@ -91,12 +91,12 @@ namespace Sgl
 			
 			delayStopwatch.Restart();
 			HandleEvents();
-			sceneManager.ProcessScene(sceneStopwatch.Elapsed());
+			_sceneManager.ProcessScene(sceneStopwatch.Elapsed());
 			sceneStopwatch.Reset();
 
 			if(_window->IsVisible() || _window->canRenderInMinimizedMode)
 			{
-				sceneManager.RenderScene(renderContext);
+				_sceneManager.RenderScene(renderContext);
 			}
 
 			if(_maxFrameRate)

@@ -77,7 +77,5 @@ namespace Sgl
 		bool IsVsyncEnable() const;
 
 		operator SDL_Window* () const { return _this; }
-	private:
-		friend class Application;
 	};
 }

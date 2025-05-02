@@ -3,7 +3,6 @@
 #include "SDL/SDL_mouse.h"
 #include "SDL/SDL_image.h"
 #include "../Tools/Log.h"
-#include "../Data/Lazy.h"
 #include <string_view>
 
 namespace Sgl

@@ -1,7 +1,6 @@
 #pragma once
 
-#include "../Data/BindableObject.h"
-#include "../Data/Collections/PropertyMap.h"
+#include "PropertyMap.h"
 
 namespace Sgl
 {

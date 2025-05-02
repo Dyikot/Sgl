@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string_view>
+#include <typeinfo>
 
 namespace Sgl
 {
@@ -10,15 +11,9 @@ namespace Sgl
 		std::string_view name;
 		const std::type_info& type;
 	public:
-		constexpr PropertyId(std::string_view name,const std::type_info& type):
+		constexpr PropertyId(std::string_view name, const std::type_info& type):
 			name(name), type(type)
 		{}
-
-		template<typename T>
-		static constexpr PropertyId New(std::string_view name)
-		{ 
-			return PropertyId(name, typeid(T));
-		}
 
 		friend constexpr bool operator==(const PropertyId& left, const PropertyId& right)
 		{
