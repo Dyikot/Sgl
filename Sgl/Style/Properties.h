@@ -5,7 +5,7 @@
 
 namespace Sgl
 {
-	struct Thikness
+	struct Thickness
 	{
 	public:
 		uint32_t top;
@@ -13,15 +13,15 @@ namespace Sgl
 		uint32_t bottom;
 		uint32_t left;
 	public:
-		constexpr Thikness(uint32_t top, uint32_t right, uint32_t bottom, uint32_t left) noexcept:
+		constexpr Thickness(uint32_t top, uint32_t right, uint32_t bottom, uint32_t left) noexcept:
 			top(top), right(right), bottom(bottom), left(left)
 		{}
 
-		constexpr Thikness(uint32_t lenght = 0) noexcept:
-			Thikness(lenght, lenght, lenght, lenght) 
+		constexpr Thickness(uint32_t lenght = 0) noexcept:
+			Thickness(lenght, lenght, lenght, lenght) 
 		{}
 
-		friend constexpr bool operator==(const Thikness& left, const Thikness& right)
+		friend constexpr bool operator==(const Thickness& left, const Thickness& right)
 		{
 			return left.top == right.top &&
 				   left.right == right.right &&
@@ -74,7 +74,7 @@ namespace Sgl
 		Center, Left, Right, Stretch
 	};
 
-	enum class VerticalAligment
+	enum class VerticalAlignment
 	{
 		Bottom, Center, Top, Stretch
 	};

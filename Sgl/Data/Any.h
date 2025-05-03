@@ -3,6 +3,7 @@
 #include <typeinfo>
 #include <type_traits>
 #include <stdexcept>
+#include <memory>
 #include "Nullable.h"
 
 namespace Sgl
@@ -140,68 +141,6 @@ namespace Sgl
 		}
 	private:
 		std::unique_ptr<ValueContainerBase> _value;
-	};
-
-	class AnyView final
-	{
-	public:
-		template<typename T> 
-		AnyView(T& value):
-			_value(&value), _type(typeid(T))
-		{}
-
-		template<typename T>
-		bool Is() const
-		{ 
-			return _type == typeid(T);
-		}
-		
-		template<typename T>
-		T& As() 
-		{ 
-			return *static_cast<T*>(_value);
-		}
-
-		template<typename T>
-		const T& As() const
-		{ 
-			return *static_cast<const T*>(_value);
-		}
-
-		template<typename T>
-		Nullable<T> TryAs() noexcept 
-		{ 
-			return Is<T>() ? &As<T>() : nullptr;
-		}
-
-		template<typename T>
-		Nullable<const T> TryAs() const noexcept 
-		{ 
-			return Is<T>() ? &As<T>() : nullptr;
-		}
-
-		friend bool operator==(const AnyView& left, const AnyView& right)
-		{
-			return left._value == right._value;
-		}
-
-		template<typename T>
-		AnyView& operator=(T& value)
-		{
-			_type = typeid(T);
-			_value = &value;
-			return *this;
-		}
-
-		AnyView& operator=(const AnyView& ref)
-		{
-			_type = ref._type;
-			_value = ref._value;
-			return *this;
-		}
-	private:
-		std::reference_wrapper<const std::type_info> _type;
-		void* _value;
 	};
 
 	template<typename TKey>

@@ -21,7 +21,10 @@ namespace Sgl
 	public:
 		ComponentsCollection components = ComponentsCollection(*this);
 	public:
-		Scene();
+		Scene() = default;
+		explicit Scene(std::unique_ptr<Style> style):
+			UIElement(std::move(style))
+		{ }
 		virtual ~Scene() = default;
 
 		void OnRender(RenderContext renderContext) const override;

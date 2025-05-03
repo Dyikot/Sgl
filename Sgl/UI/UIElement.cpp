@@ -2,16 +2,6 @@
 
 namespace Sgl
 {
-	UIElement::UIElement()
-	{
-		AddProperty<std::reference_wrapper<const Cursor>>(CursorProperty, Cursors::Arrow());
-	}
-
-	void UIElement::AddStyle(const Style& style)
-	{
-		
-	}
-
 	void UIElement::OnMouseDown(const MouseButtonEventArgs& e)
 	{
 		onMouseDown.TryRaise(*this, e);
