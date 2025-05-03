@@ -5,7 +5,7 @@ namespace Sgl
 {
     bool ZIndexComparer::operator()(const Component& left, const Component& right) const
     {
-        return left.GetZIndex() < right.GetZIndex();
+        return left.style->zIndex < right.style->zIndex;
     }
 
     ComponentsCollection::ComponentsCollection(UIElement& parent):
@@ -31,7 +31,7 @@ namespace Sgl
                 }
 
                 hoverComponent = &component;
-                SetCursor(component.GetCursor());
+                SetCursor(component.style->cursor);
                 component.OnMouseEnter(e);
                 component.OnMouseMove(e);
                 component.children.OnMouseMove(e);
@@ -45,7 +45,7 @@ namespace Sgl
         }
 
         hoverComponent = nullptr;
-        SetCursor(parent.GetCursor());
+        SetCursor(parent.style->cursor);
     }
 
     void ComponentsCollection::OnMouseDown(const MouseButtonEventArgs& e)

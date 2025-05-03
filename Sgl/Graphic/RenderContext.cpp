@@ -127,14 +127,14 @@ namespace Sgl
 
 	void RenderContext::SetSceneBackground(const Scene& scene)
 	{
-		if(scene.backgroundTexture)
+		if(scene.style->backgroundTexture)
 		{
-			SetTextureColor(*scene.backgroundTexture, scene.backgroundColor);
-			SDL_RenderCopy(_renderer, *scene.backgroundTexture, nullptr, nullptr);
+			SetTextureColor(*scene.style->backgroundTexture, scene.style->backgroundColor);
+			SDL_RenderCopy(_renderer, *scene.style->backgroundTexture, nullptr, nullptr);
 		}
 		else
 		{
-			SetRenderColor(scene.backgroundColor);
+			SetRenderColor(scene.style->backgroundColor);
 			SDL_RenderClear(_renderer);
 		}
 	}

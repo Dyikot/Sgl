@@ -6,38 +6,35 @@
 #include "../Graphic/Cursor.h"
 #include "Properties.h"
 #include "../Graphic/Color.h"
+#include "../Data/CallableView.h"
+#include "../Data/Any.h"
 
 namespace Sgl
-{
+{	
 	class Component;
 
-	class Style
+	struct Style
 	{
-	public:
-		std::reference_wrapper<const Cursor> cursor = Cursors::Arrow();
 		float width = 0;
 		float height = 0;
 		float minWidth = 0;
 		float minHeight = 0;
 		float maxWidth = 0;
 		float maxHeight = 0;
-		size_t zIndex = 1;
 		Thickness margin;
-		Nullable<const Component> tooltip;
-		HorizontalAlignment horizontalAlignment = HorizontalAlignment::Left;
-		VerticalAlignment verticalAlignment = VerticalAlignment::Top;
-		Visibility visibility = Visibility::Visible;
-		Color borderColor = Colors::Black;
-		FontFamily fontFamily;
-		FontWeight fontWeight = FontWeight::Normal;
-		Thickness borderThickness;
+		size_t zIndex = 1;
 		int fontSize = 14;
+		FontFamily fontFamily;
+		Thickness borderThickness;
 		Color fontColor = Colors::Black;
-	protected:
-		std::unordered_map<std::string_view, object> _properties;
-	public:
-		Style();
-
-		object GetByName(std::string_view name);
+		Nullable<const Component> tooltip;
+		Color borderColor = Colors::Black;
+		Nullable<Texture> backgroundTexture;
+		Color backgroundColor = Colors::Black;
+		FontWeight fontWeight = FontWeight::Normal;
+		Visibility visibility = Visibility::Visible;
+		std::reference_wrapper<const Cursor> cursor = Cursors::Arrow();
+		VerticalAlignment verticalAlignment = VerticalAlignment::Top;
+		HorizontalAlignment horizontalAlignment = HorizontalAlignment::Left;
 	};
 }

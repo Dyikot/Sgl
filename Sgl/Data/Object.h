@@ -72,6 +72,8 @@ namespace Sgl
 	private:
 		std::reference_wrapper<const std::type_info> _type;
 		void* _value;
+
+		friend class const_object;
 	};
 
 	class const_object final
@@ -79,16 +81,20 @@ namespace Sgl
 	public:
 		const_object():
 			_value(nullptr), _type(typeid(nullptr))
-		{ }
+		{}
 
 		const_object(std::nullptr_t):
 			const_object()
-		{ }
+		{}
+
+		const_object(const object object):
+			_value(object._value), _type(object._type)
+		{}
 
 		template<typename T>
 		const_object(const T& value) :
 			_value(&value), _type(typeid(T))
-		{ }
+		{}
 
 		template<typename T>
 		bool Is() const

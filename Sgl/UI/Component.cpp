@@ -4,7 +4,7 @@ namespace Sgl
 {
     void Component::OnRender(RenderContext renderContext) const
     {
-        if(auto tooltip = GetToolTip(); _hover && tooltip)
+        if(auto tooltip = style->tooltip; _hover && tooltip)
         {
             tooltip->OnRender(renderContext);
         }

@@ -17,8 +17,7 @@ namespace Sgl
 	{
 	public:
 		std::unique_ptr<Style> style = std::make_unique<Style>();
-		Color backgroundColor = Colors::Black;
-		Nullable<Texture> backgroundTexture;
+
 		Event<KeyEventHandler> onKeyUp;
 		Event<KeyEventHandler> onKeyDown;
 		Event<MouseEventHandler> onMouseDown;
@@ -28,13 +27,7 @@ namespace Sgl
 		Event<MouseWheelEventHandler> onMouseWheel;
 	public:
 		UIElement() = default;
-		explicit UIElement(std::unique_ptr<Style> style):
-			style(std::move(style))
-		{ }
 		virtual ~UIElement() = default;
-
-		void SetCursor(const Sgl::Cursor& value) { style->cursor = value; }
-		const Cursor& GetCursor() const { return style->cursor; }
 	protected:
 		virtual void OnMouseDown(const MouseButtonEventArgs& e);
 		virtual void OnMouseUp(const MouseButtonEventArgs& e);
