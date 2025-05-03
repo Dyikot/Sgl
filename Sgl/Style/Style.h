@@ -21,17 +21,25 @@ namespace Sgl
 		float minHeight = 0;
 		float maxWidth = 0;
 		float maxHeight = 0;
-		Thickness margin;
 		size_t zIndex = 1;
-		int fontSize = 14;
-		FontFamily fontFamily;
-		Thickness borderThickness;
-		Color fontColor = Colors::Black;
+		Thickness margin;
+		Thickness padding;
+		Border border =
+		{
+			.thickness = Thickness(1),
+			.color = Colors::Black
+		};
+		Font font =
+		{
+			.size = 14,
+			.family = {},
+			.style = FontStyle::Normal,
+			.weight = FontWeight::Normal,
+			.color = Colors::Black
+		};
 		Nullable<const Component> tooltip;
-		Color borderColor = Colors::Black;
 		Nullable<Texture> backgroundTexture;
 		Color backgroundColor = Colors::Black;
-		FontWeight fontWeight = FontWeight::Normal;
 		Visibility visibility = Visibility::Visible;
 		std::reference_wrapper<const Cursor> cursor = Cursors::Arrow();
 		VerticalAlignment verticalAlignment = VerticalAlignment::Top;

@@ -27,6 +27,13 @@ namespace Sgl
 		Event<MouseWheelEventHandler> onMouseWheel;
 	public:
 		UIElement() = default;
+
+		template<CAction<Style&>... TStyleSelector>
+		UIElement(TStyleSelector&&... styleSelectors)
+		{
+			(std::forward<TStyleSelector>(styleSelectors)(*style), ...);
+		}
+
 		virtual ~UIElement() = default;
 	protected:
 		virtual void OnMouseDown(const MouseButtonEventArgs& e);

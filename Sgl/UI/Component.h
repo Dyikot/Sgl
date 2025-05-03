@@ -18,17 +18,16 @@ namespace Sgl
 		bool _hover = false;
 	public:
 		Component() = default;
+
+		template<CAction<Style&>... TStyleSelector>
+		Component(TStyleSelector&&... styleSelectors)
+		{
+			(std::forward<TStyleSelector>(styleSelectors)(*style), ...);
+		}
+
 		virtual ~Component() = default;		
 
 		void OnRender(RenderContext renderContext) const override;
-
-		bool IsPointIn(SDL_FPoint point) const
-		{
-			return point.x >= position.x &&
-				   point.x <= position.x + style->width &&
-				   point.y >= position.y &&
-				   point.y <= position.y + style->height;
-		}
 	protected:
 		virtual void OnMouseEnter(const MouseButtonEventArgs& e);
 		virtual void OnMouseLeave(const MouseButtonEventArgs& e);

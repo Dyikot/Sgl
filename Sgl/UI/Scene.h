@@ -22,6 +22,12 @@ namespace Sgl
 		ComponentsCollection components = ComponentsCollection(*this);
 	public:
 		Scene() = default;
+
+		template<CAction<Style&>... TStyleSelector>
+		Scene(TStyleSelector&&... styleSelectors):
+			UIElement(std::forward<TStyleSelector>(styleSelectors)...)
+		{}
+
 		virtual ~Scene() = default;
 
 		void OnRender(RenderContext renderContext) const override;

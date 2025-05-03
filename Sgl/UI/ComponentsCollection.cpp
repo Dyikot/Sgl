@@ -1,5 +1,6 @@
 #include "ComponentsCollection.h"
 #include "Component.h"
+#include "../ECS/Systems.h"
 
 namespace Sgl
 {
@@ -8,13 +9,21 @@ namespace Sgl
         return left.style->zIndex < right.style->zIndex;
     }
 
+    constexpr bool IsIntersects(SDL_FPoint point, const Component& component)
+    {
+        return point.x >= component.position.x &&
+            point.x <= component.position.x + component.style->width &&
+            point.y >= component.position.y &&
+            point.y <= component.position.y + component.style->height;
+    }
+
     ComponentsCollection::ComponentsCollection(UIElement& parent):
         parent(parent)
     {}
 
     void ComponentsCollection::OnMouseMove(const MouseButtonEventArgs& e)
     {
-        if(hoverComponent && hoverComponent->IsPointIn(e.position))
+        if(hoverComponent && IsIntersects(e.position, *hoverComponent))
         {
             hoverComponent->OnMouseMove(e);
             hoverComponent->children.OnMouseMove(e);
@@ -23,7 +32,7 @@ namespace Sgl
 
         for(Component& component : *this)
         {
-            if(component.IsPointIn(e.position))
+            if(IsIntersects(e.position, component))
             {
                 if(hoverComponent)
                 {

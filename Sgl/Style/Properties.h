@@ -64,6 +64,21 @@ namespace Sgl
 		Normal, Italic
 	};
 
+	struct Font
+	{
+		int size;
+		FontFamily family;
+		FontStyle style;
+		FontWeight weight;
+		Color color;
+	};
+
+	struct Border
+	{
+		Thickness thickness;
+		Color color;
+	};
+
 	enum class TextDecorations
 	{
 		None, Underline, Strikethrough
