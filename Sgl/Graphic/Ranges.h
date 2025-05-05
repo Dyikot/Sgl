@@ -26,16 +26,16 @@ namespace Sgl
 	public:
 		constexpr Ellipse(SDL_FPoint position, int width, int height)
 		{
-			constexpr size_t MaxAngle = 360;
+			constexpr size_t maxAngle = 360;
 
-			if constexpr(MaxAngle % points)
+			if constexpr(maxAngle % points)
 			{
-				constexpr auto AngleStep = MaxAngle / points;
+				constexpr auto angleStep = maxAngle / points;
 				for(size_t angle = 0; SDL_FPoint& point : *this)
 				{
 					point.x = position.x + width * Math::cos360[angle];
 					point.y = position.y + height * Math::sin360[angle];
-					angle += AngleStep;
+					angle += angleStep;
 				}
 			}
 			else

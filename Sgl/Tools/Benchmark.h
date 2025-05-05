@@ -14,8 +14,8 @@ namespace Sgl
 	public:
 		static Benchmark New() { return Benchmark(); }
 		static Benchmark New(size_t loops) { return Benchmark("Benchmark", loops); }
-		static Benchmark New(std::string_view name) { return Benchmark(name, 1); }
-		static Benchmark New(std::string_view name, size_t loops) { return Benchmark(name, loops); }
+		static Benchmark New(std::string name) { return Benchmark(std::move(name), 1); }
+		static Benchmark New(std::string name, size_t loops) { return Benchmark(std::move(name), loops); }
 
 		template<typename... TArgs> 
 		void Run(CAction<TArgs...> auto&& action, TArgs&&... args)
@@ -37,8 +37,8 @@ namespace Sgl
 		Benchmark(const Benchmark&) = delete;
 		Benchmark(Benchmark&&) = delete;
 
-		Benchmark(std::string_view name, size_t loops):
-			_name(name), _loops(loops)
+		Benchmark(std::string name, size_t loops):
+			_name(std::move(name)), _loops(loops)
 		{}		
 	};
 }

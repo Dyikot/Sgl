@@ -9,16 +9,16 @@ namespace Sgl
 	public:
 		object():
 			_value(nullptr), _type(typeid(nullptr))
-		{ }
+		{}
 
 		object(std::nullptr_t):
 			object()
-		{ }
+		{}
 
 		template<typename T>
 		object(T& value) :
 			_value(&value), _type(typeid(T))
-		{ }
+		{}
 
 		template<typename T>
 		bool Is() const

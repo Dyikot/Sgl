@@ -92,7 +92,12 @@ namespace Sgl
 
 		const std::type_info& TargetType() const noexcept
 		{
-			return _callable->Type;
+			if(_callable)
+			{
+				return _callable->type;
+			}
+
+			return typeid(nullptr);
 		}
 
 		TReturn operator()(TArgs... args) const
@@ -115,7 +120,11 @@ namespace Sgl
 
 		Delegate& operator=(const Delegate& other)
 		{
-			_callable = other.IsEmpty() ? nullptr : other._callable->Copy();
+			if(this != &other)
+			{
+				_callable = other.IsEmpty() ? nullptr : other._callable->Copy();
+			}
+
 			return *this;
 		}
 
@@ -123,6 +132,11 @@ namespace Sgl
 		{
 			_callable = std::exchange(other._callable, nullptr);
 			return *this;
+		}
+
+		friend bool operator==(const Delegate& left, const Delegate& right) noexcept
+		{
+			return left.TargetType() == right.TargetType();
 		}
 
 		operator bool() const noexcept

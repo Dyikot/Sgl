@@ -125,7 +125,11 @@ namespace Sgl
 
 		Any& operator=(const Any& any)
 		{
-			_value = any._value->Copy();
+			if(this != &any)
+			{
+				_value = any._value->Copy();
+			}
+
 			return *this;
 		}
 
@@ -157,7 +161,7 @@ namespace Sgl
 	};
 
 	template<typename TValue, typename ...TArgs>
-	Any CreateAny(TArgs && ...args)
+	Any CreateAny(TArgs&& ...args)
 	{
 		Any any;
 		any._value = std::make_unique<Any::ValueContainer<TValue>>(std::forward<TArgs>(args)...);

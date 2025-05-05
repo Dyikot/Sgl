@@ -26,7 +26,7 @@ namespace Sgl
 
 		TReturn operator()(TArgs... args) const
 		{
-			return _erased(_callable, std::forward<TArgs>(args)...);
+			return _erased(_callable, args...);
 		}
 
 		template<CFunc<TReturn, TArgs...> TFunc>
@@ -47,7 +47,7 @@ namespace Sgl
 		template<typename T>
 		static TReturn OnErasedCall(void* callable, TArgs... args)
 		{
-			return (*static_cast<T*>(callable))(std::forward<TArgs>(args)...);
+			return (*static_cast<T*>(callable))(args...);
 		}
 	private:
 		void* _callable;
@@ -73,7 +73,7 @@ namespace Sgl
 
 		TReturn operator()(TArgs... args) const
 		{
-			return _erased(_callable, std::forward<TArgs>(args)...);
+			return _erased(_callable, args...);
 		}
 
 		template<CFunc<TReturn, TArgs...> TFunc>
@@ -94,7 +94,7 @@ namespace Sgl
 		template<typename T>
 		static TReturn OnErasedCall(const void* callable, TArgs... args)
 		{
-			return (*static_cast<const T*>(callable))(std::forward<TArgs>(args)...);
+			return (*static_cast<const T*>(callable))(args...);
 		}
 	private:
 		const void* _callable;

@@ -18,7 +18,7 @@ namespace Sgl
 		{}
 
 		Lazy(T&& value):
-			_valueFactory([v = std::move(value)] { return v; })
+			_valueFactory([v = std::forward<T>(value)] { return v; })
 		{}
 
 		Lazy(CFunc<T> auto&& factory):

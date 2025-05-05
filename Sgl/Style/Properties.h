@@ -40,15 +40,15 @@ namespace Sgl
 			FontFamily("Segoe UI")
 		{}
 
-		explicit FontFamily(std::string_view name):
-			path(TryGetPathByName(name)), name(name)
+		explicit FontFamily(std::string name):
+			path(TryGetPathByName(name)), name(std::move(name))
 		{}
 
-		FontFamily(const std::filesystem::path& path, std::string_view name):
-			path(path), name(name)
+		FontFamily(std::filesystem::path path, std::string name):
+			path(std::move(path)), name(std::move(name))
 		{}
 
-		static std::filesystem::path TryGetPathByName(std::string_view name)
+		static std::filesystem::path TryGetPathByName(std::string name)
 		{
 			return std::filesystem::path();
 		}

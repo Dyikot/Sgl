@@ -23,9 +23,8 @@ namespace Sgl
 	public:
 		Scene() = default;
 
-		template<CAction<Style&>... TStyleSelector>
-		Scene(TStyleSelector&&... styleSelectors):
-			UIElement(std::forward<TStyleSelector>(styleSelectors)...)
+		Scene(CAction<Style&> auto... styleSelectors):
+			UIElement(styleSelectors...)
 		{}
 
 		virtual ~Scene() = default;

@@ -18,12 +18,9 @@ namespace Sgl
 		bool _hover = false;
 	public:
 		Component() = default;
-
-		template<CAction<Style&>... TStyleSelector>
-		Component(TStyleSelector&&... styleSelectors)
-		{
-			(std::forward<TStyleSelector>(styleSelectors)(*style), ...);
-		}
+		Component(CAction<Style&> auto... styleSelectors):
+			UIElement(styleSelectors...)
+		{}
 
 		virtual ~Component() = default;		
 
