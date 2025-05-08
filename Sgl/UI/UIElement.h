@@ -26,7 +26,6 @@ namespace Sgl
 		Event<MouseEventHandler> onMouseDoubleClick;
 		Event<MouseWheelEventHandler> onMouseWheel;
 	public:
-		UIElement() = default;
 		UIElement(CAction<Style&> auto... styleSelectors)
 		{
 			(styleSelectors(*style), ...);

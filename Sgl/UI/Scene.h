@@ -21,8 +21,6 @@ namespace Sgl
 	public:
 		ComponentsCollection components = ComponentsCollection(*this);
 	public:
-		Scene() = default;
-
 		Scene(CAction<Style&> auto... styleSelectors):
 			UIElement(styleSelectors...)
 		{}
@@ -37,41 +35,28 @@ namespace Sgl
 		virtual void OnTextChanged(const TextChangedEventArgs& e) {}
 		virtual void OnTextInput(const TextInputEventArgs& e) {}
 	private:
-		friend class SceneManager;
+		friend class Application;
 	};
 
-	enum SceneState
-	{
-		Loading, Loaded, Unloaded
-	};
+	using SceneView = std::shared_ptr<Scene>;
 
 	class SceneManager
 	{
 	private:
-		using SceneView = std::shared_ptr<Scene>;
-
 		std::stack<SceneView> _scenes;
 		std::queue<Func<SceneView>> _scenesBuildersQueue;
-		size_t _scenesToUnload = 0;
+		size_t _popScenes = 0;
 	public:
-		SceneManager() = default;
-		~SceneManager();
-
 		template<CScene TScene>
-		void Load()
+		void Push() noexcept
 		{
-			_scenesBuildersQueue.push([] { return std::make_shared<TScene>(); });
+			_scenesBuildersQueue.push(&std::make_shared<TScene>);
 		}
 
-		void Unload();
+		void Pop() noexcept;
+		SceneView GetCurrentScene();
 	private:
-		void LoadScene();
-		void UnloadScene();
-		void ProcessScene(TimeSpan elapsed);
-		void RenderScene(RenderContext renderContext);
-		void HandleSceneEvents(SDL_Event& e);
-		SceneState UpdateState();
-
-		friend class Application;
+		void BuildScene() noexcept;
+		void DestroyScene() noexcept;
 	};
 }

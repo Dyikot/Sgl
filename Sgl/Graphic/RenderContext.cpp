@@ -2,6 +2,7 @@
 #include <SDL/SDL_image.h>
 #include "../Tools/Log.h"
 #include "../UI/Scene.h"
+#include "../Math/Triangulation.h"
 
 namespace Sgl
 {

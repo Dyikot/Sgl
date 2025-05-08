@@ -501,6 +501,21 @@ namespace Sgl::Ranges
 		return _FindFirstOrDefaultAdaptor<TPredicate, TDefaultValue>(std::move(predicate), defaultValue);
 	}
 
+	constexpr auto Range(int start, int end)
+	{
+		return std::views::iota(start, end);
+	}
+
+	constexpr auto Select(auto&& selector)
+	{
+		return std::views::transform(std::forward<decltype(selector)>(selector));
+	}
+
+	constexpr auto Where(auto&& predicate)
+	{
+		return std::views::filter(std::forward<decltype(predicate)>(predicate));
+	}
+
 	template<size_t size>
 	struct _ToArrayAdaptor: public RangeAdaptor<_ToArrayAdaptor<size>>
 	{

@@ -21,10 +21,10 @@ namespace Sgl
 		SDL_Quit();
 	}
 
-	void Application::SetMaxFrameRate(size_t value)
+	void Application::SetMaxFrameRate(size_t value) noexcept
 	{
 		_maxFrameRate = value;
-		_maxFrameTime = TimeSpan(1e9 / _maxFrameRate.value());
+		_maxFrameTime = TimeSpan(1e9 / value);
 	}
 
 	void Application::Run()
@@ -47,7 +47,7 @@ namespace Sgl
 		_running = false;
 	}
 
-	void Application::HandleEvents()
+	void Application::HandleEvents(SceneView scene)
 	{		
 		SDL_Event e;
 		while(SDL_PollEvent(&e))
@@ -60,11 +60,148 @@ namespace Sgl
 					break;
 				}
 
-				default:
+				case SDL_KEYDOWN:
 				{
-					_sceneManager.HandleSceneEvents(e);
+					scene->OnKeyDown(
+						KeyEventArgs
+						{
+							.state = static_cast<ButtonState>(e.key.state),
+							.key = e.key.keysym
+						}
+					);
+
 					break;
 				}
+
+				case SDL_KEYUP:
+				{
+					scene->OnKeyUp(
+						KeyEventArgs
+						{
+							.state = static_cast<ButtonState>(e.key.state),
+							.key = e.key.keysym
+						}
+					);
+
+					break;
+				}
+
+				case SDL_TEXTEDITING:
+				{
+					scene->OnTextChanged(
+						TextChangedEventArgs
+						{
+							.text = e.edit.text,
+							.selectionLength = static_cast<size_t>(e.edit.length),
+							.selectionStart = e.edit.start
+						}
+					);
+
+					break;
+				}
+
+				case SDL_TEXTINPUT:
+				{
+					scene->OnTextInput(
+						TextInputEventArgs
+						{
+							.text = e.text.text
+						}
+					);
+
+					break;
+				}
+
+				case SDL_TEXTEDITING_EXT:
+				{
+					scene->OnTextChanged(
+						TextChangedEventArgs
+						{
+							.text = e.editExt.text,
+							.selectionLength = static_cast<size_t>(e.editExt.length),
+							.selectionStart = e.editExt.start
+						}
+					);
+					SDL_free(e.editExt.text);
+
+					break;
+				}
+
+				case SDL_MOUSEMOTION:
+				{
+					scene->OnMouseMove(
+						MouseButtonEventArgs
+						{
+							.position =
+							{
+								.x = static_cast<float>(e.button.x),
+								.y = static_cast<float>(e.button.y)
+							}
+						}
+					);
+
+					break;
+				}
+
+				case SDL_MOUSEBUTTONDOWN:
+				{
+					scene->OnMouseDown(
+						MouseButtonEventArgs
+						{
+							.button = static_cast<MouseButton>(e.button.button),
+							.state = static_cast<ButtonState>(e.button.state),
+							.clicksCount = e.button.clicks,
+							.position =
+							{
+								.x = static_cast<float>(e.button.x),
+								.y = static_cast<float>(e.button.y)
+							}
+						}
+					);
+
+					break;
+				}
+
+				case SDL_MOUSEBUTTONUP:
+				{
+					scene->OnMouseUp(
+						MouseButtonEventArgs
+						{
+							.button = static_cast<MouseButton>(e.button.button),
+							.state = static_cast<ButtonState>(e.button.state),
+							.clicksCount = e.button.clicks,
+							.position =
+							{
+								.x = static_cast<float>(e.button.x),
+								.y = static_cast<float>(e.button.y)
+							}
+						}
+					);
+
+					break;
+				}
+
+				case SDL_MOUSEWHEEL:
+				{
+					scene->OnMouseWheel(
+						MouseWheelEventArgs
+						{
+							.position =
+							{
+								.x = static_cast<float>(e.button.x),
+								.y = static_cast<float>(e.button.y)
+							},
+							.scrolledHorizontally = e.wheel.preciseX,
+							.scrolledVertically = e.wheel.preciseY,
+							.direction = SDL_MouseWheelDirection(e.wheel.direction)
+						}
+					);
+
+					break;
+				}
+
+				default:
+					break;
 			}
 		}
 	}
@@ -79,24 +216,23 @@ namespace Sgl
 
 		while(_running)
 		{
-			switch(_sceneManager.UpdateState())
+			auto scene = sceneManager.GetCurrentScene();
+
+			if(scene == nullptr)
 			{
-				case SceneState::Loading:
-					continue;
-				case SceneState::Loaded:
-					break;
-				case SceneState::Unloaded:
-					return;
+				Shutdown();
+				continue;
 			}
 			
 			delayStopwatch.Restart();
-			HandleEvents();
-			_sceneManager.ProcessScene(sceneStopwatch.Elapsed());
+			HandleEvents(scene);
+			scene->OnProcessing(sceneStopwatch.Elapsed());
 			sceneStopwatch.Reset();
 
 			if(_window->IsVisible() || _window->canRenderInMinimizedMode)
 			{
-				_sceneManager.RenderScene(renderContext);
+				scene->OnRender(renderContext);
+				SDL_RenderPresent(renderContext);
 			}
 
 			if(_maxFrameRate)

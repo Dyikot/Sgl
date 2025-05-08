@@ -17,7 +17,6 @@ namespace Sgl
 	private:
 		bool _hover = false;
 	public:
-		Component() = default;
 		Component(CAction<Style&> auto... styleSelectors):
 			UIElement(styleSelectors...)
 		{}

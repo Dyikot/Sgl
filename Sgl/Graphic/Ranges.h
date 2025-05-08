@@ -1,8 +1,9 @@
 #pragma once
 
-#include <array>
 #include <vector>
 #include "../Math/Math.h"
+#include "Views.h"
+#include "Color.h"
 
 namespace Sgl
 {
@@ -23,6 +24,9 @@ namespace Sgl
 	template<size_t points = 360>
 	class Ellipse: public std::array<SDL_FPoint, points>
 	{
+	private:
+		static inline auto sinRange = Math::SinRange<360>();
+		static inline auto cosRange = Math::CosRange<360>();
 	public:
 		constexpr Ellipse(SDL_FPoint position, int width, int height)
 		{
@@ -31,16 +35,19 @@ namespace Sgl
 			if constexpr(maxAngle % points)
 			{
 				constexpr auto angleStep = maxAngle / points;
-				for(size_t angle = 0; SDL_FPoint& point : *this)
+				size_t angle = 0;
+
+				for(SDL_FPoint& point : *this)
 				{
-					point.x = position.x + width * Math::cos360[angle];
-					point.y = position.y + height * Math::sin360[angle];
+					point.x = position.x + width * cosRange[angle];
+					point.y = position.y + height * sinRange[angle];
 					angle += angleStep;
 				}
 			}
 			else
 			{
 				constexpr float AngleStep = 2 * std::numbers::pi / points;	
+
 				for(float angle = 0; SDL_FPoint& point : *this)
 				{
 					point.x = position.x + width * cosf(angle);

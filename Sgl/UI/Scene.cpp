@@ -26,216 +26,48 @@ namespace Sgl
 		components.OnMouseUp(e);
 	}
 
-	SceneManager::~SceneManager()
+	void SceneManager::Pop() noexcept
 	{
-		while(!_scenes.empty())
+		if(_popScenes < _scenes.size())
 		{
-			UnloadScene();
+			_popScenes++;
 		}
 	}
 
-	void SceneManager::Unload()
+	SceneView SceneManager::GetCurrentScene()
 	{
-		if(_scenesToUnload < _scenes.size())
+		while(true)
 		{
-			_scenesToUnload++;
-		}
-	}
-
-	SceneState SceneManager::UpdateState()
-	{
-		if(_scenesToUnload > 0)
-		{
-			UnloadScene();
-			return SceneState::Loading;
-		}
-		else if(!_scenesBuildersQueue.empty())
-		{
-			LoadScene();
-			return SceneState::Loading;
-		}
-		else if(!_scenes.empty())
-		{
-			return SceneState::Loaded;
-		}
-		else
-		{
-			return SceneState::Unloaded;
-		}
-	}
-
-	void SceneManager::RenderScene(RenderContext renderContext)
-	{
-		_scenes.top()->OnRender(renderContext);
-		SDL_RenderPresent(renderContext);
-	}
-
-	void SceneManager::ProcessScene(TimeSpan elapsed)
-	{
-		_scenes.top()->OnProcessing(elapsed);
-	}
-
-	void SceneManager::HandleSceneEvents(SDL_Event& e)
-	{
-		auto scene = _scenes.top();
-
-		switch(e.type)
-		{
-			case SDL_KEYDOWN:
+			if(_popScenes > 0)
 			{
-				scene->OnKeyDown(
-					KeyEventArgs
-					{
-						.state = static_cast<ButtonState>(e.key.state),
-						.key = e.key.keysym
-					}
-				);
-
-				break;
+				DestroyScene();
+				continue;
 			}
-
-			case SDL_KEYUP:
+			else if(!_scenesBuildersQueue.empty())
 			{
-				scene->OnKeyUp(
-					KeyEventArgs
-					{
-						.state = static_cast<ButtonState>(e.key.state),
-						.key = e.key.keysym
-					}
-				);
-
-				break;
+				BuildScene();
+				continue;
 			}
-
-			case SDL_TEXTEDITING:
+			else if(!_scenes.empty())
 			{
-				scene->OnTextChanged(
-					TextChangedEventArgs
-					{
-						.text = e.edit.text,
-						.selectionLength = static_cast<size_t>(e.edit.length),
-						.selectionStart = e.edit.start
-					}
-				);
-
-				break;
+				return _scenes.top();
 			}
-
-			case SDL_TEXTEDITING_EXT:
+			else
 			{
-				scene->OnTextChanged(
-					TextChangedEventArgs
-					{
-						.text = e.editExt.text,
-						.selectionLength = static_cast<size_t>(e.editExt.length),
-						.selectionStart = e.editExt.start
-					}
-				);
-				SDL_free(e.editExt.text);
-
-				break;
-			}
-
-			case SDL_TEXTINPUT:
-			{
-				scene->OnTextInput(
-					TextInputEventArgs
-					{
-						.text = e.text.text
-					}
-				);
-
-				break;
-			}
-
-			case SDL_MOUSEBUTTONDOWN:
-			{
-				scene->OnMouseDown(
-					MouseButtonEventArgs
-					{
-						.button = static_cast<MouseButton>(e.button.button),
-						.state = static_cast<ButtonState>(e.button.state),
-						.clicksCount = e.button.clicks,
-						.position =
-						{
-							.x = static_cast<float>(e.button.x),
-							.y = static_cast<float>(e.button.y)
-						}
-					}
-				);
-
-				break;
-			}
-
-			case SDL_MOUSEBUTTONUP:
-			{
-				scene->OnMouseUp(
-					MouseButtonEventArgs
-					{
-						.button = static_cast<MouseButton>(e.button.button),
-						.state = static_cast<ButtonState>(e.button.state),
-						.clicksCount = e.button.clicks,
-						.position =
-						{
-							.x = static_cast<float>(e.button.x),
-							.y = static_cast<float>(e.button.y)
-						}
-					}
-				);
-
-				break;
-			}
-
-			case SDL_MOUSEMOTION:
-			{
-				scene->OnMouseMove(
-					MouseButtonEventArgs
-					{
-						.position =
-						{
-							.x = static_cast<float>(e.button.x),
-							.y = static_cast<float>(e.button.y)
-						}
-					}
-				);
-
-				break;
-			}
-
-			case SDL_MOUSEWHEEL:
-			{
-				scene->OnMouseWheel(
-					MouseWheelEventArgs
-					{
-						.position =
-						{
-							.x = static_cast<float>(e.button.x),
-							.y = static_cast<float>(e.button.y)
-						},
-						.scrolledHorizontally = e.wheel.preciseX,
-						.scrolledVertically = e.wheel.preciseY,
-						.direction = SDL_MouseWheelDirection(e.wheel.direction)
-					}
-				);
-
-				break;
+				return nullptr;
 			}
 		}
 	}
 
-	void SceneManager::LoadScene()
+	void SceneManager::BuildScene() noexcept
 	{
 		_scenes.push(_scenesBuildersQueue.front()());
 		_scenesBuildersQueue.pop();
 	}
 
-	void SceneManager::UnloadScene()
+	void SceneManager::DestroyScene() noexcept
 	{
-		if(_scenesToUnload > 0)
-		{
-			_scenesToUnload--;
-		}
-
+		_popScenes--;
 		_scenes.pop();
 	}
 }
