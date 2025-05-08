@@ -34,7 +34,7 @@ namespace Sgl
 		}
 	}
 
-	SceneView SceneManager::GetCurrentScene()
+	std::shared_ptr<Scene> SceneManager::GetCurrentScene()
 	{
 		while(true)
 		{

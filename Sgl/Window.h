@@ -25,15 +25,10 @@ namespace Sgl
 
 	class Window
 	{
-	private:
-		static constexpr auto _defaultTitle = "Window";
-		static constexpr auto _defaultWidth = 1280;
-		static constexpr auto _defaultHeight = 720;
-		static constexpr auto _defaultPosition = SDL_Point(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 	public:
-		bool canRenderInMinimizedMode = false;
+		bool canRenderWhenMinimized = false;
 	private:
-		SDL_Window* _this;
+		SDL_Window* _widnow;
 		SDL_Renderer* _renderer;
 		bool _vsyncEnabled = false;
 		std::optional<Surface> _icon;
@@ -52,6 +47,8 @@ namespace Sgl
 		void SetPosition(SDL_Point value) noexcept;
 		void SetIcon(std::string_view path);
 		void SetDisplayMode(DiplayMode displayMode);
+		void SetVSync(bool value);
+		void SetResize(bool value);
 
 		size_t GetWidth() const noexcept;
 		size_t GetHeight() const noexcept;
@@ -61,7 +58,7 @@ namespace Sgl
 		size_t GetMinHeight() const noexcept;
 		size_t GetLogicalWidth() const noexcept;
 		size_t GetLogicalHeight() const noexcept;
-		std::string_view GetTitle() const noexcept;
+		std::string GetTitle() const noexcept;
 		SDL_Point GetPosition() const noexcept;
 		WindowState GetWindowState() const noexcept;
 		RenderContext GetRenderContext() const noexcept;
@@ -69,13 +66,7 @@ namespace Sgl
 		void Show();
 		void Hide();
 		bool IsVisible() const;
-		void EnableVsync();
-		void EnableResize();
-		void DisableVsync();
-		void DisableResize();
 		bool IsResizable() const;
-		bool IsVsyncEnable() const;
-
-		operator SDL_Window* () const { return _this; }
+		bool IsVSyncEnable() const;
 	};
 }

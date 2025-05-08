@@ -32,7 +32,7 @@ namespace Sgl
 		void Shutdown() noexcept;
 		bool IsRunning() const { return _running; }
 	private:
-		void HandleEvents(SceneView scene);
+		void HandleEvents(std::shared_ptr<Scene> scene);
 		void Start();
 	};
 } 

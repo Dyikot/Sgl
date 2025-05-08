@@ -38,13 +38,11 @@ namespace Sgl
 		friend class Application;
 	};
 
-	using SceneView = std::shared_ptr<Scene>;
-
 	class SceneManager
 	{
 	private:
-		std::stack<SceneView> _scenes;
-		std::queue<Func<SceneView>> _scenesBuildersQueue;
+		std::stack<std::shared_ptr<Scene>> _scenes;
+		std::queue<Func<std::shared_ptr<Scene>>> _scenesBuildersQueue;
 		size_t _popScenes = 0;
 	public:
 		template<CScene TScene>
@@ -54,7 +52,7 @@ namespace Sgl
 		}
 
 		void Pop() noexcept;
-		SceneView GetCurrentScene();
+		std::shared_ptr<Scene> GetCurrentScene();
 	private:
 		void BuildScene() noexcept;
 		void DestroyScene() noexcept;

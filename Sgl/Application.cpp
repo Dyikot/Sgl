@@ -47,7 +47,7 @@ namespace Sgl
 		_running = false;
 	}
 
-	void Application::HandleEvents(SceneView scene)
+	void Application::HandleEvents(std::shared_ptr<Scene> scene)
 	{		
 		SDL_Event e;
 		while(SDL_PollEvent(&e))
@@ -229,7 +229,7 @@ namespace Sgl
 			scene->OnProcessing(sceneStopwatch.Elapsed());
 			sceneStopwatch.Reset();
 
-			if(_window->IsVisible() || _window->canRenderInMinimizedMode)
+			if(_window->IsVisible() || _window->canRenderWhenMinimized)
 			{
 				scene->OnRender(renderContext);
 				SDL_RenderPresent(renderContext);
