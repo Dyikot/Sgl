@@ -5,7 +5,6 @@
 #include "../Graphic/Color.h"
 #include "../Graphic/Texture.h"
 #include "../ECS/IProcessed.h"
-#include "../Data/CallableView.h"
 #include "UIElement.h"
 #include "ComponentsCollection.h"
 
@@ -21,10 +20,6 @@ namespace Sgl
 	public:
 		ComponentsCollection components = ComponentsCollection(*this);
 	public:
-		Scene(CAction<Style&> auto... styleSelectors):
-			UIElement(styleSelectors...)
-		{}
-
 		virtual ~Scene() = default;
 
 		void OnRender(RenderContext renderContext) const override;

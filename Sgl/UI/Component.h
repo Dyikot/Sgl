@@ -12,17 +12,16 @@ namespace Sgl
 	public:
 		SDL_FPoint position = { 0, 0 };
 		ComponentsCollection children = ComponentsCollection(*this);
+		std::vector<StyleSelector> hoverSelectors;
 		Event<MouseEventHandler> mouseEnter;
 		Event<MouseEventHandler> mouseLeave;
 	private:
+		std::vector<StyleSelector> _hoverSelectors;
 		bool _hover = false;
 	public:
-		Component(CAction<Style&> auto... styleSelectors):
-			UIElement(styleSelectors...)
-		{}
-
 		virtual ~Component() = default;		
 
+		void SetHoverStyle(std::vector<StyleSelector> selectors);
 		void OnRender(RenderContext renderContext) const override;
 	protected:
 		virtual void OnMouseEnter(const MouseButtonEventArgs& e);

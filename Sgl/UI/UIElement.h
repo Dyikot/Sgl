@@ -3,6 +3,7 @@
 #include "../Graphic/IVisual.h"
 #include "../Events/Event.h"
 #include "../Style/Style.h"
+#include <stack>
 
 namespace Sgl
 {
@@ -16,8 +17,7 @@ namespace Sgl
 	class UIElement: public IVisual
 	{
 	public:
-		std::unique_ptr<Style> style = std::make_unique<Style>();
-
+		Style style;
 		Event<KeyEventHandler> onKeyUp;
 		Event<KeyEventHandler> onKeyDown;
 		Event<MouseEventHandler> onMouseDown;
@@ -25,14 +25,16 @@ namespace Sgl
 		Event<MouseEventHandler> onMouseMove;
 		Event<MouseEventHandler> onMouseDoubleClick;
 		Event<MouseWheelEventHandler> onMouseWheel;
+	private:
+		std::vector<StyleSelector> _classSelectors;
 	public:
-		UIElement(CAction<Style&> auto... styleSelectors)
-		{
-			(styleSelectors(*style), ...);
-		}
-
 		virtual ~UIElement() = default;
+
+		void SetClassStyle(std::vector<StyleSelector> selectors);
 	protected:
+		void ApplyClassStyle();
+		void ApplyStyle(const std::vector<StyleSelector>& selectors);
+
 		virtual void OnMouseDown(const MouseButtonEventArgs& e);
 		virtual void OnMouseUp(const MouseButtonEventArgs& e);
 		virtual void OnMouseMove(const MouseButtonEventArgs& e);

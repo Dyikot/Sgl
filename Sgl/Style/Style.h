@@ -1,12 +1,8 @@
 #pragma once
 
-#include "../Data/Object.h"
-#include <unordered_map>
-#include <string_view>
-#include "../Graphic/Cursor.h"
 #include "Properties.h"
+#include "../Graphic/Cursor.h"
 #include "../Graphic/Color.h"
-#include "../Data/CallableView.h"
 #include "../Data/Any.h"
 
 namespace Sgl
@@ -45,4 +41,6 @@ namespace Sgl
 		VerticalAlignment verticalAlignment = VerticalAlignment::Top;
 		HorizontalAlignment horizontalAlignment = HorizontalAlignment::Left;
 	};
+
+	using StyleSelector = void(*)(Style&);
 }

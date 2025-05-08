@@ -2,6 +2,36 @@
 
 namespace Sgl
 {
+	void UIElement::SetClassStyle(std::vector<StyleSelector> selectors)
+	{
+		_classSelectors = std::move(selectors);
+		
+		for(auto selector : _classSelectors)
+		{
+			selector(style);
+		}
+	}
+
+	void UIElement::ApplyClassStyle()
+	{
+		style = {};
+
+		for(auto selector : _classSelectors)
+		{
+			selector(style);
+		}
+	}
+
+	void UIElement::ApplyStyle(const std::vector<StyleSelector>& selectors)
+	{
+		ApplyClassStyle();
+
+		for(auto selector : selectors)
+		{
+			selector(style);
+		}
+	}
+
 	void UIElement::OnMouseDown(const MouseButtonEventArgs& e)
 	{
 		onMouseDown.TryRaise(*this, e);

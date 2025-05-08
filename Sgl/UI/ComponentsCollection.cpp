@@ -6,15 +6,15 @@ namespace Sgl
 {
     bool ZIndexComparer::operator()(const Component& left, const Component& right) const
     {
-        return left.style->zIndex < right.style->zIndex;
+        return left.style.zIndex < right.style.zIndex;
     }
 
-    constexpr bool IsIntersects(SDL_FPoint point, const Component& component)
+    bool IsIntersects(SDL_FPoint point, const Component& component)
     {
         return point.x >= component.position.x &&
-            point.x <= component.position.x + component.style->width &&
+            point.x <= component.position.x + component.style.width &&
             point.y >= component.position.y &&
-            point.y <= component.position.y + component.style->height;
+            point.y <= component.position.y + component.style.height;
     }
 
     ComponentsCollection::ComponentsCollection(UIElement& parent):
@@ -40,7 +40,7 @@ namespace Sgl
                 }
 
                 hoverComponent = &component;
-                SetCursor(component.style->cursor);
+                SetCursor(component.style.cursor);
                 component.OnMouseEnter(e);
                 component.OnMouseMove(e);
                 component.children.OnMouseMove(e);
@@ -54,7 +54,7 @@ namespace Sgl
         }
 
         hoverComponent = nullptr;
-        SetCursor(parent.style->cursor);
+        SetCursor(parent.style.cursor);
     }
 
     void ComponentsCollection::OnMouseDown(const MouseButtonEventArgs& e)

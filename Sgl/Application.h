@@ -6,7 +6,6 @@
 #include "Window.h"
 #include "UI/Scene.h"
 #include "Graphic/Cursor.h"
-#include "Data/CallableView.h"
 #include "Tools/Time/Stopwatch.h"
 
 namespace Sgl
