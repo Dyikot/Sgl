@@ -16,12 +16,12 @@ namespace Sgl
 		Window window;
 		SceneManager sceneManager;
 	private:
-		static inline Nullable<Application> _current;
+		static inline Application* _current;
 		bool _running = false;
 		std::optional<size_t> _maxFrameRate;
 		std::optional<TimeSpan> _maxFrameTime;
 	public:
-		static Nullable<Application> Get() { return _current; }
+		static auto Get() { return _current; }
 
 		Application() noexcept;
 		~Application() noexcept;

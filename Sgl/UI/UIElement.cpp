@@ -2,16 +2,6 @@
 
 namespace Sgl
 {
-	void UIElement::SetClassStyle(std::vector<StyleSelector> selectors)
-	{
-		_classSelectors = std::move(selectors);
-		
-		for(auto selector : _classSelectors)
-		{
-			selector(style);
-		}
-	}
-
 	void UIElement::ApplyClassStyle()
 	{
 		style = {};
@@ -22,7 +12,7 @@ namespace Sgl
 		}
 	}
 
-	void UIElement::ApplyStyle(const std::vector<StyleSelector>& selectors)
+	void UIElement::ApplyStyle(std::span<StyleSelector> selectors)
 	{
 		ApplyClassStyle();
 

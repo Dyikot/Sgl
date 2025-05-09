@@ -21,7 +21,12 @@ namespace Sgl
 	public:
 		virtual ~Component() = default;		
 
-		void SetHoverStyle(std::vector<StyleSelector> selectors);
+		template<StyleSelector... selectors>
+		void SetHoverStyle()
+		{
+			_hoverSelectors = { selectors... };
+		}
+
 		void OnRender(RenderContext renderContext) const override;
 	protected:
 		virtual void OnMouseEnter(const MouseButtonEventArgs& e);

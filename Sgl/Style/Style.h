@@ -37,7 +37,7 @@ namespace Sgl
 		Nullable<Texture> backgroundTexture;
 		Color backgroundColor = Colors::Black;
 		Visibility visibility = Visibility::Visible;
-		std::reference_wrapper<const Cursor> cursor = Cursors::Arrow();
+		CursorView cursor = Cursors::Arrow;
 		VerticalAlignment verticalAlignment = VerticalAlignment::Top;
 		HorizontalAlignment horizontalAlignment = HorizontalAlignment::Left;
 	};

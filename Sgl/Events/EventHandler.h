@@ -2,7 +2,7 @@
 
 #include "EventArgs.h"
 #include "../Data/Nullable.h"
-#include "../Data/Delegates.h"
+#include "../Data/Delegate.h"
 
 namespace Sgl
 {

@@ -2,11 +2,6 @@
 
 namespace Sgl
 {
-    void Component::SetHoverStyle(std::vector<StyleSelector> selectors)
-    {
-        _hoverSelectors = std::move(selectors);
-    }
-
     void Component::OnRender(RenderContext renderContext) const
     {
         if(auto tooltip = style.tooltip; _hover && tooltip)

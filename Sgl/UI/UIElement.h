@@ -30,10 +30,19 @@ namespace Sgl
 	public:
 		virtual ~UIElement() = default;
 
-		void SetClassStyle(std::vector<StyleSelector> selectors);
+		template<StyleSelector... selectors>
+		void SetClassStyle()
+		{
+			_classSelectors = { selectors... };
+
+			for(auto selector : _classSelectors)
+			{
+				selector(style);
+			}
+		}
 	protected:
 		void ApplyClassStyle();
-		void ApplyStyle(const std::vector<StyleSelector>& selectors);
+		void ApplyStyle(std::span<StyleSelector> selectors);
 
 		virtual void OnMouseDown(const MouseButtonEventArgs& e);
 		virtual void OnMouseUp(const MouseButtonEventArgs& e);

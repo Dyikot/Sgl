@@ -3,7 +3,7 @@
 #include "SDL/SDL_mouse.h"
 #include "SDL/SDL_image.h"
 #include "../Tools/Log.h"
-#include <string_view>
+#include "../Data/Singleton.h"
 
 namespace Sgl
 {
@@ -50,20 +50,21 @@ namespace Sgl
 		}
 	};
 
-	class Cursors
+	using CursorView = const Cursor& (*)();
+
+	namespace Cursors
 	{
-	public:
-		static const auto& Arrow() { static Cursor c(SDL_SYSTEM_CURSOR_ARROW); return c; }
-		static const auto& IBeam() { static Cursor c(SDL_SYSTEM_CURSOR_IBEAM); return c; }
-		static const auto& Wait() { static Cursor c(SDL_SYSTEM_CURSOR_WAIT); return c; }
-		static const auto& Crosshair() { static Cursor c(SDL_SYSTEM_CURSOR_CROSSHAIR); return c; }
-		static const auto& WaitArrow() { static Cursor c(SDL_SYSTEM_CURSOR_WAITARROW); return c; }
-		static const auto& ArrowNWSE() { static Cursor c(SDL_SYSTEM_CURSOR_SIZENWSE); return c; }
-		static const auto& ArrowNESW() { static Cursor c(SDL_SYSTEM_CURSOR_SIZENESW); return c; }
-		static const auto& ArrowWE() { static Cursor c(SDL_SYSTEM_CURSOR_SIZEWE); return c; }
-		static const auto& ArrowNS() { static Cursor c(SDL_SYSTEM_CURSOR_SIZENS); return c; }
-		static const auto& ArrowAll() { static Cursor c(SDL_SYSTEM_CURSOR_SIZEALL); return c; }
-		static const auto& No() { static Cursor c(SDL_SYSTEM_CURSOR_NO); return c; }
-		static const auto& Hand() { static Cursor c(SDL_SYSTEM_CURSOR_HAND); return c; }
+		inline auto Arrow = Sgl_ConstSingleton(Cursor, c, SDL_SYSTEM_CURSOR_ARROW);
+		inline auto IBeam = Sgl_ConstSingleton(Cursor, c, SDL_SYSTEM_CURSOR_IBEAM);
+		inline auto Wait = Sgl_ConstSingleton(Cursor, c, SDL_SYSTEM_CURSOR_WAIT);
+		inline auto Crosshair = Sgl_ConstSingleton(Cursor, c, SDL_SYSTEM_CURSOR_CROSSHAIR);
+		inline auto WaitArrow = Sgl_ConstSingleton(Cursor, c, SDL_SYSTEM_CURSOR_WAITARROW);
+		inline auto ArrowNWSE = Sgl_ConstSingleton(Cursor, c, SDL_SYSTEM_CURSOR_SIZENWSE);
+		inline auto ArrowNESW = Sgl_ConstSingleton(Cursor, c, SDL_SYSTEM_CURSOR_SIZENESW);
+		inline auto ArrowWE = Sgl_ConstSingleton(Cursor, c, SDL_SYSTEM_CURSOR_SIZEWE);
+		inline auto ArrowNS = Sgl_ConstSingleton(Cursor, c, SDL_SYSTEM_CURSOR_SIZENS);
+		inline auto ArrowAll = Sgl_ConstSingleton(Cursor, c, SDL_SYSTEM_CURSOR_SIZEALL);
+		inline auto No = Sgl_ConstSingleton(Cursor, c, SDL_SYSTEM_CURSOR_NO);
+		inline auto Hand = Sgl_ConstSingleton(Cursor, c, SDL_SYSTEM_CURSOR_HAND);
 	};
 }

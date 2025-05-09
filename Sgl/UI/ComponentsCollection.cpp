@@ -12,9 +12,9 @@ namespace Sgl
     bool IsIntersects(SDL_FPoint point, const Component& component)
     {
         return point.x >= component.position.x &&
-            point.x <= component.position.x + component.style.width &&
-            point.y >= component.position.y &&
-            point.y <= component.position.y + component.style.height;
+               point.x <= component.position.x + component.style.width &&
+               point.y >= component.position.y &&
+               point.y <= component.position.y + component.style.height;
     }
 
     ComponentsCollection::ComponentsCollection(UIElement& parent):
@@ -84,11 +84,11 @@ namespace Sgl
         }
     }
 
-    void ComponentsCollection::SetCursor(const Cursor& cursor)
+    void ComponentsCollection::SetCursor(CursorView cursor)
     {
-        if(SDL_GetCursor() != cursor)
+        if(SDL_GetCursor() != cursor())
         {
-            SDL_SetCursor(cursor);
+            SDL_SetCursor(cursor());
         }
     }
 }
