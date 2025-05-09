@@ -17,6 +17,8 @@ namespace Sgl
 	class UIElement: public IVisual
 	{
 	public:
+		using StyleSetter = Action<Style&>;
+
 		Style style;
 		Event<KeyEventHandler> onKeyUp;
 		Event<KeyEventHandler> onKeyDown;
@@ -26,23 +28,19 @@ namespace Sgl
 		Event<MouseEventHandler> onMouseDoubleClick;
 		Event<MouseWheelEventHandler> onMouseWheel;
 	private:
-		std::vector<StyleSelector> _classSelectors;
+		StyleSetter _classStyleSetter;
 	public:
 		virtual ~UIElement() = default;
 
 		template<StyleSelector... selectors>
-		void SetClassStyle()
+		void AddClassStyle()
 		{
-			_classSelectors = { selectors... };
-
-			for(auto selector : _classSelectors)
-			{
-				selector(style);
-			}
+			_classStyleSetter = [](Style& style) { (selectors(style), ...); };
+			_classStyleSetter(style);
 		}
 	protected:
-		void ApplyClassStyle();
-		void ApplyStyle(std::span<StyleSelector> selectors);
+		void SetClassStyle();
+		void SetStyle(const StyleSetter& setter);
 
 		virtual void OnMouseDown(const MouseButtonEventArgs& e);
 		virtual void OnMouseUp(const MouseButtonEventArgs& e);
