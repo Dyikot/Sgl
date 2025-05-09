@@ -9,7 +9,7 @@ namespace Sgl
 
     Window::Window() noexcept:
         _widnow(SDL_CreateWindow(defaultTitle, defaultPosition.x, defaultPosition.y,
-                               defaultWidth, defaultHeight, SDL_WINDOW_HIDDEN)),
+                                 defaultWidth, defaultHeight, SDL_WINDOW_HIDDEN)),
         _renderer(SDL_CreateRenderer(_widnow, -1, SDL_RENDERER_ACCELERATED))
     {
         PrintSDLErrorIf(_widnow == nullptr);

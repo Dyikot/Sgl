@@ -7,6 +7,8 @@ namespace Sgl
 {
 	Application::Application() noexcept
 	{
+		_current = this;
+
 		PrintSDLErrorIf(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_AUDIO) < 0);
 		PrintSDLErrorIf(TTF_Init() < 0);
 		PrintSDLErrorIf(!IMG_Init(IMG_InitFlags::IMG_INIT_PNG | IMG_InitFlags::IMG_INIT_JPG));
@@ -35,10 +37,7 @@ namespace Sgl
 		}
 		
 		_running = true;
-		_window = std::make_unique<Window>();
-		onWindowInitialized.TryRaise(*_window, EventArgs());
-		_window->Show();
-
+		window.Show();
 		Start();
 	}
 
@@ -209,7 +208,7 @@ namespace Sgl
 	void Application::Start()
 	{
 		Stopwatch delayStopwatch, sceneStopwatch;
-		auto renderContext = _window->GetRenderContext();
+		auto renderContext = window.GetRenderContext();
 
 		renderContext.SetBlendMode(SDL_BLENDMODE_BLEND);
 		sceneStopwatch.Start();
@@ -229,7 +228,7 @@ namespace Sgl
 			scene->OnProcessing(sceneStopwatch.Elapsed());
 			sceneStopwatch.Reset();
 
-			if(_window->IsVisible() || _window->canRenderWhenMinimized)
+			if(window.IsVisible() || window.canRenderWhenMinimized)
 			{
 				scene->OnRender(renderContext);
 				SDL_RenderPresent(renderContext);

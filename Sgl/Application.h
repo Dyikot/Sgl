@@ -13,14 +13,16 @@ namespace Sgl
 	class Application
 	{
 	public:
-		Event<WindowEventHandler> onWindowInitialized;
+		Window window;
 		SceneManager sceneManager;
 	private:
+		static inline Nullable<Application> _current;
 		bool _running = false;
-		std::unique_ptr<Window> _window;
 		std::optional<size_t> _maxFrameRate;
 		std::optional<TimeSpan> _maxFrameTime;
 	public:
+		static Nullable<Application> Get() { return _current; }
+
 		Application() noexcept;
 		~Application() noexcept;
 
@@ -34,4 +36,6 @@ namespace Sgl
 		void HandleEvents(std::shared_ptr<Scene> scene);
 		void Start();
 	};
+
+	using App = Application;
 } 
