@@ -6,72 +6,72 @@ namespace Sgl
 {
     bool ZIndexComparer::operator()(const Component& left, const Component& right) const
     {
-        return left.style.zIndex < right.style.zIndex;
+        return left.Style.ZIndex < right.Style.ZIndex;
     }
 
     bool IsIntersects(SDL_FPoint point, const Component& component)
     {
-        return point.x >= component.position.x &&
-               point.x <= component.position.x + component.style.width &&
-               point.y >= component.position.y &&
-               point.y <= component.position.y + component.style.height;
+        return point.x >= component.Position.x &&
+               point.x <= component.Position.x + component.Style.Width &&
+               point.y >= component.Position.y &&
+               point.y <= component.Position.y + component.Style.Height;
     }
 
     ComponentsCollection::ComponentsCollection(UIElement& parent):
-        parent(parent)
+        Parent(parent)
     {}
 
     void ComponentsCollection::OnMouseMove(const MouseButtonEventArgs& e)
     {
-        if(hoverComponent && IsIntersects(e.position, *hoverComponent))
+        if(HoverComponent && IsIntersects(e.Position, *HoverComponent))
         {
-            hoverComponent->OnMouseMove(e);
-            hoverComponent->children.OnMouseMove(e);
+            HoverComponent->OnMouseMove(e);
+            HoverComponent->Children.OnMouseMove(e);
             return;
         }
 
         for(Component& component : *this)
         {
-            if(IsIntersects(e.position, component))
+            if(IsIntersects(e.Position, component))
             {
-                if(hoverComponent)
+                if(HoverComponent)
                 {
-                    hoverComponent->OnMouseLeave(e);
+                    HoverComponent->OnMouseLeave(e);
                 }
 
-                hoverComponent = &component;
-                SetCursor(component.style.cursor);
+                HoverComponent = &component;
+                SetCursor(component.Style.Cursor);
                 component.OnMouseEnter(e);
                 component.OnMouseMove(e);
-                component.children.OnMouseMove(e);
+                component.Children.OnMouseMove(e);
                 return;
             }
         }
 
-        if(hoverComponent)
+        if(HoverComponent)
         {
-            hoverComponent->OnMouseLeave(e);
+            HoverComponent->OnMouseLeave(e);
         }
 
-        hoverComponent = nullptr;
-        SetCursor(parent.style.cursor);
+        HoverComponent = nullptr;
+        SetCursor(Parent.Style.Cursor);
     }
 
     void ComponentsCollection::OnMouseDown(const MouseButtonEventArgs& e)
     {
-        if(hoverComponent)
+        if(HoverComponent)
         {
-            hoverComponent->OnMouseDown(e);
-            hoverComponent->children.OnMouseDown(e);
+            HoverComponent->OnMouseDown(e);
+            HoverComponent->Children.OnMouseDown(e);
         }
     }
 
     void ComponentsCollection::OnMouseUp(const MouseButtonEventArgs& e)
     {
-        if(hoverComponent)
+        if(HoverComponent)
         {
-            hoverComponent->OnMouseUp(e);
-            hoverComponent->children.OnMouseUp(e);
+            HoverComponent->OnMouseUp(e);
+            HoverComponent->Children.OnMouseUp(e);
         }
     }
 
@@ -80,7 +80,7 @@ namespace Sgl
         for(Component& component : *this)
         {
             component.OnRender(renderContext);
-            component.children.OnRender(renderContext);
+            component.Children.OnRender(renderContext);
         }
     }
 

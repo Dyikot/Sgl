@@ -13,7 +13,12 @@ namespace Sgl
 
 		for(auto& point : points)
 		{
-			push_back(SDL_Vertex { point, color, SDL_FPoint() });
+			push_back(SDL_Vertex 
+			{
+				.position = point,
+				.color = color,
+				.tex_coord = SDL_FPoint() 
+			});
 		}
 	}
 
@@ -27,7 +32,12 @@ namespace Sgl
 
 		for(size_t i = 0; i < points.size(); i++)
 		{
-			push_back(SDL_Vertex { points[i], color, textureCoordinates[i] });
+			push_back(SDL_Vertex 
+			{
+				.position = points[i],
+				.color = color,
+				.tex_coord = textureCoordinates[i]
+			});
 		}
 	}
 }

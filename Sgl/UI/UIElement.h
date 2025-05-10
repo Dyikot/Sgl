@@ -19,24 +19,24 @@ namespace Sgl
 	public:
 		using StyleSetter = Action<Style&>;
 
-		Style style;
-		Event<KeyEventHandler> onKeyUp;
-		Event<KeyEventHandler> onKeyDown;
-		Event<MouseEventHandler> onMouseDown;
-		Event<MouseEventHandler> onMouseUp;
-		Event<MouseEventHandler> onMouseMove;
-		Event<MouseEventHandler> onMouseDoubleClick;
-		Event<MouseWheelEventHandler> onMouseWheel;
+		Style Style;
+		Event<KeyEventHandler> KeyUp;
+		Event<KeyEventHandler> KeyDown;
+		Event<MouseEventHandler> MouseDown;
+		Event<MouseEventHandler> MouseUp;
+		Event<MouseEventHandler> MouseMove;
+		Event<MouseEventHandler> MouseDoubleClick;
+		Event<MouseWheelEventHandler> MouseWheel;
 	private:
 		StyleSetter _classStyleSetter;
 	public:
 		virtual ~UIElement() = default;
 
-		template<StyleSelector... selectors>
+		template<StyleSelector... Selectors>
 		void AddClassStyle()
 		{
-			_classStyleSetter = [](Style& style) { (selectors(style), ...); };
-			_classStyleSetter(style);
+			_classStyleSetter = [](Sgl::Style& style) { (Selectors(style), ...); };
+			_classStyleSetter(Style);
 		}
 	protected:
 		void SetClassStyle();

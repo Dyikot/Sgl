@@ -9,13 +9,30 @@ namespace Sgl
 	class Benchmark
 	{
 	private:
-		size_t _loops = 1;
+		constexpr static size_t _defaultLoopsNumber = 1e2;
+
+		size_t _loopsNumber = _defaultLoopsNumber;
 		std::string _name = "Benchmark";
 	public:
-		static Benchmark New() { return Benchmark(); }
-		static Benchmark New(size_t loops) { return Benchmark("Benchmark", loops); }
-		static Benchmark New(std::string name) { return Benchmark(std::move(name), 1); }
-		static Benchmark New(std::string name, size_t loops) { return Benchmark(std::move(name), loops); }
+		static Benchmark New()
+		{
+			return Benchmark();
+		}
+
+		static Benchmark New(size_t loopsNumber) 
+		{
+			return Benchmark("Benchmark", loopsNumber);
+		}
+
+		static Benchmark New(std::string name) 
+		{
+			return Benchmark(std::move(name), _defaultLoopsNumber);		
+		}
+
+		static Benchmark New(std::string name, size_t loopsNumber)
+		{
+			return Benchmark(std::move(name), loopsNumber);
+		}
 
 		template<typename... TArgs> 
 		void Run(CAction<TArgs...> auto&& action, TArgs&&... args)
@@ -23,13 +40,13 @@ namespace Sgl
 			Stopwatch stopwatch;
 			stopwatch.Start();
 
-			for(size_t i = 0; i < _loops; i++)
+			for(size_t i = 0; i < _loopsNumber; i++)
 			{
 				std::invoke(action, std::forward<TArgs>(args)...);
 			}
 
 			stopwatch.Pause();
-			auto elapsed = stopwatch.Elapsed() / _loops;
+			auto elapsed = stopwatch.Elapsed() / _loopsNumber;
 			std::cout << std::format("{}: {}\n", _name, elapsed.ToString());
 		}
 	private:
@@ -37,8 +54,8 @@ namespace Sgl
 		Benchmark(const Benchmark&) = delete;
 		Benchmark(Benchmark&&) = delete;
 
-		Benchmark(std::string name, size_t loops):
-			_name(std::move(name)), _loops(loops)
+		Benchmark(std::string name, size_t loopsNumber):
+			_name(std::move(name)), _loopsNumber(loopsNumber)
 		{}		
 	};
 }

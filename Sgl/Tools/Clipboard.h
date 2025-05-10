@@ -14,7 +14,7 @@ namespace Sgl
 			SDL_SetClipboardText(text.data());
 		}
 
-		static auto GetText()
+		static std::string GetText()
 		{
 			auto rawText = SDL_GetClipboardText();
 			std::string text = rawText;

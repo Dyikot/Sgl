@@ -8,20 +8,20 @@ namespace Sgl
 	class Stopwatch
 	{
 	private:
-		bool _running = false;
+		using Clock = std::chrono::high_resolution_clock;
+		using TimePoint = std::chrono::steady_clock::time_point;
+
+		bool _isRunning = false;
 		TimeSpan _elapsed = TimeSpan::Zero();
-		std::chrono::steady_clock::time_point _start;
+		TimePoint _start;
 	public:
 		void Start();
 		void Restart();
 		void Reset();
 		void Pause();
-		bool IsRunning() const { return _running; }
+		bool IsRunning() const;
 		TimeSpan Elapsed();
 	private:
-		TimeSpan GetEplapsedTime()
-		{
-			return TimeSpan((std::chrono::high_resolution_clock::now() - _start).count());
-		}
+		TimeSpan GetEplapsedTime();
 	};
 }

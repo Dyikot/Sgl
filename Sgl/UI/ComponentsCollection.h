@@ -21,8 +21,8 @@ namespace Sgl
 		public IVisual
 	{
 	public:
-		UIElement& parent;
-		Nullable<Component> hoverComponent;
+		UIElement& Parent;
+		Component* HoverComponent = nullptr;
 	public:
 		explicit ComponentsCollection(UIElement& parent);
 

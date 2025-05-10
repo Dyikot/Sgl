@@ -44,6 +44,9 @@ namespace Sgl
 			return *this;
 		}
 
-		operator SDL_Texture* () const noexcept { return _texture; }
+		operator SDL_Texture* () const noexcept 
+		{ 
+			return _texture; 
+		}
 	};
 }

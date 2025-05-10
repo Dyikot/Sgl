@@ -17,8 +17,8 @@ namespace Sgl
 
 	struct KeyEventArgs: EventArgs
 	{
-		ButtonState state;
-		SDL_Keysym key;
+		ButtonState State;
+		SDL_Keysym Key;
 	};
 
 	enum class MouseButton
@@ -28,35 +28,35 @@ namespace Sgl
 
 	struct MouseButtonEventArgs : EventArgs
 	{
-		MouseButton button;
-		ButtonState state;
-		uint8_t clicksCount;
-		SDL_FPoint position;
+		MouseButton Button;
+		ButtonState State;
+		uint8_t ClicksNumber;
+		SDL_FPoint Position;
 	};
 
 	struct MouseWheelEventArgs: EventArgs
 	{
-		SDL_FPoint position;
-		float scrolledHorizontally;
-		float scrolledVertically;
-		SDL_MouseWheelDirection direction;
+		SDL_FPoint Position;
+		float ScrolledHorizontally;
+		float ScrolledVertically;
+		SDL_MouseWheelDirection Direction;
 	};
 
 	struct SizeChangedEventArgs: EventArgs
 	{
-		int width;
-		int height;
+		int Width;
+		int Height;
 	};
 
 	struct TextChangedEventArgs: EventArgs
 	{
-		std::string text;
-		size_t selectionLength;
-		int selectionStart;
+		std::string Text;
+		size_t SelectionLength;
+		int SelectionStart;
 	};
 
 	struct TextInputEventArgs: EventArgs
 	{
-		std::string text;
+		std::string Text;
 	};
 }

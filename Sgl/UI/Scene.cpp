@@ -5,25 +5,25 @@ namespace Sgl
 	void Scene::OnRender(RenderContext renderContext) const
 	{
 		renderContext.SetSceneBackground(*this);
-		components.OnRender(renderContext);
+		Components.OnRender(renderContext);
 	}
 
 	void Scene::OnMouseMove(const MouseButtonEventArgs& e)
 	{
 		UIElement::OnMouseMove(e);
-		components.OnMouseMove(e);
+		Components.OnMouseMove(e);
 	}
 
 	void Scene::OnMouseDown(const MouseButtonEventArgs& e)
 	{
 		UIElement::OnMouseDown(e);
-		components.OnMouseDown(e);
+		Components.OnMouseDown(e);
 	}
 
 	void Scene::OnMouseUp(const MouseButtonEventArgs& e)
 	{
 		UIElement::OnMouseUp(e);
-		components.OnMouseUp(e);
+		Components.OnMouseUp(e);
 	}
 
 	void SceneManager::Pop() noexcept

@@ -130,19 +130,6 @@ namespace Sgl
 		std::unique_ptr<ValueContainerBase> _value;
 	};
 
-	template<typename TKey>
-	class AnyMap: public std::unordered_map<TKey, Any>
-	{
-	public:
-		using Base = std::unordered_map<TKey, Any>;
-	public:
-		template<typename TValue, typename... TArgs>
-		void Add(const TKey& key, TArgs&&... args)
-		{
-			Base::emplace(key, CreateAny<TValue>(std::forward<TArgs>(args)...));
-		}
-	};
-
 	template<typename TValue, typename ...TArgs>
 	Any CreateAny(TArgs&& ...args)
 	{

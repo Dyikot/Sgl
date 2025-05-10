@@ -14,9 +14,9 @@ namespace Sgl
 	class Application
 	{
 	public:
-		Window window;
-		SceneManager sceneManager;
-		ResourceMap resources;
+		Window Window;
+		SceneManager SceneManager;
+		ResourceMap Resources;
 	private:
 		static inline Application* _current;
 		bool _running = false;

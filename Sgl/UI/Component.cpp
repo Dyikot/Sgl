@@ -4,23 +4,23 @@ namespace Sgl
 {
     void Component::OnRender(RenderContext renderContext) const
     {
-        if(auto tooltip = style.tooltip; _hover && tooltip)
+        if(_isHover && Style.Tooltip)
         {
-            tooltip->OnRender(renderContext);
+            Style.Tooltip->OnRender(renderContext);
         }
     }
 
     void Component::OnMouseEnter(const MouseButtonEventArgs& e)
     {
-        _hover = true;
+        _isHover = true;
         SetStyle(_hoverStyleSetter);
-        mouseEnter.TryRaise(*this, e);
+        MouseEnter.TryRaise(*this, e);
     }
 
     void Component::OnMouseLeave(const MouseButtonEventArgs& e)
     {
-        _hover = false;
+        _isHover = false;
         SetClassStyle();
-        mouseLeave.TryRaise(*this, e);
+        MouseLeave.TryRaise(*this, e);
     }
 }

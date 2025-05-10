@@ -6,7 +6,7 @@ using namespace std::chrono;
 namespace Sgl
 {
 	Timer::Timer(TimeSpan timespan) noexcept:
-		duration(timespan)
+		Duration(timespan)
 	{}
 
 	Timer::~Timer()
@@ -16,17 +16,17 @@ namespace Sgl
 
 	void Timer::Start() noexcept
 	{
-		if(_elapsed)
+		if(_isElapsed)
 		{
 			Reset();
 		}
-		else if(!_paused)
+		else if(!_isPaused)
 		{
 			return;
 		}
 
-		_paused = false;
-		_thread = std::thread(std::bind_front(&Timer::Wait, this));
+		_isPaused = false;
+		_thread = std::thread([this] { Wait(); });
 	}
 
 	void Timer::Restart() noexcept
@@ -37,7 +37,7 @@ namespace Sgl
 
 	void Timer::Pause()
 	{
-		_paused = true;
+		_isPaused = true;
 		_conditionVariable.notify_one();
 		_thread.join();
 	}
@@ -45,8 +45,18 @@ namespace Sgl
 	void Timer::Reset() noexcept
 	{
 		Pause();
-		_elapsed = false;
+		_isElapsed = false;
 		_stopwatch.Reset();
+	}
+
+	bool Timer::IsPaused() const noexcept
+	{
+		return _isPaused;
+	}
+
+	bool Timer::IsElapsed() const noexcept
+	{
+		return _isElapsed;
 	}
 
 	void Timer::Wait()
@@ -54,18 +64,17 @@ namespace Sgl
 		std::mutex mutex;
 
 		_stopwatch.Start();
-		nanoseconds waitDuration((duration - _stopwatch.Elapsed()).ToNanoseconds());
+		nanoseconds waitDuration((Duration - _stopwatch.Elapsed()).ToNanoseconds());
 
 		std::unique_lock<std::mutex> lock(mutex);
-		_conditionVariable.wait_for(lock, waitDuration,
-								    std::bind_front(&Timer::IsPaused, this));
+		_conditionVariable.wait_for(lock, waitDuration, [this] { return IsPaused(); });
 
 		_stopwatch.Pause();
-		_elapsed = !_paused;
+		_isElapsed = !_isPaused;
 
-		if(_elapsed)
+		if(_isElapsed)
 		{
-			Elapsed.TryRaise(*this, TimeElapsedEventArgs{.duration = duration });
+			Elapsed.TryRaise(*this, EventArgs());
 		}
 	}
 }

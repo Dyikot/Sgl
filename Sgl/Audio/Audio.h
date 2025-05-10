@@ -9,13 +9,20 @@ namespace Sgl
 {
 	class Volume
 	{
-	public:
-		static constexpr Volume Max() { return Volume(1); }
-		static constexpr Volume Zero() { return Volume(0); }
 	private:
 		static constexpr double _maxValue = 1;
 		double _value;
 	public:
+		static constexpr Volume Max()
+		{
+			return Volume(1);
+		}
+
+		static constexpr Volume Zero()
+		{
+			return Volume(0);
+		}
+
 		constexpr Volume() noexcept:
 			_value(_maxValue)
 		{}
@@ -95,39 +102,40 @@ namespace Sgl
 	private:
 		Mix_Music* _music;
 	public:
-		Volume volume;
-		const TimeSpan duration;
+		Volume Volume;
+		const TimeSpan Duration;
 	public:
 		Music(std::string_view path) noexcept;
 		Music(const Music&) = delete;
 		Music(Music&&) = delete;
-		~Music() noexcept { Mix_FreeMusic(_music); }
+		~Music() noexcept;
 
 		void Play(int loops = 0) const;
 		void Pause() noexcept;
-		void Resume() noexcept { Mix_ResumeMusic(); }
-		void Rewind() noexcept { Mix_RewindMusic(); }
-		void Halt() noexcept { Mix_HaltMusic(); }
-		bool IsPaused() noexcept { return Mix_PausedMusic(); }
-		bool IsPlaying() noexcept { return Mix_PlayingMusic(); }
-		Mix_Music* ToMix_Music() const noexcept { return _music; }
+		void Resume() noexcept;
+		void Rewind() noexcept;
+		void Halt() noexcept;
+		bool IsPaused() noexcept;
+		bool IsPlaying() noexcept;
+		Mix_Music* ToMix_Music() const noexcept;
 	};
 
 	class SoundChunk
 	{
 	private:
-		static constexpr int Auto = -1;
+		static constexpr int _auto = -1;
+
 		Mix_Chunk* _soundChunk;
 	public:
-		Volume volume;
+		Volume Volume;
 	public:
 		SoundChunk(std::string_view path) noexcept;
 		SoundChunk(const SoundChunk&) = delete;
 		SoundChunk(SoundChunk&&) = delete;
-		~SoundChunk() noexcept { Mix_FreeChunk(_soundChunk); }
+		~SoundChunk() noexcept;
 
-		void Play(int channel = Auto, int loops = 0) const;
-		Mix_Chunk* ToMix_Chunk() const noexcept { return _soundChunk; }
+		void Play(int channel = _auto, int loops = 0) const;
+		Mix_Chunk* ToMix_Chunk() const noexcept;
 	};
 
 	using MusicView = std::reference_wrapper<Music>;

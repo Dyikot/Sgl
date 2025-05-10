@@ -18,7 +18,7 @@ namespace Sgl
 	class Scene: public UIElement, public ECS::IProcessed
 	{
 	public:
-		ComponentsCollection components = ComponentsCollection(*this);
+		ComponentsCollection Components = ComponentsCollection(*this);
 	public:
 		virtual ~Scene() = default;
 

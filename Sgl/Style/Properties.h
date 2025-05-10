@@ -8,13 +8,13 @@ namespace Sgl
 	struct Thickness
 	{
 	public:
-		uint32_t top;
-		uint32_t right;
-		uint32_t bottom;
-		uint32_t left;
+		uint32_t Top;
+		uint32_t Right;
+		uint32_t Bottom;
+		uint32_t Left;
 	public:
 		constexpr Thickness(uint32_t top, uint32_t right, uint32_t bottom, uint32_t left) noexcept:
-			top(top), right(right), bottom(bottom), left(left)
+			Top(top), Right(right), Bottom(bottom), Left(left)
 		{}
 
 		constexpr Thickness(uint32_t lenght = 0) noexcept:
@@ -23,29 +23,29 @@ namespace Sgl
 
 		friend constexpr bool operator==(const Thickness& left, const Thickness& right)
 		{
-			return left.top == right.top &&
-				   left.right == right.right &&
-				   left.bottom == right.bottom &&
-				   left.left == right.left;
+			return left.Top == right.Top &&
+				   left.Right == right.Right &&
+				   left.Bottom == right.Bottom &&
+				   left.Left == right.Left;
 		}
 	};
 
 	class FontFamily
 	{		
 	public:
-		std::filesystem::path path;
-		std::string name;
+		std::filesystem::path Path;
+		std::string Name;
 	public:
 		FontFamily():
 			FontFamily("Segoe UI")
 		{}
 
 		explicit FontFamily(std::string name):
-			path(TryGetPathByName(name)), name(std::move(name))
+			Path(TryGetPathByName(name)), Name(std::move(name))
 		{}
 
 		FontFamily(std::filesystem::path path, std::string name):
-			path(std::move(path)), name(std::move(name))
+			Path(std::move(path)), Name(std::move(name))
 		{}
 
 		static std::filesystem::path TryGetPathByName(std::string name)
@@ -66,17 +66,17 @@ namespace Sgl
 
 	struct Font
 	{
-		int size;
-		FontFamily family;
-		FontStyle style;
-		FontWeight weight;
-		Color color;
+		int Size;
+		FontFamily Family;
+		FontStyle Style;
+		FontWeight Feight;
+		Color Color;
 	};
 
 	struct Border
 	{
-		Thickness thickness;
-		Color color;
+		Thickness Thickness;
+		Color Color;
 	};
 
 	enum class TextDecorations

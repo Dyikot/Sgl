@@ -11,35 +11,38 @@ namespace Sgl
 
 	struct Style
 	{
-		float width = 0;
-		float height = 0;
-		float minWidth = 0;
-		float minHeight = 0;
-		float maxWidth = 0;
-		float maxHeight = 0;
-		size_t zIndex = 1;
-		Thickness margin;
-		Thickness padding;
-		Border border =
+		float Width = 0;
+		float Height = 0;
+		float MinWidth = 0;
+		float MinHeight = 0;
+		float MaxWidth = 0;
+		float MaxHeight = 0;
+		size_t ZIndex = 1;
+		Thickness Margin;
+		Thickness Padding;
+
+		Border Border =
 		{
-			.thickness = Thickness(1),
-			.color = Colors::Black
+			.Thickness = Thickness(1),
+			.Color = Colors::Black
 		};
-		Font font =
+
+		Font Font =
 		{
-			.size = 14,
-			.family = {},
-			.style = FontStyle::Normal,
-			.weight = FontWeight::Normal,
-			.color = Colors::Black
+			.Size = 14,
+			.Family = {},
+			.Style = FontStyle::Normal,
+			.Feight = FontWeight::Normal,
+			.Color = Colors::Black
 		};
-		CursorGetter cursor = Cursors::Arrow;
-		Color backgroundColor = Colors::Black;
-		const Component* tooltip = nullptr;
-		const Texture* backgroundTexture = nullptr;
-		Visibility visibility = Visibility::Visible;
-		VerticalAlignment verticalAlignment = VerticalAlignment::Top;
-		HorizontalAlignment horizontalAlignment = HorizontalAlignment::Left;
+
+		CursorGetter Cursor = Cursors::Arrow;
+		Color BackgroundColor = Colors::Black;
+		const Component* Tooltip = nullptr;
+		const Texture* BackgroundTexture = nullptr;
+		Visibility Visibility = Visibility::Visible;
+		VerticalAlignment VerticalAlignment = VerticalAlignment::Top;
+		HorizontalAlignment VorizontalAlignment = HorizontalAlignment::Left;
 	};
 
 	using StyleSelector = void(*)(Style&);

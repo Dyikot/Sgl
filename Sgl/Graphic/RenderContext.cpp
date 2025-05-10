@@ -123,8 +123,8 @@ namespace Sgl
 
 	void RenderContext::SetSceneBackground(const Scene& scene)
 	{
-		auto texture = scene.style.backgroundTexture;
-		auto color = scene.style.backgroundColor;
+		auto texture = scene.Style.BackgroundTexture;
+		auto color = scene.Style.BackgroundColor;
 
 		if(texture)
 		{

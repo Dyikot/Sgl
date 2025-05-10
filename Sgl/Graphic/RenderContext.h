@@ -39,23 +39,27 @@ namespace Sgl
 		void DrawShape(VerticesView vertices, std::span<const int> order, const Texture& texture, Color color);
 		void SetSceneBackground(const Scene& scene);
 		void SetBlendMode(SDL_BlendMode mode);
-		void UpdateScreen() { SDL_RenderPresent(_renderer); }
+
+		void UpdateScreen()
+		{ 
+			SDL_RenderPresent(_renderer);
+		}
 		
 		void SetRenderColor(Color color) const noexcept
 		{
-			SDL_SetRenderDrawColor(_renderer, color.r, color.g, color.b, color.a);
+			SDL_SetRenderDrawColor(_renderer, color.Red, color.Green, color.Blue, color.Alpha);
 		}
 
 		void SetTextureColor(const Texture& texture, Color color) const noexcept
 		{
-			SDL_SetTextureColorMod(texture, color.r, color.g, color.b);
-			SDL_SetTextureAlphaMod(texture, color.a);
+			SDL_SetTextureColorMod(texture, color.Red, color.Green, color.Blue);
+			SDL_SetTextureAlphaMod(texture, color.Alpha);
 		}
 
 		void SetSurfaceColor(const Surface& surface, Color color) const noexcept
 		{
-			SDL_SetSurfaceColorMod(surface, color.r, color.g, color.b);
-			SDL_SetSurfaceAlphaMod(surface, color.a);
+			SDL_SetSurfaceColorMod(surface, color.Red, color.Green, color.Blue);
+			SDL_SetSurfaceAlphaMod(surface, color.Alpha);
 		}		
 	};
 

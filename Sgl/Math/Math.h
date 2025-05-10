@@ -7,13 +7,13 @@
 
 namespace Sgl::Math
 {
-	template<size_t number>
-	inline std::array<float, number> SinRange() noexcept
+	template<size_t Number>
+	inline std::array<float, Number> SinRange() noexcept
 	{
-		constexpr double step = 2 * std::numbers::pi / number;
-		std::array<float, number> result;
+		constexpr double step = 2 * std::numbers::pi / Number;
+		std::array<float, Number> result;
 
-		for(size_t i = 0; i < number; i++)
+		for(size_t i = 0; i < Number; i++)
 		{
 			result[i] = sinf(step * i);
 		}
@@ -21,13 +21,13 @@ namespace Sgl::Math
 		return result;
 	}
 
-	template<size_t number>
-	inline std::array<float, number> CosRange() noexcept
+	template<size_t Number>
+	inline std::array<float, Number> CosRange() noexcept
 	{
-		constexpr double step = 2 * std::numbers::pi / number;
-		std::array<float, number> result;
+		constexpr double step = 2 * std::numbers::pi / Number;
+		std::array<float, Number> result;
 
-		for(size_t i = 0; i < number; i++)
+		for(size_t i = 0; i < Number; i++)
 		{
 			result[i] = cosf(step * i);
 		}

@@ -21,38 +21,38 @@ namespace Sgl
 		VerticesCollection(PointsView points, PointsView textureCoordinates, Color color);
 	};
 
-	template<size_t points = 360>
-	class Ellipse: public std::array<SDL_FPoint, points>
+	template<size_t Points = 360>
+	class Ellipse: public std::array<SDL_FPoint, Points>
 	{
 	private:
-		static inline auto sinRange = Math::SinRange<360>();
-		static inline auto cosRange = Math::CosRange<360>();
+		static inline auto _sinRange = Math::SinRange<360>();
+		static inline auto _cosRange = Math::CosRange<360>();
 	public:
 		constexpr Ellipse(SDL_FPoint position, int width, int height)
 		{
 			constexpr size_t maxAngle = 360;
 
-			if constexpr(maxAngle % points)
+			if constexpr(maxAngle % Points)
 			{
-				constexpr auto angleStep = maxAngle / points;
+				constexpr auto angleStep = maxAngle / Points;
 				size_t angle = 0;
 
 				for(SDL_FPoint& point : *this)
 				{
-					point.x = position.x + width * cosRange[angle];
-					point.y = position.y + height * sinRange[angle];
+					point.x = position.x + width * _cosRange[angle];
+					point.y = position.y + height * _sinRange[angle];
 					angle += angleStep;
 				}
 			}
 			else
 			{
-				constexpr float AngleStep = 2 * std::numbers::pi / points;	
+				constexpr float angleStep = 2 * std::numbers::pi / Points;	
 
 				for(float angle = 0; SDL_FPoint& point : *this)
 				{
 					point.x = position.x + width * cosf(angle);
 					point.y = position.y + height * sinf(angle);
-					angle += AngleStep;
+					angle += angleStep;
 				}
 			}
 		}

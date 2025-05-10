@@ -45,11 +45,25 @@ namespace Sgl
 			return _value;
 		}
 
-		operator T& () { return Get(); }
-		operator const T& () const { return Get(); }
+		operator T& ()
+		{ 
+			return Get(); 
+		}
 
-		T* operator->() { return &Get(); }
-		const T* operator->() const { return &Get(); }
+		operator const T& () const 
+		{ 
+			return Get();
+		}
+
+		T* operator->() 
+		{ 
+			return &Get();
+		}
+
+		const T* operator->() const 
+		{ 
+			return &Get();
+		}
 	private:
 		void TryCreateValue() const
 		{

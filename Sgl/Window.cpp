@@ -2,18 +2,18 @@
 
 namespace Sgl
 {
-    constexpr auto defaultTitle = "Window";
-    constexpr auto defaultWidth = 1280;
-    constexpr auto defaultHeight = 720;
-    constexpr auto defaultPosition = SDL_Point(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+    constexpr auto DefaultTitle = "Window";
+    constexpr auto DefaultWidth = 1280;
+    constexpr auto DefaultHeight = 720;
+    constexpr auto DefaultPosition = SDL_Point(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 
     Window::Window() noexcept:
-        _widnow(SDL_CreateWindow(defaultTitle, defaultPosition.x, defaultPosition.y,
-                                 defaultWidth, defaultHeight, SDL_WINDOW_HIDDEN)),
+        _widnow(SDL_CreateWindow(DefaultTitle, DefaultPosition.x, DefaultPosition.y,
+                                 DefaultWidth, DefaultHeight, SDL_WINDOW_HIDDEN)),
         _renderer(SDL_CreateRenderer(_widnow, -1, SDL_RENDERER_ACCELERATED))
     {
         PrintSDLErrorIf(_widnow == nullptr);
-        SetLogicalSize(defaultWidth, defaultHeight);
+        SetLogicalSize(DefaultWidth, DefaultHeight);
     }
 
     Window::~Window() noexcept
@@ -68,11 +68,17 @@ namespace Sgl
         switch(displayMode)
         {
             case DiplayMode::Window: 
-                SDL_SetWindowFullscreen(_widnow, 0); break;
+                SDL_SetWindowFullscreen(_widnow, 0);
+                break;
+
             case DiplayMode::BorderlessWindow:
-                SDL_SetWindowFullscreen(_widnow, SDL_WINDOW_FULLSCREEN_DESKTOP); break;
+                SDL_SetWindowFullscreen(_widnow, SDL_WINDOW_FULLSCREEN_DESKTOP);
+                break;
+
             case DiplayMode::Fullscreen:
-                SDL_SetWindowFullscreen(_widnow, SDL_WINDOW_FULLSCREEN); break;
+                SDL_SetWindowFullscreen(_widnow, SDL_WINDOW_FULLSCREEN);
+                break;
+
             default:
                 throw std::invalid_argument("Selected display mode does not exist!");
         }
@@ -82,7 +88,7 @@ namespace Sgl
     {
         if(!SDL_RenderSetVSync(_renderer, static_cast<int>(value)))
         {
-            _vsyncEnabled = value;
+            _isVSyncEnable = value;
         }
         else
         {
@@ -170,10 +176,35 @@ namespace Sgl
 
         switch(state)
         {
-            case SDL_WINDOW_MINIMIZED: return WindowState::Minimized;
-            case SDL_WINDOW_MAXIMIZED: return WindowState::Maximized;
-            default: return WindowState::Normal;
+            case SDL_WINDOW_MINIMIZED: 
+                return WindowState::Minimized;
+
+            case SDL_WINDOW_MAXIMIZED: 
+                return WindowState::Maximized;
+
+            default:
+                return WindowState::Normal;
         }
+    }
+
+    void Window::EnableVSync() noexcept
+    {
+        SetVSync(true); 
+    }
+
+    void Window::DisableVSync() noexcept
+    {
+        SetVSync(false);
+    }
+
+    void Window::EnableResizable() noexcept
+    {
+        SetResize(true);
+    }
+
+    void Window::DisabeResizable() noexcept
+    {
+        SetResize(false);
     }
 
     RenderContext Window::CreateRenderContext() const noexcept
@@ -208,6 +239,6 @@ namespace Sgl
 
     bool Window::IsVSyncEnable() const
     {
-        return _vsyncEnabled;
+        return _isVSyncEnable;
     }
 }

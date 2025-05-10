@@ -6,21 +6,16 @@
 
 namespace Sgl
 {
-	struct TimeElapsedEventArgs: EventArgs
-	{
-		TimeSpan duration;
-	};
-
 	class Timer;
-	using TimeElapsedHandler = EventHandler<Timer, TimeElapsedEventArgs>;
+	using TimeElapsedHandler = EventHandler<Timer, EventArgs>;
 
 	class Timer
 	{
 	public:
-		const TimeSpan duration;
+		const TimeSpan Duration;
 	private:
-		bool _paused = true;
-		bool _elapsed = false;
+		bool _isPaused = true;
+		bool _isElapsed = false;
 		Stopwatch _stopwatch;
 		std::thread _thread;
 		std::condition_variable _conditionVariable;
@@ -36,8 +31,8 @@ namespace Sgl
 		void Restart() noexcept;
 		void Pause();
 		void Reset() noexcept;
-		bool IsPaused() const noexcept { return _paused; }
-		bool IsElapsed() const noexcept { return _elapsed; }
+		bool IsPaused() const noexcept;
+		bool IsElapsed() const noexcept;
 	private:
 		void Wait();
 	};

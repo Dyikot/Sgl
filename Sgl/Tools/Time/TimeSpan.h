@@ -52,13 +52,40 @@ namespace Sgl
 			return TimeSpan(0);
 		}
 
-		constexpr auto ToNanoseconds() const noexcept { return _nanoseconds; }
-		constexpr auto ToMicroseconds() const noexcept { return _nanoseconds / 1e3; }
-		constexpr auto ToMilliseconds() const noexcept { return _nanoseconds / 1e6; }
-		constexpr auto ToSeconds() const noexcept { return _nanoseconds / 1e9; }
-		constexpr auto ToMinutes() const noexcept { return _nanoseconds / 6e10; }
-		constexpr auto ToHours() const noexcept { return _nanoseconds / 36e11; }
-		constexpr auto ToDays() const noexcept { return _nanoseconds / 864e11; }
+		constexpr auto ToNanoseconds() const noexcept 
+		{
+			return _nanoseconds;
+		}
+
+		constexpr auto ToMicroseconds() const noexcept 
+		{
+			return _nanoseconds / 1e3;
+		}
+
+		constexpr auto ToMilliseconds() const noexcept 
+		{ 
+			return _nanoseconds / 1e6;
+		}
+
+		constexpr auto ToSeconds() const noexcept 
+		{ 
+			return _nanoseconds / 1e9; 
+		}
+
+		constexpr auto ToMinutes() const noexcept 
+		{ 
+			return _nanoseconds / 6e10;
+		}
+
+		constexpr auto ToHours() const noexcept 
+		{ 
+			return _nanoseconds / 36e11;
+		}
+
+		constexpr auto ToDays() const noexcept 
+		{ 
+			return _nanoseconds / 864e11;
+		}
 
 		constexpr TimeSpan Duration() const noexcept
 		{

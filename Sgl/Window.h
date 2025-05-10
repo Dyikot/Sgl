@@ -26,11 +26,11 @@ namespace Sgl
 	class Window
 	{
 	public:
-		bool canRenderWhenMinimized = false;
+		bool IsRenderableWhenMinimized = false;
 	private:
 		SDL_Window* _widnow;
 		SDL_Renderer* _renderer;
-		bool _vsyncEnabled = false;
+		bool _isVSyncEnable = false;
 		std::optional<Surface> _icon;
 	public:
 		Window() noexcept;
@@ -47,8 +47,6 @@ namespace Sgl
 		void SetPosition(SDL_Point value) noexcept;
 		void SetIcon(std::string_view path);
 		void SetDisplayMode(DiplayMode displayMode);
-		void SetVSync(bool value);
-		void SetResize(bool value);
 
 		size_t GetWidth() const noexcept;
 		size_t GetHeight() const noexcept;
@@ -62,6 +60,12 @@ namespace Sgl
 		SDL_Point GetPosition() const noexcept;
 		WindowState GetWindowState() const noexcept;
 		
+		void EnableVSync() noexcept;
+		void DisableVSync() noexcept;
+
+		void EnableResizable() noexcept;
+		void DisabeResizable() noexcept;
+
 		RenderContext CreateRenderContext() const noexcept;
 		RenderDependenciesFactory CreateRenderDependenciesFactory() const noexcept;
 
@@ -70,5 +74,8 @@ namespace Sgl
 		bool IsVisible() const;
 		bool IsResizable() const;
 		bool IsVSyncEnable() const;
+	private:
+		void SetVSync(bool value);
+		void SetResize(bool value);
 	};
 }

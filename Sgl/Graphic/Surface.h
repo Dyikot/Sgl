@@ -38,6 +38,9 @@ namespace Sgl
 			return *this;
 		}
 
-		operator SDL_Surface*() const noexcept { return _surface; }
+		operator SDL_Surface*() const noexcept 
+		{ 
+			return _surface;
+		}
 	};
 }

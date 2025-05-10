@@ -10,21 +10,20 @@ namespace Sgl
 	class Component: public UIElement
 	{
 	public:
-		SDL_FPoint position = { 0, 0 };
-		ComponentsCollection children = ComponentsCollection(*this);
-		std::vector<StyleSelector> hoverSelectors;
-		Event<MouseEventHandler> mouseEnter;
-		Event<MouseEventHandler> mouseLeave;
+		SDL_FPoint Position = { 0, 0 };
+		ComponentsCollection Children = ComponentsCollection(*this);
+		Event<MouseEventHandler> MouseEnter;
+		Event<MouseEventHandler> MouseLeave;
 	private:
 		StyleSetter _hoverStyleSetter;
-		bool _hover = false;
+		bool _isHover = false;
 	public:
 		virtual ~Component() = default;		
 
-		template<StyleSelector... selectors>
+		template<StyleSelector... Selectors>
 		void AddHoverStyle()
 		{
-			_hoverStyleSetter = [selectors...](Style& style) { (selectors(style), ...); };
+			_hoverStyleSetter = [](Sgl::Style& style) { (Selectors(style), ...); };
 		}
 
 		void OnRender(RenderContext renderContext) const override;

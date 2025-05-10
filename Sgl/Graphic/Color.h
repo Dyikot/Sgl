@@ -6,36 +6,39 @@ namespace Sgl
 	class Color
 	{
 	public:
-		uint8_t r, g, b, a;
+		uint8_t Red;
+		uint8_t Green;
+		uint8_t Blue;
+		uint8_t Alpha;
 	private:
 		static constexpr uint8_t _opaque = 0xff;
 		static constexpr uint8_t _transparent = 0x00;
 	public:
-		constexpr Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a):
-			r(r), g(g), b(b), a(a)
+		constexpr Color(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha):
+			Red(red), Green(green), Blue(blue), Alpha(alpha)
 		{}
 
-		constexpr Color(uint8_t r, uint8_t g, uint8_t b):
-			Color(r, g, b, _opaque)
+		constexpr Color(uint8_t red, uint8_t green, uint8_t blue):
+			Color(red, green, blue, _opaque)
 		{}
 
 		constexpr explicit Color(uint32_t rgba):
-			r(rgba >> 24), g(rgba >> 16), b(rgba >> 8), a(rgba)
+			Red(rgba >> 24), Green(rgba >> 16), Blue(rgba >> 8), Alpha(rgba)
 		{}
 
 		constexpr bool IsTransparent() const noexcept 
 		{
-			return a == _transparent;
+			return Alpha == _transparent;
 		}
 
 		constexpr bool operator==(Color color) const 
 		{
-			return r == color.r && g == color.g && b == color.b;
+			return Red == color.Red && Green == color.Green && Blue == color.Blue;
 		}
 
 		constexpr operator SDL_Color() const 
 		{ 
-			return SDL_Color{ r, g, b, a };
+			return SDL_Color{ Red, Green, Blue, Alpha };
 		}
 	};
 

@@ -13,10 +13,12 @@ namespace Sgl::Math
 	inline bool DoesTriangleContainsPoint(SDL_FPoint a, SDL_FPoint b,
 										  SDL_FPoint c, SDL_FPoint point)
 	{
-		return fabsf(TriangleArea(a, b, c)
-					 - TriangleArea(point, a, b)
-					 + TriangleArea(point, b, c)
-					 + TriangleArea(point, a, c)) < 1e-5f;
+		auto abc = TriangleArea(a, b, c);
+		auto pab = TriangleArea(point, a, b);
+		auto pbc = TriangleArea(point, b, c);
+		auto pac = TriangleArea(point, a, c);
+
+		return fabsf(abc - pab + pbc + pac) < 1e-5f;
 	}
 
 	inline float VectorProductKValue(SDL_FPoint a, SDL_FPoint b, SDL_FPoint c)
@@ -38,9 +40,7 @@ namespace Sgl::Math
 
 		while(order.size() > MinVerticesNumber)
 		{
-			bool isConvex = VectorProductKValue(points[*previous],
-												points[*current],
-												points[*next]) < 0;
+			bool isConvex = VectorProductKValue(points[*previous], points[*current], points[*next]) < 0;
 			bool isTriangleContainsPoint = false;
 
 			if(isConvex)
