@@ -1,4 +1,4 @@
-#include "Ranges.h"
+#include "Collections.h"
 #include <cassert>
 
 namespace Sgl
@@ -13,13 +13,13 @@ namespace Sgl
 
 		for(auto& point : points)
 		{
-			push_back(SDL_Vertex{ point, color, {} });
+			push_back(SDL_Vertex { point, color, SDL_FPoint() });
 		}
 	}
 
 	VerticesCollection::VerticesCollection(PointsView points, 
-													 PointsView textureCoordinates,
-													 Color color)
+										   PointsView textureCoordinates,
+										   Color color)
 	{
 		assert(points.size() == textureCoordinates.size());
 
@@ -27,9 +27,8 @@ namespace Sgl
 
 		for(size_t i = 0; i < points.size(); i++)
 		{
-			push_back(SDL_Vertex{ points[i], color, textureCoordinates[i]});
+			push_back(SDL_Vertex { points[i], color, textureCoordinates[i] });
 		}
 	}
-
 }
 

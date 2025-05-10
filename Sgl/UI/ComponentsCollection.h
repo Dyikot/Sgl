@@ -31,6 +31,6 @@ namespace Sgl
 		void OnMouseUp(const MouseButtonEventArgs& e);
 		void OnRender(RenderContext renderContext) const override;
 	private:
-		void SetCursor(CursorView cursor);
+		void SetCursor(CursorGetter cursorGetter);
 	};
 }

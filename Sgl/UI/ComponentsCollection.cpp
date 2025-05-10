@@ -84,11 +84,11 @@ namespace Sgl
         }
     }
 
-    void ComponentsCollection::SetCursor(CursorView cursor)
+    void ComponentsCollection::SetCursor(CursorGetter cursorGetter)
     {
-        if(SDL_GetCursor() != cursor())
+        if(SDL_GetCursor() != cursorGetter())
         {
-            SDL_SetCursor(cursor());
+            SDL_SetCursor(cursorGetter());
         }
     }
 }

@@ -6,7 +6,7 @@
 #include "../Graphic/Color.h"
 #include "../Graphic/Texture.h"
 #include "../Graphic/Surface.h"
-#include "Ranges.h"
+#include "Collections.h"
 
 namespace Sgl
 {

@@ -33,11 +33,11 @@ namespace Sgl
 			.weight = FontWeight::Normal,
 			.color = Colors::Black
 		};
+		CursorGetter cursor = Cursors::Arrow;
+		Color backgroundColor = Colors::Black;
 		const Component* tooltip = nullptr;
 		const Texture* backgroundTexture = nullptr;
-		Color backgroundColor = Colors::Black;
 		Visibility visibility = Visibility::Visible;
-		CursorView cursor = Cursors::Arrow;
 		VerticalAlignment verticalAlignment = VerticalAlignment::Top;
 		HorizontalAlignment horizontalAlignment = HorizontalAlignment::Left;
 	};

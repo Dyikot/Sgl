@@ -50,7 +50,7 @@ namespace Sgl
 		}
 	};
 
-	using CursorView = const Cursor& (*)();
+	using CursorGetter = const Cursor& (*)();
 
 	namespace Cursors
 	{
