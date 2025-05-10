@@ -12,11 +12,6 @@ namespace Sgl
 		PrintSDLErrorIf(_renderer == nullptr);
 	}
 
-	TextureFactory RenderContext::GetTextureFactory() const
-	{
-		return TextureFactory(_renderer);
-	}
-
 	void RenderContext::DrawPoint(SDL_FPoint point, Color color)
 	{
 		SetRenderColor(color);
@@ -143,5 +138,17 @@ namespace Sgl
 	void RenderContext::SetBlendMode(SDL_BlendMode mode)
 	{
 		SDL_SetRenderDrawBlendMode(_renderer, mode);
+	}
+
+	RenderDependenciesFactory::RenderDependenciesFactory(SDL_Renderer* renderer) noexcept:
+		_renderer(renderer)
+	{}
+
+	Texture RenderDependenciesFactory::CreateTexture(std::string_view path) const noexcept
+	{
+		auto texture = IMG_LoadTexture(_renderer, path.data());
+		PrintSDLErrorIf(texture == nullptr);
+
+		return Texture(texture);
 	}
 }

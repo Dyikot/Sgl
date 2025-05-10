@@ -17,11 +17,11 @@ namespace Sgl
 			_texture(texture)
 		{}
 
+		Texture(const Texture&) = delete;
+
 		Texture(Texture&& other) noexcept:
 			_texture(std::exchange(other._texture, nullptr))
 		{}
-
-		Texture(const Texture&) = delete;
 
 		~Texture() noexcept
 		{
@@ -45,23 +45,5 @@ namespace Sgl
 		}
 
 		operator SDL_Texture* () const noexcept { return _texture; }
-	};
-
-	struct TextureFactory
-	{
-	private:
-		SDL_Renderer* _renderer;
-	public:
-		explicit TextureFactory(SDL_Renderer* renderer) noexcept:
-			_renderer(renderer)
-		{}
-
-		Texture operator()(std::string_view path) const noexcept
-		{
-			auto texture = IMG_LoadTexture(_renderer, path.data());
-			PrintSDLErrorIf(texture == nullptr);
-
-			return Texture(texture);
-		}
 	};
 }

@@ -176,9 +176,14 @@ namespace Sgl
         }
     }
 
-    RenderContext Window::GetRenderContext() const noexcept
+    RenderContext Window::CreateRenderContext() const noexcept
     {
         return RenderContext(_renderer);
+    }
+
+    RenderDependenciesFactory Window::CreateRenderDependenciesFactory() const noexcept
+    {
+        return RenderDependenciesFactory(_renderer);
     }
 
     void Window::Show()

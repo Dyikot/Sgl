@@ -33,8 +33,8 @@ namespace Sgl
 			.weight = FontWeight::Normal,
 			.color = Colors::Black
 		};
-		Nullable<const Component> tooltip;
-		Nullable<Texture> backgroundTexture;
+		const Component* tooltip = nullptr;
+		const Texture* backgroundTexture = nullptr;
 		Color backgroundColor = Colors::Black;
 		Visibility visibility = Visibility::Visible;
 		CursorView cursor = Cursors::Arrow;

@@ -19,8 +19,6 @@ namespace Sgl
 	public:
 		explicit RenderContext(SDL_Renderer* renderer) noexcept;
 		
-		TextureFactory GetTextureFactory() const;
-
 		void DrawPoint(SDL_FPoint point, Color color);
 		void DrawPoints(PointsView points, Color color);
 		void DrawLine(SDL_FPoint start, SDL_FPoint end, Color color);
@@ -41,6 +39,7 @@ namespace Sgl
 		void DrawShape(VerticesView vertices, std::span<const int> order, const Texture& texture, Color color);
 		void SetSceneBackground(const Scene& scene);
 		void SetBlendMode(SDL_BlendMode mode);
+		void UpdateScreen() { SDL_RenderPresent(_renderer); }
 		
 		void SetRenderColor(Color color) const noexcept
 		{
@@ -57,9 +56,17 @@ namespace Sgl
 		{
 			SDL_SetSurfaceColorMod(surface, color.r, color.g, color.b);
 			SDL_SetSurfaceAlphaMod(surface, color.a);
-		}
-
-		operator SDL_Renderer* () const noexcept { return _renderer; }
+		}		
 	};
+
+	class RenderDependenciesFactory
+	{
+	private:
+		SDL_Renderer* _renderer;
+	public:
+		explicit RenderDependenciesFactory(SDL_Renderer* renderer) noexcept;
+
+		Texture CreateTexture(std::string_view path) const noexcept;
+	};	
 }
 

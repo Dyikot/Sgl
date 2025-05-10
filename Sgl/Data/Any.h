@@ -25,8 +25,6 @@ namespace Sgl
 
 			virtual ~ValueContainerBase() = default;
 
-			virtual std::unique_ptr<ValueContainerBase> Copy() const = 0;
-
 			template<typename T>
 			T& Get()
 			{
@@ -51,11 +49,6 @@ namespace Sgl
 				ValueContainerBase(typeid(T)),
 				Value(std::forward<TArgs>(args)...)
 			{}
-
-			std::unique_ptr<ValueContainerBase> Copy() const override
-			{
-				return std::make_unique<ValueContainer<T>>(*this);
-			}
 		};
 	public:
 		Any() noexcept = default;
@@ -65,9 +58,7 @@ namespace Sgl
 			_value(std::make_unique<ValueContainer<std::decay_t<T>>>(std::forward<T>(value)))
 		{}
 
-		Any(const Any& any):
-			_value(any._value->Copy())
-		{}
+		Any(const Any& any) = delete;
 
 		Any(Any&& any) noexcept:
 			_value(std::exchange(any._value, nullptr))
@@ -123,15 +114,7 @@ namespace Sgl
 			return *this;
 		}
 
-		Any& operator=(const Any& any)
-		{
-			if(this != &any)
-			{
-				_value = any._value->Copy();
-			}
-
-			return *this;
-		}
+		Any& operator=(const Any& any) = delete;
 
 		Any& operator=(Any&& any) noexcept
 		{

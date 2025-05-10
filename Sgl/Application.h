@@ -7,6 +7,7 @@
 #include "UI/Scene.h"
 #include "Graphic/Cursor.h"
 #include "Tools/Time/Stopwatch.h"
+#include "Collections/ResourceMap.h"
 
 namespace Sgl
 {
@@ -15,6 +16,7 @@ namespace Sgl
 	public:
 		Window window;
 		SceneManager sceneManager;
+		ResourceMap resources;
 	private:
 		static inline Application* _current;
 		bool _running = false;
