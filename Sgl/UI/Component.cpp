@@ -2,6 +2,11 @@
 
 namespace Sgl
 {
+    Component::Component()
+    {
+        Class.AddTarget(StyleTarget::Hover);
+    }
+
     void Component::OnRender(RenderContext renderContext) const
     {
         if(_isHover && Style.Tooltip)
@@ -13,14 +18,14 @@ namespace Sgl
     void Component::OnMouseEnter(const MouseButtonEventArgs& e)
     {
         _isHover = true;
-        ApplyStyle(_hoverStyleSelector);
+        Class.ApplyStyleTo(StyleTarget::Hover);
         MouseEnter.TryRaise(*this, e);
     }
 
     void Component::OnMouseLeave(const MouseButtonEventArgs& e)
     {
         _isHover = false;
-        ApplyDefaultStyle();
+        Class.ApplyStyleToElement();
         MouseLeave.TryRaise(*this, e);
     }
 }

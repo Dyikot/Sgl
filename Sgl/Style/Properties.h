@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <filesystem>
+#include "../Graphic/Color.h"
 
 namespace Sgl
 {

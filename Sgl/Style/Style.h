@@ -4,6 +4,7 @@
 #include "../Graphic/Cursor.h"
 #include "../Graphic/Color.h"
 #include "../Data/Any.h"
+#include "../Graphic/Texture.h"
 
 namespace Sgl
 {	
@@ -46,4 +47,42 @@ namespace Sgl
 	};
 
 	using StyleSelector = void(*)(Style&);
+
+	enum class StyleTarget
+	{
+		Element, Hover
+	};
+
+	class StyleClass
+	{
+	private:
+		static constexpr auto EmptySelector = [](Sgl::Style& style) {};
+
+		std::unordered_map<StyleTarget, StyleSelector> _selectors;
+		Style& _style;
+	public:
+		explicit StyleClass(Style& style):
+			_style(style)
+		{}
+
+		template<StyleSelector... Selectors>
+		void AddTo(StyleTarget styleTarget)
+		{
+			auto& selector = _selectors[styleTarget];
+			selector = CombineSelectors<Selectors...>;
+			selector(_style);
+		}
+
+		void AddTarget(StyleTarget styleTarget);
+		void ApplyStyleToElement();
+		void ApplyStyleTo(StyleTarget styleTarget);
+	private:
+		void ApplyStyleToTarget(StyleTarget styleTarget);
+
+		template<StyleSelector... Selectors>
+		static void CombineSelectors(Sgl::Style& style)
+		{
+			(Selectors(style), ...);
+		}
+	};
 }

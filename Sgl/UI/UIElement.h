@@ -18,6 +18,7 @@ namespace Sgl
 	{
 	public:
 		Style Style;
+		StyleClass Class = StyleClass(Style);
 		Event<KeyEventHandler> KeyUp;
 		Event<KeyEventHandler> KeyDown;
 		Event<MouseEventHandler> MouseDown;
@@ -25,23 +26,10 @@ namespace Sgl
 		Event<MouseEventHandler> MouseMove;
 		Event<MouseEventHandler> MouseDoubleClick;
 		Event<MouseWheelEventHandler> MouseWheel;
-	protected:
-		static inline auto EmptySelector = [](Sgl::Style& style) {};
-	private:
-		StyleSelector _styleSelector = EmptySelector;
 	public:
+		UIElement();
 		virtual ~UIElement() = default;
-
-		template<StyleSelector... Selectors>
-		void AddStyle()
-		{
-			_styleSelector = CombineSelectors<Selectors...>;
-			_styleSelector(Style);
-		}
 	protected:
-		void ApplyStyle(StyleSelector styleSelector);
-		void ApplyDefaultStyle();
-
 		virtual void OnMouseDown(const MouseButtonEventArgs& e);
 		virtual void OnMouseUp(const MouseButtonEventArgs& e);
 		virtual void OnMouseMove(const MouseButtonEventArgs& e);
