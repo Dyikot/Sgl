@@ -18,7 +18,7 @@ namespace Sgl
 	{
 	public:
 		Style Style;
-		StyleClass Class = StyleClass(Style);
+		StyleClass Class;
 		Event<KeyEventHandler> KeyUp;
 		Event<KeyEventHandler> KeyDown;
 		Event<MouseEventHandler> MouseDown;
@@ -37,11 +37,5 @@ namespace Sgl
 		virtual void OnMouseWheel(const MouseWheelEventArgs& e);
 		virtual void OnKeyDown(const KeyEventArgs& e);
 		virtual void OnKeyUp(const KeyEventArgs& e);
-
-		template<StyleSelector... Selectors>
-		static void CombineSelectors(Sgl::Style& style)
-		{
-			(Selectors(style), ...);
-		}
 	};
 }

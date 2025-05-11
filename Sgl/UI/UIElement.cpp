@@ -2,7 +2,8 @@
 
 namespace Sgl
 {
-	UIElement::UIElement()
+	UIElement::UIElement():
+		Class(Style)
 	{
 		Class.AddTarget(StyleTarget::Element);
 	}

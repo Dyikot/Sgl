@@ -2,6 +2,10 @@
 
 namespace Sgl
 {
+	Scene::Scene():
+		Components(*this)
+	{}
+
 	void Scene::OnRender(RenderContext renderContext) const
 	{
 		renderContext.SetSceneBackground(*this);

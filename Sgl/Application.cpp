@@ -6,7 +6,7 @@
 namespace Sgl
 {
 	Application::Application() noexcept:
-		Resources(Window.CreateRenderDependenciesFactory())
+		Resources(Window.GetRenderer())
 	{
 		_current = this;
 
@@ -180,7 +180,7 @@ namespace Sgl
 	void Application::Start()
 	{
 		Stopwatch delayStopwatch, sceneStopwatch;
-		auto renderContext = Window.CreateRenderContext();
+		RenderContext renderContext(Window.GetRenderer());
 
 		renderContext.SetBlendMode(SDL_BLENDMODE_BLEND);
 		sceneStopwatch.Start();

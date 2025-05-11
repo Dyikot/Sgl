@@ -5,6 +5,7 @@
 #include "../Graphic/Color.h"
 #include "../Data/Any.h"
 #include "../Graphic/Texture.h"
+#include <limits>
 
 namespace Sgl
 {	
@@ -16,8 +17,8 @@ namespace Sgl
 		float Height = 0;
 		float MinWidth = 0;
 		float MinHeight = 0;
-		float MaxWidth = 0;
-		float MaxHeight = 0;
+		float MaxWidth = std::numeric_limits<float>::max();
+		float MaxHeight = std::numeric_limits<float>::max();
 		size_t ZIndex = 1;
 		Thickness Margin;
 		Thickness Padding;
@@ -33,7 +34,7 @@ namespace Sgl
 			.Size = 14,
 			.Family = {},
 			.Style = FontStyle::Normal,
-			.Feight = FontWeight::Normal,
+			.Weight = FontWeight::Normal,
 			.Color = Colors::Black
 		};
 
@@ -43,7 +44,7 @@ namespace Sgl
 		const Texture* BackgroundTexture = nullptr;
 		Visibility Visibility = Visibility::Visible;
 		VerticalAlignment VerticalAlignment = VerticalAlignment::Top;
-		HorizontalAlignment VorizontalAlignment = HorizontalAlignment::Left;
+		HorizontalAlignment HorizontalAlignment = HorizontalAlignment::Left;
 	};
 
 	using StyleSelector = void(*)(Style&);
@@ -66,7 +67,7 @@ namespace Sgl
 		{}
 
 		template<StyleSelector... Selectors>
-		void AddTo(StyleTarget styleTarget)
+		void SetTo(StyleTarget styleTarget)
 		{
 			auto& selector = _selectors[styleTarget];
 			selector = CombineSelectors<Selectors...>;
@@ -74,10 +75,9 @@ namespace Sgl
 		}
 
 		void AddTarget(StyleTarget styleTarget);
-		void ApplyStyleToElement();
 		void ApplyStyleTo(StyleTarget styleTarget);
 	private:
-		void ApplyStyleToTarget(StyleTarget styleTarget);
+		void SetStyleTo(StyleTarget styleTarget);
 
 		template<StyleSelector... Selectors>
 		static void CombineSelectors(Sgl::Style& style)

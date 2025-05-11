@@ -18,8 +18,8 @@ namespace Sgl
 			Top(top), Right(right), Bottom(bottom), Left(left)
 		{}
 
-		constexpr Thickness(uint32_t lenght = 0) noexcept:
-			Thickness(lenght, lenght, lenght, lenght) 
+		constexpr Thickness(uint32_t value = 0) noexcept:
+			Thickness(value, value, value, value) 
 		{}
 
 		friend constexpr bool operator==(const Thickness& left, const Thickness& right)
@@ -70,7 +70,7 @@ namespace Sgl
 		int Size;
 		FontFamily Family;
 		FontStyle Style;
-		FontWeight Feight;
+		FontWeight Weight;
 		Color Color;
 	};
 

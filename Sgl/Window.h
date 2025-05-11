@@ -59,15 +59,13 @@ namespace Sgl
 		std::string GetTitle() const noexcept;
 		SDL_Point GetPosition() const noexcept;
 		WindowState GetWindowState() const noexcept;
+		SDL_Renderer* GetRenderer() const noexcept;
 		
 		void EnableVSync() noexcept;
 		void DisableVSync() noexcept;
 
 		void EnableResizable() noexcept;
 		void DisableResizable() noexcept;
-
-		RenderContext CreateRenderContext() const noexcept;
-		RenderDependenciesFactory CreateRenderDependenciesFactory() const noexcept;
 
 		void Show();
 		void Hide();

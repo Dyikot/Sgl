@@ -10,16 +10,12 @@
 
 namespace Sgl
 {	
-	class Scene;
-
-	template<typename TScene>
-	concept CScene = std::derived_from<TScene, Scene>;
-
 	class Scene: public UIElement, public ECS::IProcessed
 	{
 	public:
-		ComponentsCollection Components = ComponentsCollection(*this);
+		ComponentsCollection Components;
 	public:
+		Scene();
 		virtual ~Scene() = default;
 
 		void OnRender(RenderContext renderContext) const override;
@@ -40,7 +36,7 @@ namespace Sgl
 		std::queue<Func<std::shared_ptr<Scene>>> _scenesBuildersQueue;
 		size_t _popScenes = 0;
 	public:
-		template<CScene TScene>
+		template<std::derived_from<Scene> TScene>
 		void Push() noexcept
 		{
 			_scenesBuildersQueue.push(&std::make_shared<TScene>);

@@ -187,6 +187,11 @@ namespace Sgl
         }
     }
 
+    SDL_Renderer* Window::GetRenderer() const noexcept
+    {
+        return _renderer;
+    }
+
     void Window::EnableVSync() noexcept
     {
         SetVSync(true); 
@@ -205,16 +210,6 @@ namespace Sgl
     void Window::DisableResizable() noexcept
     {
         SetResize(false);
-    }
-
-    RenderContext Window::CreateRenderContext() const noexcept
-    {
-        return RenderContext(_renderer);
-    }
-
-    RenderDependenciesFactory Window::CreateRenderDependenciesFactory() const noexcept
-    {
-        return RenderDependenciesFactory(_renderer);
     }
 
     void Window::Show()

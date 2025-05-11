@@ -2,7 +2,9 @@
 
 namespace Sgl
 {
-    Component::Component()
+    Component::Component():
+        Position(), 
+        Children(*this)
     {
         Class.AddTarget(StyleTarget::Hover);
     }
@@ -25,7 +27,7 @@ namespace Sgl
     void Component::OnMouseLeave(const MouseButtonEventArgs& e)
     {
         _isHover = false;
-        Class.ApplyStyleToElement();
+        Class.ApplyStyleTo(StyleTarget::Element);
         MouseLeave.TryRaise(*this, e);
     }
 }

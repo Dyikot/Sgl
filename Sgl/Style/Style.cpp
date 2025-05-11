@@ -7,19 +7,18 @@ namespace Sgl
 		_selectors[styleTarget] = EmptySelector;
 	}
 
-	void StyleClass::ApplyStyleToElement()
-	{
-		_style = {};
-		ApplyStyleToTarget(StyleTarget::Element);
-	}
-
 	void StyleClass::ApplyStyleTo(StyleTarget styleTarget)
 	{
-		ApplyStyleToElement();
-		ApplyStyleToTarget(styleTarget);
+		_style = {};
+		SetStyleTo(StyleTarget::Element);
+
+		if(styleTarget != StyleTarget::Element)
+		{
+			SetStyleTo(styleTarget);			
+		}
 	}
 
-	void StyleClass::ApplyStyleToTarget(StyleTarget styleTarget)
+	void StyleClass::SetStyleTo(StyleTarget styleTarget)
 	{
 		auto selector = _selectors[styleTarget];
 

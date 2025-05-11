@@ -142,16 +142,4 @@ namespace Sgl
 	{
 		SDL_SetRenderDrawBlendMode(_renderer, mode);
 	}
-
-	RenderDependenciesFactory::RenderDependenciesFactory(SDL_Renderer* renderer) noexcept:
-		_renderer(renderer)
-	{}
-
-	Texture RenderDependenciesFactory::CreateTexture(std::string_view path) const noexcept
-	{
-		auto texture = IMG_LoadTexture(_renderer, path.data());
-		PrintSDLErrorIf(texture == nullptr);
-
-		return Texture(texture);
-	}
 }
