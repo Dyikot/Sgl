@@ -5,13 +5,12 @@
 
 namespace Sgl::Math
 {
-	inline float TriangleArea(SDL_FPoint a, SDL_FPoint b, SDL_FPoint c)
+	inline float TriangleArea(Point a, Point b, Point c)
 	{
 		return (a.x * (b.y - c.y) + b.x * (c.y - a.y) + c.x * (a.y - b.y)) / 2.f;
 	}
 
-	inline bool DoesTriangleContainsPoint(SDL_FPoint a, SDL_FPoint b,
-										  SDL_FPoint c, SDL_FPoint point)
+	inline bool DoesTriangleContainsPoint(Point a, Point b, Point c, Point point)
 	{
 		auto abc = TriangleArea(a, b, c);
 		auto pab = TriangleArea(point, a, b);
@@ -21,7 +20,7 @@ namespace Sgl::Math
 		return fabsf(abc - pab + pbc + pac) < 1e-5f;
 	}
 
-	inline float VectorProductKValue(SDL_FPoint a, SDL_FPoint b, SDL_FPoint c)
+	inline float VectorProductKValue(Point a, Point b, Point c)
 	{
 		return (c.x - a.x) * (b.y - a.y) - (c.y - a.y) * (b.x - a.x);
 	}
@@ -86,7 +85,7 @@ namespace Sgl::Math
 		return resultOrder;
 	}
 
-	std::vector<int> TriangulateConvexShape(PointsView points, SDL_FPoint center)
+	std::vector<int> TriangulateConvexShape(PointsView points, Point center)
 	{
 		std::vector<int> resultOrder;
 		resultOrder.reserve((points.size()) * 3);

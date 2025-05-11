@@ -47,9 +47,9 @@ namespace Sgl
 				DestroyScene();
 				continue;
 			}
-			else if(!_scenesBuildersQueue.empty())
+			else if(!_sceneFactoriesQueue.empty())
 			{
-				BuildScene();
+				CreateScene();
 				continue;
 			}
 			else if(!_scenes.empty())
@@ -63,10 +63,10 @@ namespace Sgl
 		}
 	}
 
-	void SceneManager::BuildScene() noexcept
+	void SceneManager::CreateScene() noexcept
 	{
-		_scenes.push(_scenesBuildersQueue.front()());
-		_scenesBuildersQueue.pop();
+		_scenes.push(_sceneFactoriesQueue.front()());
+		_sceneFactoriesQueue.pop();
 	}
 
 	void SceneManager::DestroyScene() noexcept

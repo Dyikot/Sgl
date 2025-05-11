@@ -6,7 +6,7 @@
 
 namespace Sgl
 {
-	template<typename TSender, CEventArgs TEventArgs>
+	template<typename TSender, std::derived_from<EventArgs> TEventArgs>
 	class EventHandler
 	{
 	private:

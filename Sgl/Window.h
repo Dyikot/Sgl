@@ -29,7 +29,7 @@ namespace Sgl
 		bool IsRenderableWhenMinimized = false;
 	private:
 		SDL_Window* _widnow;
-		SDL_Renderer* _renderer;
+		Renderer _renderer;
 		bool _isVSyncEnable = false;
 		std::optional<Surface> _icon;
 	public:
@@ -59,7 +59,7 @@ namespace Sgl
 		std::string GetTitle() const noexcept;
 		SDL_Point GetPosition() const noexcept;
 		WindowState GetWindowState() const noexcept;
-		SDL_Renderer* GetRenderer() const noexcept;
+		Renderer GetRenderer() const noexcept;
 		
 		void EnableVSync() noexcept;
 		void DisableVSync() noexcept;

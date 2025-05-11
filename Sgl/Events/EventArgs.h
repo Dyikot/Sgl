@@ -7,9 +7,6 @@ namespace Sgl
 {
 	struct EventArgs {};
 
-	template<typename TEventArgs>
-	concept CEventArgs = std::derived_from<TEventArgs, EventArgs>;
-
 	enum class ButtonState
 	{
 		Release, Pressed

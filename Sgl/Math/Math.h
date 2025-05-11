@@ -1,6 +1,6 @@
 #pragma once
 
-#include <array>
+#include <vector>
 #include <numbers>
 #include <numeric>
 #include <cmath>
@@ -8,10 +8,10 @@
 namespace Sgl::Math
 {
 	template<size_t Number>
-	inline std::array<float, Number> SinRange() noexcept
+	inline std::vector<float> SinRange() noexcept
 	{
 		constexpr double step = 2 * std::numbers::pi / Number;
-		std::array<float, Number> result;
+		std::vector<float> result = { Number };
 
 		for(size_t i = 0; i < Number; i++)
 		{
@@ -22,10 +22,10 @@ namespace Sgl::Math
 	}
 
 	template<size_t Number>
-	inline std::array<float, Number> CosRange() noexcept
+	inline std::vector<float> CosRange() noexcept
 	{
 		constexpr double step = 2 * std::numbers::pi / Number;
-		std::array<float, Number> result;
+		std::vector<float> result = { Number };
 
 		for(size_t i = 0; i < Number; i++)
 		{

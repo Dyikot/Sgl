@@ -38,7 +38,7 @@ namespace Sgl
 
 		constexpr operator SDL_Color() const 
 		{ 
-			return SDL_Color{ Red, Green, Blue, Alpha };
+			return SDL_Color { Red, Green, Blue, Alpha };
 		}
 	};
 

@@ -187,7 +187,7 @@ namespace Sgl
         }
     }
 
-    SDL_Renderer* Window::GetRenderer() const noexcept
+    Renderer Window::GetRenderer() const noexcept
     {
         return _renderer;
     }

@@ -3,16 +3,17 @@
 #include <unordered_map>
 #include <string_view>
 #include "SDL/SDL_render.h"
-#include "../Data/Any.h"
+#include "Any.h"
+#include "../Graphic/Types.h"
 
 namespace Sgl
 {
-	class ResourcesManager: public std::unordered_map<std::string_view, Any>
+	class ResourcesMap: public std::unordered_map<std::string_view, Any>
 	{
 	private:
-		SDL_Renderer* _renderer;
+		Renderer _renderer;
 	public:
-		explicit ResourcesManager(SDL_Renderer* renderer):
+		explicit ResourcesMap(Renderer renderer):
 			_renderer(renderer)
 		{}
 

@@ -8,7 +8,7 @@ namespace Sgl
 	template<typename T>
 	class Event;
 
-	template<typename TSender, CEventArgs TEventArgs>
+	template<typename TSender, std::derived_from<EventArgs> TEventArgs>
 	class Event<EventHandler<TSender, TEventArgs>> final
 	{
 	public:

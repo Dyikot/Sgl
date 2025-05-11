@@ -6,13 +6,13 @@
 
 namespace Sgl
 {
-	RenderContext::RenderContext(SDL_Renderer* renderer) noexcept:
+	RenderContext::RenderContext(Renderer renderer) noexcept:
 		_renderer(renderer)
 	{
 		PrintSDLErrorIf(_renderer == nullptr);
 	}
 
-	void RenderContext::DrawPoint(SDL_FPoint point, Color color)
+	void RenderContext::DrawPoint(Point point, Color color)
 	{
 		SetRenderColor(color);
 		SDL_RenderDrawPointF(_renderer, point.x, point.y);
@@ -24,7 +24,7 @@ namespace Sgl
 		SDL_RenderDrawPointsF(_renderer, points.data(), points.size());
 	}
 
-	void RenderContext::DrawLine(SDL_FPoint start, SDL_FPoint end, Color color)
+	void RenderContext::DrawLine(Point start, Point end, Color color)
 	{
 		SetRenderColor(color);
 		SDL_RenderDrawLineF(_renderer, start.x, start.y, end.x, end.y);
@@ -36,7 +36,7 @@ namespace Sgl
 		SDL_RenderDrawLinesF(_renderer, points.data(), points.size());
 	}
 
-	void RenderContext::DrawRectangle(SDL_FRect rectange, Color color)
+	void RenderContext::DrawRectangle(Rect rectange, Color color)
 	{
 		SetRenderColor(color);
 		SDL_RenderDrawRectF(_renderer, &rectange);
@@ -48,7 +48,7 @@ namespace Sgl
 		SDL_RenderDrawRectsF(_renderer, rectanges.data(), rectanges.size());
 	}
 
-	void RenderContext::DrawFillRectangle(SDL_FRect rectange, Color fill)
+	void RenderContext::DrawFillRectangle(Rect rectange, Color fill)
 	{
 		SetRenderColor(fill);
 		SDL_RenderFillRectF(_renderer, &rectange);		
@@ -60,14 +60,14 @@ namespace Sgl
 		SDL_RenderFillRectsF(_renderer, rectanges.data(), rectanges.size());
 	}
 
-	void RenderContext::DrawTexture(const Texture& texture, SDL_FRect rectangle, Color fill)
+	void RenderContext::DrawTexture(const Texture& texture, Rect rectangle, Color fill)
 	{
 		SetTextureColor(texture, fill);
 		SDL_RenderCopyF(_renderer, texture, nullptr, &rectangle);
 	}
 
-	void RenderContext::DrawTexture(const Texture& texture, SDL_FRect rectangle,
-									SDL_Rect clip, Color fill)
+	void RenderContext::DrawTexture(const Texture& texture, Rect rectangle,
+									iRect clip, Color fill)
 	{
 		SetTextureColor(texture, fill);
 		SDL_RenderCopyF(_renderer, texture, &clip, &rectangle);
@@ -78,23 +78,23 @@ namespace Sgl
 		DrawLines(ellipse, color);
 	}
 
-	void RenderContext::DrawEllipse(SDL_FPoint position, int width, int height, Color color)
+	void RenderContext::DrawEllipse(Point position, int width, int height, Color color)
 	{		
-		Ellipse<90> ellipse(position, width, height);
-		DrawLines(ellipse, color);
+		auto ellipsePoints = Shapes::CreateEllipse(position, width, height);
+		DrawLines(ellipsePoints, color);
 	}
 
 	void RenderContext::DrawEllipseFill(PointsView ellipse, Color color)
 	{
-		VerticesCollection vertices(ellipse, color);
+		auto vertices = VerticesCollection( ellipse, color);
 		auto order = Math::TriangulateConvexShape(ellipse);
 		DrawShape(vertices, order);
 	}
 
-	void RenderContext::DrawEllipseFill(SDL_FPoint position, int width, int height, Color color)
+	void RenderContext::DrawEllipseFill(Point position, int width, int height, Color color)
 	{
-		Ellipse<90> ellipse(position, width, height);
-		DrawEllipseFill(ellipse, color);
+		auto ellipsePoints = Shapes::CreateEllipse(position, width, height);
+		DrawEllipseFill(ellipsePoints, color);
 	}
 
 	void RenderContext::DrawShape(VerticesView vertices)
@@ -114,7 +114,8 @@ namespace Sgl
 						   order.data(), order.size());
 	}
 
-	void RenderContext::DrawShape(VerticesView vertices, std::span<const int> order, const Texture& texture, Color color)
+	void RenderContext::DrawShape(VerticesView vertices, std::span<const int> order,
+								  const Texture& texture, Color color)
 	{
 		SetTextureColor(texture, color);
 		SDL_RenderGeometry(_renderer, texture, vertices.data(), vertices.size(),

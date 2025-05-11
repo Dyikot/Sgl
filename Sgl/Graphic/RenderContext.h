@@ -3,10 +3,10 @@
 #include <string_view>
 #include <array>
 #include "SDL/SDL_render.h"
-#include "../Graphic/Color.h"
-#include "../Graphic/Texture.h"
-#include "../Graphic/Surface.h"
-#include "Collections.h"
+#include "Types.h"
+#include "Color.h"
+#include "Texture.h"
+#include "Surface.h"
 
 namespace Sgl
 {
@@ -15,24 +15,24 @@ namespace Sgl
 	class RenderContext
 	{
 	private:
-		SDL_Renderer* _renderer;
+		Renderer _renderer;
 	public:
-		explicit RenderContext(SDL_Renderer* renderer) noexcept;
+		explicit RenderContext(Renderer renderer) noexcept;
 		
-		void DrawPoint(SDL_FPoint point, Color color);
+		void DrawPoint(Point point, Color color);
 		void DrawPoints(PointsView points, Color color);
-		void DrawLine(SDL_FPoint start, SDL_FPoint end, Color color);
+		void DrawLine(Point start, Point end, Color color);
 		void DrawLines(PointsView points, Color color);
-		void DrawRectangle(SDL_FRect rectange, Color color);
+		void DrawRectangle(Rect rectange, Color color);
 		void DrawRectangles(RectanglesView rectanges, Color color);
-		void DrawFillRectangle(SDL_FRect rectange, Color fill);
+		void DrawFillRectangle(Rect rectange, Color fill);
 		void DrawFillRectangles(RectanglesView rectanges, Color fill);
-		void DrawTexture(const Texture& texture, SDL_FRect rectangle, Color fill);
-		void DrawTexture(const Texture& texture, SDL_FRect rectangle, SDL_Rect clip, Color fill);
+		void DrawTexture(const Texture& texture, Rect rectangle, Color fill);
+		void DrawTexture(const Texture& texture, Rect rectangle, iRect clip, Color fill);
 		void DrawEllipse(PointsView ellipse, Color color);
-		void DrawEllipse(SDL_FPoint position, int width, int height, Color color);
+		void DrawEllipse(Point position, int width, int height, Color color);
 		void DrawEllipseFill(PointsView ellipse, Color color);
-		void DrawEllipseFill(SDL_FPoint position, int width, int height, Color color);
+		void DrawEllipseFill(Point position, int width, int height, Color color);
 		void DrawShape(VerticesView vertices);
 		void DrawShape(VerticesView vertices, const Texture& texture, Color color);
 		void DrawShape(VerticesView vertices, std::span<const int> order);
@@ -62,15 +62,5 @@ namespace Sgl
 			SDL_SetSurfaceAlphaMod(surface, color.Alpha);
 		}		
 	};
-
-	class RenderDependenciesFactory
-	{
-	private:
-		SDL_Renderer* _renderer;
-	public:
-		explicit RenderDependenciesFactory(SDL_Renderer* renderer) noexcept;
-
-		Texture CreateTexture(std::string_view path) const noexcept;
-	};	
 }
 

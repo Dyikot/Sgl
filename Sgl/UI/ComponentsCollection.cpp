@@ -86,9 +86,10 @@ namespace Sgl
 
     void ComponentsCollection::SetCursor(CursorGetter cursorGetter)
     {
-        if(SDL_GetCursor() != cursorGetter())
+        const auto& cursor = cursorGetter();
+        if(SDL_GetCursor() != cursor)
         {
-            SDL_SetCursor(cursorGetter());
+            SDL_SetCursor(cursor);
         }
     }
 }

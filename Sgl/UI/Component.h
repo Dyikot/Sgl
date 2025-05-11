@@ -10,7 +10,7 @@ namespace Sgl
 	class Component: public UIElement
 	{
 	public:
-		SDL_FPoint Position;
+		Point Position;
 		ComponentsCollection Children;
 		Event<MouseEventHandler> MouseEnter;
 		Event<MouseEventHandler> MouseLeave;
