@@ -2,16 +2,16 @@
 
 namespace Sgl
 {
-	void UIElement::SetClassStyle()
+	void UIElement::ApplyDefaultStyle()
 	{
 		Style = {};
-		_classStyleSetter(Style);
+		_styleSelector(Style);
 	}
 
-	void UIElement::SetStyle(const StyleSetter& setter)
+	void UIElement::ApplyStyle(StyleSelector styleSelector)
 	{
-		SetClassStyle();
-		setter(Style);
+		ApplyDefaultStyle();
+		styleSelector(Style);
 	}
 
 	void UIElement::OnMouseDown(const MouseButtonEventArgs& e)

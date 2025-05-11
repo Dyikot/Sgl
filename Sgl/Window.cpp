@@ -202,7 +202,7 @@ namespace Sgl
         SetResize(true);
     }
 
-    void Window::DisabeResizable() noexcept
+    void Window::DisableResizable() noexcept
     {
         SetResize(false);
     }

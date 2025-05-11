@@ -64,7 +64,7 @@ namespace Sgl
 		void DisableVSync() noexcept;
 
 		void EnableResizable() noexcept;
-		void DisabeResizable() noexcept;
+		void DisableResizable() noexcept;
 
 		RenderContext CreateRenderContext() const noexcept;
 		RenderDependenciesFactory CreateRenderDependenciesFactory() const noexcept;

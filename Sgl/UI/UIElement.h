@@ -17,8 +17,6 @@ namespace Sgl
 	class UIElement: public IVisual
 	{
 	public:
-		using StyleSetter = Action<Style&>;
-
 		Style Style;
 		Event<KeyEventHandler> KeyUp;
 		Event<KeyEventHandler> KeyDown;
@@ -27,20 +25,22 @@ namespace Sgl
 		Event<MouseEventHandler> MouseMove;
 		Event<MouseEventHandler> MouseDoubleClick;
 		Event<MouseWheelEventHandler> MouseWheel;
+	protected:
+		static inline auto EmptySelector = [](Sgl::Style& style) {};
 	private:
-		StyleSetter _classStyleSetter;
+		StyleSelector _styleSelector = EmptySelector;
 	public:
 		virtual ~UIElement() = default;
 
 		template<StyleSelector... Selectors>
-		void AddClassStyle()
+		void AddStyle()
 		{
-			_classStyleSetter = [](Sgl::Style& style) { (Selectors(style), ...); };
-			_classStyleSetter(Style);
+			_styleSelector = CombineSelectors<Selectors...>;
+			_styleSelector(Style);
 		}
 	protected:
-		void SetClassStyle();
-		void SetStyle(const StyleSetter& setter);
+		void ApplyStyle(StyleSelector styleSelector);
+		void ApplyDefaultStyle();
 
 		virtual void OnMouseDown(const MouseButtonEventArgs& e);
 		virtual void OnMouseUp(const MouseButtonEventArgs& e);
@@ -49,5 +49,11 @@ namespace Sgl
 		virtual void OnMouseWheel(const MouseWheelEventArgs& e);
 		virtual void OnKeyDown(const KeyEventArgs& e);
 		virtual void OnKeyUp(const KeyEventArgs& e);
+
+		template<StyleSelector... Selectors>
+		static void CombineSelectors(Sgl::Style& style)
+		{
+			(Selectors(style), ...);
+		}
 	};
 }

@@ -13,14 +13,14 @@ namespace Sgl
     void Component::OnMouseEnter(const MouseButtonEventArgs& e)
     {
         _isHover = true;
-        SetStyle(_hoverStyleSetter);
+        ApplyStyle(_hoverStyleSelector);
         MouseEnter.TryRaise(*this, e);
     }
 
     void Component::OnMouseLeave(const MouseButtonEventArgs& e)
     {
         _isHover = false;
-        SetClassStyle();
+        ApplyDefaultStyle();
         MouseLeave.TryRaise(*this, e);
     }
 }

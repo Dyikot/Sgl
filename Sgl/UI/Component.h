@@ -15,15 +15,15 @@ namespace Sgl
 		Event<MouseEventHandler> MouseEnter;
 		Event<MouseEventHandler> MouseLeave;
 	private:
-		StyleSetter _hoverStyleSetter;
+		StyleSelector _hoverStyleSelector = EmptySelector;
 		bool _isHover = false;
 	public:
-		virtual ~Component() = default;		
+		virtual ~Component() = default;
 
 		template<StyleSelector... Selectors>
 		void AddHoverStyle()
 		{
-			_hoverStyleSetter = [](Sgl::Style& style) { (Selectors(style), ...); };
+			_hoverStyleSelector = CombineSelectors<Selectors...>;
 		}
 
 		void OnRender(RenderContext renderContext) const override;
