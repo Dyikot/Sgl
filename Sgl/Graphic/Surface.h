@@ -10,11 +10,7 @@ namespace Sgl
 	private:
 		SDL_Surface* _surface = nullptr;
 	public:
-		explicit Surface(SDL_Surface* surface):
-			_surface(surface)
-		{}
-
-		Surface(std::string_view path): 
+		explicit Surface(std::string_view path): 
 			_surface(IMG_Load(path.data()))
 		{
 			PrintSDLErrorIf(_surface == nullptr);

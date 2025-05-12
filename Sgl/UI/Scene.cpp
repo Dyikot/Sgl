@@ -30,6 +30,11 @@ namespace Sgl
 		Components.OnMouseUp(e);
 	}
 
+	void SceneManager::Push(SceneFactory sceneFactory)
+	{
+		_sceneFactoriesQueue.push(std::move(sceneFactory));
+	}
+
 	void SceneManager::Pop() noexcept
 	{
 		if(_popScenes < _scenes.size())

@@ -44,6 +44,8 @@ namespace Sgl
 			_sceneFactoriesQueue.push(&std::make_shared<TScene>);
 		}
 
+		void Push(SceneFactory sceneFactory);
+
 		void Pop() noexcept;
 		std::shared_ptr<Scene> GetCurrentScene();
 	private:

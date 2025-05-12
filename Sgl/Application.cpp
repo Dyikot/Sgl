@@ -18,6 +18,7 @@ namespace Sgl
 
 	Application::~Application() noexcept
 	{
+		Exit.TryRaise(*this, ApplicationEventArgs { .Window = Window, .Resources = Resources });
 		TTF_Quit();
 		IMG_Quit();
 		Mix_Quit();

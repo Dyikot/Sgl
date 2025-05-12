@@ -44,7 +44,7 @@ namespace Sgl
 			_eventHandlers.emplace_front(std::forward<decltype(handler)>(handler));
 		}
 
-		void operator+=(CAction<TSender&> auto&& handler)
+		void operator+=(CAction<const TEventArgs&> auto&& handler)
 		{
 			_eventHandlers.emplace_front(std::forward<decltype(handler)>(handler));
 		}
@@ -59,7 +59,7 @@ namespace Sgl
 			_eventHandlers.remove(std::forward<decltype(handler)>(handler));
 		}
 
-		void operator-=(CAction<TSender&> auto&& handler)
+		void operator-=(CAction<const TEventArgs&> auto&& handler)
 		{
 			_eventHandlers.remove(std::forward<decltype(handler)>(handler));
 		}

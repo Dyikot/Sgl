@@ -11,12 +11,23 @@
 
 namespace Sgl
 {
+	class Application;
+
+	struct ApplicationEventArgs: EventArgs
+	{
+		Window& Window;
+		ResourcesMap& Resources;
+	};
+	
+	using ApplicationEventHandler = EventHandler<Application, ApplicationEventArgs>;
+
 	class Application
 	{
 	public:
 		Window Window;
 		SceneManager SceneManager;
 		ResourcesMap Resources;
+		Event<ApplicationEventHandler> Exit;
 	private:
 		static inline Application* _current;
 		bool _running = false;

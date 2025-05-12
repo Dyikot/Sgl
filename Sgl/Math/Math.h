@@ -11,7 +11,7 @@ namespace Sgl::Math
 	inline std::vector<float> SinRange() noexcept
 	{
 		constexpr double step = 2 * std::numbers::pi / Number;
-		std::vector<float> result = { Number };
+		auto result = std::vector<float>(Number);
 
 		for(size_t i = 0; i < Number; i++)
 		{
@@ -25,7 +25,7 @@ namespace Sgl::Math
 	inline std::vector<float> CosRange() noexcept
 	{
 		constexpr double step = 2 * std::numbers::pi / Number;
-		std::vector<float> result = { Number };
+		auto result = std::vector<float>(Number);
 
 		for(size_t i = 0; i < Number; i++)
 		{

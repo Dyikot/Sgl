@@ -3,8 +3,8 @@
 #include <utility>
 #include <string_view>
 #include "../Tools/Log.h"
-#include "SDL/SDL_render.h"
 #include "SDL/SDL_image.h"
+#include "Types.h"
 
 namespace Sgl
 {
@@ -13,9 +13,11 @@ namespace Sgl
 	private:
 		SDL_Texture* _texture = nullptr;
 	public:
-		explicit Texture(SDL_Texture* texture) noexcept:
-			_texture(texture)
-		{}
+		Texture(std::string_view path, Renderer renderer):
+			_texture(IMG_LoadTexture(renderer, path.data()))
+		{			
+			PrintSDLErrorIf(_texture == nullptr);
+		}
 
 		Texture(const Texture&) = delete;
 
