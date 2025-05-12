@@ -74,7 +74,7 @@ namespace Sgl
 
 		if(_isElapsed)
 		{
-			Elapsed.TryRaise(*this, EventArgs());
+			Elapsed.TryRaise(*this, EmptyEventArgs);
 		}
 	}
 }

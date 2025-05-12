@@ -5,8 +5,6 @@
 
 namespace Sgl
 {
-	using ComponentEventHandler = EventHandler<Component, EventArgs>;
-
 	class Component: public UIElement
 	{
 	public:
@@ -22,8 +20,19 @@ namespace Sgl
 
 		void OnRender(RenderContext renderContext) const override;
 	protected:
-		virtual void OnMouseEnter(const MouseButtonEventArgs& e);
-		virtual void OnMouseLeave(const MouseButtonEventArgs& e);
+		virtual void OnMouseEnter(const MouseButtonEventArgs& e)
+		{
+			_isHover = true;
+			Class.ApplyStyleTo(StyleTarget::Hover);
+			MouseEnter.TryRaise(*this, e);
+		}
+
+		virtual void OnMouseLeave(const MouseButtonEventArgs& e)
+		{
+			_isHover = false;
+			Class.ApplyStyleTo(StyleTarget::Element);
+			MouseLeave.TryRaise(*this, e);
+		}
 
 		friend class ComponentsCollection;
 	};

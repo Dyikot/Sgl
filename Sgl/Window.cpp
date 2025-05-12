@@ -63,20 +63,20 @@ namespace Sgl
         SDL_SetWindowIcon(_widnow, _icon.value());
     }
 
-    void Window::SetDisplayMode(DiplayMode displayMode)
+    void Window::SetDisplayMode(DisplayMode displayMode)
     {
         switch(displayMode)
         {
-            case DiplayMode::Window: 
+            case DisplayMode::Window: 
                 SDL_SetWindowFullscreen(_widnow, 0);
                 break;
 
-            case DiplayMode::BorderlessWindow:
-                SDL_SetWindowFullscreen(_widnow, SDL_WINDOW_FULLSCREEN_DESKTOP);
+            case DisplayMode::BorderlessWindow:
+                SDL_SetWindowBordered(_widnow, SDL_FALSE);
                 break;
 
-            case DiplayMode::Fullscreen:
-                SDL_SetWindowFullscreen(_widnow, SDL_WINDOW_FULLSCREEN);
+            case DisplayMode::Fullscreen:
+                SDL_SetWindowFullscreen(_widnow, SDL_WINDOW_FULLSCREEN_DESKTOP);
                 break;
 
             default:
@@ -167,6 +167,24 @@ namespace Sgl
         SDL_Point position = {};
         SDL_GetWindowPosition(_widnow, &position.x, &position.y);
         return position;
+    }
+
+    DisplayMode Window::GetDisplayMode() const noexcept
+    {
+        auto flags = SDL_GetWindowFlags(_widnow);
+        auto state = SDL_WindowFlags(flags & (SDL_WINDOW_FULLSCREEN | SDL_WINDOW_BORDERLESS));
+
+        switch(state)
+        {
+            case SDL_WINDOW_FULLSCREEN:
+                return DisplayMode::Fullscreen;
+
+            case SDL_WINDOW_BORDERLESS:
+                return DisplayMode::BorderlessWindow;
+
+            default:
+                return DisplayMode::Window;
+        }
     }
 
     WindowState Window::GetWindowState() const noexcept

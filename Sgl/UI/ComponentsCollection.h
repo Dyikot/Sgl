@@ -3,12 +3,11 @@
 #include <set>
 #include "../Graphic/Cursor.h"
 #include "../Graphic/IVisual.h"
-#include "../Events/EventArgs.h"
+#include "../Events/UIElementEvents.h"
 #include "../Data/Nullable.h"
 
 namespace Sgl
 {
-	class UIElement;
 	class Component;
 
 	struct ZIndexComparer

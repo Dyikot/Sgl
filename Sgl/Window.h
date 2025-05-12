@@ -6,27 +6,15 @@
 #include "Graphic/Surface.h"
 #include "Graphic/Texture.h"
 #include "Events/Event.h"
+#include "Events/WindowEvents.h"
 
 namespace Sgl
 {
-	class Window;
-
-	using WindowEventHandler = EventHandler<Window, EventArgs>;
-
-	enum class DiplayMode
-	{
-		Window, BorderlessWindow, Fullscreen
-	};
-
-	enum class WindowState
-	{
-		Normal, Minimized, Maximized
-	};
-
 	class Window
 	{
 	public:
 		bool IsRenderableWhenMinimized = false;
+		Event<WindowStateEventHandler> WindowStateChanged;
 	private:
 		SDL_Window* _widnow;
 		Renderer _renderer;
@@ -46,7 +34,7 @@ namespace Sgl
 		void SetTitle(std::string_view value) noexcept;
 		void SetPosition(SDL_Point value) noexcept;
 		void SetIcon(std::string_view path);
-		void SetDisplayMode(DiplayMode displayMode);
+		void SetDisplayMode(DisplayMode displayMode);
 
 		size_t GetWidth() const noexcept;
 		size_t GetHeight() const noexcept;
@@ -58,6 +46,7 @@ namespace Sgl
 		size_t GetLogicalHeight() const noexcept;
 		std::string GetTitle() const noexcept;
 		SDL_Point GetPosition() const noexcept;
+		DisplayMode GetDisplayMode() const noexcept;
 		WindowState GetWindowState() const noexcept;
 		Renderer GetRenderer() const noexcept;
 		
@@ -72,8 +61,16 @@ namespace Sgl
 		bool IsVisible() const;
 		bool IsResizable() const;
 		bool IsVSyncEnable() const;
+	protected:
+		void OnWindowStateChanged(const WindowStateEventArgs& e)
+		{
+			WindowStateChanged.TryRaise(*this, e);
+		}
+		// TODO: Add other window events
 	private:
 		void SetVSync(bool value);
 		void SetResize(bool value);
+
+		friend class Application;
 	};
 }

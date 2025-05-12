@@ -20,9 +20,24 @@ namespace Sgl
 
 		void OnRender(RenderContext renderContext) const override;
 	protected:
-		void OnMouseMove(const MouseButtonEventArgs& e) override;
-		void OnMouseDown(const MouseButtonEventArgs& e) override;
-		void OnMouseUp(const MouseButtonEventArgs& e) override;
+		void OnMouseMove(const MouseButtonEventArgs& e) override
+		{
+			UIElement::OnMouseMove(e);
+			Components.OnMouseMove(e);
+		}
+
+		void OnMouseDown(const MouseButtonEventArgs& e) override
+		{
+			UIElement::OnMouseDown(e);
+			Components.OnMouseDown(e);
+		}
+
+		void OnMouseUp(const MouseButtonEventArgs& e) override
+		{
+			UIElement::OnMouseUp(e);
+			Components.OnMouseUp(e);
+		}
+
 		virtual void OnTextChanged(const TextChangedEventArgs& e) {}
 		virtual void OnTextInput(const TextInputEventArgs& e) {}
 	private:

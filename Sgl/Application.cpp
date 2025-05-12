@@ -59,6 +59,30 @@ namespace Sgl
 					Shutdown();
 					break;
 
+				case SDL_WINDOWEVENT:
+					switch(e.window.event)
+					{
+						case SDL_WINDOWEVENT_MAXIMIZED:
+							Window.OnWindowStateChanged(
+								WindowStateEventArgs { .State = WindowState::Maximized });
+							break;
+
+						case SDL_WINDOWEVENT_MINIMIZED:
+							Window.OnWindowStateChanged(
+								WindowStateEventArgs { .State = WindowState::Minimized });
+							break;
+
+						case SDL_WINDOWEVENT_RESTORED:
+							Window.OnWindowStateChanged(
+								WindowStateEventArgs { .State = WindowState::Normal });
+							break;
+
+						default:
+							break;
+					}
+					
+					break;
+
 				case SDL_KEYDOWN:
 					scene->OnKeyDown(
 						KeyEventArgs

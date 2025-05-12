@@ -12,24 +12,6 @@ namespace Sgl
 		Components.OnRender(renderContext);
 	}
 
-	void Scene::OnMouseMove(const MouseButtonEventArgs& e)
-	{
-		UIElement::OnMouseMove(e);
-		Components.OnMouseMove(e);
-	}
-
-	void Scene::OnMouseDown(const MouseButtonEventArgs& e)
-	{
-		UIElement::OnMouseDown(e);
-		Components.OnMouseDown(e);
-	}
-
-	void Scene::OnMouseUp(const MouseButtonEventArgs& e)
-	{
-		UIElement::OnMouseUp(e);
-		Components.OnMouseUp(e);
-	}
-
 	void SceneManager::Push(SceneFactory sceneFactory)
 	{
 		_sceneFactoriesQueue.push(std::move(sceneFactory));

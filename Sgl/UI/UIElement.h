@@ -1,19 +1,13 @@
 #pragma once
 
+#include <stack>
 #include "../Graphic/IVisual.h"
 #include "../Events/Event.h"
 #include "../Style/Style.h"
-#include <stack>
+#include "../Events/UIElementEvents.h"
 
 namespace Sgl
 {
-	class UIElement;
-
-	using UIElementEventHandler = EventHandler<UIElement, EventArgs>;
-	using MouseEventHandler = EventHandler<UIElement, MouseButtonEventArgs>;
-	using MouseWheelEventHandler = EventHandler<UIElement, MouseWheelEventArgs>;
-	using KeyEventHandler = EventHandler<UIElement, KeyEventArgs>;
-
 	class UIElement: public IVisual
 	{
 	public:
@@ -30,12 +24,39 @@ namespace Sgl
 		UIElement();
 		virtual ~UIElement() = default;
 	protected:
-		virtual void OnMouseDown(const MouseButtonEventArgs& e);
-		virtual void OnMouseUp(const MouseButtonEventArgs& e);
-		virtual void OnMouseMove(const MouseButtonEventArgs& e);
-		virtual void OnMouseDoubleClick(const MouseButtonEventArgs& e);
-		virtual void OnMouseWheel(const MouseWheelEventArgs& e);
-		virtual void OnKeyDown(const KeyEventArgs& e);
-		virtual void OnKeyUp(const KeyEventArgs& e);
+		virtual void OnMouseDown(const MouseButtonEventArgs& e)
+		{
+			MouseDown.TryRaise(*this, e);
+		}
+
+		virtual void OnMouseUp(const MouseButtonEventArgs& e)
+		{
+			MouseUp.TryRaise(*this, e);
+		}
+
+		virtual void OnMouseMove(const MouseButtonEventArgs& e)
+		{
+			MouseMove.TryRaise(*this, e);
+		}
+
+		virtual void OnMouseDoubleClick(const MouseButtonEventArgs& e)
+		{
+			MouseDoubleClick.TryRaise(*this, e);
+		}
+
+		virtual void OnMouseWheel(const MouseWheelEventArgs& e)
+		{
+			MouseWheel.TryRaise(*this, e);
+		}
+
+		virtual void OnKeyDown(const KeyEventArgs& e)
+		{
+			KeyDown.TryRaise(*this, e);
+		}
+
+		virtual void OnKeyUp(const KeyEventArgs& e)
+		{
+			KeyUp.TryRaise(*this, e);
+		}
 	};
 }
