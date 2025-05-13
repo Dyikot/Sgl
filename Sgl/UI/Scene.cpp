@@ -3,13 +3,13 @@
 namespace Sgl
 {
 	Scene::Scene():
-		Components(*this)
+		Style(Properties)
 	{}
 
 	void Scene::OnRender(RenderContext renderContext) const
 	{
 		renderContext.SetSceneBackground(*this);
-		Components.OnRender(renderContext);
+		UIElements.OnRender(renderContext);
 	}
 
 	void SceneManager::Push(SceneFactory sceneFactory)
@@ -27,25 +27,24 @@ namespace Sgl
 
 	std::shared_ptr<Scene> SceneManager::GetCurrentScene()
 	{
+		return _scenes.empty() ? nullptr : _scenes.top();
+	}
+
+	std::shared_ptr<Scene> SceneManager::GetNextScene()
+	{
 		while(true)
 		{
 			if(_popScenes > 0)
 			{
 				DestroyScene();
-				continue;
 			}
 			else if(!_sceneFactoriesQueue.empty())
 			{
 				CreateScene();
-				continue;
-			}
-			else if(!_scenes.empty())
-			{
-				return _scenes.top();
 			}
 			else
 			{
-				return nullptr;
+				return GetCurrentScene();
 			}
 		}
 	}

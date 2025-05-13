@@ -56,75 +56,96 @@ namespace Sgl
 			switch(e.type)
 			{
 				case SDL_QUIT:
+				{
 					Shutdown();
 					break;
+				}
 
 				case SDL_WINDOWEVENT:
+				{
 					switch(e.window.event)
 					{
 						case SDL_WINDOWEVENT_MAXIMIZED:
-							Window.OnWindowStateChanged(
-								WindowStateEventArgs { .State = WindowState::Maximized });
+						{
+							WindowStateEventArgs args = { .State = WindowState::Maximized };
+							Window.OnWindowStateChanged(args);
 							break;
+						}
 
 						case SDL_WINDOWEVENT_MINIMIZED:
-							Window.OnWindowStateChanged(
-								WindowStateEventArgs { .State = WindowState::Minimized });
+						{
+							WindowStateEventArgs args = { .State = WindowState::Minimized };
+							Window.OnWindowStateChanged(args);
 							break;
+						}
 
 						case SDL_WINDOWEVENT_RESTORED:
-							Window.OnWindowStateChanged(
-								WindowStateEventArgs { .State = WindowState::Normal });
+						{
+							WindowStateEventArgs args = { .State = WindowState::Normal };
+							Window.OnWindowStateChanged(args);
 							break;
+						}
 
 						default:
 							break;
 					}
-					
+
 					break;
+				}
 
 				case SDL_KEYDOWN:
-					scene->OnKeyDown(
-						KeyEventArgs
-						{
-							.State = static_cast<ButtonState>(e.key.state),
-							.Key = e.key.keysym
-						}
-					);
+				{
+					KeyEventArgs args =
+					{
+						.State = static_cast<ButtonState>(e.key.state),
+						.Key = e.key.keysym
+					};
+
+					scene->OnKeyDown(args);
+					scene->UIElements.OnKeyDown(args);
 					break;
+				}
 
 				case SDL_KEYUP:
-					scene->OnKeyUp(
-						KeyEventArgs
-						{
-							.State = static_cast<ButtonState>(e.key.state),
-							.Key = e.key.keysym
-						}
-					);
+				{
+					KeyEventArgs args =
+					{
+						.State = static_cast<ButtonState>(e.key.state),
+						.Key = e.key.keysym
+					};
+
+					scene->OnKeyUp(args);
+					scene->UIElements.OnKeyUp(args);
 					break;
+				}
 
 				case SDL_TEXTEDITING:
-					scene->OnTextChanged(
+				{
+					/*scene->OnTextChanged(
 						TextChangedEventArgs
 						{
 							.Text = e.edit.text,
 							.SelectionLength = static_cast<size_t>(e.edit.length),
 							.SelectionStart = e.edit.start
 						}
-					);
+					);*/
 					break;
+				}
 
 				case SDL_TEXTINPUT:
-					scene->OnTextInput(
+				{
+					/*scene->OnTextInput(
 						TextInputEventArgs
 						{
 							.Text = e.text.text
 						}
-					);
+					);*/
 					break;
+				}
 
 				case SDL_TEXTEDITING_EXT:
-					scene->OnTextChanged(
+				{
+					/*scene->OnTextChanged(
 						TextChangedEventArgs
 						{
 							.Text = e.editExt.text,
@@ -132,69 +153,78 @@ namespace Sgl
 							.SelectionStart = e.editExt.start
 						}
 					);
-					SDL_free(e.editExt.text);
+					SDL_free(e.editExt.text);*/
 					break;
+				}
 
 				case SDL_MOUSEMOTION:
-					scene->OnMouseMove(
-						MouseButtonEventArgs
+				{
+					MouseButtonEventArgs args =
+					{
+						.Position =
 						{
-							.Position =
-							{
-								.x = static_cast<float>(e.button.x),
-								.y = static_cast<float>(e.button.y)
-							}
+							.x = static_cast<float>(e.button.x),
+							.y = static_cast<float>(e.button.y)
 						}
-					);
+					};
+
+					scene->UIElements.OnMouseMove(args);
 					break;
+				}
 
 				case SDL_MOUSEBUTTONDOWN:
-					scene->OnMouseDown(
-						MouseButtonEventArgs
+				{
+					MouseButtonEventArgs args =
+					{
+						.Button = static_cast<MouseButton>(e.button.button),
+						.State = static_cast<ButtonState>(e.button.state),
+						.ClicksNumber = e.button.clicks,
+						.Position =
 						{
-							.Button = static_cast<MouseButton>(e.button.button),
-							.State = static_cast<ButtonState>(e.button.state),
-							.ClicksNumber = e.button.clicks,
-							.Position =
-							{
-								.x = static_cast<float>(e.button.x),
-								.y = static_cast<float>(e.button.y)
-							}
+							.x = static_cast<float>(e.button.x),
+							.y = static_cast<float>(e.button.y)
 						}
-					);
+					};
+
+					scene->UIElements.OnMouseDown(args);
 					break;
+				}
 
 				case SDL_MOUSEBUTTONUP:
-					scene->OnMouseUp(
-						MouseButtonEventArgs
+				{
+					MouseButtonEventArgs args =
+					{
+						.Button = static_cast<MouseButton>(e.button.button),
+						.State = static_cast<ButtonState>(e.button.state),
+						.ClicksNumber = e.button.clicks,
+						.Position =
 						{
-							.Button = static_cast<MouseButton>(e.button.button),
-							.State = static_cast<ButtonState>(e.button.state),
-							.ClicksNumber = e.button.clicks,
-							.Position =
-							{
-								.x = static_cast<float>(e.button.x),
-								.y = static_cast<float>(e.button.y)
-							}
+							.x = static_cast<float>(e.button.x),
+							.y = static_cast<float>(e.button.y)
 						}
-					);
+					};
+
+					scene->UIElements.OnMouseUp(args);
 					break;
+				}
 
 				case SDL_MOUSEWHEEL:
-					scene->OnMouseWheel(
-						MouseWheelEventArgs
+				{
+					MouseWheelEventArgs args =
+					{
+						.Position =
 						{
-							.Position =
-							{
-								.x = static_cast<float>(e.button.x),
-								.y = static_cast<float>(e.button.y)
-							},
-							.ScrolledHorizontally = e.wheel.preciseX,
-							.ScrolledVertically = e.wheel.preciseY,
-							.Direction = SDL_MouseWheelDirection(e.wheel.direction)
-						}
-					);
+							.x = static_cast<float>(e.button.x),
+							.y = static_cast<float>(e.button.y)
+						},
+						.ScrolledHorizontally = e.wheel.preciseX,
+						.ScrolledVertically = e.wheel.preciseY,
+						.Direction = SDL_MouseWheelDirection(e.wheel.direction)
+					};
+
+					scene->UIElements.OnMouseWheel(args);
 					break;
+				}
 
 				default:
 					break;
@@ -212,7 +242,7 @@ namespace Sgl
 
 		while(_running)
 		{
-			auto scene = SceneManager.GetCurrentScene();
+			auto scene = SceneManager.GetNextScene();
 
 			if(scene == nullptr)
 			{

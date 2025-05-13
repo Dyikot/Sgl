@@ -9,9 +9,20 @@ namespace Sgl
 {
 	class Cursor
 	{
+	public:
+		using Getter = const Cursor& (*)();
 	private:
 		SDL_Cursor* _cursor;
 	public:
+		static void Set(Getter cursorGetter)
+		{
+			const auto& cursor = cursorGetter();
+			if(SDL_GetCursor() != cursor)
+			{
+				SDL_SetCursor(cursor);
+			}
+		}
+
 		Cursor() noexcept:
 			Cursor(SDL_SYSTEM_CURSOR_ARROW)
 		{}
@@ -22,8 +33,8 @@ namespace Sgl
 			PrintSDLErrorIf(!_cursor);
 		}
 
-		explicit Cursor(SDL_SystemCursor id) noexcept:
-			_cursor(SDL_CreateSystemCursor(id))
+		explicit Cursor(SDL_SystemCursor systemCursor) noexcept:
+			_cursor(SDL_CreateSystemCursor(systemCursor))
 		{
 			PrintSDLErrorIf(!_cursor);
 		}
@@ -53,8 +64,6 @@ namespace Sgl
 			return _cursor;
 		}
 	};
-
-	using CursorGetter = const Cursor& (*)();
 
 	namespace Cursors
 	{

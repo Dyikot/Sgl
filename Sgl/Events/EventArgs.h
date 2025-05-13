@@ -1,7 +1,5 @@
 #pragma once
 
-#include "SDL/SDL.h"
-
 namespace Sgl
 {
 	/// <summary>

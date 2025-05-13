@@ -2,44 +2,41 @@
 
 #include <stack>
 #include <queue>
-#include "../Graphic/Color.h"
-#include "../Graphic/Texture.h"
 #include "../ECS/IProcessed.h"
 #include "UIElement.h"
-#include "ComponentsCollection.h"
 
 namespace Sgl
 {	
-	class Scene: public UIElement, public ECS::IProcessed
+	class Scene: public IVisual, public ECS::IProcessed, public IKeyEventsListener
 	{
 	public:
-		ComponentsCollection Components;
+		struct StyleableProperties
+		{
+			Cursor::Getter Cursor = Cursors::Arrow;
+			Color BackgroundColor = Colors::Black;
+			const Texture* BackgroundTexture = nullptr;
+		};
+
+		StyleableProperties Properties;
+		Style<StyleableProperties> Style;
+		UIElementsCollection UIElements;
+		Event<KeyEventHandler> KeyUp;
+		Event<KeyEventHandler> KeyDown;
 	public:
 		Scene();
 		virtual ~Scene() = default;
 
 		void OnRender(RenderContext renderContext) const override;
 	protected:
-		void OnMouseMove(const MouseButtonEventArgs& e) override
+		virtual void OnKeyDown(const KeyEventArgs& e) override
 		{
-			UIElement::OnMouseMove(e);
-			Components.OnMouseMove(e);
+			KeyDown.TryRaise(*this, e);
 		}
 
-		void OnMouseDown(const MouseButtonEventArgs& e) override
+		virtual void OnKeyUp(const KeyEventArgs& e) override
 		{
-			UIElement::OnMouseDown(e);
-			Components.OnMouseDown(e);
+			KeyUp.TryRaise(*this, e);
 		}
-
-		void OnMouseUp(const MouseButtonEventArgs& e) override
-		{
-			UIElement::OnMouseUp(e);
-			Components.OnMouseUp(e);
-		}
-
-		virtual void OnTextChanged(const TextChangedEventArgs& e) {}
-		virtual void OnTextInput(const TextInputEventArgs& e) {}
 	private:
 		friend class Application;
 	};
@@ -64,7 +61,10 @@ namespace Sgl
 		void Pop() noexcept;
 		std::shared_ptr<Scene> GetCurrentScene();
 	private:
+		std::shared_ptr<Scene> GetNextScene();
 		void CreateScene() noexcept;
 		void DestroyScene() noexcept;
+
+		friend class Application;
 	};
 }
