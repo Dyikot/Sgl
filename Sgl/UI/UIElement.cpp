@@ -7,12 +7,12 @@ namespace Sgl
         return left.Properties.ZIndex < right.Properties.ZIndex;
     }
 
-    bool IsIntersects(SDL_FPoint point, const UIElement& component)
+    bool IsIntersects(Point point, const UIElement& element)
     {
-        return point.x >= component.Position.x &&
-               point.x <= component.Position.x + component.Properties.Width &&
-               point.y >= component.Position.y &&
-               point.y <= component.Position.y + component.Properties.Height;
+        return point.x >= element.Position.x &&
+               point.x <= element.Position.x + element.Properties.Width &&
+               point.y >= element.Position.y &&
+               point.y <= element.Position.y + element.Properties.Height;
     }
 
     void UIElementsCollection::OnMouseMove(const MouseButtonEventArgs& e)
@@ -24,20 +24,20 @@ namespace Sgl
             return;
         }
 
-        for(UIElement& component : *this)
+        for(UIElement& element : *this)
         {
-            if(IsIntersects(e.Position, component))
+            if(IsIntersects(e.Position, element))
             {
                 if(HoverElement)
                 {
                     HoverElement->OnMouseLeave(e);
                 }
 
-                HoverElement = &component;
-                Cursor::Set(component.Properties.Cursor);
-                component.OnMouseEnter(e);
-                component.OnMouseMove(e);
-                component.Children.OnMouseMove(e);
+                HoverElement = &element;
+                Cursor::Set(element.Properties.Cursor);
+                element.OnMouseEnter(e);
+                element.OnMouseMove(e);
+                element.Children.OnMouseMove(e);
                 return;
             }
         }
@@ -48,7 +48,7 @@ namespace Sgl
         }
 
         HoverElement = nullptr;
-       
+        Cursor::Set(Parent ? Parent->Properties.Cursor : DefaultCursorGetter());
     }
 
     void UIElementsCollection::OnMouseDown(const MouseButtonEventArgs& e)
@@ -68,6 +68,14 @@ namespace Sgl
             HoverElement->Children.OnMouseUp(e);
         }
     }
+
+    UIElementsCollection::UIElementsCollection(UIElement* parent):
+        Parent(parent)
+    {}
+
+    UIElementsCollection::UIElementsCollection(Func<Cursor::Getter> defaultCursorGetter):
+        DefaultCursorGetter(std::move(defaultCursorGetter))
+    {}
 
     void UIElementsCollection::OnRender(RenderContext renderContext) const
     {
@@ -102,10 +110,10 @@ namespace Sgl
 
     UIElement::UIElement():
         Position(), 
-        Style(Properties)
-    {
-        Style.AddState(StyleState::Hover);
-    }
+        BaseStyle(Properties),
+        HoverStyle(Properties, BaseStyle),
+        Children(this)
+    {}
 
     void UIElement::OnRender(RenderContext renderContext) const
     {

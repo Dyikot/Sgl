@@ -1,84 +1,68 @@
 #pragma once
 
-#include <unordered_map>
+#include <vector>
 
 namespace Sgl
-{	
-	enum class StyleState
-	{
-		Normal, Hover
-	};
-	
-	template<typename TTarget>
+{		
+	template<typename TTargetType,
+			 typename TStyleSelector = void(*)(TTargetType&), 
+			 typename TResetFactory = TTargetType(*)()>
 	class Style
 	{
 	private:
-		using StyleSelector = void(*)(TTarget&);
-		static constexpr auto EmptySelector = [](TTarget& style) {};
+		using StyleSelector = TStyleSelector;
+		using ResetFactory = TResetFactory;
+		static constexpr auto DefaultResetFactory = [] { return TTargetType(); };
 
-		class Setter
-		{
-		private:
-			Style& _style;
-			StyleState _state;
-		public:
-			Setter(Style& style, StyleState state): 
-				_style(style), _state(state)
-			{}
-
-			template<StyleSelector... Selectors>
-			void Use()
-			{
-				auto& selector = _style._selectors[_state];
-				selector = CombineSelectors<Selectors...>;
-				selector(_style._target);
-			}
-		};
-
-		std::unordered_map<StyleState, StyleSelector> _selectors;
-		TTarget& _target;
+		TTargetType& _target;
+		std::vector<StyleSelector> _selectors;
+		ResetFactory _resetFactory;
+		Style& _base = *this;
 	public:
-		explicit Style(TTarget& target):
-			_target(target)
-		{
-			AddState(StyleState::Normal);
-		}
+		Style(TTargetType& target, ResetFactory resetFactory = DefaultResetFactory):
+			_target(target),
+			_resetFactory(resetFactory)
+		{}
 
-		void AddState(StyleState state)
-		{
-			_selectors[state] = EmptySelector;
-		}
+		Style(TTargetType& target,
+			  Style& base,
+			  ResetFactory resetFactory = DefaultResetFactory):
+			_target(target),
+			_resetFactory(resetFactory)
+		{}
 
-		Setter On(StyleState state)
-		{
-			return Setter(*this, state);
-		}
+		Style(const Style&) = delete;
+		Style(Style&&) = delete;
 
-		void ApplyStyleOn(StyleState state)
+		void Use(std::vector<StyleSelector> selectors)
 		{
-			_target = {};
-			SetStyleTo(StyleState::Normal);
-
-			if(state != StyleState::Normal)
-			{
-				SetStyleTo(state);
-			}
-		}
-	private:
-		void SetStyleTo(StyleState state)
-		{
-			auto selector = _selectors[state];
-
-			if(selector)
-			{
-				selector(_target);
-			}
+			_selectors = std::move(selectors);
+			ApplyStyle(_target);
 		}
 
 		template<StyleSelector... Selectors>
-		static void CombineSelectors(TTarget& target)
+		void Use()
 		{
-			(Selectors(target), ...);
+			Use({ Selectors... });
+		}
+
+		void Apply()
+		{
+			_target = _resetFactory();
+			if(this != &_base)
+			{
+				_base.ApplyStyle(_target);
+			}
+
+			ApplyStyle(_target);
+		}
+	private:
+		void ApplyStyle(TTargetType& target)
+		{
+			for(StyleSelector selector : _selectors)
+			{
+				selector(target);
+			}
 		}
 	};
 }

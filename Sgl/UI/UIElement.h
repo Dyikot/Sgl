@@ -3,8 +3,8 @@
 #include <set>
 #include "../Graphic/IVisual.h"
 #include "../Graphic/Color.h"
-#include "../Graphic/Texture.h"
 #include "../Graphic/Cursor.h"
+#include "../Graphic/Texture.h"
 #include "../Events/Event.h"
 #include "../Events/MouseAndKeyEvents.h"
 #include "../Appearance/Properties.h"
@@ -13,8 +13,7 @@
 namespace Sgl
 {
 	class UIElement;
-	class Scene;
-
+	
 	struct ZIndexComparer
 	{
 		bool operator()(const UIElement& left, const UIElement& right) const;
@@ -28,11 +27,13 @@ namespace Sgl
 	{
 	public:
 		UIElement* HoverElement = nullptr;
+		UIElement* Parent = nullptr;
+		Func<Cursor::Getter> DefaultCursorGetter;
 	public:
-		UIElementsCollection() = default;
+		UIElementsCollection(UIElement* parent);
+		UIElementsCollection(Func<Cursor::Getter> defaultCursorGetter);
 		void OnRender(RenderContext renderContext) const override;
 	protected:
-		// TODO: Add Parent cursor
 		void OnMouseMove(const MouseButtonEventArgs& e) override; 
 		void OnMouseDown(const MouseButtonEventArgs& e) override;
 		void OnMouseUp(const MouseButtonEventArgs& e) override;
@@ -44,7 +45,10 @@ namespace Sgl
 		friend class Application;
 	};
 
-	class UIElement: public IVisual, public IMouseEventsListener, public IKeyEventsListener
+	class UIElement: 
+		public IVisual,
+		public IMouseEventsListener, 
+		public IKeyEventsListener
 	{
 	public:
 		struct StyleableProperties
@@ -82,7 +86,8 @@ namespace Sgl
 
 		Point Position;
 		StyleableProperties Properties;
-		Style<StyleableProperties> Style;
+		Style<StyleableProperties> BaseStyle;
+		Style<StyleableProperties> HoverStyle;
 		UIElementsCollection Children;
 
 		Event<KeyEventHandler> KeyUp;
@@ -120,14 +125,14 @@ namespace Sgl
 		virtual void OnMouseEnter(const MouseButtonEventArgs& e)
 		{
 			_isHover = true;
-			Style.ApplyStyleOn(StyleState::Hover);
+			HoverStyle.Apply();
 			MouseEnter.TryRaise(*this, e);
 		}
 
 		virtual void OnMouseLeave(const MouseButtonEventArgs& e)
 		{
 			_isHover = false;
-			Style.ApplyStyleOn(StyleState::Normal);
+			BaseStyle.Apply();
 			MouseLeave.TryRaise(*this, e);
 		}
 
@@ -150,7 +155,7 @@ namespace Sgl
 		{
 			KeyUp.TryRaise(*this, e);
 		}		
-
+		
 		friend class UIElementsCollection;
 	};
 }

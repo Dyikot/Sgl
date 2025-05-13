@@ -3,7 +3,8 @@
 namespace Sgl
 {
 	Scene::Scene():
-		Style(Properties)
+		BaseStyle(Properties),
+		UIElements([this] { return Properties.Cursor; })
 	{}
 
 	void Scene::OnRender(RenderContext renderContext) const

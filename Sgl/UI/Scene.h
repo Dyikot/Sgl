@@ -7,7 +7,10 @@
 
 namespace Sgl
 {	
-	class Scene: public IVisual, public ECS::IProcessed, public IKeyEventsListener
+	class Scene: 
+		public IVisual, 
+		public ECS::IProcessed, 
+		public IKeyEventsListener
 	{
 	public:
 		struct StyleableProperties
@@ -18,7 +21,7 @@ namespace Sgl
 		};
 
 		StyleableProperties Properties;
-		Style<StyleableProperties> Style;
+		Style<StyleableProperties> BaseStyle;
 		UIElementsCollection UIElements;
 		Event<KeyEventHandler> KeyUp;
 		Event<KeyEventHandler> KeyDown;
