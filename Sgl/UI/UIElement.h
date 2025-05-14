@@ -84,7 +84,7 @@ namespace Sgl
 			HorizontalAlignment HorizontalAlignment = HorizontalAlignment::Left;
 		};
 
-		Point Position;
+		FPoint Position;
 		StyleableProperties Properties;
 		Style<StyleableProperties> BaseStyle;
 		Style<StyleableProperties> HoverStyle;

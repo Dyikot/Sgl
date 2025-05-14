@@ -10,8 +10,6 @@
 
 namespace Sgl
 {
-	class Scene;
-
 	class RenderContext
 	{
 	private:
@@ -19,25 +17,26 @@ namespace Sgl
 	public:
 		explicit RenderContext(Renderer renderer) noexcept;
 		
-		void DrawPoint(Point point, Color color);
-		void DrawPoints(PointsView points, Color color);
-		void DrawLine(Point start, Point end, Color color);
-		void DrawLines(PointsView points, Color color);
-		void DrawRectangle(Rect rectange, Color color);
-		void DrawRectangles(RectanglesView rectanges, Color color);
-		void DrawFillRectangle(Rect rectange, Color fill);
-		void DrawFillRectangles(RectanglesView rectanges, Color fill);
-		void DrawTexture(const Texture& texture, Rect rectangle, Color fill);
-		void DrawTexture(const Texture& texture, Rect rectangle, iRect clip, Color fill);
-		void DrawEllipse(PointsView ellipse, Color color);
-		void DrawEllipse(Point position, int width, int height, Color color);
-		void DrawEllipseFill(PointsView ellipse, Color color);
-		void DrawEllipseFill(Point position, int width, int height, Color color);
+		void DrawPoint(FPoint point, Color color);
+		void DrawPoints(FPointsView points, Color color);
+		void DrawLine(FPoint start, FPoint end, Color color);
+		void DrawLines(FPointsView points, Color color);
+		void DrawRect(FRect rectange, Color color);
+		void DrawRects(FRectsView rectanges, Color color);
+		void DrawFillRect(FRect rectange, Color fill);
+		void DrawFillRects(FRectsView rectanges, Color fill);
+		void DrawTexture(const Texture& texture, FRect rectangle, Color fill);
+		void DrawTexture(const Texture& texture, FRect rectangle, Rect clip, Color fill);
+		void DrawEllipse(FPointsView ellipse, Color color);
+		void DrawEllipse(FPoint position, int width, int height, Color color);
+		void DrawEllipseFill(FPointsView ellipse, Color color);
+		void DrawEllipseFill(FPoint position, int width, int height, Color color);
 		void DrawShape(VerticesView vertices);
 		void DrawShape(VerticesView vertices, const Texture& texture, Color color);
 		void DrawShape(VerticesView vertices, std::span<const int> order);
 		void DrawShape(VerticesView vertices, std::span<const int> order, const Texture& texture, Color color);
-		void SetSceneBackground(const Scene& scene);
+		void FillBackground(Color color);
+		void FillBackground(const Texture& texture, Color color);
 		void SetBlendMode(SDL_BlendMode mode);
 
 		void UpdateScreen()

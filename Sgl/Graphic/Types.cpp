@@ -7,7 +7,7 @@ namespace Sgl
 		base(count)
 	{}
 
-	VerticesCollection::VerticesCollection(PointsView points, Color color)
+	VerticesCollection::VerticesCollection(FPointsView points, Color color)
 	{
 		reserve(points.size());
 
@@ -22,8 +22,8 @@ namespace Sgl
 		}
 	}
 
-	VerticesCollection::VerticesCollection(PointsView points,
-								   PointsView textureCoordinates,
+	VerticesCollection::VerticesCollection(FPointsView points,
+								   FPointsView textureCoordinates,
 								   Color color)
 	{
 		assert(points.size() == textureCoordinates.size());
@@ -44,10 +44,10 @@ namespace Sgl
 	static inline auto _sinRange = Math::SinRange<360>();
 	static inline auto _cosRange = Math::CosRange<360>();
 
-	PointsCollection Shapes::CreateEllipse(Point position, int width, int height, size_t pointsNumber)
+	FPointsCollection Shapes::CreateEllipse(FPoint position, int width, int height, size_t pointsNumber)
 	{
 		constexpr size_t maxAngle = 360;
-		PointsCollection points = PointsCollection(pointsNumber);
+		auto points = FPointsCollection(pointsNumber);
 
 		if (maxAngle % pointsNumber)
 		{

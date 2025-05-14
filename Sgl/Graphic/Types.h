@@ -8,19 +8,19 @@
 
 namespace Sgl
 {
-	using Point = SDL_FPoint;
-	using iPoint = SDL_Point;
-	using Rect = SDL_FRect;
-	using iRect = SDL_Rect;
+	using FPoint = SDL_FPoint;
+	using Point = SDL_Point;
+	using FRect = SDL_FRect;
+	using Rect = SDL_Rect;
 	using Vertex = SDL_Vertex;
 	using Renderer = SDL_Renderer*;
 
-	using PointsView = std::span<const Point>;
-	using RectanglesView = std::span<const Rect>;
+	using FPointsView = std::span<const FPoint>;
+	using FRectsView = std::span<const FRect>;
 	using VerticesView = std::span<const Vertex>;
 
-	using PointsCollection = std::vector<Point>;
-	using RectanglesCollection = std::vector<Rect>;
+	using FPointsCollection = std::vector<FPoint>;
+	using FRectsCollection = std::vector<FRect>;
 
 	class VerticesCollection: public std::vector<Vertex>
 	{
@@ -29,13 +29,13 @@ namespace Sgl
 
 		VerticesCollection() = default;
 		explicit VerticesCollection(size_t count);
-		VerticesCollection(PointsView points, Color color);
-		VerticesCollection(PointsView points, PointsView textureCoordinates, Color color);
+		VerticesCollection(FPointsView points, Color color);
+		VerticesCollection(FPointsView points, FPointsView textureCoordinates, Color color);
 	};
 
 	class Shapes
 	{
 	public:
-		static PointsCollection CreateEllipse(Point position, int width, int height, size_t pointsNumber = 360);
+		static FPointsCollection CreateEllipse(FPoint position, int width, int height, size_t pointsNumber = 360);
 	};
 }

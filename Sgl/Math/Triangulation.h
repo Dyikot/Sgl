@@ -4,6 +4,6 @@
 
 namespace Sgl::Math
 {
-	std::vector<int> TriangulateConvexShape(PointsView points);
-	std::vector<int> TriangulateConvexShape(PointsView points, Point center);
+	std::vector<int> TriangulateConvexShape(FPointsView points);
+	std::vector<int> TriangulateConvexShape(FPointsView points, FPoint center);
 }

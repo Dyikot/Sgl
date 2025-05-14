@@ -9,7 +9,17 @@ namespace Sgl
 
 	void Scene::OnRender(RenderContext renderContext) const
 	{
-		renderContext.SetSceneBackground(*this);
+		auto texture = Properties.BackgroundTexture;
+
+		if(texture)
+		{
+			renderContext.FillBackground(*texture, Properties.BackgroundColor);
+		}
+		else
+		{
+			renderContext.FillBackground(Properties.BackgroundColor);
+		}
+
 		UIElements.OnRender(renderContext);
 	}
 

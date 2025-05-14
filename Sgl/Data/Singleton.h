@@ -1,4 +1,4 @@
 #pragma once
 
-#define Sgl_Singleton(T, varName, value) []() -> T& { static T varName = T(value); return varName; }
-#define Sgl_ConstSingleton(T, varName, value) []() -> const T& { static T varName = T(value); return varName; }
+#define Sgl_Singleton(T, value) []() -> T& { static T var = T(value); return var; }
+#define Sgl_ConstSingleton(T, value) []() -> const T& { static T var = T(value); return var; }

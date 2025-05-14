@@ -5,12 +5,12 @@
 
 namespace Sgl::Math
 {
-	inline float TriangleArea(Point a, Point b, Point c)
+	inline float TriangleArea(FPoint a, FPoint b, FPoint c)
 	{
 		return (a.x * (b.y - c.y) + b.x * (c.y - a.y) + c.x * (a.y - b.y)) / 2.f;
 	}
 
-	inline bool DoesTriangleContainsPoint(Point a, Point b, Point c, Point point)
+	inline bool DoesTriangleContainsPoint(FPoint a, FPoint b, FPoint c, FPoint point)
 	{
 		auto abc = TriangleArea(a, b, c);
 		auto pab = TriangleArea(point, a, b);
@@ -20,12 +20,12 @@ namespace Sgl::Math
 		return fabsf(abc - pab + pbc + pac) < 1e-5f;
 	}
 
-	inline float VectorProductKValue(Point a, Point b, Point c)
+	inline float VectorProductKValue(FPoint a, FPoint b, FPoint c)
 	{
 		return (c.x - a.x) * (b.y - a.y) - (c.y - a.y) * (b.x - a.x);
 	}
 
-	std::vector<int> TriangulateConvexShape(PointsView points)
+	std::vector<int> TriangulateConvexShape(FPointsView points)
 	{
 		constexpr size_t MinVerticesNumber = 3;
 		std::list<int> order(points.size());
@@ -85,7 +85,7 @@ namespace Sgl::Math
 		return resultOrder;
 	}
 
-	std::vector<int> TriangulateConvexShape(PointsView points, Point center)
+	std::vector<int> TriangulateConvexShape(FPointsView points, FPoint center)
 	{
 		std::vector<int> resultOrder;
 		resultOrder.reserve((points.size()) * 3);

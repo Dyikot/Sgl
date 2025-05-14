@@ -7,7 +7,7 @@ namespace Sgl
         return left.Properties.ZIndex < right.Properties.ZIndex;
     }
 
-    bool IsIntersects(Point point, const UIElement& element)
+    bool IsIntersects(FPoint point, const UIElement& element)
     {
         return point.x >= element.Position.x &&
                point.x <= element.Position.x + element.Properties.Width &&
