@@ -15,6 +15,12 @@ namespace Sgl
 			object()
 		{}
 
+		object(const object& other):
+			_value(other._value), _type(other._type)
+		{}
+
+		object(object&&) = delete;
+
 		template<typename T>
 		object(T& value) :
 			_value(&value), _type(typeid(T))
@@ -87,9 +93,11 @@ namespace Sgl
 			const_object()
 		{}
 
-		const_object(const object object):
-			_value(object._value), _type(object._type)
+		const_object(const object& other):
+			_value(other._value), _type(other._type)
 		{}
+
+		const_object(const_object&&) = delete;
 
 		template<typename T>
 		const_object(const T& value) :

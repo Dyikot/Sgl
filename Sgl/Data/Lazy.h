@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include <optional>
+#include <tuple>
 #include "Delegate.h"
 
 namespace Sgl
@@ -14,29 +14,43 @@ namespace Sgl
 		mutable Func<T> _valueFactory;
 	public:
 		Lazy() requires std::default_initializable<T>:
-			_valueFactory([] { return T{}; })
+			_valueFactory([] { return T(); })
 		{}
 
-		Lazy(T&& value):
-			_valueFactory([v = std::forward<T>(value)] { return v; })
+		template<typename... TArgs> requires std::constructible_from<T, TArgs...>
+		Lazy(TArgs&&... args)
+		{
+			_valueFactory = [args = std::make_tuple(std::forward<TArgs>(args)...)]
+			{
+				return std::apply(
+					[](auto&&... args)
+					{
+						return T(std::forward<decltype(args)>(args)...);
+					}, 
+					std::move(args)
+				);
+			};
+		}
+
+		Lazy(Func<T> valueFactory):
+			_valueFactory(std::move(valueFactory))
 		{}
 
-		Lazy(CFunc<T> auto&& factory):
-			_valueFactory(std::forward<decltype(factory)>(factory))
-		{}
+		Lazy(const Lazy& other) = delete;
 
-		Lazy(const Lazy&) = delete;
-		Lazy(Lazy&&) = delete;
+		Lazy(Lazy&& other) noexcept:
+			_value(std::move(other._value)), _valueFactory(std::move(other._valueFactory))
+		{}
 
 		T& Get()
 		{
-			TryCreateValue();
+			CreateValueIfNull();
 			return *_value;
 		}
 
 		const T& Get() const
 		{
-			TryCreateValue();
+			CreateValueIfNull();
 			return *_value;
 		}
 
@@ -45,13 +59,13 @@ namespace Sgl
 			return _value;
 		}
 
-		operator T& ()
-		{ 
-			return Get(); 
+		T& operator*()
+		{
+			return Get();
 		}
 
-		operator const T& () const 
-		{ 
+		const T& operator*() const
+		{
 			return Get();
 		}
 
@@ -65,7 +79,7 @@ namespace Sgl
 			return &Get();
 		}
 	private:
-		void TryCreateValue() const
+		void CreateValueIfNull() const
 		{
 			if(!_value)
 			{
