@@ -23,6 +23,12 @@ namespace Sgl
 		Surface(const Surface& surface) = delete;
 		~Surface() { SDL_FreeSurface(_surface); }
 
+		void SetColor(Color color)
+		{
+			SDL_SetSurfaceColorMod(_surface, color.Red, color.Green, color.Blue);
+			SDL_SetSurfaceAlphaMod(_surface, color.Alpha);
+		}
+
 		auto Size() const
 		{
 			return std::pair<size_t, size_t>(_surface->w, _surface->h);

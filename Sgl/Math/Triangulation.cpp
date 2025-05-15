@@ -25,7 +25,7 @@ namespace Sgl::Math
 		return (c.x - a.x) * (b.y - a.y) - (c.y - a.y) * (b.x - a.x);
 	}
 
-	std::vector<int> TriangulateConvexShape(FPointsView points)
+	std::vector<int> TriangulateConvexShape(std::span<FPoint> points)
 	{
 		constexpr size_t MinVerticesNumber = 3;
 		std::list<int> order(points.size());
@@ -85,7 +85,7 @@ namespace Sgl::Math
 		return resultOrder;
 	}
 
-	std::vector<int> TriangulateConvexShape(FPointsView points, FPoint center)
+	std::vector<int> TriangulateConvexShape(std::span<FPoint> points, FPoint center)
 	{
 		std::vector<int> resultOrder;
 		resultOrder.reserve((points.size()) * 3);

@@ -77,8 +77,8 @@ namespace Sgl
 			};
 			Cursor::Getter Cursor = Cursors::Arrow;
 			Color BackgroundColor = Colors::Black;
-			const UIElement* Tooltip = nullptr;
-			const Texture* BackgroundTexture = nullptr;
+			UIElement* Tooltip = nullptr;
+			Texture* BackgroundTexture = nullptr;
 			Visibility Visibility = Visibility::Visible;
 			VerticalAlignment VerticalAlignment = VerticalAlignment::Top;
 			HorizontalAlignment HorizontalAlignment = HorizontalAlignment::Left;

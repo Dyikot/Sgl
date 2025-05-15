@@ -1,4 +1,4 @@
-#include "Types.h"
+#include "BasicTypes.h"
 #include <cassert>
 
 namespace Sgl
@@ -7,7 +7,7 @@ namespace Sgl
 		base(count)
 	{}
 
-	VerticesCollection::VerticesCollection(FPointsView points, Color color)
+	VerticesCollection::VerticesCollection(std::span<FPoint> points, Color color)
 	{
 		reserve(points.size());
 
@@ -22,8 +22,8 @@ namespace Sgl
 		}
 	}
 
-	VerticesCollection::VerticesCollection(FPointsView points,
-								   FPointsView textureCoordinates,
+	VerticesCollection::VerticesCollection(std::span<FPoint> points,
+								   std::span<FPoint> textureCoordinates,
 								   Color color)
 	{
 		assert(points.size() == textureCoordinates.size());
@@ -44,10 +44,10 @@ namespace Sgl
 	static inline auto _sinRange = Math::SinRange<360>();
 	static inline auto _cosRange = Math::CosRange<360>();
 
-	FPointsCollection Shapes::CreateEllipse(FPoint position, int width, int height, size_t pointsNumber)
+	std::vector<FPoint> Shapes::CreateEllipse(FPoint position, int width, int height, size_t pointsNumber)
 	{
 		constexpr size_t maxAngle = 360;
-		auto points = FPointsCollection(pointsNumber);
+		auto points = std::vector<FPoint>(pointsNumber);
 
 		if (maxAngle % pointsNumber)
 		{

@@ -137,7 +137,4 @@ namespace Sgl
 		void Play(int channel = _auto, int loops = 0) const;
 		Mix_Chunk* ToMix_Chunk() const noexcept;
 	};
-
-	using MusicView = std::reference_wrapper<Music>;
-	using SoundChunkView = std::reference_wrapper<SoundChunk>;
 }

@@ -17,7 +17,7 @@ namespace Sgl
 		SDL_RenderDrawPointF(_renderer, point.x, point.y);
 	}
 
-	void RenderContext::DrawPoints(FPointsView points, Color color)
+	void RenderContext::DrawPoints(std::span<FPoint> points, Color color)
 	{
 		SetRenderColor(color);
 		SDL_RenderDrawPointsF(_renderer, points.data(), points.size());
@@ -29,7 +29,7 @@ namespace Sgl
 		SDL_RenderDrawLineF(_renderer, start.x, start.y, end.x, end.y);
 	}
 
-	void RenderContext::DrawLines(FPointsView points, Color color)
+	void RenderContext::DrawLines(std::span<FPoint> points, Color color)
 	{	
 		SetRenderColor(color);
 		SDL_RenderDrawLinesF(_renderer, points.data(), points.size());
@@ -41,7 +41,7 @@ namespace Sgl
 		SDL_RenderDrawRectF(_renderer, &rectange);
 	}
 
-	void RenderContext::DrawRects(FRectsView rectanges, Color color)
+	void RenderContext::DrawRects(std::span<FRect> rectanges, Color color)
 	{
 		SetRenderColor(color);
 		SDL_RenderDrawRectsF(_renderer, rectanges.data(), rectanges.size());
@@ -53,26 +53,26 @@ namespace Sgl
 		SDL_RenderFillRectF(_renderer, &rectange);		
 	}
 
-	void RenderContext::DrawFillRects(FRectsView rectanges, Color fill)
+	void RenderContext::DrawFillRects(std::span<FRect> rectanges, Color fill)
 	{
 		SetRenderColor(fill);
 		SDL_RenderFillRectsF(_renderer, rectanges.data(), rectanges.size());
 	}
 
-	void RenderContext::DrawTexture(const Texture& texture, FRect rectangle, Color fill)
+	void RenderContext::DrawTexture(Texture& texture, FRect rectangle, Color fill)
 	{
-		SetTextureColor(texture, fill);
+		texture.SetColor(fill);
 		SDL_RenderCopyF(_renderer, texture, nullptr, &rectangle);
 	}
 
-	void RenderContext::DrawTexture(const Texture& texture, FRect rectangle,
+	void RenderContext::DrawTexture(Texture& texture, FRect rectangle,
 									Rect clip, Color fill)
 	{
-		SetTextureColor(texture, fill);
+		texture.SetColor(fill);
 		SDL_RenderCopyF(_renderer, texture, &clip, &rectangle);
 	}
 
-	void RenderContext::DrawEllipse(FPointsView ellipse, Color color)
+	void RenderContext::DrawEllipse(std::span<FPoint> ellipse, Color color)
 	{
 		DrawLines(ellipse, color);
 	}
@@ -83,7 +83,7 @@ namespace Sgl
 		DrawLines(ellipsePoints, color);
 	}
 
-	void RenderContext::DrawEllipseFill(FPointsView ellipse, Color color)
+	void RenderContext::DrawEllipseFill(std::span<FPoint> ellipse, Color color)
 	{
 		auto vertices = VerticesCollection( ellipse, color);
 		auto order = Math::TriangulateConvexShape(ellipse);
@@ -96,27 +96,27 @@ namespace Sgl
 		DrawEllipseFill(ellipsePoints, color);
 	}
 
-	void RenderContext::DrawShape(VerticesView vertices)
+	void RenderContext::DrawShape(std::span<Vertex> vertices)
 	{
 		SDL_RenderGeometry(_renderer, nullptr, vertices.data(), vertices.size(), nullptr, 0);
 	}
 
-	void RenderContext::DrawShape(VerticesView vertices, const Texture& texture, Color color)
+	void RenderContext::DrawShape(std::span<Vertex> vertices, Texture& texture, Color color)
 	{
-		SetTextureColor(texture, color);
+		texture.SetColor(color);
 		SDL_RenderGeometry(_renderer, texture, vertices.data(), vertices.size(), nullptr, 0);	
 	}
 
-	void RenderContext::DrawShape(VerticesView vertices, std::span<const int> order)
+	void RenderContext::DrawShape(std::span<Vertex> vertices, std::span<int> order)
 	{
 		SDL_RenderGeometry(_renderer, nullptr, vertices.data(), vertices.size(),
 						   order.data(), order.size());
 	}
 
-	void RenderContext::DrawShape(VerticesView vertices, std::span<const int> order,
-								  const Texture& texture, Color color)
+	void RenderContext::DrawShape(std::span<Vertex> vertices, std::span<int> order,
+								  Texture& texture, Color color)
 	{
-		SetTextureColor(texture, color);
+		texture.SetColor(color);
 		SDL_RenderGeometry(_renderer, texture, vertices.data(), vertices.size(),
 						   order.data(), order.size());		
 	}
@@ -127,9 +127,9 @@ namespace Sgl
 		SDL_RenderClear(_renderer);
 	}
 
-	void RenderContext::FillBackground(const Texture& texture, Color color)
+	void RenderContext::FillBackground(Texture& texture, Color color)
 	{
-		SetTextureColor(texture, color);
+		texture.SetColor(color);
 		SDL_RenderCopy(_renderer, texture, nullptr, nullptr);
 	}
 

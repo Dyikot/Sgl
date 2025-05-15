@@ -17,7 +17,7 @@ namespace Sgl
 		{
 			Cursor::Getter Cursor = Cursors::Arrow;
 			Color BackgroundColor = Colors::Black;
-			const Texture* BackgroundTexture = nullptr;
+			Texture* BackgroundTexture = nullptr;
 		};
 
 		StyleableProperties Properties;

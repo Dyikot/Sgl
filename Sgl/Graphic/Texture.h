@@ -4,7 +4,8 @@
 #include <string_view>
 #include "../Tools/Log.h"
 #include "SDL/SDL_image.h"
-#include "Types.h"
+#include "BasicTypes.h"
+#include "Color.h"
 
 namespace Sgl
 {
@@ -31,6 +32,12 @@ namespace Sgl
 			{
 				SDL_DestroyTexture(_texture);
 			}
+		}
+
+		void SetColor(Color color)
+		{
+			SDL_SetTextureColorMod(_texture, color.Red, color.Green, color.Blue);
+			SDL_SetTextureAlphaMod(_texture, color.Alpha);
 		}
 
 		auto Size() const

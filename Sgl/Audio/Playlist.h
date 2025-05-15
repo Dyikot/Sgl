@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "Audio.h"
+#include "../Data/Ref.h"
 #include "../Events/Event.h"
 
 namespace Sgl
@@ -14,8 +15,8 @@ namespace Sgl
 	{
 	public:
 		Volume Volume;
-		std::vector<MusicView> Items;
-		std::vector<MusicView>::iterator Current = Items.begin();
+		std::vector<Ref<Music>> Items;
+		std::vector<Ref<Music>>::iterator Current = Items.begin();
 	public:
 		Playlist() = default;
 		Playlist(const Playlist& other);
