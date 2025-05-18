@@ -53,7 +53,7 @@ namespace Sgl
 		return Mix_PlayingMusic();
 	}
 
-	Mix_Music* Music::ToMix_Music() const noexcept
+	Music::operator Mix_Music* () const noexcept
 	{
 		return _music;
 	}
@@ -75,7 +75,7 @@ namespace Sgl
 		Mix_PlayChannel(channel, _soundChunk, loops);
 	}
 
-	Mix_Chunk* SoundChunk::ToMix_Chunk() const noexcept
+	SoundChunk::operator Mix_Chunk* () const noexcept
 	{
 		return _soundChunk;
 	}

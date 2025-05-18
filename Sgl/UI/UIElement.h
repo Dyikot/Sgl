@@ -51,7 +51,7 @@ namespace Sgl
 		public IKeyEventsListener
 	{
 	public:
-		struct StyleableProperties
+		struct Properties
 		{
 			float Width = 0;
 			float Height = 0;
@@ -84,10 +84,11 @@ namespace Sgl
 			HorizontalAlignment HorizontalAlignment = HorizontalAlignment::Left;
 		};
 
+		using PropertiesFactory = std::unique_ptr<Properties>(*)();
+
 		FPoint Position;
-		StyleableProperties Properties;
-		Style<StyleableProperties> BaseStyle;
-		Style<StyleableProperties> HoverStyle;
+		Style<Properties> BaseStyle;
+		Style<Properties> HoverStyle;
 		UIElementsCollection Children;
 
 		Event<KeyEventHandler> KeyUp;
@@ -99,13 +100,70 @@ namespace Sgl
 		Event<MouseEventHandler> MouseLeave;
 		Event<MouseEventHandler> MouseDoubleClick;
 		Event<MouseWheelEventHandler> MouseWheel;
+	protected:
+		std::unique_ptr<Properties> _properties;
 	private:
 		bool _isHover = false;
 	public:
 		UIElement();
+		UIElement(PropertiesFactory propertiesFactory);
 		virtual ~UIElement() = default;
 
 		void OnRender(RenderContext renderContext) const override;
+
+		void SetWidth(float value) { _properties->Width = value; }
+		float GetWidth() const { return _properties->Width; }
+
+		void SetHeight(float value) { _properties->Height = value; }
+		float GetHeight() const { return _properties->Height; }
+
+		void SetMinWidth(float value) { _properties->MinWidth = value; }
+		float GetMinWidth() const { return _properties->MinWidth; }
+
+		void SetMinHeight(float value) { _properties->MinHeight = value; }
+		float GetMinHeight() const { return _properties->MinHeight; }
+
+		void SetMaxWidth(float value) { _properties->MaxWidth = value; }
+		float GetMaxWidth() const { return _properties->MaxWidth; }
+
+		void SetMaxHeight(float value) { _properties->MaxHeight = value; }
+		float GetMaxHeight() const { return _properties->MaxHeight; }
+
+		void SetZIndex(size_t value) { _properties->ZIndex = value; }
+		size_t GetZIndex() const { return _properties->ZIndex; }
+
+		void SetMargin(Thickness value) { _properties->Margin = value; }
+		Thickness GetMargin() const { return _properties->Margin; }
+
+		void SetPadding(Thickness value) { _properties->Padding = value; }
+		Thickness GetPadding() const { return _properties->Padding; }
+
+		void SetBorder(Border value) { _properties->Border = value; }
+		Border GetBorder() const { return _properties->Border; }
+
+		void SetFont(const Font& value) { _properties->Font = value; }
+		const Font& GetFont() const { return _properties->Font; }
+
+		void SetCursor(Cursor::Getter value) { _properties->Cursor = value; }
+		Cursor::Getter GetCursor() const { return _properties->Cursor; }
+
+		void SetBackgroundColor(Color value) { _properties->BackgroundColor = value; }
+		Color GetBackgroundColor() const { return _properties->BackgroundColor; }
+
+		void SetTooltip(UIElement* value) { _properties->Tooltip = value; }
+		UIElement* GetTooltip() const { return _properties->Tooltip; }
+
+		void SetBackgroundTexture(Texture* value) { _properties->BackgroundTexture = value; }
+		Texture* GetBackgroundTexture() const { return _properties->BackgroundTexture; }
+
+		void SetVisibility(Visibility value) { _properties->Visibility = value; }
+		Visibility GetVisibility() const { return _properties->Visibility; }
+
+		void SetVerticalAlignment(VerticalAlignment value) { _properties->VerticalAlignment = value; }
+		VerticalAlignment GetVerticalAlignment() const { return _properties->VerticalAlignment; }
+
+		void SetHorizontalAlignment(HorizontalAlignment value) { _properties->HorizontalAlignment = value; }
+		HorizontalAlignment GetHorizontalAlignment() const { return _properties->HorizontalAlignment; }
 	protected:
 		virtual void OnMouseDown(const MouseButtonEventArgs& e) override
 		{

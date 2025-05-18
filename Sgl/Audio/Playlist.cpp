@@ -31,16 +31,16 @@ namespace Sgl
 			Current = Items.begin();
 		}
 
-		Music& music = *Current;
+		Music& current = *Current;
 
-		if(!music.IsPlaying())
+		if(!current.IsPlaying())
 		{
-			music.Play();
+			current.Play();
 			Current++;
 		}
-		else if(music.IsPaused())
+		else if(current.IsPaused())
 		{
-			music.Resume();
+			current.Resume();
 		}
 	}
 

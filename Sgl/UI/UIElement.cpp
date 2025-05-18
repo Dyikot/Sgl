@@ -4,15 +4,15 @@ namespace Sgl
 {
     bool ZIndexComparer::operator()(const UIElement& left, const UIElement& right) const
     {
-        return left.Properties.ZIndex < right.Properties.ZIndex;
+        return left.GetZIndex() < right.GetZIndex();
     }
 
     bool IsIntersects(FPoint point, const UIElement& element)
     {
         return point.x >= element.Position.x &&
-               point.x <= element.Position.x + element.Properties.Width &&
+               point.x <= element.Position.x + element.GetWidth() &&
                point.y >= element.Position.y &&
-               point.y <= element.Position.y + element.Properties.Height;
+               point.y <= element.Position.y + element.GetHeight();
     }
 
     void UIElementsCollection::OnMouseMove(const MouseButtonEventArgs& e)
@@ -34,7 +34,7 @@ namespace Sgl
                 }
 
                 HoverElement = &element;
-                Cursor::Set(element.Properties.Cursor);
+                Cursor::Set(element._properties->Cursor);
                 element.OnMouseEnter(e);
                 element.OnMouseMove(e);
                 element.Children.OnMouseMove(e);
@@ -48,7 +48,7 @@ namespace Sgl
         }
 
         HoverElement = nullptr;
-        Cursor::Set(Parent ? Parent->Properties.Cursor : DefaultCursorGetter());
+        Cursor::Set(Parent ? Parent->_properties->Cursor : DefaultCursorGetter());
     }
 
     void UIElementsCollection::OnMouseDown(const MouseButtonEventArgs& e)
@@ -109,17 +109,22 @@ namespace Sgl
     }
 
     UIElement::UIElement():
-        Position(), 
-        BaseStyle(Properties),
-        HoverStyle(Properties, BaseStyle),
-        Children(this)
+        UIElement(std::make_unique<Properties>)
+    {}
+
+    UIElement::UIElement(PropertiesFactory propertiesFactory):
+        Position(),
+        BaseStyle(_properties),
+        HoverStyle(_properties, BaseStyle),
+        Children(this),
+        _properties(propertiesFactory())
     {}
 
     void UIElement::OnRender(RenderContext renderContext) const
     {
-        if(_isHover && Properties.Tooltip)
+        if(_isHover && _properties->Tooltip)
         {
-            Properties.Tooltip->OnRender(renderContext);
+            _properties->Tooltip->OnRender(renderContext);
         }
     }
 }

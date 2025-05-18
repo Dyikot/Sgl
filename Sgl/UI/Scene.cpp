@@ -2,22 +2,27 @@
 
 namespace Sgl
 {
+	Scene::Scene(PropertiesFactory propertiesFactory):
+		BaseStyle(_properties),
+		UIElements([this] { return _properties->Cursor; }),
+		_properties(propertiesFactory())
+	{}
+
 	Scene::Scene():
-		BaseStyle(Properties),
-		UIElements([this] { return Properties.Cursor; })
+		Scene(std::make_unique<Properties>)
 	{}
 
 	void Scene::OnRender(RenderContext renderContext) const
 	{
-		auto texture = Properties.BackgroundTexture;
+		auto texture = _properties->BackgroundTexture;
 
 		if(texture)
 		{
-			renderContext.FillBackground(*texture, Properties.BackgroundColor);
+			renderContext.FillBackground(*texture, _properties->BackgroundColor);
 		}
 		else
 		{
-			renderContext.FillBackground(Properties.BackgroundColor);
+			renderContext.FillBackground(_properties->BackgroundColor);
 		}
 
 		UIElements.OnRender(renderContext);

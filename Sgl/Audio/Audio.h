@@ -117,13 +117,14 @@ namespace Sgl
 		void Halt() noexcept;
 		bool IsPaused() noexcept;
 		bool IsPlaying() noexcept;
-		Mix_Music* ToMix_Music() const noexcept;
+
+		operator Mix_Music* () const noexcept;
 	};
 
 	class SoundChunk
 	{
 	private:
-		static constexpr int _auto = -1;
+		static constexpr int Auto = -1;
 
 		Mix_Chunk* _soundChunk;
 	public:
@@ -134,7 +135,8 @@ namespace Sgl
 		SoundChunk(SoundChunk&&) = delete;
 		~SoundChunk() noexcept;
 
-		void Play(int channel = _auto, int loops = 0) const;
-		Mix_Chunk* ToMix_Chunk() const noexcept;
+		void Play(int channel = Auto, int loops = 0) const;
+
+		operator Mix_Chunk* () const noexcept;
 	};
 }

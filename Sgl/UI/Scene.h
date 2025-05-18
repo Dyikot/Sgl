@@ -13,23 +13,36 @@ namespace Sgl
 		public IKeyEventsListener
 	{
 	public:
-		struct StyleableProperties
+		struct Properties
 		{
 			Cursor::Getter Cursor = Cursors::Arrow;
 			Color BackgroundColor = Colors::Black;
 			Texture* BackgroundTexture = nullptr;
 		};
 
-		StyleableProperties Properties;
-		Style<StyleableProperties> BaseStyle;
+		using PropertiesFactory = std::unique_ptr<Properties>(*)();
+
+		Style<Properties> BaseStyle;
 		UIElementsCollection UIElements;
 		Event<KeyEventHandler> KeyUp;
 		Event<KeyEventHandler> KeyDown;
+	protected:
+		std::unique_ptr<Properties> _properties;
 	public:
+		Scene(PropertiesFactory propertiesFactory);
 		Scene();
 		virtual ~Scene() = default;
 
 		void OnRender(RenderContext renderContext) const override;
+
+		void SetCursor(Cursor::Getter value) { _properties->Cursor = value; }
+		Cursor::Getter GetCursor() const { return _properties->Cursor; }
+
+		void SetBackgroundColor(Color value) { _properties->BackgroundColor = value; }
+		Color GetBackgroundColor() const { return _properties->BackgroundColor; }
+
+		void SetBackgroundTexture(Texture* value) { _properties->BackgroundTexture = value; }
+		const Texture* GetBackgroundTexture() const { _properties->BackgroundTexture; }
 	protected:
 		virtual void OnKeyDown(const KeyEventArgs& e) override
 		{
