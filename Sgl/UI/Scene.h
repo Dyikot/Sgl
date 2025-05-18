@@ -3,46 +3,37 @@
 #include <stack>
 #include <queue>
 #include "../ECS/IProcessed.h"
-#include "UIElement.h"
+#include "UIElement/UIElementsCollection.h"
+#include "../Appearance/Style.h"
+#include "../Events/Event.h"
 
 namespace Sgl
 {	
 	class Scene: 
 		public IVisual, 
-		public ECS::IProcessed, 
+		public ECS::IProcessed,
 		public IKeyEventsListener
 	{
 	public:
-		struct Properties
-		{
-			Cursor::Getter Cursor = Cursors::Arrow;
-			Color BackgroundColor = Colors::Black;
-			Texture* BackgroundTexture = nullptr;
-		};
-
-		using PropertiesFactory = std::unique_ptr<Properties>(*)();
-
-		Style<Properties> BaseStyle;
+		StyleProperties<IVisual> Properties;
+		Style<IVisual> BaseStyle;
 		UIElementsCollection UIElements;
 		Event<KeyEventHandler> KeyUp;
 		Event<KeyEventHandler> KeyDown;
-	protected:
-		std::unique_ptr<Properties> _properties;
 	public:
-		Scene(PropertiesFactory propertiesFactory);
 		Scene();
 		virtual ~Scene() = default;
 
 		void OnRender(RenderContext renderContext) const override;
 
-		void SetCursor(Cursor::Getter value) { _properties->Cursor = value; }
-		Cursor::Getter GetCursor() const { return _properties->Cursor; }
+		void SetCursor(Cursor::Getter value) final { Properties.Cursor = value; }
+		Cursor::Getter GetCursor() const final { return Properties.Cursor; }
 
-		void SetBackgroundColor(Color value) { _properties->BackgroundColor = value; }
-		Color GetBackgroundColor() const { return _properties->BackgroundColor; }
+		void SetBackgroundColor(Color value) final { Properties.BackgroundColor = value; }
+		Color GetBackgroundColor() const final { return Properties.BackgroundColor; }
 
-		void SetBackgroundTexture(Texture* value) { _properties->BackgroundTexture = value; }
-		const Texture* GetBackgroundTexture() const { _properties->BackgroundTexture; }
+		void SetBackgroundTexture(Texture* value) final { Properties.BackgroundTexture = value; }
+		const Texture* GetBackgroundTexture() const final { return Properties.BackgroundTexture; }
 	protected:
 		virtual void OnKeyDown(const KeyEventArgs& e) override
 		{

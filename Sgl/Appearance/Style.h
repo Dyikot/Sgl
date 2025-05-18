@@ -4,33 +4,28 @@
 
 namespace Sgl
 {		
+	template<typename T>
+	struct StyleProperties;
+
 	template<typename TTargetType,
-			 typename TTargetProperty = std::unique_ptr<TTargetType>,
-			 typename TStyleSelector = void(*)(TTargetType&),
-			 typename TResetFactory = TTargetType(*)()>
+			 typename TProperties = StyleProperties<TTargetType>,
+			 typename TStyleSelector = void(*)(TProperties&)>
 	class Style
 	{
 	private:
 		using StyleSelector = TStyleSelector;
-		using ResetFactory = TResetFactory;
-		static constexpr auto DefaultResetFactory = [] { return TTargetType(); };
 
-		TTargetProperty& _target;
+		TProperties& _properties;
 		std::vector<StyleSelector> _selectors;
-		ResetFactory _resetFactory;
 		Style& _base = *this;
 	public:
-		Style(TTargetProperty& target, ResetFactory resetFactory = DefaultResetFactory) :
-			_target(target),
-			_resetFactory(resetFactory)
+		Style(TProperties& properties):
+			_properties(properties)
 		{}
 
-		Style(TTargetProperty& target,
-			  Style& base,
-			  ResetFactory resetFactory = DefaultResetFactory) :
-			_target(target),
-			_base(base),
-			_resetFactory(resetFactory)
+		Style(TProperties& properties, Style& base):
+			_properties(properties),
+			_base(base)
 		{}
 
 		Style(const Style&) = delete;
@@ -39,7 +34,7 @@ namespace Sgl
 		void Use(std::vector<StyleSelector> selectors)
 		{
 			_selectors = std::move(selectors);
-			ApplyStyle(*_target);
+			ApplyStyle(_properties);
 		}
 
 		template<StyleSelector... Selectors>
@@ -50,18 +45,16 @@ namespace Sgl
 
 		void Apply()
 		{
-			auto& target = *_target;
-
-			target = _resetFactory();
+			_properties = {};
 			if(this != &_base)
 			{
-				_base.ApplyStyle(target);
+				_base.ApplyStyle(_properties);
 			}
 
-			ApplyStyle(target);
+			ApplyStyle(_properties);
 		}
 	private:
-		void ApplyStyle(TTargetType& properties)
+		void ApplyStyle(TProperties& properties)
 		{
 			for(StyleSelector selector : _selectors)
 			{				
