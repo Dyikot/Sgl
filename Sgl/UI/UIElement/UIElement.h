@@ -14,7 +14,9 @@ namespace Sgl
 		StyleProperties<TStyleTargetType> Properties;
 
 		Style<TStyleTargetType> ClassStyle;
+
 		Trigger<TStyleTargetType> OnHover;
+		Trigger<TStyleTargetType> OnMousePressed;
 
 		Event<KeyEventHandler> KeyUp;
 		Event<KeyEventHandler> KeyDown;
@@ -34,24 +36,12 @@ namespace Sgl
 		UIElement():
 			ClassStyle(Properties),
 			OnHover(ClassStyle),
+			OnMousePressed(ClassStyle),
 			_position(),
 			_children(*this)
 		{}
 
 		virtual ~UIElement() = default;
-
-		void OnRender(RenderContext renderContext) const override
-		{
-			for(IUIElement& child : _children)
-			{
-				child.OnRender(renderContext);
-			}
-
-			if(_isHover && Properties.Tooltip)
-			{
-				Properties.Tooltip->OnRender(renderContext);
-			}
-		}
 
 		UIElementsCollection& Children() override { return _children; }
 
@@ -111,14 +101,29 @@ namespace Sgl
 
 		void SetHorizontalAlignment(HorizontalAlignment value) override { Properties.HorizontalAlignment = value; }
 		HorizontalAlignment GetHorizontalAlignment() const override { return Properties.HorizontalAlignment; }
+
+		void OnRender(RenderContext renderContext) const override
+		{
+			for(IUIElement& child : _children)
+			{
+				child.OnRender(renderContext);
+			}
+
+			if(_isHover && Properties.Tooltip)
+			{
+				Properties.Tooltip->OnRender(renderContext);
+			}
+		}
 	protected:
 		virtual void OnMouseDown(const MouseButtonEventArgs& e) override
 		{
+			OnMousePressed.Activate();
 			MouseDown.TryRaise(*this, e);
 		}
 
 		virtual void OnMouseUp(const MouseButtonEventArgs& e) override
 		{
+			OnMousePressed.Deactivate();
 			MouseUp.TryRaise(*this, e);
 		}
 
