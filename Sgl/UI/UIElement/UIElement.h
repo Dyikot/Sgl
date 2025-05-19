@@ -3,19 +3,18 @@
 #include <set>
 #include "UIElementsCollection.h"
 #include "../../Events/Event.h"
-#include "../../Appearance/Style.h"
+#include "../../Style/Trigger.h"
 
 namespace Sgl
 {
-	template<typename TProperties = StyleProperties<IUIElement>> 
-		requires std::derived_from<TProperties, StyleProperties<IUIElement>>
+	template<std::derived_from<IUIElement> TStyleTargetType = IUIElement>
 	class UIElement: public IUIElement
 	{
 	public:
-		TProperties Properties;
+		StyleProperties<TStyleTargetType> Properties;
 
-		Style<UIElement, TProperties> BaseStyle;
-		Style<UIElement, TProperties> HoverStyle;
+		Style<TStyleTargetType> ClassStyle;
+		Trigger<TStyleTargetType> OnHover;
 
 		Event<KeyEventHandler> KeyUp;
 		Event<KeyEventHandler> KeyDown;
@@ -33,8 +32,8 @@ namespace Sgl
 		bool _isHover = false;
 	public:
 		UIElement():
-			BaseStyle(Properties),
-			HoverStyle(Properties, BaseStyle),
+			ClassStyle(Properties),
+			OnHover(ClassStyle),
 			_position(),
 			_children(*this)
 		{}
@@ -131,14 +130,14 @@ namespace Sgl
 		void OnMouseEnter(const MouseButtonEventArgs& e) override
 		{
 			_isHover = true;
-			HoverStyle.Apply();
+			OnHover.Activate();
 			MouseEnter.TryRaise(*this, e);
 		}
 
 		void OnMouseLeave(const MouseButtonEventArgs& e) override
 		{
 			_isHover = false;
-			BaseStyle.Apply();
+			OnHover.Deactivate();
 			MouseLeave.TryRaise(*this, e);
 		}
 

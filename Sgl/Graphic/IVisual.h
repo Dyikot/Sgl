@@ -2,7 +2,7 @@
 
 #include "RenderContext.h"
 #include "Cursor.h"
-#include "../Appearance/Style.h"
+#include "../Style/Style.h"
 
 namespace Sgl
 {

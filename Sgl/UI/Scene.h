@@ -4,7 +4,7 @@
 #include <queue>
 #include "../ECS/IProcessed.h"
 #include "UIElement/UIElementsCollection.h"
-#include "../Appearance/Style.h"
+#include "../Style/Style.h"
 #include "../Events/Event.h"
 
 namespace Sgl
@@ -16,7 +16,7 @@ namespace Sgl
 	{
 	public:
 		StyleProperties<IVisual> Properties;
-		Style<IVisual> BaseStyle;
+		Style<IVisual> ClassStyle;
 		UIElementsCollection UIElements;
 		Event<KeyEventHandler> KeyUp;
 		Event<KeyEventHandler> KeyDown;

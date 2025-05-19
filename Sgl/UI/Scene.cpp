@@ -3,7 +3,7 @@
 namespace Sgl
 {
 	Scene::Scene():
-		BaseStyle(Properties),
+		ClassStyle(Properties),
 		UIElements(*this)
 	{}
 

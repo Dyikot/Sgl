@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../Appearance/Properties.h"
+#include "../../Style/Properties.h"
 #include "../../Graphic/IVisual.h"
 #include "../../Events/MouseAndKeyEvents.h"
 
