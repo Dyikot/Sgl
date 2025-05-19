@@ -19,6 +19,8 @@ Perfect for beginners learning game development and experienced developers who w
 ## Example
 This example shows how to create an application, set up a window, and style the scene.
 ```
+#include "../Sgl/Application.h"
+
 void SceneSetter(Sgl::StyleProperties<IVisual>& p)
 {
 	p.BackgroundColor = Colors::Green;
