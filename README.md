@@ -5,14 +5,29 @@
 ## About
 **Sgl** is a minimalistic C++ library designed to simplify 2D game development using [SDL2](https://www.libsdl.org/).
 
-**Key Features:**
-- Simple Application and Window creation/managment
-- 2D rendering using RenderContext
-- C# inspired Events
-- Scenes and SceneManager
-- Stylization UIElements and Scenes
-- Includes time utilities: Timer and Stopwatch
-- Audio wrappers: SoundChunk, Music and Playlist
+## Key Features
+- **Application Framework**: 
+  - Simple `Application` class for game lifecycle management
+  - Window management with `Window` class
+  - Built-in game loop with frame rate control
+- **Rendering**: 
+  - 2D rendering with `RenderContext`
+  - Texture loading and management
+- **Event System**: 
+  - C#-style events with delegates and observers
+  - Input event handling (keyboard/mouse)
+- **Scene Management**: 
+  - Stack-based `SceneManager` for scene transitions
+- **Styling System**: 
+  - Declarative UI element styling with `StyleProperties`
+  - Scene-level style configuration
+- **Time Utilities**: 
+  - `Timer` with duration/interval callbacks
+  - `Stopwatch` for precise time measurements
+- **Audio System**: 
+  - `SoundChunk` for short sound effects
+  - `Music` for streaming audio
+  - `Playlist` for managing background music
 
 Perfect for beginners learning game development and experienced developers who want to avoid boilerplate SDL2 setup.
 
