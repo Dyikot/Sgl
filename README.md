@@ -6,7 +6,7 @@
 **Sgl** is a minimalistic C++ library designed to simplify 2D game development using [SDL2](https://www.libsdl.org/).
 
 **Key Features:**
-- Simple Application and Window creationg/managment
+- Simple Application and Window creation/managment
 - 2D rendering using RenderContext
 - C# inspired Events
 - Scenes and SceneManager
