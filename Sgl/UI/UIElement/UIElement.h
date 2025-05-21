@@ -11,8 +11,6 @@ namespace Sgl
 	class UIElement: public IUIElement
 	{
 	public:
-		StyleProperties<TStyleTargetType> Properties;
-
 		Style<TStyleTargetType> ClassStyle;
 
 		Trigger<TStyleTargetType> OnHover;
@@ -28,13 +26,14 @@ namespace Sgl
 		Event<MouseEventHandler> MouseDoubleClick;
 		Event<MouseWheelEventHandler> MouseWheel;
 	protected:
+		StyleProperties<TStyleTargetType> _properties;
 		FPoint _position;
 		UIElementsCollection _children;
 	private:
 		bool _isHover = false;
 	public:
 		UIElement():
-			ClassStyle(Properties),
+			ClassStyle(_properties),
 			OnHover(ClassStyle),
 			OnMousePressed(ClassStyle),
 			_position(),
@@ -48,59 +47,59 @@ namespace Sgl
 		void SetPosition(FPoint value) override { _position = value; }
 		FPoint GetPosition() const override { return _position; }
 
-		void SetWidth(float value) override { Properties.Width = value; }
-		float GetWidth() const override { return Properties.Width; }
+		void SetWidth(float value) override { _properties.Width = value; }
+		float GetWidth() const override { return _properties.Width; }
 
-		void SetHeight(float value) override { Properties.Height = value; }
-		float GetHeight() const override { return Properties.Height; }
+		void SetHeight(float value) override { _properties.Height = value; }
+		float GetHeight() const override { return _properties.Height; }
 
-		void SetMinWidth(float value) override { Properties.MinWidth = value; }
-		float GetMinWidth() const override { return Properties.MinWidth; }
+		void SetMinWidth(float value) override { _properties.MinWidth = value; }
+		float GetMinWidth() const override { return _properties.MinWidth; }
 
-		void SetMinHeight(float value) override { Properties.MinHeight = value; }
-		float GetMinHeight() const override { return Properties.MinHeight; }
+		void SetMinHeight(float value) override { _properties.MinHeight = value; }
+		float GetMinHeight() const override { return _properties.MinHeight; }
 
-		void SetMaxWidth(float value) override { Properties.MaxWidth = value; }
-		float GetMaxWidth() const override { return Properties.MaxWidth; }
+		void SetMaxWidth(float value) override { _properties.MaxWidth = value; }
+		float GetMaxWidth() const override { return _properties.MaxWidth; }
 
-		void SetMaxHeight(float value) override { Properties.MaxHeight = value; }
-		float GetMaxHeight() const override { return Properties.MaxHeight; }
+		void SetMaxHeight(float value) override { _properties.MaxHeight = value; }
+		float GetMaxHeight() const override { return _properties.MaxHeight; }
 
-		void SetZIndex(size_t value) override { Properties.ZIndex = value; }
-		size_t GetZIndex() const override { return Properties.ZIndex; }
+		void SetZIndex(size_t value) override { _properties.ZIndex = value; }
+		size_t GetZIndex() const override { return _properties.ZIndex; }
 
-		void SetMargin(Thickness value) override { Properties.Margin = value; }
-		Thickness GetMargin() const override { return Properties.Margin; }
+		void SetMargin(Thickness value) override { _properties.Margin = value; }
+		Thickness GetMargin() const override { return _properties.Margin; }
 
-		void SetPadding(Thickness value) override { Properties.Padding = value; }
-		Thickness GetPadding() const override { return Properties.Padding; }
+		void SetPadding(Thickness value) override { _properties.Padding = value; }
+		Thickness GetPadding() const override { return _properties.Padding; }
 
-		void SetBorder(Border value) override { Properties.Border = value; }
-		Border GetBorder() const override { return Properties.Border; }
+		void SetBorder(Border value) override { _properties.Border = value; }
+		Border GetBorder() const override { return _properties.Border; }
 
-		void SetFont(const Font& value) override { Properties.Font = value; }
-		const Font& GetFont() const override { return Properties.Font; }
+		void SetFont(const Font& value) override { _properties.Font = value; }
+		const Font& GetFont() const override { return _properties.Font; }
 
-		void SetCursor(Cursor::Getter value) override { Properties.Cursor = value; }
-		Cursor::Getter GetCursor() const override { return Properties.Cursor; }
+		void SetCursor(Cursor::Getter value) override { _properties.Cursor = value; }
+		Cursor::Getter GetCursor() const override { return _properties.Cursor; }
 
-		void SetBackgroundColor(Color value) override { Properties.BackgroundColor = value; }
-		Color GetBackgroundColor() const override { return Properties.BackgroundColor; }
+		void SetBackgroundColor(Color value) override { _properties.BackgroundColor = value; }
+		Color GetBackgroundColor() const override { return _properties.BackgroundColor; }
 
-		void SetTooltip(IUIElement* value) override { Properties.Tooltip = value; }
-		IUIElement* GetTooltip() const override { return Properties.Tooltip; }
+		void SetTooltip(IUIElement* value) override { _properties.Tooltip = value; }
+		IUIElement* GetTooltip() const override { return _properties.Tooltip; }
 
-		void SetBackgroundTexture(Texture* value) override { Properties.BackgroundTexture = value; }
-		Texture* GetBackgroundTexture() const override { return Properties.BackgroundTexture; }
+		void SetBackgroundTexture(Texture* value) override { _properties.BackgroundTexture = value; }
+		Texture* GetBackgroundTexture() const override { return _properties.BackgroundTexture; }
 
-		void SetVisibility(Visibility value) override { Properties.Visibility = value; }
-		Visibility GetVisibility() const override { return Properties.Visibility; }
+		void SetVisibility(Visibility value) override { _properties.Visibility = value; }
+		Visibility GetVisibility() const override { return _properties.Visibility; }
 
-		void SetVerticalAlignment(VerticalAlignment value) override { Properties.VerticalAlignment = value; }
-		VerticalAlignment GetVerticalAlignment() const override { return Properties.VerticalAlignment; }
+		void SetVerticalAlignment(VerticalAlignment value) override { _properties.VerticalAlignment = value; }
+		VerticalAlignment GetVerticalAlignment() const override { return _properties.VerticalAlignment; }
 
-		void SetHorizontalAlignment(HorizontalAlignment value) override { Properties.HorizontalAlignment = value; }
-		HorizontalAlignment GetHorizontalAlignment() const override { return Properties.HorizontalAlignment; }
+		void SetHorizontalAlignment(HorizontalAlignment value) override { _properties.HorizontalAlignment = value; }
+		HorizontalAlignment GetHorizontalAlignment() const override { return _properties.HorizontalAlignment; }
 
 		void OnRender(RenderContext renderContext) const override
 		{
@@ -109,9 +108,9 @@ namespace Sgl
 				child.OnRender(renderContext);
 			}
 
-			if(_isHover && Properties.Tooltip)
+			if(_isHover && _properties.Tooltip)
 			{
-				Properties.Tooltip->OnRender(renderContext);
+				_properties.Tooltip->OnRender(renderContext);
 			}
 		}
 	protected:

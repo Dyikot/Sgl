@@ -234,10 +234,10 @@ namespace Sgl
 
 	void Application::Start()
 	{
-		Stopwatch delayStopwatch, sceneStopwatch;
-		RenderContext renderContext(Window.GetRenderer());
+		auto& renderer = Window.GetRenderer();
+		renderer.SetBlendMode(SDL_BLENDMODE_BLEND);
 
-		renderContext.SetBlendMode(SDL_BLENDMODE_BLEND);
+		Stopwatch delayStopwatch, sceneStopwatch;
 		sceneStopwatch.Start();
 
 		while(_running)
@@ -257,8 +257,8 @@ namespace Sgl
 
 			if(Window.IsVisible() || Window.IsRenderableWhenMinimized)
 			{
-				scene->OnRender(renderContext);
-				renderContext.UpdateScreen();
+				scene->OnRender(RenderContext(renderer));
+				renderer.UpdateScreen();
 			}
 
 			if(_maxFrameRate)

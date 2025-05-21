@@ -1,8 +1,8 @@
 #pragma once
 
 #include <cstdint>
-#include <filesystem>
 #include "../Graphic/Color.h"
+#include <string>
 
 namespace Sgl
 {
@@ -33,25 +33,19 @@ namespace Sgl
 
 	class FontFamily
 	{		
+	private:
+		std::string _name;
 	public:
-		std::filesystem::path Path;
-		std::string Name;
-	public:
-		FontFamily():
-			FontFamily("Segoe UI")
+		static FontFamily Get(std::string_view name);
+		static FontFamily Default();
+
+		FontFamily(std::string name, std::string path):
+			_name(std::move(name))
 		{}
 
-		explicit FontFamily(std::string name):
-			Path(TryGetPathByName(name)), Name(std::move(name))
-		{}
-
-		FontFamily(std::filesystem::path path, std::string name):
-			Path(std::move(path)), Name(std::move(name))
-		{}
-
-		static std::filesystem::path TryGetPathByName(std::string name)
+		std::string_view GetName() const
 		{
-			return std::filesystem::path();
+			return _name;
 		}
 	};
 

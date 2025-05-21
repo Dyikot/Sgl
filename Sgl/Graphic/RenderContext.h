@@ -7,15 +7,16 @@
 #include "Color.h"
 #include "Texture.h"
 #include "Surface.h"
+#include "Renderer.h"
 
 namespace Sgl
 {
 	class RenderContext
 	{
 	private:
-		Renderer _renderer;
+		Renderer& _renderer;
 	public:
-		explicit RenderContext(Renderer renderer) noexcept;
+		explicit RenderContext(Renderer& renderer) noexcept;
 		
 		void DrawPoint(FPoint point, Color color);
 		void DrawPoints(std::span<FPoint> points, Color color);
@@ -37,17 +38,6 @@ namespace Sgl
 		void DrawShape(std::span<Vertex> vertices, std::span<int> order, Texture& texture, Color color);
 		void FillBackground(Color color);
 		void FillBackground(Texture& texture, Color color);
-		void SetBlendMode(SDL_BlendMode mode);
-
-		void UpdateScreen()
-		{ 
-			SDL_RenderPresent(_renderer);
-		}
-		
-		void SetRenderColor(Color color) const noexcept
-		{
-			SDL_SetRenderDrawColor(_renderer, color.Red, color.Green, color.Blue, color.Alpha);
-		}	
 	};
 }
 

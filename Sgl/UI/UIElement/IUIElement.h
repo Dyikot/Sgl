@@ -100,7 +100,7 @@ namespace Sgl
 		Font Font =
 		{
 			.Size = 14,
-			.Family = {},
+			.Family = FontFamily::Default(),
 			.Style = FontStyle::Normal,
 			.Weight = FontWeight::Normal,
 			.Color = Colors::Black

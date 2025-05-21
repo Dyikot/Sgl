@@ -5,31 +5,30 @@ namespace Sgl
     constexpr auto DefaultTitle = "Window";
     constexpr auto DefaultWidth = 1280;
     constexpr auto DefaultHeight = 720;
-    constexpr auto DefaultPosition = SDL_Point(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+    constexpr auto DefaultPosition = Point(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 
     Window::Window() noexcept:
-        _widnow(SDL_CreateWindow(DefaultTitle, DefaultPosition.x, DefaultPosition.y,
+        _window(SDL_CreateWindow(DefaultTitle, DefaultPosition.x, DefaultPosition.y,
                                  DefaultWidth, DefaultHeight, SDL_WINDOW_HIDDEN)),
-        _renderer(SDL_CreateRenderer(_widnow, -1, SDL_RENDERER_ACCELERATED))
+        _renderer(_window)
     {
-        PrintSDLErrorIf(_widnow == nullptr);
+        PrintSDLErrorIf(_window == nullptr);
         SetLogicalSize(DefaultWidth, DefaultHeight);
     }
 
     Window::~Window() noexcept
     {
-        SDL_DestroyRenderer(_renderer);
-        SDL_DestroyWindow(_widnow);
+        SDL_DestroyWindow(_window);
     }
 
     void Window::SetWidth(size_t value) noexcept
     {
-        SDL_SetWindowSize(_widnow, value, GetHeight());
+        SDL_SetWindowSize(_window, value, GetHeight());
     }
 
     void Window::SetHeight(size_t value) noexcept
     {
-        SDL_SetWindowSize(_widnow, GetWidth(), value);
+        SDL_SetWindowSize(_window, GetWidth(), value);
     }
 
     void Window::SetLogicalSize(size_t width, size_t height) noexcept
@@ -39,28 +38,28 @@ namespace Sgl
 
     void Window::SetMaxSize(size_t width, size_t height) noexcept
     {
-        SDL_SetWindowMaximumSize(_widnow, width, height);
+        SDL_SetWindowMaximumSize(_window, width, height);
     }
 
     void Window::SetMinSize(size_t width, size_t height) noexcept
     {        
-        SDL_SetWindowMinimumSize(_widnow, width, height);
+        SDL_SetWindowMinimumSize(_window, width, height);
     }
 
     void Window::SetTitle(std::string_view value) noexcept
     {
-        SDL_SetWindowTitle(_widnow, value.data());
+        SDL_SetWindowTitle(_window, value.data());
     }
 
     void Window::SetPosition(SDL_Point value) noexcept
     {
-        SDL_SetWindowPosition(_widnow, value.x, value.y);
+        SDL_SetWindowPosition(_window, value.x, value.y);
     }
 
     void Window::SetIcon(std::string_view path)
     {
         _icon = Surface(path);
-        SDL_SetWindowIcon(_widnow, _icon.value());
+        SDL_SetWindowIcon(_window, _icon.value());
     }
 
     void Window::SetDisplayMode(DisplayMode displayMode)
@@ -68,15 +67,15 @@ namespace Sgl
         switch(displayMode)
         {
             case DisplayMode::Window: 
-                SDL_SetWindowFullscreen(_widnow, 0);
+                SDL_SetWindowFullscreen(_window, 0);
                 break;
 
             case DisplayMode::BorderlessWindow:
-                SDL_SetWindowBordered(_widnow, SDL_FALSE);
+                SDL_SetWindowBordered(_window, SDL_FALSE);
                 break;
 
             case DisplayMode::Fullscreen:
-                SDL_SetWindowFullscreen(_widnow, SDL_WINDOW_FULLSCREEN_DESKTOP);
+                SDL_SetWindowFullscreen(_window, SDL_WINDOW_FULLSCREEN_DESKTOP);
                 break;
 
             default:
@@ -98,48 +97,48 @@ namespace Sgl
 
     void Window::SetResize(bool value)
     {
-        SDL_SetWindowResizable(_widnow, static_cast<SDL_bool>(value));
+        SDL_SetWindowResizable(_window, static_cast<SDL_bool>(value));
     }
 
     size_t Window::GetWidth() const noexcept
     {
         int width = 0;
-        SDL_GetWindowSize(_widnow, &width, nullptr);
+        SDL_GetWindowSize(_window, &width, nullptr);
         return width;
     }
 
     size_t Window::GetHeight() const noexcept
     {
         int height = 0;
-        SDL_GetWindowSize(_widnow, nullptr, &height);
+        SDL_GetWindowSize(_window, nullptr, &height);
         return height;
     }
 
     size_t Window::GetMaxWidth() const noexcept
     {
         int width = 0;
-        SDL_GetWindowMaximumSize(_widnow, &width, nullptr);
+        SDL_GetWindowMaximumSize(_window, &width, nullptr);
         return width;
     }
 
     size_t Window::GetMaxHeight() const noexcept
     {
         int height = 0;
-        SDL_GetWindowMaximumSize(_widnow, nullptr, &height);
+        SDL_GetWindowMaximumSize(_window, nullptr, &height);
         return height;
     }
 
     size_t Window::GetMinWidth() const noexcept
     {
         int width = 0;
-        SDL_GetWindowMinimumSize(_widnow, &width, nullptr);
+        SDL_GetWindowMinimumSize(_window, &width, nullptr);
         return width;
     }
 
     size_t Window::GetMinHeight() const noexcept
     {
         int height = 0;
-        SDL_GetWindowMinimumSize(_widnow, nullptr, &height);
+        SDL_GetWindowMinimumSize(_window, nullptr, &height);
         return height;
     }
 
@@ -159,19 +158,19 @@ namespace Sgl
 
     std::string Window::GetTitle() const noexcept
     {        
-        return std::string(SDL_GetWindowTitle(_widnow));
+        return std::string(SDL_GetWindowTitle(_window));
     }
 
     SDL_Point Window::GetPosition() const noexcept
     {
         SDL_Point position = {};
-        SDL_GetWindowPosition(_widnow, &position.x, &position.y);
+        SDL_GetWindowPosition(_window, &position.x, &position.y);
         return position;
     }
 
     DisplayMode Window::GetDisplayMode() const noexcept
     {
-        auto flags = SDL_GetWindowFlags(_widnow);
+        auto flags = SDL_GetWindowFlags(_window);
         auto state = SDL_WindowFlags(flags & (SDL_WINDOW_FULLSCREEN | SDL_WINDOW_BORDERLESS));
 
         switch(state)
@@ -189,7 +188,7 @@ namespace Sgl
 
     WindowState Window::GetWindowState() const noexcept
     {
-        auto flags = SDL_GetWindowFlags(_widnow);
+        auto flags = SDL_GetWindowFlags(_window);
         auto state = SDL_WindowFlags(flags & (SDL_WINDOW_MINIMIZED | SDL_WINDOW_MAXIMIZED));
 
         switch(state)
@@ -205,7 +204,7 @@ namespace Sgl
         }
     }
 
-    Renderer Window::GetRenderer() const noexcept
+    Renderer& Window::GetRenderer() noexcept
     {
         return _renderer;
     }
@@ -232,22 +231,22 @@ namespace Sgl
 
     void Window::Show()
     {
-        SDL_ShowWindow(_widnow);
+        SDL_ShowWindow(_window);
     }
 
     void Window::Hide()
     {
-        SDL_HideWindow(_widnow);
+        SDL_HideWindow(_window);
     }
 
     bool Window::IsVisible() const
     {
-        return !(SDL_GetWindowFlags(_widnow) & (SDL_WINDOW_HIDDEN | SDL_WINDOW_MINIMIZED));
+        return !(SDL_GetWindowFlags(_window) & (SDL_WINDOW_HIDDEN | SDL_WINDOW_MINIMIZED));
     }
 
     bool Window::IsResizable() const
     {
-        return SDL_GetWindowFlags(_widnow) & SDL_WINDOW_RESIZABLE;
+        return SDL_GetWindowFlags(_window) & SDL_WINDOW_RESIZABLE;
     }
 
     bool Window::IsVSyncEnable() const

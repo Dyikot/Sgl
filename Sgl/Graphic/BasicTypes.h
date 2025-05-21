@@ -14,7 +14,6 @@ namespace Sgl
 	using FRect = SDL_FRect;
 	using Rect = SDL_Rect;
 	using Vertex = SDL_Vertex;
-	using Renderer = SDL_Renderer*;
 
 	class VerticesCollection: public std::vector<Vertex>
 	{

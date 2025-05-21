@@ -3,19 +3,19 @@
 namespace Sgl
 {
 	Scene::Scene():
-		ClassStyle(Properties),
+		ClassStyle(_properties),
 		UIElements(*this)
 	{}
 
 	void Scene::OnRender(RenderContext renderContext) const
 	{
-		if(Properties.BackgroundTexture)
+		if(_properties.BackgroundTexture)
 		{
-			renderContext.FillBackground(*Properties.BackgroundTexture, Properties.BackgroundColor);
+			renderContext.FillBackground(*_properties.BackgroundTexture, _properties.BackgroundColor);
 		}
 		else
 		{
-			renderContext.FillBackground(Properties.BackgroundColor);
+			renderContext.FillBackground(_properties.BackgroundColor);
 		}
 
 		for(IUIElement& element : UIElements)

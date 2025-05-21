@@ -5,57 +5,55 @@
 
 namespace Sgl
 {
-	RenderContext::RenderContext(Renderer renderer) noexcept:
+	RenderContext::RenderContext(Renderer& renderer) noexcept:
 		_renderer(renderer)
-	{
-		PrintSDLErrorIf(_renderer == nullptr);
-	}
+	{}
 
 	void RenderContext::DrawPoint(FPoint point, Color color)
 	{
-		SetRenderColor(color);
+		_renderer.SetColor(color);
 		SDL_RenderDrawPointF(_renderer, point.x, point.y);
 	}
 
 	void RenderContext::DrawPoints(std::span<FPoint> points, Color color)
 	{
-		SetRenderColor(color);
+		_renderer.SetColor(color);
 		SDL_RenderDrawPointsF(_renderer, points.data(), points.size());
 	}
 
 	void RenderContext::DrawLine(FPoint start, FPoint end, Color color)
 	{
-		SetRenderColor(color);
+		_renderer.SetColor(color);
 		SDL_RenderDrawLineF(_renderer, start.x, start.y, end.x, end.y);
 	}
 
 	void RenderContext::DrawLines(std::span<FPoint> points, Color color)
 	{	
-		SetRenderColor(color);
+		_renderer.SetColor(color);
 		SDL_RenderDrawLinesF(_renderer, points.data(), points.size());
 	}
 
 	void RenderContext::DrawRect(FRect rectange, Color color)
 	{
-		SetRenderColor(color);
+		_renderer.SetColor(color);
 		SDL_RenderDrawRectF(_renderer, &rectange);
 	}
 
 	void RenderContext::DrawRects(std::span<FRect> rectanges, Color color)
 	{
-		SetRenderColor(color);
+		_renderer.SetColor(color);
 		SDL_RenderDrawRectsF(_renderer, rectanges.data(), rectanges.size());
 	}
 
 	void RenderContext::DrawFillRect(FRect rectange, Color fill)
 	{
-		SetRenderColor(fill);
+		_renderer.SetColor(fill);
 		SDL_RenderFillRectF(_renderer, &rectange);		
 	}
 
 	void RenderContext::DrawFillRects(std::span<FRect> rectanges, Color fill)
 	{
-		SetRenderColor(fill);
+		_renderer.SetColor(fill);
 		SDL_RenderFillRectsF(_renderer, rectanges.data(), rectanges.size());
 	}
 
@@ -123,7 +121,7 @@ namespace Sgl
 
 	void RenderContext::FillBackground(Color color)
 	{
-		SetRenderColor(color);
+		_renderer.SetColor(color);
 		SDL_RenderClear(_renderer);
 	}
 
@@ -131,10 +129,5 @@ namespace Sgl
 	{
 		texture.SetColor(color);
 		SDL_RenderCopy(_renderer, texture, nullptr, nullptr);
-	}
-
-	void RenderContext::SetBlendMode(SDL_BlendMode mode)
-	{
-		SDL_SetRenderDrawBlendMode(_renderer, mode);
 	}
 }

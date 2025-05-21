@@ -7,6 +7,7 @@
 #include "../Graphic/Texture.h"
 #include "../Events/Event.h"
 #include "../Events/WindowEvents.h"
+#include "../Graphic/Renderer.h"
 
 namespace Sgl
 {
@@ -16,7 +17,7 @@ namespace Sgl
 		bool IsRenderableWhenMinimized = false;
 		Event<WindowStateEventHandler> WindowStateChanged;
 	private:
-		SDL_Window* _widnow;
+		SDL_Window* _window;
 		Renderer _renderer;
 		bool _isVSyncEnable = false;
 		std::optional<Surface> _icon;
@@ -48,7 +49,7 @@ namespace Sgl
 		SDL_Point GetPosition() const noexcept;
 		DisplayMode GetDisplayMode() const noexcept;
 		WindowState GetWindowState() const noexcept;
-		Renderer GetRenderer() const noexcept;
+		Renderer& GetRenderer() noexcept;
 		
 		void EnableVSync() noexcept;
 		void DisableVSync() noexcept;
@@ -61,6 +62,8 @@ namespace Sgl
 		bool IsVisible() const;
 		bool IsResizable() const;
 		bool IsVSyncEnable() const;
+
+		operator SDL_Window* () const noexcept { return _window; }
 	protected:
 		void OnWindowStateChanged(const WindowStateEventArgs& e)
 		{

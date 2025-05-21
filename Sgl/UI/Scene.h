@@ -15,25 +15,26 @@ namespace Sgl
 		public IKeyEventsListener
 	{
 	public:
-		StyleProperties<IVisual> Properties;
 		Style<IVisual> ClassStyle;
 		UIElementsCollection UIElements;
 		Event<KeyEventHandler> KeyUp;
 		Event<KeyEventHandler> KeyDown;
+	protected:
+		StyleProperties<IVisual> _properties;
 	public:
 		Scene();
 		virtual ~Scene() = default;
 
 		void OnRender(RenderContext renderContext) const override;
 
-		void SetCursor(Cursor::Getter value) final { Properties.Cursor = value; }
-		Cursor::Getter GetCursor() const final { return Properties.Cursor; }
+		void SetCursor(Cursor::Getter value) final { _properties.Cursor = value; }
+		Cursor::Getter GetCursor() const final { return _properties.Cursor; }
 
-		void SetBackgroundColor(Color value) final { Properties.BackgroundColor = value; }
-		Color GetBackgroundColor() const final { return Properties.BackgroundColor; }
+		void SetBackgroundColor(Color value) final { _properties.BackgroundColor = value; }
+		Color GetBackgroundColor() const final { return _properties.BackgroundColor; }
 
-		void SetBackgroundTexture(Texture* value) final { Properties.BackgroundTexture = value; }
-		const Texture* GetBackgroundTexture() const final { return Properties.BackgroundTexture; }
+		void SetBackgroundTexture(Texture* value) final { _properties.BackgroundTexture = value; }
+		const Texture* GetBackgroundTexture() const final { return _properties.BackgroundTexture; }
 	protected:
 		virtual void OnKeyDown(const KeyEventArgs& e) override
 		{

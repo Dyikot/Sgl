@@ -14,7 +14,7 @@ namespace Sgl
 	private:
 		SDL_Texture* _texture = nullptr;
 	public:
-		Texture(std::string_view path, Renderer renderer):
+		Texture(std::string_view path, SDL_Renderer* renderer):
 			_texture(IMG_LoadTexture(renderer, path.data()))
 		{			
 			PrintSDLErrorIf(_texture == nullptr);
