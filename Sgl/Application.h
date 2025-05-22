@@ -49,6 +49,4 @@ namespace Sgl
 		void HandleEvents(std::shared_ptr<Scene> scene);
 		void Start();
 	};
-
-	using App = Application;
 } 

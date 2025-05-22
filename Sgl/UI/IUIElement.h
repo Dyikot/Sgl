@@ -1,14 +1,15 @@
 #pragma once
 
-#include "../../Style/Properties.h"
-#include "../../Graphic/IVisual.h"
-#include "../../Events/MouseAndKeyEvents.h"
+#include "IVisual.h"
+#include "../Style/Properties.h"
+#include "../Events/MouseAndKeyEvents.h"
+#include "../Graphic/Primitives.h"
 
 namespace Sgl
 {
 	class UIElementsCollection;
 
-	class IUIElement: 
+	class IUIElement:
 		public IVisual,
 		public IMouseEventsListener,
 		public IKeyEventsListener
@@ -81,7 +82,7 @@ namespace Sgl
 	};
 
 	template<>
-	struct StyleProperties<IUIElement>: public StyleProperties<IVisual>
+	struct StyleProperties<IUIElement> : public StyleProperties<IVisual>
 	{
 		float Width = 0;
 		float Height = 0;

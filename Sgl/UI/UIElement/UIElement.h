@@ -1,6 +1,7 @@
 #pragma once
 
 #include <set>
+#include "../IVisual.h"
 #include "UIElementsCollection.h"
 #include "../../Events/Event.h"
 #include "../../Style/Trigger.h"
@@ -44,62 +45,62 @@ namespace Sgl
 
 		UIElementsCollection& Children() override { return _children; }
 
-		void SetPosition(FPoint value) override { _position = value; }
-		FPoint GetPosition() const override { return _position; }
+		void SetPosition(FPoint value) final { _position = value; }
+		FPoint GetPosition() const final { return _position; }
 
-		void SetWidth(float value) override { _properties.Width = value; }
-		float GetWidth() const override { return _properties.Width; }
+		void SetWidth(float value) final { _properties.Width = value; }
+		float GetWidth() const final { return _properties.Width; }
 
-		void SetHeight(float value) override { _properties.Height = value; }
-		float GetHeight() const override { return _properties.Height; }
+		void SetHeight(float value) final { _properties.Height = value; }
+		float GetHeight() const final { return _properties.Height; }
 
-		void SetMinWidth(float value) override { _properties.MinWidth = value; }
-		float GetMinWidth() const override { return _properties.MinWidth; }
+		void SetMinWidth(float value) final { _properties.MinWidth = value; }
+		float GetMinWidth() const final { return _properties.MinWidth; }
 
-		void SetMinHeight(float value) override { _properties.MinHeight = value; }
-		float GetMinHeight() const override { return _properties.MinHeight; }
+		void SetMinHeight(float value) final { _properties.MinHeight = value; }
+		float GetMinHeight() const final { return _properties.MinHeight; }
 
-		void SetMaxWidth(float value) override { _properties.MaxWidth = value; }
-		float GetMaxWidth() const override { return _properties.MaxWidth; }
+		void SetMaxWidth(float value) final { _properties.MaxWidth = value; }
+		float GetMaxWidth() const final { return _properties.MaxWidth; }
 
-		void SetMaxHeight(float value) override { _properties.MaxHeight = value; }
-		float GetMaxHeight() const override { return _properties.MaxHeight; }
+		void SetMaxHeight(float value) final { _properties.MaxHeight = value; }
+		float GetMaxHeight() const final { return _properties.MaxHeight; }
 
-		void SetZIndex(size_t value) override { _properties.ZIndex = value; }
-		size_t GetZIndex() const override { return _properties.ZIndex; }
+		void SetZIndex(size_t value) final { _properties.ZIndex = value; }
+		size_t GetZIndex() const final { return _properties.ZIndex; }
 
-		void SetMargin(Thickness value) override { _properties.Margin = value; }
-		Thickness GetMargin() const override { return _properties.Margin; }
+		void SetMargin(Thickness value) final { _properties.Margin = value; }
+		Thickness GetMargin() const final { return _properties.Margin; }
 
-		void SetPadding(Thickness value) override { _properties.Padding = value; }
-		Thickness GetPadding() const override { return _properties.Padding; }
+		void SetPadding(Thickness value) final { _properties.Padding = value; }
+		Thickness GetPadding() const final { return _properties.Padding; }
 
-		void SetBorder(Border value) override { _properties.Border = value; }
-		Border GetBorder() const override { return _properties.Border; }
+		void SetBorder(Border value) final { _properties.Border = value; }
+		Border GetBorder() const final { return _properties.Border; }
 
-		void SetFont(const Font& value) override { _properties.Font = value; }
-		const Font& GetFont() const override { return _properties.Font; }
+		void SetFont(const Font& value) final { _properties.Font = value; }
+		const Font& GetFont() const final { return _properties.Font; }
 
-		void SetCursor(Cursor::Getter value) override { _properties.Cursor = value; }
-		Cursor::Getter GetCursor() const override { return _properties.Cursor; }
+		void SetCursor(Cursor::Getter value) final { _properties.Cursor = value; }
+		Cursor::Getter GetCursor() const final { return _properties.Cursor; }
 
-		void SetBackgroundColor(Color value) override { _properties.BackgroundColor = value; }
-		Color GetBackgroundColor() const override { return _properties.BackgroundColor; }
+		void SetBackgroundColor(Color value) final { _properties.BackgroundColor = value; }
+		Color GetBackgroundColor() const final { return _properties.BackgroundColor; }
 
-		void SetTooltip(IUIElement* value) override { _properties.Tooltip = value; }
-		IUIElement* GetTooltip() const override { return _properties.Tooltip; }
+		void SetTooltip(IUIElement* value) final { _properties.Tooltip = value; }
+		IUIElement* GetTooltip() const final { return _properties.Tooltip; }
 
-		void SetBackgroundTexture(Texture* value) override { _properties.BackgroundTexture = value; }
-		Texture* GetBackgroundTexture() const override { return _properties.BackgroundTexture; }
+		void SetBackgroundTexture(Texture* value) final { _properties.BackgroundTexture = value; }
+		Texture* GetBackgroundTexture() const final { return _properties.BackgroundTexture; }
 
-		void SetVisibility(Visibility value) override { _properties.Visibility = value; }
-		Visibility GetVisibility() const override { return _properties.Visibility; }
+		void SetVisibility(Visibility value) final { _properties.Visibility = value; }
+		Visibility GetVisibility() const final { return _properties.Visibility; }
 
-		void SetVerticalAlignment(VerticalAlignment value) override { _properties.VerticalAlignment = value; }
-		VerticalAlignment GetVerticalAlignment() const override { return _properties.VerticalAlignment; }
+		void SetVerticalAlignment(VerticalAlignment value) final { _properties.VerticalAlignment = value; }
+		VerticalAlignment GetVerticalAlignment() const final { return _properties.VerticalAlignment; }
 
-		void SetHorizontalAlignment(HorizontalAlignment value) override { _properties.HorizontalAlignment = value; }
-		HorizontalAlignment GetHorizontalAlignment() const override { return _properties.HorizontalAlignment; }
+		void SetHorizontalAlignment(HorizontalAlignment value) final { _properties.HorizontalAlignment = value; }
+		HorizontalAlignment GetHorizontalAlignment() const final { return _properties.HorizontalAlignment; }
 
 		void OnRender(RenderContext renderContext) const override
 		{

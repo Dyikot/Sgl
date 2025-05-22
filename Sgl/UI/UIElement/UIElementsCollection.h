@@ -1,7 +1,7 @@
 #pragma once
 
 #include <set>
-#include "IUIElement.h"
+#include "../IUIElement.h"
 #include "../../Events/MouseAndKeyEvents.h"
 
 namespace Sgl

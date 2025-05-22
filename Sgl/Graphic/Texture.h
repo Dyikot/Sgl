@@ -57,10 +57,5 @@ namespace Sgl
 		{ 
 			return _texture; 
 		}
-
-		operator const SDL_Texture* () const noexcept
-		{
-			return _texture;
-		}
 	};
 }

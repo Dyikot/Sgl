@@ -25,7 +25,7 @@ namespace Sgl
 		Scene();
 		virtual ~Scene() = default;
 
-		void OnRender(RenderContext renderContext) const override;
+		void OnRender(RenderContext renderContext) const final;
 
 		void SetCursor(Cursor::Getter value) final { _properties.Cursor = value; }
 		Cursor::Getter GetCursor() const final { return _properties.Cursor; }

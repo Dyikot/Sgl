@@ -1,7 +1,6 @@
 #include "RenderContext.h"
 #include <SDL/SDL_image.h>
 #include "../Tools/Log.h"
-#include "../Math/Triangulation.h"
 
 namespace Sgl
 {
@@ -75,21 +74,16 @@ namespace Sgl
 		DrawLines(ellipse.GetCoordinates(), color);
 	}
 
-	void RenderContext::DrawEllipse(FPoint position, int width, int height, Color color)
-	{
-		auto ellipse = Ellipse(position, width, height);
-		DrawLines(ellipse.GetCoordinates(), color);
-	}
-
 	void RenderContext::DrawEllipseFill(const FillEllipse& ellipse)
-	{
-		DrawShape(ellipse.GetVertices(), ellipse.GetVerticesOrder());
-	}
-
-	void RenderContext::DrawEllipseFill(FPoint position, int width, int height, Color color)
-	{
-		auto ellipse = FillEllipse(position, width, height, color);
-		DrawEllipseFill(ellipse);
+	{		
+		if(ellipse.Texture != nullptr)
+		{
+			DrawShape(ellipse.GetVertices(), ellipse.GetVerticesOrder(), *ellipse.Texture);
+		}
+		else
+		{
+			DrawShape(ellipse.GetVertices(), ellipse.GetVerticesOrder());
+		}
 	}
 
 	void RenderContext::DrawShape(std::span<const Vertex> vertices)
@@ -109,7 +103,7 @@ namespace Sgl
 	}
 
 	void RenderContext::DrawShape(std::span<const Vertex> vertices, std::span<const int> order,
-									 Texture& texture)
+								  Texture& texture)
 	{
 		SDL_RenderGeometry(_renderer, texture, vertices.data(), vertices.size(),
 						   order.data(), order.size());		

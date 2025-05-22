@@ -23,21 +23,24 @@ namespace Sgl
 
 		const std::vector<FPoint>& GetCoordinates() const;
 	private:
-		size_t DefinePointsNumber(int pixels);
+		static size_t SelectPointsNumber(int pixels);
 	};
 
 	class FillEllipse
 	{
+	public:
+		Texture* Texture = nullptr;
 	private:
 		std::vector<Vertex> _vertices;
 		std::vector<int> _order;
 	public:
 		FillEllipse(FPoint position, int width, int height, Color color);
-		FillEllipse(FPoint position, int width, int height, Texture& texture, Color color);
+		FillEllipse(FPoint position, int width, int height, Sgl::Texture& texture, Color color);
 
 		const std::vector<Vertex>& GetVertices() const;
 		const std::vector<int>& GetVerticesOrder() const;
 	private:
-		size_t DefinePointsNumber(int pixels);
+		static size_t SelectPointsNumber(int pixels);
+		std::vector<int> TriangulateEllipse(size_t pointsNumber);
 	};
 }

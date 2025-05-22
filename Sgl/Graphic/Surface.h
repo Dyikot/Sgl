@@ -46,10 +46,5 @@ namespace Sgl
 		{ 
 			return _surface;
 		}
-
-		operator const SDL_Surface* () const noexcept
-		{
-			return _surface;
-		}
 	};
 }
