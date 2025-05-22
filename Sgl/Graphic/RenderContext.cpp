@@ -15,7 +15,7 @@ namespace Sgl
 		SDL_RenderDrawPointF(_renderer, point.x, point.y);
 	}
 
-	void RenderContext::DrawPoints(std::span<FPoint> points, Color color)
+	void RenderContext::DrawPoints(std::span<const FPoint> points, Color color)
 	{
 		_renderer.SetColor(color);
 		SDL_RenderDrawPointsF(_renderer, points.data(), points.size());
@@ -27,7 +27,7 @@ namespace Sgl
 		SDL_RenderDrawLineF(_renderer, start.x, start.y, end.x, end.y);
 	}
 
-	void RenderContext::DrawLines(std::span<FPoint> points, Color color)
+	void RenderContext::DrawLines(std::span<const FPoint> points, Color color)
 	{	
 		_renderer.SetColor(color);
 		SDL_RenderDrawLinesF(_renderer, points.data(), points.size());
@@ -39,7 +39,7 @@ namespace Sgl
 		SDL_RenderDrawRectF(_renderer, &rectange);
 	}
 
-	void RenderContext::DrawRects(std::span<FRect> rectanges, Color color)
+	void RenderContext::DrawRects(std::span<const FRect> rectanges, Color color)
 	{
 		_renderer.SetColor(color);
 		SDL_RenderDrawRectsF(_renderer, rectanges.data(), rectanges.size());
@@ -51,7 +51,7 @@ namespace Sgl
 		SDL_RenderFillRectF(_renderer, &rectange);		
 	}
 
-	void RenderContext::DrawFillRects(std::span<FRect> rectanges, Color fill)
+	void RenderContext::DrawFillRects(std::span<const FRect> rectanges, Color fill)
 	{
 		_renderer.SetColor(fill);
 		SDL_RenderFillRectsF(_renderer, rectanges.data(), rectanges.size());
@@ -70,51 +70,47 @@ namespace Sgl
 		SDL_RenderCopyF(_renderer, texture, &clip, &rectangle);
 	}
 
-	void RenderContext::DrawEllipse(std::span<FPoint> ellipse, Color color)
+	void RenderContext::DrawEllipse(const Ellipse& ellipse, Color color)
 	{
-		DrawLines(ellipse, color);
+		DrawLines(ellipse.GetCoordinates(), color);
 	}
 
 	void RenderContext::DrawEllipse(FPoint position, int width, int height, Color color)
-	{		
-		auto ellipsePoints = Shapes::CreateEllipse(position, width, height);
-		DrawLines(ellipsePoints, color);
+	{
+		auto ellipse = Ellipse(position, width, height);
+		DrawLines(ellipse.GetCoordinates(), color);
 	}
 
-	void RenderContext::DrawEllipseFill(std::span<FPoint> ellipse, Color color)
+	void RenderContext::DrawEllipseFill(const FillEllipse& ellipse)
 	{
-		auto vertices = VerticesCollection( ellipse, color);
-		auto order = Math::TriangulateConvexShape(ellipse);
-		DrawShape(vertices, order);
+		DrawShape(ellipse.GetVertices(), ellipse.GetVerticesOrder());
 	}
 
 	void RenderContext::DrawEllipseFill(FPoint position, int width, int height, Color color)
 	{
-		auto ellipsePoints = Shapes::CreateEllipse(position, width, height);
-		DrawEllipseFill(ellipsePoints, color);
+		auto ellipse = FillEllipse(position, width, height, color);
+		DrawEllipseFill(ellipse);
 	}
 
-	void RenderContext::DrawShape(std::span<Vertex> vertices)
+	void RenderContext::DrawShape(std::span<const Vertex> vertices)
 	{
 		SDL_RenderGeometry(_renderer, nullptr, vertices.data(), vertices.size(), nullptr, 0);
 	}
 
-	void RenderContext::DrawShape(std::span<Vertex> vertices, Texture& texture, Color color)
+	void RenderContext::DrawShape(std::span<const Vertex> vertices, Texture& texture)
 	{
-		texture.SetColor(color);
 		SDL_RenderGeometry(_renderer, texture, vertices.data(), vertices.size(), nullptr, 0);	
 	}
 
-	void RenderContext::DrawShape(std::span<Vertex> vertices, std::span<int> order)
+	void RenderContext::DrawShape(std::span<const Vertex> vertices, std::span<const int> order)
 	{
 		SDL_RenderGeometry(_renderer, nullptr, vertices.data(), vertices.size(),
 						   order.data(), order.size());
 	}
 
-	void RenderContext::DrawShape(std::span<Vertex> vertices, std::span<int> order,
-								  Texture& texture, Color color)
+	void RenderContext::DrawShape(std::span<const Vertex> vertices, std::span<const int> order,
+									 Texture& texture)
 	{
-		texture.SetColor(color);
 		SDL_RenderGeometry(_renderer, texture, vertices.data(), vertices.size(),
 						   order.data(), order.size());		
 	}

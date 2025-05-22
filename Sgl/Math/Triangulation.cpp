@@ -85,23 +85,21 @@ namespace Sgl::Math
 		return resultOrder;
 	}
 
-	std::vector<int> TriangulateConvexShape(std::span<FPoint> points, FPoint center)
+	std::vector<int> TriangulateEllipse(size_t pointsNumber)
 	{
-		std::vector<int> resultOrder;
-		resultOrder.reserve((points.size()) * 3);
-		size_t centerIndex = points.size();
+		auto order = std::vector<int>(pointsNumber * 3);
+		constexpr int center = 0;
+		int step = center;
 
-		for(size_t i = 0; i < points.size() - 1; i++)
+		for(size_t i = 0; i < order.size(); i += 3, step++)
 		{
-			resultOrder.push_back(centerIndex);
-			resultOrder.push_back(i);
-			resultOrder.push_back(i + 1);
+			order[i] = center;
+			order[i + 1] = step + 1;
+			order[i + 2] = step + 2;
 		}
 
-		resultOrder.push_back(centerIndex);
-		resultOrder.push_back(points.size() - 1);
-		resultOrder.push_back(0);
+		order[order.size() - 1] = 1;
 
-		return resultOrder;
+		return order;
 	}
 }

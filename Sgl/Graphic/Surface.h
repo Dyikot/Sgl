@@ -1,7 +1,9 @@
 #pragma once
+
 #include <SDL/SDL_image.h>
 #include <string_view>
 #include "../Tools/Log.h"
+#include "Color.h"
 
 namespace Sgl
 {
@@ -40,8 +42,13 @@ namespace Sgl
 			return *this;
 		}
 
-		operator SDL_Surface*() const noexcept 
+		operator SDL_Surface*() noexcept 
 		{ 
+			return _surface;
+		}
+
+		operator const SDL_Surface* () const noexcept
+		{
 			return _surface;
 		}
 	};

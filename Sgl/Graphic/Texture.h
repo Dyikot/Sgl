@@ -4,7 +4,7 @@
 #include <string_view>
 #include "../Tools/Log.h"
 #include "SDL/SDL_image.h"
-#include "BasicTypes.h"
+#include "Primitives.h"
 #include "Color.h"
 
 namespace Sgl
@@ -53,9 +53,14 @@ namespace Sgl
 			return *this;
 		}
 
-		operator SDL_Texture* () const noexcept 
+		operator SDL_Texture* () noexcept 
 		{ 
 			return _texture; 
+		}
+
+		operator const SDL_Texture* () const noexcept
+		{
+			return _texture;
 		}
 	};
 }

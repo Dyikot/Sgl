@@ -1,9 +1,10 @@
 #pragma once
 
-#include "../Graphic/BasicTypes.h"
+#include "../Graphic/Primitives.h"
+#include <span>
 
 namespace Sgl::Math
 {
 	std::vector<int> TriangulateConvexShape(std::span<FPoint> points);
-	std::vector<int> TriangulateConvexShape(std::span<FPoint> points, FPoint center);
+	std::vector<int> TriangulateEllipse(size_t pointsNumber);
 }

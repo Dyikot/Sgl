@@ -4,7 +4,7 @@
 #include <string_view>
 #include "SDL/SDL_render.h"
 #include "Any.h"
-#include "../Graphic/BasicTypes.h"
+#include "../Graphic/Primitives.h"
 #include "../Graphic/Renderer.h"
 
 namespace Sgl
