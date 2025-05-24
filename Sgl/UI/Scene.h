@@ -2,12 +2,12 @@
 
 #include <stack>
 #include <queue>
-#include "../ECS/IProcessed.h"
 #include "UIElement/UIElement.h"
+#include "../Tools/Time/TimeSpan.h"
 
 namespace Sgl
 {	
-	class Scene: public VisualElement, public ECS::IProcessed, public IKeyEventsListener
+	class Scene: public VisualElement, public IKeyEventsListener
 	{
 	public:
 		Style ClassStyle;
@@ -19,6 +19,7 @@ namespace Sgl
 		virtual ~Scene() = default;
 
 		void OnRender(RenderContext renderContext) const final;
+		virtual void OnProcessing(TimeSpan elapsed) {}
 	protected:
 		void OnKeyDown(const KeyEventArgs& e) override
 		{
