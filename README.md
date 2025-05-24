@@ -35,32 +35,32 @@ Perfect for beginners learning game development and experienced developers who w
 This example shows how to create an application, set up a window, and style the scene.
 ```
 #include "../Sgl/Application.h"
+#include "../Sgl/UI/UIElement/UIElement.h"
 
-void SceneSetter(Sgl::StyleProperties<IVisual>& p)
+void BgGreen(IStyleable& s)
 {
-	p.BackgroundColor = Colors::Green;
+	auto& element = static_cast<VisualElement&>(s);
+
+	element.BackgroundColor = Colors::Green;
 }
 
-class MyScene: public Sgl::Scene
+class MyScene: public Scene
 {
+public:
+	UIElement Button;
 public:
 	MyScene()
 	{
-		ClassStyle.Use<SceneSetter>();
-	}
-
-	void OnProcessing(TimeSpan elapsed) override
-	{
-	
+		ClassStyle.Use<BgGreen>();
+		Button.ClassStyle.Use<BgGreen>();
 	}
 };
 
 int main()
 {	
-	Sgl::Application app;
+	Application app;
 	app.SetMaxFrameRate(60);
 	app.Window.SetTitle("Test");
-	app.Window.EnableResizable();
 	app.SceneManager.Push<MyScene>();
 	app.Run();
 }
