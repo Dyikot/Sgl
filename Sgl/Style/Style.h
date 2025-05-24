@@ -4,24 +4,26 @@
 
 namespace Sgl
 {		
-	template<typename T>
-	struct StyleProperties;
+	class IStyleable
+	{
+	public:
+		virtual ~IStyleable() = default;
 
-	template<typename TTargetType>
+		virtual void ResetStyle() = 0;
+	};
+
 	class Trigger;
 
-	template<typename TTargetType>
 	class Style final
 	{
 	public:
-		using Properties = StyleProperties<TTargetType>;
-		using Setter = void(*)(Properties&);
+		using Setter = void(*)(IStyleable&);
 	private:
-		Properties& _properties;
+		IStyleable& _target;
 		std::vector<Setter> _setters;
 	public:
-		Style(Properties& properties):
-			_properties(properties)
+		Style(IStyleable& target):
+			_target(target)
 		{}
 
 		Style(const Style&) = delete;
@@ -46,16 +48,16 @@ namespace Sgl
 		{
 			for(Setter setter : _setters)
 			{
-				setter(_properties);
+				setter(_target);
 			}
 		}
 
 		void ResetAndApply()
 		{			
-			_properties = {};
+			_target.ResetStyle();
 			Apply();
 		}
 
-		friend class Trigger<TTargetType>;
+		friend class Trigger;
 	};
 }

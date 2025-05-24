@@ -4,7 +4,7 @@
 #include "SDL/SDL_mixer.h"
 #include "SDL/SDL_image.h"
 #include "UI/Scene.h"
-#include "UI/Window.h"
+#include "Window.h"
 #include "Graphic/Cursor.h"
 #include "Tools/Time/Stopwatch.h"
 #include "Data/ResourcesMap.h"

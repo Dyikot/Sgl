@@ -3,45 +3,29 @@
 #include <stack>
 #include <queue>
 #include "../ECS/IProcessed.h"
-#include "UIElement/UIElementsCollection.h"
-#include "../Style/Style.h"
-#include "../Events/Event.h"
+#include "UIElement/UIElement.h"
 
 namespace Sgl
 {	
-	class Scene: 
-		public IVisual, 
-		public ECS::IProcessed,
-		public IKeyEventsListener
+	class Scene: public VisualElement, public ECS::IProcessed, public IKeyEventsListener
 	{
 	public:
-		Style<IVisual> ClassStyle;
+		Style ClassStyle;
 		UIElementsCollection UIElements;
 		Event<KeyEventHandler> KeyUp;
 		Event<KeyEventHandler> KeyDown;
-	protected:
-		StyleProperties<IVisual> _properties;
 	public:
 		Scene();
 		virtual ~Scene() = default;
 
 		void OnRender(RenderContext renderContext) const final;
-
-		void SetCursor(Cursor::Getter value) final { _properties.Cursor = value; }
-		Cursor::Getter GetCursor() const final { return _properties.Cursor; }
-
-		void SetBackgroundColor(Color value) final { _properties.BackgroundColor = value; }
-		Color GetBackgroundColor() const final { return _properties.BackgroundColor; }
-
-		void SetBackgroundTexture(Texture* value) final { _properties.BackgroundTexture = value; }
-		const Texture* GetBackgroundTexture() const final { return _properties.BackgroundTexture; }
 	protected:
-		virtual void OnKeyDown(const KeyEventArgs& e) override
+		void OnKeyDown(const KeyEventArgs& e) override
 		{
 			KeyDown.TryRaise(*this, e);
 		}
 
-		virtual void OnKeyUp(const KeyEventArgs& e) override
+		void OnKeyUp(const KeyEventArgs& e) override
 		{
 			KeyUp.TryRaise(*this, e);
 		}

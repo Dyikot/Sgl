@@ -4,19 +4,16 @@
 
 namespace Sgl
 {	
-	template<typename TTargetType>
 	class Trigger final
 	{
 	private:
-		using Style = Style<TTargetType>;
-
 		Style& _class;
 	public:
 		Style TriggerStyle;
 	public:
 		Trigger(Style& classStyle):
 			_class(classStyle), 
-			TriggerStyle(classStyle._properties)
+			TriggerStyle(classStyle._target)
 		{}
 
 		Trigger(const Trigger&) = delete;

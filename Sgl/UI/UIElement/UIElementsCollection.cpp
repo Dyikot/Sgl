@@ -1,73 +1,71 @@
-#include "UIElementsCollection.h"
+#include "UIElement.h"
 
 namespace Sgl
 {
-    bool IsIntersects(FPoint point, const IUIElement& element)
+    bool IsIntersects(FPoint point, const UIElementsCollection::UIElementContext& context)
     {
-        auto position = element.GetPosition();
-
-        return point.x >= position.x &&
-               point.x <= position.x + element.GetWidth() &&
-               point.y >= position.y &&
-               point.y <= position.y + element.GetHeight();
+        return point.x >= context.Position.x &&
+               point.x <= context.Position.x + context.Element.Width &&
+               point.y >= context.Position.y &&
+               point.y <= context.Position.y + context.Element.Height;
     }
 
-    UIElementsCollection::UIElementsCollection(IVisual& parent):
+    UIElementsCollection::UIElementsCollection(VisualElement& parent):
         Parent(parent)
     {}
 
     void UIElementsCollection::OnMouseMove(const MouseButtonEventArgs& e)
     {
-        if(HoverElement && IsIntersects(e.Position, *HoverElement))
+        if(HoverElementContext && IsIntersects(e.Position, *HoverElementContext))
         {
-            HoverElement->OnMouseMove(e);
-            HoverElement->Children().OnMouseMove(e);
+            HoverElementContext->Element.OnMouseMove(e);
+            HoverElementContext->Element.Children.OnMouseMove(e);
             return;
         }
 
-        for(IUIElement& element : *this)
+        for(auto& context : _items)
         {
-            if(IsIntersects(e.Position, element))
+            if(IsIntersects(e.Position, context))
             {
-                if(HoverElement)
+                if(HoverElementContext)
                 {
-                    HoverElement->OnMouseLeave(e);
+                    HoverElementContext->Element.OnMouseLeave(e);
                 }
 
-                HoverElement = &element;
-                Cursor::Set(element.GetCursor());
-                element.OnMouseEnter(e);
-                element.OnMouseMove(e);
-                element.Children().OnMouseMove(e);
+                HoverElementContext = &context;
+                Cursor::Set(context.Element.Cursor);
+                context.Element.OnMouseEnter(e);
+                context.Element.OnMouseMove(e);
+                context.Element.Children.OnMouseMove(e);
 
                 return;
             }
         }
 
-        if(HoverElement)
+        if(HoverElementContext)
         {
-            HoverElement->OnMouseLeave(e);
+            HoverElementContext->Element.OnMouseLeave(e);
         }
 
-        HoverElement = nullptr;
-        Cursor::Set(Parent.GetCursor());
+        HoverElementContext = nullptr;
+        Cursor::Set(Parent.Cursor);
     }
 
     void UIElementsCollection::OnMouseDown(const MouseButtonEventArgs& e)
     {
-        if(HoverElement)
+        if(HoverElementContext)
         {
-            HoverElement->OnMouseDown(e);
-            HoverElement->Children().OnMouseDown(e);
+            HoverElementContext->Element.OnMouseDown(e);
+            HoverElementContext->Element.Children.OnMouseDown(e);
         }
     }
 
     void UIElementsCollection::OnMouseUp(const MouseButtonEventArgs& e)
     {
-        if(HoverElement)
+        if(HoverElementContext)
         {
-            HoverElement->OnMouseUp(e);
-            HoverElement->Children().OnMouseUp(e);
+            HoverElementContext->Element.OnMouseUp(e);
+            HoverElementContext->Element.Children.OnMouseUp(e);
         }
     }
 
@@ -79,17 +77,22 @@ namespace Sgl
 
     void UIElementsCollection::OnKeyDown(const KeyEventArgs& e)
     {
-        for(IUIElement& element : *this)
+        for(auto& context : _items)
         {
-            element.OnKeyDown(e);
+            context.Element.OnKeyDown(e);
         }
     }
 
     void UIElementsCollection::OnKeyUp(const KeyEventArgs& e)
     {
-        for(IUIElement& element : *this)
+        for(auto& context : _items)
         {
-            element.OnKeyUp(e);
+            context.Element.OnKeyUp(e);
         }
+    }
+
+    bool UIElementsCollection::ZIndexComparer::operator()(const UIElementContext& left, const UIElementContext& right) const
+    {
+        return left.Element.ZIndex < right.Element.ZIndex;
     }
 }

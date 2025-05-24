@@ -1,21 +1,56 @@
 #pragma once
 
 #include <set>
-#include "../IUIElement.h"
 #include "../../Events/MouseAndKeyEvents.h"
+#include "../VisualElement.h"
 
 namespace Sgl
 {
-	class UIElementsCollection:
-		public std::multiset<std::reference_wrapper<IUIElement>, ZIndexComparer>,
-		public IMouseEventsListener,
-		public IKeyEventsListener
+	class UIElement;
+
+	class UIElementsCollection: public IMouseEventsListener, public IKeyEventsListener
 	{
 	public:
-		IUIElement* HoverElement = nullptr;
-		IVisual& Parent;
+		struct UIElementContext
+		{
+			FPoint Position;
+			UIElement& Element;
+		};
+
+		struct ZIndexComparer
+		{
+			bool operator()(const UIElementContext& left, const UIElementContext& right) const;
+		};
+
+		using iterator = std::multiset<UIElementContext, ZIndexComparer>::iterator;
+		using const_iterator = std::multiset<UIElementContext, ZIndexComparer>::const_iterator;
+
+		const UIElementContext* HoverElementContext = nullptr;
+		VisualElement& Parent;
+	private:
+		std::multiset<UIElementContext, ZIndexComparer> _items;
 	public:
-		UIElementsCollection(IVisual& parent);
+		UIElementsCollection(VisualElement& parent);
+		
+		iterator begin() noexcept
+		{
+			return _items.begin();
+		}
+
+		const_iterator begin() const noexcept
+		{
+			return _items.begin();
+		}
+
+		iterator end() noexcept
+		{
+			return _items.end();
+		}
+
+		const_iterator end() const noexcept
+		{
+			return _items.end();
+		}
 	protected:
 		void OnMouseMove(const MouseButtonEventArgs& e) override;
 		void OnMouseDown(const MouseButtonEventArgs& e) override;
