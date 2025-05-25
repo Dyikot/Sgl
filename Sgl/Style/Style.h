@@ -17,10 +17,10 @@ namespace Sgl
 	class Style final
 	{
 	public:
-		using Setter = void(*)(IStyleable&);
+		using StyleClass = void(*)(IStyleable&);
 	private:
 		IStyleable& _target;
-		std::vector<Setter> _setters;
+		std::vector<StyleClass> _classes;
 	public:
 		Style(IStyleable& target):
 			_target(target)
@@ -28,26 +28,26 @@ namespace Sgl
 
 		Style(const Style& other):
 			_target(other._target),
-			_setters(other._setters)
+			_classes(other._classes)
 		{}
 
 		Style(Style&& other) noexcept:
 			_target(other._target),
-			_setters(std::move(other._setters))
+			_classes(std::move(other._classes))
 		{}
 
-		template<Setter... Setters>
+		template<StyleClass... Class>
 		void Use()
 		{
-			_setters = { Setters... };
+			_classes = { Class... };
 			Apply();
 		}
 	private:
 		void Apply()
 		{
-			for(Setter setter : _setters)
+			for(StyleClass styleClass : _classes)
 			{
-				setter(_target);
+				styleClass(_target);
 			}
 		}
 

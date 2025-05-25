@@ -9,6 +9,8 @@ namespace Sgl::UI
 	private:
 		using base = Layout;
 	public:
+		static std::unique_ptr<Canvas> New(VisualElement& parent);
+
 		Canvas(VisualElement& parent);
 
 		void SetOffset(UIElement& element, Thickness value);

@@ -31,17 +31,23 @@ namespace Sgl::UI
 		template<typename TUIElement>
 		class AddChildContext
 		{
-		public:
-			std::shared_ptr<TUIElement> Element;
+		private:
+			std::shared_ptr<TUIElement> _element;
 		public:
 			AddChildContext(std::shared_ptr<TUIElement> element):
-				Element(std::move(element))
+				_element(std::move(element))
 			{}
 
-			template<Style::Setter... Setters>
+			template<Style::StyleClass... Setters>
 			AddChildContext& Class()
 			{
-				Element->ClassStyle.Use<Setters...>();
+				_element->ClassStyle.Use<Setters...>();
+				return *this;
+			}
+
+			AddChildContext& Configure(Action<TUIElement&> configurer)
+			{
+				configurer(*_element);
 				return *this;
 			}
 		};
@@ -63,7 +69,9 @@ namespace Sgl::UI
 		template<std::derived_from<UIElement> TUIElement, typename... TArgs>
 		auto Add(TArgs&&... args)
 		{
-			return AddChildContext(std::make_shared<TUIElement>(std::forward<TArgs>(args)...));
+			auto element = std::make_shared<TUIElement>(std::forward<TArgs>(args)...);
+			_children.insert(element);
+			return AddChildContext(element);
 		}
 
 		void OnRender(RenderContext rc) const override

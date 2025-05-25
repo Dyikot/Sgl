@@ -51,6 +51,14 @@ namespace Sgl
 			{}
 		};
 	public:
+		template<typename TValue, typename ...TArgs>
+		static Any New(TArgs&& ...args)
+		{
+			Any any;
+			any._value = std::make_unique<Any::ValueContainer<TValue>>(std::forward<TArgs>(args)...);
+			return any;
+		}
+
 		Any() noexcept = default;
 
 		template<typename T> requires (!std::same_as<std::decay_t<T>, Any>)
@@ -63,9 +71,6 @@ namespace Sgl
 		Any(Any&& any) noexcept:
 			_value(std::exchange(any._value, nullptr))
 		{}
-
-		template<typename TValue, typename... TArgs>
-		friend Any CreateAny(TArgs&&... args);
 
 		template<typename T>
 		bool Is() const
@@ -129,12 +134,4 @@ namespace Sgl
 	private:
 		std::unique_ptr<ValueContainerBase> _value;
 	};
-
-	template<typename TValue, typename ...TArgs>
-	Any CreateAny(TArgs&& ...args)
-	{
-		Any any;
-		any._value = std::make_unique<Any::ValueContainer<TValue>>(std::forward<TArgs>(args)...);
-		return any;
-	}
 }
