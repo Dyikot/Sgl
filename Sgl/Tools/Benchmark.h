@@ -3,15 +3,16 @@
 #include <format>
 #include <iostream>
 #include "Time/Stopwatch.h"
+#include "../Data/Delegate.h"
 
 namespace Sgl
 {
 	class Benchmark
 	{
 	private:
-		constexpr static size_t _defaultLoopsNumber = 1e2;
+		constexpr static size_t DefaultLoopsNumber = 1e2;
 
-		size_t _loopsNumber = _defaultLoopsNumber;
+		size_t _loopsNumber = DefaultLoopsNumber;
 		std::string _name = "Benchmark";
 	public:
 		static Benchmark New()
@@ -26,7 +27,7 @@ namespace Sgl
 
 		static Benchmark New(std::string name) 
 		{
-			return Benchmark(std::move(name), _defaultLoopsNumber);		
+			return Benchmark(std::move(name), DefaultLoopsNumber);		
 		}
 
 		static Benchmark New(std::string name, size_t loopsNumber)
@@ -56,6 +57,6 @@ namespace Sgl
 
 		Benchmark(std::string name, size_t loopsNumber):
 			_name(std::move(name)), _loopsNumber(loopsNumber)
-		{}		
+		{}
 	};
 }

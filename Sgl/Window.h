@@ -2,12 +2,12 @@
 
 #include <filesystem>
 #include <iostream>
-#include "Graphic/RenderContext.h"
-#include "Graphic/Surface.h"
-#include "Graphic/Texture.h"
+#include "Render/RenderContext.h"
+#include "Render/Surface.h"
+#include "Render/Texture.h"
 #include "Events/Event.h"
 #include "Events/WindowEvents.h"
-#include "Graphic/Renderer.h"
+#include "Render/Renderer.h"
 
 namespace Sgl
 {

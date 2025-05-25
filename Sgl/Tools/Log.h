@@ -6,20 +6,24 @@
 
 namespace Sgl
 {
-	inline void PrintSDLErrorIf(bool condition)
+	class Log
 	{
-		#ifndef NDEBUG
-		if(condition)
+	public:
+		static void PrintSDLErrorIf(bool condition)
 		{
-			std::cout << std::format("SDL error: {}\n", SDL_GetError());
+			#ifndef NDEBUG
+			if(condition)
+			{
+				std::cout << std::format("SDL error: {}\n", SDL_GetError());
+			}
+			#endif // NDEBUG
 		}
-		#endif // NDEBUG
-	}
 
-	inline void PrintSDLError()
-	{
-		#ifndef NDEBUG
-		std::cout << std::format("SDL error: {}\n", SDL_GetError());
-		#endif // NDEBUG
-	}
+		static void PrintSDLError()
+		{
+			#ifndef NDEBUG
+			std::cout << std::format("SDL error: {}\n", SDL_GetError());
+			#endif // NDEBUG
+		}
+	};	
 }

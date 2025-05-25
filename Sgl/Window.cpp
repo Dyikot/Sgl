@@ -12,7 +12,7 @@ namespace Sgl
                                  DefaultWidth, DefaultHeight, SDL_WINDOW_HIDDEN)),
         _renderer(_window)
     {
-        PrintSDLErrorIf(_window == nullptr);
+        Log::PrintSDLErrorIf(_window == nullptr);
         SetLogicalSize(DefaultWidth, DefaultHeight);
     }
 
@@ -91,7 +91,7 @@ namespace Sgl
         }
         else
         {
-            PrintSDLError();
+            Log::PrintSDLError();
         }
     }
 

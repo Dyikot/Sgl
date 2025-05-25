@@ -30,13 +30,13 @@ namespace Sgl
 		explicit Cursor(std::string_view path):
 			_cursor(SDL_CreateColorCursor(IMG_Load(path.data()), 0, 0))
 		{
-			PrintSDLErrorIf(!_cursor);
+			Log::PrintSDLErrorIf(!_cursor);
 		}
 
 		explicit Cursor(SDL_SystemCursor systemCursor) noexcept:
 			_cursor(SDL_CreateSystemCursor(systemCursor))
 		{
-			PrintSDLErrorIf(!_cursor);
+			Log::PrintSDLErrorIf(!_cursor);
 		}
 
 		Cursor(const Cursor&) = delete;
@@ -79,5 +79,5 @@ namespace Sgl
 		inline auto ArrowAll = Sgl_ConstSingleton(Cursor, SDL_SYSTEM_CURSOR_SIZEALL);
 		inline auto No = Sgl_ConstSingleton(Cursor, SDL_SYSTEM_CURSOR_NO);
 		inline auto Hand = Sgl_ConstSingleton(Cursor, SDL_SYSTEM_CURSOR_HAND);
-	};
+	}
 }

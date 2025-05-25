@@ -16,7 +16,7 @@ namespace Sgl
 		explicit Surface(std::string_view path): 
 			_surface(IMG_Load(path.data()))
 		{
-			PrintSDLErrorIf(_surface == nullptr);
+			Log::PrintSDLErrorIf(_surface == nullptr);
 		}
 
 		Surface(Surface&& other) noexcept:
@@ -24,7 +24,11 @@ namespace Sgl
 		{}
 
 		Surface(const Surface& surface) = delete;
-		~Surface() { SDL_FreeSurface(_surface); }
+
+		~Surface() 
+		{ 
+			SDL_FreeSurface(_surface); 
+		}
 
 		void SetColor(Color color)
 		{

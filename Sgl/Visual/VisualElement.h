@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../Style/Style.h"
-#include "../Graphic/RenderContext.h"
-#include "../Graphic/Cursor.h"
+#include "../Render/RenderContext.h"
+#include "../Render/Cursor.h"
 
 namespace Sgl
 {

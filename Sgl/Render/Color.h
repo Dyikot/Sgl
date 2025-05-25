@@ -1,4 +1,5 @@
 #pragma once
+
 #include <SDL/SDL_render.h>
 
 namespace Sgl

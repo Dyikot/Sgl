@@ -1,6 +1,6 @@
 #include "ResourcesMap.h"
 #include "../Tools/Log.h"
-#include "../Graphic/Texture.h"
+#include "../Render/Texture.h"
 
 namespace Sgl
 {

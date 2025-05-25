@@ -6,7 +6,7 @@ namespace Sgl
 		_music(Mix_LoadMUS(path.data())),
 		Duration(TimeSpan::FromSeconds(Mix_MusicDuration(_music)))
 	{
-		PrintSDLErrorIf(_music == nullptr);
+		Log::PrintSDLErrorIf(_music == nullptr);
 	}
 
 	Music::~Music() noexcept
@@ -61,7 +61,7 @@ namespace Sgl
 	SoundChunk::SoundChunk(std::string_view path) noexcept:
 		_soundChunk(Mix_LoadWAV(path.data()))
 	{
-		PrintSDLErrorIf(_soundChunk == nullptr);
+		Log::PrintSDLErrorIf(_soundChunk == nullptr);
 	}
 
 	SoundChunk::~SoundChunk() noexcept

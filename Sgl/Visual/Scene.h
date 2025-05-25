@@ -2,7 +2,7 @@
 
 #include <stack>
 #include <queue>
-#include "../UI/Layout.h"
+#include "../UI/Layout/Layout.h"
 #include "../Tools/Time/TimeSpan.h"
 
 namespace Sgl
@@ -15,12 +15,12 @@ namespace Sgl
 	public:
 		Style ClassStyle;
 
-		UI::Layout Layout;
+		UI::Layout& Layout;
 
 		Event<KeyEventHandler> KeyUp;
 		Event<KeyEventHandler> KeyDown;
 	public:
-		Scene();
+		Scene(UI::Layout& layout);
 		virtual ~Scene() = default;
 
 		void OnRender(RenderContext rc) const final;
@@ -28,7 +28,7 @@ namespace Sgl
 	protected:
 		void OnMouseMove(const MouseButtonEventArgs& e) override
 		{
-			Layout.OnMouseMove(e);
+			Layout.OnRootLayoutMouseMove(e);
 		}
 
 		void OnMouseDown(const MouseButtonEventArgs& e) override

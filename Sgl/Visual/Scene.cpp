@@ -2,9 +2,9 @@
 
 namespace Sgl
 {
-	Scene::Scene():
+	Scene::Scene(UI::Layout& layout):
 		ClassStyle(*this),
-		Layout(*this)
+		Layout(layout)
 	{}
 
 	void Scene::OnRender(RenderContext rc) const

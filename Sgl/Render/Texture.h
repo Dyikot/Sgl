@@ -18,7 +18,7 @@ namespace Sgl
 		Texture(std::string_view path, SDL_Renderer* renderer):
 			_texture(IMG_LoadTexture(renderer, path.data()))
 		{			
-			PrintSDLErrorIf(_texture == nullptr);
+			Log::PrintSDLErrorIf(_texture == nullptr);
 		}
 
 		Texture(const Texture&) = delete;

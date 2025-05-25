@@ -5,7 +5,8 @@ namespace Sgl::UI
 	UIElement::UIElement():
 		ClassStyle(*this),
 		OnHover(ClassStyle),
-		OnMousePressed(ClassStyle)
+		OnMousePressed(ClassStyle),
+		_position()
 	{}
 
 	UIElement::UIElement(const UIElement& other):

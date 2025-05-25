@@ -6,7 +6,7 @@ namespace Sgl
 	Renderer::Renderer(SDL_Window* window):
 		_renderer(SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED))
 	{
-		PrintSDLErrorIf(_renderer == nullptr);
+		Log::PrintSDLErrorIf(_renderer == nullptr);
 	}
 
 	Renderer::~Renderer()

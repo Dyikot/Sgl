@@ -45,6 +45,8 @@ namespace Sgl::UI
 		Border Border;
 	private:
 		using base = VisualElement;
+
+		FPoint _position;
 	public:
 		UIElement();
 		UIElement(const UIElement& other);
@@ -101,7 +103,6 @@ namespace Sgl::UI
 		{
 			KeyUp.TryRaise(*this, e);
 		}
-
 	private:
 		friend class Layout;
 	};
