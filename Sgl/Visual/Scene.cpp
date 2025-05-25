@@ -4,7 +4,7 @@ namespace Sgl
 {
 	Scene::Scene(UI::Layout& layout):
 		ClassStyle(*this),
-		Layout(layout)
+		_layout(layout)
 	{}
 
 	void Scene::OnRender(RenderContext rc) const
@@ -18,7 +18,7 @@ namespace Sgl
 			rc.FillBackground(BackgroundColor);
 		}
 
-		Layout.OnRender(rc);
+		_layout.OnRender(rc);
 	}
 
 	void SceneManager::Push(SceneFactory sceneFactory)

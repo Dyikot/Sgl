@@ -16,39 +16,88 @@ namespace Sgl::UI
 {
 	struct ZIndexComparer
 	{
-		bool operator()(const UIElement& left, const UIElement& right) const
+		bool operator()(const std::shared_ptr<UIElement>& left, 
+						const std::shared_ptr<UIElement>& right) const
 		{
-			return left.ZIndex < right.ZIndex;
+			return left->ZIndex < right->ZIndex;
 		}
 	};
 
-	using UIElementCollection = std::multiset<Ref<UIElement>, ZIndexComparer>;
+	using UIElementCollection = std::multiset<std::shared_ptr<UIElement>, ZIndexComparer>;
 
 	class Layout: public UIElement
 	{
 	public:
+		class AddElementContext
+		{
+		private:
+			std::shared_ptr<UIElement> _element;
+			Layout& _parent;
+		public:
+			AddElementContext(Layout& parent, std::shared_ptr<UIElement> element):
+				_parent(parent),
+				_element(std::move(element))
+			{}
+
+			template<Style::Setter... Setters>
+			Layout& WithStyle()
+			{
+				_element->ClassStyle.Use<Setters...>();
+				return _parent;
+			}
+		};
+
+		class AddLayoutContext
+		{
+		private:
+			std::shared_ptr<Layout> _layout;
+			Layout& _parent;
+		public:
+			AddLayoutContext(Layout& parent, std::shared_ptr<Layout> layout):
+				_parent(parent),
+				_layout(std::move(layout))
+			{}
+
+			template<Style::Setter... Setters>
+			Layout& With()
+			{
+				_layout->ClassStyle.Use<Setters...>();
+				return _parent;
+			}
+		};
+
 		VisualElement& Parent;
 	protected:
 		UIElementCollection _children;
 	private:
 		using base = UIElement;
 
-		UIElement* _hoverChild = nullptr;
+		std::shared_ptr<UIElement> _hoverChild;
 		bool _isHover = false;
 	public:
 		Layout(VisualElement& parent);
 
-		virtual void AddChild(UIElement& child);
-		virtual void RemoveChild(UIElement& child);
-
 		virtual void Arrange() = 0;
 		virtual void Measure() = 0;
 
+		template<std::derived_from<UIElement> TUIElement, typename... TArgs>
+		auto Add(TArgs&&... args)
+		{
+			if constexpr(std::derived_from<TUIElement, Layout>)
+			{
+				return AddLayoutContext(*this, std::make_shared<TUIElement>(std::forward<TArgs>(args)...));
+			}
+			else
+			{
+				return AddElementContext(*this, std::make_shared<TUIElement>(std::forward<TArgs>(args)...));
+			}
+		}
+
 		void OnRender(RenderContext rc) const override
 		{
-			for(UIElement& child : _children)
+			for(auto& child : _children)
 			{
-				child.OnRender(rc);
+				child->OnRender(rc);
 			}
 
 			base::OnRender(rc);
@@ -92,9 +141,9 @@ namespace Sgl::UI
 		{
 			base::OnMouseDoubleClick(e);
 
-			for(UIElement& child : _children)
+			for(auto& child : _children)
 			{
-				child.OnMouseDoubleClick(e);
+				child->OnMouseDoubleClick(e);
 			}
 		}
 
@@ -102,9 +151,9 @@ namespace Sgl::UI
 		{
 			base::OnMouseWheel(e);
 
-			for(UIElement& child : _children)
+			for(auto& child : _children)
 			{
-				child.OnMouseWheel(e);
+				child->OnMouseWheel(e);
 			}
 		}
 
@@ -112,9 +161,9 @@ namespace Sgl::UI
 		{
 			base::OnKeyDown(e);
 
-			for(UIElement& child : _children)
+			for(auto& child : _children)
 			{
-				child.OnKeyDown(e);
+				child->OnKeyDown(e);
 			}
 		}
 
@@ -122,9 +171,9 @@ namespace Sgl::UI
 		{
 			base::OnKeyUp(e);
 
-			for(UIElement& child : _children)
+			for(auto& child : _children)
 			{
-				child.OnKeyUp(e);
+				child->OnKeyUp(e);
 			}
 		}
 	private:

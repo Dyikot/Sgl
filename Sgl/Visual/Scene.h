@@ -15,10 +15,10 @@ namespace Sgl
 	public:
 		Style ClassStyle;
 
-		UI::Layout& Layout;
-
 		Event<KeyEventHandler> KeyUp;
 		Event<KeyEventHandler> KeyDown;
+	private:
+		UI::Layout& _layout;
 	public:
 		Scene(UI::Layout& layout);
 		virtual ~Scene() = default;
@@ -28,39 +28,39 @@ namespace Sgl
 	protected:
 		void OnMouseMove(const MouseButtonEventArgs& e) override
 		{
-			Layout.OnRootLayoutMouseMove(e);
+			_layout.OnRootLayoutMouseMove(e);
 		}
 
 		void OnMouseDown(const MouseButtonEventArgs& e) override
 		{
-			Layout.OnMouseDown(e);
+			_layout.OnMouseDown(e);
 		}
 
 		void OnMouseUp(const MouseButtonEventArgs& e) override
 		{
-			Layout.OnMouseUp(e);
+			_layout.OnMouseUp(e);
 		}
 
 		void OnMouseDoubleClick(const MouseButtonEventArgs& e) override
 		{
-			Layout.OnMouseDoubleClick(e);
+			_layout.OnMouseDoubleClick(e);
 		}
 
 		void OnMouseWheel(const MouseWheelEventArgs& e) override
 		{
-			Layout.OnMouseWheel(e);
+			_layout.OnMouseWheel(e);
 		}
 
 		void OnKeyDown(const KeyEventArgs& e) override
 		{
 			KeyDown.TryRaise(*this, e);
-			Layout.OnKeyDown(e);
+			_layout.OnKeyDown(e);
 		}
 
 		void OnKeyUp(const KeyEventArgs& e) override
 		{
 			KeyUp.TryRaise(*this, e);
-			Layout.OnKeyUp(e);
+			_layout.OnKeyUp(e);
 		}
 
 		friend class Application;

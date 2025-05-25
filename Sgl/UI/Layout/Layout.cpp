@@ -14,16 +14,6 @@ namespace Sgl::UI
         Parent(parent)
     {}
 
-    void Layout::AddChild(UIElement& child)
-    {
-        _children.emplace(child);
-    }
-
-    void Layout::RemoveChild(UIElement& child)
-    {
-        _children.erase(child);
-    }
-
     void Layout::OnMouseMove(const MouseButtonEventArgs& e)
     {
         if(_hoverChild && IsHover(e.Position, _hoverChild->_position,
@@ -34,19 +24,19 @@ namespace Sgl::UI
             return;
         }
 
-        for(UIElement& child : _children)
+        for(auto& child : _children)
         {
-            if(IsHover(e.Position, child._position, child.Width, child.Height))
+            if(IsHover(e.Position, child->_position, child->Width, child->Height))
             {
                 if(_hoverChild)
                 {
                     _hoverChild->OnMouseLeave(e);
                 }
 
-                _hoverChild = &child;
-                Cursor::Set(child.Cursor);
-                child.OnMouseEnter(e);
-                child.OnMouseMove(e);
+                _hoverChild = child;
+                Cursor::Set(child->Cursor);
+                child->OnMouseEnter(e);
+                child->OnMouseMove(e);
 
                 return;
             }
