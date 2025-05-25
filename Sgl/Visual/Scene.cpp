@@ -3,7 +3,7 @@
 namespace Sgl
 {
 	Scene::Scene(UI::Layout& layout):
-		ClassStyle(*this),
+		Class(*this),
 		_layout(layout)
 	{}
 

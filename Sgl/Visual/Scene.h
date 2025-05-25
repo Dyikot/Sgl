@@ -13,7 +13,7 @@ namespace Sgl
 		public IMouseEventsListener	
 	{
 	public:
-		Style ClassStyle;
+		Style Class;
 
 		Event<KeyEventHandler> KeyUp;
 		Event<KeyEventHandler> KeyDown;

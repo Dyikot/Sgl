@@ -28,41 +28,21 @@ namespace Sgl::UI
 	class Layout: public UIElement
 	{
 	public:
-		class AddElementContext
+		template<typename TUIElement>
+		class AddChildContext
 		{
-		private:
-			std::shared_ptr<UIElement> _element;
-			Layout& _parent;
 		public:
-			AddElementContext(Layout& parent, std::shared_ptr<UIElement> element):
-				_parent(parent),
-				_element(std::move(element))
+			std::shared_ptr<TUIElement> Element;
+		public:
+			AddChildContext(std::shared_ptr<TUIElement> element):
+				Element(std::move(element))
 			{}
 
 			template<Style::Setter... Setters>
-			Layout& WithStyle()
+			AddChildContext& Class()
 			{
-				_element->ClassStyle.Use<Setters...>();
-				return _parent;
-			}
-		};
-
-		class AddLayoutContext
-		{
-		private:
-			std::shared_ptr<Layout> _layout;
-			Layout& _parent;
-		public:
-			AddLayoutContext(Layout& parent, std::shared_ptr<Layout> layout):
-				_parent(parent),
-				_layout(std::move(layout))
-			{}
-
-			template<Style::Setter... Setters>
-			Layout& With()
-			{
-				_layout->ClassStyle.Use<Setters...>();
-				return _parent;
+				Element->ClassStyle.Use<Setters...>();
+				return *this;
 			}
 		};
 
@@ -83,14 +63,7 @@ namespace Sgl::UI
 		template<std::derived_from<UIElement> TUIElement, typename... TArgs>
 		auto Add(TArgs&&... args)
 		{
-			if constexpr(std::derived_from<TUIElement, Layout>)
-			{
-				return AddLayoutContext(*this, std::make_shared<TUIElement>(std::forward<TArgs>(args)...));
-			}
-			else
-			{
-				return AddElementContext(*this, std::make_shared<TUIElement>(std::forward<TArgs>(args)...));
-			}
+			return AddChildContext(std::make_shared<TUIElement>(std::forward<TArgs>(args)...));
 		}
 
 		void OnRender(RenderContext rc) const override

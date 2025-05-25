@@ -10,30 +10,30 @@ namespace Sgl
 		Style& _class;
 		bool _isActive = false;
 	public:
-		Style TriggerStyle;
+		Style Class;
 	public:
 		Trigger(Style& classStyle):
 			_class(classStyle), 
-			TriggerStyle(classStyle._target)
+			Class(classStyle._target)
 		{}
 
 		Trigger(const Trigger& other):
 			_class(other._class),
 			_isActive(other._isActive),
-			TriggerStyle(other.TriggerStyle)
+			Class(other.Class)
 		{}
 
 		Trigger(Trigger&& other) noexcept:
 			_class(other._class),
 			_isActive(other._isActive),
-			TriggerStyle(std::move(other.TriggerStyle))
+			Class(std::move(other.Class))
 		{}
 
 		void Activate()
 		{
 			_isActive = true;
 			_class.ResetAndApply();
-			TriggerStyle.Apply();
+			Class.Apply();
 		}
 
 		void Deactivate()
