@@ -102,7 +102,6 @@ namespace Sgl
 					};
 
 					scene->OnKeyDown(args);
-					scene->UIElements.OnKeyDown(args);
 					break;
 				}
 
@@ -115,7 +114,6 @@ namespace Sgl
 					};
 
 					scene->OnKeyUp(args);
-					scene->UIElements.OnKeyUp(args);
 					break;
 				}
 
@@ -168,7 +166,7 @@ namespace Sgl
 						}
 					};
 
-					scene->UIElements.OnMouseMove(args);
+					scene->OnMouseMove(args);
 					break;
 				}
 
@@ -186,7 +184,7 @@ namespace Sgl
 						}
 					};
 
-					scene->UIElements.OnMouseDown(args);
+					scene->OnMouseDown(args);
 					break;
 				}
 
@@ -204,7 +202,7 @@ namespace Sgl
 						}
 					};
 
-					scene->UIElements.OnMouseUp(args);
+					scene->OnMouseUp(args);
 					break;
 				}
 
@@ -222,7 +220,7 @@ namespace Sgl
 						.Direction = SDL_MouseWheelDirection(e.wheel.direction)
 					};
 
-					scene->UIElements.OnMouseWheel(args);
+					scene->OnMouseWheel(args);
 					break;
 				}
 
@@ -252,7 +250,7 @@ namespace Sgl
 			
 			delayStopwatch.Restart();
 			HandleEvents(scene);
-			scene->OnProcessing(sceneStopwatch.Elapsed());
+			scene->OnUpdate(sceneStopwatch.Elapsed());
 			sceneStopwatch.Reset();
 
 			if(Window.IsVisible() || Window.IsRenderableWhenMinimized)

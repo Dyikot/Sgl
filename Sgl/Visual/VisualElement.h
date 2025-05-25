@@ -15,7 +15,7 @@ namespace Sgl
 	public:
 		virtual ~VisualElement() = default;
 
-		virtual void OnRender(RenderContext renderContext) const = 0;
+		virtual void OnRender(RenderContext rc) const = 0;
 
 		void ResetStyle() override
 		{

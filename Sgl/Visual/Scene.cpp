@@ -4,24 +4,21 @@ namespace Sgl
 {
 	Scene::Scene():
 		ClassStyle(*this),
-		UIElements(*this)
+		Layout(*this)
 	{}
 
-	void Scene::OnRender(RenderContext renderContext) const
+	void Scene::OnRender(RenderContext rc) const
 	{
 		if(BackgroundTexture)
 		{
-			renderContext.FillBackground(*BackgroundTexture, BackgroundColor);
+			rc.FillBackground(*BackgroundTexture, BackgroundColor);
 		}
 		else
 		{
-			renderContext.FillBackground(BackgroundColor);
+			rc.FillBackground(BackgroundColor);
 		}
 
-		for(auto& context: UIElements)
-		{
-			context.Element.OnRender(renderContext);
-		}
+		Layout.OnRender(rc);
 	}
 
 	void SceneManager::Push(SceneFactory sceneFactory)

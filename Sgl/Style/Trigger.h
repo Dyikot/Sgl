@@ -8,6 +8,7 @@ namespace Sgl
 	{
 	private:
 		Style& _class;
+		bool _isActive = false;
 	public:
 		Style TriggerStyle;
 	public:
@@ -16,21 +17,34 @@ namespace Sgl
 			TriggerStyle(classStyle._target)
 		{}
 
-		Trigger(const Trigger&) = delete;
-		Trigger(Trigger&&) = delete;
+		Trigger(const Trigger& other):
+			_class(other._class),
+			_isActive(other._isActive),
+			TriggerStyle(other.TriggerStyle)
+		{}
+
+		Trigger(Trigger&& other) noexcept:
+			_class(other._class),
+			_isActive(other._isActive),
+			TriggerStyle(std::move(other.TriggerStyle))
+		{}
 
 		void Activate()
 		{
+			_isActive = true;
 			_class.ResetAndApply();
 			TriggerStyle.Apply();
 		}
 
 		void Deactivate()
 		{
+			_isActive = false;
 			_class.ResetAndApply();
 		}
 
-		Trigger& operator=(const Trigger&) = delete;
-		Trigger& operator=(Trigger&&) = delete;
+		bool IsActive() const noexcept
+		{
+			return _isActive;
+		}
 	};
 }

@@ -4,6 +4,7 @@
 #include <string_view>
 #include "../Tools/Log.h"
 #include "Color.h"
+#include "../Data/Helpers.h"
 
 namespace Sgl
 {
@@ -31,9 +32,9 @@ namespace Sgl
 			SDL_SetSurfaceAlphaMod(_surface, color.Alpha);
 		}
 
-		auto Size() const
+		Size GetSize() const
 		{
-			return std::pair<size_t, size_t>(_surface->w, _surface->h);
+			return Size(_surface->w, _surface->h);
 		}
 
 		Surface& operator=(Surface&& other) noexcept

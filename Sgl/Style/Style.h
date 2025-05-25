@@ -26,23 +26,22 @@ namespace Sgl
 			_target(target)
 		{}
 
-		Style(const Style&) = delete;
-		Style(Style&&) = delete;
+		Style(const Style& other):
+			_target(other._target),
+			_setters(other._setters)
+		{}
 
-		void Use(std::vector<Setter> setters)
-		{
-			_setters = std::move(setters);
-			Apply();
-		}
+		Style(Style&& other) noexcept:
+			_target(other._target),
+			_setters(std::move(other._setters))
+		{}
 
 		template<Setter... Setters>
 		void Use()
 		{
-			Use({ Setters... });
+			_setters = { Setters... };
+			Apply();
 		}
-
-		Style& operator=(const Style&) = delete;
-		Style& operator=(Style&&) = delete;
 	private:
 		void Apply()
 		{

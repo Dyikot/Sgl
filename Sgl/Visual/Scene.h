@@ -2,35 +2,67 @@
 
 #include <stack>
 #include <queue>
-#include "UIElement/UIElement.h"
+#include "../UI/Layout.h"
 #include "../Tools/Time/TimeSpan.h"
 
 namespace Sgl
 {	
-	class Scene: public VisualElement, public IKeyEventsListener
+	class Scene: 
+		public VisualElement,
+		public IKeyEventsListener,
+		public IMouseEventsListener	
 	{
 	public:
 		Style ClassStyle;
-		UIElementsCollection UIElements;
+
+		UI::Layout Layout;
+
 		Event<KeyEventHandler> KeyUp;
 		Event<KeyEventHandler> KeyDown;
 	public:
 		Scene();
 		virtual ~Scene() = default;
 
-		void OnRender(RenderContext renderContext) const final;
-		virtual void OnProcessing(TimeSpan elapsed) {}
+		void OnRender(RenderContext rc) const final;
+		virtual void OnUpdate(TimeSpan elapsed) {}
 	protected:
+		void OnMouseMove(const MouseButtonEventArgs& e) override
+		{
+			Layout.OnMouseMove(e);
+		}
+
+		void OnMouseDown(const MouseButtonEventArgs& e) override
+		{
+			Layout.OnMouseDown(e);
+		}
+
+		void OnMouseUp(const MouseButtonEventArgs& e) override
+		{
+			Layout.OnMouseUp(e);
+		}
+
+		void OnMouseDoubleClick(const MouseButtonEventArgs& e) override
+		{
+			Layout.OnMouseDoubleClick(e);
+		}
+
+		void OnMouseWheel(const MouseWheelEventArgs& e) override
+		{
+			Layout.OnMouseWheel(e);
+		}
+
 		void OnKeyDown(const KeyEventArgs& e) override
 		{
 			KeyDown.TryRaise(*this, e);
+			Layout.OnKeyDown(e);
 		}
 
 		void OnKeyUp(const KeyEventArgs& e) override
 		{
 			KeyUp.TryRaise(*this, e);
+			Layout.OnKeyUp(e);
 		}
-	private:
+
 		friend class Application;
 	};
 

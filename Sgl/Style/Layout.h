@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../Graphic/Color.h"
+#include "../Graphic/Color.h"
 
 namespace Sgl
 {
@@ -17,7 +17,7 @@ namespace Sgl
 	enum class Visibility
 	{
 		Visible, Hidden, Collapsed
-	};	
+	};
 
 	struct Thickness
 	{

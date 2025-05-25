@@ -6,6 +6,7 @@
 #include "SDL/SDL_image.h"
 #include "Primitives.h"
 #include "Color.h"
+#include "../Data/Helpers.h"
 
 namespace Sgl
 {
@@ -40,11 +41,11 @@ namespace Sgl
 			SDL_SetTextureAlphaMod(_texture, color.Alpha);
 		}
 
-		auto Size() const
+		Size GetSize() const
 		{
 			int width = 0, height = 0;
 			SDL_QueryTexture(_texture, nullptr, nullptr, &width, &height);
-			return std::pair<size_t, size_t>(width, height);
+			return Size(width, height);
 		}
 
 		Texture& operator=(Texture&& other) noexcept

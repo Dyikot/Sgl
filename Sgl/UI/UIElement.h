@@ -1,23 +1,18 @@
 #pragma once
 
-#include <set>
-#include "UIElementsCollection.h"
-#include "../../Events/Event.h"
-#include "../../Style/Trigger.h"
-#include "../../Events/MouseAndKeyEvents.h"
-#include "../../Graphic/Primitives.h"
-#include "../VisualElement.h"
-#include "Properties.h"
+#include "../Style/Trigger.h"
+#include "../Style/Layout.h"
+#include "../Events/Event.h"
+#include "../Events/MouseAndKeyEvents.h"
+#include "../Visual/VisualElement.h"
 
-namespace Sgl
+namespace Sgl::UI
 {
 	class UIElement: 
 		public VisualElement,
 		public IMouseEventsListener,
 		public IKeyEventsListener
 	{
-	private:
-		using base = VisualElement;
 	public:
 		Style ClassStyle;
 
@@ -33,9 +28,7 @@ namespace Sgl
 		Event<MouseEventHandler> MouseLeave;
 		Event<MouseEventHandler> MouseDoubleClick;
 		Event<MouseWheelEventHandler> MouseWheel;
-
-		UIElementsCollection Children;
-
+		
 		float Width = 0;
 		float Height = 0;
 		float MinWidth = 0;
@@ -51,12 +44,13 @@ namespace Sgl
 		Thickness Padding;
 		Border Border;
 	private:
-		bool _isHover = false;
+		using base = VisualElement;
 	public:
 		UIElement();
+		UIElement(const UIElement& other);
 		virtual ~UIElement() = default;
 
-		void OnRender(RenderContext renderContext) const override;
+		void OnRender(RenderContext rc) const override;
 		void ResetStyle() override;
 	protected:
 		void OnMouseDown(const MouseButtonEventArgs& e) override
@@ -76,16 +70,14 @@ namespace Sgl
 			MouseMove.TryRaise(*this, e);
 		}
 
-		void OnMouseEnter(const MouseButtonEventArgs& e)
+		virtual void OnMouseEnter(const MouseButtonEventArgs& e)
 		{
-			_isHover = true;
 			OnHover.Activate();
 			MouseEnter.TryRaise(*this, e);
 		}
 
-		void OnMouseLeave(const MouseButtonEventArgs& e)
+		virtual void OnMouseLeave(const MouseButtonEventArgs& e)
 		{
-			_isHover = false;
 			OnHover.Deactivate();
 			MouseLeave.TryRaise(*this, e);
 		}
@@ -110,6 +102,7 @@ namespace Sgl
 			KeyUp.TryRaise(*this, e);
 		}
 
-		friend class UIElementsCollection;
+	private:
+		friend class Layout;
 	};
 }

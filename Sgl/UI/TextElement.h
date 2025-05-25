@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Properties.h"
-#include "../UIElement/UIElement.h"
+#include "../Style/Font.h"
+#include "UIElement.h"
 
-namespace Sgl
+namespace Sgl::UI
 {
 	class TextElement: public UIElement
 	{
