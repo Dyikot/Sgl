@@ -43,10 +43,4 @@ namespace Sgl
 				left.Left == right.Left;
 		}
 	};
-
-	struct Border
-	{
-		Thickness Thickness = Sgl::Thickness(1);
-		Color Color = Colors::Black;
-	};
 }

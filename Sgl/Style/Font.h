@@ -37,13 +37,4 @@ namespace Sgl
 	{
 		Normal, Italic
 	};
-
-	struct Font
-	{
-		int Size = 14;
-		FontFamily Family = FontFamily::Default();
-		FontStyle Style = FontStyle::Normal;
-		FontWeight Weight = FontWeight::Normal;
-		Color Color = Colors::Black;
-	};
 }

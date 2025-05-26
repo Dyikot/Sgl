@@ -20,7 +20,6 @@ namespace Sgl::UI
 		MouseMove(other.MouseMove),
 		MouseEnter(other.MouseEnter),
 		MouseLeave(other.MouseLeave),
-		MouseDoubleClick(other.MouseDoubleClick),
 		MouseWheel(other.MouseWheel),
 		Width(other.Width),
 		Height(other.Height),
@@ -33,9 +32,7 @@ namespace Sgl::UI
 		Visibility(other.Visibility),
 		VerticalAlignment(other.VerticalAlignment),
 		HorizontalAlignment(other.HorizontalAlignment),
-		Margin(other.Margin),
-		Padding(other.Padding),
-		Border(other.Border)
+		Margin(other.Margin)
 	{}
 
 	void UIElement::OnRender(RenderContext rc) const
@@ -62,7 +59,5 @@ namespace Sgl::UI
 		VerticalAlignment = VerticalAlignment::Top;
 		HorizontalAlignment = HorizontalAlignment::Left;
 		Margin = {};
-		Padding = {};
-		Border = {};
 	}
 }

@@ -57,7 +57,6 @@ namespace Sgl
 		virtual void OnMouseDown(const MouseButtonEventArgs& e) = 0;
 		virtual void OnMouseUp(const MouseButtonEventArgs& e) = 0;
 		virtual void OnMouseMove(const MouseButtonEventArgs& e) = 0;
-		virtual void OnMouseDoubleClick(const MouseButtonEventArgs& e) = 0;
 		virtual void OnMouseWheel(const MouseWheelEventArgs& e) = 0;
 	};
 	

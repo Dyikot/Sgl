@@ -5,6 +5,7 @@
 #include "../Events/Event.h"
 #include "../Events/MouseAndKeyEvents.h"
 #include "../Visual/VisualElement.h"
+#include "../Data/Object.h"
 
 namespace Sgl::UI
 {
@@ -26,7 +27,6 @@ namespace Sgl::UI
 		Event<MouseEventHandler> MouseMove;
 		Event<MouseEventHandler> MouseEnter;
 		Event<MouseEventHandler> MouseLeave;
-		Event<MouseEventHandler> MouseDoubleClick;
 		Event<MouseWheelEventHandler> MouseWheel;
 		
 		float Width = 0;
@@ -41,8 +41,6 @@ namespace Sgl::UI
 		VerticalAlignment VerticalAlignment = VerticalAlignment::Top;
 		HorizontalAlignment HorizontalAlignment = HorizontalAlignment::Left;
 		Thickness Margin;
-		Thickness Padding;
-		Border Border;
 	private:
 		using base = VisualElement;
 
@@ -82,11 +80,6 @@ namespace Sgl::UI
 		{
 			OnHover.Deactivate();
 			MouseLeave.TryRaise(*this, e);
-		}
-
-		void OnMouseDoubleClick(const MouseButtonEventArgs& e) override
-		{
-			MouseDoubleClick.TryRaise(*this, e);
 		}
 
 		void OnMouseWheel(const MouseWheelEventArgs& e) override

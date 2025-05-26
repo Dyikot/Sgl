@@ -38,10 +38,24 @@ namespace Sgl::UI
 				_element(std::move(element))
 			{}
 
-			template<Style::StyleClass... Setters>
+			template<Style::StyleClass... Classes>
 			AddChildContext& Class()
 			{
-				_element->ClassStyle.Use<Setters...>();
+				_element->ClassStyle.Use<Classes...>();
+				return *this;
+			}
+
+			template<Style::StyleClass... Classes>
+			AddChildContext& Class(Trigger TUIElement::* trigger)
+			{
+				((*_element).*trigger).Class.Use<Classes...>();
+				return *this;
+			}
+
+			template<typename TEvent, typename THandler>
+			AddChildContext& AddHandler(TEvent event, THandler handler)
+			{
+				((*_element).*event) += handler;
 				return *this;
 			}
 
@@ -115,16 +129,6 @@ namespace Sgl::UI
 			if(_hoverChild)
 			{
 				_hoverChild->OnMouseUp(e);
-			}
-		}
-
-		void OnMouseDoubleClick(const MouseButtonEventArgs& e) override
-		{
-			base::OnMouseDoubleClick(e);
-
-			for(auto& child : _children)
-			{
-				child->OnMouseDoubleClick(e);
 			}
 		}
 

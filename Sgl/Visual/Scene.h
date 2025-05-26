@@ -15,6 +15,7 @@ namespace Sgl
 	public:
 		Style Class;
 		std::unique_ptr<UI::Layout> Layout;
+
 		Event<KeyEventHandler> KeyUp;
 		Event<KeyEventHandler> KeyDown;
 	public:
@@ -37,11 +38,6 @@ namespace Sgl
 		void OnMouseUp(const MouseButtonEventArgs& e) override
 		{
 			Layout->OnMouseUp(e);
-		}
-
-		void OnMouseDoubleClick(const MouseButtonEventArgs& e) override
-		{
-			Layout->OnMouseDoubleClick(e);
 		}
 
 		void OnMouseWheel(const MouseWheelEventArgs& e) override
