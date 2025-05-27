@@ -10,14 +10,21 @@
 
 namespace Sgl
 {
+	enum class TextureAccess
+	{
+		Static, Streaming, Target
+	};
+
 	class Texture
 	{
 	private:
 		SDL_Texture* _texture = nullptr;
 	public:
-		Texture(std::string_view path, SDL_Renderer* renderer):
-			_texture(IMG_LoadTexture(renderer, path.data()))
-		{			
+		Texture() = default;
+
+		Texture(SDL_Texture* texture):
+			_texture(texture)
+		{
 			Log::PrintSDLErrorIf(_texture == nullptr);
 		}
 
@@ -35,7 +42,7 @@ namespace Sgl
 			}
 		}
 
-		void SetColor(Color color)
+		void SetColor(Color color) const
 		{
 			SDL_SetTextureColorMod(_texture, color.Red, color.Green, color.Blue);
 			SDL_SetTextureAlphaMod(_texture, color.Alpha);
@@ -48,13 +55,18 @@ namespace Sgl
 			return Size(width, height);
 		}
 
+		bool IsEmpty() const noexcept
+		{
+			return _texture == nullptr;
+		}
+
 		Texture& operator=(Texture&& other) noexcept
 		{
 			_texture = std::exchange(other._texture, nullptr);
 			return *this;
 		}
 
-		operator SDL_Texture* () noexcept 
+		operator SDL_Texture* () const noexcept 
 		{ 
 			return _texture; 
 		}

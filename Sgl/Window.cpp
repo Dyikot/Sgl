@@ -10,14 +10,18 @@ namespace Sgl
     Window::Window() noexcept:
         _window(SDL_CreateWindow(DefaultTitle, DefaultPosition.x, DefaultPosition.y,
                                  DefaultWidth, DefaultHeight, SDL_WINDOW_HIDDEN)),
-        _renderer(_window)
+        _renderer(SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED))
     {
         Log::PrintSDLErrorIf(_window == nullptr);
+        Log::PrintSDLErrorIf(_renderer == nullptr);
+
         SetLogicalSize(DefaultWidth, DefaultHeight);
+        SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
     }
 
     Window::~Window() noexcept
     {
+        SDL_DestroyRenderer(_renderer);
         SDL_DestroyWindow(_window);
     }
 
@@ -202,11 +206,6 @@ namespace Sgl
             default:
                 return WindowState::Normal;
         }
-    }
-
-    Renderer& Window::GetRenderer() noexcept
-    {
-        return _renderer;
     }
 
     void Window::EnableVSync() noexcept

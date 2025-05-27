@@ -1,16 +1,42 @@
 #include "Renderer.h"
-#include "../Tools/Log.h"
+#include "../Application.h"
 
 namespace Sgl
 {
-	Renderer::Renderer(SDL_Window* window):
-		_renderer(SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED))
+	Renderer::Renderer():
+		_renderer(Application::Get()->Window._renderer)
+	{}
+
+	Texture Renderer::LoadTexture(std::string_view path)
 	{
-		Log::PrintSDLErrorIf(_renderer == nullptr);
+		return Texture(IMG_LoadTexture(_renderer, path.data()));
 	}
 
-	Renderer::~Renderer()
+	Texture Renderer::CreateTexture(TextureAccess textureAccess, int width, int height)
 	{
-		SDL_DestroyRenderer(_renderer);
+		return CreateTexture(SDL_PIXELFORMAT_RGBA8888, textureAccess, width, height);
+	}
+
+	Texture Renderer::CreateTexture(SDL_PixelFormatEnum pixelFormat, TextureAccess textureAccess,
+									int width, int height)
+	{
+		return Texture(SDL_CreateTexture(_renderer, pixelFormat, static_cast<SDL_TextureAccess>(textureAccess), width, height));
+	}
+
+	void Renderer::FillTexture(Texture& texture, Action<RenderContext> action)
+	{
+		SDL_SetRenderTarget(_renderer, texture);
+		action(OpenContext());
+		SDL_SetRenderTarget(_renderer, nullptr);
+	}
+
+	RenderContext Renderer::OpenContext()
+	{
+		return RenderContext(_renderer);
+	}
+
+	void Renderer::SetBlendMode(SDL_BlendMode mode)
+	{
+		SDL_SetRenderDrawBlendMode(_renderer, mode);
 	}
 }

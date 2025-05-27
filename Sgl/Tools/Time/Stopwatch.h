@@ -15,6 +15,8 @@ namespace Sgl
 		TimeSpan _elapsed = TimeSpan::Zero();
 		TimePoint _start;
 	public:
+		static Stopwatch StartNew();
+
 		void Start();
 		void Restart();
 		void Reset();

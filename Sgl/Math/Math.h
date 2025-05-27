@@ -5,33 +5,39 @@
 #include <numeric>
 #include <cmath>
 
-namespace Sgl::Math
+namespace Sgl
 {
-	template<size_t Number>
-	inline std::vector<float> SinRange() noexcept
+	class Math
 	{
-		constexpr double step = 2 * std::numbers::pi / Number;
-		auto result = std::vector<float>(Number);
-
-		for(size_t i = 0; i < Number; i++)
+	public:
+		template<size_t Number>
+		static std::vector<float> SinRange() noexcept
 		{
-			result[i] = sinf(step * i);
+			constexpr double step = 2 * std::numbers::pi / Number;
+			auto result = std::vector<float>(Number);
+
+			for(size_t i = 0; i < Number; i++)
+			{
+				result[i] = sinf(step * i);
+			}
+
+			return result;
 		}
 
-		return result;
-	}
-
-	template<size_t Number>
-	inline std::vector<float> CosRange() noexcept
-	{
-		constexpr double step = 2 * std::numbers::pi / Number;
-		auto result = std::vector<float>(Number);
-
-		for(size_t i = 0; i < Number; i++)
+		template<size_t Number>
+		static std::vector<float> CosRange() noexcept
 		{
-			result[i] = cosf(step * i);
+			constexpr double step = 2 * std::numbers::pi / Number;
+			auto result = std::vector<float>(Number);
+
+			for(size_t i = 0; i < Number; i++)
+			{
+				result[i] = cosf(step * i);
+			}
+
+			return result;
 		}
 
-		return result;
-	}
+		static std::vector<int> TriangulateEllipse(size_t pointsNumber);
+	};	
 }

@@ -2,6 +2,13 @@
 
 namespace Sgl
 {
+	Stopwatch Stopwatch::StartNew()
+	{
+		Stopwatch s;
+		s.Start();
+		return s;
+	}
+
 	void Stopwatch::Start()
 	{
 		if(!_isRunning)

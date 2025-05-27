@@ -1,7 +1,9 @@
 #pragma once
 
-#include <SDL/SDL_render.h>
-#include "Color.h"
+#include <string_view>
+#include "RenderContext.h"
+#include "Texture.h"
+#include "../Data/Delegate.h"
 
 namespace Sgl
 {
@@ -10,27 +12,21 @@ namespace Sgl
 	private:
 		SDL_Renderer* _renderer;
 	public:
-		explicit Renderer(SDL_Window* window);
-		~Renderer();
+		Renderer();
 
-		void SetColor(Color color) const noexcept
-		{
-			SDL_SetRenderDrawColor(_renderer, color.Red, color.Green, color.Blue, color.Alpha);
-		}
+		Texture LoadTexture(std::string_view path);
+		Texture CreateTexture(TextureAccess textureAccess, int width, int height);
+		Texture CreateTexture(SDL_PixelFormatEnum pixelFormat, TextureAccess textureAccess, int width, int height);
+		void FillTexture(Texture& texture, Action<RenderContext> action);
 
-		void SetBlendMode(SDL_BlendMode mode)
-		{
-			SDL_SetRenderDrawBlendMode(_renderer, mode);
-		}
+		RenderContext OpenContext();
+		void SetBlendMode(SDL_BlendMode mode);		
 
 		void UpdateScreen()
 		{
 			SDL_RenderPresent(_renderer);
 		}
 
-		operator SDL_Renderer* () const noexcept
-		{
-			return _renderer;
-		}
+		operator SDL_Renderer* () noexcept { return _renderer; }
 	};
 }

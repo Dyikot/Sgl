@@ -18,7 +18,7 @@ namespace Sgl
 		Event<WindowStateEventHandler> WindowStateChanged;
 	private:
 		SDL_Window* _window;
-		Renderer _renderer;
+		SDL_Renderer* _renderer;
 		bool _isVSyncEnable = false;
 		std::optional<Surface> _icon;
 	public:
@@ -49,7 +49,6 @@ namespace Sgl
 		SDL_Point GetPosition() const noexcept;
 		DisplayMode GetDisplayMode() const noexcept;
 		WindowState GetWindowState() const noexcept;
-		Renderer& GetRenderer() noexcept;
 		
 		void EnableVSync() noexcept;
 		void DisableVSync() noexcept;
@@ -75,5 +74,6 @@ namespace Sgl
 		void SetResize(bool value);
 
 		friend class Application;
+		friend class Renderer;
 	};
 }

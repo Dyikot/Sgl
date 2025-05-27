@@ -22,7 +22,7 @@ namespace Sgl
 		Scene();
 		virtual ~Scene() = default;
 
-		void OnRender(RenderContext rc) const final;
+		void OnRender(RenderContext rc) const override;
 		virtual void OnUpdate(TimeSpan elapsed) {}
 	protected:
 		void OnMouseMove(const MouseButtonEventArgs& e) override

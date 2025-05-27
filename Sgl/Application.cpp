@@ -5,8 +5,7 @@
 
 namespace Sgl
 {
-	Application::Application() noexcept:
-		Resources(Window.GetRenderer())
+	Application::Application() noexcept
 	{
 		_current = this;
 
@@ -232,7 +231,7 @@ namespace Sgl
 
 	void Application::Start()
 	{
-		auto& renderer = Window.GetRenderer();
+		Renderer renderer;
 		renderer.SetBlendMode(SDL_BLENDMODE_BLEND);
 
 		Stopwatch delayStopwatch, sceneStopwatch;
@@ -255,7 +254,7 @@ namespace Sgl
 
 			if(Window.IsVisible() || Window.IsRenderableWhenMinimized)
 			{
-				scene->OnRender(RenderContext(renderer));
+				scene->OnRender(renderer.OpenContext());
 				renderer.UpdateScreen();
 			}
 
