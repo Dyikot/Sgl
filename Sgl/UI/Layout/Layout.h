@@ -162,7 +162,7 @@ namespace Sgl::UI
 			}
 		}
 	private:
-		void OnRootLayoutMouseMove(const MouseButtonEventArgs& e);
+		void OnSceneLayoutMouseMove(const MouseButtonEventArgs& e);
 
 		FPoint GetPosition() const
 		{

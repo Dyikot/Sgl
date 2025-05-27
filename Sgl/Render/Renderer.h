@@ -14,19 +14,18 @@ namespace Sgl
 	public:
 		Renderer();
 
+		RenderContext OpenContext();
+
 		Texture LoadTexture(std::string_view path);
 		Texture CreateTexture(TextureAccess textureAccess, int width, int height);
 		Texture CreateTexture(SDL_PixelFormatEnum pixelFormat, TextureAccess textureAccess, int width, int height);
 		void FillTexture(Texture& texture, Action<RenderContext> action);
 
-		RenderContext OpenContext();
 		void SetBlendMode(SDL_BlendMode mode);		
 
 		void UpdateScreen()
 		{
 			SDL_RenderPresent(_renderer);
 		}
-
-		operator SDL_Renderer* () noexcept { return _renderer; }
 	};
 }

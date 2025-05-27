@@ -29,13 +29,15 @@ namespace Sgl
 		void DrawTexture(const Texture& texture, FRect rectangle, Color fill);
 		void DrawTexture(Texture& texture, FRect rectangle, Rect clip);
 		void DrawTexture(Texture& texture, FRect rectangle, Rect clip, Color fill);
+		void DrawCircle(FPoint position, int diameter, Color color);
 		void DrawEllipse(FPoint position, int width, int height, Color color);
 		void DrawEllipseFill(FPoint position, int width, int height, Color color);
 		void DrawEllipseFill(FPoint position, int width, int height, const Texture& texture, Color color);
-		void DrawShape(std::span<const Vertex> vertices);
-		void DrawShape(std::span<const Vertex> vertices, const Texture& texture);
-		void DrawShape(std::span<const Vertex> vertices, std::span<const int> order);
-		void DrawShape(std::span<const Vertex> vertices, std::span<const int> order, const Texture& texture);
+		void DrawGeometry(std::span<const Vertex> vertices);
+		void DrawGeometry(std::span<const Vertex> vertices, const Texture& texture);
+		void DrawGeometry(std::span<const Vertex> vertices, std::span<const int> order);
+		void DrawGeometry(std::span<const Vertex> vertices, std::span<const int> order, const Texture& texture);
+
 		void FillBackground(Color color);
 		void FillBackground(Texture& texture, Color color);
 	private:

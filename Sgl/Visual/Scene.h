@@ -27,7 +27,7 @@ namespace Sgl
 	protected:
 		void OnMouseMove(const MouseButtonEventArgs& e) override
 		{
-			Layout->OnRootLayoutMouseMove(e);
+			Layout->OnSceneLayoutMouseMove(e);
 		}
 
 		void OnMouseDown(const MouseButtonEventArgs& e) override

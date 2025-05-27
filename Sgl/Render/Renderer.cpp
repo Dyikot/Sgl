@@ -7,6 +7,11 @@ namespace Sgl
 		_renderer(Application::Get()->Window._renderer)
 	{}
 
+	RenderContext Renderer::OpenContext()
+	{
+		return RenderContext(_renderer);
+	}
+
 	Texture Renderer::LoadTexture(std::string_view path)
 	{
 		return Texture(IMG_LoadTexture(_renderer, path.data()));
@@ -28,11 +33,6 @@ namespace Sgl
 		SDL_SetRenderTarget(_renderer, texture);
 		action(OpenContext());
 		SDL_SetRenderTarget(_renderer, nullptr);
-	}
-
-	RenderContext Renderer::OpenContext()
-	{
-		return RenderContext(_renderer);
 	}
 
 	void Renderer::SetBlendMode(SDL_BlendMode mode)

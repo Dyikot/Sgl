@@ -81,6 +81,42 @@ namespace Sgl
 		SDL_RenderCopyF(_renderer, texture, &clip, &rectangle);
 	}
 
+	void RenderContext::DrawCircle(FPoint position, int diameter, Color color)
+	{
+		int radius = diameter / 2;
+		int x = radius;
+		int y = 0;
+		int err = 0;
+
+		auto center = FPoint(position.x + radius, position.y + radius);
+		auto points = std::vector<FPoint>(9 * radius);
+
+		for(int i = 0; x >= y;)
+		{
+			points[i++] = FPoint(center.x + x, center.y + y);
+			points[i++] = FPoint(center.x + y, center.y + x);
+			points[i++] = FPoint(center.x - y, center.y + x);
+			points[i++] = FPoint(center.x - x, center.y + y);
+			points[i++] = FPoint(center.x - x, center.y - y);
+			points[i++] = FPoint(center.x - y, center.y - x);
+			points[i++] = FPoint(center.x + y, center.y - x);
+			points[i++] = FPoint(center.x + x, center.y - y);
+
+			if(err <= 0)
+			{
+				y += 1;
+				err += 2 * y + 1;
+			}
+			else
+			{
+				x -= 1;
+				err -= 2 * x + 1;
+			}
+		}
+
+		DrawPoints(points, color);
+	}
+
 	constexpr size_t MaxPointsNumber = 180;
 	const auto SinRange = Math::SinRange<MaxPointsNumber>();
 	const auto CosRange = Math::CosRange<MaxPointsNumber>();
@@ -133,7 +169,7 @@ namespace Sgl
 		CalculateFillEllipse(vertices, MaxPointsNumber / pointNumber, 
 							 position, width, height, color);
 		auto order = Math::TriangulateEllipse(pointNumber);
-		DrawShape(vertices, order);
+		DrawGeometry(vertices, order);
 	}
 
 	void RenderContext::DrawEllipseFill(FPoint position, int width, int height, const Texture& texture, Color color)
@@ -144,26 +180,26 @@ namespace Sgl
 		CalculateFillEllipse(vertices, MaxPointsNumber / pointNumber, 
 							 position, width, height, color);
 		auto order = Math::TriangulateEllipse(pointNumber);
-		DrawShape(vertices, order, texture);
+		DrawGeometry(vertices, order, texture);
 	}
 
-	void RenderContext::DrawShape(std::span<const Vertex> vertices)
+	void RenderContext::DrawGeometry(std::span<const Vertex> vertices)
 	{
 		SDL_RenderGeometry(_renderer, nullptr, vertices.data(), vertices.size(), nullptr, 0);
 	}
 
-	void RenderContext::DrawShape(std::span<const Vertex> vertices, const Texture& texture)
+	void RenderContext::DrawGeometry(std::span<const Vertex> vertices, const Texture& texture)
 	{
 		SDL_RenderGeometry(_renderer, texture, vertices.data(), vertices.size(), nullptr, 0);	
 	}
 
-	void RenderContext::DrawShape(std::span<const Vertex> vertices, std::span<const int> order)
+	void RenderContext::DrawGeometry(std::span<const Vertex> vertices, std::span<const int> order)
 	{
 		SDL_RenderGeometry(_renderer, nullptr, vertices.data(), vertices.size(),
 						   order.data(), order.size());
 	}
 
-	void RenderContext::DrawShape(std::span<const Vertex> vertices, std::span<const int> order,
+	void RenderContext::DrawGeometry(std::span<const Vertex> vertices, std::span<const int> order,
 								  const Texture& texture)
 	{
 		SDL_RenderGeometry(_renderer, texture, vertices.data(), vertices.size(),

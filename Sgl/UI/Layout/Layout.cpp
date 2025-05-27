@@ -51,7 +51,7 @@ namespace Sgl::UI
         Cursor::Set(Parent.Cursor);
     }
 
-    void Layout::OnRootLayoutMouseMove(const MouseButtonEventArgs& e)
+    void Layout::OnSceneLayoutMouseMove(const MouseButtonEventArgs& e)
     {
         bool wasHover = _isHover;
         _isHover = IsHover(e.Position, GetPosition(), Width, Height);
