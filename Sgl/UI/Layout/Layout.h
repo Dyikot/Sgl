@@ -28,44 +28,6 @@ namespace Sgl::UI
 	class Layout: public UIElement
 	{
 	public:
-		template<typename TUIElement>
-		class AddChildContext
-		{
-		private:
-			std::shared_ptr<TUIElement> _element;
-		public:
-			AddChildContext(std::shared_ptr<TUIElement> element):
-				_element(std::move(element))
-			{}
-
-			template<Style::StyleClass... Classes>
-			AddChildContext& Class()
-			{
-				_element->ClassStyle.Use<Classes...>();
-				return *this;
-			}
-
-			template<Style::StyleClass... Classes>
-			AddChildContext& Class(Trigger TUIElement::* trigger)
-			{
-				((*_element).*trigger).Class.Use<Classes...>();
-				return *this;
-			}
-
-			template<typename TEvent, typename THandler>
-			AddChildContext& AddHandler(TEvent event, THandler handler)
-			{
-				((*_element).*event) += handler;
-				return *this;
-			}
-
-			AddChildContext& Configure(Action<TUIElement&> configurer)
-			{
-				configurer(*_element);
-				return *this;
-			}
-		};
-
 		VisualElement& Parent;
 	protected:
 		UIElementCollection _children;
@@ -85,7 +47,7 @@ namespace Sgl::UI
 		{
 			auto element = std::make_shared<TUIElement>(std::forward<TArgs>(args)...);
 			_children.insert(element);
-			return AddChildContext(element);
+			return ElementConfigurer(*element);
 		}
 
 		void OnRender(RenderContext rc) const override

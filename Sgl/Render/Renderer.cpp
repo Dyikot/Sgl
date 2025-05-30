@@ -22,16 +22,32 @@ namespace Sgl
 		return CreateTexture(SDL_PIXELFORMAT_RGBA8888, textureAccess, width, height);
 	}
 
+	Texture Renderer::CreateTexture(TextureAccess textureAccess, int width, int height, 
+									Action<RenderContext> fill)
+	{
+		auto texture = CreateTexture(textureAccess, width, height);
+		FillTexture(texture, std::move(fill));
+		return texture;
+	}
+
 	Texture Renderer::CreateTexture(SDL_PixelFormatEnum pixelFormat, TextureAccess textureAccess,
 									int width, int height)
 	{
 		return Texture(SDL_CreateTexture(_renderer, pixelFormat, static_cast<SDL_TextureAccess>(textureAccess), width, height));
 	}
 
-	void Renderer::FillTexture(Texture& texture, Action<RenderContext> action)
+	Texture Renderer::CreateTexture(SDL_PixelFormatEnum pixelFormat, TextureAccess textureAccess,
+									int width, int height, Action<RenderContext> fill)
+	{
+		auto texture = CreateTexture(pixelFormat, textureAccess, width, height);
+		FillTexture(texture, std::move(fill));
+		return texture;
+	}
+
+	void Renderer::FillTexture(Texture& texture, Action<RenderContext> fill)
 	{
 		SDL_SetRenderTarget(_renderer, texture);
-		action(OpenContext());
+		fill(OpenContext());
 		SDL_SetRenderTarget(_renderer, nullptr);
 	}
 

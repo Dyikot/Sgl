@@ -15,7 +15,7 @@ namespace Sgl::UI
 		public IKeyEventsListener
 	{
 	public:
-		Style ClassStyle;
+		Style Class;
 
 		Trigger OnHover;
 		Trigger OnMousePressed;
@@ -98,5 +98,93 @@ namespace Sgl::UI
 		}
 	private:
 		friend class Layout;
+	};
+
+	template<std::derived_from<UIElement> TUIElement>
+	class ElementConfigurer
+	{
+	private:
+		TUIElement& _element;
+	public:
+		ElementConfigurer(TUIElement& element):
+			_element(element)
+		{}
+
+		template<Style::StyleClass... Classes>
+		ElementConfigurer& Class()
+		{
+			_element.Class.Use<Classes...>();
+			return *this;
+		}
+
+		template<Style::StyleClass... Classes>
+		ElementConfigurer& OnHover()
+		{
+			_element.OnHover.Class.Use<Classes...>();
+			return *this;
+		}
+
+		template<Style::StyleClass... Classes>
+		ElementConfigurer& OnMousePressed()
+		{
+			_element.OnMousePressed.Class.Use<Classes...>();
+			return *this;
+		}
+
+		template<typename TCallable>
+		ElementConfigurer& KeyUp(TCallable callable)
+		{
+			_element.KeyUp += std::move(callable);
+			return *this;
+		}
+
+		template<typename TCallable>
+		ElementConfigurer& KeyDown(TCallable callable)
+		{
+			_element.KeyDown += std::move(callable);
+			return *this;
+		}
+
+		template<typename TCallable>
+		ElementConfigurer& MouseDown(TCallable callable)
+		{
+			_element.MouseDown += std::move(callable);
+			return *this;
+		}
+
+		template<typename TCallable>
+		ElementConfigurer& MouseUp(TCallable callable)
+		{
+			_element.MouseUp += std::move(callable);
+			return *this;
+		}
+
+		template<typename TCallable>
+		ElementConfigurer& MouseMove(TCallable callable)
+		{
+			_element.MouseMove += std::move(callable);
+			return *this;
+		}
+
+		template<typename TCallable>
+		ElementConfigurer& MouseEnter(TCallable callable)
+		{
+			_element.MouseEnter += std::move(callable);
+			return *this;
+		}
+
+		template<typename TCallable>
+		ElementConfigurer& MouseLeave(TCallable callable)
+		{
+			_element.MouseLeave += std::move(callable);
+			return *this;
+		}
+
+		template<typename TCallable>
+		ElementConfigurer& MouseWheel(TCallable callable)
+		{
+			_element.MouseWheel += std::move(callable);
+			return *this;
+		}
 	};
 }

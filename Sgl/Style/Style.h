@@ -36,10 +36,10 @@ namespace Sgl
 			_classes(std::move(other._classes))
 		{}
 
-		template<StyleClass... Class>
+		template<StyleClass... Classes>
 		void Use()
 		{
-			_classes = { Class... };
+			_classes = { Classes... };
 			Apply();
 		}
 	private:

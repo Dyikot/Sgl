@@ -81,62 +81,73 @@ namespace Sgl
 		SDL_RenderCopyF(_renderer, texture, &clip, &rectangle);
 	}
 
+	constexpr size_t MaxPointsNumber = 180;
+	const auto SinRange = Math::SinRange<MaxPointsNumber>();
+	const auto CosRange = Math::CosRange<MaxPointsNumber>();
+
 	void RenderContext::DrawCircle(FPoint position, int diameter, Color color)
 	{
 		int radius = diameter / 2;
 		int x = radius;
 		int y = 0;
-		int err = 0;
+		int p = 0;
 
 		auto center = FPoint(position.x + radius, position.y + radius);
-		auto points = std::vector<FPoint>(9 * radius);
+		auto points = std::vector<FPoint>();
+		points.reserve(9 * radius);
 
-		for(int i = 0; x >= y;)
+		while(x >= y)
 		{
-			points[i++] = FPoint(center.x + x, center.y + y);
-			points[i++] = FPoint(center.x + y, center.y + x);
-			points[i++] = FPoint(center.x - y, center.y + x);
-			points[i++] = FPoint(center.x - x, center.y + y);
-			points[i++] = FPoint(center.x - x, center.y - y);
-			points[i++] = FPoint(center.x - y, center.y - x);
-			points[i++] = FPoint(center.x + y, center.y - x);
-			points[i++] = FPoint(center.x + x, center.y - y);
+			points.emplace_back(center.x + x, center.y + y);
+			points.emplace_back(center.x + y, center.y + x);
+			points.emplace_back(center.x - y, center.y + x);
+			points.emplace_back(center.x - x, center.y + y);
+			points.emplace_back(center.x - x, center.y - y);
+			points.emplace_back(center.x - y, center.y - x);
+			points.emplace_back(center.x + y, center.y - x);
+			points.emplace_back(center.x + x, center.y - y);
 
-			if(err <= 0)
+			if(p <= 0)
 			{
 				y += 1;
-				err += 2 * y + 1;
+				p += 2 * y + 1;
 			}
 			else
 			{
 				x -= 1;
-				err -= 2 * x + 1;
+				p -= 2 * x + 1;
 			}
 		}
 
 		DrawPoints(points, color);
 	}
 
-	constexpr size_t MaxPointsNumber = 180;
-	const auto SinRange = Math::SinRange<MaxPointsNumber>();
-	const auto CosRange = Math::CosRange<MaxPointsNumber>();
+	void RenderContext::DrawCircleFill(FPoint position, int diameter, Color color)
+	{
+		DrawEllipseFill(position, diameter, diameter, color);
+	}
+
+	void RenderContext::DrawCircleFill(FPoint position, int diameter, Texture& texture, Color color)
+	{
+		DrawEllipseFill(position, diameter, diameter, texture, color);
+	}
 
 	void RenderContext::DrawEllipse(FPoint position, int width, int height, Color color)
 	{
-		std::array<FPoint, MaxPointsNumber + 1> coordinates;
+		std::array<FPoint, MaxPointsNumber + 1> points;
 		float radiusX = width / 2.0f;
 		float radiusY = height / 2.0f;
 		FPoint center = { position.x + radiusX, position.y + radiusY };
 
-		for(size_t i = 0; i < coordinates.size() - 1; i++)
+		for(size_t i = 0; i < points.size() - 1; i++)
 		{
-			coordinates[i].x = center.x + radiusX * CosRange[i];
-			coordinates[i].y = center.y + radiusY * SinRange[i];
+			points[i].x = center.x + radiusX * CosRange[i];
+			points[i].y = center.y + radiusY * SinRange[i];
 		}
 
-		coordinates[MaxPointsNumber] = coordinates[0];
+		points[MaxPointsNumber] = points[0];
 
-		DrawLines(coordinates, color);
+		DrawLines(points, color);
 	}
 
 	void CalculateFillEllipse(std::span<Vertex> vertices, size_t angleStep, 

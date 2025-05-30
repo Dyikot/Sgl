@@ -2,8 +2,9 @@
 
 namespace Sgl
 {
-	Scene::Scene():
-		Class(*this)
+	Scene::Scene(std::unique_ptr<UI::Layout> layout):
+		Class(*this),
+		Layout(std::move(layout))
 	{}
 
 	void Scene::OnRender(RenderContext rc) const

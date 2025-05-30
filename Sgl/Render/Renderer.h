@@ -18,8 +18,10 @@ namespace Sgl
 
 		Texture LoadTexture(std::string_view path);
 		Texture CreateTexture(TextureAccess textureAccess, int width, int height);
+		Texture CreateTexture(TextureAccess textureAccess, int width, int height, Action<RenderContext> fill);
 		Texture CreateTexture(SDL_PixelFormatEnum pixelFormat, TextureAccess textureAccess, int width, int height);
-		void FillTexture(Texture& texture, Action<RenderContext> action);
+		Texture CreateTexture(SDL_PixelFormatEnum pixelFormat, TextureAccess textureAccess, int width, int height, Action<RenderContext> fill);
+		void FillTexture(Texture& texture, Action<RenderContext> fill);
 
 		void SetBlendMode(SDL_BlendMode mode);		
 

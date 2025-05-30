@@ -19,11 +19,11 @@ namespace Sgl
 		Event<KeyEventHandler> KeyUp;
 		Event<KeyEventHandler> KeyDown;
 	public:
-		Scene();
+		Scene(std::unique_ptr<UI::Layout> layout);
 		virtual ~Scene() = default;
 
 		void OnRender(RenderContext rc) const override;
-		virtual void OnUpdate(TimeSpan elapsed) {}
+		virtual void OnUpdate(TimeSpan elapsed) = 0;
 	protected:
 		void OnMouseMove(const MouseButtonEventArgs& e) override
 		{

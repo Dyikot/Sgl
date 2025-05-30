@@ -3,14 +3,14 @@
 namespace Sgl::UI
 {
 	UIElement::UIElement():
-		ClassStyle(*this),
-		OnHover(ClassStyle),
-		OnMousePressed(ClassStyle),
+		Class(*this),
+		OnHover(Class),
+		OnMousePressed(Class),
 		_position()
 	{}
 
 	UIElement::UIElement(const UIElement& other):
-		ClassStyle(other.ClassStyle),
+		Class(other.Class),
 		OnHover(other.OnHover),
 		OnMousePressed(other.OnMousePressed),
 		KeyUp(other.KeyUp),

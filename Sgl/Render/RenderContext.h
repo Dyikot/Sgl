@@ -30,6 +30,8 @@ namespace Sgl
 		void DrawTexture(Texture& texture, FRect rectangle, Rect clip);
 		void DrawTexture(Texture& texture, FRect rectangle, Rect clip, Color fill);
 		void DrawCircle(FPoint position, int diameter, Color color);
+		void DrawCircleFill(FPoint position, int diameter, Color color);
+		void DrawCircleFill(FPoint position, int diameter, Texture& texture, Color color);
 		void DrawEllipse(FPoint position, int width, int height, Color color);
 		void DrawEllipseFill(FPoint position, int width, int height, Color color);
 		void DrawEllipseFill(FPoint position, int width, int height, const Texture& texture, Color color);
