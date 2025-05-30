@@ -17,7 +17,7 @@ namespace Sgl
 
 	Application::~Application() noexcept
 	{
-		Exit.TryRaise(*this, ApplicationEventArgs { .Window = Window, .Resources = Resources });
+		Exit.TryRaise(*this, EmptyEventArgs);
 		TTF_Quit();
 		IMG_Quit();
 		Mix_Quit();
@@ -31,12 +31,12 @@ namespace Sgl
 	}
 
 	void Application::Run()
-	{
+	{		
 		if(_running)
 		{
 			return;
 		}
-		
+
 		_running = true;
 		Window.Show();
 		Start();

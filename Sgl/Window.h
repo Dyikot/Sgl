@@ -1,8 +1,8 @@
 #pragma once
 
 #include <optional>
-#include "Render/Surface.h"
-#include "Render/Renderer.h"
+#include "Visual/Surface.h"
+#include "Visual/Renderer.h"
 #include "Events/Event.h"
 #include "Events/WindowEvents.h"
 

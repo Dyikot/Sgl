@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "../Render/Color.h"
+#include "../Visual/Color.h"
 
 namespace Sgl
 {

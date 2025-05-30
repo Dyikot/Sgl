@@ -4,7 +4,7 @@
 namespace Sgl
 {
 	Renderer::Renderer():
-		_renderer(Application::Get()->Window._renderer)
+		_renderer(App->Window._renderer)
 	{}
 
 	RenderContext Renderer::OpenContext()

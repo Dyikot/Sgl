@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Render/Color.h"
+#include "../Visual/Color.h"
 
 namespace Sgl
 {
