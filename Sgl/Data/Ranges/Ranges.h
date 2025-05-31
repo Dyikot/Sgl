@@ -5,7 +5,7 @@
 #include <functional>
 #include <optional>
 
-namespace Sgl::Views
+namespace Sgl::Ranges
 {
 	template<std::ranges::range TRange>
 	using TRangeValue = std::ranges::range_value_t<TRange>;
@@ -416,33 +416,40 @@ namespace Sgl::Views
 	}
 
 	template<std::ranges::view TRange>
-	class SortedView: public std::ranges::view_interface<SortedView<TRange>>
+	class OrderedView: public std::ranges::view_interface<OrderedView<TRange>>
 	{
+	private:
 		TRange _range;
-		mutable std::optional<std::vector<TRangeValue<TRange>>> _sorted;
+		std::optional<std::vector<TRangeValue<TRange>>> _ordered;
 	public:
-		constexpr explicit SortedView(TRange&& range) noexcept:
+		OrderedView(const OrderedView&) requires std::copyable<TRange> = default;
+		OrderedView(OrderedView&&) = default;
+
+		constexpr explicit OrderedView(TRange&& range) noexcept:
 			_range(std::move(range))
 		{}
 
-		constexpr auto begin() const noexcept
+		constexpr auto begin() noexcept
 		{
 			TrySort();
-			return _sorted->begin();
+			return _ordered->begin();
 		}
 
-		constexpr auto end() const noexcept
+		constexpr auto end() noexcept
 		{
 			TrySort();
-			return _sorted->end();
+			return _ordered->end();
 		}
+
+		OrderedView& operator=(const OrderedView&) requires std::copyable<TRange> = default;
+		OrderedView& operator=(OrderedView&&) = default;
 	private:
-		constexpr void TrySort() const
+		constexpr void TrySort()
 		{
-			if(!_sorted)
+			if(!_ordered)
 			{
-				_sorted.emplace(std::ranges::begin(_range), std::ranges::end(_range));
-				std::ranges::sort(*_sorted);
+				_ordered.emplace(std::ranges::begin(_range), std::ranges::end(_range));
+				std::ranges::sort(*_ordered);
 			}
 		}
 	};
@@ -454,14 +461,11 @@ namespace Sgl::Views
 		{
 			if constexpr(std::ranges::view<TRange>)
 			{
-				return SortedView(std::forward<TRange>(range));
+				return OrderedView(std::forward<TRange>(range));
 			}
 			else
 			{
-				auto view = std::ranges::ref_view(std::forward<TRange>(range));
-				using ViewType = decltype(view);
-
-				return SortedView(std::forward<ViewType>(view));
+				return OrderedView(std::views::all(std::forward<TRange>(range)));
 			}
 		}
 	};

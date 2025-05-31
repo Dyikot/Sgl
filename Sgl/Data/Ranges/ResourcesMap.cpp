@@ -3,9 +3,9 @@
 
 namespace Sgl
 {
-	void ResourcesMap::Add(std::string_view key, Any value)
+	void ResourcesMap::Add(std::string_view key, Any item)
 	{
-		_resources.emplace(key, std::move(value));
+		_resources.emplace(key, std::move(item));
 	}
 
 	void ResourcesMap::AddTexture(std::string_view key, std::string_view path)
