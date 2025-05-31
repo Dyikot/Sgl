@@ -24,9 +24,9 @@ namespace Sgl
 		SDL_Quit();
 	}
 
-	void Application::SetMaxFrameRate(size_t value) noexcept
+	void Application::SetMaxFPS(size_t value) noexcept
 	{
-		_maxFrameRate = value;
+		_maxFPS = value;
 		_maxFrameTime = TimeSpan(1e9 / value);
 	}
 
@@ -247,7 +247,9 @@ namespace Sgl
 				continue;
 			}
 			
+			_fpsCounter.OnFrameStart();
 			delayStopwatch.Restart();
+
 			HandleEvents(scene);
 			scene->OnUpdate(sceneStopwatch.Elapsed());
 			sceneStopwatch.Reset();
@@ -258,7 +260,7 @@ namespace Sgl
 				renderer.UpdateScreen();
 			}
 
-			if(_maxFrameRate)
+			if(_maxFPS)
 			{
 				SleepFor(_maxFrameTime.value() - delayStopwatch.Elapsed());
 			}

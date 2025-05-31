@@ -50,7 +50,7 @@ namespace Sgl
         SDL_SetWindowMinimumSize(_window, width, height);
     }
 
-    void Window::SetTitle(std::string_view value) noexcept
+    void Window::SetTitle(const std::string& value) noexcept
     {
         SDL_SetWindowTitle(_window, value.data());
     }

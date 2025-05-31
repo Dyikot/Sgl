@@ -1,4 +1,5 @@
-#include "../Application.h"
+#include "ResourcesMap.h"
+#include "../../Visual/Renderer.h"
 
 namespace Sgl
 {

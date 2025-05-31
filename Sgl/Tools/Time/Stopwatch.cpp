@@ -35,7 +35,7 @@ namespace Sgl
 	{
 		if(_isRunning)
 		{
-			_elapsed += GetEplapsedTime();
+			_elapsed += GetElapsedTime();
 			_isRunning = false;
 		}
 	}
@@ -49,16 +49,16 @@ namespace Sgl
 	{
 		if(_isRunning)
 		{
-			_elapsed += GetEplapsedTime();
+			_elapsed += GetElapsedTime();
 			_start = Clock::now();
 		}
 
 		return _elapsed;
 	}
 
-	TimeSpan Stopwatch::GetEplapsedTime()
+	TimeSpan Stopwatch::GetElapsedTime()
 	{
-		auto elsapsed = Clock::now() - _start;
-		return TimeSpan(elsapsed.count());
+		auto elapsed = Clock::now() - _start;
+		return TimeSpan(elapsed.count());
 	}
 }

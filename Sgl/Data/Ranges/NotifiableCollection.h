@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "../Events/Event.h"
+#include "../../Events/Event.h"
 
 namespace Sgl
 {
@@ -46,6 +46,8 @@ namespace Sgl
 		NotifiableCollection(TIterator first, TIterator last):
 			base(first, last)
 		{}
+
+		Event<NofityEventHandler> Changed;
 
 		void push_back(T&& item)
 		{
@@ -257,8 +259,6 @@ namespace Sgl
 				.EndIndex = std::distance(base::begin(), base::end())
 			});
 		}
-
-		Event<NofityEventHandler> Changed;
 	protected:
 		void OnChanged(const NotifyEventArgs& e)
 		{

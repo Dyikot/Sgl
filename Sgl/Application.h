@@ -3,11 +3,10 @@
 #include "SDL/SDL_ttf.h"
 #include "SDL/SDL_mixer.h"
 #include "SDL/SDL_image.h"
-#include "Scene/Scene.h"
-#include "Window.h"
-#include "Tools/Time/Stopwatch.h"
-#include "Data/ResourcesMap.h"
 #include "Scene/SceneManager.h"
+#include "Window.h"
+#include "Tools/FPSCounter.h"
+#include "Data/Ranges/ResourcesMap.h"
 
 namespace Sgl
 {
@@ -24,15 +23,19 @@ namespace Sgl
 		Event<ApplicationEventHandler> Exit;
 	private:
 		static inline Application* _current;
+
 		bool _running = false;
-		std::optional<size_t> _maxFrameRate;
+		FPSCounter _fpsCounter;
+		std::optional<size_t> _maxFPS;
 		std::optional<TimeSpan> _maxFrameTime;
 	public:
 		Application() noexcept;
 		~Application() noexcept;
 
-		void SetMaxFrameRate(size_t value) noexcept;
-		auto GetMaxFrameRate() const noexcept { return _maxFrameRate; }
+		void SetMaxFPS(size_t value) noexcept;
+		auto GetMaxFPS() const noexcept { return _maxFPS; }
+
+		size_t GetFPS() const { return _fpsCounter.GetFps(); }
 
 		void Run();
 		void Shutdown() noexcept;

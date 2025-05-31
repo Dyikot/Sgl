@@ -29,7 +29,7 @@ namespace Sgl
 		void SetLogicalSize(size_t width, size_t height) noexcept;
 		void SetMaxSize(size_t width, size_t height) noexcept;
 		void SetMinSize(size_t width, size_t height) noexcept;
-		void SetTitle(std::string_view value) noexcept;
+		void SetTitle(const std::string& value) noexcept;
 		void SetPosition(SDL_Point value) noexcept;
 		void SetIcon(std::string_view path);
 		void SetDisplayMode(DisplayMode displayMode);

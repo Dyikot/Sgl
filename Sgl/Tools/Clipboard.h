@@ -9,7 +9,7 @@ namespace Sgl
 	class Clipboard
 	{
 	public:
-		static void SetText(std::string_view text)
+		static void SetText(const std::string& text)
 		{
 			SDL_SetClipboardText(text.data());
 		}
