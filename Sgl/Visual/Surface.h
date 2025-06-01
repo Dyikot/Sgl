@@ -3,8 +3,8 @@
 #include <SDL/SDL_image.h>
 #include <string_view>
 #include "../Tools/Log.h"
+#include "../Data/Size.h"
 #include "Color.h"
-#include "../Data/Helpers.h"
 
 namespace Sgl
 {
@@ -47,9 +47,6 @@ namespace Sgl
 			return *this;
 		}
 
-		operator SDL_Surface*() noexcept 
-		{ 
-			return _surface;
-		}
+		operator SDL_Surface*() noexcept { return _surface; }
 	};
 }

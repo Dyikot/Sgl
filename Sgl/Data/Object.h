@@ -1,8 +1,7 @@
 #pragma once
 
-#include <functional>
+#include <type_traits>
 #include "Nullable.h"
-#include "Helpers.h"
 
 namespace Sgl
 {
@@ -78,7 +77,7 @@ namespace Sgl
 			return *this;
 		}
 	private:
-		Ref<const std::type_info> _type;
+		std::reference_wrapper<const std::type_info> _type;
 		void* _value;
 
 		friend class const_object;
@@ -144,7 +143,7 @@ namespace Sgl
 			return *this;
 		}
 	private:
-		Ref<const std::type_info> _type;
+		std::reference_wrapper<const std::type_info> _type;
 		const void* _value;
 	};
 }

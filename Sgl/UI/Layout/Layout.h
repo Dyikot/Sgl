@@ -5,7 +5,7 @@
 #include <memory>
 #include "../UIElement.h"
 #include "../../Data/Ranges/Ranges.h"
-#include "../../Data/Helpers.h"
+#include "../../Data/Size.h"
 
 namespace Sgl
 {

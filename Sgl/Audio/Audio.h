@@ -10,25 +10,15 @@ namespace Sgl
 	class Volume
 	{
 	private:
-		static constexpr double _maxValue = 1;
+		static constexpr double MaxValue = 1;
 		double _value;
 	public:
-		static constexpr Volume Max()
-		{
-			return Volume(1);
-		}
-
-		static constexpr Volume Zero()
-		{
-			return Volume(0);
-		}
-
 		constexpr Volume() noexcept:
-			_value(_maxValue)
+			_value(MaxValue)
 		{}
 
-		explicit constexpr Volume(double value):
-			_value(Adjust(std::abs(value)))
+		constexpr explicit Volume(double value):
+			_value(Adjust(value > 0 ? value : -value))
 		{}
 
 		constexpr int ToMixVolume() const noexcept
@@ -93,9 +83,12 @@ namespace Sgl
 	private:
 		static constexpr double Adjust(double value)
 		{
-			return std::min(value, _maxValue);
+			return std::min(value, MaxValue);
 		}
 	};
+
+	constexpr inline Volume MaxVolume = Volume(1);
+	constexpr inline Volume ZeroVolume = Volume(0);
 
 	class Music
 	{
@@ -105,7 +98,7 @@ namespace Sgl
 		Volume Volume;
 		const TimeSpan Duration;
 	public:
-		Music(std::string_view path) noexcept;
+		explicit Music(std::string_view path) noexcept;
 		Music(const Music&) = delete;
 		Music(Music&&) = delete;
 		~Music() noexcept;
@@ -118,25 +111,24 @@ namespace Sgl
 		bool IsPaused() noexcept;
 		bool IsPlaying() noexcept;
 
-		operator Mix_Music* () const noexcept;
+		operator Mix_Music* () const noexcept { return _music; }
 	};
 
 	class SoundChunk
 	{
 	private:
-		static constexpr int Auto = -1;
-
 		Mix_Chunk* _soundChunk;
 	public:
 		Volume Volume;
 	public:
-		SoundChunk(std::string_view path) noexcept;
+		explicit SoundChunk(std::string_view path) noexcept;
 		SoundChunk(const SoundChunk&) = delete;
 		SoundChunk(SoundChunk&&) = delete;
 		~SoundChunk() noexcept;
 
-		void Play(int channel = Auto, int loops = 0) const;
+		void Play(int loops = 0);
+		void Play(int channel, int loops = 0) const;
 
-		operator Mix_Chunk* () const noexcept;
+		operator Mix_Chunk* () const noexcept { return _soundChunk; }
 	};
 }

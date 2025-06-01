@@ -4,9 +4,6 @@
 
 namespace Sgl
 {
-	template<typename T>
-	using Ref = std::reference_wrapper<T>;
-
 	struct Size
 	{
 		size_t Width;

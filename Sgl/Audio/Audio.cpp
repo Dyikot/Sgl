@@ -53,11 +53,6 @@ namespace Sgl
 		return Mix_PlayingMusic();
 	}
 
-	Music::operator Mix_Music* () const noexcept
-	{
-		return _music;
-	}
-
 	SoundChunk::SoundChunk(std::string_view path) noexcept:
 		_soundChunk(Mix_LoadWAV(path.data()))
 	{
@@ -69,14 +64,15 @@ namespace Sgl
 		Mix_FreeChunk(_soundChunk);
 	}
 
+	void SoundChunk::Play(int loops)
+	{
+		constexpr int freeChannel = -1;
+		Play(freeChannel, loops);
+	}
+
 	void SoundChunk::Play(int channel, int loops) const
 	{
 		Mix_VolumeChunk(_soundChunk, Volume.ToMixVolume());
 		Mix_PlayChannel(channel, _soundChunk, loops);
-	}
-
-	SoundChunk::operator Mix_Chunk* () const noexcept
-	{
-		return _soundChunk;
 	}
 }

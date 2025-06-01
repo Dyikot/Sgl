@@ -5,13 +5,13 @@ namespace Sgl
 	Playlist::Playlist(const Playlist& other):
 		Volume(other.Volume),
 		Items(other.Items),
-		Current(other.Current)
+		_current(other._current)
 	{}
 
 	Playlist::Playlist(Playlist&& other) noexcept:
 		Volume(other.Volume),
 		Items(std::move(other.Items)),
-		Current(std::move(other.Current))
+		_current(std::move(other._current))
 	{}
 
 	void Playlist::Play()
@@ -21,22 +21,22 @@ namespace Sgl
 			return;
 		}
 
-		if(Current == Items.begin())
+		if(_current == Items.begin())
 		{
 			Started.TryRaise(*this, EmptyEventArgs);
 		}
-		else if(Current == Items.end())
+		else if(_current == Items.end())
 		{
 			Ended.TryRaise(*this, EmptyEventArgs);
-			Current = Items.begin();
+			_current = Items.begin();
 		}
 
-		Music& current = *Current;
+		Music& current = *_current;
 
 		if(!current.IsPlaying())
 		{
 			current.Play();
-			Current++;
+			_current++;
 		}
 		else if(current.IsPaused())
 		{
@@ -48,7 +48,7 @@ namespace Sgl
 	{
 		Volume = other.Volume;
 		Items = other.Items;
-		Current = other.Current;
+		_current = other._current;
 		return *this;
 	}
 
@@ -56,7 +56,7 @@ namespace Sgl
 	{
 		Volume = other.Volume;
 		Items = std::move(other.Items);
-		Current = std::move(other.Current);
+		_current = std::move(other._current);
 		return *this;
 	}
 }

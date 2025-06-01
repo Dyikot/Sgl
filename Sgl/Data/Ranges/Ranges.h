@@ -25,45 +25,6 @@ namespace Sgl::Ranges
 		}
 	};
 
-	template<size_t Size>
-	struct _ToArrayAdaptor: public RangeAdaptor<_ToArrayAdaptor<Size>>
-	{
-		template<std::ranges::range TRange>
-		constexpr auto operator()(TRange&& range) const
-		{
-			const auto minSize = std::min(static_cast<size_t>(std::ranges::distance(range)), Size);
-			std::array<TRangeValue<TRange>, Size> result = {};
-			auto it = range.begin();
-
-			for(size_t i = 0; i < minSize; i++, it++)
-			{
-				result[i] = *it;
-			}
-
-			return result;
-		}
-	};
-
-	template<size_t Size>
-	constexpr auto ToArray()
-	{
-		return _ToArrayAdaptor<Size>();
-	}
-
-	struct _ToVectorAdaptor: public RangeAdaptor<_ToVectorAdaptor>
-	{
-		template<std::ranges::range TRange>
-		constexpr auto operator()(TRange&& range) const
-		{
-			return std::vector(range.begin(), range.end());
-		}
-	};
-
-	constexpr auto ToVector()
-	{
-		return _ToVectorAdaptor();
-	}
-
 	template<typename TFunc>
 	struct _AggregateAdaptor: public RangeAdaptor<_AggregateAdaptor<TFunc>>
 	{
@@ -484,6 +445,66 @@ namespace Sgl::Ranges
 	constexpr auto Select(TSelector&& selector)
 	{
 		return std::views::transform(std::forward<TSelector>(selector));
+	}
+
+	struct _SubRangeAdaptor: public RangeAdaptor<_SubRangeAdaptor>
+	{
+		size_t Index;
+		size_t Count;
+
+		constexpr _SubRangeAdaptor(size_t index, size_t count):
+			Index(index), Count(count)
+		{}
+
+		template<std::ranges::range TRange>
+		constexpr auto operator()(TRange&& range) const
+		{
+			return range | std::views::drop(Index) | std::views::take(Count);
+		}
+	};
+
+	constexpr auto SubRange(size_t start, size_t count)
+	{
+		return _SubRangeAdaptor(start, count);
+	}
+
+	template<size_t Size>
+	struct _ToArrayAdaptor: public RangeAdaptor<_ToArrayAdaptor<Size>>
+	{
+		template<std::ranges::range TRange>
+		constexpr auto operator()(TRange&& range) const
+		{
+			const auto minSize = std::min(static_cast<size_t>(std::ranges::distance(range)), Size);
+			std::array<TRangeValue<TRange>, Size> result = {};
+			auto it = range.begin();
+
+			for(size_t i = 0; i < minSize; i++, it++)
+			{
+				result[i] = *it;
+			}
+
+			return result;
+		}
+	};
+
+	template<size_t Size>
+	constexpr auto ToArray()
+	{
+		return _ToArrayAdaptor<Size>();
+	}
+
+	struct _ToVectorAdaptor: public RangeAdaptor<_ToVectorAdaptor>
+	{
+		template<std::ranges::range TRange>
+		constexpr auto operator()(TRange&& range) const
+		{
+			return std::vector(range.begin(), range.end());
+		}
+	};
+
+	constexpr auto ToVector()
+	{
+		return _ToVectorAdaptor();
 	}
 
 	template<typename TPredicate>

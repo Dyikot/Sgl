@@ -6,7 +6,7 @@
 #include "SDL/SDL_image.h"
 #include "Primitives.h"
 #include "Color.h"
-#include "../Data/Helpers.h"
+#include "../Data/Size.h"
 
 namespace Sgl
 {
@@ -66,9 +66,6 @@ namespace Sgl
 			return *this;
 		}
 
-		operator SDL_Texture* () const noexcept 
-		{ 
-			return _texture; 
-		}
+		operator SDL_Texture* () const noexcept { return _texture; }
 	};
 }

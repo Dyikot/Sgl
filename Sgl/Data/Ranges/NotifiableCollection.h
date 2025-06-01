@@ -1,6 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <ranges>
+#include "../../Events/EventArgs.h"
 #include "../../Events/Event.h"
 
 namespace Sgl
@@ -13,256 +15,274 @@ namespace Sgl
 	struct NotifyEventArgs: EventArgs
 	{
 		NotifiableCollectionChangedAction Action;
-		int64_t StartIndex;
-		int64_t EndIndex;
+		size_t StartIndex;
+		size_t EndIndex;
 	};
-
+	
 	template<typename T>
-	class NotifiableCollection: public std::vector<T>
+	class NotifiableCollection
 	{
 	public:
 		using NofityEventHandler = EventHandler<NotifiableCollection<T>, NotifyEventArgs>;
-		using base = std::vector<T>;
+
+		Event<NofityEventHandler> Changed;
+	private:
+		std::vector<T> _items;
 	public:
 		NotifiableCollection() = default;
 
-		NotifiableCollection(const NotifiableCollection& collection):
-			base(collection)
+		NotifiableCollection(const NotifiableCollection& other):
+			_items(other._items)
 		{}
 
-		NotifiableCollection(NotifiableCollection&& collection) noexcept:
-			base(std::move(collection))
+		NotifiableCollection(NotifiableCollection&& other) noexcept:
+			_items(std::move(other._items))
+		{}
+
+		NotifiableCollection(size_t count):
+			_items(count)
 		{}
 
 		NotifiableCollection(size_t count, const T& value):
-			base(count, value)
+			_items(count, value)
 		{}
 
-		NotifiableCollection(std::initializer_list<T> initList):
-			base(initList)
+		NotifiableCollection(std::initializer_list<T> init):
+			_items(init)
 		{}
 
-		template<typename TIterator>
-		NotifiableCollection(TIterator first, TIterator last):
-			base(first, last)
+		template<std::ranges::range TRange>
+			requires std::same_as<std::ranges::range_value_t<TRange>, T>
+		NotifiableCollection(TRange&& range):
+			_items(std::ranges::begin(range), std::ranges::end(range))
 		{}
 
-		Event<NofityEventHandler> Changed;
+		auto begin() const { return _items.begin(); }
+		auto end() const { return _items.end(); }
 
-		void push_back(T&& item)
+		void Add(const T& item)
 		{
-			base::push_back(std::forward<T>(item));
+			_items.push_back(item);
+			auto index = _items.size() - 1;
+
+			OnChanged(NotifyEventArgs
+					  {
+						  .Action = NotifiableCollectionChangedAction::Add,
+						  .StartIndex = index,
+						  .EndIndex = index
+					  });
+		}
+
+		void Add(T&& item)
+		{
+			_items.push_back(std::forward<T>(item));
+			auto index = _items.size() - 1;
+
 			OnChanged(NotifyEventArgs
 			{
 				.Action = NotifiableCollectionChangedAction::Add,
-				.StartIndex = std::distance(base::begin(), base::end() - 1),
-				.EndIndex = std::distance(base::begin(), base::end() - 1)
+				.StartIndex = index,
+				.EndIndex = index
 			});
 		}
 
-		void push_back(const T& item)
+		void Insert(size_t index, const T& item)
 		{
-			base::push_back(item);
+			_items.insert(_items.begin() + index, item);
+
 			OnChanged(NotifyEventArgs
 			{
 				.Action = NotifiableCollectionChangedAction::Add,
-				.StartIndex = std::distance(base::begin(), base::end() - 1),
-				.EndIndex = std::distance(base::begin(), base::end() - 1)
+				.StartIndex = index,
+				.EndIndex = index
 			});
 		}
 
-		void insert(base::const_iterator position, const T& item)
+		void Insert(size_t index, T&& item)
 		{
-			auto newPosition = base::insert(position, item);
+			_items.insert(_items.begin() + index, std::forward<T>(item));
+
 			OnChanged(NotifyEventArgs
 			{
 				.Action = NotifiableCollectionChangedAction::Add,
-				.StartIndex = std::distance(base::begin(), newPosition),
-				.EndIndex = std::distance(base::begin(), newPosition)
+				.StartIndex = index,
+				.EndIndex = index
 			});
 		}
 
-		void insert(base::const_iterator position, T&& item)
+		template<std::ranges::range TRange> 
+			requires std::same_as<std::ranges::range_value_t<TRange>, T>
+		void InsertRange(size_t index, TRange&& range)
 		{
-			auto newPosition = base::insert(position, std::forward<T>(item));
+			auto begin = std::ranges::begin(range);
+			auto end = std::ranges::end(range);
+
+			if(begin == end)
+			{
+				return;
+			}
+
+			_items.insert(_items.begin() + index, begin, end);
+
 			OnChanged(NotifyEventArgs
 			{
 				.Action = NotifiableCollectionChangedAction::Add,
-				.StartIndex = std::distance(base::begin(), newPosition),
-				.EndIndex = std::distance(base::begin(), newPosition)
+				.StartIndex = index,
+				.EndIndex = index + std::ranges::distance(range) - 1
 			});
 		}
 
-		void insert(base::const_iterator position, size_t size, const T& item)
-		{
-			auto newPosition = base::insert(position, size, item);
-			OnChanged(NotifyEventArgs
-			{
-				.Action = NotifiableCollectionChangedAction::Add,
-				.StartIndex = std::distance(base::begin(), newPosition),
-				.EndIndex = std::distance(base::begin(), newPosition + size - 1)
-			});
-		}
-
-		template<typename TIterator> requires std::_Is_iterator_v<TIterator>
-		void insert(base::const_iterator position, TIterator first, TIterator last)
-		{
-			auto newPosition = base::insert(position, first, last);
-			OnChanged(NotifyEventArgs
-			{
-				.Action = NotifiableCollectionChangedAction::Add,
-				.StartIndex = std::distance(base::begin(), newPosition),
-				.EndIndex = std::distance(base::begin(), 
-										  newPosition + std::distance(first, last) - 1)
-			});
-		}
-
-		void clear() noexcept
+		void Clear() noexcept
 		{
 			OnChanged(NotifyEventArgs
 			{
 				.Action = NotifiableCollectionChangedAction::Remove,
 				.StartIndex = 0,
-				.EndIndex = std::distance(base::begin(), base::end())
+				.EndIndex = _items.size() - 1
 			});
-			base::clear();
+
+			_items.clear();
 		}
 
 		template<typename... TArgs>
-		void emplace(base::const_iterator position, TArgs&&... args)
+		void Emplace(size_t index, TArgs&&... args)
 		{
-			auto newPosition = base::emplace(position, std::forward<TArgs>(args)...);
+			_items.emplace(_items.begin() + index, std::forward<TArgs>(args)...);
+
 			OnChanged(NotifyEventArgs
 			{
 				.Action = NotifiableCollectionChangedAction::Add,
-				.StartIndex = std::distance(base::begin(), newPosition),
-				.EndIndex = std::distance(base::begin(), newPosition)
+				.StartIndex = index,
+				.EndIndex = index
 			});
 		}
 
 		template<typename... TArgs>
-		void emplace_back(TArgs&&... args)
+		void EmplaceBack(TArgs&&... args)
 		{
-			base::emplace_back(std::forward<TArgs>(args)...);
+			_items.emplace_back(std::forward<TArgs>(args)...);
+			auto index = _items.size() - 1;
+
 			OnChanged(NotifyEventArgs
 			{
 				.Action = NotifiableCollectionChangedAction::Add,
-				.StartIndex = std::distance(base::begin(), base::end()),
-				.EndIndex = std::distance(base::begin(), base::end())
+				.StartIndex = index,
+				.EndIndex = index
 			});
 		}
 
-		void erase(base::const_iterator position)
+		void RemoveAt(size_t index)
 		{
 			OnChanged(NotifyEventArgs
 			{
 				.Action = NotifiableCollectionChangedAction::Remove,
-				.StartIndex = std::distance(base::cbegin(), position),
-				.EndIndex = std::distance(base::cbegin(), position)
+				.StartIndex = index,
+				.EndIndex = index
 			});
-			base::erase(position);
+
+			_items.erase(_items.begin() + index);
 		}
 
-		void erase(base::const_iterator first, base::const_iterator last)
+		void RemoveLast()
+		{
+			auto index = _items.size() - 1;
+
+			OnChanged(NotifyEventArgs
+			{
+				.Action = NotifiableCollectionChangedAction::Remove,
+				.StartIndex = index,
+				.EndIndex = index
+			});
+
+			_items.pop_back();
+		}
+
+		void RemoveRange(size_t index, size_t count)
 		{
 			OnChanged(NotifyEventArgs
 			{
 				.Action = NotifiableCollectionChangedAction::Remove,
-				.StartIndex = std::distance(base::cbegin(), first),
-				.EndIndex = std::distance(base::cbegin(), last)
+				.StartIndex = index,
+				.EndIndex = index + count - 1
 			});
-			base::erase(first, last);
+
+			auto begin = _items.begin() + index;
+			_items.erase(begin, begin + count);
 		}
 
-		void pop_back()
+		void Resize(size_t count)
 		{
-			OnChanged(NotifyEventArgs
-			{
-				.Action = NotifiableCollectionChangedAction::Remove,
-				.StartIndex = std::distance(base::begin(), base::end()),
-				.EndIndex = std::distance(base::begin(), base::end())
-			});
-			base::pop_back();
-		}
+			auto size = _items.size();
 
-		void resize(size_t count)
-		{
-			if(count > base::size())
+			if(count > size)
 			{
-				auto oldSize = base::size();
-				base::resize(count);
+				_items.resize(count);
+
 				OnChanged(NotifyEventArgs
 				{
 					.Action = NotifiableCollectionChangedAction::Add,
-					.StartIndex = std::distance(base::begin(), base::begin() + oldSize),
-					.EndIndex = std::distance(base::begin(), base::end() - 1)
+					.StartIndex = size,
+					.EndIndex = count - 1
 				});
 			}
-			else if(count < base::size())
+			else if(count < size)
 			{
 				OnChanged(NotifyEventArgs
 				{
 					.Action = NotifiableCollectionChangedAction::Remove,
-					.StartIndex = std::distance(base::begin(), base::begin() + count),
-					.EndIndex = std::distance(base::begin(), base::end() - 1)
+					.StartIndex = count,
+					.EndIndex = size - 1
 				});
-				base::resize(count);
+
+				_items.resize(count);
 			}			
 		}
 
-		void move(base::iterator from, base::iterator where)
+		void Move(size_t oldIndex, size_t newIndex)
 		{
-			std::iter_swap(from, where);
+			auto begin = _items.begin();
+			std::iter_swap(begin + oldIndex, begin + newIndex);
+
 			OnChanged(NotifyEventArgs
 			{
 				.Action = NotifiableCollectionChangedAction::Move,
-				.StartIndex = std::distance(base::begin(), from),
-				.EndIndex = std::distance(base::begin(), where)
+				.StartIndex = oldIndex,
+				.EndIndex = newIndex
 			});
 		}
 
-		void replace(base::iterator position, const T& value)
+		void SetItem(size_t index, const T& item)
 		{
-			*position = value;
+			_items[index] = item;
+
 			OnChanged(NotifyEventArgs
 			{
 				.Action = NotifiableCollectionChangedAction::Replace,
-				.StartIndex = std::distance(base::begin(), position),
-				.EndIndex = std::distance(base::begin(), position)
+				.StartIndex = index,
+				.EndIndex = index
 			});
 		}
 
-		void replace(base::iterator position, T&& value)
+		void SetItem(size_t index, T&& item)
 		{
-			*position = std::forward<T>(value);
+			_items[index] = std::forward<T>(item);
+
 			OnChanged(NotifyEventArgs
 			{
 				.Action = NotifiableCollectionChangedAction::Replace,
-				.StartIndex = std::distance(base::begin(), position),
-				.EndIndex = std::distance(base::begin(), position)
+				.StartIndex = index,
+				.EndIndex = index
 			});
 		}
 
-		void swap(NotifiableCollection& collection)
+		const T& ElementAt(size_t index)
 		{
-			OnChanged(NotifyEventArgs
-			{
-				.Action = NotifiableCollectionChangedAction::Remove,
-				.StartIndex = std::distance(base::begin(), base::begin()),
-				.EndIndex = std::distance(base::begin(), base::end())
-			});
-			base::swap(collection);
-			OnChanged(NotifyEventArgs
-			{
-				.Action = NotifiableCollectionChangedAction::Add,
-				.StartIndex = std::distance(base::begin(), base::begin()),
-				.EndIndex = std::distance(base::begin(), base::end())
-			});
+			return _items.at(index);
 		}
 	protected:
 		void OnChanged(const NotifyEventArgs& e)
 		{
-			Changed.TryInvoke(*this, e);
+			Changed.TryRaise(*this, e);
 		}
 	};
 }

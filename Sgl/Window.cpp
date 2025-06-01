@@ -2,10 +2,10 @@
 
 namespace Sgl
 {
-    constexpr auto DefaultTitle = "Window";
-    constexpr auto DefaultWidth = 1280;
-    constexpr auto DefaultHeight = 720;
-    constexpr auto DefaultPosition = Point(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+    constexpr static auto DefaultTitle = "Window";
+    constexpr static auto DefaultWidth = 1280;
+    constexpr static auto DefaultHeight = 720;
+    constexpr static auto DefaultPosition = Point(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 
     Window::Window() noexcept:
         _window(SDL_CreateWindow(DefaultTitle, DefaultPosition.x, DefaultPosition.y,
