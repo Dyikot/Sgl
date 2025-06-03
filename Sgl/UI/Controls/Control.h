@@ -10,6 +10,7 @@ namespace Sgl::UI
 	private:
 		using base = UIElement;
 	public:
+		using FontFamilyRef = std::reference_wrapper<const FontFamily>;
 		Event<MouseEventHandler> MouseDoubleClick;
 
 		Thickness Padding;
@@ -17,7 +18,7 @@ namespace Sgl::UI
 		Color FontColor = Colors::Black;
 		FontStyle FontStyle = FontStyle::Normal;
 		FontWeight FontWeight = FontWeight::Normal;
-		FontFamily FontFamily = FontFamily::Default();
+		FontFamilyRef FontFamily = FontFamily::Get("Segoe UI");
 		TextDecoration TextDecoration = TextDecoration::None;
 		Thickness BorderThickness = Thickness(1);
 		Color BorderColor = Colors::Black;
@@ -29,7 +30,7 @@ namespace Sgl::UI
 			Padding = {};
 			TextDecoration = TextDecoration::None;
 			FontSize = 14;
-			FontFamily = FontFamily::Default();
+			FontFamily = FontFamily::Get("Segoe UI");
 			FontStyle = FontStyle::Normal;
 			FontWeight = FontWeight::Normal;
 			FontColor = Colors::Black;

@@ -10,12 +10,11 @@ namespace Sgl
 	{
 	public:
 		using MusicRef = std::reference_wrapper<Music>;
-		using MusicCollection = std::vector<MusicRef>;
-		using iterator = MusicCollection::iterator;
+		using iterator = std::vector<MusicRef>::iterator;
 		using PlayListEventHandler = EventHandler<Playlist, EventArgs>;
 
 		Volume Volume;
-		MusicCollection Items;		
+		std::vector<MusicRef> Items;
 
 		Event<PlayListEventHandler> Started;
 		Event<PlayListEventHandler> Ended;

@@ -10,13 +10,11 @@
 
 namespace Sgl
 {
-	class Application;
-
-	using ApplicationEventHandler = EventHandler<Application, EventArgs>;
-
 	class Application
 	{
 	public:
+		using ApplicationEventHandler = EventHandler<Application, EventArgs>;
+
 		Window Window;
 		SceneManager SceneManager;
 		ResourcesMap Resources;

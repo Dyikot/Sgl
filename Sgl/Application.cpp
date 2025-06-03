@@ -173,14 +173,14 @@ namespace Sgl
 				{
 					MouseButtonEventArgs args =
 					{
-						.Button = static_cast<MouseButton>(e.button.button),
-						.State = static_cast<ButtonState>(e.button.state),
-						.ClicksNumber = e.button.clicks,
 						.Position =
 						{
 							.x = static_cast<float>(e.button.x),
 							.y = static_cast<float>(e.button.y)
-						}
+						},
+						.Button = static_cast<MouseButton>(e.button.button),
+						.State = static_cast<ButtonState>(e.button.state),
+						.ClicksNumber = e.button.clicks
 					};
 
 					scene->OnMouseDown(args);
@@ -191,14 +191,14 @@ namespace Sgl
 				{
 					MouseButtonEventArgs args =
 					{
-						.Button = static_cast<MouseButton>(e.button.button),
-						.State = static_cast<ButtonState>(e.button.state),
-						.ClicksNumber = e.button.clicks,
 						.Position =
 						{
 							.x = static_cast<float>(e.button.x),
 							.y = static_cast<float>(e.button.y)
-						}
+						},
+						.Button = static_cast<MouseButton>(e.button.button),
+						.State = static_cast<ButtonState>(e.button.state),
+						.ClicksNumber = e.button.clicks
 					};
 
 					scene->OnMouseUp(args);
@@ -216,7 +216,7 @@ namespace Sgl
 						},
 						.ScrolledHorizontally = e.wheel.preciseX,
 						.ScrolledVertically = e.wheel.preciseY,
-						.Direction = SDL_MouseWheelDirection(e.wheel.direction)
+						.Direction = static_cast<MouseWheelDirection>(e.wheel.direction)
 					};
 
 					scene->OnMouseWheel(args);

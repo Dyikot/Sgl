@@ -32,7 +32,8 @@ namespace Sgl::UI
 		Visibility(other.Visibility),
 		VerticalAlignment(other.VerticalAlignment),
 		HorizontalAlignment(other.HorizontalAlignment),
-		Margin(other.Margin)
+		Margin(other.Margin),
+		_position()
 	{}
 
 	void UIElement::OnRender(RenderContext rc) const

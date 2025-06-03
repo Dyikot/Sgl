@@ -22,25 +22,25 @@ namespace Sgl
 	struct Thickness
 	{
 	public:
-		uint32_t Top;
-		uint32_t Right;
-		uint32_t Bottom;
-		uint32_t Left;
+		int Top;
+		int Right;
+		int Bottom;
+		int Left;
 	public:
-		constexpr Thickness(uint32_t top, uint32_t right, uint32_t bottom, uint32_t left) noexcept:
+		constexpr Thickness(int top, int right, int bottom, int left) noexcept:
 			Top(top), Right(right), Bottom(bottom), Left(left)
 		{}
 
-		constexpr Thickness(uint32_t value = 0) noexcept:
+		constexpr Thickness(int value = 0) noexcept:
 			Thickness(value, value, value, value)
 		{}
 
 		friend constexpr bool operator==(const Thickness& left, const Thickness& right)
 		{
 			return left.Top == right.Top &&
-				left.Right == right.Right &&
-				left.Bottom == right.Bottom &&
-				left.Left == right.Left;
+				   left.Right == right.Right &&
+				   left.Bottom == right.Bottom &&
+				   left.Left == right.Left;
 		}
 	};
 }

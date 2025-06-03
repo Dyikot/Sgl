@@ -14,12 +14,12 @@ namespace Sgl
 		Normal, Minimized, Maximized
 	};
 
-	class Window;
-
 	struct WindowStateEventArgs: EventArgs
 	{
 		WindowState State;
 	};
+
+	class Window;
 
 	using WindowStateEventHandler = EventHandler<Window, WindowStateEventArgs>;
 }

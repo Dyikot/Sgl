@@ -25,39 +25,46 @@ namespace Sgl
 		~Window() noexcept;
 		
 		void SetWidth(size_t value) noexcept;
-		void SetHeight(size_t value) noexcept;
-		void SetLogicalSize(size_t width, size_t height) noexcept;
-		void SetMaxSize(size_t width, size_t height) noexcept;
-		void SetMinSize(size_t width, size_t height) noexcept;
-		void SetTitle(const std::string& value) noexcept;
-		void SetPosition(SDL_Point value) noexcept;
-		void SetIcon(std::string_view path);
-		void SetDisplayMode(DisplayMode displayMode);
-
 		size_t GetWidth() const noexcept;
+
+		void SetHeight(size_t value) noexcept;
 		size_t GetHeight() const noexcept;
-		size_t GetMaxWidth() const noexcept;
-		size_t GetMaxHeight() const noexcept;
-		size_t GetMinWidth() const noexcept;
-		size_t GetMinHeight() const noexcept;
-		size_t GetLogicalWidth() const noexcept;
-		size_t GetLogicalHeight() const noexcept;
-		std::string GetTitle() const noexcept;
+
+		void SetTitle(std::string_view value) noexcept;
+		std::string_view GetTitle() const noexcept;
+
+		void SetLogicalSize(Size size) noexcept;
+		Size GetLogicalSize() const noexcept;
+
+		void SetMaxSize(Size size) noexcept;
+		Size GetMaxSize() const noexcept;
+
+		void SetMinSize(Size size) noexcept;
+		Size GetMinSize() const noexcept;
+
+		void SetPosition(SDL_Point value) noexcept;
 		SDL_Point GetPosition() const noexcept;
+
+		void SetDisplayMode(DisplayMode displayMode);
 		DisplayMode GetDisplayMode() const noexcept;
+
+		void SetWindowState(WindowState state) noexcept;
 		WindowState GetWindowState() const noexcept;
-		
+
+		void SetIcon(std::string_view path);
+		const std::optional<Surface>& GetIcon() const;
+
 		void EnableVSync() noexcept;
 		void DisableVSync() noexcept;
+		bool IsVSyncEnable() const;
 
 		void EnableResizable() noexcept;
 		void DisableResizable() noexcept;
+		bool IsResizable() const;
 
 		void Show();
 		void Hide();
 		bool IsVisible() const;
-		bool IsResizable() const;
-		bool IsVSyncEnable() const;
 
 		operator SDL_Window* () const noexcept { return _window; }
 	protected:

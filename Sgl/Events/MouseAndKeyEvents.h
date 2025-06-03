@@ -4,6 +4,7 @@
 #include <SDL/SDL_mouse.h>
 #include <SDL/SDL_keyboard.h>
 #include "EventHandler.h"
+#include "../Visual/Primitives.h"
 
 
 namespace Sgl
@@ -11,6 +12,16 @@ namespace Sgl
 	enum class ButtonState
 	{
 		Release, Pressed
+	};	
+
+	enum class MouseButton
+	{
+		Left = 1, Middle, Right
+	};
+
+	enum class MouseWheelDirection
+	{
+		Normal, Flipped
 	};
 
 	struct KeyEventArgs: EventArgs
@@ -19,25 +30,20 @@ namespace Sgl
 		SDL_Keysym Key;
 	};
 
-	enum class MouseButton
-	{
-		Left = 1, Middle, Right
-	};
-
 	struct MouseButtonEventArgs: EventArgs
 	{
+		FPoint Position;
 		MouseButton Button;
 		ButtonState State;
-		uint8_t ClicksNumber;
-		SDL_FPoint Position;
+		int ClicksNumber;
 	};
 
 	struct MouseWheelEventArgs: EventArgs
 	{
-		SDL_FPoint Position;
+		FPoint Position;
 		float ScrolledHorizontally;
 		float ScrolledVertically;
-		SDL_MouseWheelDirection Direction;
+		MouseWheelDirection Direction;
 	};
 
 	class IKeyEventsListener

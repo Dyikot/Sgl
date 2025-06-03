@@ -10,8 +10,7 @@ namespace Sgl
 
 	void ResourcesMap::AddTexture(std::string_view key, std::string_view path)
 	{
-		Renderer r;
-		Add(key, r.LoadTexture(path));
+		Add(key, Renderer().LoadTexture(path));
 	}
 
 	void ResourcesMap::Remove(std::string_view key)
@@ -24,7 +23,7 @@ namespace Sgl
 		return _resources[key];
 	}
 
-	Any* ResourcesMap::TryGet(std::string_view key)
+	Nullable<Any> ResourcesMap::TryGet(std::string_view key)
 	{
 		if(auto it = _resources.find(key); it != _resources.end())
 		{

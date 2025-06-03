@@ -447,25 +447,9 @@ namespace Sgl::Ranges
 		return std::views::transform(std::forward<TSelector>(selector));
 	}
 
-	struct _SubRangeAdaptor: public RangeAdaptor<_SubRangeAdaptor>
-	{
-		size_t Index;
-		size_t Count;
-
-		constexpr _SubRangeAdaptor(size_t index, size_t count):
-			Index(index), Count(count)
-		{}
-
-		template<std::ranges::range TRange>
-		constexpr auto operator()(TRange&& range) const
-		{
-			return range | std::views::drop(Index) | std::views::take(Count);
-		}
-	};
-
 	constexpr auto SubRange(size_t start, size_t count)
 	{
-		return _SubRangeAdaptor(start, count);
+		return std::views::drop(start) | std::views::take(count);
 	}
 
 	template<size_t Size>

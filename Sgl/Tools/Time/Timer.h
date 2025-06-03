@@ -6,19 +6,23 @@
 
 namespace Sgl
 {
-	class Timer;
-	using TimeElapsedHandler = EventHandler<Timer, EventArgs>;
-
 	/// <summary>
 	/// Represents a timer that raises an event after a specified duration.
 	/// </summary>
 	class Timer
 	{
 	public:
+		using TimeElapsedHandler = EventHandler<Timer, EventArgs>;
+
 		/// <summary>
 		/// Gets the duration for which the timer is set.
 		/// </summary>
 		const TimeSpan Duration;
+
+		/// <summary>
+		/// Occurs when the timer reaches its specified duration.
+		/// </summary>
+		Event<TimeElapsedHandler> Elapsed;
 	private:
 		bool _isPaused = true;
 		bool _isElapsed = false;
@@ -35,11 +39,6 @@ namespace Sgl
 		Timer(const Timer& timer) = delete;
 		Timer(Timer&& timer) = delete;
 		~Timer();
-
-		/// <summary>
-		/// Occurs when the timer reaches its specified duration.
-		/// </summary>
-		Event<TimeElapsedHandler> Elapsed;
 
 		/// <summary>
 		/// Starts the timer.

@@ -3,18 +3,13 @@
 
 namespace Sgl
 {
-	const std::unordered_map<std::string_view, FontFamily> DefaultFontFamilies =
+	static const std::unordered_map<std::string_view, FontFamily> FontFamilies =
 	{
-		{ "Segoe UI", FontFamily("Segoe UI", "") }
+		{ "SegoeUI", { "Segoe UI", "" } },
 	};
 
-	FontFamily FontFamily::Get(std::string_view name)
+	const FontFamily& FontFamily::Get(std::string_view name)
 	{
-		return DefaultFontFamilies.at(name);
-	}
-
-	FontFamily FontFamily::Default()
-	{
-		return DefaultFontFamilies.at("Segoe UI");
+		return FontFamilies.at(name);
 	}
 }
