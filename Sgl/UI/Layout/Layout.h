@@ -6,6 +6,7 @@
 #include "../UIElement.h"
 #include "../../Data/Ranges/Ranges.h"
 #include "../../Data/Size.h"
+#include "../../Data/Ranges/SortedVector.h"
 
 namespace Sgl
 {
@@ -23,11 +24,11 @@ namespace Sgl::UI
 		}
 	};
 
-	using UIElementCollection = std::multiset<std::shared_ptr<UIElement>, ZIndexComparer>;
-
 	class Layout: public UIElement
 	{
 	public:
+		using UIElementCollection = SortedVector<std::shared_ptr<UIElement>, ZIndexComparer>;
+
 		VisualElement& Parent;
 	protected:
 		UIElementCollection _children;
@@ -46,7 +47,7 @@ namespace Sgl::UI
 		auto Add(TArgs&&... args)
 		{
 			auto element = std::make_shared<TUIElement>(std::forward<TArgs>(args)...);
-			_children.insert(element);
+			_children.Add(element);
 			return ElementConfigurer(*element);
 		}
 

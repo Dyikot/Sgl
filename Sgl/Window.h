@@ -5,6 +5,7 @@
 #include "Visual/Renderer.h"
 #include "Events/Event.h"
 #include "Events/WindowEvents.h"
+#include "Data/Size.h"
 
 namespace Sgl
 {

@@ -10,7 +10,6 @@ namespace Sgl
 	{
 	public:
 		using MusicRef = std::reference_wrapper<Music>;
-		using iterator = std::vector<MusicRef>::iterator;
 		using PlayListEventHandler = EventHandler<Playlist, EventArgs>;
 
 		Volume Volume;
@@ -19,7 +18,7 @@ namespace Sgl
 		Event<PlayListEventHandler> Started;
 		Event<PlayListEventHandler> Ended;
 	private:
-		iterator _current = Items.begin();
+		std::vector<MusicRef>::iterator _current = Items.begin();
 	public:
 		Playlist() = default;
 		Playlist(const Playlist& other);

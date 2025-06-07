@@ -81,9 +81,9 @@ namespace Sgl
 		SDL_RenderCopyF(_renderer, texture, &clip, &rectangle);
 	}
 
-	constexpr size_t MaxPointsNumber = 180;
-	const auto SinRange = Math::SinRange<MaxPointsNumber>();
-	const auto CosRange = Math::CosRange<MaxPointsNumber>();
+	static constexpr size_t MaxPointsNumber = 180;
+	static const auto SinRange = Math::SinRange<MaxPointsNumber>();
+	static const auto CosRange = Math::CosRange<MaxPointsNumber>();
 
 	void RenderContext::DrawCircle(FPoint position, int diameter, Color color)
 	{
@@ -134,10 +134,10 @@ namespace Sgl
 
 	void RenderContext::DrawEllipse(FPoint position, int width, int height, Color color)
 	{
-		std::array<FPoint, MaxPointsNumber + 1> points;
-		float radiusX = width / 2.0f;
-		float radiusY = height / 2.0f;
-		FPoint center = { position.x + radiusX, position.y + radiusY };
+		auto points = std::array<FPoint, MaxPointsNumber + 1>();
+		auto radiusX = width / 2.0f;
+		auto radiusY = height / 2.0f;
+		auto center = FPoint(position.x + radiusX, position.y + radiusY);
 
 		for(size_t i = 0; i < points.size() - 1; i++)
 		{
@@ -153,10 +153,10 @@ namespace Sgl
 	void CalculateFillEllipse(std::span<Vertex> vertices, size_t angleStep, 
 							  FPoint position, int width, int height, Color color)
 	{
-		size_t angle = 0;
-		float radiusX = width / 2.0f;
-		float radiusY = height / 2.0f;
-		FPoint center = { position.x + radiusX, position.y + radiusY };
+		auto angle = 0ull;
+		auto radiusX = width / 2.0f;
+		auto radiusY = height / 2.0f;
+		auto center = FPoint(position.x + radiusX, position.y + radiusY);
 
 		auto& first = vertices[0];
 		first.position.x = center.x + radiusX * CosRange[0];
@@ -174,8 +174,8 @@ namespace Sgl
 
 	void RenderContext::DrawEllipseFill(FPoint position, int width, int height, Color color)
 	{
-		constexpr size_t pointNumber = MaxPointsNumber / 2;
-		std::array<Vertex, pointNumber + 1> vertices;
+		constexpr auto pointNumber = MaxPointsNumber / 2;
+		auto vertices = std::array<Vertex, pointNumber + 1>();
 
 		CalculateFillEllipse(vertices, MaxPointsNumber / pointNumber, 
 							 position, width, height, color);
@@ -185,8 +185,8 @@ namespace Sgl
 
 	void RenderContext::DrawEllipseFill(FPoint position, int width, int height, const Texture& texture, Color color)
 	{
-		constexpr size_t pointNumber = MaxPointsNumber / 2;
-		std::array<Vertex, pointNumber + 1> vertices;
+		constexpr auto pointNumber = MaxPointsNumber / 2;
+		auto vertices = std::array<Vertex, pointNumber + 1>();
 
 		CalculateFillEllipse(vertices, MaxPointsNumber / pointNumber, 
 							 position, width, height, color);

@@ -11,14 +11,18 @@ namespace Sgl
 	{
 	private:
 		static constexpr double MaxValue = 1;
+		static constexpr double MinValue = 0;
 		double _value;
 	public:
+		static constexpr Volume Min() { return Volume(MinValue); }
+		static constexpr Volume Max() { return Volume(MaxValue); }
+
 		constexpr Volume() noexcept:
 			_value(MaxValue)
 		{}
 
 		constexpr explicit Volume(double value):
-			_value(Adjust(value > 0 ? value : -value))
+			_value(Adjust(value > MinValue ? value : -value))
 		{}
 
 		constexpr int ToMixVolume() const noexcept
@@ -86,9 +90,6 @@ namespace Sgl
 			return std::min(value, MaxValue);
 		}
 	};
-
-	constexpr inline Volume MaxVolume = Volume(1);
-	constexpr inline Volume ZeroVolume = Volume(0);
 
 	class Music
 	{

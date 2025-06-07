@@ -447,7 +447,7 @@ namespace Sgl::Ranges
 		return std::views::transform(std::forward<TSelector>(selector));
 	}
 
-	constexpr auto SubRange(size_t start, size_t count)
+	constexpr auto Slice(size_t start, size_t count)
 	{
 		return std::views::drop(start) | std::views::take(count);
 	}
@@ -459,7 +459,7 @@ namespace Sgl::Ranges
 		constexpr auto operator()(TRange&& range) const
 		{
 			const auto minSize = std::min(static_cast<size_t>(std::ranges::distance(range)), Size);
-			std::array<TRangeValue<TRange>, Size> result = {};
+			auto result = std::array<TRangeValue<TRange>, Size>();
 			auto it = range.begin();
 
 			for(size_t i = 0; i < minSize; i++, it++)

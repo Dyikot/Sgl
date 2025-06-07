@@ -18,6 +18,7 @@ namespace Sgl
 		Window Window;
 		SceneManager SceneManager;
 		ResourcesMap Resources;
+
 		Event<ApplicationEventHandler> Exit;
 	private:
 		static inline Application* _current;

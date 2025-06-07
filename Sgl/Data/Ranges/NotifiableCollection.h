@@ -66,11 +66,11 @@ namespace Sgl
 			auto index = _items.size() - 1;
 
 			OnChanged(NotifyEventArgs
-					  {
-						  .Action = NotifiableCollectionChangedAction::Add,
-						  .StartIndex = index,
-						  .EndIndex = index
-					  });
+			{
+				.Action = NotifiableCollectionChangedAction::Add,
+				.StartIndex = index,
+				.EndIndex = index
+			});
 		}
 
 		void Add(T&& item)
@@ -84,6 +84,16 @@ namespace Sgl
 				.StartIndex = index,
 				.EndIndex = index
 			});
+		}
+
+		size_t Count() const noexcept
+		{
+			return _items.size();
+		}
+
+		size_t Capacity() const noexcept
+		{
+			return _items.capacity();
 		}
 
 		void Insert(size_t index, const T& item)

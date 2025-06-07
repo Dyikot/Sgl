@@ -59,10 +59,7 @@ namespace Sgl
 			return *this;
 		}
 
-		operator SDL_Cursor* () const 
-		{ 
-			return _cursor;
-		}
+		operator SDL_Cursor* () const { return _cursor; }
 	};
 
 	namespace Cursors
