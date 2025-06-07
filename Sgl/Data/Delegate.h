@@ -63,6 +63,14 @@ namespace Sgl
 	public:
 		Delegate() noexcept = default;
 
+		Delegate(const Delegate& other):
+			_callable(other.IsEmpty() ? nullptr : other._callable->Copy())
+		{}
+
+		Delegate(Delegate&& other) noexcept:
+			_callable(std::exchange(other._callable, nullptr))
+		{}
+
 		Delegate(nullptr_t) noexcept:
 			_callable(nullptr)
 		{}
@@ -70,14 +78,6 @@ namespace Sgl
 		template<CFunc<TReturn, TArgs...> TFunc>
 		Delegate(TFunc&& func):
 			_callable(std::make_unique<Callable<std::remove_reference_t<TFunc>>>(std::forward<TFunc>(func)))
-		{}
-
-		Delegate(const Delegate& other):
-			_callable(other.IsEmpty() ? nullptr : other._callable->Copy())
-		{}
-
-		Delegate(Delegate&& other) noexcept:
-			_callable(std::exchange(other._callable, nullptr))
 		{}
 
 		void Reset() noexcept

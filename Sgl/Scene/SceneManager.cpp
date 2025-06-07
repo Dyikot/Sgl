@@ -2,6 +2,14 @@
 
 namespace Sgl
 {
+	SceneManager::~SceneManager()
+	{
+		while(!_scenes.empty())
+		{
+			DestroyScene();
+		}
+	}
+
 	void SceneManager::Push(SceneFactory sceneFactory)
 	{
 		_sceneFactoriesQueue.push(std::move(sceneFactory));
@@ -9,9 +17,9 @@ namespace Sgl
 
 	void SceneManager::Pop() noexcept
 	{
-		if(_popScenes < _scenes.size())
+		if(_scenesToDestory < _scenes.size())
 		{
-			_popScenes++;
+			_scenesToDestory++;
 		}
 	}
 
@@ -24,7 +32,7 @@ namespace Sgl
 	{
 		while(true)
 		{
-			if(_popScenes > 0)
+			if(_scenesToDestory > 0)
 			{
 				DestroyScene();
 			}
@@ -39,15 +47,29 @@ namespace Sgl
 		}
 	}
 
-	void SceneManager::CreateScene() noexcept
+	void SceneManager::CreateScene()
 	{
-		_scenes.push(_sceneFactoriesQueue.front()());
+		auto scene = _sceneFactoriesQueue.front()();
+		scene->OnCreated(EmptyEventArgs);
+
+		if(!_scenes.empty())
+		{
+			_scenes.top()->OnStopped(EmptyEventArgs);
+		}
+
+		_scenes.push(std::move(scene));
 		_sceneFactoriesQueue.pop();
 	}
 
-	void SceneManager::DestroyScene() noexcept
+	void SceneManager::DestroyScene()
 	{
-		_popScenes--;
+		_scenesToDestory--;
+		_scenes.top()->OnDestroying(EmptyEventArgs);
 		_scenes.pop();
+
+		if(!_scenes.empty())
+		{
+			_scenes.top()->OnResumed(EmptyEventArgs);
+		}
 	}
 }

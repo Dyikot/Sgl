@@ -13,10 +13,15 @@ namespace Sgl
 
 		std::stack<std::shared_ptr<Scene>> _scenes;
 		std::queue<SceneFactory> _sceneFactoriesQueue;
-		size_t _popScenes = 0;
+		size_t _scenesToDestory = 0;
 	public:
+		SceneManager() = default;
+		SceneManager(const SceneManager&) = delete;
+		SceneManager(SceneManager&&) = delete;
+		~SceneManager();
+
 		template<std::derived_from<Scene> TScene>
-		void Push() noexcept
+		void Push()
 		{
 			_sceneFactoriesQueue.push(&std::make_shared<TScene>);
 		}
@@ -27,8 +32,8 @@ namespace Sgl
 		std::shared_ptr<Scene> GetCurrentScene();
 	private:
 		std::shared_ptr<Scene> GetNextScene();
-		void CreateScene() noexcept;
-		void DestroyScene() noexcept;
+		void CreateScene();
+		void DestroyScene();
 
 		friend class Application;
 	};

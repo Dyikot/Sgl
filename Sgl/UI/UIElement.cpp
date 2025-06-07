@@ -10,6 +10,7 @@ namespace Sgl::UI
 	{}
 
 	UIElement::UIElement(const UIElement& other):
+		base(other),
 		Class(other.Class),
 		OnHover(other.OnHover),
 		OnMousePressed(other.OnMousePressed),
@@ -34,6 +35,34 @@ namespace Sgl::UI
 		HorizontalAlignment(other.HorizontalAlignment),
 		Margin(other.Margin),
 		_position()
+	{}
+
+	UIElement::UIElement(UIElement&& other) noexcept:
+		base(std::move(other)),
+		Class(std::move(other.Class)),
+		OnHover(std::move(other.OnHover)),
+		OnMousePressed(std::move(other.OnMousePressed)),
+		KeyUp(std::move(other.KeyUp)),
+		KeyDown(std::move(other.KeyDown)),
+		MouseDown(std::move(other.MouseDown)),
+		MouseUp(std::move(other.MouseUp)),
+		MouseMove(std::move(other.MouseMove)),
+		MouseEnter(std::move(other.MouseEnter)),
+		MouseLeave(std::move(other.MouseLeave)),
+		MouseWheel(std::move(other.MouseWheel)),
+		Width(other.Width),
+		Height(other.Height),
+		MinWidth(other.MinWidth),
+		MinHeight(other.MinHeight),
+		MaxWidth(other.MaxWidth),
+		MaxHeight(other.MaxHeight),
+		ZIndex(other.ZIndex),
+		Tooltip(std::exchange(other.Tooltip, nullptr)),
+		Visibility(other.Visibility),
+		VerticalAlignment(other.VerticalAlignment),
+		HorizontalAlignment(other.HorizontalAlignment),
+		Margin(other.Margin),
+		_position(other._position)
 	{}
 
 	void UIElement::OnRender(RenderContext rc) const

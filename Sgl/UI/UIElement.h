@@ -48,6 +48,7 @@ namespace Sgl::UI
 	public:
 		UIElement();
 		UIElement(const UIElement& other);
+		UIElement(UIElement&& other) noexcept;
 		virtual ~UIElement() = default;
 
 		void OnRender(RenderContext rc) const override;

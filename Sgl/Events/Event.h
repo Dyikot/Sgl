@@ -16,6 +16,16 @@ namespace Sgl
 	protected:
 		std::forward_list<EventHandler> _eventHandlers;
 	public:
+		Event() = default;
+
+		Event(const Event& other):
+			_eventHandlers(other._eventHandlers)
+		{}
+
+		Event(Event&& other) noexcept:
+			_eventHandlers(std::move(other._eventHandlers))
+		{}
+
 		void Clear() noexcept
 		{ 
 			_eventHandlers.clear();

@@ -10,6 +10,14 @@ namespace Sgl
 	public:
 		Nullable() = default;
 
+		Nullable(const Nullable& other):
+			_value(other._value)
+		{}
+
+		Nullable(Nullable&& other) noexcept:
+			_value(std::exchange(other._value, nullptr))
+		{}
+
 		Nullable(nullptr_t):
 			_value(nullptr)
 		{}

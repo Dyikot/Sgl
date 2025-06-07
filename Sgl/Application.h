@@ -29,6 +29,8 @@ namespace Sgl
 		std::optional<TimeSpan> _maxFrameTime;
 	public:
 		Application() noexcept;
+		Application(const Application&) = delete;
+		Application(Application&&) = delete;
 		~Application() noexcept;
 
 		void SetMaxFPS(size_t value) noexcept;
