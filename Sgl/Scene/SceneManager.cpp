@@ -50,11 +50,11 @@ namespace Sgl
 	void SceneManager::CreateScene()
 	{
 		auto scene = _sceneFactoriesQueue.front()();
-		scene->OnCreated(EmptyEventArgs);
+		scene->OnCreated();
 
 		if(!_scenes.empty())
 		{
-			_scenes.top()->OnStopped(EmptyEventArgs);
+			_scenes.top()->OnStopped();
 		}
 
 		_scenes.push(std::move(scene));
@@ -64,12 +64,12 @@ namespace Sgl
 	void SceneManager::DestroyScene()
 	{
 		_scenesToDestory--;
-		_scenes.top()->OnDestroying(EmptyEventArgs);
+		_scenes.top()->OnDestroying();
 		_scenes.pop();
 
 		if(!_scenes.empty())
 		{
-			_scenes.top()->OnResumed(EmptyEventArgs);
+			_scenes.top()->OnResumed();
 		}
 	}
 }

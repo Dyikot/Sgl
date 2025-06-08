@@ -2,11 +2,12 @@
 
 #include <string_view>
 #include <array>
+#include <span>
 #include "SDL/SDL_render.h"
 #include "Surface.h"
 #include "Primitives.h"
-#include <span>
 #include "Texture.h"
+#include "../Data/Delegate.h"
 
 namespace Sgl
 {
@@ -48,5 +49,7 @@ namespace Sgl
 			SDL_SetRenderDrawColor(_renderer, color.Red, color.Green, color.Blue, color.Alpha);
 		}
 	};
+
+	using RenderFragment = Action<RenderContext>;
 }
 

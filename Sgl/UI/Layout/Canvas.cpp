@@ -2,11 +2,6 @@
 
 namespace Sgl::UI
 {
-	std::unique_ptr<Canvas> Canvas::New(VisualElement& parent)
-	{
-		return std::make_unique<Canvas>(parent);
-	}
-
 	Canvas::Canvas(VisualElement& parent):
 		base(parent)
 	{}
@@ -23,6 +18,16 @@ namespace Sgl::UI
 
 	void Canvas::Measure()
 	{}
+
+	void Layout::OnRender(RenderContext rc) const
+	{
+		for(auto& child : Children)
+		{
+			child->OnRender(rc);
+		}
+
+		base::OnRender(rc);
+	}
 
 	void Canvas::Arrange()
 	{}

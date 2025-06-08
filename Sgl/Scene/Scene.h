@@ -11,22 +11,11 @@ namespace Sgl
 		public IMouseEventsListener	
 	{
 	public:
-		using SceneEventHandler = EventHandler<Scene, EventArgs>;
-
-		Style Class;
-		std::unique_ptr<UI::Layout> Layout;
-
-		Event<KeyEventHandler> KeyUp;
-		Event<KeyEventHandler> KeyDown;
-		Event<SceneEventHandler> Stopped;
-		Event<SceneEventHandler> Resumed;
-		Event<SceneEventHandler> Created;
-		Event<SceneEventHandler> Destroying;
+		Style Class = { *this };
 	private:
-		using base = VisualElement;
+		UI::Layout* _layout = nullptr;
 	public:
-		Scene(std::unique_ptr<UI::Layout> layout);
-		Scene(Func<std::unique_ptr<UI::Layout>> layoutFactory);
+		Scene() = default;
 		Scene(const Scene&) = delete;
 		Scene(Scene&&) = delete;
 		virtual ~Scene() = default;
@@ -34,56 +23,41 @@ namespace Sgl
 		void OnRender(RenderContext rc) const override;
 		virtual void OnUpdate(TimeSpan elapsed) = 0;
 	protected:
+		void SetLayout(UI::Layout& layout);
+
+		virtual void OnStopped() {}
+		virtual void OnResumed() {}
+		virtual void OnCreated() {}
+		virtual void OnDestroying() {}
+
 		void OnMouseMove(const MouseButtonEventArgs& e) override
 		{
-			Layout->OnSceneLayoutMouseMove(e);
+			_layout->OnSceneLayoutMouseMove(e);
 		}
 
 		void OnMouseDown(const MouseButtonEventArgs& e) override
 		{
-			Layout->OnMouseDown(e);
+			_layout->OnMouseDown(e);
 		}
 
 		void OnMouseUp(const MouseButtonEventArgs& e) override
 		{
-			Layout->OnMouseUp(e);
+			_layout->OnMouseUp(e);
 		}
 
 		void OnMouseWheel(const MouseWheelEventArgs& e) override
 		{
-			Layout->OnMouseWheel(e);
+			_layout->OnMouseWheel(e);
 		}
 
 		void OnKeyDown(const KeyEventArgs& e) override
 		{
-			Layout->OnKeyDown(e);
-			KeyDown.TryRaise(*this, e);
+			_layout->OnKeyDown(e);
 		}
 
 		void OnKeyUp(const KeyEventArgs& e) override
 		{
-			Layout->OnKeyUp(e);
-			KeyUp.TryRaise(*this, e);
-		}
-	private:
-		void OnStopped(const EventArgs& e)
-		{
-			Stopped.TryRaise(*this, e);
-		}
-
-		void OnResumed(const EventArgs& e)
-		{
-			Resumed.TryRaise(*this, e);
-		}
-
-		void OnCreated(const EventArgs& e)
-		{
-			Created.TryRaise(*this, e);
-		}
-
-		void OnDestroying(const EventArgs& e)
-		{
-			Destroying.TryRaise(*this, e);
+			_layout->OnKeyUp(e);
 		}
 
 		friend class Application;

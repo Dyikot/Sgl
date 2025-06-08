@@ -5,7 +5,7 @@ namespace Sgl
 {
 	static const std::unordered_map<std::string_view, FontFamily> FontFamilies =
 	{
-		{ "SegoeUI", { "Segoe UI", "" } },
+		{ "Segoe UI", { "Segoe UI", "" } },
 	};
 
 	const FontFamily& FontFamily::Get(std::string_view name)

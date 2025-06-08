@@ -7,11 +7,8 @@ namespace Sgl::UI
 {
 	class Control: public UIElement
 	{
-	private:
-		using base = UIElement;
 	public:
 		using FontFamilyRef = std::reference_wrapper<const FontFamily>;
-		Event<MouseEventHandler> MouseDoubleClick;
 
 		Thickness Padding;
 		size_t FontSize = 14;
@@ -22,7 +19,14 @@ namespace Sgl::UI
 		TextDecoration TextDecoration = TextDecoration::None;
 		Thickness BorderThickness = Thickness(1);
 		Color BorderColor = Colors::Black;
+	private:
+		using base = UIElement;
+
+		Layout* _layout = nullptr;
 	public:
+		Control() = default;
+		virtual ~Control() = default;
+
 		void ResetStyle() override
 		{
 			base::ResetStyle();
@@ -38,6 +42,8 @@ namespace Sgl::UI
 			BorderColor = Colors::Black;
 		}
 	protected:
+		void SetLayout(Layout& layout);
+
 		virtual void OnMouseDoubleClick(const MouseButtonEventArgs& e) {}
 	};
 }

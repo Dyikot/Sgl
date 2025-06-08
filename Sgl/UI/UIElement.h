@@ -19,15 +19,6 @@ namespace Sgl::UI
 
 		Trigger OnHover;
 		Trigger OnMousePressed;
-
-		Event<KeyEventHandler> KeyUp;
-		Event<KeyEventHandler> KeyDown;
-		Event<MouseEventHandler> MouseDown;
-		Event<MouseEventHandler> MouseUp;
-		Event<MouseEventHandler> MouseMove;
-		Event<MouseEventHandler> MouseEnter;
-		Event<MouseEventHandler> MouseLeave;
-		Event<MouseWheelEventHandler> MouseWheel;
 		
 		float Width = 0;
 		float Height = 0;
@@ -54,138 +45,40 @@ namespace Sgl::UI
 		void OnRender(RenderContext rc) const override;
 		void ResetStyle() override;
 	protected:
+		void OnKeyUp(const KeyEventArgs& e) override {}
+		void OnKeyDown(const KeyEventArgs& e) override {}
+		void OnMouseMove(const MouseButtonEventArgs& e) override {}
+		void OnMouseWheel(const MouseWheelEventArgs& e) override {}
+
 		void OnMouseDown(const MouseButtonEventArgs& e) override
 		{
 			OnMousePressed.Activate();
-			MouseDown.TryRaise(*this, e);
 		}
 
 		void OnMouseUp(const MouseButtonEventArgs& e) override
 		{
 			OnMousePressed.Deactivate();
-			MouseUp.TryRaise(*this, e);
-		}
-
-		void OnMouseMove(const MouseButtonEventArgs& e) override
-		{
-			MouseMove.TryRaise(*this, e);
 		}
 
 		virtual void OnMouseEnter(const MouseButtonEventArgs& e)
 		{
 			OnHover.Activate();
-			MouseEnter.TryRaise(*this, e);
 		}
 
 		virtual void OnMouseLeave(const MouseButtonEventArgs& e)
 		{
 			OnHover.Deactivate();
-			MouseLeave.TryRaise(*this, e);
-		}
-
-		void OnMouseWheel(const MouseWheelEventArgs& e) override
-		{
-			MouseWheel.TryRaise(*this, e);
-		}
-
-		void OnKeyDown(const KeyEventArgs& e) override
-		{
-			KeyDown.TryRaise(*this, e);
-		}
-
-		void OnKeyUp(const KeyEventArgs& e) override
-		{
-			KeyUp.TryRaise(*this, e);
 		}
 	private:
 		friend class Layout;
 	};
 
-	template<std::derived_from<UIElement> TUIElement>
-	class ElementConfigurer
+	struct UIElementComparer
 	{
-	private:
-		TUIElement& _element;
-	public:
-		ElementConfigurer(TUIElement& element):
-			_element(element)
-		{}
-
-		template<Style::StyleClass... Classes>
-		ElementConfigurer& Class()
+		bool operator()(const std::shared_ptr<UIElement>& left,
+						const std::shared_ptr<UIElement>& right) const
 		{
-			_element.Class.Use<Classes...>();
-			return *this;
-		}
-
-		template<Style::StyleClass... Classes>
-		ElementConfigurer& OnHover()
-		{
-			_element.OnHover.Class.Use<Classes...>();
-			return *this;
-		}
-
-		template<Style::StyleClass... Classes>
-		ElementConfigurer& OnMousePressed()
-		{
-			_element.OnMousePressed.Class.Use<Classes...>();
-			return *this;
-		}
-
-		template<typename TCallable>
-		ElementConfigurer& KeyUp(TCallable callable)
-		{
-			_element.KeyUp += std::move(callable);
-			return *this;
-		}
-
-		template<typename TCallable>
-		ElementConfigurer& KeyDown(TCallable callable)
-		{
-			_element.KeyDown += std::move(callable);
-			return *this;
-		}
-
-		template<typename TCallable>
-		ElementConfigurer& MouseDown(TCallable callable)
-		{
-			_element.MouseDown += std::move(callable);
-			return *this;
-		}
-
-		template<typename TCallable>
-		ElementConfigurer& MouseUp(TCallable callable)
-		{
-			_element.MouseUp += std::move(callable);
-			return *this;
-		}
-
-		template<typename TCallable>
-		ElementConfigurer& MouseMove(TCallable callable)
-		{
-			_element.MouseMove += std::move(callable);
-			return *this;
-		}
-
-		template<typename TCallable>
-		ElementConfigurer& MouseEnter(TCallable callable)
-		{
-			_element.MouseEnter += std::move(callable);
-			return *this;
-		}
-
-		template<typename TCallable>
-		ElementConfigurer& MouseLeave(TCallable callable)
-		{
-			_element.MouseLeave += std::move(callable);
-			return *this;
-		}
-
-		template<typename TCallable>
-		ElementConfigurer& MouseWheel(TCallable callable)
-		{
-			_element.MouseWheel += std::move(callable);
-			return *this;
+			return left->ZIndex < right->ZIndex;
 		}
 	};
 }

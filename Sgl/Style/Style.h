@@ -42,6 +42,12 @@ namespace Sgl
 			_classes = { Classes... };
 			Apply();
 		}
+
+		void Use(const Style& style)
+		{
+			_classes = style._classes;
+			Apply();
+		}
 	private:
 		void Apply()
 		{

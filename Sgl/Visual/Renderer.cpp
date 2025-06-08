@@ -23,10 +23,10 @@ namespace Sgl
 	}
 
 	Texture Renderer::CreateTexture(TextureAccess textureAccess, int width, int height, 
-									Action<RenderContext> fill)
+									RenderFragment renderFragment)
 	{
 		auto texture = CreateTexture(textureAccess, width, height);
-		FillTexture(texture, std::move(fill));
+		RenderOnTexture(texture, std::move(renderFragment));
 		return texture;
 	}
 
@@ -37,17 +37,17 @@ namespace Sgl
 	}
 
 	Texture Renderer::CreateTexture(SDL_PixelFormatEnum pixelFormat, TextureAccess textureAccess,
-									int width, int height, Action<RenderContext> fill)
+									int width, int height, RenderFragment renderFragment)
 	{
 		auto texture = CreateTexture(pixelFormat, textureAccess, width, height);
-		FillTexture(texture, std::move(fill));
+		RenderOnTexture(texture, std::move(renderFragment));
 		return texture;
 	}
 
-	void Renderer::FillTexture(Texture& texture, Action<RenderContext> fill)
+	void Renderer::RenderOnTexture(Texture& texture, RenderFragment renderFragment)
 	{
 		SDL_SetRenderTarget(_renderer, texture);
-		fill(OpenContext());
+		renderFragment(OpenContext());
 		SDL_SetRenderTarget(_renderer, nullptr);
 	}
 

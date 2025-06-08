@@ -4,14 +4,16 @@
 #include "Visual/Surface.h"
 #include "Visual/Renderer.h"
 #include "Events/Event.h"
-#include "Events/WindowEvents.h"
+#include "Events/WindowEventArgs.h"
 #include "Data/Size.h"
 
 namespace Sgl
 {
-	class Window
+	class Window final
 	{
 	public:
+		using WindowStateEventHandler = EventHandler<Window, WindowStateEventArgs>;
+
 		bool IsRenderableWhenMinimized = false;
 		Event<WindowStateEventHandler> WindowStateChanged;
 	private:
@@ -68,15 +70,15 @@ namespace Sgl
 		bool IsVisible() const;
 
 		operator SDL_Window* () const noexcept { return _window; }
-	protected:
+	private:
+		void SetVSync(bool value);
+		void SetResize(bool value);
+
 		void OnWindowStateChanged(const WindowStateEventArgs& e)
 		{
 			WindowStateChanged.TryRaise(*this, e);
 		}
 		// TODO: Add other window events
-	private:
-		void SetVSync(bool value);
-		void SetResize(bool value);
 
 		friend class Application;
 		friend class Renderer;

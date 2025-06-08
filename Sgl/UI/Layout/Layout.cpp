@@ -2,7 +2,7 @@
 
 namespace Sgl::UI
 {
-    bool IsHover(FPoint point, FPoint position, float width, float height)
+    static bool IsHover(FPoint point, FPoint position, float width, float height)
     {
         return point.x >= position.x &&
                point.x <= position.x + width &&
@@ -24,7 +24,7 @@ namespace Sgl::UI
             return;
         }
 
-        for(auto& child : _children)
+        for(auto& child : Children)
         {
             if(IsHover(e.Position, child->_position, child->Width, child->Height))
             {

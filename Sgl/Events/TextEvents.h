@@ -25,7 +25,4 @@ namespace Sgl
 		virtual void OnTextChanged(const TextChangedEventArgs& e) = 0;
 		virtual void OnTextInput(const TextInputEventArgs& e) = 0;
 	};
-
-	using TextInputEventHandler = EventHandler<ITextEventsListener, TextInputEventArgs>;
-	using TextChangedEventHandler = EventHandler<ITextEventsListener, TextChangedEventArgs>;
 }

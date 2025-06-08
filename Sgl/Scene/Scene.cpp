@@ -2,20 +2,6 @@
 
 namespace Sgl
 {
-	Scene::Scene(std::unique_ptr<UI::Layout> layout):
-		Class(*this),
-		Layout(std::move(layout))
-	{
-		if(Layout == nullptr)
-		{
-			throw std::invalid_argument("Layout cannot be null");
-		}
-	}
-
-	Scene::Scene(Func<std::unique_ptr<UI::Layout>> layoutFactory):
-		Scene(layoutFactory())
-	{}
-
 	void Scene::OnRender(RenderContext rc) const
 	{
 		if(BackgroundTexture)
@@ -27,6 +13,11 @@ namespace Sgl
 			rc.FillBackground(BackgroundColor);
 		}
 
-		Layout->OnRender(rc);
+		_layout->OnRender(rc);
+	}
+
+	void Scene::SetLayout(UI::Layout& layout)
+	{
+		_layout = &layout;
 	}
 }

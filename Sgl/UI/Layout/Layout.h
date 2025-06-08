@@ -15,23 +15,13 @@ namespace Sgl
 
 namespace Sgl::UI
 {
-	struct ZIndexComparer
-	{
-		bool operator()(const std::shared_ptr<UIElement>& left, 
-						const std::shared_ptr<UIElement>& right) const
-		{
-			return left->ZIndex < right->ZIndex;
-		}
-	};
-
 	class Layout: public UIElement
 	{
 	public:
-		using UIElementCollection = SortedVector<std::shared_ptr<UIElement>, ZIndexComparer>;
+		using UIElementCollection = SortedVector<std::shared_ptr<UIElement>, UIElementComparer>;
 
 		VisualElement& Parent;
-	protected:
-		UIElementCollection _children;
+		UIElementCollection Children;
 	private:
 		using base = UIElement;
 
@@ -43,25 +33,7 @@ namespace Sgl::UI
 		virtual void Arrange() = 0;
 		virtual void Measure() = 0;
 
-		template<std::derived_from<UIElement> TUIElement, typename... TArgs>
-		auto Add(TArgs&&... args)
-		{
-			auto element = std::make_shared<TUIElement>(std::forward<TArgs>(args)...);
-			_children.Add(element);
-			return ElementConfigurer(*element);
-		}
-
-		void OnRender(RenderContext rc) const override
-		{
-			for(auto& child : _children)
-			{
-				child->OnRender(rc);
-			}
-
-			base::OnRender(rc);
-		}
-
-		const UIElementCollection& GetChildren() const { return _children; }
+		void OnRender(RenderContext rc) const override;
 	protected:
 		static void SetAbsolutePosition(UIElement& element, FPoint position)
 		{
@@ -97,9 +69,7 @@ namespace Sgl::UI
 
 		void OnMouseWheel(const MouseWheelEventArgs& e) override
 		{
-			base::OnMouseWheel(e);
-
-			for(auto& child : _children)
+			for(auto& child : Children)
 			{
 				child->OnMouseWheel(e);
 			}
@@ -107,9 +77,7 @@ namespace Sgl::UI
 
 		void OnKeyDown(const KeyEventArgs& e) override
 		{
-			base::OnKeyDown(e);
-
-			for(auto& child : _children)
+			for(auto& child : Children)
 			{
 				child->OnKeyDown(e);
 			}
@@ -117,9 +85,7 @@ namespace Sgl::UI
 
 		void OnKeyUp(const KeyEventArgs& e) override
 		{
-			base::OnKeyUp(e);
-
-			for(auto& child : _children)
+			for(auto& child : Children)
 			{
 				child->OnKeyUp(e);
 			}

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "EventHandler.h"
+#include "EventArgs.h"
 
 namespace Sgl
 {
@@ -18,8 +18,4 @@ namespace Sgl
 	{
 		WindowState State;
 	};
-
-	class Window;
-
-	using WindowStateEventHandler = EventHandler<Window, WindowStateEventArgs>;
 }
