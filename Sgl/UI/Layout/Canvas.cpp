@@ -6,29 +6,22 @@ namespace Sgl::UI
 		base(parent)
 	{}
 
-	void Canvas::SetOffset(UIElement& element, Thickness value)
+	void Canvas::Arrange()
 	{
-		
-	}
-
-	Thickness Canvas::GetOffset(UIElement& element)
-	{
-		return Thickness();
-	}
-
-	void Canvas::Measure()
-	{}
-
-	void Layout::OnRender(RenderContext rc) const
-	{
-		for(auto& child : Children)
+		if(!_shouldArrange)
 		{
-			child->OnRender(rc);
+			return;
 		}
 
-		base::OnRender(rc);
-	}
+		for(auto& child : _children)
+		{
+			auto [left, top, right, bottom] = child->GetMargin();
+			auto position = GetActualPosition();
+			position.x += left >= right ? left : GetActualWidth() - right - child->GetActualWidth();
+			position.y += top >= bottom ? top : GetActualHeight() - bottom - child->GetActualHeight();
+			SetElementPosition(*child, position);
 
-	void Canvas::Arrange()
-	{}
+			_shouldArrange = false;
+		}
+	}
 }

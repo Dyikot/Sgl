@@ -22,13 +22,13 @@ namespace Sgl
 	struct Thickness
 	{
 	public:
+		int Left;
 		int Top;
 		int Right;
 		int Bottom;
-		int Left;
 	public:
-		constexpr Thickness(int top, int right, int bottom, int left) noexcept:
-			Top(top), Right(right), Bottom(bottom), Left(left)
+		constexpr Thickness(int left, int top, int right, int bottom) noexcept:
+			Left(left), Top(top), Right(right), Bottom(bottom)
 		{}
 
 		constexpr Thickness(int value = 0) noexcept:

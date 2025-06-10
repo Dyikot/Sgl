@@ -11,10 +11,6 @@ namespace Sgl::UI
 	public:
 		Canvas(VisualElement& parent);
 
-		void SetOffset(UIElement& element, Thickness value);
-		Thickness GetOffset(UIElement& element);
-
-		void Measure() override;
 		void Arrange() override;
 	};
 }

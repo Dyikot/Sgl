@@ -11,17 +11,17 @@ namespace Sgl
 		public IMouseEventsListener	
 	{
 	public:
-		Style Class = { *this };
+		Style Class;
 	private:
-		UI::Layout* _layout = nullptr;
+		UI::Layout* _layout;
 	public:
-		Scene() = default;
+		Scene();
 		Scene(const Scene&) = delete;
 		Scene(Scene&&) = delete;
 		virtual ~Scene() = default;
 
 		void OnRender(RenderContext rc) const override;
-		virtual void OnUpdate(TimeSpan elapsed) = 0;
+		virtual void OnUpdate(TimeSpan elapsed);
 	protected:
 		void SetLayout(UI::Layout& layout);
 
@@ -30,35 +30,12 @@ namespace Sgl
 		virtual void OnCreated() {}
 		virtual void OnDestroying() {}
 
-		void OnMouseMove(const MouseButtonEventArgs& e) override
-		{
-			_layout->OnSceneLayoutMouseMove(e);
-		}
-
-		void OnMouseDown(const MouseButtonEventArgs& e) override
-		{
-			_layout->OnMouseDown(e);
-		}
-
-		void OnMouseUp(const MouseButtonEventArgs& e) override
-		{
-			_layout->OnMouseUp(e);
-		}
-
-		void OnMouseWheel(const MouseWheelEventArgs& e) override
-		{
-			_layout->OnMouseWheel(e);
-		}
-
-		void OnKeyDown(const KeyEventArgs& e) override
-		{
-			_layout->OnKeyDown(e);
-		}
-
-		void OnKeyUp(const KeyEventArgs& e) override
-		{
-			_layout->OnKeyUp(e);
-		}
+		void OnMouseMove(const MouseButtonEventArgs& e) override;
+		void OnMouseDown(const MouseButtonEventArgs& e) override;
+		void OnMouseUp(const MouseButtonEventArgs& e) override;
+		void OnMouseWheel(const MouseWheelEventArgs& e) override;
+		void OnKeyDown(const KeyEventArgs& e) override;
+		void OnKeyUp(const KeyEventArgs& e) override;
 
 		friend class Application;
 		friend class SceneManager;

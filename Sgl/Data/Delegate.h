@@ -45,9 +45,9 @@ namespace Sgl
 		public:
 			using base = CallableBase<TReturn, TArgs...>;
 
-			Callable(TCallable&& callable):
+			Callable(TCallable callable):
 				base(typeid(TCallable)),
-				_callable(std::forward<TCallable>(callable))
+				_callable(std::move(callable))
 			{}
 
 			std::unique_ptr<CallableBase<TReturn, TArgs...>> Copy() const override

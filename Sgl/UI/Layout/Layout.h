@@ -21,86 +21,38 @@ namespace Sgl::UI
 		using UIElementCollection = SortedVector<std::shared_ptr<UIElement>, UIElementComparer>;
 
 		VisualElement& Parent;
-		UIElementCollection Children;
+	protected:
+		UIElementCollection _children;
+		bool _shouldArrange;
 	private:
 		using base = UIElement;
 
+		bool _isHover;
 		std::shared_ptr<UIElement> _hoverChild;
-		bool _isHover = false;
 	public:
 		Layout(VisualElement& parent);
 
-		virtual void Arrange() = 0;
-		virtual void Measure() = 0;
+		const UIElementCollection& Children() const { return _children; }
 
+		void QueryArrange();
 		void OnRender(RenderContext rc) const override;
+		void Add(const std::shared_ptr<UIElement>& element);
+		void Remove(const std::shared_ptr<UIElement>& element);
 	protected:
-		static void SetAbsolutePosition(UIElement& element, FPoint position)
-		{
-			element._position = position;
-		}
+		static void SetElementPosition(UIElement& element, FPoint position) { element.SetPosition(position); }
+		static FPoint GetElementPosition(UIElement& element) { return element.GetPosition(); }
 
-		static FPoint GetAbsolutePosition(UIElement& element)
-		{
-			return element._position;
-		}
+		virtual void Arrange() = 0;
 
 		void OnMouseMove(const MouseButtonEventArgs& e) override;
-
-		void OnMouseDown(const MouseButtonEventArgs& e) override
-		{
-			base::OnMouseDown(e);
-
-			if(_hoverChild)
-			{
-				_hoverChild->OnMouseDown(e);
-			}
-		}
-
-		void OnMouseUp(const MouseButtonEventArgs& e) override
-		{
-			base::OnMouseUp(e);
-
-			if(_hoverChild)
-			{
-				_hoverChild->OnMouseUp(e);
-			}
-		}
-
-		void OnMouseWheel(const MouseWheelEventArgs& e) override
-		{
-			for(auto& child : Children)
-			{
-				child->OnMouseWheel(e);
-			}
-		}
-
-		void OnKeyDown(const KeyEventArgs& e) override
-		{
-			for(auto& child : Children)
-			{
-				child->OnKeyDown(e);
-			}
-		}
-
-		void OnKeyUp(const KeyEventArgs& e) override
-		{
-			for(auto& child : Children)
-			{
-				child->OnKeyUp(e);
-			}
-		}
+		void OnMouseDown(const MouseButtonEventArgs& e) override;
+		void OnMouseUp(const MouseButtonEventArgs& e) override;
+		void OnMouseWheel(const MouseWheelEventArgs& e) override;
+		void OnKeyDown(const KeyEventArgs& e) override;
+		void OnKeyUp(const KeyEventArgs& e) override;
+		void OnSizeChanged() override;
 	private:
 		void OnSceneLayoutMouseMove(const MouseButtonEventArgs& e);
-
-		FPoint GetPosition() const
-		{
-			return FPoint
-			{
-				.x = static_cast<float>(std::max(Margin.Left, Margin.Right)),
-				.y = static_cast<float>(std::max(Margin.Top, Margin.Bottom))
-			};
-		}
 
 		friend class Sgl::Scene;
 	};

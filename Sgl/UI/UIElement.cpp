@@ -6,7 +6,22 @@ namespace Sgl::UI
 		Class(*this),
 		OnHover(Class),
 		OnMousePressed(Class),
-		_position()
+		_width(),
+		_height(),
+		_minWidth(),
+		_minHeight(),
+		_maxWidth(std::numeric_limits<float>::max()),
+		_maxHeight(std::numeric_limits<float>::max()),
+		_zIndex(1),
+		_tooltip(nullptr),
+		_visibility(Visibility::Visible),
+		_verticalAlignment(VerticalAlignment::Top),
+		_horizontalAlignment(HorizontalAlignment::Left),
+		_margin(),
+		_actualWidth(_width - _margin.Right),
+		_actualHeight(_height - _margin.Bottom),
+		_position(),
+		_actualPosition(_position.x + _margin.Left, _position.y + _margin.Right)
 	{}
 
 	UIElement::UIElement(const UIElement& other):
@@ -14,19 +29,22 @@ namespace Sgl::UI
 		Class(other.Class),
 		OnHover(other.OnHover),
 		OnMousePressed(other.OnMousePressed),
-		Width(other.Width),
-		Height(other.Height),
-		MinWidth(other.MinWidth),
-		MinHeight(other.MinHeight),
-		MaxWidth(other.MaxWidth),
-		MaxHeight(other.MaxHeight),
-		ZIndex(other.ZIndex),
-		Tooltip(other.Tooltip),
-		Visibility(other.Visibility),
-		VerticalAlignment(other.VerticalAlignment),
-		HorizontalAlignment(other.HorizontalAlignment),
-		Margin(other.Margin),
-		_position()
+		_width(other._width),
+		_height(other._height),
+		_minWidth(other._minWidth),
+		_minHeight(other._minHeight),
+		_maxWidth(other._maxWidth),
+		_maxHeight(other._maxHeight),
+		_zIndex(other._zIndex),
+		_tooltip(other._tooltip),
+		_visibility(other._visibility),
+		_verticalAlignment(other._verticalAlignment),
+		_horizontalAlignment(other._horizontalAlignment),
+		_margin(other._margin),
+		_actualWidth(other._actualWidth),
+		_actualHeight(other._actualHeight),
+		_position(other._position),
+		_actualPosition(other._actualPosition)
 	{}
 
 	UIElement::UIElement(UIElement&& other) noexcept:
@@ -34,26 +52,29 @@ namespace Sgl::UI
 		Class(std::move(other.Class)),
 		OnHover(std::move(other.OnHover)),
 		OnMousePressed(std::move(other.OnMousePressed)),
-		Width(other.Width),
-		Height(other.Height),
-		MinWidth(other.MinWidth),
-		MinHeight(other.MinHeight),
-		MaxWidth(other.MaxWidth),
-		MaxHeight(other.MaxHeight),
-		ZIndex(other.ZIndex),
-		Tooltip(std::exchange(other.Tooltip, nullptr)),
-		Visibility(other.Visibility),
-		VerticalAlignment(other.VerticalAlignment),
-		HorizontalAlignment(other.HorizontalAlignment),
-		Margin(other.Margin),
-		_position(other._position)
+		_width(other._width),
+		_height(other._height),
+		_minWidth(other._minWidth),
+		_minHeight(other._minHeight),
+		_maxWidth(other._maxWidth),
+		_maxHeight(other._maxHeight),
+		_zIndex(other._zIndex),
+		_tooltip(std::exchange(other._tooltip, nullptr)),
+		_visibility(other._visibility),
+		_verticalAlignment(other._verticalAlignment),
+		_horizontalAlignment(other._horizontalAlignment),
+		_margin(other._margin),
+		_actualWidth(other._actualWidth),
+		_actualHeight(other._actualHeight),
+		_position(other._position),
+		_actualPosition(other._actualPosition)
 	{}
 
 	void UIElement::OnRender(RenderContext rc) const
 	{		
-		if(OnHover.IsActive() && Tooltip)
+		if(OnHover.IsActive() && _tooltip)
 		{
-			Tooltip->OnRender(rc);
+			_tooltip->OnRender(rc);
 		}
 	}
 
@@ -61,17 +82,42 @@ namespace Sgl::UI
 	{
 		base::ResetStyle();
 
-		Width = 0;
-		Height = 0;
-		MinWidth = 0;
-		MinHeight = 0;
-		MaxWidth = std::numeric_limits<float>::max();
-		MaxHeight = std::numeric_limits<float>::max();
-		ZIndex = 1;
-		Tooltip = nullptr;
-		Visibility = Visibility::Visible;
-		VerticalAlignment = VerticalAlignment::Top;
-		HorizontalAlignment = HorizontalAlignment::Left;
-		Margin = {};
+		SetWidth(0);
+		SetHeight(0);
+		_minWidth = 0;
+		_minHeight = 0;
+		_maxWidth = std::numeric_limits<float>::max();
+		_maxHeight = std::numeric_limits<float>::max();
+		_zIndex = 1;
+		_tooltip = nullptr;
+		_visibility = Visibility::Visible;
+		_verticalAlignment = VerticalAlignment::Top;
+		_horizontalAlignment = HorizontalAlignment::Left;
+		_margin = {};
+	}
+
+	void UIElement::OnMouseDown(const MouseButtonEventArgs& e)
+	{
+		OnMousePressed.Activate();
+	}
+
+	void UIElement::OnMouseUp(const MouseButtonEventArgs& e)
+	{
+		OnMousePressed.Deactivate();
+	}
+
+	void UIElement::OnMouseEnter(const MouseButtonEventArgs& e)
+	{
+		OnHover.Activate();
+	}
+
+	void UIElement::OnMouseLeave(const MouseButtonEventArgs& e)
+	{
+		OnHover.Deactivate();
+	}
+
+	void UIElement::OnSizeChanged()
+	{
+		SizeChanged.TryRaise(*this);
 	}
 }

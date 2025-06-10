@@ -8,23 +8,27 @@ namespace Sgl
 {
 	class VisualElement: public IStyleable
 	{
+	private:
+		Cursor::Getter _cursor;
+		Color _backgroundColor;
+		Texture* _backgroundTexture;
 	public:
-		Cursor::Getter Cursor = Cursors::Arrow;
-		Color BackgroundColor = Colors::Black;
-		Texture* BackgroundTexture = nullptr;
-	public:
-		VisualElement() = default;
+		VisualElement();
 		VisualElement(const VisualElement& other);
 		VisualElement(VisualElement&& other) noexcept;
 		virtual ~VisualElement() = default;
 
+		void SetCursor(Cursor::Getter value) { _cursor = value; }
+		Cursor::Getter GetCursor() const { return _cursor; }
+
+		void SetBackgroundColor(Color value) { _backgroundColor = value; }
+		Color GetBackgroundColor() const { return _backgroundColor; }
+
+		void SetBackgroundTexture(Texture* value) { _backgroundTexture = value; }
+		Texture* GetBackgroundTexture() const { return _backgroundTexture; }
+
 		virtual void OnRender(RenderContext rc) const = 0;
 
-		void ResetStyle() override
-		{
-			Cursor = Cursors::Arrow;
-			BackgroundColor = Colors::Black;
-			BackgroundTexture = nullptr;
-		}
+		void ResetStyle() override;
 	};
 }
