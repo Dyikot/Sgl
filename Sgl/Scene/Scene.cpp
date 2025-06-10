@@ -20,12 +20,8 @@ namespace Sgl
 			rc.FillBackground(GetBackgroundColor());
 		}
 
-		_layout->OnRender(rc);
-	}
-
-	void Scene::OnUpdate(TimeSpan elapsed)
-	{
 		_layout->Arrange();
+		_layout->OnRender(rc);
 	}
 
 	void Scene::SetLayout(UI::Layout& layout)

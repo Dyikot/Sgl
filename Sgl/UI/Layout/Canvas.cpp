@@ -13,7 +13,7 @@ namespace Sgl::UI
 			return;
 		}
 
-		for(auto& child : _children)
+		for(auto& child : Children)
 		{
 			auto [left, top, right, bottom] = child->GetMargin();
 			auto position = GetActualPosition();

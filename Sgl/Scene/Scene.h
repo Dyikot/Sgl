@@ -21,7 +21,7 @@ namespace Sgl
 		virtual ~Scene() = default;
 
 		void OnRender(RenderContext rc) const override;
-		virtual void OnUpdate(TimeSpan elapsed);
+		virtual void OnUpdate(TimeSpan elapsed) = 0;
 	protected:
 		void SetLayout(UI::Layout& layout);
 

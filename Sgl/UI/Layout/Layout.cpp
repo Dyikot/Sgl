@@ -4,6 +4,7 @@ namespace Sgl::UI
 {  
     Layout::Layout(VisualElement& parent):
         Parent(parent),
+        Children(*this),
         _isHover(false),
         _shouldArrange(false)
     {}
@@ -16,18 +17,6 @@ namespace Sgl::UI
                point.y <= position.y + height;
     }
 
-    struct OnUIElementSizeChanged
-    {
-        Layout& Layout;
-
-        OnUIElementSizeChanged(UI::Layout& layout): Layout(layout) {}
-
-        void operator()(UIElement& element) const
-        {
-            Layout.QueryArrange();
-        }
-    };
-
     void Layout::QueryArrange()
     {
         _shouldArrange = true;
@@ -37,24 +26,10 @@ namespace Sgl::UI
     {
         base::OnRender(rc);
         
-        for(auto& child : _children)
+        for(auto& child : Children)
         {
             child->OnRender(rc);
         }
-    }
-
-    void Layout::Add(const std::shared_ptr<UIElement>& element)
-    {
-        _children.Add(element);
-        element->SizeChanged += OnUIElementSizeChanged(*this);
-        QueryArrange();
-    }
-
-    void Layout::Remove(const std::shared_ptr<UIElement>& element)
-    {
-        _children.Remove(element);
-        element->SizeChanged -= OnUIElementSizeChanged(*this);
-        QueryArrange();
     }
 
     void Layout::OnMouseMove(const MouseButtonEventArgs& e)
@@ -67,7 +42,7 @@ namespace Sgl::UI
             return;
         }
 
-        for(auto& child : _children)
+        for(auto& child : Children)
         {
             if(IsHover(e.Position, child->GetActualPosition(), 
                                    child->GetActualWidth(),
@@ -118,7 +93,7 @@ namespace Sgl::UI
 
     void Layout::OnMouseWheel(const MouseWheelEventArgs& e)
     {
-        for(auto& child : _children)
+        for(auto& child : Children)
         {
             child->OnMouseWheel(e);
         }
@@ -126,7 +101,7 @@ namespace Sgl::UI
 
     void Layout::OnKeyDown(const KeyEventArgs& e)
     {
-        for(auto& child : _children)
+        for(auto& child : Children)
         {
             child->OnKeyDown(e);
         }
@@ -134,7 +109,7 @@ namespace Sgl::UI
 
     void Layout::OnKeyUp(const KeyEventArgs& e)
     {
-        for(auto& child : _children)
+        for(auto& child : Children)
         {
             child->OnKeyUp(e);
         }
@@ -144,7 +119,7 @@ namespace Sgl::UI
     {
         base::OnSizeChanged();
 
-        if(_children.Count() > 0)
+        if(Children.Count() > 0)
         {
             QueryArrange();
         }
