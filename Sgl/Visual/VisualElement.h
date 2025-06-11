@@ -11,7 +11,7 @@ namespace Sgl
 	private:
 		Cursor::Getter _cursor;
 		Color _backgroundColor;
-		Texture* _backgroundTexture;
+		std::shared_ptr<Texture> _backgroundTexture;
 	public:
 		VisualElement();
 		VisualElement(const VisualElement& other);
@@ -24,11 +24,11 @@ namespace Sgl
 		void SetBackgroundColor(Color value) { _backgroundColor = value; }
 		Color GetBackgroundColor() const { return _backgroundColor; }
 
-		void SetBackgroundTexture(Texture* value) { _backgroundTexture = value; }
-		Texture* GetBackgroundTexture() const { return _backgroundTexture; }
+		void SetBackgroundTexture(std::shared_ptr<Texture> value) { _backgroundTexture = value; }
+		auto GetBackgroundTexture() const { return _backgroundTexture; }
 
 		virtual void OnRender(RenderContext rc) const = 0;
 
-		void ResetStyle() override;
+		void ResetToDefault() override;
 	};
 }

@@ -44,6 +44,22 @@ namespace Sgl
 		return texture;
 	}
 
+	Texture Renderer::CreateTexture(const Surface& surface)
+	{
+		return Texture(SDL_CreateTextureFromSurface(_renderer, surface));
+	}
+
+	Texture Renderer::CreateTextTexture(const std::string& text, const Font& font)
+	{
+		auto sdlSurface = font.Antialiasing
+			? TTF_RenderText_Blended(font, text.c_str(), font.Color)
+			: TTF_RenderText_Solid(font, text.c_str(), font.Color);
+
+		Log::PrintSDLErrorIf(sdlSurface == nullptr);
+
+		return CreateTexture(Surface(sdlSurface));
+	}
+
 	void Renderer::RenderOnTexture(Texture& texture, RenderFragment renderFragment)
 	{
 		SDL_SetRenderTarget(_renderer, texture);

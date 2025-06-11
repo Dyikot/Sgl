@@ -2,8 +2,8 @@
 
 #include <utility>
 #include <string_view>
+#include <SDL/SDL_image.h>
 #include "../Tools/Log.h"
-#include "SDL/SDL_image.h"
 #include "Primitives.h"
 #include "Color.h"
 #include "../Data/Size.h"
@@ -17,7 +17,7 @@ namespace Sgl
 
 	class Texture
 	{
-	private:
+	protected:
 		SDL_Texture* _texture = nullptr;
 	public:
 		Texture() = default;

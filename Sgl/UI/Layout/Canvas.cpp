@@ -3,7 +3,7 @@
 namespace Sgl::UI
 {
 	Canvas::Canvas(VisualElement& parent):
-		base(parent)
+		Layout(parent)
 	{}
 
 	void Canvas::Arrange()

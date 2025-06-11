@@ -31,7 +31,7 @@ namespace Sgl::UI
 		float _maxWidth;
 		float _maxHeight;
 		size_t _zIndex;
-		VisualElement* _tooltip;
+		std::shared_ptr<VisualElement> _tooltip;
 		Visibility _visibility;
 		VerticalAlignment _verticalAlignment;
 		HorizontalAlignment _horizontalAlignment;
@@ -79,26 +79,26 @@ namespace Sgl::UI
 		void SetZIndex(size_t value) { _zIndex = value; }
 		size_t GetZIndex() const { return _zIndex; }
 
-		void SetTooltip(VisualElement* value) { _tooltip = value; }
-		VisualElement* GetTooltip() const { return _tooltip; }
+		void SetTooltip(std::shared_ptr<VisualElement> value) { _tooltip = value; }
+		auto GetTooltip() const { return _tooltip; }
 
 		void SetVisibility(Visibility value) { _visibility = value; }
-		Visibility GetVisibility() const { return _visibility; }
+		auto GetVisibility() const { return _visibility; }
 
 		void SetVerticalAlignment(VerticalAlignment value) { _verticalAlignment = value; }
-		VerticalAlignment GetVerticalAlignment() const { return _verticalAlignment; }
+		auto GetVerticalAlignment() const { return _verticalAlignment; }
 
 		void SetHorizontalAlignment(HorizontalAlignment value) { _horizontalAlignment = value; }
-		HorizontalAlignment GetHorizontalAlignment() const { return _horizontalAlignment; }
+		auto GetHorizontalAlignment() const { return _horizontalAlignment; }
 
 		void SetMargin(const Thickness& value) { _margin = value; }
-		Thickness GetMargin() const { return _margin; }
+		auto GetMargin() const { return _margin; }
 
 		float GetActualWidth() const { return _actualWidth; }
 		float GetActualHeight() const { return _actualHeight; }
 
 		void OnRender(RenderContext rc) const override;
-		void ResetStyle() override;
+		void ResetToDefault() override;
 	protected:
 		void SetPosition(FPoint value)
 		{

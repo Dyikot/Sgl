@@ -107,17 +107,6 @@ namespace Sgl
         return position;
     }
 
-    void Window::SetIcon(std::string_view path)
-    {
-        _icon = Surface(path);
-        SDL_SetWindowIcon(_window, _icon.value());
-    }
-
-    const std::optional<Surface>& Window::GetIcon() const
-    {
-        return _icon;
-    }
-
     void Window::SetDisplayMode(DisplayMode displayMode)
     {
         switch(displayMode)
@@ -156,23 +145,6 @@ namespace Sgl
                 return DisplayMode::Window;
         }
     }
-
-    void Window::SetVSync(bool value)
-    {
-        if(!SDL_RenderSetVSync(_renderer, static_cast<int>(value)))
-        {
-            _isVSyncEnable = value;
-        }
-        else
-        {
-            Log::PrintSDLError();
-        }
-    }
-
-    void Window::SetResize(bool value)
-    {
-        SDL_SetWindowResizable(_window, static_cast<SDL_bool>(value));
-    }    
 
     void Window::SetWindowState(WindowState state) noexcept
     {
@@ -213,29 +185,37 @@ namespace Sgl
         }
     }
 
-    void Window::EnableVSync() noexcept
+    void Window::SetIcon(std::string_view path)
     {
-        SetVSync(true); 
+        _icon = Surface(path);
+        SDL_SetWindowIcon(_window, _icon.value());
     }
 
-    void Window::DisableVSync() noexcept
+    const std::optional<Surface>& Window::GetIcon() const
     {
-        SetVSync(false);
+        return _icon;
     }
 
-    bool Window::IsVSyncEnable() const
+    void Window::SetVSync(bool value) noexcept
     {
-        return _isVSyncEnable;
+        if(!SDL_RenderSetVSync(_renderer, static_cast<int>(value)))
+        {
+            _hasVSync = value;
+        }
+        else
+        {
+            Log::PrintSDLError();
+        }
     }
 
-    void Window::EnableResizable() noexcept
+    bool Window::HasVSync() const
     {
-        SetResize(true);
+        return _hasVSync;
     }
 
-    void Window::DisableResizable() noexcept
+    void Window::SetResizable(bool value) noexcept
     {
-        SetResize(false);
+        SDL_SetWindowResizable(_window, SDL_bool(value));
     }
 
     bool Window::IsResizable() const

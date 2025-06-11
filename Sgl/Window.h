@@ -19,7 +19,7 @@ namespace Sgl
 	private:
 		SDL_Window* _window;
 		SDL_Renderer* _renderer;
-		bool _isVSyncEnable = false;
+		bool _hasVSync = false;
 		std::optional<Surface> _icon;
 	public:
 		Window() noexcept;
@@ -57,12 +57,10 @@ namespace Sgl
 		void SetIcon(std::string_view path);
 		const std::optional<Surface>& GetIcon() const;
 
-		void EnableVSync() noexcept;
-		void DisableVSync() noexcept;
-		bool IsVSyncEnable() const;
+		void SetVSync(bool value) noexcept;
+		bool HasVSync() const;
 
-		void EnableResizable() noexcept;
-		void DisableResizable() noexcept;
+		void SetResizable(bool value) noexcept;
 		bool IsResizable() const;
 
 		void Show();
@@ -71,9 +69,6 @@ namespace Sgl
 
 		operator SDL_Window* () const noexcept { return _window; }
 	private:
-		void SetVSync(bool value);
-		void SetResize(bool value);
-
 		void OnWindowStateChanged(const WindowStateEventArgs& e)
 		{
 			WindowStateChanged.TryRaise(*this, e);

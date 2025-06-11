@@ -1,7 +1,7 @@
 #pragma once
 
-#include "SDL/SDL_mouse.h"
-#include "SDL/SDL_image.h"
+#include <SDL/SDL_mouse.h>
+#include <SDL/SDL_image.h>
 #include "../Tools/Log.h"
 #include "../Data/Singleton.h"
 

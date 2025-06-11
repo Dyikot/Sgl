@@ -19,6 +19,10 @@ namespace Sgl
 			Log::PrintSDLErrorIf(_surface == nullptr);
 		}
 
+		explicit Surface(SDL_Surface* surface):
+			_surface(surface)
+		{}
+
 		Surface(Surface&& other) noexcept:
 			_surface(std::exchange(other._surface, nullptr))
 		{}
@@ -47,6 +51,6 @@ namespace Sgl
 			return *this;
 		}
 
-		operator SDL_Surface*() noexcept { return _surface; }
+		operator SDL_Surface*() const noexcept { return _surface; }
 	};
 }

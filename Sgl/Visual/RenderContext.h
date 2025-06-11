@@ -3,7 +3,7 @@
 #include <string_view>
 #include <array>
 #include <span>
-#include "SDL/SDL_render.h"
+#include <SDL/SDL_render.h>
 #include "Surface.h"
 #include "Primitives.h"
 #include "Texture.h"

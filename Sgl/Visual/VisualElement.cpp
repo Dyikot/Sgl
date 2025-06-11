@@ -17,13 +17,13 @@ namespace Sgl
 	VisualElement::VisualElement(VisualElement&& other) noexcept:
 		_cursor(other._cursor),
 		_backgroundColor(other._backgroundColor),
-		_backgroundTexture(std::exchange(other._backgroundTexture, nullptr))
+		_backgroundTexture(std::move(other._backgroundTexture))
 	{}
 
-	void VisualElement::ResetStyle()
+	void VisualElement::ResetToDefault()
 	{
 		_cursor = Cursors::Arrow;
 		_backgroundColor = Colors::Black;
-		_backgroundTexture = nullptr;
+		_backgroundTexture = {};
 	}
 }

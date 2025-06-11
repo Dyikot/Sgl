@@ -9,22 +9,21 @@ namespace Sgl
 	class Playlist
 	{
 	public:
-		using MusicRef = std::reference_wrapper<Music>;
 		using PlayListEventHandler = EventHandler<Playlist, EventArgs>;
 
 		Volume Volume;
-		std::vector<MusicRef> Items;
+		std::vector<std::shared_ptr<Music>> Items;
 
 		Event<PlayListEventHandler> Started;
 		Event<PlayListEventHandler> Ended;
 	private:
-		std::vector<MusicRef>::iterator _current = Items.begin();
+		std::vector<std::shared_ptr<Music>>::iterator _currentIt = Items.begin();
 	public:
 		Playlist() = default;
 		Playlist(const Playlist& other);
 		Playlist(Playlist&& other) noexcept;
 
-		Music* GetCurrent() { return _current != Items.end() ? &_current->get(): nullptr; }
+		auto GetCurrent() { return _currentIt != Items.end() ? *_currentIt: nullptr; }
 		
 		void Play();
 

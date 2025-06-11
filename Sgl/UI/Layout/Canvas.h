@@ -6,8 +6,6 @@ namespace Sgl::UI
 {
 	class Canvas: public Layout
 	{
-	private:
-		using base = Layout;
 	public:
 		Canvas(VisualElement& parent);
 

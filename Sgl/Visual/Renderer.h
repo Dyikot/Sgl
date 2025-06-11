@@ -3,6 +3,7 @@
 #include <string_view>
 #include "RenderContext.h"
 #include "Texture.h"
+#include "Font.h"
 
 namespace Sgl
 {
@@ -20,6 +21,8 @@ namespace Sgl
 		Texture CreateTexture(TextureAccess textureAccess, int width, int height, RenderFragment renderFragment);
 		Texture CreateTexture(SDL_PixelFormatEnum pixelFormat, TextureAccess textureAccess, int width, int height);
 		Texture CreateTexture(SDL_PixelFormatEnum pixelFormat, TextureAccess textureAccess, int width, int height, RenderFragment renderFragment);
+		Texture CreateTexture(const Surface& surface);
+		Texture CreateTextTexture(const std::string& text, const Font& font);
 		void RenderOnTexture(Texture& texture, RenderFragment renderFragment);
 
 		void SetBlendMode(SDL_BlendMode mode);

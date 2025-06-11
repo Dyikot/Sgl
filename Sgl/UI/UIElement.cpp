@@ -13,7 +13,7 @@ namespace Sgl::UI
 		_maxWidth(std::numeric_limits<float>::max()),
 		_maxHeight(std::numeric_limits<float>::max()),
 		_zIndex(1),
-		_tooltip(nullptr),
+		_tooltip(),
 		_visibility(Visibility::Visible),
 		_verticalAlignment(VerticalAlignment::Top),
 		_horizontalAlignment(HorizontalAlignment::Left),
@@ -59,7 +59,7 @@ namespace Sgl::UI
 		_maxWidth(other._maxWidth),
 		_maxHeight(other._maxHeight),
 		_zIndex(other._zIndex),
-		_tooltip(std::exchange(other._tooltip, nullptr)),
+		_tooltip(std::move(other._tooltip)),
 		_visibility(other._visibility),
 		_verticalAlignment(other._verticalAlignment),
 		_horizontalAlignment(other._horizontalAlignment),
@@ -78,9 +78,9 @@ namespace Sgl::UI
 		}
 	}
 
-	void UIElement::ResetStyle()
+	void UIElement::ResetToDefault()
 	{
-		base::ResetStyle();
+		base::ResetToDefault();
 
 		SetWidth(0);
 		SetHeight(0);
@@ -89,7 +89,7 @@ namespace Sgl::UI
 		_maxWidth = std::numeric_limits<float>::max();
 		_maxHeight = std::numeric_limits<float>::max();
 		_zIndex = 1;
-		_tooltip = nullptr;
+		_tooltip = {};
 		_visibility = Visibility::Visible;
 		_verticalAlignment = VerticalAlignment::Top;
 		_horizontalAlignment = HorizontalAlignment::Left;

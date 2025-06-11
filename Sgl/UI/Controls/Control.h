@@ -1,53 +1,29 @@
 #pragma once
 
-#include "../../Style/Font.h"
 #include "../UIElement.h"
+#include "../../Visual/Font.h"
 
 namespace Sgl::UI
 {
 	class Control: public UIElement
 	{
-	public:
-		using FontFamilyRef = std::reference_wrapper<const FontFamily>;
-
 	private:
 		using base = UIElement;
 
 		Layout* _layout = nullptr;
 
+		Color _borderColor;
 		Thickness _padding;
-		size_t _fontSize = 14;
-		Color _fontColor = Colors::Black;
-		FontStyle _fontStyle = FontStyle::Normal;
-		FontWeight _fontWeight = FontWeight::Normal;
-		FontFamilyRef _fontFamily = FontFamily::Get("Segoe UI");
-		TextDecoration _textDecoration = TextDecoration::None;
-		Thickness _borderThickness = Thickness(1);
-		Color _borderColor = Colors::Black;
+		Thickness _borderThickness;
+		std::shared_ptr<Font> _font;
 	public:
-		Control() = default;
+		Control();
+		Control(const Control& other);
+		Control(Control&& other) noexcept;
 		virtual ~Control() = default;
 
 		void SetPadding(Thickness value) { _padding = value; }
 		Thickness GetPadding() const { return _padding; }
-
-		void SetFontSize(size_t value) { _fontSize = value; }
-		size_t GetFontSize() const { return _fontSize; }
-
-		void SetFontColor(Color value) { _fontColor = value; }
-		Color GetFontColor() const { return _fontColor; }
-
-		void SetFontStyle(FontStyle value) { _fontStyle = value; }
-		FontStyle GetFontStyle() const { return _fontStyle; }
-
-		void SetFontWeight(FontWeight value) { _fontWeight = value; }
-		FontWeight GetFontWeight() const { return _fontWeight; }
-
-		void SetFontFamily(const FontFamily& value) { _fontFamily = value; }
-		const FontFamily& GetFontFamily() const { return _fontFamily; }
-
-		void SetTextDecoration(TextDecoration value) { _textDecoration = value; }
-		TextDecoration GetTextDecoration() const { return _textDecoration; }
 
 		void SetBorderThickness(const Thickness& value) { _borderThickness = value; }
 		Thickness GetBorderThickness() const { return _borderThickness; }
@@ -55,20 +31,10 @@ namespace Sgl::UI
 		void SetBorderColor(Color value) { _borderColor = value; }
 		Color GetBorderColor() const { return _borderColor; }
 
-		void ResetStyle() override
-		{
-			base::ResetStyle();
+		void SetFont(std::shared_ptr<Font> value) { _font = value; }
+		auto GetFont() const { return _font; }
 
-			_padding = {};
-			_textDecoration = TextDecoration::None;
-			_fontSize = 14;
-			_fontFamily = FontFamily::Get("Segoe UI");
-			_fontStyle = FontStyle::Normal;
-			_fontWeight = FontWeight::Normal;
-			_fontColor = Colors::Black;
-			_borderThickness = Thickness(1);
-			_borderColor = Colors::Black;
-		}
+		void ResetToDefault() override;
 	protected:
 		void SetLayout(Layout& layout);
 

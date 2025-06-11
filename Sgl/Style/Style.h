@@ -9,7 +9,7 @@ namespace Sgl
 	public:
 		virtual ~IStyleable() = default;
 
-		virtual void ResetStyle() = 0;
+		virtual void ResetToDefault() = 0;
 	};
 
 	class Trigger;
@@ -59,7 +59,7 @@ namespace Sgl
 
 		void ResetAndApply()
 		{			
-			_target.ResetStyle();
+			_target.ResetToDefault();
 			Apply();
 		}
 
