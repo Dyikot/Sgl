@@ -63,6 +63,12 @@ namespace Sgl
 		SDL_RenderCopyF(_renderer, texture, nullptr, nullptr);
 	}
 
+	void RenderContext::DrawTexture(const Texture& texture, Color fill)
+	{
+		texture.SetColor(fill);
+		SDL_RenderCopyF(_renderer, texture, nullptr, nullptr);
+	}
+
 	void RenderContext::DrawTexture(const Texture& texture, FRect target)
 	{
 		SDL_RenderCopyF(_renderer, texture, nullptr, &target);
@@ -88,6 +94,13 @@ namespace Sgl
 
 	void RenderContext::DrawTextureWithRotation(const Texture& texture, double angle, FPoint center)
 	{
+		SDL_RenderCopyExF(_renderer, texture, nullptr, nullptr, angle, &center, SDL_FLIP_NONE);
+	}
+
+	void RenderContext::DrawTextureWithRotation(const Texture& texture, Color fill, 
+												double angle, FPoint center)
+	{
+		texture.SetColor(fill);
 		SDL_RenderCopyExF(_renderer, texture, nullptr, nullptr, angle, &center, SDL_FLIP_NONE);
 	}
 
@@ -120,6 +133,13 @@ namespace Sgl
 	void RenderContext::DrawTextureWithFlip(const Texture& texture, TextureFlip flip)
 	{
 		SDL_RenderCopyExF(_renderer, texture, nullptr, nullptr, 0, nullptr, 
+						  static_cast<SDL_RendererFlip>(flip));
+	}
+
+	void RenderContext::DrawTextureWithFlip(const Texture& texture, Color fill, TextureFlip flip)
+	{
+		texture.SetColor(fill);
+		SDL_RenderCopyExF(_renderer, texture, nullptr, nullptr, 0, nullptr,
 						  static_cast<SDL_RendererFlip>(flip));
 	}
 
@@ -156,6 +176,15 @@ namespace Sgl
 		const Texture& texture, double angle, FPoint center, TextureFlip flip)
 	{
 		SDL_RenderCopyExF(_renderer, texture, nullptr, nullptr, angle, &center, 
+						  static_cast<SDL_RendererFlip>(flip));
+	}
+
+	void RenderContext::DrawTextureWithRotationAndFlip(
+		const Texture& texture, Color fill, double angle, 
+		FPoint center, TextureFlip flip)
+	{
+		texture.SetColor(fill);
+		SDL_RenderCopyExF(_renderer, texture, nullptr, nullptr, angle, &center,
 						  static_cast<SDL_RendererFlip>(flip));
 	}
 
@@ -333,11 +362,5 @@ namespace Sgl
 	{
 		SetColor(color);
 		SDL_RenderClear(_renderer);
-	}
-
-	void RenderContext::FillBackground(const Texture& texture, Color color)
-	{
-		texture.SetColor(color);
-		SDL_RenderCopy(_renderer, texture, nullptr, nullptr);
 	}
 }

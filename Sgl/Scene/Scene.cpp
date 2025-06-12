@@ -10,14 +10,15 @@ namespace Sgl
 	void Scene::OnRender(RenderContext rc) const
 	{
 		auto texture = GetBackgroundTexture();
+		auto color = GetBackgroundColor();
 
 		if(texture)
 		{
-			rc.FillBackground(*texture, GetBackgroundColor());
+			rc.DrawTexture(*texture, color);
 		}
 		else
 		{
-			rc.FillBackground(GetBackgroundColor());
+			rc.FillBackground(color);
 		}
 
 		_layout->Arrange();
