@@ -4,6 +4,8 @@
 #include "Audio.h"
 #include "../Events/Event.h"
 
+using std::shared_ptr;
+
 namespace Sgl
 {
 	class Playlist
@@ -12,12 +14,12 @@ namespace Sgl
 		using PlayListEventHandler = EventHandler<Playlist, EventArgs>;
 
 		Volume Volume;
-		std::vector<std::shared_ptr<Music>> Items;
+		std::vector<shared_ptr<Music>> Items;
 
 		Event<PlayListEventHandler> Started;
 		Event<PlayListEventHandler> Ended;
 	private:
-		std::vector<std::shared_ptr<Music>>::iterator _currentIt = Items.begin();
+		std::vector<shared_ptr<Music>>::iterator _currentIt = Items.begin();
 	public:
 		Playlist() = default;
 		Playlist(const Playlist& other);

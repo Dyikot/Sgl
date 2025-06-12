@@ -15,6 +15,11 @@ namespace Sgl
 		Static, Streaming, Target
 	};
 
+	enum class TextureFlip
+	{
+		Horizontal = 1, Vertical = 2
+	};
+
 	class Texture
 	{
 	protected:

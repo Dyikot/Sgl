@@ -23,7 +23,7 @@ namespace Sgl::UI
 			}
 		};
 	private:
-		SortedVector<std::shared_ptr<UIElement>, UIElementComparer> _items;
+		SortedVector<shared_ptr<UIElement>, UIElementComparer> _items;
 		ILayout& _layout;
 	public:
 		UIElementsCollection(ILayout& layout):
@@ -36,7 +36,7 @@ namespace Sgl::UI
 		auto begin() const { return _items.begin(); }
 		auto end() const { return _items.end(); }
 
-		void Add(const std::shared_ptr<UIElement>& element)
+		void Add(const shared_ptr<UIElement>& element)
 		{
 			_items.Add(element);
 			element->SizeChanged += OnItemSizeChanged(_layout);
@@ -58,7 +58,7 @@ namespace Sgl::UI
 			_items.Clear();
 		}
 
-		bool Contains(const std::shared_ptr<UIElement>& element) const
+		bool Contains(const shared_ptr<UIElement>& element) const
 		{
 			return Contains(element);
 		}
@@ -68,12 +68,12 @@ namespace Sgl::UI
 			return _items.ElementAt(index);
 		}
 
-		std::optional<size_t> Find(const std::shared_ptr<UIElement>& element) const
+		std::optional<size_t> Find(const shared_ptr<UIElement>& element) const
 		{
 			return _items.Find(element);
 		}
 
-		void Remove(const std::shared_ptr<UIElement>& element)
+		void Remove(const shared_ptr<UIElement>& element)
 		{
 			_items.Remove(element);
 			element->SizeChanged -= OnItemSizeChanged(_layout);

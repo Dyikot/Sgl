@@ -34,51 +34,163 @@ namespace Sgl
 		SDL_RenderDrawLinesF(_renderer, points.data(), points.size());
 	}
 
-	void RenderContext::DrawRect(FRect rectange, Color color)
+	void RenderContext::DrawRect(FRect rect, Color color)
 	{
 		SetColor(color);
-		SDL_RenderDrawRectF(_renderer, &rectange);
+		SDL_RenderDrawRectF(_renderer, &rect);
 	}
 
-	void RenderContext::DrawRects(std::span<const FRect> rectanges, Color color)
+	void RenderContext::DrawRects(std::span<const FRect> rects, Color color)
 	{
 		SetColor(color);
-		SDL_RenderDrawRectsF(_renderer, rectanges.data(), rectanges.size());
+		SDL_RenderDrawRectsF(_renderer, rects.data(), rects.size());
 	}
 
-	void RenderContext::DrawFillRect(FRect rectange, Color fill)
+	void RenderContext::DrawFillRect(FRect rect, Color fill)
 	{
 		SetColor(fill);
-		SDL_RenderFillRectF(_renderer, &rectange);		
+		SDL_RenderFillRectF(_renderer, &rect);		
 	}
 
-	void RenderContext::DrawFillRects(std::span<const FRect> rectanges, Color fill)
+	void RenderContext::DrawFillRects(std::span<const FRect> rects, Color fill)
 	{
 		SetColor(fill);
-		SDL_RenderFillRectsF(_renderer, rectanges.data(), rectanges.size());
+		SDL_RenderFillRectsF(_renderer, rects.data(), rects.size());
 	}
 
-	void RenderContext::DrawTexture(const Texture& texture, FRect rectangle)
+	void RenderContext::DrawTexture(const Texture& texture)
 	{
-		SDL_RenderCopyF(_renderer, texture, nullptr, &rectangle);
+		SDL_RenderCopyF(_renderer, texture, nullptr, nullptr);
 	}
 
-	void RenderContext::DrawTexture(const Texture& texture, FRect rectangle, Color fill)
+	void RenderContext::DrawTexture(const Texture& texture, FRect target)
 	{
-		texture.SetColor(fill);
-		SDL_RenderCopyF(_renderer, texture, nullptr, &rectangle);
+		SDL_RenderCopyF(_renderer, texture, nullptr, &target);
 	}
 
-	void RenderContext::DrawTexture(Texture& texture, FRect rectangle, Rect clip)
-	{
-		SDL_RenderCopyF(_renderer, texture, &clip, &rectangle);
-	}
-
-	void RenderContext::DrawTexture(Texture& texture, FRect rectangle,
-									Rect clip, Color fill)
+	void RenderContext::DrawTexture(const Texture& texture, FRect target, Color fill)
 	{
 		texture.SetColor(fill);
-		SDL_RenderCopyF(_renderer, texture, &clip, &rectangle);
+		SDL_RenderCopyF(_renderer, texture, nullptr, &target);
+	}
+
+	void RenderContext::DrawTexture(const Texture& texture, FRect target, Rect source)
+	{
+		SDL_RenderCopyF(_renderer, texture, &source, &target);
+	}
+
+	void RenderContext::DrawTexture(const Texture& texture, FRect target,
+									Rect source, Color fill)
+	{
+		texture.SetColor(fill);
+		SDL_RenderCopyF(_renderer, texture, &source, &target);
+	}
+
+	void RenderContext::DrawTextureWithRotation(const Texture& texture, double angle, FPoint center)
+	{
+		SDL_RenderCopyExF(_renderer, texture, nullptr, nullptr, angle, &center, SDL_FLIP_NONE);
+	}
+
+	void RenderContext::DrawTextureWithRotation(const Texture& texture, FRect target,
+												double angle, FPoint center)
+	{
+		SDL_RenderCopyExF(_renderer, texture, nullptr, &target, angle, &center, SDL_FLIP_NONE);
+	}
+
+	void RenderContext::DrawTextureWithRotation(const Texture& texture, FRect target, 
+												Color fill, double angle, FPoint center)
+	{
+		texture.SetColor(fill);
+		SDL_RenderCopyExF(_renderer, texture, nullptr, &target, angle, &center, SDL_FLIP_NONE);
+	}
+
+	void RenderContext::DrawTextureWithRotation(const Texture& texture, FRect target, Rect source,
+												double angle, FPoint center)
+	{
+		SDL_RenderCopyExF(_renderer, texture, &source, &target, angle, &center, SDL_FLIP_NONE);
+	}
+
+	void RenderContext::DrawTextureWithRotation(const Texture& texture, FRect target, Rect source,
+												Color fill, double angle, FPoint center)
+	{
+		texture.SetColor(fill);
+		SDL_RenderCopyExF(_renderer, texture, &source, &target, angle, &center, SDL_FLIP_NONE);
+	}
+
+	void RenderContext::DrawTextureWithFlip(const Texture& texture, TextureFlip flip)
+	{
+		SDL_RenderCopyExF(_renderer, texture, nullptr, nullptr, 0, nullptr, 
+						  static_cast<SDL_RendererFlip>(flip));
+	}
+
+	void RenderContext::DrawTextureWithFlip(const Texture& texture, FRect target, TextureFlip flip)
+	{
+		SDL_RenderCopyExF(_renderer, texture, nullptr, &target, 0, nullptr,
+						  static_cast<SDL_RendererFlip>(flip));
+	}
+
+	void RenderContext::DrawTextureWithFlip(const Texture& texture, FRect target, Color fill,
+											TextureFlip flip)
+	{
+		texture.SetColor(fill);
+		SDL_RenderCopyExF(_renderer, texture, nullptr, &target, 0, nullptr,
+						  static_cast<SDL_RendererFlip>(flip));
+	}
+
+	void RenderContext::DrawTextureWithFlip(const Texture& texture, FRect target, Rect source,
+											TextureFlip flip)
+	{
+		SDL_RenderCopyExF(_renderer, texture, &source, &target, 0, nullptr,
+						  static_cast<SDL_RendererFlip>(flip));
+	}
+
+	void RenderContext::DrawTextureWithFlip(const Texture& texture, FRect target, Rect source,
+											Color fill, TextureFlip flip)
+	{
+		texture.SetColor(fill);
+		SDL_RenderCopyExF(_renderer, texture, &source, &target, 0, nullptr,
+						  static_cast<SDL_RendererFlip>(flip));
+	}
+
+	void RenderContext::DrawTextureWithRotationAndFlip(
+		const Texture& texture, double angle, FPoint center, TextureFlip flip)
+	{
+		SDL_RenderCopyExF(_renderer, texture, nullptr, nullptr, angle, &center, 
+						  static_cast<SDL_RendererFlip>(flip));
+	}
+
+	void RenderContext::DrawTextureWithRotationAndFlip(
+		const Texture& texture, FRect target, double angle, 
+		FPoint center, TextureFlip flip)
+	{
+		SDL_RenderCopyExF(_renderer, texture, nullptr, &target, angle, &center,
+						  static_cast<SDL_RendererFlip>(flip));
+	}
+
+	void RenderContext::DrawTextureWithRotationAndFlip(
+		const Texture& texture, FRect target, Color fill, 
+		double angle, FPoint center, TextureFlip flip)
+	{
+		texture.SetColor(fill);
+		SDL_RenderCopyExF(_renderer, texture, nullptr, &target, angle, &center,
+						  static_cast<SDL_RendererFlip>(flip));
+	}
+
+	void RenderContext::DrawTextureWithRotationAndFlip(
+		const Texture& texture, FRect target, Rect source,
+		double angle, FPoint center, TextureFlip flip)
+	{
+		SDL_RenderCopyExF(_renderer, texture, &source, &target, angle, &center,
+						  static_cast<SDL_RendererFlip>(flip));
+	}
+
+	void RenderContext::DrawTextureWithRotationAndFlip(
+		const Texture& texture, FRect target, Rect source, 
+		Color fill, double angle, FPoint center, TextureFlip flip)
+	{
+		texture.SetColor(fill);
+		SDL_RenderCopyExF(_renderer, texture, &source, &target, angle, &center,
+						  static_cast<SDL_RendererFlip>(flip));
 	}
 
 	static constexpr size_t MaxPointsNumber = 180;
@@ -127,7 +239,7 @@ namespace Sgl
 		DrawEllipseFill(position, diameter, diameter, color);
 	}
 
-	void RenderContext::DrawCircleFill(FPoint position, int diameter, Texture& texture, Color color)
+	void RenderContext::DrawCircleFill(FPoint position, int diameter, const Texture& texture, Color color)
 	{
 		DrawEllipseFill(position, diameter, diameter, texture, color);
 	}
@@ -223,7 +335,7 @@ namespace Sgl
 		SDL_RenderClear(_renderer);
 	}
 
-	void RenderContext::FillBackground(Texture& texture, Color color)
+	void RenderContext::FillBackground(const Texture& texture, Color color)
 	{
 		texture.SetColor(color);
 		SDL_RenderCopy(_renderer, texture, nullptr, nullptr);

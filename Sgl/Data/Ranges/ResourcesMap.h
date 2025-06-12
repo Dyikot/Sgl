@@ -18,7 +18,6 @@ namespace Sgl
 		auto end() const { return _resources.end(); }
 
 		void Add(std::string_view key, Any item);
-		void AddTexture(std::string_view key, std::string_view path);
 		void Remove(std::string_view key);
 		Any& Get(std::string_view key);
 		Nullable<Any> TryGet(std::string_view key);

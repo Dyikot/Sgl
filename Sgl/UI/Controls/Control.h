@@ -15,7 +15,7 @@ namespace Sgl::UI
 		Color _borderColor;
 		Thickness _padding;
 		Thickness _borderThickness;
-		std::shared_ptr<Font> _font;
+		shared_ptr<Font> _font;
 	public:
 		Control();
 		Control(const Control& other);
@@ -31,7 +31,7 @@ namespace Sgl::UI
 		void SetBorderColor(Color value) { _borderColor = value; }
 		Color GetBorderColor() const { return _borderColor; }
 
-		void SetFont(std::shared_ptr<Font> value) { _font = value; }
+		void SetFont(shared_ptr<Font> value) { _font = value; }
 		auto GetFont() const { return _font; }
 
 		void ResetToDefault() override;

@@ -1,16 +1,10 @@
 #include "ResourcesMap.h"
-#include "../../Visual/Renderer.h"
 
 namespace Sgl
 {
 	void ResourcesMap::Add(std::string_view key, Any item)
 	{
 		_resources.emplace(key, std::move(item));
-	}
-
-	void ResourcesMap::AddTexture(std::string_view key, std::string_view path)
-	{
-		Add(key, Renderer().LoadTexture(path));
 	}
 
 	void ResourcesMap::Remove(std::string_view key)

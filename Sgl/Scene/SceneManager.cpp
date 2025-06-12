@@ -23,12 +23,12 @@ namespace Sgl
 		}
 	}
 
-	std::shared_ptr<Scene> SceneManager::GetCurrentScene()
+	shared_ptr<Scene> SceneManager::GetCurrentScene()
 	{
 		return _scenes.empty() ? nullptr : _scenes.top();
 	}
 
-	std::shared_ptr<Scene> SceneManager::GetNextScene()
+	shared_ptr<Scene> SceneManager::GetNextScene()
 	{
 		while(true)
 		{

@@ -20,29 +20,55 @@ namespace Sgl
 		
 		void DrawPoint(FPoint point, Color color);
 		void DrawPoints(std::span<const FPoint> points, Color color);
+
 		void DrawLine(FPoint start, FPoint end, Color color);
 		void DrawLines(std::span<const FPoint> points, Color color);
-		void DrawRect(FRect rectange, Color color);
-		void DrawRects(std::span<const FRect> rectanges, Color color);
-		void DrawFillRect(FRect rectange, Color fill);
-		void DrawFillRects(std::span<const FRect> rectanges, Color fill);
-		void DrawTexture(const Texture& texture, FRect rectangle);
-		void DrawTexture(const Texture& texture, FRect rectangle, Color fill);
-		void DrawTexture(Texture& texture, FRect rectangle, Rect clip);
-		void DrawTexture(Texture& texture, FRect rectangle, Rect clip, Color fill);
+
+		void DrawRect(FRect rect, Color color);
+		void DrawRects(std::span<const FRect> rects, Color color);
+
+		void DrawFillRect(FRect rect, Color fill);
+		void DrawFillRects(std::span<const FRect> rects, Color fill);
+
+		void DrawTexture(const Texture& texture);
+		void DrawTexture(const Texture& texture, FRect target);
+		void DrawTexture(const Texture& texture, FRect target, Color fill);
+		void DrawTexture(const Texture& texture, FRect target, Rect source);
+		void DrawTexture(const Texture& texture, FRect target, Rect source, Color fill);
+
+		void DrawTextureWithRotation(const Texture& texture, double angle, FPoint center);
+		void DrawTextureWithRotation(const Texture& texture, FRect target, double angle, FPoint center);
+		void DrawTextureWithRotation(const Texture& texture, FRect target, Color fill, double angle, FPoint center);
+		void DrawTextureWithRotation(const Texture& texture, FRect target, Rect source, double angle, FPoint center);
+		void DrawTextureWithRotation(const Texture& texture, FRect target, Rect source, Color fill, double angle, FPoint center);
+		
+		void DrawTextureWithFlip(const Texture& texture, TextureFlip flip);
+		void DrawTextureWithFlip(const Texture& texture, FRect target, TextureFlip flip);
+		void DrawTextureWithFlip(const Texture& texture, FRect target, Color fill, TextureFlip flip);
+		void DrawTextureWithFlip(const Texture& texture, FRect target, Rect source, TextureFlip flip);
+		void DrawTextureWithFlip(const Texture& texture, FRect target, Rect source, Color fill, TextureFlip flip);
+
+		void DrawTextureWithRotationAndFlip(const Texture& texture, double angle, FPoint center, TextureFlip flip);
+		void DrawTextureWithRotationAndFlip(const Texture& texture, FRect target, double angle, FPoint center, TextureFlip flip);
+		void DrawTextureWithRotationAndFlip(const Texture& texture, FRect target, Color fill, double angle, FPoint center, TextureFlip flip);
+		void DrawTextureWithRotationAndFlip(const Texture& texture, FRect target, Rect source, double angle, FPoint center, TextureFlip flip);
+		void DrawTextureWithRotationAndFlip(const Texture& texture, FRect target, Rect source, Color fill, double angle, FPoint center, TextureFlip flip);
+
 		void DrawCircle(FPoint position, int diameter, Color color);
 		void DrawCircleFill(FPoint position, int diameter, Color color);
-		void DrawCircleFill(FPoint position, int diameter, Texture& texture, Color color);
+		void DrawCircleFill(FPoint position, int diameter, const Texture& texture, Color color);
+
 		void DrawEllipse(FPoint position, int width, int height, Color color);
 		void DrawEllipseFill(FPoint position, int width, int height, Color color);
 		void DrawEllipseFill(FPoint position, int width, int height, const Texture& texture, Color color);
+
 		void DrawGeometry(std::span<const Vertex> vertices);
 		void DrawGeometry(std::span<const Vertex> vertices, const Texture& texture);
 		void DrawGeometry(std::span<const Vertex> vertices, std::span<const int> order);
 		void DrawGeometry(std::span<const Vertex> vertices, std::span<const int> order, const Texture& texture);
 
 		void FillBackground(Color color);
-		void FillBackground(Texture& texture, Color color);
+		void FillBackground(const Texture& texture, Color color);
 	private:
 		void SetColor(Color color) const noexcept
 		{

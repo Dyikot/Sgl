@@ -31,11 +31,11 @@ namespace Sgl::UI
 		float _maxWidth;
 		float _maxHeight;
 		size_t _zIndex;
-		std::shared_ptr<VisualElement> _tooltip;
+		Thickness _margin;
 		Visibility _visibility;
+		shared_ptr<VisualElement> _tooltip;
 		VerticalAlignment _verticalAlignment;
 		HorizontalAlignment _horizontalAlignment;
-		Thickness _margin;
 
 		float _actualWidth;
 		float _actualHeight;
@@ -79,7 +79,7 @@ namespace Sgl::UI
 		void SetZIndex(size_t value) { _zIndex = value; }
 		size_t GetZIndex() const { return _zIndex; }
 
-		void SetTooltip(std::shared_ptr<VisualElement> value) { _tooltip = value; }
+		void SetTooltip(shared_ptr<VisualElement> value) { _tooltip = value; }
 		auto GetTooltip() const { return _tooltip; }
 
 		void SetVisibility(Visibility value) { _visibility = value; }

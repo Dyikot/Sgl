@@ -24,7 +24,7 @@ namespace Sgl::UI
 		using base = UIElement;
 
 		bool _isHover;
-		std::shared_ptr<UIElement> _hoverChild;
+		shared_ptr<UIElement> _hoverChild;
 	public:
 		Layout(VisualElement& parent);
 

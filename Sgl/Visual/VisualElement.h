@@ -4,6 +4,9 @@
 #include "../Visual/RenderContext.h"
 #include "../Visual/Cursor.h"
 
+using std::shared_ptr;
+using std::make_shared;
+
 namespace Sgl
 {
 	class VisualElement: public IStyleable
@@ -11,7 +14,7 @@ namespace Sgl
 	private:
 		Cursor::Getter _cursor;
 		Color _backgroundColor;
-		std::shared_ptr<Texture> _backgroundTexture;
+		shared_ptr<Texture> _backgroundTexture;
 	public:
 		VisualElement();
 		VisualElement(const VisualElement& other);
@@ -23,8 +26,8 @@ namespace Sgl
 
 		void SetBackgroundColor(Color value) { _backgroundColor = value; }
 		Color GetBackgroundColor() const { return _backgroundColor; }
-
-		void SetBackgroundTexture(std::shared_ptr<Texture> value) { _backgroundTexture = value; }
+		
+		void SetBackgroundTexture(shared_ptr<Texture> value) { _backgroundTexture = value; }
 		auto GetBackgroundTexture() const { return _backgroundTexture; }
 
 		virtual void OnRender(RenderContext rc) const = 0;
