@@ -78,7 +78,5 @@ namespace Sgl
 			SDL_SetRenderDrawColor(_renderer, color.Red, color.Green, color.Blue, color.Alpha);
 		}
 	};
-
-	using RenderFragment = Action<RenderContext>;
 }
 

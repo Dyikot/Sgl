@@ -2,10 +2,6 @@
 
 namespace Sgl::UI
 {
-	Canvas::Canvas(VisualElement& parent):
-		Layout(parent)
-	{}
-
 	void Canvas::Arrange()
 	{
 		if(!_shouldArrange)

@@ -16,7 +16,7 @@ namespace Sgl::UI
 	class Layout: public UIElement, public ILayout
 	{
 	public:
-		VisualElement& Parent;
+		VisualElement* Parent;
 		UIElementsCollection Children;
 	protected:
 		bool _shouldArrange;
@@ -26,7 +26,7 @@ namespace Sgl::UI
 		bool _isHover;
 		shared_ptr<UIElement> _hoverChild;
 	public:
-		Layout(VisualElement& parent);
+		Layout();
 
 		void QueryArrange() override;
 		void OnRender(RenderContext rc) const override;

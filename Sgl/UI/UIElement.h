@@ -22,8 +22,6 @@ namespace Sgl::UI
 
 		Event<UIElement&> SizeChanged;
 	private:
-		using base = VisualElement;
-
 		float _width;
 		float _height;
 		float _minWidth;

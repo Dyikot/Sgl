@@ -7,7 +7,7 @@ namespace Sgl::UI
 	class Canvas: public Layout
 	{
 	public:
-		Canvas(VisualElement& parent);
+		Canvas() = default;
 
 		void Arrange() override;
 	};

@@ -1,4 +1,5 @@
 #include "Scene.h"
+#include <cassert>
 
 namespace Sgl
 {
@@ -6,6 +7,18 @@ namespace Sgl
 		Class(*this),
 		_layout(nullptr)
 	{}
+
+	void Scene::SetLayout(shared_ptr<UI::Layout> value)
+	{
+		assert(value != nullptr);
+		_layout = std::move(value);
+		_layout->Parent = this;
+	}
+
+	shared_ptr<UI::Layout> Scene::GetLayout() const
+	{
+		return _layout;
+	}
 
 	void Scene::OnRender(RenderContext rc) const
 	{
@@ -23,11 +36,6 @@ namespace Sgl
 
 		_layout->Arrange();
 		_layout->OnRender(rc);
-	}
-
-	void Scene::SetLayout(UI::Layout& layout)
-	{
-		_layout = &layout;
 	}
 
 	void Scene::OnMouseMove(const MouseButtonEventArgs& e)

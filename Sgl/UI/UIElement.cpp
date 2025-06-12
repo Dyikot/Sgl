@@ -25,7 +25,7 @@ namespace Sgl::UI
 	{}
 
 	UIElement::UIElement(const UIElement& other):
-		base(other),
+		VisualElement(other),
 		Class(other.Class),
 		OnHover(other.OnHover),
 		OnMousePressed(other.OnMousePressed),
@@ -48,7 +48,7 @@ namespace Sgl::UI
 	{}
 
 	UIElement::UIElement(UIElement&& other) noexcept:
-		base(std::move(other)),
+		VisualElement(std::move(other)),
 		Class(std::move(other.Class)),
 		OnHover(std::move(other.OnHover)),
 		OnMousePressed(std::move(other.OnMousePressed)),
@@ -80,7 +80,7 @@ namespace Sgl::UI
 
 	void UIElement::ResetToDefault()
 	{
-		base::ResetToDefault();
+		VisualElement::ResetToDefault();
 
 		SetWidth(0);
 		SetHeight(0);

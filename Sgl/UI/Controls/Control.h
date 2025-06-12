@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../UIElement.h"
+#include "../Layout/Layout.h"
 #include "../../Visual/Font.h"
 
 namespace Sgl::UI
@@ -8,9 +9,7 @@ namespace Sgl::UI
 	class Control: public UIElement
 	{
 	private:
-		using base = UIElement;
-
-		Layout* _layout = nullptr;
+		shared_ptr<Layout> _layout;
 
 		Color _borderColor;
 		Thickness _padding;
@@ -21,6 +20,9 @@ namespace Sgl::UI
 		Control(const Control& other);
 		Control(Control&& other) noexcept;
 		virtual ~Control() = default;
+
+		void SetLayout(shared_ptr<Layout> value);
+		shared_ptr<Layout> GetLayout() const;
 
 		void SetPadding(Thickness value) { _padding = value; }
 		Thickness GetPadding() const { return _padding; }
@@ -36,8 +38,6 @@ namespace Sgl::UI
 
 		void ResetToDefault() override;
 	protected:
-		void SetLayout(Layout& layout);
-
 		virtual void OnMouseDoubleClick(const MouseButtonEventArgs& e) {}
 	};
 }

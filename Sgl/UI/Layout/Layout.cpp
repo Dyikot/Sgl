@@ -2,8 +2,8 @@
 
 namespace Sgl::UI
 {  
-    Layout::Layout(VisualElement& parent):
-        Parent(parent),
+    Layout::Layout():
+        Parent(nullptr),
         Children(*this),
         _isHover(false),
         _shouldArrange(false)
@@ -68,7 +68,7 @@ namespace Sgl::UI
         }
 
         _hoverChild = nullptr;
-        Cursor::Set(Parent.GetCursor());
+        Cursor::Set(Parent->GetCursor());
     }
 
     void Layout::OnMouseDown(const MouseButtonEventArgs& e)

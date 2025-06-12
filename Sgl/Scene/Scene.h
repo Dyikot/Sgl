@@ -13,18 +13,19 @@ namespace Sgl
 	public:
 		Style Class;
 	private:
-		UI::Layout* _layout;
+		shared_ptr<UI::Layout> _layout;
 	public:
 		Scene();
 		Scene(const Scene&) = delete;
 		Scene(Scene&&) = delete;
 		virtual ~Scene() = default;
 
+		void SetLayout(shared_ptr<UI::Layout> value);
+		shared_ptr<UI::Layout> GetLayout() const;
+
 		void OnRender(RenderContext rc) const override;
 		virtual void OnUpdate(TimeSpan elapsed) = 0;
 	protected:
-		void SetLayout(UI::Layout& layout);
-
 		virtual void OnStopped() {}
 		virtual void OnResumed() {}
 		virtual void OnCreated() {}
