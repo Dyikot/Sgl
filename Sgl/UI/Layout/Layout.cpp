@@ -3,8 +3,7 @@
 namespace Sgl::UI
 {  
     Layout::Layout():
-        Parent(nullptr),
-        Children(*this),
+        _children(*this),
         _isHover(false),
         _shouldArrange(false)
     {}
@@ -24,12 +23,24 @@ namespace Sgl::UI
 
     void Layout::OnRender(RenderContext rc) const
     {
-        base::OnRender(rc);
+        UIElement::OnRender(rc);
         
-        for(auto& child : Children)
+        for(auto& child : _children)
         {
             child->OnRender(rc);
         }
+    }
+
+    void Layout::OnMouseEnter(FPoint position)
+    {
+        UIElement::OnMouseEnter(position);
+        MouseEnter.TryRaise(position);
+    }
+
+    void Layout::OnMouseLeave(FPoint position)
+    {
+        UIElement::OnMouseLeave(position);
+        MouseLeave.TryRaise(position);
     }
 
     void Layout::OnMouseMove(const MouseButtonEventArgs& e)
@@ -42,7 +53,7 @@ namespace Sgl::UI
             return;
         }
 
-        for(auto& child : Children)
+        for(auto& child : _children)
         {
             if(IsHover(e.Position, child->GetActualPosition(), 
                                    child->GetActualWidth(),
@@ -50,12 +61,12 @@ namespace Sgl::UI
             {
                 if(_hoverChild)
                 {
-                    _hoverChild->OnMouseLeave(e);
+                    _hoverChild->OnMouseLeave(e.Position);
                 }
 
                 _hoverChild = child;
                 Cursor::Set(child->GetCursor());
-                child->OnMouseEnter(e);
+                child->OnMouseEnter(e.Position);
                 child->OnMouseMove(e);
 
                 return;
@@ -64,16 +75,16 @@ namespace Sgl::UI
 
         if(_hoverChild)
         {
-            _hoverChild->OnMouseLeave(e);
+            _hoverChild->OnMouseLeave(e.Position);
         }
 
         _hoverChild = nullptr;
-        Cursor::Set(Parent->GetCursor());
+        Cursor::Set(GetCursor());
     }
 
     void Layout::OnMouseDown(const MouseButtonEventArgs& e)
     {
-        base::OnMouseDown(e);
+        UIElement::OnMouseDown(e);
 
         if(_hoverChild)
         {
@@ -83,7 +94,7 @@ namespace Sgl::UI
 
     void Layout::OnMouseUp(const MouseButtonEventArgs& e)
     {
-        base::OnMouseUp(e);
+        UIElement::OnMouseUp(e);
 
         if(_hoverChild)
         {
@@ -93,7 +104,7 @@ namespace Sgl::UI
 
     void Layout::OnMouseWheel(const MouseWheelEventArgs& e)
     {
-        for(auto& child : Children)
+        for(auto& child : _children)
         {
             child->OnMouseWheel(e);
         }
@@ -101,7 +112,7 @@ namespace Sgl::UI
 
     void Layout::OnKeyDown(const KeyEventArgs& e)
     {
-        for(auto& child : Children)
+        for(auto& child : _children)
         {
             child->OnKeyDown(e);
         }
@@ -109,7 +120,7 @@ namespace Sgl::UI
 
     void Layout::OnKeyUp(const KeyEventArgs& e)
     {
-        for(auto& child : Children)
+        for(auto& child : _children)
         {
             child->OnKeyUp(e);
         }
@@ -117,9 +128,9 @@ namespace Sgl::UI
 
     void Layout::OnSizeChanged()
     {
-        base::OnSizeChanged();
+        UIElement::OnSizeChanged();
 
-        if(Children.Count() > 0)
+        if(_children.Count() > 0)
         {
             QueryArrange();
         }
@@ -134,14 +145,14 @@ namespace Sgl::UI
         {
             if(!wasHover)
             {
-                OnMouseEnter(e);
+                OnMouseEnter(e.Position);
             }
 
             OnMouseMove(e);
         }
         else if(wasHover)
         {
-            OnMouseLeave(e);
+            OnMouseLeave(e.Position);
         }
     }
 }

@@ -1,15 +1,16 @@
 #pragma once
 
-#include <type_traits>
-#include "Nullable.h"
+#include <typeinfo>
 
 namespace Sgl
 {
 	class object final
 	{
+	private:
+		void* _value;
 	public:
 		object():
-			_value(nullptr), _type(typeid(nullptr))
+			_value(nullptr)
 		{}
 
 		object(std::nullptr_t):
@@ -17,21 +18,17 @@ namespace Sgl
 		{}
 
 		object(const object& other):
-			_value(other._value), _type(other._type)
+			_value(other._value)
 		{}
 
-		object(object&&) = delete;
-
-		template<typename T>
-		object(T& value) :
-			_value(&value), _type(typeid(T))
+		object(object&& other) noexcept:
+			_value(std::exchange(other._value, nullptr))
 		{}
 
 		template<typename T>
-		bool Is() const
-		{
-			return _type == typeid(T);
-		}
+		object(T& value):
+			_value(&value)
+		{}
 
 		template<typename T>
 		T& As()
@@ -45,18 +42,6 @@ namespace Sgl
 			return *static_cast<const T*>(_value);
 		}
 
-		template<typename T>
-		Nullable<T> TryAs() noexcept
-		{
-			return Is<T>() ? &As<T>() : nullptr;
-		}
-
-		template<typename T>
-		Nullable<const T> TryAs() const noexcept
-		{
-			return Is<T>() ? &As<T>() : nullptr;
-		}
-
 		friend bool operator==(object left, object right)
 		{
 			return left._value == right._value;
@@ -65,62 +50,59 @@ namespace Sgl
 		template<typename T>
 		object& operator=(T& value)
 		{
-			_type = typeid(T);
 			_value = &value;
 			return *this;
 		}
 
-		object& operator=(object ref)
+		object& operator=(const object& other)
 		{
-			_type = ref._type;
-			_value = ref._value;
+			_value = other._value;
 			return *this;
 		}
-	private:
-		std::reference_wrapper<const std::type_info> _type;
-		void* _value;
+
+		object& operator=(object&& other) noexcept
+		{
+			_value = std::exchange(other._value, nullptr);
+			return *this;
+		}
 
 		friend class const_object;
 	};
 
 	class const_object final
 	{
+	private:
+		const void* _value;
 	public:
 		const_object():
-			_value(nullptr), _type(typeid(nullptr))
+			_value(nullptr)
 		{}
 
 		const_object(std::nullptr_t):
 			const_object()
 		{}
 
-		const_object(const object& other):
-			_value(other._value), _type(other._type)
+		template<typename T>
+		const_object(const T& value):
+			_value(&value)
 		{}
 
-		const_object(const_object&&) = delete;
-
-		template<typename T>
-		const_object(const T& value) :
-			_value(&value), _type(typeid(T))
+		const_object(object other):
+			_value(other._value)
 		{}
 
-		template<typename T>
-		bool Is() const
-		{
-			return _type == typeid(T);
-		}
+		const_object(const const_object& other):
+			_value(other._value)
+		{}
+
+		const_object(const_object&& other) noexcept:
+			_value(std::exchange(other._value, nullptr))
+		{}
 
 		template<typename T>
 		const T& As() const
 		{
 			return *static_cast<const T*>(_value);
-		}
-
-		template<typename T>
-		Nullable<const T> TryAs() const noexcept
-		{
-			return Is<T>() ? &As<T>() : nullptr;
 		}
 
 		friend bool operator==(const_object left, const_object right)
@@ -131,19 +113,20 @@ namespace Sgl
 		template<typename T>
 		const_object& operator=(T& value)
 		{
-			_type = typeid(T);
 			_value = &value;
 			return *this;
 		}
 
-		const_object& operator=(const_object ref)
+		const_object& operator=(const const_object& other)
 		{
-			_type = ref._type;
-			_value = ref._value;
+			_value = other._value;
 			return *this;
 		}
-	private:
-		std::reference_wrapper<const std::type_info> _type;
-		const void* _value;
+
+		const_object& operator=(const_object&& other) noexcept
+		{
+			_value = std::exchange(other._value, nullptr);
+			return *this;
+		}
 	};
 }

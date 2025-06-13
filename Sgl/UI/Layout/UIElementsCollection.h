@@ -13,10 +13,6 @@ namespace Sgl::UI
 		{
 			ILayout& Layout;
 
-			OnItemSizeChanged(ILayout& layout):
-				Layout(layout)
-			{}
-
 			void operator()(UIElement& element) const
 			{
 				Layout.QueryArrange();

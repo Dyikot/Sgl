@@ -20,7 +20,7 @@ namespace Sgl
 		_backgroundTexture(std::move(other._backgroundTexture))
 	{}
 
-	void VisualElement::ResetToDefault()
+	void VisualElement::ApplyDefaultStyle()
 	{
 		_cursor = Cursors::Arrow;
 		_backgroundColor = Colors::Black;

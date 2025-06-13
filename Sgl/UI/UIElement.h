@@ -1,11 +1,12 @@
 #pragma once
 
-#include "../Style/Trigger.h"
 #include "../Style/Layout.h"
+#include "../Style/Trigger.h"
 #include "../Events/Event.h"
 #include "../Events/MouseAndKeyEvents.h"
 #include "../Visual/VisualElement.h"
 #include "../Data/Object.h"
+#include "../Visual/Renderer.h"
 
 namespace Sgl::UI
 {
@@ -15,8 +16,6 @@ namespace Sgl::UI
 		public IKeyEventsListener
 	{
 	public:
-		Style Class;
-
 		Trigger OnHover;
 		Trigger OnMousePressed;
 
@@ -31,15 +30,14 @@ namespace Sgl::UI
 		size_t _zIndex;
 		Thickness _margin;
 		Visibility _visibility;
-		shared_ptr<VisualElement> _tooltip;
 		VerticalAlignment _verticalAlignment;
 		HorizontalAlignment _horizontalAlignment;
-
 		float _actualWidth;
 		float _actualHeight;
-
 		FPoint _position;
 		FPoint _actualPosition;
+
+		RenderFragment _tooltip;
 	public:
 		UIElement();
 		UIElement(const UIElement& other);
@@ -54,7 +52,7 @@ namespace Sgl::UI
 		}
 		float GetWidth() const { return _width; }
 
-		void SetHeight(float value) 
+		void SetHeight(float value)
 		{
 			_height = value;
 			_actualHeight = value - _margin.Bottom;
@@ -77,26 +75,27 @@ namespace Sgl::UI
 		void SetZIndex(size_t value) { _zIndex = value; }
 		size_t GetZIndex() const { return _zIndex; }
 
-		void SetTooltip(shared_ptr<VisualElement> value) { _tooltip = value; }
-		auto GetTooltip() const { return _tooltip; }
-
 		void SetVisibility(Visibility value) { _visibility = value; }
-		auto GetVisibility() const { return _visibility; }
+		Visibility GetVisibility() const { return _visibility; }
 
 		void SetVerticalAlignment(VerticalAlignment value) { _verticalAlignment = value; }
-		auto GetVerticalAlignment() const { return _verticalAlignment; }
+		VerticalAlignment GetVerticalAlignment() const { return _verticalAlignment; }
 
 		void SetHorizontalAlignment(HorizontalAlignment value) { _horizontalAlignment = value; }
-		auto GetHorizontalAlignment() const { return _horizontalAlignment; }
+		HorizontalAlignment GetHorizontalAlignment() const { return _horizontalAlignment; }
 
 		void SetMargin(const Thickness& value) { _margin = value; }
-		auto GetMargin() const { return _margin; }
+		const Thickness& GetMargin() const { return _margin; }
 
 		float GetActualWidth() const { return _actualWidth; }
 		float GetActualHeight() const { return _actualHeight; }
 
+		void SetTooltip(RenderFragment value) { _tooltip = std::move(value); }
+		// TODO: Create tooltip for text
+		void SetTooltip(const std::string& text);
+
 		void OnRender(RenderContext rc) const override;
-		void ResetToDefault() override;
+		void ApplyDefaultStyle() override;
 	protected:
 		void SetPosition(FPoint value)
 		{
@@ -110,14 +109,14 @@ namespace Sgl::UI
 		FPoint GetPosition() const { return _position; }
 		FPoint GetActualPosition() const { return _actualPosition; }
 
-		void OnKeyUp(const KeyEventArgs& e) override {}
-		void OnKeyDown(const KeyEventArgs& e) override {}
-		void OnMouseMove(const MouseButtonEventArgs& e) override {}
-		void OnMouseWheel(const MouseWheelEventArgs& e) override {}
-		void OnMouseDown(const MouseButtonEventArgs& e) override;
-		void OnMouseUp(const MouseButtonEventArgs& e) override;
-		virtual void OnMouseEnter(const MouseButtonEventArgs& e);
-		virtual void OnMouseLeave(const MouseButtonEventArgs& e);
+		void OnKeyUp(const KeyEventArgs& e) {}
+		void OnKeyDown(const KeyEventArgs& e) {}
+		void OnMouseMove(const MouseButtonEventArgs& e) {}
+		void OnMouseWheel(const MouseWheelEventArgs& e) {}
+		void OnMouseDown(const MouseButtonEventArgs& e);
+		void OnMouseUp(const MouseButtonEventArgs& e);
+		virtual void OnMouseEnter(FPoint position);
+		virtual void OnMouseLeave(FPoint position);
 		virtual void OnSizeChanged();
 
 		friend class Layout;
@@ -125,8 +124,7 @@ namespace Sgl::UI
 
 	struct UIElementComparer
 	{
-		bool operator()(const std::shared_ptr<UIElement>& left,
-						const std::shared_ptr<UIElement>& right) const
+		bool operator()(const shared_ptr<UIElement>& left, const shared_ptr<UIElement>& right) const
 		{
 			return left->GetZIndex() < right->GetZIndex();
 		}

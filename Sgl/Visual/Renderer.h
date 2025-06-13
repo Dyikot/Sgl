@@ -9,9 +9,6 @@ namespace Sgl
 {
 	using RenderFragment = Action<RenderContext>;
 
-	template<typename T>
-	using RenderFragmentFor = RenderFragment(*)(const T&);
-
 	class Renderer
 	{
 	private:

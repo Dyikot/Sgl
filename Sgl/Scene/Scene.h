@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../UI/Layout/Layout.h"
+#include "../UI/Layout/ILayoutElement.h"
 #include "../Tools/Time/TimeSpan.h"
 
 namespace Sgl
@@ -8,10 +8,9 @@ namespace Sgl
 	class Scene: 
 		public VisualElement,
 		public IKeyEventsListener,
-		public IMouseEventsListener	
+		public IMouseEventsListener,
+		public UI::ILayoutElement
 	{
-	public:
-		Style Class;
 	private:
 		shared_ptr<UI::Layout> _layout;
 	public:
@@ -20,8 +19,8 @@ namespace Sgl
 		Scene(Scene&&) = delete;
 		virtual ~Scene() = default;
 
-		void SetLayout(shared_ptr<UI::Layout> value);
-		shared_ptr<UI::Layout> GetLayout() const;
+		void SetLayout(shared_ptr<UI::Layout> value) override;
+		shared_ptr<UI::Layout> GetLayout() const override;
 
 		void OnRender(RenderContext rc) const override;
 		virtual void OnUpdate(TimeSpan elapsed) = 0;

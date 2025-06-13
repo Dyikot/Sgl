@@ -1,15 +1,15 @@
 #pragma once
 
-#include "../Style/Style.h"
-#include "../Visual/RenderContext.h"
 #include "../Visual/Cursor.h"
+#include "../Visual/RenderContext.h"
+#include "../Style/StyleableElement.h"
 
 using std::shared_ptr;
 using std::make_shared;
 
 namespace Sgl
 {
-	class VisualElement: public IStyleable
+	class VisualElement: public StyleableElement
 	{
 	private:
 		Cursor::Getter _cursor;
@@ -28,10 +28,9 @@ namespace Sgl
 		Color GetBackgroundColor() const { return _backgroundColor; }
 		
 		void SetBackgroundTexture(shared_ptr<Texture> value) { _backgroundTexture = value; }
-		auto GetBackgroundTexture() const { return _backgroundTexture; }
+		shared_ptr<Texture> GetBackgroundTexture() const { return _backgroundTexture; }
 
 		virtual void OnRender(RenderContext rc) const = 0;
-
-		void ResetToDefault() override;
+		void ApplyDefaultStyle();
 	};
 }

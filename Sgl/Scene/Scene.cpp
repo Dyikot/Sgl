@@ -4,15 +4,30 @@
 namespace Sgl
 {
 	Scene::Scene():
-		Class(*this),
 		_layout(nullptr)
 	{}
+
+	struct LayoutMouseLeave
+	{
+		Scene& Scene;
+
+		void operator()(FPoint position) const
+		{
+			Cursor::Set(Scene.GetCursor());
+		}
+	};
 
 	void Scene::SetLayout(shared_ptr<UI::Layout> value)
 	{
 		assert(value != nullptr);
+
+		if(_layout)
+		{
+			_layout->MouseLeave -= LayoutMouseLeave(*this);
+		}
+
 		_layout = std::move(value);
-		_layout->Parent = this;
+		_layout->MouseLeave += LayoutMouseLeave(*this);
 	}
 
 	shared_ptr<UI::Layout> Scene::GetLayout() const

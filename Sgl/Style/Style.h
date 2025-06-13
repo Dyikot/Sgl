@@ -1,68 +1,76 @@
 #pragma once
 
-#include <vector>
+#include "../Data/Delegate.h"
 
 namespace Sgl
-{		
-	class IStyleable
+{
+	class Style;
+
+	class IStylable
 	{
 	public:
-		virtual ~IStyleable() = default;
+		virtual ~IStylable() = default;
 
-		virtual void ResetToDefault() = 0;
+		virtual void ApplyDefaultStyle() = 0;
+		virtual const Style& GetStyle() const = 0;
 	};
 
-	class Trigger;
-
-	class Style final
+	class Style
 	{
 	public:
-		using StyleClass = void(*)(IStyleable&);
-	private:
-		IStyleable& _target;
-		std::vector<StyleClass> _classes;
-	public:
-		Style(IStyleable& target):
+		template<typename T>
+		struct Wrapper
+		{
+			T& Target;
+			Action<T&> Setter;
+
+			void operator()() const
+			{
+				Setter(Target);
+			}
+		};
+    private:
+		Action<> _style;
+		IStylable& _target;
+    public:
+		Style(IStylable& target):
 			_target(target)
 		{}
 
 		Style(const Style& other):
-			_target(other._target),
-			_classes(other._classes)
+			_style(other._style),
+			_target(other._target)
 		{}
 
 		Style(Style&& other) noexcept:
-			_target(other._target),
-			_classes(std::move(other._classes))
+			_style(std::move(other._style)),
+			_target(other._target)
 		{}
 
-		template<StyleClass... Classes>
-		void Use()
+		template<std::derived_from<IStylable> T, typename... TSetters>
+		void Set(TSetters... setters)
 		{
-			_classes = { Classes... };
+			Action<T&> setter = [setters...](T& target)
+			{
+				(setters(target), ...);
+			};
+
+			_style = Wrapper<T>(static_cast<T&>(_target), std::move(setter));
+		}
+
+		template<std::derived_from<IStylable> T, typename... TSetters>
+		void Use(TSetters... setters)
+		{
+			Set<T, TSetters...>(setters...);
 			Apply();
 		}
 
-		void Use(const Style& style)
+		void Apply() const
 		{
-			_classes = style._classes;
-			Apply();
-		}
-	private:
-		void Apply()
-		{
-			for(StyleClass styleClass : _classes)
+			if(_style)
 			{
-				styleClass(_target);
+				_style();
 			}
 		}
-
-		void ResetAndApply()
-		{			
-			_target.ResetToDefault();
-			Apply();
-		}
-
-		friend class Trigger;
 	};
 }

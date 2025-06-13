@@ -5,6 +5,7 @@
 #include <memory>
 #include "../../Data/Size.h"
 #include "UIElementsCollection.h"
+#include "../../Events/Event.h"
 
 namespace Sgl
 {
@@ -16,17 +17,18 @@ namespace Sgl::UI
 	class Layout: public UIElement, public ILayout
 	{
 	public:
-		VisualElement* Parent;
-		UIElementsCollection Children;
+		Event<FPoint> MouseEnter;
+		Event<FPoint> MouseLeave;
 	protected:
 		bool _shouldArrange;
 	private:
-		using base = UIElement;
-
 		bool _isHover;
+		UIElementsCollection _children;
 		shared_ptr<UIElement> _hoverChild;
 	public:
 		Layout();
+
+		const UIElementsCollection& GetChildren() const { return _children; }
 
 		void QueryArrange() override;
 		void OnRender(RenderContext rc) const override;
@@ -34,6 +36,8 @@ namespace Sgl::UI
 		static void SetElementPosition(UIElement& element, FPoint position) { element.SetPosition(position); }
 		static FPoint GetElementPosition(UIElement& element) { return element.GetPosition(); }
 
+		void OnMouseEnter(FPoint position) override;
+		void OnMouseLeave(FPoint position) override;
 		void OnMouseMove(const MouseButtonEventArgs& e) override;
 		void OnMouseDown(const MouseButtonEventArgs& e) override;
 		void OnMouseUp(const MouseButtonEventArgs& e) override;
