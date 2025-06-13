@@ -19,7 +19,7 @@ namespace Sgl
 	{
 	public:
 		template<typename T>
-		struct Wrapper
+		struct SetterWrapper
 		{
 			T& Target;
 			Action<T&> Setter;
@@ -30,7 +30,7 @@ namespace Sgl
 			}
 		};
     private:
-		Action<> _style;
+		Action<> _source;
 		IStylable& _target;
     public:
 		Style(IStylable& target):
@@ -38,12 +38,12 @@ namespace Sgl
 		{}
 
 		Style(const Style& other):
-			_style(other._style),
+			_source(other._source),
 			_target(other._target)
 		{}
 
 		Style(Style&& other) noexcept:
-			_style(std::move(other._style)),
+			_source(std::move(other._source)),
 			_target(other._target)
 		{}
 
@@ -55,7 +55,7 @@ namespace Sgl
 				(setters(target), ...);
 			};
 
-			_style = Wrapper<T>(static_cast<T&>(_target), std::move(setter));
+			_source = SetterWrapper<T>(static_cast<T&>(_target), std::move(setter));
 		}
 
 		template<std::derived_from<IStylable> T, typename... TSetters>
@@ -67,9 +67,9 @@ namespace Sgl
 
 		void Apply() const
 		{
-			if(_style)
+			if(_source)
 			{
-				_style();
+				_source();
 			}
 		}
 	};
