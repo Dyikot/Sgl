@@ -11,35 +11,19 @@ namespace Sgl
 	{
 	private:
 		Action<TSender&, const TEventArgs&> _handler;
-		Nullable<const std::type_info> _targetType;
 	public:
 		EventHandler() = default;
 
 		EventHandler(const EventHandler& other):
-			_handler(other._handler),
-			_targetType(other._targetType)
+			_handler(other._handler)
 		{}
 
 		EventHandler(EventHandler&& other) noexcept:
-			_handler(std::move(other._handler)),
-			_targetType(std::move(other._targetType))
+			_handler(std::move(other._handler))
 		{}
 
-		EventHandler(CAction<TSender&, const TEventArgs&> auto&& handler):
-			_handler(std::forward<decltype(handler)>(handler)),
-			_targetType(typeid(_handler))
-		{}
-
-		EventHandler(CAction<const TEventArgs&> auto&& handler):
-			_handler([h = std::forward<decltype(handler)>(handler)]
-					 (TSender& sender, const TEventArgs& e) { h(e); }),
-			_targetType(typeid(handler))
-		{}
-
-		EventHandler(CAction auto&& handler):
-			_handler([h = std::forward<decltype(handler)>(handler)]
-					 (TSender& sender, const TEventArgs& e) { h(); }),
-			_targetType(typeid(handler))
+		EventHandler(Action<TSender&, const TEventArgs&> handler):
+			_handler(std::move(handler))
 		{}
 
 		bool IsEmpty() const noexcept
@@ -49,7 +33,7 @@ namespace Sgl
 
 		const std::type_info& TargetType() const noexcept
 		{
-			return _targetType | _handler.TargetType();
+			return _handler.TargetType();
 		}
 
 		void Invoke(TSender& sender, const TEventArgs& e) const

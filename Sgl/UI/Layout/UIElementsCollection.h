@@ -13,7 +13,7 @@ namespace Sgl::UI
 		{
 			ILayout& Layout;
 
-			void operator()(UIElement& element) const
+			void operator()(UIElement& element, const EventArgs& e) const
 			{
 				Layout.QueryArrange();
 			}

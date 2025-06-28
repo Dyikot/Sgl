@@ -1,28 +1,18 @@
 #pragma once
 
-#include "Trigger.h"
+#include "Style.h"
+#include <vector>
 
 namespace Sgl
 {
-	class StyleableElement: public IStylable
+	class StyleableElement
 	{
 	public:
-		Style Style;
+		std::vector<Style> Styles;
+		std::vector<std::string> Classes;
 	public:
-		StyleableElement():
-			Style(*this)
-		{}
-
-		virtual ~StyleableElement() = default;
-
-		StyleableElement(const StyleableElement& other):
-			Style(other.Style)
-		{}
-
-		StyleableElement(StyleableElement&& other) noexcept:
-			Style(std::move(other.Style))
-		{}
-
-		const Sgl::Style& GetStyle() const { return Style; }
+		StyleableElement() = default;
+		StyleableElement(const StyleableElement&) = default;
+		StyleableElement(StyleableElement&&) = default;
 	};
 }

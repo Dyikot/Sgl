@@ -31,6 +31,6 @@ namespace Sgl
 		shared_ptr<Texture> GetBackgroundTexture() const { return _backgroundTexture; }
 
 		virtual void OnRender(RenderContext rc) const = 0;
-		void ApplyDefaultStyle();
+		/*void ApplyDefaultStyle() override;*/
 	};
 }

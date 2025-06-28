@@ -31,19 +31,7 @@ namespace Sgl::UI
         }
     }
 
-    void Layout::OnMouseEnter(FPoint position)
-    {
-        UIElement::OnMouseEnter(position);
-        MouseEnter.TryRaise(position);
-    }
-
-    void Layout::OnMouseLeave(FPoint position)
-    {
-        UIElement::OnMouseLeave(position);
-        MouseLeave.TryRaise(position);
-    }
-
-    void Layout::OnMouseMove(const MouseButtonEventArgs& e)
+    void Layout::OnMouseMove(const MouseEventArgs& e)
     {
         if(_hoverChild && IsHover(e.Position, _hoverChild->GetActualPosition(),
                                               _hoverChild->GetActualWidth(),
@@ -61,12 +49,12 @@ namespace Sgl::UI
             {
                 if(_hoverChild)
                 {
-                    _hoverChild->OnMouseLeave(e.Position);
+                    _hoverChild->OnMouseLeave(e);
                 }
 
                 _hoverChild = child;
                 Cursor::Set(child->GetCursor());
-                child->OnMouseEnter(e.Position);
+                child->OnMouseEnter(e);
                 child->OnMouseMove(e);
 
                 return;
@@ -75,7 +63,7 @@ namespace Sgl::UI
 
         if(_hoverChild)
         {
-            _hoverChild->OnMouseLeave(e.Position);
+            _hoverChild->OnMouseLeave(e);
         }
 
         _hoverChild = nullptr;
@@ -136,7 +124,7 @@ namespace Sgl::UI
         }
     }
 
-    void Layout::OnSceneLayoutMouseMove(const MouseButtonEventArgs& e)
+    void Layout::OnSceneLayoutMouseMove(const MouseEventArgs& e)
     {
         bool wasHover = _isHover;
         _isHover = IsHover(e.Position, GetActualPosition(), GetActualWidth(), GetActualHeight());
@@ -145,14 +133,14 @@ namespace Sgl::UI
         {
             if(!wasHover)
             {
-                OnMouseEnter(e.Position);
+                OnMouseEnter(e);
             }
 
             OnMouseMove(e);
         }
         else if(wasHover)
         {
-            OnMouseLeave(e.Position);
+            OnMouseLeave(e);
         }
     }
 }

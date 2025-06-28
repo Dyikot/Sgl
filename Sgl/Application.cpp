@@ -100,7 +100,7 @@ namespace Sgl
 						.Key = e.key.keysym
 					};
 
-					scene->OnKeyDown(args);
+					scene->Layout->OnKeyDown(args);
 					break;
 				}
 
@@ -112,13 +112,13 @@ namespace Sgl
 						.Key = e.key.keysym
 					};
 
-					scene->OnKeyUp(args);
+					scene->Layout->OnKeyUp(args);
 					break;
 				}
 
 				case SDL_TEXTEDITING:
 				{
-					/*scene->OnTextChanged(
+					/*scene->Layout->OnTextChanged(
 						TextChangedEventArgs
 						{
 							.Text = e.edit.text,
@@ -131,7 +131,7 @@ namespace Sgl
 
 				case SDL_TEXTINPUT:
 				{
-					/*scene->OnTextInput(
+					/*scene->Layout->OnTextInput(
 						TextInputEventArgs
 						{
 							.Text = e.text.text
@@ -142,7 +142,7 @@ namespace Sgl
 
 				case SDL_TEXTEDITING_EXT:
 				{
-					/*scene->OnTextChanged(
+					/*scene->Layout->OnTextChanged(
 						TextChangedEventArgs
 						{
 							.Text = e.editExt.text,
@@ -156,7 +156,7 @@ namespace Sgl
 
 				case SDL_MOUSEMOTION:
 				{
-					MouseButtonEventArgs args =
+					MouseEventArgs args =
 					{
 						.Position =
 						{
@@ -165,7 +165,7 @@ namespace Sgl
 						}
 					};
 
-					scene->OnMouseMove(args);
+					scene->Layout->OnMouseMove(args);
 					break;
 				}
 
@@ -173,17 +173,12 @@ namespace Sgl
 				{
 					MouseButtonEventArgs args =
 					{
-						.Position =
-						{
-							.x = static_cast<float>(e.button.x),
-							.y = static_cast<float>(e.button.y)
-						},
 						.Button = static_cast<MouseButton>(e.button.button),
 						.State = static_cast<ButtonState>(e.button.state),
 						.ClicksNumber = e.button.clicks
 					};
 
-					scene->OnMouseDown(args);
+					scene->Layout->OnMouseDown(args);
 					break;
 				}
 
@@ -191,17 +186,12 @@ namespace Sgl
 				{
 					MouseButtonEventArgs args =
 					{
-						.Position =
-						{
-							.x = static_cast<float>(e.button.x),
-							.y = static_cast<float>(e.button.y)
-						},
 						.Button = static_cast<MouseButton>(e.button.button),
 						.State = static_cast<ButtonState>(e.button.state),
 						.ClicksNumber = e.button.clicks
 					};
 
-					scene->OnMouseUp(args);
+					scene->Layout->OnMouseUp(args);
 					break;
 				}
 
@@ -219,7 +209,7 @@ namespace Sgl
 						.Direction = static_cast<MouseWheelDirection>(e.wheel.direction)
 					};
 
-					scene->OnMouseWheel(args);
+					scene->Layout->OnMouseWheel(args);
 					break;
 				}
 
@@ -251,7 +241,7 @@ namespace Sgl
 			delayStopwatch.Restart();
 
 			HandleEvents(scene);
-			scene->OnUpdate(sceneStopwatch.Elapsed());
+			scene->Process(sceneStopwatch.Elapsed());
 			sceneStopwatch.Reset();
 
 			if(Window.IsVisible() || Window.IsRenderableWhenMinimized)

@@ -10,6 +10,7 @@
 namespace Sgl
 {
 	class Scene;
+	class Application;
 }
 
 namespace Sgl::UI
@@ -17,8 +18,8 @@ namespace Sgl::UI
 	class Layout: public UIElement, public ILayout
 	{
 	public:
-		Event<FPoint> MouseEnter;
-		Event<FPoint> MouseLeave;
+		Event<MouseEventHandler> MouseEnter;
+		Event<MouseEventHandler> MouseLeave;
 	protected:
 		bool _shouldArrange;
 	private:
@@ -36,9 +37,7 @@ namespace Sgl::UI
 		static void SetElementPosition(UIElement& element, FPoint position) { element.SetPosition(position); }
 		static FPoint GetElementPosition(UIElement& element) { return element.GetPosition(); }
 
-		void OnMouseEnter(FPoint position) override;
-		void OnMouseLeave(FPoint position) override;
-		void OnMouseMove(const MouseButtonEventArgs& e) override;
+		void OnMouseMove(const MouseEventArgs& e) override;
 		void OnMouseDown(const MouseButtonEventArgs& e) override;
 		void OnMouseUp(const MouseButtonEventArgs& e) override;
 		void OnMouseWheel(const MouseWheelEventArgs& e) override;
@@ -46,8 +45,9 @@ namespace Sgl::UI
 		void OnKeyUp(const KeyEventArgs& e) override;
 		void OnSizeChanged() override;
 	private:
-		void OnSceneLayoutMouseMove(const MouseButtonEventArgs& e);
+		void OnSceneLayoutMouseMove(const MouseEventArgs& e);
 
-		friend class Sgl::Scene;
+		friend class Application;
+		friend class Scene;
 	};
 }

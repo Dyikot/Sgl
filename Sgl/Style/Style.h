@@ -1,76 +1,61 @@
 #pragma once
 
+#include <optional>
+#include <type_traits>
+#include <string>
 #include "../Data/Delegate.h"
 
 namespace Sgl
 {
-	class Style;
+	class StyleableElement;
+	using Setter = void(*)(StyleableElement&);
 
-	class IStylable
+	enum class Trigger
 	{
-	public:
-		virtual ~IStylable() = default;
-
-		virtual void ApplyDefaultStyle() = 0;
-		virtual const Style& GetStyle() const = 0;
+		Hover, Pressed
 	};
 
-	class Style
+	class Selector
 	{
+	private:
+		std::string _name;
+		std::string _class;
+		std::optional<Trigger> _trigger;
+		std::reference_wrapper<const type_info> _type;
 	public:
-		template<typename T>
-		struct SetterWrapper
-		{
-			T& Target;
-			Action<T&> Setter;
-
-			void operator()() const
-			{
-				Setter(Target);
-			}
-		};
-    private:
-		Action<> _source;
-		IStylable& _target;
-    public:
-		Style(IStylable& target):
-			_target(target)
+		Selector():
+			_type(typeid(nullptr))
 		{}
 
-		Style(const Style& other):
-			_source(other._source),
-			_target(other._target)
-		{}
-
-		Style(Style&& other) noexcept:
-			_source(std::move(other._source)),
-			_target(other._target)
-		{}
-
-		template<std::derived_from<IStylable> T, typename... TSetters>
-		void Set(TSetters... setters)
+		template<std::derived_from<StyleableElement> T>
+		Selector& OfType()
 		{
-			Action<T&> setter = [setters...](T& target)
-			{
-				(setters(target), ...);
-			};
-
-			_source = SetterWrapper<T>(static_cast<T&>(_target), std::move(setter));
+			_type = typeid(T);
+			return *this;
 		}
 
-		template<std::derived_from<IStylable> T, typename... TSetters>
-		void Use(TSetters... setters)
-		{
-			Set<T, TSetters...>(setters...);
-			Apply();
+		Selector& Name(std::string value)
+		{ 
+			_name = std::move(value);
+			return *this;
 		}
 
-		void Apply() const
+		Selector& Class(std::string value)
 		{
-			if(_source)
-			{
-				_source();
-			}
+			_class = std::move(value);
+			return *this;
 		}
+
+		Selector& On(Trigger value)
+		{
+			_trigger = value;
+			return *this;
+		}
+	};
+
+	struct Style
+	{
+		Selector Selector;
+		Setter Setter;
 	};
 }

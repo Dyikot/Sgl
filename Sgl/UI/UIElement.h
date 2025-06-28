@@ -1,25 +1,34 @@
 #pragma once
 
 #include "../Style/Layout.h"
-#include "../Style/Trigger.h"
+#include "../Style/Style.h"
 #include "../Events/Event.h"
 #include "../Events/MouseAndKeyEvents.h"
 #include "../Visual/VisualElement.h"
 #include "../Data/Object.h"
 #include "../Visual/Renderer.h"
+#include "ToolTip.h"
 
 namespace Sgl::UI
 {
-	class UIElement: 
-		public VisualElement,
-		public IMouseEventsListener,
-		public IKeyEventsListener
+	class UIElement: public VisualElement, public IMouseEventsListener, public IKeyEventsListener
 	{
 	public:
-		Trigger OnHover;
-		Trigger OnMousePressed;
+		using KeyEventHandler = EventHandler<UIElement, KeyEventArgs>;
+		using MouseEventHandler = EventHandler<UIElement, MouseEventArgs>;
+		using MouseButtonEventHandler = EventHandler<UIElement, MouseButtonEventArgs>;
+		using MouseWheelEventHandler = EventHandler<UIElement, MouseWheelEventArgs>;
+		using SizeChangedEventHandler = EventHandler<UIElement, EventArgs>;
 
-		Event<UIElement&> SizeChanged;
+		Event<KeyEventHandler> KeyUp;
+		Event<KeyEventHandler> KeyDown;
+		Event<MouseEventHandler> MouseMove;
+		Event<MouseEventHandler> MouseEnter;
+		Event<MouseEventHandler> MouseLeave;
+		Event<MouseButtonEventHandler> MouseUp;
+		Event<MouseButtonEventHandler> MouseDown;
+		Event<MouseWheelEventHandler> MouseWheel;
+		Event<SizeChangedEventHandler> SizeChanged;
 	private:
 		float _width;
 		float _height;
@@ -36,8 +45,6 @@ namespace Sgl::UI
 		float _actualHeight;
 		FPoint _position;
 		FPoint _actualPosition;
-
-		RenderFragment _tooltip;
 	public:
 		UIElement();
 		UIElement(const UIElement& other);
@@ -90,12 +97,10 @@ namespace Sgl::UI
 		float GetActualWidth() const { return _actualWidth; }
 		float GetActualHeight() const { return _actualHeight; }
 
-		void SetTooltip(RenderFragment value) { _tooltip = std::move(value); }
-		// TODO: Create tooltip for text
-		void SetTooltip(const std::string& text);
+		void SetTooltip(const ToolTip& tooltip);
 
 		void OnRender(RenderContext rc) const override;
-		void ApplyDefaultStyle() override;
+		/*void ApplyDefaultStyle() override;*/
 	protected:
 		void SetPosition(FPoint value)
 		{
@@ -109,15 +114,15 @@ namespace Sgl::UI
 		FPoint GetPosition() const { return _position; }
 		FPoint GetActualPosition() const { return _actualPosition; }
 
-		void OnKeyUp(const KeyEventArgs& e) {}
-		void OnKeyDown(const KeyEventArgs& e) {}
-		void OnMouseMove(const MouseButtonEventArgs& e) {}
-		void OnMouseWheel(const MouseWheelEventArgs& e) {}
-		void OnMouseDown(const MouseButtonEventArgs& e);
-		void OnMouseUp(const MouseButtonEventArgs& e);
-		virtual void OnMouseEnter(FPoint position);
-		virtual void OnMouseLeave(FPoint position);
-		virtual void OnSizeChanged();
+		void OnKeyUp(const KeyEventArgs& e) { KeyUp.TryRaise(*this, e); }
+		void OnKeyDown(const KeyEventArgs& e) { KeyDown.TryRaise(*this, e); }
+		void OnMouseMove(const MouseEventArgs& e) { MouseMove.TryRaise(*this, e); }
+		void OnMouseDown(const MouseButtonEventArgs& e) { MouseDown.TryRaise(*this, e); }
+		void OnMouseUp(const MouseButtonEventArgs& e) { MouseUp.TryRaise(*this, e); }
+		void OnMouseWheel(const MouseWheelEventArgs& e) { MouseWheel.TryRaise(*this, e); }
+		virtual void OnMouseEnter(const MouseEventArgs& e) { MouseEnter.TryRaise(*this, e); }
+		virtual void OnMouseLeave(const MouseEventArgs& e) { MouseLeave.TryRaise(*this, e); }
+		virtual void OnSizeChanged() { SizeChanged.TryRaise(*this, EmptyEventArgs); }
 
 		friend class Layout;
 	};

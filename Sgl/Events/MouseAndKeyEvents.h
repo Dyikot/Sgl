@@ -30,9 +30,13 @@ namespace Sgl
 		SDL_Keysym Key;
 	};
 
-	struct MouseButtonEventArgs: EventArgs
+	struct MouseEventArgs: EventArgs
 	{
 		FPoint Position;
+	};
+
+	struct MouseButtonEventArgs: EventArgs
+	{
 		MouseButton Button;
 		ButtonState State;
 		int ClicksNumber;
@@ -62,7 +66,7 @@ namespace Sgl
 	protected:
 		virtual void OnMouseDown(const MouseButtonEventArgs& e) = 0;
 		virtual void OnMouseUp(const MouseButtonEventArgs& e) = 0;
-		virtual void OnMouseMove(const MouseButtonEventArgs& e) = 0;
+		virtual void OnMouseMove(const MouseEventArgs& e) = 0;
 		virtual void OnMouseWheel(const MouseWheelEventArgs& e) = 0;
 	};
 }
