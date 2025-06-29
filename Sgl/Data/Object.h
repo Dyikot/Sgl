@@ -1,6 +1,7 @@
 #pragma once
 
 #include <typeinfo>
+#include <utility>
 
 namespace Sgl
 {

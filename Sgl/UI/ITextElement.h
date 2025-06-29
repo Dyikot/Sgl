@@ -1,9 +1,9 @@
 #pragma once
 
 #include <string>
-#include "../Visual/Font.h"
+#include "../Render/Font.h"
 
-namespace Sgl::UI
+namespace Sgl
 {
     class ITextElement
     {
@@ -11,7 +11,7 @@ namespace Sgl::UI
         virtual ~ITextElement() = default;
 
         virtual void SetText(std::string value) = 0;
-        virtual std::string GetText() const = 0;
+        virtual const std::string& GetText() const = 0;
 
         virtual void SetFont(std::shared_ptr<Font> value) = 0;
         virtual std::shared_ptr<Font> GetFont() const = 0;

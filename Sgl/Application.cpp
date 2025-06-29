@@ -41,7 +41,7 @@ namespace Sgl
 		Start();
 	}
 
-	void Application::Stop() noexcept
+	void Application::Stop()
 	{
 		_running = false;
 		OnStop();

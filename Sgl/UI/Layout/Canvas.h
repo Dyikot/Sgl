@@ -2,7 +2,7 @@
 
 #include "Layout.h"
 
-namespace Sgl::UI
+namespace Sgl
 {
 	class Canvas: public Layout
 	{

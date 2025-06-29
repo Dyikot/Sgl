@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Visual/Color.h"
+#include "../Render/Color.h"
 
 namespace Sgl
 {
@@ -12,11 +12,6 @@ namespace Sgl
 	enum class VerticalAlignment
 	{
 		Bottom, Center, Top, Stretch
-	};
-
-	enum class Visibility
-	{
-		Visible, Hidden, Collapsed
 	};
 
 	struct Thickness

@@ -1,8 +1,11 @@
 #include "UIElement.h"
 
-namespace Sgl::UI
+namespace Sgl
 {
 	UIElement::UIElement():
+		_cursor(Cursors::Arrow),
+		_backgroundColor(Colors::Black),
+		_backgroundTexture(),
 		_width(),
 		_height(),
 		_minWidth(),
@@ -10,7 +13,7 @@ namespace Sgl::UI
 		_maxWidth(std::numeric_limits<float>::max()),
 		_maxHeight(std::numeric_limits<float>::max()),
 		_zIndex(1),
-		_visibility(Visibility::Visible),
+		_isVisible(true),
 		_verticalAlignment(VerticalAlignment::Top),
 		_horizontalAlignment(HorizontalAlignment::Left),
 		_margin(),
@@ -21,7 +24,9 @@ namespace Sgl::UI
 	{}
 
 	UIElement::UIElement(const UIElement& other):
-		VisualElement(other),
+		_cursor(other._cursor),
+		_backgroundColor(other._backgroundColor),
+		_backgroundTexture(other._backgroundTexture),
 		_width(other._width),
 		_height(other._height),
 		_minWidth(other._minWidth),
@@ -29,7 +34,7 @@ namespace Sgl::UI
 		_maxWidth(other._maxWidth),
 		_maxHeight(other._maxHeight),
 		_zIndex(other._zIndex),
-		_visibility(other._visibility),
+		_isVisible(other._isVisible),
 		_verticalAlignment(other._verticalAlignment),
 		_horizontalAlignment(other._horizontalAlignment),
 		_margin(other._margin),
@@ -40,7 +45,9 @@ namespace Sgl::UI
 	{}
 
 	UIElement::UIElement(UIElement&& other) noexcept:
-		VisualElement(std::move(other)),
+		_cursor(other._cursor),
+		_backgroundColor(other._backgroundColor),
+		_backgroundTexture(std::move(other._backgroundTexture)),
 		_width(other._width),
 		_height(other._height),
 		_minWidth(other._minWidth),
@@ -48,7 +55,7 @@ namespace Sgl::UI
 		_maxWidth(other._maxWidth),
 		_maxHeight(other._maxHeight),
 		_zIndex(other._zIndex),
-		_visibility(other._visibility),
+		_isVisible(other._isVisible),
 		_verticalAlignment(other._verticalAlignment),
 		_horizontalAlignment(other._horizontalAlignment),
 		_margin(other._margin),

@@ -4,21 +4,19 @@
 namespace Sgl
 {
 	Scene::Scene():
+		BackgroundColor(Colors::Black),
 		Layout(nullptr)
 	{}
 
 	void Scene::OnRender(RenderContext rc) const
 	{
-		auto texture = GetBackgroundTexture();
-		auto color = GetBackgroundColor();
-
-		if(texture)
+		if(BackgroundTexture)
 		{
-			rc.DrawTexture(*texture, color);
+			rc.DrawTexture(*BackgroundTexture, BackgroundColor);
 		}
 		else
 		{
-			rc.FillBackground(color);
+			rc.FillBackground(BackgroundColor);
 		}
 		
 		Layout->OnRender(rc);
@@ -29,14 +27,8 @@ namespace Sgl
 		Layout->Arrange();
 	}
 
-	void Scene::ApplyStyle()
-	{
-		StyleableElement::ApplyStyle();
-		Layout->ApplyStyle();
-	}
-
 	void Scene::OnCreated()
 	{
-		ApplyStyle();
+		Layout->ApplyStyle();
 	}
 }

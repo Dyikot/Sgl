@@ -1,19 +1,11 @@
 #pragma once
 
 #include <set>
-#include <unordered_map>
-#include <memory>
 #include "../../Data/Size.h"
 #include "UIElementsCollection.h"
 #include "../../Events/Event.h"
 
 namespace Sgl
-{
-	class Scene;
-	class Application;
-}
-
-namespace Sgl::UI
 {
 	class Layout: public UIElement, public ILayout
 	{

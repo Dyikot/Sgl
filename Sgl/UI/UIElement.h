@@ -1,17 +1,18 @@
 #pragma once
 
-#include "../Style/Layout.h"
-#include "../Style/Style.h"
-#include "../Events/Event.h"
-#include "../Events/MouseAndKeyEvents.h"
-#include "../Visual/VisualElement.h"
 #include "../Data/Object.h"
-#include "../Visual/Renderer.h"
+#include "../Style/Layout.h"
+#include "../Style/StyleableElement.h"
+#include "../Events/Event.h"
+#include "../Events/MouseAndKeyArgs.h"
+#include "../Render/Renderer.h"
+#include "../Render/IRenderable.h"
+#include "../Render/Cursor.h"
 #include "ToolTip.h"
 
-namespace Sgl::UI
+namespace Sgl
 {
-	class UIElement: public VisualElement, public IMouseEventsListener, public IKeyEventsListener
+	class UIElement: public StyleableElement, public IRenderable
 	{
 	public:
 		using KeyEventHandler = EventHandler<UIElement, KeyEventArgs>;
@@ -30,15 +31,18 @@ namespace Sgl::UI
 		Event<MouseWheelEventHandler> MouseWheel;
 		Event<SizeChangedEventHandler> SizeChanged;
 	private:
+		Cursor::Getter _cursor;	
+		Color _backgroundColor;
+		shared_ptr<Texture> _backgroundTexture;
 		float _width;
 		float _height;
 		float _minWidth;
 		float _minHeight;
 		float _maxWidth;
 		float _maxHeight;
+		bool _isVisible;
 		size_t _zIndex;
 		Thickness _margin;
-		Visibility _visibility;
 		VerticalAlignment _verticalAlignment;
 		HorizontalAlignment _horizontalAlignment;
 		float _actualWidth;
@@ -50,6 +54,15 @@ namespace Sgl::UI
 		UIElement(const UIElement& other);
 		UIElement(UIElement&& other) noexcept;
 		virtual ~UIElement() = default;
+
+		void SetCursor(Cursor::Getter value) { _cursor = value; }
+		Cursor::Getter GetCursor() const { return _cursor; }
+
+		void SetBackgroundColor(Color value) { _backgroundColor = value; }
+		Color GetBackgroundColor() const { return _backgroundColor; }
+
+		void SetBackgroundTexture(shared_ptr<Texture> value) { _backgroundTexture = value; }
+		shared_ptr<Texture> GetBackgroundTexture() const { return _backgroundTexture; }
 
 		void SetWidth(float value)
 		{
@@ -79,11 +92,11 @@ namespace Sgl::UI
 		void SetMaxHeight(float value) { _maxHeight = value; }
 		float GetMaxHeight() const { return _maxHeight; }
 
+		void SetVisibility(bool value) { _isVisible = value; }
+		bool IsVisible() const { return _isVisible; }
+
 		void SetZIndex(size_t value) { _zIndex = value; }
 		size_t GetZIndex() const { return _zIndex; }
-
-		void SetVisibility(Visibility value) { _visibility = value; }
-		Visibility GetVisibility() const { return _visibility; }
 
 		void SetVerticalAlignment(VerticalAlignment value) { _verticalAlignment = value; }
 		VerticalAlignment GetVerticalAlignment() const { return _verticalAlignment; }
@@ -113,12 +126,12 @@ namespace Sgl::UI
 		FPoint GetPosition() const { return _position; }
 		FPoint GetActualPosition() const { return _actualPosition; }
 
-		void OnKeyUp(const KeyEventArgs& e) { KeyUp.TryRaise(*this, e); }
-		void OnKeyDown(const KeyEventArgs& e) { KeyDown.TryRaise(*this, e); }
-		void OnMouseMove(const MouseEventArgs& e) { MouseMove.TryRaise(*this, e); }
-		void OnMouseDown(const MouseButtonEventArgs& e) { MouseDown.TryRaise(*this, e); }
-		void OnMouseUp(const MouseButtonEventArgs& e) { MouseUp.TryRaise(*this, e); }
-		void OnMouseWheel(const MouseWheelEventArgs& e) { MouseWheel.TryRaise(*this, e); }
+		virtual void OnKeyUp(const KeyEventArgs& e) { KeyUp.TryRaise(*this, e); }
+		virtual void OnKeyDown(const KeyEventArgs& e) { KeyDown.TryRaise(*this, e); }
+		virtual void OnMouseMove(const MouseEventArgs& e) { MouseMove.TryRaise(*this, e); }
+		virtual void OnMouseDown(const MouseButtonEventArgs& e) { MouseDown.TryRaise(*this, e); }
+		virtual void OnMouseUp(const MouseButtonEventArgs& e) { MouseUp.TryRaise(*this, e); }
+		virtual void OnMouseWheel(const MouseWheelEventArgs& e) { MouseWheel.TryRaise(*this, e); }
 		virtual void OnMouseEnter(const MouseEventArgs& e) { MouseEnter.TryRaise(*this, e); }
 		virtual void OnMouseLeave(const MouseEventArgs& e) { MouseLeave.TryRaise(*this, e); }
 		virtual void OnSizeChanged() { SizeChanged.TryRaise(*this, EmptyEventArgs); }

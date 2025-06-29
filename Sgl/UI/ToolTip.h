@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "../Visual/Primitives.h"
+#include "../Render/Primitives.h"
 #include "../Tools/Time/TimeSpan.h"
 
 namespace Sgl

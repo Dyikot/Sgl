@@ -4,7 +4,7 @@
 #include "../../Data/Ranges/SortedVector.h"
 #include "ILayout.h"
 
-namespace Sgl::UI
+namespace Sgl
 {
 	class UIElementsCollection
 	{

@@ -3,8 +3,8 @@
 #include <string>
 #include <SDL/SDL_mouse.h>
 #include <SDL/SDL_keyboard.h>
-#include "EventHandler.h"
-#include "../Visual/Primitives.h"
+#include "EventArgs.h"
+#include "../Render/Primitives.h"
 
 
 namespace Sgl
@@ -48,25 +48,5 @@ namespace Sgl
 		float ScrolledHorizontally;
 		float ScrolledVertically;
 		MouseWheelDirection Direction;
-	};
-
-	class IKeyEventsListener
-	{
-	public:
-		virtual ~IKeyEventsListener() = default;
-	protected:
-		virtual void OnKeyDown(const KeyEventArgs& e) = 0;
-		virtual void OnKeyUp(const KeyEventArgs& e) = 0;
-	};
-
-	class IMouseEventsListener
-	{
-	public:
-		virtual ~IMouseEventsListener() = default;
-	protected:
-		virtual void OnMouseDown(const MouseButtonEventArgs& e) = 0;
-		virtual void OnMouseUp(const MouseButtonEventArgs& e) = 0;
-		virtual void OnMouseMove(const MouseEventArgs& e) = 0;
-		virtual void OnMouseWheel(const MouseWheelEventArgs& e) = 0;
 	};
 }

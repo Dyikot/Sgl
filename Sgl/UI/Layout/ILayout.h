@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Sgl::UI
+namespace Sgl
 {
     class ILayout
     {

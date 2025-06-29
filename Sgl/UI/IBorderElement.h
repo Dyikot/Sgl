@@ -1,7 +1,8 @@
 #pragma once
+
 #include "../Style/Layout.h"
 
-namespace Sgl::UI
+namespace Sgl
 {
     class IBorderElement
     {

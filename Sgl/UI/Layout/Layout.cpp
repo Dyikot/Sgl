@@ -1,6 +1,6 @@
 #include "Layout.h"
 
-namespace Sgl::UI
+namespace Sgl
 {  
     Layout::Layout():
         _children(*this),
