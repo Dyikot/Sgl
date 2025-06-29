@@ -37,22 +37,35 @@ This example shows how to create an application, set up a window, and style the 
 #include "../Sgl/Application.h"
 #include "../Sgl/UI/UIElement/UIElement.h"
 
-void BgGreen(IStyleable& s)
-{
-	auto& element = static_cast<VisualElement&>(s);
-
-	element.BackgroundColor = Colors::Green;
-}
-
 class MyScene: public Scene
 {
 public:
-	UIElement Button;
-public:
 	MyScene()
 	{
-		ClassStyle.Use<BgGreen>();
-		Button.ClassStyle.Use<BgGreen>();
+		InitStyles();
+		Classes = { "test" };
+		Layout = Canvas::New();
+	}
+
+	void InitStyles()
+	{
+		auto style = Style<Scene>::New();
+		style->Setter = [](Scene& x)
+		{
+			x.SetBackgroundColor(Colors::Whitesmoke);
+		};
+
+		Styles["test"] = style;
+	}
+
+	void OnRender(RenderContext rc) const override
+	{
+		Scene::OnRender(rc);
+	}
+
+	void Process(TimeSpan elapsed) override
+	{
+		Scene::Process(elapsed);
 	}
 };
 
