@@ -65,21 +65,4 @@ namespace Sgl::UI
 	{		
 		
 	}
-
-	/*void UIElement::ApplyDefaultStyle()
-	{
-		VisualElement::ApplyDefaultStyle();
-
-		SetWidth(0);
-		SetHeight(0);
-		_minWidth = 0;
-		_minHeight = 0;
-		_maxWidth = std::numeric_limits<float>::max();
-		_maxHeight = std::numeric_limits<float>::max();
-		_zIndex = 1;
-		_visibility = Visibility::Visible;
-		_verticalAlignment = VerticalAlignment::Top;
-		_horizontalAlignment = HorizontalAlignment::Left;
-		_margin = {};
-	}*/
 }

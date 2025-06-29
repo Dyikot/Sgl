@@ -18,11 +18,12 @@ namespace Sgl
 		virtual ~Scene() = default;
 
 		void OnRender(RenderContext rc) const override;
-		virtual void Process(TimeSpan elapsed) = 0;
+		virtual void Process(TimeSpan elapsed);
+		void ApplyStyle() override;
 	protected:
-		virtual void OnStopped() {}
 		virtual void OnResumed() {}
-		virtual void OnCreated() {}
+		virtual void OnStopped() {}
+		virtual void OnCreated();
 		virtual void OnDestroying() {}
 
 		friend class Application;

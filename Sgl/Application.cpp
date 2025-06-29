@@ -17,7 +17,6 @@ namespace Sgl
 
 	Application::~Application() noexcept
 	{
-		Exit.TryRaise(*this, EmptyEventArgs);
 		TTF_Quit();
 		IMG_Quit();
 		Mix_Quit();
@@ -42,9 +41,10 @@ namespace Sgl
 		Start();
 	}
 
-	void Application::Shutdown() noexcept
+	void Application::Stop() noexcept
 	{
 		_running = false;
+		OnStop();
 	}
 
 	void Application::HandleEvents(std::shared_ptr<Scene> scene)
@@ -56,7 +56,7 @@ namespace Sgl
 			{
 				case SDL_QUIT:
 				{
-					Shutdown();
+					Stop();
 					break;
 				}
 
@@ -221,6 +221,8 @@ namespace Sgl
 
 	void Application::Start()
 	{
+		OnStart();
+
 		Renderer renderer;
 		renderer.SetBlendMode(SDL_BLENDMODE_BLEND);
 
@@ -233,7 +235,7 @@ namespace Sgl
 
 			if(scene == nullptr)
 			{
-				Shutdown();
+				Stop();
 				continue;
 			}
 			
@@ -255,5 +257,15 @@ namespace Sgl
 				SleepFor(_maxFrameTime.value() - delayStopwatch.Elapsed());
 			}
 		}
+	}
+
+	void Application::OnStart()
+	{
+		Started.TryRaise(*this, EmptyEventArgs);
+	}
+
+	void Application::OnStop()
+	{
+		Stopped.TryRaise(*this, EmptyEventArgs);
 	}
 }

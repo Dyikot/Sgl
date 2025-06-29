@@ -100,7 +100,6 @@ namespace Sgl::UI
 		void SetTooltip(const ToolTip& tooltip);
 
 		void OnRender(RenderContext rc) const override;
-		/*void ApplyDefaultStyle() override;*/
 	protected:
 		void SetPosition(FPoint value)
 		{

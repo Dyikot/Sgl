@@ -19,7 +19,8 @@ namespace Sgl
 		SceneManager SceneManager;
 		ResourcesMap Resources;
 
-		Event<ApplicationEventHandler> Exit;
+		Event<ApplicationEventHandler> Started;
+		Event<ApplicationEventHandler> Stopped;
 	private:
 		static inline Application* _current;
 
@@ -39,7 +40,10 @@ namespace Sgl
 		size_t GetFPS() const { return _fpsCounter.GetFps(); }
 
 		void Run();
-		void Shutdown() noexcept;
+		void Stop();
+	protected:
+		virtual void OnStart();
+		virtual void OnStop();
 	private:
 		void HandleEvents(std::shared_ptr<Scene> scene);
 		void Start();

@@ -1,61 +1,45 @@
 #pragma once
 
-#include <optional>
-#include <type_traits>
 #include <string>
-#include "../Data/Delegate.h"
+#include <memory>
+#include "../Data/Object.h"
+
+using std::shared_ptr;
 
 namespace Sgl
 {
-	class StyleableElement;
-	using Setter = void(*)(StyleableElement&);
+    enum class Trigger
+    {
+        OnInitialize, OnHover, OnPressed
+    };
 
-	enum class Trigger
-	{
-		Hover, Pressed
-	};
+    class IStyle
+    {
+    public:
+        virtual ~IStyle() = default;
 
-	class Selector
-	{
-	private:
-		std::string _name;
-		std::string _class;
-		std::optional<Trigger> _trigger;
-		std::reference_wrapper<const type_info> _type;
-	public:
-		Selector():
-			_type(typeid(nullptr))
-		{}
+        virtual void ApplyTo(object target) = 0;
+    };
 
-		template<std::derived_from<StyleableElement> T>
-		Selector& OfType()
-		{
-			_type = typeid(T);
-			return *this;
-		}
+    template<typename T>
+    class Style: public IStyle
+    {
+    public:
+        using StyleSetter = void(*)(T&);
 
-		Selector& Name(std::string value)
-		{ 
-			_name = std::move(value);
-			return *this;
-		}
+        Trigger Trigger;
+        StyleSetter Setter;
+    public:
+        Style():
+            Trigger(Sgl::Trigger::OnInitialize),
+            Setter(nullptr)
+        {}
 
-		Selector& Class(std::string value)
-		{
-			_class = std::move(value);
-			return *this;
-		}
+        static shared_ptr<Style<T>> New() { return std::make_shared<Style<T>>(); }
 
-		Selector& On(Trigger value)
-		{
-			_trigger = value;
-			return *this;
-		}
-	};
-
-	struct Style
-	{
-		Selector Selector;
-		Setter Setter;
-	};
+        void ApplyTo(object target) override
+        {
+            Setter(target.As<T>());
+        }
+    };
 }

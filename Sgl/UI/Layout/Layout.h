@@ -33,6 +33,7 @@ namespace Sgl::UI
 
 		void QueryArrange() override;
 		void OnRender(RenderContext rc) const override;
+		void ApplyStyle() override;
 	protected:
 		static void SetElementPosition(UIElement& element, FPoint position) { element.SetPosition(position); }
 		static FPoint GetElementPosition(UIElement& element) { return element.GetPosition(); }

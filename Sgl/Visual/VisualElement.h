@@ -1,11 +1,11 @@
 #pragma once
 
+#include <memory>
 #include "../Visual/Cursor.h"
 #include "../Visual/RenderContext.h"
 #include "../Style/StyleableElement.h"
 
 using std::shared_ptr;
-using std::make_shared;
 
 namespace Sgl
 {
@@ -31,6 +31,5 @@ namespace Sgl
 		shared_ptr<Texture> GetBackgroundTexture() const { return _backgroundTexture; }
 
 		virtual void OnRender(RenderContext rc) const = 0;
-		/*void ApplyDefaultStyle() override;*/
 	};
 }

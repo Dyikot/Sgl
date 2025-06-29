@@ -20,8 +20,23 @@ namespace Sgl
 		{
 			rc.FillBackground(color);
 		}
-
-		Layout->Arrange();
+		
 		Layout->OnRender(rc);
+	}
+
+	void Scene::Process(TimeSpan elapsed)
+	{
+		Layout->Arrange();
+	}
+
+	void Scene::ApplyStyle()
+	{
+		StyleableElement::ApplyStyle();
+		Layout->ApplyStyle();
+	}
+
+	void Scene::OnCreated()
+	{
+		ApplyStyle();
 	}
 }

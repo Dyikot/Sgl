@@ -31,6 +31,14 @@ namespace Sgl::UI
         }
     }
 
+    void Layout::ApplyStyle()
+    {
+        for(auto& child : _children)
+        {
+            child->ApplyStyle();
+        }
+    }
+
     void Layout::OnMouseMove(const MouseEventArgs& e)
     {
         if(_hoverChild && IsHover(e.Position, _hoverChild->GetActualPosition(),

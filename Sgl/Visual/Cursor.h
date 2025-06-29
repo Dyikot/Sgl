@@ -3,7 +3,7 @@
 #include <SDL/SDL_mouse.h>
 #include <SDL/SDL_image.h>
 #include "../Tools/Log.h"
-#include "../Data/Singleton.h"
+#include "../Tools/Macroses.h"
 
 namespace Sgl
 {
@@ -64,17 +64,17 @@ namespace Sgl
 
 	namespace Cursors
 	{
-		inline auto Arrow = Sgl_ConstSingleton(Cursor, SDL_SYSTEM_CURSOR_ARROW);
-		inline auto IBeam = Sgl_ConstSingleton(Cursor, SDL_SYSTEM_CURSOR_IBEAM);
-		inline auto Wait = Sgl_ConstSingleton(Cursor, SDL_SYSTEM_CURSOR_WAIT);
-		inline auto Crosshair = Sgl_ConstSingleton(Cursor, SDL_SYSTEM_CURSOR_CROSSHAIR);
-		inline auto WaitArrow = Sgl_ConstSingleton(Cursor, SDL_SYSTEM_CURSOR_WAITARROW);
-		inline auto ArrowNWSE = Sgl_ConstSingleton(Cursor, SDL_SYSTEM_CURSOR_SIZENWSE);
-		inline auto ArrowNESW = Sgl_ConstSingleton(Cursor, SDL_SYSTEM_CURSOR_SIZENESW);
-		inline auto ArrowWE = Sgl_ConstSingleton(Cursor, SDL_SYSTEM_CURSOR_SIZEWE);
-		inline auto ArrowNS = Sgl_ConstSingleton(Cursor, SDL_SYSTEM_CURSOR_SIZENS);
-		inline auto ArrowAll = Sgl_ConstSingleton(Cursor, SDL_SYSTEM_CURSOR_SIZEALL);
-		inline auto No = Sgl_ConstSingleton(Cursor, SDL_SYSTEM_CURSOR_NO);
-		inline auto Hand = Sgl_ConstSingleton(Cursor, SDL_SYSTEM_CURSOR_HAND);
+		inline auto Arrow = CONST_SINGLETON(Cursor, SDL_SYSTEM_CURSOR_ARROW);
+		inline auto IBeam = CONST_SINGLETON(Cursor, SDL_SYSTEM_CURSOR_IBEAM);
+		inline auto Wait = CONST_SINGLETON(Cursor, SDL_SYSTEM_CURSOR_WAIT);
+		inline auto Crosshair = CONST_SINGLETON(Cursor, SDL_SYSTEM_CURSOR_CROSSHAIR);
+		inline auto WaitArrow = CONST_SINGLETON(Cursor, SDL_SYSTEM_CURSOR_WAITARROW);
+		inline auto ArrowNWSE = CONST_SINGLETON(Cursor, SDL_SYSTEM_CURSOR_SIZENWSE);
+		inline auto ArrowNESW = CONST_SINGLETON(Cursor, SDL_SYSTEM_CURSOR_SIZENESW);
+		inline auto ArrowWE = CONST_SINGLETON(Cursor, SDL_SYSTEM_CURSOR_SIZEWE);
+		inline auto ArrowNS = CONST_SINGLETON(Cursor, SDL_SYSTEM_CURSOR_SIZENS);
+		inline auto ArrowAll = CONST_SINGLETON(Cursor, SDL_SYSTEM_CURSOR_SIZEALL);
+		inline auto No = CONST_SINGLETON(Cursor, SDL_SYSTEM_CURSOR_NO);
+		inline auto Hand = CONST_SINGLETON(Cursor, SDL_SYSTEM_CURSOR_HAND);
 	}
 }
