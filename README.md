@@ -42,20 +42,20 @@ class MyScene: public Scene
 public:
 	MyScene()
 	{
-		InitStyles();
-		Classes = { "test" };
+		BackgroundColor = Colors::Whitesmoke;
+
+		auto style = Style<Button>::New(Selector { .Class = "test" });
+		style->Setters.Add(&Button::BackgroundColor, Colors::Grey);
+		style->Setters.Add(&Button::Cursor, Cursors::Arrow);
+		style->Setters.Add(&Button::Width, 150);
+		style->Setters.Add(&Button::Height, 100);
+
+		auto button = Button::New();
+		button->Classes = { "test" };
+		button->Styles.Add(style);
+
 		Layout = Canvas::New();
-	}
-
-	void InitStyles()
-	{
-		auto style = Style<Scene>::New();
-		style->Setter = [](Scene& x)
-		{
-			x.SetBackgroundColor(Colors::Whitesmoke);
-		};
-
-		Styles["test"] = style;
+		Layout->Children.Add(button);
 	}
 
 	void OnRender(RenderContext rc) const override
