@@ -2,79 +2,48 @@
 
 #include <SDL/SDL_mouse.h>
 #include <SDL/SDL_image.h>
-#include "../Tools/Log.h"
-#include "../Tools/Macroses.h"
+#include <variant>
+#include <string_view>
 
 namespace Sgl
 {
 	class Cursor
 	{
-	public:
-		using Getter = const Cursor& (*)();
 	private:
-		SDL_Cursor* _cursor;
+		mutable SDL_Cursor* _cursor;
+		std::variant<std::string_view, SDL_SystemCursor> _creationArgs;
 	public:
-		static void Set(Getter cursorGetter)
-		{
-			const auto& cursor = cursorGetter();
-			if(SDL_GetCursor() != cursor)
-			{
-				SDL_SetCursor(cursor);
-			}
-		}
+		static void Set(const Cursor& cursor);
 
-		Cursor() noexcept:
-			Cursor(SDL_SYSTEM_CURSOR_ARROW)
-		{}
-
-		explicit Cursor(std::string_view path):
-			_cursor(SDL_CreateColorCursor(IMG_Load(path.data()), 0, 0))
-		{
-			Log::PrintSDLErrorIf(!_cursor);
-		}
-
-		explicit Cursor(SDL_SystemCursor systemCursor) noexcept:
-			_cursor(SDL_CreateSystemCursor(systemCursor))
-		{
-			Log::PrintSDLErrorIf(!_cursor);
-		}
+		Cursor() noexcept;
+		explicit Cursor(std::string_view path);
+		explicit Cursor(SDL_SystemCursor systemCursor) noexcept;
 
 		Cursor(const Cursor&) = delete;
+		Cursor(Cursor&& other) noexcept;
+		~Cursor() noexcept;
 
-		Cursor(Cursor&& other) noexcept:
-			_cursor(std::exchange(other._cursor, nullptr))
-		{}
+		SDL_Cursor* GetSDLCursor() const;
 
-		~Cursor() noexcept
-		{
-			if(_cursor)
-			{
-				SDL_FreeCursor(_cursor);
-			}
-		}
-
-		Cursor& operator=(Cursor&& other) noexcept
-		{
-			_cursor = std::exchange(other._cursor, nullptr);
-			return *this;
-		}
-
-		operator SDL_Cursor* () const { return _cursor; }
+		Cursor& operator=(const Cursor&) = delete;
+		Cursor& operator=(Cursor&& other) noexcept;
+	private:
+		SDL_Cursor* CreateCursor() const;
 	};
 
 	namespace Cursors
 	{
-		inline auto Arrow = CONST_SINGLETON(Cursor, SDL_SYSTEM_CURSOR_ARROW);
-		inline auto IBeam = CONST_SINGLETON(Cursor, SDL_SYSTEM_CURSOR_IBEAM);
-		inline auto Wait = CONST_SINGLETON(Cursor, SDL_SYSTEM_CURSOR_WAIT);
-		inline auto Crosshair = CONST_SINGLETON(Cursor, SDL_SYSTEM_CURSOR_CROSSHAIR);
-		inline auto WaitArrow = CONST_SINGLETON(Cursor, SDL_SYSTEM_CURSOR_WAITARROW);
-		inline auto ArrowNWSE = CONST_SINGLETON(Cursor, SDL_SYSTEM_CURSOR_SIZENWSE);
-		inline auto ArrowNESW = CONST_SINGLETON(Cursor, SDL_SYSTEM_CURSOR_SIZENESW);
-		inline auto ArrowWE = CONST_SINGLETON(Cursor, SDL_SYSTEM_CURSOR_SIZEWE);
-		inline auto ArrowNS = CONST_SINGLETON(Cursor, SDL_SYSTEM_CURSOR_SIZENS);
-		inline auto ArrowAll = CONST_SINGLETON(Cursor, SDL_SYSTEM_CURSOR_SIZEALL);
-		inline auto No = CONST_SINGLETON(Cursor, SDL_SYSTEM_CURSOR_NO);
-		inline auto Hand = CONST_SINGLETON(Cursor, SDL_SYSTEM_CURSOR_HAND);
+		inline const Cursor Arrow = Cursor(SDL_SYSTEM_CURSOR_ARROW);
+		inline const Cursor IBeam = Cursor(SDL_SYSTEM_CURSOR_IBEAM);
+		inline const Cursor Wait = Cursor(SDL_SYSTEM_CURSOR_WAIT);
+		inline const Cursor Crosshair = Cursor(SDL_SYSTEM_CURSOR_CROSSHAIR);
+		inline const Cursor WaitArrow = Cursor(SDL_SYSTEM_CURSOR_WAITARROW);
+		inline const Cursor ArrowNWSE = Cursor(SDL_SYSTEM_CURSOR_SIZENWSE);
+		inline const Cursor ArrowNESW = Cursor(SDL_SYSTEM_CURSOR_SIZENESW);
+		inline const Cursor ArrowWE = Cursor(SDL_SYSTEM_CURSOR_SIZEWE);
+		inline const Cursor ArrowNS = Cursor(SDL_SYSTEM_CURSOR_SIZENS);
+		inline const Cursor ArrowAll = Cursor(SDL_SYSTEM_CURSOR_SIZEALL);
+		inline const Cursor No = Cursor(SDL_SYSTEM_CURSOR_NO);
+		inline const Cursor Hand = Cursor(SDL_SYSTEM_CURSOR_HAND);
 	}
 }

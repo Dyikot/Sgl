@@ -15,7 +15,7 @@ namespace Sgl
 			auto position = GetActualPosition();
 			position.x += left >= right ? left : GetActualWidth() - right - child->GetActualWidth();
 			position.y += top >= bottom ? top : GetActualHeight() - bottom - child->GetActualHeight();
-			SetElementPosition(*child, position);
+			SetPosition(*child, position);
 
 			_shouldArrange = false;
 		}

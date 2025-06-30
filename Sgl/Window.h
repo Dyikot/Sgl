@@ -9,7 +9,7 @@
 
 namespace Sgl
 {
-	class Window final
+	class Window
 	{
 	public:
 		using WindowStateEventHandler = EventHandler<Window, WindowStateEventArgs>;

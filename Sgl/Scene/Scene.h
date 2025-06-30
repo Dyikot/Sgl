@@ -10,6 +10,7 @@ namespace Sgl
 	class Scene: public IRenderable
 	{
 	public:
+		Cursor Cursor;
 		Color BackgroundColor;
 		shared_ptr<Texture> BackgroundTexture;
 		shared_ptr<Layout> Layout;

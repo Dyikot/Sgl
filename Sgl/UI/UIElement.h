@@ -31,7 +31,7 @@ namespace Sgl
 		Event<MouseWheelEventHandler> MouseWheel;
 		Event<SizeChangedEventHandler> SizeChanged;
 	private:
-		Cursor::Getter _cursor;	
+		std::reference_wrapper<const Cursor> _cursor;	
 		Color _backgroundColor;
 		shared_ptr<Texture> _backgroundTexture;
 		float _width;
@@ -55,8 +55,8 @@ namespace Sgl
 		UIElement(UIElement&& other) noexcept;
 		virtual ~UIElement() = default;
 
-		void SetCursor(Cursor::Getter value) { _cursor = value; }
-		Cursor::Getter GetCursor() const { return _cursor; }
+		void SetCursor(const Cursor& value) { _cursor = value; }
+		const Cursor& GetCursor() const { return _cursor; }
 
 		void SetBackgroundColor(Color value) { _backgroundColor = value; }
 		Color GetBackgroundColor() const { return _backgroundColor; }
@@ -114,15 +114,6 @@ namespace Sgl
 
 		void OnRender(RenderContext rc) const override;
 	protected:
-		void SetPosition(FPoint value)
-		{
-			_position = value;
-			_actualPosition = FPoint
-			{
-				.x = static_cast<float>(value.x + _margin.Left),
-				.y = static_cast<float>(value.y + _margin.Top)
-			};
-		}
 		FPoint GetPosition() const { return _position; }
 		FPoint GetActualPosition() const { return _actualPosition; }
 
@@ -135,6 +126,16 @@ namespace Sgl
 		virtual void OnMouseEnter(const MouseEventArgs& e) { MouseEnter.TryRaise(*this, e); }
 		virtual void OnMouseLeave(const MouseEventArgs& e) { MouseLeave.TryRaise(*this, e); }
 		virtual void OnSizeChanged() { SizeChanged.TryRaise(*this, EmptyEventArgs); }
+	private:
+		void SetPosition(FPoint value)
+		{
+			_position = value;
+			_actualPosition = FPoint
+			{
+				.x = static_cast<float>(value.x + _margin.Left),
+				.y = static_cast<float>(value.y + _margin.Top)
+			};
+		}
 
 		friend class Layout;
 	};

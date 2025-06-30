@@ -41,41 +41,22 @@ namespace Sgl
 
     void Layout::OnMouseMove(const MouseEventArgs& e)
     {
-        if(_hoverChild && IsHover(e.Position, _hoverChild->GetActualPosition(),
-                                              _hoverChild->GetActualWidth(),
-                                              _hoverChild->GetActualHeight()))
-        {
-            _hoverChild->OnMouseMove(e);
-            return;
-        }
+        bool wasHover = _isHover;
+        _isHover = IsHover(e.Position, GetActualPosition(), GetActualWidth(), GetActualHeight());
 
-        for(auto& child : _children)
+        if(_isHover)
         {
-            if(IsHover(e.Position, child->GetActualPosition(), 
-                                   child->GetActualWidth(),
-                                   child->GetActualHeight()))
+            if(!wasHover)
             {
-                if(_hoverChild)
-                {
-                    _hoverChild->OnMouseLeave(e);
-                }
-
-                _hoverChild = child;
-                Cursor::Set(child->GetCursor());
-                child->OnMouseEnter(e);
-                child->OnMouseMove(e);
-
-                return;
+                OnMouseEnter(e);
             }
-        }
 
-        if(_hoverChild)
+            OnChildrenMouseMove(e);
+        }
+        else if(wasHover)
         {
-            _hoverChild->OnMouseLeave(e);
+            OnMouseLeave(e);
         }
-
-        _hoverChild = nullptr;
-        Cursor::Set(GetCursor());
     }
 
     void Layout::OnMouseDown(const MouseButtonEventArgs& e)
@@ -132,23 +113,42 @@ namespace Sgl
         }
     }
 
-    void Layout::OnSceneLayoutMouseMove(const MouseEventArgs& e)
+    void Layout::OnChildrenMouseMove(const MouseEventArgs& e)
     {
-        bool wasHover = _isHover;
-        _isHover = IsHover(e.Position, GetActualPosition(), GetActualWidth(), GetActualHeight());
-
-        if(_isHover)
+        if(_hoverChild && IsHover(e.Position, _hoverChild->GetActualPosition(),
+                                  _hoverChild->GetActualWidth(),
+                                  _hoverChild->GetActualHeight()))
         {
-            if(!wasHover)
+            _hoverChild->OnMouseMove(e);
+            return;
+        }
+
+        for(auto& child : _children)
+        {
+            if(IsHover(e.Position, child->GetActualPosition(),
+                       child->GetActualWidth(),
+                       child->GetActualHeight()))
             {
-                OnMouseEnter(e);
-            }
+                if(_hoverChild)
+                {
+                    _hoverChild->OnMouseLeave(e);
+                }
 
-            OnMouseMove(e);
+                _hoverChild = child;
+                Cursor::Set(child->GetCursor());
+                child->OnMouseEnter(e);
+                child->OnMouseMove(e);
+
+                return;
+            }
         }
-        else if(wasHover)
+
+        if(_hoverChild)
         {
-            OnMouseLeave(e);
+            _hoverChild->OnMouseLeave(e);
+            _hoverChild = nullptr;
         }
+
+        Cursor::Set(GetCursor());
     }
 }

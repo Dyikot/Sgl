@@ -59,25 +59,11 @@ namespace Sgl
 			return _value;
 		}
 
-		T& operator*()
-		{
-			return Get();
-		}
+		T& operator*() { return Get(); }
+		const T& operator*() const { return Get(); }
 
-		const T& operator*() const
-		{
-			return Get();
-		}
-
-		T* operator->() 
-		{ 
-			return &Get();
-		}
-
-		const T* operator->() const 
-		{ 
-			return &Get();
-		}
+		T* operator->() {  return &Get(); }
+		const T* operator->() const { return &Get(); }
 	private:
 		void CreateValueIfNull() const
 		{
