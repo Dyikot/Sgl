@@ -2,15 +2,18 @@
 
 #include <string>
 #include <memory>
+#include <unordered_map>
 #include "../Data/Object.h"
+#include "Setters.h"
 
 using std::shared_ptr;
 
 namespace Sgl
 {
-    enum class Trigger
+    struct Selector
     {
-        OnInitialize, OnHover, OnPressed
+        std::string Class;
+        std::string PseudoClass;
     };
 
     class IStyle
@@ -19,27 +22,61 @@ namespace Sgl
         virtual ~IStyle() = default;
 
         virtual void ApplyTo(object target) = 0;
+        virtual const Selector& GetSelector() const = 0;
     };
 
     template<typename T>
     class Style: public IStyle
     {
+    private:
+        Selector _selector;
     public:
-        using StyleSetter = void(*)(T&);
+        using Setter = SettersCollection<T>::Setter;
 
-        Trigger Trigger;
-        StyleSetter Setter;
+        SettersCollection<T> Setters;
     public:
-        Style():
-            Trigger(Sgl::Trigger::OnInitialize),
-            Setter(nullptr)
+        explicit Style(Selector selector): 
+            _selector(std::move(selector))
         {}
 
-        static shared_ptr<Style<T>> New() { return std::make_shared<Style<T>>(); }
+        static shared_ptr<Style<T>> New(Selector selector)
+        {
+            return std::make_shared<Style<T>>(std::move(selector));
+        }
+
+        const Selector& GetSelector() const override 
+        { 
+            return _selector; 
+        }
 
         void ApplyTo(object target) override
         {
-            Setter(target.As<T>());
+            for(const Setter& setter : Setters)
+            {
+                setter(target.As<T>());
+            }
         }
+    };
+
+    class StyleCollection
+    {
+    private:
+        std::unordered_map<std::string, shared_ptr<IStyle>> _items;
+    public:
+        StyleCollection() = default;
+
+        StyleCollection(const StyleCollection& other):
+            _items(other._items)
+        {}
+
+        StyleCollection(StyleCollection&& other) noexcept:
+            _items(std::move(other._items))
+        {}
+
+        auto begin() const { return _items.begin(); }
+        auto end() const { return _items.end(); }
+
+        void Add(shared_ptr<IStyle> style);
+        shared_ptr<IStyle> TryFind(const std::string& className);
     };
 }

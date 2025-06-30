@@ -6,9 +6,9 @@ namespace Sgl
 	{
 		for(auto& classStyle: Classes)
 		{
-			if(auto it = Styles.find(classStyle); it != Styles.end())
+			if(auto style = Styles.TryFind(classStyle); style != nullptr)
 			{
-				it->second->ApplyTo(*this);
+				style->ApplyTo(*this);
 			}
 		}
 	}

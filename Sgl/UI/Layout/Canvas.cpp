@@ -9,9 +9,9 @@ namespace Sgl
 			return;
 		}
 
-		for(auto& child : GetChildren())
+		for(auto& child : Children)
 		{
-			auto [left, top, right, bottom] = child->GetMargin();
+			auto [left, top, right, bottom] = child->Margin.Get();
 			auto position = GetActualPosition();
 			position.x += left >= right ? left : GetActualWidth() - right - child->GetActualWidth();
 			position.y += top >= bottom ? top : GetActualHeight() - bottom - child->GetActualHeight();

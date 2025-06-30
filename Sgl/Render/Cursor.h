@@ -2,6 +2,7 @@
 
 #include <SDL/SDL_mouse.h>
 #include <SDL/SDL_image.h>
+#include <memory>
 #include <variant>
 #include <string_view>
 
@@ -13,7 +14,10 @@ namespace Sgl
 		mutable SDL_Cursor* _cursor;
 		std::variant<std::string_view, SDL_SystemCursor> _creationArgs;
 	public:
-		static void Set(const Cursor& cursor);
+		static void Set(std::shared_ptr<Cursor> cursor);
+		static std::shared_ptr<Cursor> New() { return std::make_shared<Cursor>(); }
+		static std::shared_ptr<Cursor> New(std::string_view path) { return std::make_shared<Cursor>(path); }
+		static std::shared_ptr<Cursor> New(SDL_SystemCursor systemCursor) { return std::make_shared<Cursor>(systemCursor); }
 
 		Cursor() noexcept;
 		explicit Cursor(std::string_view path);
@@ -33,17 +37,17 @@ namespace Sgl
 
 	namespace Cursors
 	{
-		inline const Cursor Arrow = Cursor(SDL_SYSTEM_CURSOR_ARROW);
-		inline const Cursor IBeam = Cursor(SDL_SYSTEM_CURSOR_IBEAM);
-		inline const Cursor Wait = Cursor(SDL_SYSTEM_CURSOR_WAIT);
-		inline const Cursor Crosshair = Cursor(SDL_SYSTEM_CURSOR_CROSSHAIR);
-		inline const Cursor WaitArrow = Cursor(SDL_SYSTEM_CURSOR_WAITARROW);
-		inline const Cursor ArrowNWSE = Cursor(SDL_SYSTEM_CURSOR_SIZENWSE);
-		inline const Cursor ArrowNESW = Cursor(SDL_SYSTEM_CURSOR_SIZENESW);
-		inline const Cursor ArrowWE = Cursor(SDL_SYSTEM_CURSOR_SIZEWE);
-		inline const Cursor ArrowNS = Cursor(SDL_SYSTEM_CURSOR_SIZENS);
-		inline const Cursor ArrowAll = Cursor(SDL_SYSTEM_CURSOR_SIZEALL);
-		inline const Cursor No = Cursor(SDL_SYSTEM_CURSOR_NO);
-		inline const Cursor Hand = Cursor(SDL_SYSTEM_CURSOR_HAND);
+		inline auto Arrow = Cursor::New(SDL_SYSTEM_CURSOR_ARROW);
+		inline auto IBeam = Cursor::New(SDL_SYSTEM_CURSOR_IBEAM);
+		inline auto Wait = Cursor::New(SDL_SYSTEM_CURSOR_WAIT);
+		inline auto Crosshair = Cursor::New(SDL_SYSTEM_CURSOR_CROSSHAIR);
+		inline auto WaitArrow = Cursor::New(SDL_SYSTEM_CURSOR_WAITARROW);
+		inline auto ArrowNWSE = Cursor::New(SDL_SYSTEM_CURSOR_SIZENWSE);
+		inline auto ArrowNESW = Cursor::New(SDL_SYSTEM_CURSOR_SIZENESW);
+		inline auto ArrowWE = Cursor::New(SDL_SYSTEM_CURSOR_SIZEWE);
+		inline auto ArrowNS = Cursor::New(SDL_SYSTEM_CURSOR_SIZENS);
+		inline auto ArrowAll = Cursor::New(SDL_SYSTEM_CURSOR_SIZEALL);
+		inline auto No = Cursor::New(SDL_SYSTEM_CURSOR_NO);
+		inline auto Hand = Cursor::New(SDL_SYSTEM_CURSOR_HAND);
 	}
 }

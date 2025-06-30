@@ -3,7 +3,7 @@
 namespace Sgl
 {  
     Layout::Layout():
-        _children(*this),
+        Children(*this),
         _isHover(false),
         _shouldArrange(false)
     {}
@@ -25,7 +25,7 @@ namespace Sgl
     {
         UIElement::OnRender(rc);
         
-        for(auto& child : _children)
+        for(auto& child : Children)
         {
             child->OnRender(rc);
         }
@@ -33,7 +33,7 @@ namespace Sgl
 
     void Layout::ApplyStyle()
     {
-        for(auto& child : _children)
+        for(auto& child : Children)
         {
             child->ApplyStyle();
         }
@@ -81,7 +81,7 @@ namespace Sgl
 
     void Layout::OnMouseWheel(const MouseWheelEventArgs& e)
     {
-        for(auto& child : _children)
+        for(auto& child : Children)
         {
             child->OnMouseWheel(e);
         }
@@ -89,7 +89,7 @@ namespace Sgl
 
     void Layout::OnKeyDown(const KeyEventArgs& e)
     {
-        for(auto& child : _children)
+        for(auto& child : Children)
         {
             child->OnKeyDown(e);
         }
@@ -97,7 +97,7 @@ namespace Sgl
 
     void Layout::OnKeyUp(const KeyEventArgs& e)
     {
-        for(auto& child : _children)
+        for(auto& child : Children)
         {
             child->OnKeyUp(e);
         }
@@ -107,7 +107,7 @@ namespace Sgl
     {
         UIElement::OnSizeChanged();
 
-        if(_children.Count() > 0)
+        if(Children.Count() > 0)
         {
             QueryArrange();
         }
@@ -123,7 +123,7 @@ namespace Sgl
             return;
         }
 
-        for(auto& child : _children)
+        for(auto& child : Children)
         {
             if(IsHover(e.Position, child->GetActualPosition(),
                        child->GetActualWidth(),
@@ -135,7 +135,7 @@ namespace Sgl
                 }
 
                 _hoverChild = child;
-                Cursor::Set(child->GetCursor());
+                Cursor::Set(child->Cursor.Get());
                 child->OnMouseEnter(e);
                 child->OnMouseMove(e);
 
@@ -149,6 +149,6 @@ namespace Sgl
             _hoverChild = nullptr;
         }
 
-        Cursor::Set(GetCursor());
+        Cursor::Set(Cursor.Get());
     }
 }

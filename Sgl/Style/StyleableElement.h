@@ -3,14 +3,13 @@
 #include <vector>
 #include <unordered_map>
 #include "Style.h"
-#include "../Data/Object.h"
 
 namespace Sgl
 {
 	class StyleableElement
 	{
 	public:
-		std::unordered_map<std::string, shared_ptr<IStyle>> Styles;
+		StyleCollection Styles;
 		std::vector<std::string> Classes;
 	public:
 		StyleableElement() = default;

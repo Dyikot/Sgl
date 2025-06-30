@@ -16,9 +16,9 @@ namespace Sgl
         }
     };
 
-    void Cursor::Set(const Cursor& cursor)
+    void Cursor::Set(std::shared_ptr<Cursor> cursor)
     {
-        auto sdlCursor = cursor.GetSDLCursor();
+        auto sdlCursor = cursor->GetSDLCursor();
         if(sdlCursor != nullptr && SDL_GetCursor() != sdlCursor)
         {
             SDL_SetCursor(sdlCursor);
@@ -66,6 +66,7 @@ namespace Sgl
     Cursor& Cursor::operator=(Cursor&& other) noexcept
     {
         _cursor = std::exchange(other._cursor, nullptr);
+        _creationArgs = std::move(other._creationArgs);
         return *this;
     }
 

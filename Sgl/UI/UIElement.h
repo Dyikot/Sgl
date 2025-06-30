@@ -3,6 +3,7 @@
 #include "../Data/Object.h"
 #include "../Style/Layout.h"
 #include "../Style/StyleableElement.h"
+#include "../Style/StyleableProperty.h"
 #include "../Events/Event.h"
 #include "../Events/MouseAndKeyArgs.h"
 #include "../Render/Renderer.h"
@@ -15,6 +16,54 @@ namespace Sgl
 	class UIElement: public StyleableElement, public IRenderable
 	{
 	public:
+		struct WidthProperty: StylyableProperty<float>
+		{
+		private:
+			UIElement& _owner;
+		public:
+			WidthProperty(UIElement& owner):
+				StylyableProperty<float>(0),
+				_owner(owner)
+			{}
+
+			WidthProperty& operator=(float value) override
+			{
+				_value = value;
+				_owner._actualWidth = value;
+				_owner.OnSizeChanged();
+				return *this;
+			}
+		};
+
+		struct HeightProperty: StylyableProperty<float>
+		{
+		private:
+			UIElement& _owner;
+		public:
+			HeightProperty(UIElement& owner):
+				StylyableProperty<float>(0),
+				_owner(owner)
+			{}
+
+			HeightProperty& operator=(float value) override
+			{
+				_value = value;
+				_owner._actualHeight = value;
+				_owner.OnSizeChanged();
+				return *this;
+			}
+		};
+
+		using FloatProperty = StylyableProperty<float>;
+		using BoolProperty = StylyableProperty<bool>;
+		using ZIndexProperty = StylyableProperty<size_t>;
+		using ThicknessProperty = StylyableProperty<Thickness>;
+		using VerticalAlignmentProperty = StylyableProperty<VerticalAlignment>;
+		using HorizontalAlignmentProperty = StylyableProperty<HorizontalAlignment>;
+		using ColorProperty = StylyableProperty<Color>;
+		using CursorProperty = StylyableProperty<shared_ptr<Cursor>>;
+		using TextureProperty = StylyableProperty<shared_ptr<Texture>>;
+
 		using KeyEventHandler = EventHandler<UIElement, KeyEventArgs>;
 		using MouseEventHandler = EventHandler<UIElement, MouseEventArgs>;
 		using MouseButtonEventHandler = EventHandler<UIElement, MouseButtonEventArgs>;
@@ -30,21 +79,22 @@ namespace Sgl
 		Event<MouseButtonEventHandler> MouseDown;
 		Event<MouseWheelEventHandler> MouseWheel;
 		Event<SizeChangedEventHandler> SizeChanged;
+
+		WidthProperty Width;
+		HeightProperty Height;
+		FloatProperty MinWidth;
+		FloatProperty MinHeight;
+		FloatProperty MaxWidth;
+		FloatProperty MaxHeight;
+		BoolProperty IsVisible;
+		ZIndexProperty ZIndex;
+		ThicknessProperty Margin;
+		CursorProperty Cursor;
+		TextureProperty Texture;
+		ColorProperty BackgroundColor;
+		VerticalAlignmentProperty VerticalAlignment;
+		HorizontalAlignmentProperty HorizontalAlignment;
 	private:
-		std::reference_wrapper<const Cursor> _cursor;	
-		Color _backgroundColor;
-		shared_ptr<Texture> _backgroundTexture;
-		float _width;
-		float _height;
-		float _minWidth;
-		float _minHeight;
-		float _maxWidth;
-		float _maxHeight;
-		bool _isVisible;
-		size_t _zIndex;
-		Thickness _margin;
-		VerticalAlignment _verticalAlignment;
-		HorizontalAlignment _horizontalAlignment;
 		float _actualWidth;
 		float _actualHeight;
 		FPoint _position;
@@ -54,58 +104,6 @@ namespace Sgl
 		UIElement(const UIElement& other);
 		UIElement(UIElement&& other) noexcept;
 		virtual ~UIElement() = default;
-
-		void SetCursor(const Cursor& value) { _cursor = value; }
-		const Cursor& GetCursor() const { return _cursor; }
-
-		void SetBackgroundColor(Color value) { _backgroundColor = value; }
-		Color GetBackgroundColor() const { return _backgroundColor; }
-
-		void SetBackgroundTexture(shared_ptr<Texture> value) { _backgroundTexture = value; }
-		shared_ptr<Texture> GetBackgroundTexture() const { return _backgroundTexture; }
-
-		void SetWidth(float value)
-		{
-			_width = value; 
-			_actualWidth = value - _margin.Right;
-			OnSizeChanged();
-		}
-		float GetWidth() const { return _width; }
-
-		void SetHeight(float value)
-		{
-			_height = value;
-			_actualHeight = value - _margin.Bottom;
-			OnSizeChanged();
-		}
-		float GetHeight() const { return _height; }
-
-		void SetMinWidth(float value) { _minWidth = value; }
-		float GetMinWidth() const { return _minWidth; }
-
-		void SetMinHeight(float value) { _minHeight = value; }
-		float GetMinHeight() const { return _minHeight; }
-
-		void SetMaxWidth(float value) { _maxWidth = value; }
-		float GetMaxWidth() const { return _maxWidth; }
-
-		void SetMaxHeight(float value) { _maxHeight = value; }
-		float GetMaxHeight() const { return _maxHeight; }
-
-		void SetVisibility(bool value) { _isVisible = value; }
-		bool IsVisible() const { return _isVisible; }
-
-		void SetZIndex(size_t value) { _zIndex = value; }
-		size_t GetZIndex() const { return _zIndex; }
-
-		void SetVerticalAlignment(VerticalAlignment value) { _verticalAlignment = value; }
-		VerticalAlignment GetVerticalAlignment() const { return _verticalAlignment; }
-
-		void SetHorizontalAlignment(HorizontalAlignment value) { _horizontalAlignment = value; }
-		HorizontalAlignment GetHorizontalAlignment() const { return _horizontalAlignment; }
-
-		void SetMargin(const Thickness& value) { _margin = value; }
-		const Thickness& GetMargin() const { return _margin; }
 
 		float GetActualWidth() const { return _actualWidth; }
 		float GetActualHeight() const { return _actualHeight; }
@@ -132,8 +130,8 @@ namespace Sgl
 			_position = value;
 			_actualPosition = FPoint
 			{
-				.x = static_cast<float>(value.x + _margin.Left),
-				.y = static_cast<float>(value.y + _margin.Top)
+				.x = static_cast<float>(value.x + Margin->Left),
+				.y = static_cast<float>(value.y + Margin->Top)
 			};
 		}
 
@@ -144,7 +142,7 @@ namespace Sgl
 	{
 		bool operator()(const shared_ptr<UIElement>& left, const shared_ptr<UIElement>& right) const
 		{
-			return left->GetZIndex() < right->GetZIndex();
+			return left->ZIndex < right->ZIndex;
 		}
 	};
 }

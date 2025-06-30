@@ -9,16 +9,15 @@ namespace Sgl
 {
 	class Layout: public UIElement, public ILayout
 	{
+	public:
+		UIElementsCollection Children;
 	protected:
 		bool _shouldArrange;
 	private:
 		bool _isHover;
-		UIElementsCollection _children;
 		shared_ptr<UIElement> _hoverChild;
 	public:
 		Layout();
-
-		const UIElementsCollection& GetChildren() const { return _children; }
 
 		void QueryArrange() override;
 		void OnRender(RenderContext rc) const override;
