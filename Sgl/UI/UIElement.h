@@ -61,7 +61,7 @@ namespace Sgl
 		using VerticalAlignmentProperty = StylyableProperty<VerticalAlignment>;
 		using HorizontalAlignmentProperty = StylyableProperty<HorizontalAlignment>;
 		using ColorProperty = StylyableProperty<Color>;
-		using CursorProperty = StylyableProperty<shared_ptr<Cursor>>;
+		using CursorProperty = StylyableProperty<std::reference_wrapper<const Cursor>, const Cursor&>;
 		using TextureProperty = StylyableProperty<shared_ptr<Texture>>;
 
 		using KeyEventHandler = EventHandler<UIElement, KeyEventArgs>;

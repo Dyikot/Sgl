@@ -4,13 +4,13 @@
 
 namespace Sgl
 {
-    template<typename T, typename TValue = T>
-        requires std::convertible_to<TValue, T> && std::copyable<T>
+    template<typename T, typename TInput = T>
+        requires std::convertible_to<TInput, T> && std::copyable<T>
     class StylyableProperty
     {
     public:
         using Type = T;
-        using ValueType = TValue;
+        using InputType = TInput;
     protected:
         T _value;
     public:
@@ -18,7 +18,7 @@ namespace Sgl
             _value()
         {}
 
-        StylyableProperty(TValue value):
+        StylyableProperty(TInput value):
             _value(value)
         {}
 
@@ -32,10 +32,10 @@ namespace Sgl
 
         virtual ~StylyableProperty() = default;
 
-        virtual TValue Get() const { return _value; }
-        operator TValue() const { return Get(); }
+        virtual TInput Get() const { return _value; }
+        operator TInput() const { return Get(); }
 
-        virtual StylyableProperty& operator=(TValue value)
+        virtual StylyableProperty& operator=(TInput value)
         {
             _value = value;
             return *this;

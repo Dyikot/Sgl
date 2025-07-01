@@ -16,10 +16,10 @@ namespace Sgl
         auto begin() const { return _setters.begin(); }
         auto end() const { return _setters.end(); }
 
-        template<typename TField, typename TValue>
-        void Add(TField field, TValue value)
+        template<typename TProperty>
+        void Add(TProperty T::* field, TProperty::InputType value)
         {
-            _setters.push_back([field, value](T& target)
+            _setters.push_back([field, value = TProperty::Type(value)](T& target)
             {
                 target.*field = value;
             });
