@@ -7,18 +7,18 @@ namespace Sgl
 		Layout(nullptr)
 	{}
 
-	void Scene::OnRender(RenderContext rc) const
+	void Sgl::Scene::OnRender(RenderContext context) const
 	{
 		if(BackgroundTexture)
 		{
-			rc.DrawTexture(*BackgroundTexture, BackgroundColor);
+			context.DrawTexture(*BackgroundTexture, BackgroundColor);
 		}
 		else
 		{
-			rc.FillBackground(BackgroundColor);
+			context.FillBackground(BackgroundColor);
 		}
 		
-		Layout->OnRender(rc);
+		Layout->OnRender(context);
 	}
 
 	void Scene::Process(TimeSpan elapsed)

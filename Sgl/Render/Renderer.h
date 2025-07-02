@@ -16,7 +16,7 @@ namespace Sgl
 	public:
 		Renderer();
 
-		RenderContext OpenContext();
+		RenderContext CreateContext();
 
 		Texture LoadTexture(std::string_view path);
 		Texture CreateTexture(TextureAccess textureAccess, int width, int height);

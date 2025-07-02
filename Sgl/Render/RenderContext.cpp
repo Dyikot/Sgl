@@ -34,25 +34,25 @@ namespace Sgl
 		SDL_RenderDrawLinesF(_renderer, points.data(), points.size());
 	}
 
-	void RenderContext::DrawRect(FRect rect, Color color)
+	void RenderContext::DrawRectange(FRect rect, Color color)
 	{
 		SetColor(color);
 		SDL_RenderDrawRectF(_renderer, &rect);
 	}
 
-	void RenderContext::DrawRects(std::span<const FRect> rects, Color color)
+	void RenderContext::DrawRectangles(std::span<const FRect> rects, Color color)
 	{
 		SetColor(color);
 		SDL_RenderDrawRectsF(_renderer, rects.data(), rects.size());
 	}
 
-	void RenderContext::DrawFillRect(FRect rect, Color fill)
+	void RenderContext::DrawFillRectangle(FRect rect, Color fill)
 	{
 		SetColor(fill);
 		SDL_RenderFillRectF(_renderer, &rect);		
 	}
 
-	void RenderContext::DrawFillRects(std::span<const FRect> rects, Color fill)
+	void RenderContext::DrawFillRectangles(std::span<const FRect> rects, Color fill)
 	{
 		SetColor(fill);
 		SDL_RenderFillRectsF(_renderer, rects.data(), rects.size());

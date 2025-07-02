@@ -20,7 +20,7 @@ namespace Sgl
 		Layout();
 
 		void QueryArrange() override;
-		void OnRender(RenderContext rc) const override;
+		void OnRender(RenderContext context) const override;
 		void ApplyStyle() override;
 	protected:
 		static void SetPosition(UIElement& element, FPoint position) { element.SetPosition(position); }

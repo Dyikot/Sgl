@@ -18,16 +18,16 @@ namespace Sgl
 	class Task
 	{
 	public:
-		template<typename TCallable, typename... TArgs>
-		static auto Run(TCallable&& callable, TArgs&&... args)
+		template<typename TInvocable, typename... TArgs> 
+			requires CAction<TInvocable, TArgs...>
+		static auto Run(TInvocable&& invocable, TArgs&&... args)
 		{
 			return std::async(std::launch::async,
-							  std::forward<TCallable>(callable),
+							  std::forward<TInvocable>(invocable),
 							  std::forward<TArgs>(args)...);
 		}
 
-		template<typename TRange> 
-			requires is_future_v<std::ranges::range_value_t<TRange>>
+		template<typename TRange> requires is_future_v<std::ranges::range_value_t<TRange>>
 		static void WaitAll(TRange&& tasks)
 		{
 			for(const auto& task : tasks)

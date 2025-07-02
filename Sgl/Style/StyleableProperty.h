@@ -32,12 +32,24 @@ namespace Sgl
 
         virtual ~StylyableProperty() = default;
 
-        virtual TInput Get() const { return _value; }
-        operator TInput() const { return Get(); }
-
-        virtual StylyableProperty& operator=(TInput value)
+        virtual void Set(TInput value)
         {
             _value = value;
+        }
+
+        virtual TInput Get() const
+        { 
+            return _value; 
+        }
+
+        operator TInput() const
+        { 
+            return Get();
+        }
+
+        StylyableProperty& operator=(TInput value)
+        {
+            Set(value);
             return *this;
         }
 
@@ -54,6 +66,5 @@ namespace Sgl
         }
 
         const T* operator->() const { return &_value; }
-        T* operator->() { return &_value; }
     };
 }

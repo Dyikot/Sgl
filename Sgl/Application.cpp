@@ -248,7 +248,7 @@ namespace Sgl
 
 			if(Window.IsVisible() || Window.IsRenderableWhenMinimized)
 			{
-				scene->OnRender(renderer.OpenContext());
+				scene->OnRender(renderer.CreateContext());
 				renderer.UpdateScreen();
 			}
 

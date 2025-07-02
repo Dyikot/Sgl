@@ -11,29 +11,18 @@ namespace Sgl
 	{
 	private:
 		constexpr static size_t DefaultLoopsNumber = 1e2;
+		constexpr static auto DefaultName = "Benchmark";
 
-		size_t _loopsNumber = DefaultLoopsNumber;
-		std::string _name = "Benchmark";
+		std::string _name;
+		size_t _loopsNumber;
 	public:
-		static Benchmark New()
-		{
-			return Benchmark();
-		}
+		Benchmark(std::string name = DefaultName, size_t loopsNumber = DefaultLoopsNumber):
+			_name(std::move(name)),
+			_loopsNumber(loopsNumber)
+		{}
 
-		static Benchmark New(size_t loopsNumber) 
-		{
-			return Benchmark("Benchmark", loopsNumber);
-		}
-
-		static Benchmark New(std::string name) 
-		{
-			return Benchmark(std::move(name), DefaultLoopsNumber);		
-		}
-
-		static Benchmark New(std::string name, size_t loopsNumber)
-		{
-			return Benchmark(std::move(name), loopsNumber);
-		}
+		Benchmark(const Benchmark&) = delete;
+		Benchmark(Benchmark&&) = delete;
 
 		template<typename... TArgs> 
 		void Run(CAction<TArgs...> auto&& action, TArgs&&... args)
@@ -50,13 +39,5 @@ namespace Sgl
 			auto elapsed = stopwatch.Elapsed() / _loopsNumber;
 			std::cout << std::format("{}: {}\n", _name, elapsed.ToString());
 		}
-	private:
-		Benchmark() = default;
-		Benchmark(const Benchmark&) = delete;
-		Benchmark(Benchmark&&) = delete;
-
-		Benchmark(std::string name, size_t loopsNumber):
-			_name(std::move(name)), _loopsNumber(loopsNumber)
-		{}
 	};
 }

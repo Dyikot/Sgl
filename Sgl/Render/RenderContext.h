@@ -24,11 +24,11 @@ namespace Sgl
 		void DrawLine(FPoint start, FPoint end, Color color);
 		void DrawLines(std::span<const FPoint> points, Color color);
 
-		void DrawRect(FRect rect, Color color);
-		void DrawRects(std::span<const FRect> rects, Color color);
+		void DrawRectange(FRect rect, Color color);
+		void DrawRectangles(std::span<const FRect> rects, Color color);
 
-		void DrawFillRect(FRect rect, Color fill);
-		void DrawFillRects(std::span<const FRect> rects, Color fill);
+		void DrawFillRectangle(FRect rect, Color fill);
+		void DrawFillRectangles(std::span<const FRect> rects, Color fill);
 
 		void DrawTexture(const Texture& texture);
 		void DrawTexture(const Texture& texture, Color fill);

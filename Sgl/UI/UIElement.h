@@ -16,7 +16,7 @@ namespace Sgl
 	class UIElement: public StyleableElement, public IRenderable
 	{
 	public:
-		struct WidthProperty: StylyableProperty<float>
+		class WidthProperty: public StylyableProperty<float>
 		{
 		private:
 			UIElement& _owner;
@@ -26,16 +26,17 @@ namespace Sgl
 				_owner(owner)
 			{}
 
-			WidthProperty& operator=(float value) override
+			void Set(float value) override
 			{
 				_value = value;
-				_owner._actualWidth = value;
+				_owner._actualWidth = value - _owner.Margin->Right;
 				_owner.OnSizeChanged();
-				return *this;
 			}
+
+			using StylyableProperty<float>::operator=;
 		};
 
-		struct HeightProperty: StylyableProperty<float>
+		class HeightProperty: public StylyableProperty<float>
 		{
 		private:
 			UIElement& _owner;
@@ -45,13 +46,14 @@ namespace Sgl
 				_owner(owner)
 			{}
 
-			HeightProperty& operator=(float value) override
+			void Set(float value) override
 			{
 				_value = value;
-				_owner._actualHeight = value;
+				_owner._actualHeight = value - _owner.Margin->Bottom;
 				_owner.OnSizeChanged();
-				return *this;
 			}
+
+			using StylyableProperty<float>::operator=;
 		};
 
 		using FloatProperty = StylyableProperty<float>;
@@ -110,7 +112,7 @@ namespace Sgl
 
 		void SetTooltip(const ToolTip& tooltip);
 
-		void OnRender(RenderContext rc) const override;
+		void OnRender(RenderContext context) const override;
 	protected:
 		FPoint GetPosition() const { return _position; }
 		FPoint GetActualPosition() const { return _actualPosition; }

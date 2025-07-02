@@ -21,7 +21,7 @@ namespace Sgl
         {
             _setters.push_back([field, value = TProperty::Type(value)](T& target)
             {
-                target.*field = value;
+                (target.*field).Set(value);
             });
         }
     };

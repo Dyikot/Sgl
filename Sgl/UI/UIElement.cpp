@@ -68,7 +68,7 @@ namespace Sgl
 	void UIElement::SetTooltip(const ToolTip& tooltip)
 	{}
 
-	void UIElement::OnRender(RenderContext rc) const
+	void Sgl::UIElement::OnRender(RenderContext context) const
 	{		
 		
 	}

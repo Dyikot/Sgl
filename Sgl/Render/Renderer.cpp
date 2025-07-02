@@ -7,7 +7,7 @@ namespace Sgl
 		_renderer(App->Window._renderer)
 	{}
 
-	RenderContext Renderer::OpenContext()
+	RenderContext Renderer::CreateContext()
 	{
 		return RenderContext(_renderer);
 	}
@@ -63,7 +63,7 @@ namespace Sgl
 	void Renderer::RenderOnTexture(Texture& texture, RenderFragment renderFragment)
 	{
 		SDL_SetRenderTarget(_renderer, texture);
-		renderFragment(OpenContext());
+		renderFragment(CreateContext());
 		SDL_SetRenderTarget(_renderer, nullptr);
 	}
 

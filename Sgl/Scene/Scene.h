@@ -20,7 +20,7 @@ namespace Sgl
 		Scene(Scene&&) = delete;
 		virtual ~Scene() = default;
 
-		void OnRender(RenderContext rc) const override;
+		void OnRender(RenderContext context) const override;
 		virtual void Process(TimeSpan elapsed);
 	protected:
 		virtual void OnResumed() {}

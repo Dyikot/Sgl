@@ -21,13 +21,13 @@ namespace Sgl
         _shouldArrange = true;
     }
 
-    void Layout::OnRender(RenderContext rc) const
+    void Sgl::Layout::OnRender(RenderContext context) const
     {
-        UIElement::OnRender(rc);
+        UIElement::OnRender(context);
         
         for(auto& child : Children)
         {
-            child->OnRender(rc);
+            child->OnRender(context);
         }
     }
 
