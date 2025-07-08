@@ -42,39 +42,44 @@ class MyScene: public Scene
 public:
 	MyScene()
 	{
+		auto layout = Canvas::New();
+		layout->Classes = { "layout", "elementSize"};
+
 		BackgroundColor = Colors::Whitesmoke;
-
-		auto style = Style<Button>::New(Selector { .Class = "test" });
-		style->Setters.Add(&Button::BackgroundColor, Colors::Grey);
-		style->Setters.Add(&Button::Cursor, Cursors::Arrow);
-		style->Setters.Add(&Button::Width, 150);
-		style->Setters.Add(&Button::Height, 100);
-
-		auto button = Button::New();
-		button->Classes = { "test" };
-		button->Styles.Add(style);
-
-		Layout = Canvas::New();
-		Layout->Children.Add(button);
+		SetLayout(layout);
 	}
 
-	void OnRender(RenderContext rc) const override
+	void OnRender(RenderContext context) const override
 	{
-		Scene::OnRender(rc);
+		Scene::OnRender(context);
 	}
 
 	void Process(TimeSpan elapsed) override
 	{
-		Scene::Process(elapsed);
+		Scene::Process(elapsed);		
 	}
 };
+
+static StyleMap CreateAppStyles()
+{
+	StyleMap styles;
+	styles.Add<Canvas>("layout")
+		.AddSetter(&Canvas::BackgroundColor, Colors::White)
+		.AddSetter(&Canvas::Cursor, Cursors::Hand);
+	styles.Add<UIElement>("elementSize")
+		.AddSetter(&UIElement::Width, 200)
+		.AddSetter(&UIElement::Height, 400);
+
+	return styles;
+}
 
 int main()
 {	
 	Application app;
-	app.SetMaxFrameRate(60);
+	app.SetMaxFPS(60);
 	app.Window.SetTitle("Test");
 	app.SceneManager.Push<MyScene>();
+	app.Styles = CreateAppStyles();
 	app.Run();
 }
 ```
