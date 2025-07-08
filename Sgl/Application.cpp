@@ -1,11 +1,12 @@
 #include "Application.h"
-#include "Tools/Time/Timer.h"
-#include "Tools/Log.h"
-#include "Tools/Time/Delay.h"
+#include "Base/Log.h"
+#include "Base/Time/Timer.h"
+#include "Base/Time/Delay.h"
 
 namespace Sgl
 {
-	Application::Application() noexcept
+	Application::Application() noexcept:
+		_stylingParent(nullptr)
 	{
 		_current = this;
 
@@ -41,10 +42,10 @@ namespace Sgl
 		Start();
 	}
 
-	void Application::Stop()
+	void Application::Shutdown()
 	{
 		_running = false;
-		OnStop();
+		OnShutdown();
 	}
 
 	void Application::HandleEvents(std::shared_ptr<Scene> scene)
@@ -56,7 +57,7 @@ namespace Sgl
 			{
 				case SDL_QUIT:
 				{
-					Stop();
+					Shutdown();
 					break;
 				}
 
@@ -100,7 +101,7 @@ namespace Sgl
 						.Key = e.key.keysym
 					};
 
-					scene->Layout->OnKeyDown(args);
+					scene->_layout->OnKeyDown(args);
 					break;
 				}
 
@@ -112,7 +113,7 @@ namespace Sgl
 						.Key = e.key.keysym
 					};
 
-					scene->Layout->OnKeyUp(args);
+					scene->_layout->OnKeyUp(args);
 					break;
 				}
 
@@ -165,7 +166,7 @@ namespace Sgl
 						}
 					};
 
-					scene->Layout->OnMouseMove(args);
+					scene->_layout->OnMouseMove(args);
 					break;
 				}
 
@@ -178,7 +179,7 @@ namespace Sgl
 						.ClicksNumber = e.button.clicks
 					};
 
-					scene->Layout->OnMouseDown(args);
+					scene->_layout->OnMouseDown(args);
 					break;
 				}
 
@@ -191,7 +192,7 @@ namespace Sgl
 						.ClicksNumber = e.button.clicks
 					};
 
-					scene->Layout->OnMouseUp(args);
+					scene->_layout->OnMouseUp(args);
 					break;
 				}
 
@@ -209,7 +210,7 @@ namespace Sgl
 						.Direction = static_cast<MouseWheelDirection>(e.wheel.direction)
 					};
 
-					scene->Layout->OnMouseWheel(args);
+					scene->_layout->OnMouseWheelChanged(args);
 					break;
 				}
 
@@ -221,7 +222,7 @@ namespace Sgl
 
 	void Application::Start()
 	{
-		OnStart();
+		OnRun();
 
 		Renderer renderer;
 		renderer.SetBlendMode(SDL_BLENDMODE_BLEND);
@@ -235,7 +236,7 @@ namespace Sgl
 
 			if(scene == nullptr)
 			{
-				Stop();
+				Shutdown();
 				continue;
 			}
 			
@@ -259,12 +260,12 @@ namespace Sgl
 		}
 	}
 
-	void Application::OnStart()
+	void Application::OnRun()
 	{
 		Started.TryRaise(*this, EmptyEventArgs);
 	}
 
-	void Application::OnStop()
+	void Application::OnShutdown()
 	{
 		Stopped.TryRaise(*this, EmptyEventArgs);
 	}

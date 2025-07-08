@@ -1,8 +1,8 @@
 #include "RenderContext.h"
 #include <SDL/SDL_image.h>
-#include "../Tools/Log.h"
-#include "../Tools/Time/Stopwatch.h"
-#include "../Math/Math.h"
+#include "../Base/Log.h"
+#include "../Base/Math.h"
+#include "../Base/Time/Stopwatch.h"
 
 namespace Sgl
 {
@@ -60,92 +60,92 @@ namespace Sgl
 
 	void RenderContext::DrawTexture(const Texture& texture)
 	{
-		SDL_RenderCopyF(_renderer, texture, nullptr, nullptr);
+		SDL_RenderCopyF(_renderer, texture.GetSDLTexture(), nullptr, nullptr);
 	}
 
 	void RenderContext::DrawTexture(const Texture& texture, Color fill)
 	{
 		texture.SetColor(fill);
-		SDL_RenderCopyF(_renderer, texture, nullptr, nullptr);
+		SDL_RenderCopyF(_renderer, texture.GetSDLTexture(), nullptr, nullptr);
 	}
 
 	void RenderContext::DrawTexture(const Texture& texture, FRect target)
 	{
-		SDL_RenderCopyF(_renderer, texture, nullptr, &target);
+		SDL_RenderCopyF(_renderer, texture.GetSDLTexture(), nullptr, &target);
 	}
 
 	void RenderContext::DrawTexture(const Texture& texture, FRect target, Color fill)
 	{
 		texture.SetColor(fill);
-		SDL_RenderCopyF(_renderer, texture, nullptr, &target);
+		SDL_RenderCopyF(_renderer, texture.GetSDLTexture(), nullptr, &target);
 	}
 
 	void RenderContext::DrawTexture(const Texture& texture, FRect target, Rect source)
 	{
-		SDL_RenderCopyF(_renderer, texture, &source, &target);
+		SDL_RenderCopyF(_renderer, texture.GetSDLTexture(), &source, &target);
 	}
 
 	void RenderContext::DrawTexture(const Texture& texture, FRect target,
 									Rect source, Color fill)
 	{
 		texture.SetColor(fill);
-		SDL_RenderCopyF(_renderer, texture, &source, &target);
+		SDL_RenderCopyF(_renderer, texture.GetSDLTexture(), &source, &target);
 	}
 
 	void RenderContext::DrawTextureWithRotation(const Texture& texture, double angle, FPoint center)
 	{
-		SDL_RenderCopyExF(_renderer, texture, nullptr, nullptr, angle, &center, SDL_FLIP_NONE);
+		SDL_RenderCopyExF(_renderer, texture.GetSDLTexture(), nullptr, nullptr, angle, &center, SDL_FLIP_NONE);
 	}
 
 	void RenderContext::DrawTextureWithRotation(const Texture& texture, Color fill, 
 												double angle, FPoint center)
 	{
 		texture.SetColor(fill);
-		SDL_RenderCopyExF(_renderer, texture, nullptr, nullptr, angle, &center, SDL_FLIP_NONE);
+		SDL_RenderCopyExF(_renderer, texture.GetSDLTexture(), nullptr, nullptr, angle, &center, SDL_FLIP_NONE);
 	}
 
 	void RenderContext::DrawTextureWithRotation(const Texture& texture, FRect target,
 												double angle, FPoint center)
 	{
-		SDL_RenderCopyExF(_renderer, texture, nullptr, &target, angle, &center, SDL_FLIP_NONE);
+		SDL_RenderCopyExF(_renderer, texture.GetSDLTexture(), nullptr, &target, angle, &center, SDL_FLIP_NONE);
 	}
 
 	void RenderContext::DrawTextureWithRotation(const Texture& texture, FRect target, 
 												Color fill, double angle, FPoint center)
 	{
 		texture.SetColor(fill);
-		SDL_RenderCopyExF(_renderer, texture, nullptr, &target, angle, &center, SDL_FLIP_NONE);
+		SDL_RenderCopyExF(_renderer, texture.GetSDLTexture(), nullptr, &target, angle, &center, SDL_FLIP_NONE);
 	}
 
 	void RenderContext::DrawTextureWithRotation(const Texture& texture, FRect target, Rect source,
 												double angle, FPoint center)
 	{
-		SDL_RenderCopyExF(_renderer, texture, &source, &target, angle, &center, SDL_FLIP_NONE);
+		SDL_RenderCopyExF(_renderer, texture.GetSDLTexture(), &source, &target, angle, &center, SDL_FLIP_NONE);
 	}
 
 	void RenderContext::DrawTextureWithRotation(const Texture& texture, FRect target, Rect source,
 												Color fill, double angle, FPoint center)
 	{
 		texture.SetColor(fill);
-		SDL_RenderCopyExF(_renderer, texture, &source, &target, angle, &center, SDL_FLIP_NONE);
+		SDL_RenderCopyExF(_renderer, texture.GetSDLTexture(), &source, &target, angle, &center, SDL_FLIP_NONE);
 	}
 
 	void RenderContext::DrawTextureWithFlip(const Texture& texture, TextureFlip flip)
 	{
-		SDL_RenderCopyExF(_renderer, texture, nullptr, nullptr, 0, nullptr, 
+		SDL_RenderCopyExF(_renderer, texture.GetSDLTexture(), nullptr, nullptr, 0, nullptr,
 						  static_cast<SDL_RendererFlip>(flip));
 	}
 
 	void RenderContext::DrawTextureWithFlip(const Texture& texture, Color fill, TextureFlip flip)
 	{
 		texture.SetColor(fill);
-		SDL_RenderCopyExF(_renderer, texture, nullptr, nullptr, 0, nullptr,
+		SDL_RenderCopyExF(_renderer, texture.GetSDLTexture(), nullptr, nullptr, 0, nullptr,
 						  static_cast<SDL_RendererFlip>(flip));
 	}
 
 	void RenderContext::DrawTextureWithFlip(const Texture& texture, FRect target, TextureFlip flip)
 	{
-		SDL_RenderCopyExF(_renderer, texture, nullptr, &target, 0, nullptr,
+		SDL_RenderCopyExF(_renderer, texture.GetSDLTexture(), nullptr, &target, 0, nullptr,
 						  static_cast<SDL_RendererFlip>(flip));
 	}
 
@@ -153,14 +153,14 @@ namespace Sgl
 											TextureFlip flip)
 	{
 		texture.SetColor(fill);
-		SDL_RenderCopyExF(_renderer, texture, nullptr, &target, 0, nullptr,
+		SDL_RenderCopyExF(_renderer, texture.GetSDLTexture(), nullptr, &target, 0, nullptr,
 						  static_cast<SDL_RendererFlip>(flip));
 	}
 
 	void RenderContext::DrawTextureWithFlip(const Texture& texture, FRect target, Rect source,
 											TextureFlip flip)
 	{
-		SDL_RenderCopyExF(_renderer, texture, &source, &target, 0, nullptr,
+		SDL_RenderCopyExF(_renderer, texture.GetSDLTexture(), &source, &target, 0, nullptr,
 						  static_cast<SDL_RendererFlip>(flip));
 	}
 
@@ -168,14 +168,14 @@ namespace Sgl
 											Color fill, TextureFlip flip)
 	{
 		texture.SetColor(fill);
-		SDL_RenderCopyExF(_renderer, texture, &source, &target, 0, nullptr,
+		SDL_RenderCopyExF(_renderer, texture.GetSDLTexture(), &source, &target, 0, nullptr,
 						  static_cast<SDL_RendererFlip>(flip));
 	}
 
 	void RenderContext::DrawTextureWithRotationAndFlip(
 		const Texture& texture, double angle, FPoint center, TextureFlip flip)
 	{
-		SDL_RenderCopyExF(_renderer, texture, nullptr, nullptr, angle, &center, 
+		SDL_RenderCopyExF(_renderer, texture.GetSDLTexture(), nullptr, nullptr, angle, &center,
 						  static_cast<SDL_RendererFlip>(flip));
 	}
 
@@ -184,7 +184,7 @@ namespace Sgl
 		FPoint center, TextureFlip flip)
 	{
 		texture.SetColor(fill);
-		SDL_RenderCopyExF(_renderer, texture, nullptr, nullptr, angle, &center,
+		SDL_RenderCopyExF(_renderer, texture.GetSDLTexture(), nullptr, nullptr, angle, &center,
 						  static_cast<SDL_RendererFlip>(flip));
 	}
 
@@ -192,7 +192,7 @@ namespace Sgl
 		const Texture& texture, FRect target, double angle, 
 		FPoint center, TextureFlip flip)
 	{
-		SDL_RenderCopyExF(_renderer, texture, nullptr, &target, angle, &center,
+		SDL_RenderCopyExF(_renderer, texture.GetSDLTexture(), nullptr, &target, angle, &center,
 						  static_cast<SDL_RendererFlip>(flip));
 	}
 
@@ -201,7 +201,7 @@ namespace Sgl
 		double angle, FPoint center, TextureFlip flip)
 	{
 		texture.SetColor(fill);
-		SDL_RenderCopyExF(_renderer, texture, nullptr, &target, angle, &center,
+		SDL_RenderCopyExF(_renderer, texture.GetSDLTexture(), nullptr, &target, angle, &center,
 						  static_cast<SDL_RendererFlip>(flip));
 	}
 
@@ -209,7 +209,7 @@ namespace Sgl
 		const Texture& texture, FRect target, Rect source,
 		double angle, FPoint center, TextureFlip flip)
 	{
-		SDL_RenderCopyExF(_renderer, texture, &source, &target, angle, &center,
+		SDL_RenderCopyExF(_renderer, texture.GetSDLTexture(), &source, &target, angle, &center,
 						  static_cast<SDL_RendererFlip>(flip));
 	}
 
@@ -218,7 +218,7 @@ namespace Sgl
 		Color fill, double angle, FPoint center, TextureFlip flip)
 	{
 		texture.SetColor(fill);
-		SDL_RenderCopyExF(_renderer, texture, &source, &target, angle, &center,
+		SDL_RenderCopyExF(_renderer, texture.GetSDLTexture(), &source, &target, angle, &center,
 						  static_cast<SDL_RendererFlip>(flip));
 	}
 
@@ -342,7 +342,7 @@ namespace Sgl
 
 	void RenderContext::DrawGeometry(std::span<const Vertex> vertices, const Texture& texture)
 	{
-		SDL_RenderGeometry(_renderer, texture, vertices.data(), vertices.size(), nullptr, 0);	
+		SDL_RenderGeometry(_renderer, texture.GetSDLTexture(), vertices.data(), vertices.size(), nullptr, 0);
 	}
 
 	void RenderContext::DrawGeometry(std::span<const Vertex> vertices, std::span<const int> order)
@@ -354,7 +354,7 @@ namespace Sgl
 	void RenderContext::DrawGeometry(std::span<const Vertex> vertices, std::span<const int> order,
 								  const Texture& texture)
 	{
-		SDL_RenderGeometry(_renderer, texture, vertices.data(), vertices.size(),
+		SDL_RenderGeometry(_renderer, texture.GetSDLTexture(), vertices.data(), vertices.size(),
 						   order.data(), order.size());		
 	}
 

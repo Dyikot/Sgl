@@ -2,8 +2,8 @@
 
 #include <string_view>
 #include "SDL/SDL_mixer.h"
-#include "../Tools/Log.h"
-#include "../Tools/Time/TimeSpan.h"
+#include "../Base/Log.h"
+#include "../Base/Time/TimeSpan.h"
 
 namespace Sgl
 {
@@ -122,7 +122,7 @@ namespace Sgl
 	public:
 		Volume Volume;
 	public:
-		explicit SoundChunk(std::string_view path) noexcept;
+		explicit SoundChunk(std::string path) noexcept;
 		SoundChunk(const SoundChunk&) = delete;
 		SoundChunk(SoundChunk&&) = delete;
 		~SoundChunk() noexcept;

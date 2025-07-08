@@ -1,82 +1,46 @@
 #pragma once
 
-#include <string>
 #include <memory>
-#include <unordered_map>
-#include "../Data/Object.h"
-#include "Setters.h"
-
-using std::shared_ptr;
+#include <vector>
+#include "IStyle.h"
+#include "../Base/Delegate.h"
 
 namespace Sgl
 {
-    struct Selector
-    {
-        std::string Class;
-        std::string PseudoClass;
-    };
-
-    class IStyle
-    {
-    public:
-        virtual ~IStyle() = default;
-
-        virtual void ApplyTo(object target) = 0;
-        virtual const Selector& GetSelector() const = 0;
-    };
+    using std::shared_ptr;    
 
     template<typename T>
     class Style: public IStyle
     {
     private:
-        Selector _selector;
+        std::vector<Action<T&>> _setters;
     public:
-        using Setter = SettersCollection<T>::Setter;
+        Style() = default;
 
-        SettersCollection<T> Setters;
-    public:
-        explicit Style(Selector selector): 
-            _selector(std::move(selector))
-        {}
+        auto begin() { return _setters.begin(); }
+        auto end() { return _setters.end(); }
 
-        static shared_ptr<Style<T>> New(Selector selector)
+        auto begin() const { return _setters.begin(); }
+        auto end() const { return _setters.end(); }
+
+        template<typename TProperty>
+        Style<T>& AddSetter(TProperty T::* field, TProperty::InputType value)
         {
-            return std::make_shared<Style<T>>(std::move(selector));
-        }
-
-        const Selector& GetSelector() const override 
-        { 
-            return _selector; 
-        }
-
-        void ApplyTo(object target) override
-        {
-            for(const Setter& setter : Setters)
+            _setters.push_back([field, value = TProperty::Type(value)](T& target)
             {
-                setter(target.As<T>());
+                (target.*field).Set(value);
+            });
+
+            return *this;
+        }       
+
+        void Apply(StyleableElement& target) override
+        {
+            T& targetElement = static_cast<T&>(target);
+            for(const auto& setter : _setters)
+            {
+                setter(targetElement);
             }
         }
-    };
-
-    class StyleCollection
-    {
-    private:
-        std::unordered_map<std::string, shared_ptr<IStyle>> _items;
-    public:
-        StyleCollection() = default;
-
-        StyleCollection(const StyleCollection& other):
-            _items(other._items)
-        {}
-
-        StyleCollection(StyleCollection&& other) noexcept:
-            _items(std::move(other._items))
-        {}
-
-        auto begin() const { return _items.begin(); }
-        auto end() const { return _items.end(); }
-
-        void Add(shared_ptr<IStyle> style);
-        shared_ptr<IStyle> TryFind(const std::string& className);
-    };
+    };    
 }

@@ -25,6 +25,11 @@ namespace Sgl
         SDL_DestroyWindow(_window);
     }
 
+    SDL_Window* Window::GetSDL_Window() const noexcept
+    {
+        return _window;
+    }
+
     void Window::SetWidth(size_t value) noexcept
     {
         SDL_SetWindowSize(_window, value, GetHeight());
@@ -85,7 +90,7 @@ namespace Sgl
         return Size(width, height);
     }
 
-    void Window::SetTitle(std::string_view value) noexcept
+    void Window::SetTitle(std::string value) noexcept
     {
         SDL_SetWindowTitle(_window, value.data());
     }
@@ -95,14 +100,14 @@ namespace Sgl
         return std::string_view(SDL_GetWindowTitle(_window));
     }
 
-    void Window::SetPosition(SDL_Point value) noexcept
+    void Window::SetPosition(Point value) noexcept
     {
         SDL_SetWindowPosition(_window, value.x, value.y);
     }
 
-    SDL_Point Window::GetPosition() const noexcept
+    Point Window::GetPosition() const noexcept
     {
-        SDL_Point position = {};
+        Point position = {};
         SDL_GetWindowPosition(_window, &position.x, &position.y);
         return position;
     }
@@ -185,13 +190,13 @@ namespace Sgl
         }
     }
 
-    void Window::SetIcon(std::string_view path)
+    void Window::SetIcon(shared_ptr<Surface> icon)
     {
-        _icon = Surface(path);
-        SDL_SetWindowIcon(_window, _icon.value());
+        _icon = std::move(icon);
+        SDL_SetWindowIcon(_window, _icon->GetSDLSurface());
     }
 
-    const std::optional<Surface>& Window::GetIcon() const
+    shared_ptr<Surface> Window::GetIcon() const
     {
         return _icon;
     }
@@ -236,5 +241,10 @@ namespace Sgl
     bool Window::IsVisible() const
     {
         return !(SDL_GetWindowFlags(_window) & (SDL_WINDOW_HIDDEN | SDL_WINDOW_MINIMIZED));
-    }    
+    }
+
+    void Window::OnWindowStateChanged(const WindowStateEventArgs& e)
+    {
+        WindowStateChanged.TryRaise(*this, e);
+    }
 }

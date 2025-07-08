@@ -1,39 +1,44 @@
 #pragma once
 
 #include <optional>
-#include "Render/Surface.h"
 #include "Render/Renderer.h"
-#include "Events/Event.h"
-#include "Events/WindowEventArgs.h"
-#include "Data/Size.h"
+#include "Render/Surface.h"
+#include "Base/Size.h"
+#include "Base/WindowEventArgs.h"
+#include "Base/Events/Event.h"
 
 namespace Sgl
 {
+	using std::shared_ptr;
+
 	class Window
 	{
 	public:
 		using WindowStateEventHandler = EventHandler<Window, WindowStateEventArgs>;
 
-		bool IsRenderableWhenMinimized = false;
 		Event<WindowStateEventHandler> WindowStateChanged;
-	private:
+		bool IsRenderableWhenMinimized = false;
+	protected:
 		SDL_Window* _window;
 		SDL_Renderer* _renderer;
+	private:
+		shared_ptr<Surface> _icon;
 		bool _hasVSync = false;
-		std::optional<Surface> _icon;
 	public:
 		Window() noexcept;
 		Window(const Window&) = delete;
 		Window(Window&&) = delete;
 		~Window() noexcept;
 		
+		SDL_Window* GetSDL_Window() const noexcept;
+
 		void SetWidth(size_t value) noexcept;
 		size_t GetWidth() const noexcept;
 
 		void SetHeight(size_t value) noexcept;
 		size_t GetHeight() const noexcept;
 
-		void SetTitle(std::string_view value) noexcept;
+		void SetTitle(std::string value) noexcept;
 		std::string_view GetTitle() const noexcept;
 
 		void SetLogicalSize(Size size) noexcept;
@@ -45,8 +50,8 @@ namespace Sgl
 		void SetMinSize(Size size) noexcept;
 		Size GetMinSize() const noexcept;
 
-		void SetPosition(SDL_Point value) noexcept;
-		SDL_Point GetPosition() const noexcept;
+		void SetPosition(Point value) noexcept;
+		Point GetPosition() const noexcept;
 
 		void SetDisplayMode(DisplayMode displayMode);
 		DisplayMode GetDisplayMode() const noexcept;
@@ -54,8 +59,8 @@ namespace Sgl
 		void SetWindowState(WindowState state) noexcept;
 		WindowState GetWindowState() const noexcept;
 
-		void SetIcon(std::string_view path);
-		const std::optional<Surface>& GetIcon() const;
+		void SetIcon(shared_ptr<Surface> icon);
+		shared_ptr<Surface> GetIcon() const;
 
 		void SetVSync(bool value) noexcept;
 		bool HasVSync() const;
@@ -66,13 +71,8 @@ namespace Sgl
 		void Show();
 		void Hide();
 		bool IsVisible() const;
-
-		operator SDL_Window* () const noexcept { return _window; }
-	private:
-		void OnWindowStateChanged(const WindowStateEventArgs& e)
-		{
-			WindowStateChanged.TryRaise(*this, e);
-		}
+	protected:
+		void OnWindowStateChanged(const WindowStateEventArgs& e);
 		// TODO: Add other window events
 
 		friend class Application;

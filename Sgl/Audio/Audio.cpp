@@ -53,7 +53,7 @@ namespace Sgl
 		return Mix_PlayingMusic();
 	}
 
-	SoundChunk::SoundChunk(std::string_view path) noexcept:
+	SoundChunk::SoundChunk(std::string path) noexcept:
 		_soundChunk(Mix_LoadWAV(path.data()))
 	{
 		Log::PrintSDLErrorIf(_soundChunk == nullptr);

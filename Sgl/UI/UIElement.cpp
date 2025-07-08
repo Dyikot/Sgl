@@ -1,11 +1,12 @@
 #include "UIElement.h"
+#include "../Scene/Scene.h"
 
 namespace Sgl
 {
 	UIElement::UIElement():
 		BackgroundColor(Colors::Black),
 		Cursor(Cursors::Arrow),
-		Texture(),
+		BackgroundTexture(),
 		Width(*this),
 		Height(*this),
 		MinWidth(),
@@ -17,6 +18,7 @@ namespace Sgl
 		Margin(),
 		VerticalAlignment(VerticalAlignment::Top),
 		HorizontalAlignment(HorizontalAlignment::Left),
+		Tag(),
 		_actualWidth(Width - Margin->Right),
 		_actualHeight(Height - Margin->Bottom),
 		_position(),
@@ -26,7 +28,7 @@ namespace Sgl
 	UIElement::UIElement(const UIElement& other):
 		BackgroundColor(other.BackgroundColor),
 		Cursor(other.Cursor),
-		Texture(other.Texture),
+		BackgroundTexture(other.BackgroundTexture),
 		Width(other.Width),
 		Height(other.Height),
 		MinWidth(other.MinWidth),
@@ -38,6 +40,7 @@ namespace Sgl
 		Margin(other.Margin),
 		VerticalAlignment(other.VerticalAlignment),
 		HorizontalAlignment(other.HorizontalAlignment),
+		Tag(other.Tag),
 		_actualWidth(other._actualWidth),
 		_actualHeight(other._actualHeight),
 		_position(other._position),
@@ -45,25 +48,38 @@ namespace Sgl
 	{}
 
 	UIElement::UIElement(UIElement&& other) noexcept:
-		BackgroundColor(other.BackgroundColor),
-		Cursor(other.Cursor),
-		Texture(std::move(other.Texture)),
-		Width(other.Width),
-		Height(other.Height),
-		MinWidth(other.MinWidth),
-		MinHeight(other.MinHeight),
-		MaxWidth(other.MaxWidth),
-		MaxHeight(other.MaxHeight),
-		IsVisible(other.IsVisible),
-		ZIndex(other.ZIndex),
-		Margin(other.Margin),
-		VerticalAlignment(other.VerticalAlignment),
-		HorizontalAlignment(other.HorizontalAlignment),
+		BackgroundColor(std::move(other.BackgroundColor)),
+		Cursor(std::move(other.Cursor)),
+		BackgroundTexture(std::move(other.BackgroundTexture)),
+		Width(std::move(other.Width)),
+		Height(std::move(other.Height)),
+		MinWidth(std::move(other.MinWidth)),
+		MinHeight(std::move(other.MinHeight)),
+		MaxWidth(std::move(other.MaxWidth)),
+		MaxHeight(std::move(other.MaxHeight)),
+		IsVisible(std::move(other.IsVisible)),
+		ZIndex(std::move(other.ZIndex)),
+		Margin(std::move(other.Margin)),
+		VerticalAlignment(std::move(other.VerticalAlignment)),
+		Tag(std::move(other.Tag)),
+		HorizontalAlignment(std::move(other.HorizontalAlignment)),
 		_actualWidth(other._actualWidth),
 		_actualHeight(other._actualHeight),
 		_position(other._position),
 		_actualPosition(other._actualPosition)
 	{}
+
+	Scene& UIElement::GetScene()
+	{
+		Scene* scene = nullptr;
+
+		while(scene == nullptr)
+		{
+			scene = dynamic_cast<Scene*>(_stylingParent);
+		}
+
+		return *scene;
+	}
 
 	void UIElement::SetTooltip(const ToolTip& tooltip)
 	{}

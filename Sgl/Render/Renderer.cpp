@@ -46,7 +46,7 @@ namespace Sgl
 
 	Texture Renderer::CreateTexture(const Surface& surface)
 	{
-		return Texture(SDL_CreateTextureFromSurface(_renderer, surface));
+		return Texture(SDL_CreateTextureFromSurface(_renderer, surface.GetSDLSurface()));
 	}
 
 	Texture Renderer::CreateTextTexture(const std::string& text, const Font& font)
@@ -62,7 +62,7 @@ namespace Sgl
 
 	void Renderer::RenderOnTexture(Texture& texture, RenderFragment renderFragment)
 	{
-		SDL_SetRenderTarget(_renderer, texture);
+		SDL_SetRenderTarget(_renderer, texture.GetSDLTexture());
 		renderFragment(CreateContext());
 		SDL_SetRenderTarget(_renderer, nullptr);
 	}

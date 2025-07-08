@@ -3,10 +3,10 @@
 #include <utility>
 #include <string_view>
 #include <SDL/SDL_image.h>
-#include "../Tools/Log.h"
-#include "Primitives.h"
-#include "Color.h"
-#include "../Data/Size.h"
+#include "../Base/Color.h"
+#include "../Base/Log.h"
+#include "../Base/Primitives.h"
+#include "../Base/Size.h"
 
 namespace Sgl
 {
@@ -26,26 +26,13 @@ namespace Sgl
 		SDL_Texture* _texture = nullptr;
 	public:
 		Texture() = default;
-
-		Texture(SDL_Texture* texture):
-			_texture(texture)
-		{
-			Log::PrintSDLErrorIf(_texture == nullptr);
-		}
-
+		Texture(SDL_Texture* texture);
 		Texture(const Texture&) = delete;
+		Texture(Texture&& other) noexcept;
+		~Texture() noexcept;
 
-		Texture(Texture&& other) noexcept:
-			_texture(std::exchange(other._texture, nullptr))
-		{}
-
-		~Texture() noexcept
-		{
-			if(_texture)
-			{
-				SDL_DestroyTexture(_texture);
-			}
-		}
+		SDL_Texture* GetSDLTexture() const noexcept { return _texture; }
+		Size GetSize() const;
 
 		void SetColor(Color color) const
 		{
@@ -53,24 +40,7 @@ namespace Sgl
 			SDL_SetTextureAlphaMod(_texture, color.Alpha);
 		}
 
-		Size GetSize() const
-		{
-			int width = 0, height = 0;
-			SDL_QueryTexture(_texture, nullptr, nullptr, &width, &height);
-			return Size(width, height);
-		}
-
-		bool IsEmpty() const noexcept
-		{
-			return _texture == nullptr;
-		}
-
-		Texture& operator=(Texture&& other) noexcept
-		{
-			_texture = std::exchange(other._texture, nullptr);
-			return *this;
-		}
-
-		operator SDL_Texture* () const noexcept { return _texture; }
+		Texture& operator=(const Texture&) = delete;
+		Texture& operator=(Texture&& other) noexcept;
 	};
 }

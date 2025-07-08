@@ -4,8 +4,8 @@
 
 namespace Sgl
 {
-    template<typename T, typename TInput = T>
-        requires std::convertible_to<TInput, T> && std::copyable<T>
+    template<typename T, typename TInput = T> 
+        requires std::constructible_from<T, TInput> && std::copyable<T>
     class StylyableProperty
     {
     public:
@@ -22,7 +22,7 @@ namespace Sgl
             _value(value)
         {}
 
-        StylyableProperty(const StylyableProperty& other): 
+        StylyableProperty(const StylyableProperty& other):
             _value(other._value)
         {}
 

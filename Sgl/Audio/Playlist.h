@@ -2,31 +2,33 @@
 
 #include <vector>
 #include "Audio.h"
-#include "../Events/Event.h"
+#include "../Base/Events/Event.h"
 
-using std::shared_ptr;
 
 namespace Sgl
 {
+	using std::shared_ptr;
+
 	class Playlist
 	{
 	public:
 		using PlayListEventHandler = EventHandler<Playlist, EventArgs>;
+		using MusicCollection = std::vector<shared_ptr<Music>>;
+		using Iterator = MusicCollection::iterator;
 
 		Volume Volume;
-		std::vector<shared_ptr<Music>> Items;
+		MusicCollection Items;
 
 		Event<PlayListEventHandler> Started;
 		Event<PlayListEventHandler> Ended;
 	private:
-		std::vector<shared_ptr<Music>>::iterator _currentIt = Items.begin();
+		Iterator _currentIt = Items.begin();
 	public:
 		Playlist() = default;
 		Playlist(const Playlist& other);
 		Playlist(Playlist&& other) noexcept;
 
-		auto GetCurrent() { return _currentIt != Items.end() ? *_currentIt: nullptr; }
-		
+		shared_ptr<Music> GetCurrent();		
 		void Play();
 
 		Playlist& operator=(const Playlist& other);

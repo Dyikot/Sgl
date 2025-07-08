@@ -1,18 +1,21 @@
 #pragma once
 
-#include "../Data/Object.h"
-#include "../Style/Layout.h"
-#include "../Style/StyleableElement.h"
-#include "../Style/StyleableProperty.h"
-#include "../Events/Event.h"
-#include "../Events/MouseAndKeyArgs.h"
 #include "../Render/Renderer.h"
 #include "../Render/IRenderable.h"
-#include "../Render/Cursor.h"
+#include "../Style/StyleableElement.h"
+#include "../Style/StyleableProperty.h"
+#include "../Base/Object.h"
+#include "../Base/LayoutProperties.h"
+#include "../Base/Input/Cursor.h"
+#include "../Base/Input/MouseAndKeyArgs.h"
+#include "../Base/Events/Event.h"
+#include "../Base/Collections/ResourcesMap.h"
 #include "ToolTip.h"
 
 namespace Sgl
 {
+	class Scene;
+
 	class UIElement: public StyleableElement, public IRenderable
 	{
 	public:
@@ -65,6 +68,7 @@ namespace Sgl
 		using ColorProperty = StylyableProperty<Color>;
 		using CursorProperty = StylyableProperty<std::reference_wrapper<const Cursor>, const Cursor&>;
 		using TextureProperty = StylyableProperty<shared_ptr<Texture>>;
+		using TagProperty = StylyableProperty<object, const object&>;
 
 		using KeyEventHandler = EventHandler<UIElement, KeyEventArgs>;
 		using MouseEventHandler = EventHandler<UIElement, MouseEventArgs>;
@@ -92,10 +96,13 @@ namespace Sgl
 		ZIndexProperty ZIndex;
 		ThicknessProperty Margin;
 		CursorProperty Cursor;
-		TextureProperty Texture;
+		TextureProperty BackgroundTexture;
 		ColorProperty BackgroundColor;
 		VerticalAlignmentProperty VerticalAlignment;
 		HorizontalAlignmentProperty HorizontalAlignment;
+		TagProperty Tag;
+
+		ResourcesMap Resources;
 	private:
 		float _actualWidth;
 		float _actualHeight;
@@ -109,6 +116,7 @@ namespace Sgl
 
 		float GetActualWidth() const { return _actualWidth; }
 		float GetActualHeight() const { return _actualHeight; }
+		Scene& GetScene();
 
 		void SetTooltip(const ToolTip& tooltip);
 
@@ -122,7 +130,7 @@ namespace Sgl
 		virtual void OnMouseMove(const MouseEventArgs& e) { MouseMove.TryRaise(*this, e); }
 		virtual void OnMouseDown(const MouseButtonEventArgs& e) { MouseDown.TryRaise(*this, e); }
 		virtual void OnMouseUp(const MouseButtonEventArgs& e) { MouseUp.TryRaise(*this, e); }
-		virtual void OnMouseWheel(const MouseWheelEventArgs& e) { MouseWheel.TryRaise(*this, e); }
+		virtual void OnMouseWheelChanged(const MouseWheelEventArgs& e) { MouseWheel.TryRaise(*this, e); }
 		virtual void OnMouseEnter(const MouseEventArgs& e) { MouseEnter.TryRaise(*this, e); }
 		virtual void OnMouseLeave(const MouseEventArgs& e) { MouseLeave.TryRaise(*this, e); }
 		virtual void OnSizeChanged() { SizeChanged.TryRaise(*this, EmptyEventArgs); }
@@ -138,6 +146,7 @@ namespace Sgl
 		}
 
 		friend class Layout;
+		friend class UIElementsCollection;
 	};
 
 	struct UIElementComparer

@@ -1,11 +1,19 @@
 #include "Scene.h"
+#include "../Application.h"
 
 namespace Sgl
 {
 	Scene::Scene():
 		BackgroundColor(Colors::Black),
-		Layout(nullptr)
+		_layout(nullptr),
+		_stylingParent(App.Current())
 	{}
+
+	void Scene::SetLayout(shared_ptr<Layout> value)
+	{
+		_layout = value;
+		_layout->_stylingParent = this;
+	}
 
 	void Sgl::Scene::OnRender(RenderContext context) const
 	{
@@ -18,16 +26,16 @@ namespace Sgl
 			context.FillBackground(BackgroundColor);
 		}
 		
-		Layout->OnRender(context);
+		_layout->OnRender(context);
 	}
 
 	void Scene::Process(TimeSpan elapsed)
 	{
-		Layout->Arrange();
+		_layout->Arrange();
 	}
 
 	void Scene::OnCreated()
 	{
-		Layout->ApplyStyle();
+		_layout->ApplyStyle();
 	}
 }

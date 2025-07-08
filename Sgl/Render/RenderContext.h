@@ -4,10 +4,10 @@
 #include <array>
 #include <span>
 #include <SDL/SDL_render.h>
+#include "../Base/Delegate.h"
+#include "../Base/Primitives.h"
 #include "Surface.h"
-#include "Primitives.h"
 #include "Texture.h"
-#include "../Data/Delegate.h"
 
 namespace Sgl
 {

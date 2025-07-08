@@ -3,7 +3,7 @@
 #include <string_view>
 #include "RenderContext.h"
 #include "Texture.h"
-#include "Font.h"
+#include "../Base/Font.h"
 
 namespace Sgl
 {
@@ -28,8 +28,9 @@ namespace Sgl
 		void RenderOnTexture(Texture& texture, RenderFragment renderFragment);
 
 		void SetBlendMode(SDL_BlendMode mode);
+		SDL_Renderer* GetSDLRenderer() const noexcept { return _renderer; }
 
-		void UpdateScreen() 
+		void UpdateScreen()
 		{
 			SDL_RenderPresent(_renderer);
 		}

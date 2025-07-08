@@ -2,13 +2,49 @@
 
 namespace Sgl
 {
+	StyleableElement::StyleableElement():
+		_stylingParent(nullptr)
+	{}
+
 	void StyleableElement::ApplyStyle()
 	{
-		for(auto& classStyle: Classes)
+		if(_shouldRestyle)
 		{
-			if(auto style = Styles.TryFind(classStyle); style != nullptr)
+			UpdateStyle();
+		}
+
+		for(int i = _styles.size() - 1; i >= 0; i--)
+		{
+			_styles[i]->Apply(*this);
+		}
+	}
+
+	void StyleableElement::UpdateStyle()
+	{
+		_styles.clear();
+
+		GetStylesFrom(Styles);
+		
+		auto parent = _stylingParent;
+		while(parent != nullptr)
+		{
+			GetStylesFrom(parent->GetStyles());
+			parent = parent->GetStylingParent();
+		}
+	}
+
+	void StyleableElement::GetStylesFrom(const StyleMap& styles)
+	{
+		if(styles.IsEmpty())
+		{
+			return;
+		}
+
+		for(auto& className : Classes)
+		{
+			if(auto style = styles.TryGet(className); style != nullptr)	
 			{
-				style->ApplyTo(*this);
+				_styles.push_back(style);
 			}
 		}
 	}
