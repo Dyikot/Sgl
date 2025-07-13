@@ -27,6 +27,9 @@ namespace Sgl
 		};
 
 		DataTemplateProperty ContentTemplate;
+		ThicknessProperty Padding;
+		HorizontalAlignmentProperty HorizontalContentAlignment;
+		VerticalAlignmentProperty VerticalContentAlignment;
 	protected:
 		ConstVoidPtr _content;
 		shared_ptr<UIElement> _contentPresenter;
@@ -52,6 +55,8 @@ namespace Sgl
 		ConstVoidPtr GetContent() const { return _content; }
 
 		shared_ptr<UIElement> GetPresenter() const { return _contentPresenter; }
+
+		void OnRender(RenderContext context) const override;
 	protected:
 		void TryCreatePresenter();
 	};
