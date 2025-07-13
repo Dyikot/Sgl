@@ -4,7 +4,6 @@
 #include "Audio.h"
 #include "../Base/Events/Event.h"
 
-
 namespace Sgl
 {
 	using std::shared_ptr;

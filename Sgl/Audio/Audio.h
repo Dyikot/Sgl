@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string_view>
-#include "SDL/SDL_mixer.h"
+#include <SDL/SDL_mixer.h>
 #include "../Base/Log.h"
 #include "../Base/Time/TimeSpan.h"
 

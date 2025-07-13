@@ -1,5 +1,5 @@
 #include "Cursor.h"
-#include "../Log.h"
+#include "../Base/Log.h"
 
 namespace Sgl
 {

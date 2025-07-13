@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Style/StyleMap.h"
+#include "Style/StyleMap.h"
 
 namespace Sgl
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <type_traits>
+#include <concepts>
 
 namespace Sgl
 {
@@ -32,20 +32,17 @@ namespace Sgl
 
         virtual ~StylyableProperty() = default;
 
-        virtual void Set(TInput value)
+        void Set(TInput value)
         {
             _value = value;
+            OnPropertyChanged(value);
         }
 
-        virtual TInput Get() const
-        { 
-            return _value; 
-        }
+        TInput Get() const { return _value; }
 
-        operator TInput() const
-        { 
-            return Get();
-        }
+        virtual void OnPropertyChanged(TInput value) {}
+
+        operator TInput() const { return _value; }
 
         StylyableProperty& operator=(TInput value)
         {

@@ -3,7 +3,7 @@
 #include <memory>
 #include <vector>
 #include "IStyle.h"
-#include "../Base/Delegate.h"
+#include "../../Base/Delegate.h"
 
 namespace Sgl
 {

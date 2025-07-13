@@ -81,11 +81,11 @@ namespace Sgl
 		return *scene;
 	}
 
-	void UIElement::SetTooltip(const ToolTip& tooltip)
-	{}
-
 	void Sgl::UIElement::OnRender(RenderContext context) const
 	{		
-		
+		if(auto toolTip = ToolTip.Get(); toolTip != nullptr)
+		{
+			toolTip->OnRender(context);
+		}
 	}
 }

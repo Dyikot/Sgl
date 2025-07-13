@@ -1,16 +1,15 @@
 #pragma once
 
-#include "../Render/Renderer.h"
-#include "../Render/IRenderable.h"
-#include "../Style/StyleableElement.h"
-#include "../Style/StyleableProperty.h"
 #include "../Base/Object.h"
 #include "../Base/LayoutProperties.h"
-#include "../Base/Input/Cursor.h"
-#include "../Base/Input/MouseAndKeyArgs.h"
 #include "../Base/Events/Event.h"
 #include "../Base/Collections/ResourcesMap.h"
-#include "ToolTip.h"
+#include "../Render/Renderer.h"
+#include "../Render/IRenderable.h"
+#include "../Input/Cursor.h"
+#include "../Input/MouseAndKeyArgs.h"
+#include "Style/StyleableElement.h"
+#include "Style/StyleableProperty.h"
 
 namespace Sgl
 {
@@ -29,9 +28,8 @@ namespace Sgl
 				_owner(owner)
 			{}
 
-			void Set(float value) override
+			void OnPropertyChanged(float value) override
 			{
-				_value = value;
 				_owner._actualWidth = value - _owner.Margin->Right;
 				_owner.OnSizeChanged();
 			}
@@ -49,9 +47,8 @@ namespace Sgl
 				_owner(owner)
 			{}
 
-			void Set(float value) override
+			void OnPropertyChanged(float value) override
 			{
-				_value = value;
 				_owner._actualHeight = value - _owner.Margin->Bottom;
 				_owner.OnSizeChanged();
 			}
@@ -69,6 +66,7 @@ namespace Sgl
 		using CursorProperty = StylyableProperty<std::reference_wrapper<const Cursor>, const Cursor&>;
 		using TextureProperty = StylyableProperty<shared_ptr<Texture>>;
 		using TagProperty = StylyableProperty<object, const object&>;
+		using ToolTipProperty = StylyableProperty<shared_ptr<UIElement>>;
 
 		using KeyEventHandler = EventHandler<UIElement, KeyEventArgs>;
 		using MouseEventHandler = EventHandler<UIElement, MouseEventArgs>;
@@ -101,6 +99,7 @@ namespace Sgl
 		VerticalAlignmentProperty VerticalAlignment;
 		HorizontalAlignmentProperty HorizontalAlignment;
 		TagProperty Tag;
+		ToolTipProperty ToolTip;
 
 		ResourcesMap Resources;
 	private:
@@ -117,8 +116,6 @@ namespace Sgl
 		float GetActualWidth() const { return _actualWidth; }
 		float GetActualHeight() const { return _actualHeight; }
 		Scene& GetScene();
-
-		void SetTooltip(const ToolTip& tooltip);
 
 		void OnRender(RenderContext context) const override;
 	protected:

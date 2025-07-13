@@ -31,6 +31,11 @@ namespace Sgl
 			_value(&value)
 		{}
 
+		bool IsEmpty() const
+		{
+			return _value == nullptr;
+		}
+
 		template<typename T>
 		T& As()
 		{
@@ -99,6 +104,11 @@ namespace Sgl
 		ConstVoidPtr(ConstVoidPtr&& other) noexcept:
 			_value(std::exchange(other._value, nullptr))
 		{}
+
+		bool IsEmpty() const
+		{
+			return _value == nullptr;
+		}
 
 		template<typename T>
 		const T& As() const

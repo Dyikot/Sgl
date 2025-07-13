@@ -3,7 +3,7 @@
 #include "../UI/Layout.h"
 #include "../Render/IRenderable.h"
 #include "../Base/Time/TimeSpan.h"
-#include "../Base/Input/MouseAndKeyArgs.h"
+#include "../Input/MouseAndKeyArgs.h"
 
 namespace Sgl
 {	

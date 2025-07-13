@@ -1,6 +1,6 @@
 #include "Canvas.h"
 
-namespace Sgl::Controls
+namespace Sgl::UIElements
 {
 	void Canvas::Arrange()
 	{
