@@ -7,29 +7,31 @@ namespace Sgl
 {
 	class ContentUIElement: public UIElement
 	{
-	public:
+	private:
 		class DataTemplateProperty: public StylyableProperty<shared_ptr<IDataTemplate>>
 		{
 		private:
+			using base = StylyableProperty<shared_ptr<IDataTemplate>>;
 			ContentUIElement& _owner;
 		public:
 			DataTemplateProperty(ContentUIElement& owner):
-				StylyableProperty<shared_ptr<IDataTemplate>>(),
 				_owner(owner)
 			{}
 
-			void OnPropertyChanged(shared_ptr<IDataTemplate> value) override
+			void OnChanged() override
 			{
 				_owner.TryCreatePresenter();
 			}
 
-			using StylyableProperty<shared_ptr<IDataTemplate>>::operator=;
+			using base::operator=;
 		};
-
+		using VerticalAlignmentProperty = ArrangedProperty<Sgl::VerticalAlignment>;
+		using HorizontalAlignmentProperty = ArrangedProperty<Sgl::HorizontalAlignment>;
+	public:
 		DataTemplateProperty ContentTemplate;
-		ThicknessProperty Padding;
-		HorizontalAlignmentProperty HorizontalContentAlignment;
+		MeasuredProperty<Thickness> Padding;
 		VerticalAlignmentProperty VerticalContentAlignment;
+		HorizontalAlignmentProperty HorizontalContentAlignment;
 	protected:
 		ConstVoidPtr _content;
 		shared_ptr<UIElement> _contentPresenter;
@@ -53,11 +55,12 @@ namespace Sgl
 		}
 
 		ConstVoidPtr GetContent() const { return _content; }
-
 		shared_ptr<UIElement> GetPresenter() const { return _contentPresenter; }
 
 		void OnRender(RenderContext context) const override;
 	protected:
 		void TryCreatePresenter();
+		FSize MeasureContent(FSize avaliableSize) override;
+		void ArrangeContent(FRect rect) override;
 	};
 }

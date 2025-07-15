@@ -2,7 +2,7 @@
 
 #include <vector>
 #include "Audio.h"
-#include "../Base/Events/Event.h"
+#include "../Base/Event.h"
 
 namespace Sgl
 {
@@ -17,7 +17,7 @@ namespace Sgl
 
 		Volume Volume;
 		MusicCollection Items;
-
+		
 		Event<PlayListEventHandler> Started;
 		Event<PlayListEventHandler> Ended;
 	private:

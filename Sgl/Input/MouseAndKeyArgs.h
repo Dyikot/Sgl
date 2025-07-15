@@ -3,7 +3,7 @@
 #include <string>
 #include <SDL/SDL_mouse.h>
 #include <SDL/SDL_keyboard.h>
-#include "../Base/Events/EventArgs.h"
+#include "../Base/EventArgs.h"
 #include "../Base/Primitives.h"
 
 namespace Sgl

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../UI/Layout.h"
+#include "../UI/UIElement.h"
 #include "../Render/IRenderable.h"
 #include "../Base/Time/TimeSpan.h"
 #include "../Input/MouseAndKeyArgs.h"
@@ -17,7 +17,7 @@ namespace Sgl
 		ResourcesMap Resources;
 		StyleMap Styles;
 	protected:
-		shared_ptr<Layout> _layout;
+		shared_ptr<UIElement> _uielement;
 		IStyleProvider* _stylingParent;
 	public:
 		Scene();
@@ -25,8 +25,8 @@ namespace Sgl
 		Scene(Scene&&) = delete;
 		virtual ~Scene() = default;
 
-		void SetLayout(shared_ptr<Layout> value);
-		shared_ptr<Layout> GetLayout() const { return _layout; }
+		void SetUIElement(shared_ptr<UIElement> value);
+		shared_ptr<UIElement> GetUIElement() const { return _uielement; }
 
 		StyleMap& GetStyles() override { return Styles; }
 		IStyleProvider* GetStylingParent() { return _stylingParent; }
@@ -38,6 +38,8 @@ namespace Sgl
 		virtual void OnStopped() {}
 		virtual void OnCreated();
 		virtual void OnDestroying() {}
+	private:
+		void UpdateInvalidatedLayout();
 
 		friend class Application;
 		friend class SceneManager;

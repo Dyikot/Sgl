@@ -11,16 +11,13 @@ namespace Sgl
 		uint8_t Green;
 		uint8_t Blue;
 		uint8_t Alpha;
-	private:
-		static constexpr uint8_t _opaque = 0xff;
-		static constexpr uint8_t _transparent = 0x00;
 	public:
 		constexpr Color(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha):
 			Red(red), Green(green), Blue(blue), Alpha(alpha)
 		{}
 
 		constexpr Color(uint8_t red, uint8_t green, uint8_t blue):
-			Color(red, green, blue, _opaque)
+			Color(red, green, blue, 0xff)
 		{}
 
 		constexpr explicit Color(uint32_t rgba):
@@ -29,7 +26,7 @@ namespace Sgl
 
 		constexpr bool IsTransparent() const noexcept 
 		{
-			return Alpha == _transparent;
+			return Alpha == 0x00;
 		}
 
 		constexpr bool operator==(Color color) const 

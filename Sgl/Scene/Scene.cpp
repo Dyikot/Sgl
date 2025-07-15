@@ -5,14 +5,14 @@ namespace Sgl
 {
 	Scene::Scene():
 		BackgroundColor(Colors::Black),
-		_layout(nullptr),
+		_uielement(nullptr),
 		_stylingParent(App.Current())
 	{}
 
-	void Scene::SetLayout(shared_ptr<Layout> value)
+	void Scene::SetUIElement(shared_ptr<UIElement> value)
 	{
-		_layout = value;
-		_layout->_stylingParent = this;
+		_uielement = value;
+		_uielement->_stylingParent = this;
 	}
 
 	void Sgl::Scene::OnRender(RenderContext context) const
@@ -26,16 +26,45 @@ namespace Sgl
 			context.FillBackground(BackgroundColor);
 		}
 		
-		_layout->OnRender(context);
+		_uielement->OnRender(context);
 	}
 
 	void Scene::Process(TimeSpan elapsed)
 	{
-		_layout->Arrange();
+		if(_uielement)
+		{
+			UpdateInvalidatedLayout();
+		}
 	}
 
 	void Scene::OnCreated()
 	{
-		_layout->ApplyStyle();
+		if(_uielement)
+		{
+			UpdateInvalidatedLayout();
+		}
+	}
+
+	void Scene::UpdateInvalidatedLayout()
+	{
+		if(!_uielement->IsStyleValid())
+		{
+			_uielement->ApplyStyle();
+		}
+
+		if(!_uielement->IsMeasureValid())
+		{
+			auto& window = App->Window;
+			auto availableSize = FSize(window.GetWidth(), window.GetHeight());
+			_uielement->Measure(availableSize);
+		}
+
+		if(!_uielement->IsArrangeValid())
+		{
+			auto& window = App->Window;
+			auto availableSize = FSize(window.GetWidth(), window.GetHeight());
+			auto bounds = FRect(0, 0, availableSize.Width, availableSize.Height);
+			_uielement->Arrange(bounds);
+		}
 	}
 }

@@ -308,7 +308,7 @@ namespace Sgl
 	protected:
 		void OnChanged(const NotifyEventArgs& e)
 		{
-			Changed.TryRaise(*this, e);
+			Changed.TryInvoke(*this, e);
 		}
 	};
 }

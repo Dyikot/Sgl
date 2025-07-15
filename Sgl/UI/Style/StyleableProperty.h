@@ -35,12 +35,12 @@ namespace Sgl
         void Set(TInput value)
         {
             _value = value;
-            OnPropertyChanged(value);
+            OnChanged();
         }
 
         TInput Get() const { return _value; }
 
-        virtual void OnPropertyChanged(TInput value) {}
+        virtual void OnChanged(){}
 
         operator TInput() const { return _value; }
 

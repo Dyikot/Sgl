@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Events/EventArgs.h"
+#include "EventArgs.h"
 
 namespace Sgl
 {

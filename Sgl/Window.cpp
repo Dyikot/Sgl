@@ -15,7 +15,6 @@ namespace Sgl
         Log::PrintSDLErrorIf(_window == nullptr);
         Log::PrintSDLErrorIf(_renderer == nullptr);
 
-        SetLogicalSize(Size(DefaultWidth, DefaultHeight));
         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
     }
 
@@ -245,6 +244,6 @@ namespace Sgl
 
     void Window::OnWindowStateChanged(const WindowStateEventArgs& e)
     {
-        WindowStateChanged.TryRaise(*this, e);
+        WindowStateChanged.TryInvoke(*this, e);
     }
 }

@@ -1,79 +1,32 @@
 #pragma once
 
 #include "../Base/Object.h"
-#include "../Base/LayoutProperties.h"
-#include "../Base/Events/Event.h"
+#include "../Base/Event.h"
 #include "../Base/Collections/ResourcesMap.h"
-#include "../Render/Renderer.h"
-#include "../Render/IRenderable.h"
 #include "../Input/Cursor.h"
 #include "../Input/MouseAndKeyArgs.h"
-#include "Style/StyleableElement.h"
-#include "Style/StyleableProperty.h"
+#include "../Render/IRenderable.h"
+#include "Layoutable.h"
 
 namespace Sgl
 {
 	class Scene;
 
-	class UIElement: public StyleableElement, public IRenderable
+	class UIElement: public Layoutable, public IRenderable
 	{
-	public:
-		class WidthProperty: public StylyableProperty<float>
-		{
-		private:
-			UIElement& _owner;
-		public:
-			WidthProperty(UIElement& owner):
-				StylyableProperty<float>(0),
-				_owner(owner)
-			{}
-
-			void OnPropertyChanged(float value) override
-			{
-				_owner._actualWidth = value - _owner.Margin->Right;
-				_owner.OnSizeChanged();
-			}
-
-			using StylyableProperty<float>::operator=;
-		};
-
-		class HeightProperty: public StylyableProperty<float>
-		{
-		private:
-			UIElement& _owner;
-		public:
-			HeightProperty(UIElement& owner):
-				StylyableProperty<float>(0),
-				_owner(owner)
-			{}
-
-			void OnPropertyChanged(float value) override
-			{
-				_owner._actualHeight = value - _owner.Margin->Bottom;
-				_owner.OnSizeChanged();
-			}
-
-			using StylyableProperty<float>::operator=;
-		};
-
-		using FloatProperty = StylyableProperty<float>;
-		using BoolProperty = StylyableProperty<bool>;
-		using ZIndexProperty = StylyableProperty<size_t>;
-		using ThicknessProperty = StylyableProperty<Thickness>;
-		using VerticalAlignmentProperty = StylyableProperty<VerticalAlignment>;
-		using HorizontalAlignmentProperty = StylyableProperty<HorizontalAlignment>;
+	private:
 		using ColorProperty = StylyableProperty<Color>;
 		using CursorProperty = StylyableProperty<std::reference_wrapper<const Cursor>, const Cursor&>;
 		using TextureProperty = StylyableProperty<shared_ptr<Texture>>;
 		using TagProperty = StylyableProperty<object, const object&>;
 		using ToolTipProperty = StylyableProperty<shared_ptr<UIElement>>;
+		using ZIndexProperty = StylyableProperty<size_t>;
 
 		using KeyEventHandler = EventHandler<UIElement, KeyEventArgs>;
 		using MouseEventHandler = EventHandler<UIElement, MouseEventArgs>;
 		using MouseButtonEventHandler = EventHandler<UIElement, MouseButtonEventArgs>;
 		using MouseWheelEventHandler = EventHandler<UIElement, MouseWheelEventArgs>;
-		using SizeChangedEventHandler = EventHandler<UIElement, EventArgs>;
-
+	public:		
 		Event<KeyEventHandler> KeyUp;
 		Event<KeyEventHandler> KeyDown;
 		Event<MouseEventHandler> MouseMove;
@@ -82,67 +35,41 @@ namespace Sgl
 		Event<MouseButtonEventHandler> MouseUp;
 		Event<MouseButtonEventHandler> MouseDown;
 		Event<MouseWheelEventHandler> MouseWheel;
-		Event<SizeChangedEventHandler> SizeChanged;
-
-		WidthProperty Width;
-		HeightProperty Height;
-		FloatProperty MinWidth;
-		FloatProperty MinHeight;
-		FloatProperty MaxWidth;
-		FloatProperty MaxHeight;
-		BoolProperty IsVisible;
-		ZIndexProperty ZIndex;
-		ThicknessProperty Margin;
+		
 		CursorProperty Cursor;
 		TextureProperty BackgroundTexture;
 		ColorProperty BackgroundColor;
-		VerticalAlignmentProperty VerticalAlignment;
-		HorizontalAlignmentProperty HorizontalAlignment;
 		TagProperty Tag;
 		ToolTipProperty ToolTip;
+		ZIndexProperty ZIndex;
 
 		ResourcesMap Resources;
-	private:
-		float _actualWidth;
-		float _actualHeight;
-		FPoint _position;
-		FPoint _actualPosition;
+	protected:
+		bool _isMouseOver;
 	public:
 		UIElement();
 		UIElement(const UIElement& other);
 		UIElement(UIElement&& other) noexcept;
 		virtual ~UIElement() = default;
-
-		float GetActualWidth() const { return _actualWidth; }
-		float GetActualHeight() const { return _actualHeight; }
+		
 		Scene& GetScene();
+		bool IsMouseOver() const { return _isMouseOver; }
 
 		void OnRender(RenderContext context) const override;
 	protected:
-		FPoint GetPosition() const { return _position; }
-		FPoint GetActualPosition() const { return _actualPosition; }
-
-		virtual void OnKeyUp(const KeyEventArgs& e) { KeyUp.TryRaise(*this, e); }
-		virtual void OnKeyDown(const KeyEventArgs& e) { KeyDown.TryRaise(*this, e); }
-		virtual void OnMouseMove(const MouseEventArgs& e) { MouseMove.TryRaise(*this, e); }
-		virtual void OnMouseDown(const MouseButtonEventArgs& e) { MouseDown.TryRaise(*this, e); }
-		virtual void OnMouseUp(const MouseButtonEventArgs& e) { MouseUp.TryRaise(*this, e); }
-		virtual void OnMouseWheelChanged(const MouseWheelEventArgs& e) { MouseWheel.TryRaise(*this, e); }
-		virtual void OnMouseEnter(const MouseEventArgs& e) { MouseEnter.TryRaise(*this, e); }
-		virtual void OnMouseLeave(const MouseEventArgs& e) { MouseLeave.TryRaise(*this, e); }
-		virtual void OnSizeChanged() { SizeChanged.TryRaise(*this, EmptyEventArgs); }
-	private:
-		void SetPosition(FPoint value)
-		{
-			_position = value;
-			_actualPosition = FPoint
-			{
-				.x = static_cast<float>(value.x + Margin->Left),
-				.y = static_cast<float>(value.y + Margin->Top)
-			};
-		}
-
-		friend class Layout;
+		virtual void OnKeyUp(const KeyEventArgs& e) { KeyUp.TryInvoke(*this, e); }
+		virtual void OnKeyDown(const KeyEventArgs& e) { KeyDown.TryInvoke(*this, e); }
+		virtual void OnMouseMove(const MouseEventArgs& e) { MouseMove.TryInvoke(*this, e); }
+		virtual void OnMouseDown(const MouseButtonEventArgs& e) { MouseDown.TryInvoke(*this, e); }
+		virtual void OnMouseUp(const MouseButtonEventArgs& e) { MouseUp.TryInvoke(*this, e); }
+		virtual void OnMouseWheelChanged(const MouseWheelEventArgs& e) { MouseWheel.TryInvoke(*this, e); }
+		virtual void OnMouseEnter(const MouseEventArgs& e) { MouseEnter.TryInvoke(*this, e); }
+		virtual void OnMouseLeave(const MouseEventArgs& e) { MouseLeave.TryInvoke(*this, e); }
+		
+		friend class Application;
+		friend class Scene;
+		friend class Panel;
+		friend class ContentUIElement;
 		friend class UIElementsCollection;
 	};
 

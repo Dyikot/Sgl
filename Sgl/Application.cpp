@@ -101,7 +101,7 @@ namespace Sgl
 						.Key = e.key.keysym
 					};
 
-					scene->_layout->OnKeyDown(args);
+					scene->_uielement->OnKeyDown(args);
 					break;
 				}
 
@@ -113,7 +113,7 @@ namespace Sgl
 						.Key = e.key.keysym
 					};
 
-					scene->_layout->OnKeyUp(args);
+					scene->_uielement->OnKeyUp(args);
 					break;
 				}
 
@@ -166,7 +166,7 @@ namespace Sgl
 						}
 					};
 
-					scene->_layout->OnMouseMove(args);
+					scene->_uielement->OnMouseMove(args);
 					break;
 				}
 
@@ -179,7 +179,7 @@ namespace Sgl
 						.ClicksNumber = e.button.clicks
 					};
 
-					scene->_layout->OnMouseDown(args);
+					scene->_uielement->OnMouseDown(args);
 					break;
 				}
 
@@ -192,7 +192,7 @@ namespace Sgl
 						.ClicksNumber = e.button.clicks
 					};
 
-					scene->_layout->OnMouseUp(args);
+					scene->_uielement->OnMouseUp(args);
 					break;
 				}
 
@@ -210,7 +210,7 @@ namespace Sgl
 						.Direction = static_cast<MouseWheelDirection>(e.wheel.direction)
 					};
 
-					scene->_layout->OnMouseWheelChanged(args);
+					scene->_uielement->OnMouseWheelChanged(args);
 					break;
 				}
 
@@ -262,11 +262,11 @@ namespace Sgl
 
 	void Application::OnRun()
 	{
-		Started.TryRaise(*this, EmptyEventArgs);
+		Started.TryInvoke(*this, EmptyEventArgs);
 	}
 
 	void Application::OnShutdown()
 	{
-		Stopped.TryRaise(*this, EmptyEventArgs);
+		Stopped.TryInvoke(*this, EmptyEventArgs);
 	}
 }

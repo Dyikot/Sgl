@@ -1,20 +1,24 @@
 #pragma once
 
-#include <forward_list>
-#include "EventHandler.h"
+#include <list>
+#include "EventArgs.h"
+#include "Delegate.h"
 
 namespace Sgl
 {
+	template<typename TSender, std::derived_from<EventArgs> TEventArgs>
+	using EventHandler = Action<TSender&, const TEventArgs&>;
+
 	template<typename T>
 	class Event;
 
-	template<typename TSender, std::derived_from<EventArgs> TEventArgs>
+	template<typename TSender, typename TEventArgs>
 	class Event<EventHandler<TSender, TEventArgs>> final
 	{
 	public:
 		using EventHandler = EventHandler<TSender, TEventArgs>;
 	private:
-		std::forward_list<EventHandler> _eventHandlers;
+		std::list<EventHandler> _eventHandlers;
 	public:
 		Event() = default;
 
@@ -31,17 +35,12 @@ namespace Sgl
 			_eventHandlers.clear();
 		}
 
-		void TryRaise(TSender& sender, const TEventArgs& e) const
+		void TryInvoke(TSender& sender, const TEventArgs& e) const
 		{
-			if(operator bool())
+			if(HasTarget())
 			{
 				operator()(sender, e);
 			}
-		}
-
-		void Raise(TSender& sender, const TEventArgs& e) const
-		{
-			operator()(sender, e);
 		}
 
 		bool HasTarget() const
@@ -49,19 +48,14 @@ namespace Sgl
 			return !_eventHandlers.empty();
 		}
 
-		void operator+=(Action<TSender&, const TEventArgs&> handler)
+		void operator+=(EventHandler handler)
 		{
-			_eventHandlers.emplace_front(std::move(handler));
+			_eventHandlers.emplace_back(std::move(handler));
 		}
 
-		void operator-=(Action<TSender&, const TEventArgs&> handler)
+		void operator-=(EventHandler handler)
 		{
 			_eventHandlers.remove(std::move(handler));
-		}
-
-		operator bool() const noexcept
-		{ 
-			return !_eventHandlers.empty();
 		}
 
 		void operator()(TSender& sender, const TEventArgs& e) const

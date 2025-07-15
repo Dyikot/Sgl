@@ -1,16 +1,16 @@
 #pragma once
 
-#include "../Layout.h"
+#include "../Panel.h"
 
 namespace Sgl::UIElements
 {
-	class Canvas: public Layout
+	class Canvas: public Panel
 	{
 	public:
 		static std::shared_ptr<Canvas> New() { return std::make_shared<Canvas>(); }
 		
 		Canvas() = default;
 
-		void Arrange() override;
+		//void Arrange();
 	};
 }

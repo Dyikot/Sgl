@@ -1,31 +1,29 @@
 #pragma once
 
-#include "ILayout.h"
 #include "UIElement.h"
 #include "../Base/Collections/SortedVector.h"
 
 namespace Sgl
 {
-	class Layout;
-
 	class UIElementsCollection
 	{
-	public:
-		struct OnItemSizeChanged
-		{
-			ILayout& Layout;
-
-			void operator()(UIElement& element, const EventArgs& e) const
-			{
-				Layout.QueryArrange();
-			}
-		};
 	private:
 		SortedVector<shared_ptr<UIElement>, UIElementComparer> _items;
-		ILayout& _layout;
+		Layoutable& _owner;
 	public:
-		UIElementsCollection(ILayout& layout):
-			_layout(layout)
+		UIElementsCollection(Layoutable& layout):
+			_items(),
+			_owner(layout)
+		{}
+
+		UIElementsCollection(const UIElementsCollection& other):
+			_items(other._items),
+			_owner(other._owner)
+		{}
+
+		UIElementsCollection(UIElementsCollection&& other) noexcept:
+			_items(std::move(other._items)),
+			_owner(other._owner)
 		{}
 
 		auto begin() { return _items.begin(); }
@@ -37,9 +35,8 @@ namespace Sgl
 		void Add(const shared_ptr<UIElement>& element)
 		{
 			_items.Add(element);
-			element->_stylingParent = &_layout;
-			element->SizeChanged += OnItemSizeChanged(_layout);
-			_layout.QueryArrange();
+			element->_stylingParent = &_owner;
+			element->_layoutableParent = &_owner;
 		}
 
 		size_t Count() const noexcept
@@ -75,8 +72,6 @@ namespace Sgl
 		void Remove(const shared_ptr<UIElement>& element)
 		{
 			_items.Remove(element);
-			element->SizeChanged -= OnItemSizeChanged(_layout);
-			_layout.QueryArrange();
 		}
 	};
 }

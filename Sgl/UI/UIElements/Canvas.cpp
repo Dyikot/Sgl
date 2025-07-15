@@ -2,7 +2,7 @@
 
 namespace Sgl::UIElements
 {
-	void Canvas::Arrange()
+	/*void Canvas::Arrange()
 	{
 		if(!_shouldArrange)
 		{
@@ -19,5 +19,5 @@ namespace Sgl::UIElements
 
 			_shouldArrange = false;
 		}
-	}
+	}*/
 }

@@ -26,6 +26,10 @@ namespace Sgl
 			Left(left), Top(top), Right(right), Bottom(bottom)
 		{}
 
+		constexpr Thickness(int horizontal, int vertical) noexcept:
+			Left(horizontal), Top(vertical), Right(horizontal), Bottom(vertical)
+		{}
+
 		constexpr Thickness(int value = 0) noexcept:
 			Thickness(value, value, value, value)
 		{}

@@ -5,7 +5,7 @@
 
 namespace Sgl
 {
-	class StyleableElement: public virtual IStyleProvider
+	class StyleableElement: public IStyleProvider
 	{
 	public:
 		StyleMap Styles;
@@ -13,18 +13,20 @@ namespace Sgl
 	protected:
 		IStyleProvider* _stylingParent;
 	private:
-		bool _shouldRestyle = true;
+		bool _isStyleValid;
 		std::vector<shared_ptr<IStyle>> _styles;
 	public:
 		StyleableElement();
-		StyleableElement(const StyleableElement&) = default;
-		StyleableElement(StyleableElement&&) = default;
+		StyleableElement(const StyleableElement& other);
+		StyleableElement(StyleableElement&& other) noexcept;
 		virtual ~StyleableElement() = default;
 
+		bool IsStyleValid() const { return _isStyleValid; }
 		StyleMap& GetStyles() override { return Styles; }
 		IStyleProvider* GetStylingParent() override { return _stylingParent; }
 
 		virtual void ApplyStyle();
+		void InvalidateStyle();
 	private:
 		void UpdateStyle();
 		void GetStylesFrom(const StyleMap& styles);

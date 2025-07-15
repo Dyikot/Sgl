@@ -64,7 +64,7 @@ namespace Sgl
 		Delegate() noexcept = default;
 
 		Delegate(const Delegate& other):
-			_callable(other.IsEmpty() ? nullptr : other._callable->Copy())
+			_callable(other.HasTarget() ? other._callable->Copy() : nullptr)
 		{}
 
 		Delegate(Delegate&& other) noexcept:
@@ -85,19 +85,14 @@ namespace Sgl
 			_callable.reset();
 		}
 
-		bool IsEmpty() const noexcept
+		bool HasTarget() const noexcept
 		{		
-			return !operator bool();
+			return _callable != nullptr;
 		}
 
 		const std::type_info& TargetType() const noexcept
 		{
-			if(_callable)
-			{
-				return _callable->type;
-			}
-
-			return typeid(nullptr);
+			return HasTarget() ? _callable->type : typeid(nullptr);
 		}
 
 		TReturn operator()(TArgs... args) const
@@ -122,7 +117,7 @@ namespace Sgl
 		{
 			if(this != &other)
 			{
-				_callable = other.IsEmpty() ? nullptr : other._callable->Copy();
+				_callable = other.HasTarget() ? other._callable->Copy() : nullptr;
 			}
 
 			return *this;
@@ -137,11 +132,6 @@ namespace Sgl
 		friend bool operator==(const Delegate& left, const Delegate& right) noexcept
 		{
 			return left.TargetType() == right.TargetType();
-		}
-
-		operator bool() const noexcept
-		{
-			return _callable.operator bool();
 		}
 	private:
 		std::unique_ptr<CallableBase<TReturn, TArgs...>> _callable;
