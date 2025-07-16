@@ -4,7 +4,7 @@
 #include "../Base/Event.h"
 #include "../Base/Collections/ResourcesMap.h"
 #include "../Input/Cursor.h"
-#include "../Input/MouseAndKeyArgs.h"
+#include "../Input/MouseAndKeyEventArgs.h"
 #include "../Render/IRenderable.h"
 #include "Layoutable.h"
 
@@ -57,16 +57,49 @@ namespace Sgl
 
 		void OnRender(RenderContext context) const override;
 	protected:
-		virtual void OnKeyUp(const KeyEventArgs& e) { KeyUp.TryInvoke(*this, e); }
-		virtual void OnKeyDown(const KeyEventArgs& e) { KeyDown.TryInvoke(*this, e); }
-		virtual void OnMouseMove(const MouseEventArgs& e) { MouseMove.TryInvoke(*this, e); }
-		virtual void OnMouseDown(const MouseButtonEventArgs& e) { MouseDown.TryInvoke(*this, e); }
-		virtual void OnMouseUp(const MouseButtonEventArgs& e) { MouseUp.TryInvoke(*this, e); }
-		virtual void OnMouseWheelChanged(const MouseWheelEventArgs& e) { MouseWheel.TryInvoke(*this, e); }
-		virtual void OnMouseEnter(const MouseEventArgs& e) { MouseEnter.TryInvoke(*this, e); }
-		virtual void OnMouseLeave(const MouseEventArgs& e) { MouseLeave.TryInvoke(*this, e); }
+		virtual void OnKeyUp(const KeyEventArgs& e)
+		{
+			KeyUp.TryInvoke(*this, e);
+		}
+
+		virtual void OnKeyDown(const KeyEventArgs& e)
+		{
+			KeyDown.TryInvoke(*this, e);
+		}
+
+		virtual void OnMouseMove(const MouseEventArgs& e)
+		{
+			MouseMove.TryInvoke(*this, e);
+		}
+
+		virtual void OnMouseDown(const MouseButtonEventArgs& e)
+		{
+			MouseDown.TryInvoke(*this, e);
+		}
+
+		virtual void OnMouseUp(const MouseButtonEventArgs& e)
+		{ 
+			MouseUp.TryInvoke(*this, e);
+		}
+
+		virtual void OnMouseWheelChanged(const MouseWheelEventArgs& e)
+		{ 
+			MouseWheel.TryInvoke(*this, e);
+		}
+
+		virtual void OnMouseEnter(const MouseEventArgs& e)
+		{
+			_isMouseOver = true;
+			Cursor::Set(Cursor);
+			MouseEnter.TryInvoke(*this, e);
+		}
+
+		virtual void OnMouseLeave(const MouseEventArgs& e)
+		{
+			MouseLeave.TryInvoke(*this, e);
+			_isMouseOver = false;
+		}
 		
-		friend class Application;
 		friend class Scene;
 		friend class Panel;
 		friend class ContentUIElement;

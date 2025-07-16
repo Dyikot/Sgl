@@ -4,6 +4,7 @@
 #include <numbers>
 #include <numeric>
 #include <cmath>
+#include "Primitives.h"
 
 namespace Sgl
 {
@@ -36,6 +37,14 @@ namespace Sgl
 			}
 
 			return result;
+		}
+
+		static constexpr bool IsPointInRect(FPoint point, FRect rect) noexcept
+		{
+			return point.x >= rect.x &&
+				   point.x <= rect.x + rect.w &&
+				   point.y >= rect.y &&
+				   point.y <= rect.y + rect.h;
 		}
 
 		static std::vector<int> TriangulateEllipse(size_t pointsNumber);

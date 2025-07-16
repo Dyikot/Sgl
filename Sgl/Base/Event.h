@@ -7,7 +7,7 @@
 namespace Sgl
 {
 	template<typename TSender, std::derived_from<EventArgs> TEventArgs>
-	using EventHandler = Action<TSender&, const TEventArgs&>;
+	using EventHandler = Delegate<void(TSender&, const TEventArgs&)>;
 
 	template<typename T>
 	class Event;

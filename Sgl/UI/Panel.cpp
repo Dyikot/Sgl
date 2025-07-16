@@ -1,4 +1,5 @@
 #include "Panel.h"
+#include "../Base/Math.h"
 
 namespace Sgl
 {  
@@ -17,22 +18,17 @@ namespace Sgl
         Children(std::move(Children))
     {}
 
-    static bool IsPointInBounds(FPoint point, FRect bounds)
+    void Panel::OnRender(RenderContext context) const
     {
-        return point.x >= bounds.x &&
-               point.x <= bounds.x + bounds.w &&
-               point.y >= bounds.y &&
-               point.y <= bounds.y + bounds.h;
-    }
-
-    void Sgl::Panel::OnRender(RenderContext context) const
-    {
-        UIElement::OnRender(context);
-        
         for(auto& child : Children)
         {
-            child->OnRender(context);
+            if(child->IsVisible)
+            {
+                child->OnRender(context);
+            }
         }
+
+        UIElement::OnRender(context);
     }
 
     void Panel::ApplyStyle()
@@ -47,88 +43,25 @@ namespace Sgl
 
     void Panel::OnMouseMove(const MouseEventArgs& e)
     {
-        bool wasMouseOver = _isMouseOver;
-        _isMouseOver = IsPointInBounds(e.Position, GetBounds());
+        UIElement::OnMouseMove(e);
 
-        if(_isMouseOver)
+        bool isCurrentVisible = _currentChild && _currentChild->IsVisible;
+        if(isCurrentVisible && Math::IsPointInRect(e.Position, _currentChild->GetBounds()))
         {
-            if(!wasMouseOver)
-            {
-                OnMouseEnter(e);
-            }
-
-            OnChildrenMouseMove(e);
-        }
-        else if(wasMouseOver)
-        {
-            OnMouseLeave(e);
-        }
-    }
-
-    void Panel::OnMouseDown(const MouseButtonEventArgs& e)
-    {
-        UIElement::OnMouseDown(e);
-
-        if(_mouseOverChild)
-        {
-            _mouseOverChild->OnMouseDown(e);
-        }
-    }
-
-    void Panel::OnMouseUp(const MouseButtonEventArgs& e)
-    {
-        UIElement::OnMouseUp(e);
-
-        if(_mouseOverChild)
-        {
-            _mouseOverChild->OnMouseUp(e);
-        }
-    }
-
-    void Panel::OnMouseWheelChanged(const MouseWheelEventArgs& e)
-    {
-        for(auto& child : Children)
-        {
-            child->OnMouseWheelChanged(e);
-        }
-    }
-
-    void Panel::OnKeyDown(const KeyEventArgs& e)
-    {
-        for(auto& child : Children)
-        {
-            child->OnKeyDown(e);
-        }
-    }
-
-    void Panel::OnKeyUp(const KeyEventArgs& e)
-    {
-        for(auto& child : Children)
-        {
-            child->OnKeyUp(e);
-        }
-    }
-
-    void Panel::OnChildrenMouseMove(const MouseEventArgs& e)
-    {
-        if(_mouseOverChild && IsPointInBounds(e.Position, _mouseOverChild->GetBounds()))
-        {
-            _mouseOverChild->OnMouseMove(e);
+            _currentChild->OnMouseMove(e);
             return;
         }
 
         for(auto& child : Children)
         {
-            if(IsPointInBounds(e.Position, child->GetBounds()))
+            if(Math::IsPointInRect(e.Position, child->GetBounds()) && child->IsVisible)
             {
-                if(_mouseOverChild)
+                if(_currentChild && _currentChild->IsVisible)
                 {
-                    _mouseOverChild->OnMouseLeave(e);
-                    _mouseOverChild->_isMouseOver = false;
+                    _currentChild->OnMouseLeave(e);
                 }
 
-                _mouseOverChild = child;
-                _mouseOverChild->_isMouseOver = true;
+                _currentChild = child;
                 Cursor::Set(child->Cursor);
                 child->OnMouseEnter(e);
                 child->OnMouseMove(e);
@@ -137,13 +70,41 @@ namespace Sgl
             }
         }
 
-        if(_mouseOverChild)
+        if(_currentChild && _currentChild->IsVisible)
         {
-            _mouseOverChild->OnMouseLeave(e);
-            _mouseOverChild->_isMouseOver = false;
-            _mouseOverChild = nullptr;
-        }
+            _currentChild->OnMouseLeave(e);
+            _currentChild = nullptr;
+        }    
+    }
 
-        Cursor::Set(Cursor);
+    void Panel::OnMouseDown(const MouseButtonEventArgs& e)
+    {
+        UIElement::OnMouseDown(e);
+
+        if(_currentChild && _currentChild->IsMouseOver() && _currentChild->IsVisible)
+        {
+            _currentChild->OnMouseDown(e);
+        }
+    }
+
+    void Panel::OnMouseUp(const MouseButtonEventArgs& e)
+    {
+        UIElement::OnMouseUp(e);
+
+        if(_currentChild && _currentChild->IsMouseOver() && _currentChild->IsVisible)
+        {
+            _currentChild->OnMouseUp(e);
+        }
+    }
+
+    void Panel::OnMouseLeave(const MouseEventArgs& e)
+    {
+        UIElement::OnMouseLeave(e);
+
+        if(_currentChild && _currentChild->IsVisible)
+        {
+            _currentChild->OnMouseLeave(e);
+            _currentChild = nullptr;
+        }
     }
 }

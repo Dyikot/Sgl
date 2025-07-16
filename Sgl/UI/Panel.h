@@ -10,7 +10,7 @@ namespace Sgl
 	public:
 		UIElementsCollection Children;
 	private:
-		shared_ptr<UIElement> _mouseOverChild;
+		shared_ptr<UIElement> _currentChild;
 	public:
 		Panel();
 		Panel(const Panel& other);
@@ -22,10 +22,6 @@ namespace Sgl
 		void OnMouseMove(const MouseEventArgs& e) override;
 		void OnMouseDown(const MouseButtonEventArgs& e) override;
 		void OnMouseUp(const MouseButtonEventArgs& e) override;
-		void OnMouseWheelChanged(const MouseWheelEventArgs& e) override;
-		void OnKeyDown(const KeyEventArgs& e) override;
-		void OnKeyUp(const KeyEventArgs& e) override;
-	private:
-		void OnChildrenMouseMove(const MouseEventArgs& e);
+		void OnMouseLeave(const MouseEventArgs& e) override;
 	};
 }

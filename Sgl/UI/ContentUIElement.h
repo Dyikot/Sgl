@@ -55,10 +55,15 @@ namespace Sgl
 		}
 
 		ConstVoidPtr GetContent() const { return _content; }
-		shared_ptr<UIElement> GetPresenter() const { return _contentPresenter; }
+		shared_ptr<UIElement> GetContentPresenter() const { return _contentPresenter; }
 
 		void OnRender(RenderContext context) const override;
 	protected:
+		void OnMouseMove(const MouseEventArgs& e) override;
+		void OnMouseDown(const MouseButtonEventArgs& e) override;
+		void OnMouseUp(const MouseButtonEventArgs& e) override;
+		void OnMouseLeave(const MouseEventArgs& e) override;
+
 		void TryCreatePresenter();
 		FSize MeasureContent(FSize avaliableSize) override;
 		void ArrangeContent(FRect rect) override;

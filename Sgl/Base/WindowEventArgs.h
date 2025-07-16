@@ -18,4 +18,20 @@ namespace Sgl
 	{
 		WindowState State;
 	};
+
+	struct WindowVisibilityEventArgs: EventArgs
+	{
+		bool IsVisible;
+	};
+
+	struct WindowPositionChangedEventArgs: EventArgs
+	{
+		Point Position;
+	};
+
+	struct WindowSizeChangedEventArgs: EventArgs
+	{
+		size_t Width;
+		size_t Height;
+	};
 }

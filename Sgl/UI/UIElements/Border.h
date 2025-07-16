@@ -16,6 +16,6 @@ namespace Sgl
 		Border(const Border& other);
 		Border(Border&& other) noexcept;
 
-		void OnRender(RenderContext context) const override;
+		void OnRender(RenderContext context) const final;
 	};
 }

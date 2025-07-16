@@ -42,9 +42,9 @@ namespace Sgl
 		return *scene;
 	}
 
-	void Sgl::UIElement::OnRender(RenderContext context) const
+	void UIElement::OnRender(RenderContext context) const
 	{		
-		if(auto toolTip = ToolTip.Get(); toolTip != nullptr)
+		if(const auto& toolTip = ToolTip.Get(); toolTip && toolTip->IsVisible)
 		{
 			toolTip->OnRender(context);
 		}

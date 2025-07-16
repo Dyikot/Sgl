@@ -65,7 +65,7 @@ namespace Sgl
 		MeasuredProperty<float> MinHeight;
 		MeasuredProperty<float> MaxWidth;
 		MeasuredProperty<float> MaxHeight;
-		ArrangedProperty<bool> IsVisible;
+		MeasuredProperty<bool> IsVisible;
 		MeasuredProperty<Thickness> Margin;
 		ArrangedProperty<VerticalAlignment> VerticalAlignment;
 		ArrangedProperty<HorizontalAlignment> HorizontalAlignment;

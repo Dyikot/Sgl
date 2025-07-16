@@ -11,6 +11,8 @@ namespace Sgl
 {
 	class Application: public IStyleProvider
 	{
+	private:
+		using ApplicationEventHandler = EventHandler<Application, EventArgs>;
 	public:
 		struct Context
 		{
@@ -30,15 +32,13 @@ namespace Sgl
 			}
 		};
 
-		using ApplicationEventHandler = EventHandler<Application, EventArgs>;
+		Event<ApplicationEventHandler> Started;
+		Event<ApplicationEventHandler> Stopped;
 
 		Window Window;
 		SceneManager SceneManager;
 		ResourcesMap Resources;
 		StyleMap Styles;
-
-		Event<ApplicationEventHandler> Started;
-		Event<ApplicationEventHandler> Stopped;
 	protected:
 		IStyleProvider* _stylingParent;
 	private:

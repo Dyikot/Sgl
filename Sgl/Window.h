@@ -13,10 +13,17 @@ namespace Sgl
 
 	class Window
 	{
-	public:
+	private:
 		using WindowStateEventHandler = EventHandler<Window, WindowStateEventArgs>;
-
+		using WindowVisibilityEventHandler = EventHandler<Window, WindowVisibilityEventArgs>;
+		using WindowPositionChangedEventHandler = EventHandler<Window, WindowPositionChangedEventArgs>;
+		using WindowSizeChangedEventHandler = EventHandler<Window, WindowSizeChangedEventArgs>;
+	public:
 		Event<WindowStateEventHandler> WindowStateChanged;
+		Event<WindowVisibilityEventHandler> VisibilityChanged;
+		Event<WindowPositionChangedEventHandler> PositionChanged;
+		Event<WindowSizeChangedEventHandler> SizeChanged;
+
 		bool IsRenderableWhenMinimized = false;
 	protected:
 		SDL_Window* _window;
@@ -73,7 +80,9 @@ namespace Sgl
 		bool IsVisible() const;
 	protected:
 		void OnWindowStateChanged(const WindowStateEventArgs& e);
-		// TODO: Add other window events
+		void OnVisibilityChanged(const WindowVisibilityEventArgs& e);
+		void OnPositionChanged(const WindowPositionChangedEventArgs& e);
+		void OnWindowSizeChanged(const WindowSizeChangedEventArgs& e);
 
 		friend class Application;
 		friend class Renderer;

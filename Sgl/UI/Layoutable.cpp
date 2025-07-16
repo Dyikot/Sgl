@@ -11,7 +11,7 @@ namespace Sgl
 		MinHeight(*this),
 		MaxWidth(*this, std::numeric_limits<float>::max()),
 		MaxHeight(*this, std::numeric_limits<float>::max()),
-		IsVisible(*this, false),
+		IsVisible(*this, true),
 		Margin(*this),
 		VerticalAlignment(*this, VerticalAlignment::Top),
 		HorizontalAlignment(*this, HorizontalAlignment::Left),
@@ -67,77 +67,80 @@ namespace Sgl
 			Measure(FSize(rect.w, rect.h));
 		}
 
-		Thickness margin = Margin;
-		auto x = rect.x + margin.Left;
-		auto y = rect.y + margin.Top;
-
-		auto availableWidth = rect.w - margin.Left - margin.Right;
-		auto availableHeight = rect.h - margin.Top - margin.Bottom;
-
-		if(availableWidth < 0)
+		if(IsVisible)
 		{
-			availableWidth = 0;
+			Thickness margin = Margin;
+			auto x = rect.x + margin.Left;
+			auto y = rect.y + margin.Top;
+
+			auto availableWidth = rect.w - margin.Left - margin.Right;
+			auto availableHeight = rect.h - margin.Top - margin.Bottom;
+
+			if(availableWidth < 0)
+			{
+				availableWidth = 0;
+			}
+
+			if(availableHeight < 0)
+			{
+				availableHeight = 0;
+			}
+
+			auto horizontalAlignment = HorizontalAlignment.Get();
+			auto verticalAlignment = VerticalAlignment.Get();
+			auto width = availableWidth;
+			auto height = availableHeight;
+
+			if(horizontalAlignment != HorizontalAlignment::Stretch)
+			{
+				width = std::fmin(width, _desiredSize.Width - margin.Left - margin.Right);
+			}
+
+			if(verticalAlignment != VerticalAlignment::Stretch)
+			{
+				height = std::fmin(height, _desiredSize.Height - margin.Top - margin.Bottom);
+			}
+
+			width = std::clamp<float>(width, MinWidth, MaxWidth);
+			height = std::clamp<float>(height, MinHeight, MaxHeight);
+
+			switch(horizontalAlignment)
+			{
+				case HorizontalAlignment::Right:
+					x += availableWidth - width;
+					break;
+
+				case HorizontalAlignment::Center:
+					x += (availableWidth - width) / 2.f;
+					break;
+
+				default:
+					break;
+			}
+
+			switch(verticalAlignment)
+			{
+				case VerticalAlignment::Bottom:
+					y += availableHeight - height;
+					break;
+
+				case VerticalAlignment::Center:
+					y += (availableHeight - height) / 2.f;
+					break;
+
+				default:
+					break;
+			}
+
+			_bounds = FRect(x, y, width, height);
+			ArrangeContent(_bounds);
+			_isArrangeValid = true;
 		}
-
-		if(availableHeight < 0)
-		{
-			availableHeight = 0;
-		}
-
-		auto horizontalAlignment = HorizontalAlignment.Get();
-		auto verticalAlignment = VerticalAlignment.Get();
-		auto width = availableWidth;
-		auto height = availableHeight;
-
-		if(horizontalAlignment != HorizontalAlignment::Stretch)
-		{
-			width = std::fmin(width, _desiredSize.Width - margin.Left - margin.Right);
-		}
-
-		if(verticalAlignment != VerticalAlignment::Stretch)
-		{
-			height = std::fmin(height, _desiredSize.Height - margin.Top - margin.Bottom);
-		}
-
-		width = std::clamp<float>(width, MinWidth, MaxWidth);
-		height = std::clamp<float>(height, MinHeight, MaxHeight);		
-
-		switch(horizontalAlignment)
-		{
-			case HorizontalAlignment::Right:
-				x += availableWidth - width;
-				break;
-
-			case HorizontalAlignment::Center:
-				x += (availableWidth - width) / 2.f;
-				break;
-
-			default:
-				break;
-		}
-
-		switch(verticalAlignment)
-		{
-			case VerticalAlignment::Bottom:
-				y += availableHeight - height;
-				break;
-
-			case VerticalAlignment::Center:
-				y += (availableHeight - height) / 2.f;
-				break;
-
-			default:
-				break;
-		}
-
-		_bounds = FRect(x, y, width, height);		
-		ArrangeContent(_bounds);
-		_isArrangeValid = true;
 	}
 
 	void Layoutable::Measure(FSize avaliableSize)
 	{
-		if(!_isMeasureValid)
+		if(!_isMeasureValid && IsVisible)
 		{
 			Thickness margin = Margin;
 
@@ -184,22 +187,28 @@ namespace Sgl
 
 	void Layoutable::InvalidateArrange()
 	{
-		_isArrangeValid = false;
-
-		if(_layoutableParent != nullptr)
+		if(_isArrangeValid)
 		{
-			_layoutableParent->InvalidateArrange();
+			_isArrangeValid = false;
+
+			if(_layoutableParent != nullptr)
+			{
+				_layoutableParent->InvalidateArrange();
+			}
 		}
 	}
 
 	void Layoutable::InvalidateMeasure()
 	{
-		_isMeasureValid = false;
-		_isArrangeValid = false;
-
-		if(_layoutableParent != nullptr)
+		if(_isMeasureValid)
 		{
-			_layoutableParent->InvalidateMeasure();
+			_isMeasureValid = false;
+			_isArrangeValid = false;
+
+			if(_layoutableParent != nullptr)
+			{
+				_layoutableParent->InvalidateMeasure();
+			}
 		}
 	}
 }

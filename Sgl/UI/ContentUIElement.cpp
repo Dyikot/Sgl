@@ -1,5 +1,6 @@
 #include "ContentUIElement.h"
 #include <algorithm>
+#include "../Base/Math.h"
 
 namespace Sgl
 {
@@ -7,8 +8,8 @@ namespace Sgl
 		UIElement(),
 		ContentTemplate(*this),
 		Padding(*this),
-		HorizontalContentAlignment(*this, HorizontalAlignment::Center),
-		VerticalContentAlignment(*this, VerticalAlignment::Center)
+		HorizontalContentAlignment(*this, HorizontalAlignment::Left),
+		VerticalContentAlignment(*this, VerticalAlignment::Top)
 	{}
 
 	ContentUIElement::ContentUIElement(const ContentUIElement& other):
@@ -33,12 +34,69 @@ namespace Sgl
 
 	void ContentUIElement::OnRender(RenderContext context) const
 	{
-		if(auto content = _contentPresenter; content != nullptr)
+		if(_contentPresenter && _contentPresenter->IsVisible)
 		{
-			content->OnRender(context);
+			_contentPresenter->OnRender(context);
 		}
 
 		UIElement::OnRender(context);
+	}
+
+	void ContentUIElement::OnMouseMove(const MouseEventArgs& e)
+	{
+		UIElement::OnMouseMove(e);
+
+		if(_contentPresenter)
+		{
+			auto& content = *_contentPresenter;
+			bool wasMouseOver = content._isMouseOver;
+			bool isMouseOver = Math::IsPointInRect(e.Position, content._bounds);
+
+			if(isMouseOver)
+			{
+				if(!wasMouseOver)
+				{
+					content.OnMouseEnter(e);
+				}
+
+				content.OnMouseMove(e);
+			}
+			else
+			{
+				content.OnMouseLeave(e);
+				Cursor::Set(Cursor);
+			}
+		}
+	}
+
+	void ContentUIElement::OnMouseDown(const MouseButtonEventArgs& e)
+	{
+		UIElement::OnMouseDown(e);
+
+		if(_contentPresenter && _contentPresenter->IsMouseOver() && _contentPresenter->IsVisible)
+		{
+			_contentPresenter->OnMouseDown(e);
+		}
+	}
+
+	void ContentUIElement::OnMouseUp(const MouseButtonEventArgs& e)
+	{
+		UIElement::OnMouseUp(e);
+
+		if(_contentPresenter && _contentPresenter->IsMouseOver() && _contentPresenter->IsVisible)
+		{
+			_contentPresenter->OnMouseUp(e);
+		}
+	}
+
+	void ContentUIElement::OnMouseLeave(const MouseEventArgs& e)
+	{
+		UIElement::OnMouseLeave(e);
+
+		if(_contentPresenter && _contentPresenter->IsVisible)
+		{
+			_contentPresenter->OnMouseLeave(e);
+		}
 	}
 
 	void ContentUIElement::TryCreatePresenter()
@@ -89,17 +147,18 @@ namespace Sgl
 			auto verticalContentAlignment = VerticalContentAlignment.Get();
 			auto availableWidth = rect.w;
 			auto availableHeight = rect.h;
+			auto desireSize = _contentPresenter->GetDesiredSize();
 			auto x = rect.x;
 			auto y = rect.y;
 
-			if(horizontalContentAlignment != HorizontalAlignment::Stretch)
+			/*if(horizontalContentAlignment != HorizontalAlignment::Stretch)
 			{
-				availableWidth = std::fmin(availableWidth, _desiredSize.Width);
+				availableWidth = std::min(availableWidth, desireSize.Width);
 			}
 
 			if(verticalContentAlignment != VerticalAlignment::Stretch)
 			{
-				availableHeight = std::min(availableHeight, _desiredSize.Height);
+				availableHeight = std::min(availableHeight, desireSize.Height);
 			}
 
  			switch(horizontalContentAlignment)
@@ -128,7 +187,7 @@ namespace Sgl
 
 				default:
 					break;
-			}
+			}*/
 
 			FRect finalRect =
 			{

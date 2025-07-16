@@ -71,7 +71,7 @@ namespace Sgl
 							Window.OnWindowStateChanged(args);
 							break;
 						}
-
+						
 						case SDL_WINDOWEVENT_MINIMIZED:
 						{
 							WindowStateEventArgs args = { .State = WindowState::Minimized };
@@ -85,6 +85,46 @@ namespace Sgl
 							Window.OnWindowStateChanged(args);
 							break;
 						}
+
+						case SDL_WINDOWEVENT_SHOWN:
+						{
+							WindowVisibilityEventArgs args = { .IsVisible = true };
+							Window.OnVisibilityChanged(args);
+							break;
+						}
+
+						case SDL_WINDOWEVENT_HIDDEN:
+						{
+							WindowVisibilityEventArgs args = { .IsVisible = false };
+							Window.OnVisibilityChanged(args);
+							break;
+						}
+
+						case SDL_WINDOWEVENT_MOVED:
+						{
+							WindowPositionChangedEventArgs args =
+							{
+								.Position = 
+								{
+									.x = e.window.data1,
+									.y = e.window.data2
+								}
+							};
+							Window.OnPositionChanged(args);
+							break;
+						}
+
+						case SDL_WINDOWEVENT_SIZE_CHANGED:
+						{
+							WindowSizeChangedEventArgs args =
+							{
+								.Width = static_cast<size_t>(e.window.data1),
+								.Height = static_cast<size_t>(e.window.data2)
+							};
+							Window.OnWindowSizeChanged(args);
+							break;
+						}
+
 
 						default:
 							break;
@@ -100,8 +140,7 @@ namespace Sgl
 						.State = static_cast<ButtonState>(e.key.state),
 						.Key = e.key.keysym
 					};
-
-					scene->_uielement->OnKeyDown(args);
+					scene->OnKeyDown(args);
 					break;
 				}
 
@@ -112,46 +151,42 @@ namespace Sgl
 						.State = static_cast<ButtonState>(e.key.state),
 						.Key = e.key.keysym
 					};
-
-					scene->_uielement->OnKeyUp(args);
+					scene->OnKeyUp(args);
 					break;
 				}
 
 				case SDL_TEXTEDITING:
 				{
-					/*scene->Layout->OnTextChanged(
-						TextChangedEventArgs
-						{
-							.Text = e.edit.text,
-							.SelectionLength = static_cast<size_t>(e.edit.length),
-							.SelectionStart = e.edit.start
-						}
-					);*/
+					TextEditingEventArgs args
+					{
+						.Text = e.edit.text,
+						.SelectionStart = static_cast<size_t>(e.edit.start),
+						.SelectionLength = static_cast<size_t>(e.edit.length)
+					};
+					scene->OnTextEditing(args);
 					break;
 				}
 
 				case SDL_TEXTINPUT:
 				{
-					/*scene->Layout->OnTextInput(
-						TextInputEventArgs
-						{
-							.Text = e.text.text
-						}
-					);*/
+					TextInputEventArgs args
+					{
+						.Text = e.text.text
+					};
+					scene->OnTextInput(args);
 					break;
 				}
 
 				case SDL_TEXTEDITING_EXT:
 				{
-					/*scene->Layout->OnTextChanged(
-						TextChangedEventArgs
-						{
-							.Text = e.editExt.text,
-							.SelectionLength = static_cast<size_t>(e.editExt.length),
-							.SelectionStart = e.editExt.start
-						}
-					);
-					SDL_free(e.editExt.text);*/
+					TextEditingEventArgs args
+					{
+						.Text = e.editExt.text,
+						.SelectionStart = static_cast<size_t>(e.edit.start),
+						.SelectionLength = static_cast<size_t>(e.edit.length)
+					};
+					SDL_free(e.editExt.text);
+					scene->OnTextEditing(args);
 					break;
 				}
 
@@ -165,8 +200,7 @@ namespace Sgl
 							.y = static_cast<float>(e.button.y)
 						}
 					};
-
-					scene->_uielement->OnMouseMove(args);
+					scene->OnMouseMove(args);
 					break;
 				}
 
@@ -178,8 +212,7 @@ namespace Sgl
 						.State = static_cast<ButtonState>(e.button.state),
 						.ClicksNumber = e.button.clicks
 					};
-
-					scene->_uielement->OnMouseDown(args);
+					scene->OnMouseDown(args);
 					break;
 				}
 
@@ -191,8 +224,7 @@ namespace Sgl
 						.State = static_cast<ButtonState>(e.button.state),
 						.ClicksNumber = e.button.clicks
 					};
-
-					scene->_uielement->OnMouseUp(args);
+					scene->OnMouseUp(args);
 					break;
 				}
 
@@ -209,8 +241,7 @@ namespace Sgl
 						.ScrolledVertically = e.wheel.preciseY,
 						.Direction = static_cast<MouseWheelDirection>(e.wheel.direction)
 					};
-
-					scene->_uielement->OnMouseWheelChanged(args);
+					scene->OnMouseWheelChanged(args);
 					break;
 				}
 

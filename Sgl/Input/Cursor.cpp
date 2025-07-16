@@ -19,7 +19,7 @@ namespace Sgl
     void Cursor::Set(const Cursor& cursor)
     {
         auto sdlCursor = cursor.GetSDLCursor();
-        if(sdlCursor != nullptr && SDL_GetCursor() != sdlCursor)
+        if(sdlCursor && sdlCursor != SDL_GetCursor())
         {
             SDL_SetCursor(sdlCursor);
         }

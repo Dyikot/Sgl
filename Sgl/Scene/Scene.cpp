@@ -1,5 +1,6 @@
 #include "Scene.h"
 #include "../Application.h"
+#include "../Base/Math.h"
 
 namespace Sgl
 {
@@ -26,7 +27,10 @@ namespace Sgl
 			context.FillBackground(BackgroundColor);
 		}
 		
-		_uielement->OnRender(context);
+		if(_uielement && _uielement->IsVisible)
+		{
+			_uielement->OnRender(context);
+		}
 	}
 
 	void Scene::Process(TimeSpan elapsed)
@@ -43,6 +47,72 @@ namespace Sgl
 		{
 			UpdateInvalidatedLayout();
 		}
+	}
+
+	void Scene::OnKeyUp(const KeyEventArgs& e)
+	{
+		
+	}
+
+	void Scene::OnKeyDown(const KeyEventArgs& e)
+	{
+		
+	}
+
+	void Scene::OnMouseMove(const MouseEventArgs& e)
+	{
+		if(_uielement && _uielement->IsVisible)
+		{
+			auto& element = *_uielement;
+			bool wasMouseOver = element._isMouseOver;
+			bool isMouseOver = Math::IsPointInRect(e.Position, element._bounds);
+
+			if(isMouseOver)
+			{
+				if(!wasMouseOver)
+				{
+					element.OnMouseEnter(e);
+				}
+
+				element.OnMouseMove(e);
+			}
+			else if(wasMouseOver)
+			{
+				element.OnMouseLeave(e);
+				Cursor::Set(Cursor);
+			}
+		}
+	}
+
+	void Scene::OnMouseDown(const MouseButtonEventArgs& e)
+	{
+		if(_uielement && _uielement->IsMouseOver() && _uielement->IsVisible)
+		{
+			_uielement->OnMouseDown(e);
+		}
+	}
+
+	void Scene::OnMouseUp(const MouseButtonEventArgs& e)
+	{
+		if(_uielement && _uielement->IsMouseOver() && _uielement->IsVisible)
+		{
+			_uielement->OnMouseUp(e);
+		}
+	}
+
+	void Scene::OnMouseWheelChanged(const MouseWheelEventArgs& e)
+	{
+		
+	}
+
+	void Scene::OnTextInput(const TextInputEventArgs& e)
+	{
+		
+	}
+
+	void Scene::OnTextEditing(const TextEditingEventArgs& e)
+	{
+		
 	}
 
 	void Scene::UpdateInvalidatedLayout()

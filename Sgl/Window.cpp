@@ -246,4 +246,19 @@ namespace Sgl
     {
         WindowStateChanged.TryInvoke(*this, e);
     }
+
+    void Window::OnVisibilityChanged(const WindowVisibilityEventArgs& e)
+    {
+        VisibilityChanged.TryInvoke(*this, e);
+    }
+
+    void Window::OnPositionChanged(const WindowPositionChangedEventArgs& e)
+    {
+        PositionChanged.TryInvoke(*this, e);
+    }
+
+    void Window::OnWindowSizeChanged(const WindowSizeChangedEventArgs& e)
+    {
+        SizeChanged.TryInvoke(*this, e);
+    }
 }
