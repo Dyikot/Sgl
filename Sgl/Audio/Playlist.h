@@ -11,7 +11,7 @@ namespace Sgl
 	class Playlist
 	{
 	public:
-		using PlayListEventHandler = EventHandler<Playlist, EventArgs>;
+		using PlayListEventHandler = EventHandler<Playlist>;
 		using MusicCollection = std::vector<shared_ptr<Music>>;
 		using Iterator = MusicCollection::iterator;
 

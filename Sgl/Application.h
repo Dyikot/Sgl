@@ -12,7 +12,7 @@ namespace Sgl
 	class Application: public IStyleProvider
 	{
 	private:
-		using ApplicationEventHandler = EventHandler<Application, EventArgs>;
+		using ApplicationEventHandler = EventHandler<Application>;
 	public:
 		struct Context
 		{

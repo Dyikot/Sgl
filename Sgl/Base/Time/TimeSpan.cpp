@@ -4,27 +4,29 @@ namespace Sgl
 {
 	std::string TimeSpan::ToString() const
 	{
-		if(ToMicroseconds() < 10)
+		const auto ns = _nanoseconds;
+
+		if(ns < ThresholdMicroseconds)
 		{
 			return std::format("{} ns", ToNanoseconds());
 		}
-		else if(ToMilliseconds() < 10)
+		else if(ns < ThresholdMilliseconds)
 		{
 			return std::format("{:.2f} us", ToMicroseconds());
 		}
-		else if(ToSeconds() < 10)
+		else if(ns < ThresholdSeconds)
 		{
 			return std::format("{:.2f} ms", ToMilliseconds());
 		}
-		else if(ToMinutes() < 10)
+		else if(ns < ThresholdMinutes)
 		{
 			return std::format("{:.2f} sec", ToSeconds());
 		}
-		else if(ToHours() < 10)
+		else if(ns < ThresholdHours)
 		{
 			return std::format("{:.2f} min", ToMinutes());
 		}
-		else if(ToDays() < 10)
+		else if(ns < ThresholdDays)
 		{
 			return std::format("{:.2f} hr", ToHours());
 		}

@@ -12,7 +12,7 @@ namespace Sgl
 	class Timer
 	{
 	public:
-		using TimeElapsedHandler = EventHandler<Timer, EventArgs>;
+		using TimeElapsedHandler = EventHandler<Timer>;
 
 		/// <summary>
 		/// Gets the duration for which the timer is set.

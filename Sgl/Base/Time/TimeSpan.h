@@ -7,6 +7,20 @@ namespace Sgl
 	class TimeSpan
 	{
 	private:
+		static constexpr double NanosecondsPerMicrosecond = 1e3;
+		static constexpr double NanosecondsPerMillisecond = 1e6;
+		static constexpr double NanosecondsPerSecond = 1e9;
+		static constexpr double NanosecondsPerMinute = 6e10;
+		static constexpr double NanosecondsPerHour = 36e11;
+		static constexpr double NanosecondsPerDay = 864e11;
+
+		static constexpr long long ThresholdMicroseconds = 10 * NanosecondsPerMicrosecond;
+		static constexpr long long ThresholdMilliseconds = 10 * NanosecondsPerMillisecond;
+		static constexpr long long ThresholdSeconds = 10 * NanosecondsPerSecond;
+		static constexpr long long ThresholdMinutes = 10 * NanosecondsPerMinute;
+		static constexpr long long ThresholdHours = 10 * NanosecondsPerHour;
+		static constexpr long long ThresholdDays = 10 * NanosecondsPerHour;
+
 		long long _nanoseconds;
 	public:
 		constexpr explicit TimeSpan(long long nanoseconds) noexcept:
@@ -19,32 +33,32 @@ namespace Sgl
 
 		static constexpr TimeSpan FromMicroseconds(long long value) noexcept
 		{
-			return TimeSpan(value * 1e3);
+			return TimeSpan(value * NanosecondsPerMicrosecond);
 		}
 
 		static constexpr TimeSpan FromMilliseconds(long long value) noexcept
 		{
-			return TimeSpan(value * 1e6);
+			return TimeSpan(value * NanosecondsPerMillisecond);
 		}
 
 		static constexpr TimeSpan FromSeconds(long long value) noexcept
 		{
-			return TimeSpan(value * 1e9);
+			return TimeSpan(value * NanosecondsPerSecond);
 		}
 
 		static constexpr TimeSpan FromMinutes(long long value) noexcept
 		{
-			return TimeSpan(value * 6e10);
+			return TimeSpan(value * NanosecondsPerMinute);
 		}
 
 		static constexpr TimeSpan FromHours(long long value) noexcept
 		{
-			return TimeSpan(value * 36e11);
+			return TimeSpan(value * NanosecondsPerHour);
 		}
 
 		static constexpr TimeSpan FromDays(long long value) noexcept
 		{
-			return TimeSpan(value * 864e11);
+			return TimeSpan(value * NanosecondsPerDay);
 		}
 
 		static constexpr TimeSpan Zero() noexcept
@@ -52,39 +66,39 @@ namespace Sgl
 			return TimeSpan(0);
 		}
 
-		constexpr auto ToNanoseconds() const noexcept 
+		constexpr double ToNanoseconds() const noexcept
 		{
 			return _nanoseconds;
 		}
 
-		constexpr auto ToMicroseconds() const noexcept 
+		constexpr double ToMicroseconds() const noexcept
 		{
-			return _nanoseconds / 1e3;
+			return _nanoseconds / NanosecondsPerMicrosecond;
 		}
 
-		constexpr auto ToMilliseconds() const noexcept 
+		constexpr double ToMilliseconds() const noexcept
 		{ 
-			return _nanoseconds / 1e6;
+			return _nanoseconds / NanosecondsPerMillisecond;
 		}
 
-		constexpr auto ToSeconds() const noexcept 
+		constexpr double ToSeconds() const noexcept
 		{ 
-			return _nanoseconds / 1e9; 
+			return _nanoseconds / NanosecondsPerSecond; 
 		}
 
-		constexpr auto ToMinutes() const noexcept 
+		constexpr double ToMinutes() const noexcept
 		{ 
-			return _nanoseconds / 6e10;
+			return _nanoseconds / NanosecondsPerMinute;
 		}
 
-		constexpr auto ToHours() const noexcept 
+		constexpr double ToHours() const noexcept
 		{ 
-			return _nanoseconds / 36e11;
+			return _nanoseconds / NanosecondsPerHour;
 		}
 
-		constexpr auto ToDays() const noexcept 
+		constexpr double ToDays() const noexcept 
 		{ 
-			return _nanoseconds / 864e11;
+			return _nanoseconds / NanosecondsPerDay;
 		}
 
 		constexpr TimeSpan Duration() const noexcept
