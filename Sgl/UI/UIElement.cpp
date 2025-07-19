@@ -9,6 +9,7 @@ namespace Sgl
 		Cursor(Cursors::Arrow),
 		BackgroundTexture(),		
 		Tag(),
+		DataContext(),
 		_isMouseOver(false)
 	{}
 
@@ -18,6 +19,7 @@ namespace Sgl
 		Cursor(other.Cursor),
 		BackgroundTexture(other.BackgroundTexture),		
 		Tag(other.Tag),
+		DataContext(other.DataContext),
 		_isMouseOver(other._isMouseOver)
 	{}
 
@@ -27,6 +29,7 @@ namespace Sgl
 		Cursor(other.Cursor),
 		BackgroundTexture(std::move(other.BackgroundTexture)),		
 		Tag(std::move(other.Tag)),
+		DataContext(std::move(other.DataContext)),
 		_isMouseOver(other._isMouseOver)
 	{}
 

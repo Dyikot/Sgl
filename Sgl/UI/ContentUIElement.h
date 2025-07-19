@@ -33,7 +33,7 @@ namespace Sgl
 		VerticalAlignmentProperty VerticalContentAlignment;
 		HorizontalAlignmentProperty HorizontalContentAlignment;
 	protected:
-		ConstVoidPtr _content;
+		AnyConstView _content;
 		shared_ptr<UIElement> _contentPresenter;
 	public:
 		ContentUIElement();
@@ -54,7 +54,7 @@ namespace Sgl
 			ContentTemplate = UIElementDataTemplate::New();
 		}
 
-		ConstVoidPtr GetContent() const { return _content; }
+		AnyConstView GetContent() const { return _content; }
 		shared_ptr<UIElement> GetContentPresenter() const { return _contentPresenter; }
 
 		void OnRender(RenderContext context) const override;

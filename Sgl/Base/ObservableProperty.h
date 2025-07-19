@@ -53,17 +53,17 @@ namespace Sgl
             return TInput(_value); 
         }
 
-        void Subscribe(T& observer)
+        void SetObserver(T& observer)
         {
             _observer = [&observer](TInput value) { observer = value; };
         }
 
-        void Subscribe(Action<TInput> observer)
+        void SetObserver(Action<TInput> observer)
         {
             _observer = std::move(observer);
         }
 
-        void Subscribe(ObservableProperty& observer, bool twoWay = false)
+        void SetObserver(ObservableProperty& observer, bool twoWay = false)
         {
             _observer = [&observer](TInput value) { observer.Set(value); };
 
@@ -74,12 +74,12 @@ namespace Sgl
         }
 
         template<typename TObserver>
-        void Subscribe(TObserver& observer, void(TObserver::*setter)(TInput))
+        void SetObserver(TObserver& observer, void(TObserver::*setter)(TInput))
         {
             _observer = [&observer, setter](TInput value) { (observer.*setter)(value); };
         }
 
-        void ClearSubscription()
+        void RemoveObserver()
         {
             _observer.Reset();
         }

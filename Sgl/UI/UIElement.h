@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Base/Object.h"
+#include "../Base/Any.h"
 #include "../Base/Event.h"
 #include "../Base/Collections/ResourcesMap.h"
 #include "../Input/Cursor.h"
@@ -18,7 +18,7 @@ namespace Sgl
 		using ColorProperty = ObservableProperty<Color>;
 		using CursorProperty = ObservableProperty<std::reference_wrapper<const Cursor>, const Cursor&>;
 		using TextureProperty = ObservableProperty<shared_ptr<Texture>>;
-		using TagProperty = ObservableProperty<object, const object&>;
+		using TagProperty = ObservableProperty<Any, const Any&>;
 		using ToolTipProperty = ObservableProperty<shared_ptr<UIElement>>;
 		using ZIndexProperty = ObservableProperty<size_t>;
 
@@ -44,6 +44,7 @@ namespace Sgl
 		ZIndexProperty ZIndex;
 
 		ResourcesMap Resources;
+		Any DataContext;
 	protected:
 		bool _isMouseOver;
 	public:

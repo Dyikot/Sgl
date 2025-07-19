@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include "../../Base/VoidPtr.h"
+#include "../../Base/AnyView.h"
 
 namespace Sgl
 {
@@ -13,7 +13,7 @@ namespace Sgl
     public:
         virtual ~IDataTemplate() = default;
 
-        virtual shared_ptr<UIElement> Build(ConstVoidPtr data) const = 0;
+        virtual shared_ptr<UIElement> Build(AnyConstView data) const = 0;
     };
 
     class UIElementDataTemplate: public IDataTemplate
@@ -24,7 +24,7 @@ namespace Sgl
             return std::make_shared<UIElementDataTemplate>();
         }
 
-        shared_ptr<UIElement> Build(ConstVoidPtr data) const override
+        shared_ptr<UIElement> Build(AnyConstView data) const override
         {
             return data.As<shared_ptr<UIElement>>();
         }

@@ -5,29 +5,29 @@
 
 namespace Sgl
 {
-	class VoidPtr final
+	class AnyView final
 	{
 	private:
 		void* _value;
 	public:
-		VoidPtr():
+		AnyView():
 			_value(nullptr)
 		{}
 
-		VoidPtr(std::nullptr_t):
-			VoidPtr()
+		AnyView(std::nullptr_t):
+			AnyView()
 		{}
 
-		VoidPtr(const VoidPtr& other):
+		AnyView(const AnyView& other):
 			_value(other._value)
 		{}
 
-		VoidPtr(VoidPtr&& other) noexcept:
+		AnyView(AnyView&& other) noexcept:
 			_value(std::exchange(other._value, nullptr))
 		{}
 
 		template<typename T>
-		VoidPtr(T& value):
+		AnyView(T& value):
 			_value(&value)
 		{}
 
@@ -48,60 +48,60 @@ namespace Sgl
 			return *static_cast<const T*>(_value);
 		}
 
-		friend bool operator==(VoidPtr left, VoidPtr right)
+		friend bool operator==(AnyView left, AnyView right)
 		{
 			return left._value == right._value;
 		}
 
 		template<typename T>
-		VoidPtr& operator=(T& value)
+		AnyView& operator=(T& value)
 		{
 			_value = &value;
 			return *this;
 		}
 
-		VoidPtr& operator=(const VoidPtr& other)
+		AnyView& operator=(const AnyView& other)
 		{
 			_value = other._value;
 			return *this;
 		}
 
-		VoidPtr& operator=(VoidPtr&& other) noexcept
+		AnyView& operator=(AnyView&& other) noexcept
 		{
 			_value = std::exchange(other._value, nullptr);
 			return *this;
 		}
 
-		friend class ConstVoidPtr;
+		friend class AnyConstView;
 	};
 
-	class ConstVoidPtr final
+	class AnyConstView final
 	{
 	private:
 		const void* _value;
 	public:
-		ConstVoidPtr():
+		AnyConstView():
 			_value(nullptr)
 		{}
 
-		ConstVoidPtr(std::nullptr_t):
-			ConstVoidPtr()
+		AnyConstView(std::nullptr_t):
+			AnyConstView()
 		{}
 
 		template<typename T>
-		ConstVoidPtr(const T& value):
+		AnyConstView(const T& value):
 			_value(&value)
 		{}
 
-		ConstVoidPtr(VoidPtr other):
+		AnyConstView(AnyView other):
 			_value(other._value)
 		{}
 
-		ConstVoidPtr(const ConstVoidPtr& other):
+		AnyConstView(const AnyConstView& other):
 			_value(other._value)
 		{}
 
-		ConstVoidPtr(ConstVoidPtr&& other) noexcept:
+		AnyConstView(AnyConstView&& other) noexcept:
 			_value(std::exchange(other._value, nullptr))
 		{}
 
@@ -116,25 +116,25 @@ namespace Sgl
 			return *static_cast<const T*>(_value);
 		}
 
-		friend bool operator==(ConstVoidPtr left, ConstVoidPtr right)
+		friend bool operator==(AnyConstView left, AnyConstView right)
 		{
 			return left._value == right._value;
 		}
 
 		template<typename T>
-		ConstVoidPtr& operator=(T& value)
+		AnyConstView& operator=(T& value)
 		{
 			_value = &value;
 			return *this;
 		}
 
-		ConstVoidPtr& operator=(const ConstVoidPtr& other)
+		AnyConstView& operator=(const AnyConstView& other)
 		{
 			_value = other._value;
 			return *this;
 		}
 
-		ConstVoidPtr& operator=(ConstVoidPtr&& other) noexcept
+		AnyConstView& operator=(AnyConstView&& other) noexcept
 		{
 			_value = std::exchange(other._value, nullptr);
 			return *this;

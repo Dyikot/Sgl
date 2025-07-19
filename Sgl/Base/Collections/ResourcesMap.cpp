@@ -2,12 +2,12 @@
 
 namespace Sgl
 {
-	void ResourcesMap::Add(std::string key, object item)
+	void ResourcesMap::Add(std::string key, Any item)
 	{
 		_resources[std::move(key)] = item;
 	}
 
-	bool ResourcesMap::TryAdd(std::string key, object item)
+	bool ResourcesMap::TryAdd(std::string key, Any item)
 	{
 		return _resources.try_emplace(std::move(key), std::move(item)).second;
 	}
@@ -17,7 +17,7 @@ namespace Sgl
 		_resources.erase(key);
 	}
 
-	object* ResourcesMap::TryGet(const std::string& key)
+	Any* ResourcesMap::TryGet(const std::string& key)
 	{
 		if(auto it = _resources.find(key); it != _resources.end())
 		{
@@ -47,12 +47,12 @@ namespace Sgl
 		return std::views::values(_resources);
 	}
 
-	object& ResourcesMap::operator[](const std::string& key)
+	Any& ResourcesMap::operator[](const std::string& key)
 	{
 		return _resources[key];
 	}
 
-	const object& ResourcesMap::operator[](const std::string& key) const
+	const Any& ResourcesMap::operator[](const std::string& key) const
 	{
 		return _resources.at(key);
 	}
