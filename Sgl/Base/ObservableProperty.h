@@ -6,7 +6,9 @@
 namespace Sgl
 {
     template<typename T, typename TInput = T> 
-        requires std::constructible_from<T, TInput> && std::copyable<T>
+        requires std::constructible_from<T, TInput> && 
+                 std::convertible_to<T, TInput> && 
+                 std::copyable<T>
     class ObservableProperty
     {
     public:
@@ -26,24 +28,29 @@ namespace Sgl
         {}
 
         ObservableProperty(const ObservableProperty& other):
-            _value(other._value)
+            _value(other._value),
+            _observer(other._observer)
         {}
 
         ObservableProperty(ObservableProperty&& other) noexcept:
-            _value(std::move(other._value))
+            _value(std::move(other._value)),
+            _observer(std::move(other._observer))
         {}
 
         virtual ~ObservableProperty() = default;
 
         void Set(TInput value)
         {
-            _value = value;
-            OnChanged();
+            if(_value != value)
+            {
+                _value = value;
+                OnChanged();
+            }
         }
 
         TInput Get() const 
         {
-            return _value; 
+            return TInput(_value); 
         }
 
         void Subscribe(T& observer)
@@ -56,9 +63,14 @@ namespace Sgl
             _observer = std::move(observer);
         }
 
-        void Subscribe(ObservableProperty& observer)
+        void Subscribe(ObservableProperty& observer, bool twoWay = false)
         {
             _observer = [&observer](TInput value) { observer.Set(value); };
+
+            if(twoWay)
+            {
+                observer._observer = [this](TInput value) { Set(value); };
+            }
         }
 
         template<typename TObserver>
@@ -67,14 +79,14 @@ namespace Sgl
             _observer = [&observer, setter](TInput value) { (observer.*setter)(value); };
         }
 
-        void ClearSubcription()
+        void ClearSubscription()
         {
             _observer.Reset();
         }
 
         operator TInput() const 
         { 
-            return _value; 
+            return TInput(_value); 
         }
 
         ObservableProperty& operator=(TInput value)
@@ -86,12 +98,14 @@ namespace Sgl
         ObservableProperty& operator=(const ObservableProperty& other)
         {
             _value = other._value;
+            _observer = other._observer;
             return *this;
         }
 
         ObservableProperty& operator=(ObservableProperty&& other) noexcept
         {
             _value = std::move(other._value);
+            _observer = std::move(other._observer);
             return *this;
         }
 
