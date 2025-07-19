@@ -15,12 +15,12 @@ namespace Sgl
 	class UIElement: public Layoutable, public IRenderable
 	{
 	private:
-		using ColorProperty = StylyableProperty<Color>;
-		using CursorProperty = StylyableProperty<std::reference_wrapper<const Cursor>, const Cursor&>;
-		using TextureProperty = StylyableProperty<shared_ptr<Texture>>;
-		using TagProperty = StylyableProperty<object, const object&>;
-		using ToolTipProperty = StylyableProperty<shared_ptr<UIElement>>;
-		using ZIndexProperty = StylyableProperty<size_t>;
+		using ColorProperty = ObservableProperty<Color>;
+		using CursorProperty = ObservableProperty<std::reference_wrapper<const Cursor>, const Cursor&>;
+		using TextureProperty = ObservableProperty<shared_ptr<Texture>>;
+		using TagProperty = ObservableProperty<object, const object&>;
+		using ToolTipProperty = ObservableProperty<shared_ptr<UIElement>>;
+		using ZIndexProperty = ObservableProperty<size_t>;
 
 		using KeyEventHandler = EventHandler<UIElement, KeyEventArgs>;
 		using MouseEventHandler = EventHandler<UIElement, MouseEventArgs>;

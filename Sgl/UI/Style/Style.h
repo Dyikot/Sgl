@@ -32,7 +32,7 @@ namespace Sgl
             });
 
             return *this;
-        }       
+        }
 
         void Apply(StyleableElement& target) override
         {

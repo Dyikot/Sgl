@@ -8,10 +8,10 @@ namespace Sgl
 	class ContentUIElement: public UIElement
 	{
 	private:
-		class DataTemplateProperty: public StylyableProperty<shared_ptr<IDataTemplate>>
+		class DataTemplateProperty: public ObservableProperty<shared_ptr<IDataTemplate>>
 		{
 		private:
-			using base = StylyableProperty<shared_ptr<IDataTemplate>>;
+			using base = ObservableProperty<shared_ptr<IDataTemplate>>;
 			ContentUIElement& _owner;
 		public:
 			DataTemplateProperty(ContentUIElement& owner):

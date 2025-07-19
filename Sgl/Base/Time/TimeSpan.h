@@ -66,7 +66,7 @@ namespace Sgl
 			return TimeSpan(0);
 		}
 
-		constexpr double ToNanoseconds() const noexcept
+		constexpr long long ToNanoseconds() const noexcept
 		{
 			return _nanoseconds;
 		}

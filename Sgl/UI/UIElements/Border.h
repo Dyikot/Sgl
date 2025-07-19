@@ -7,8 +7,8 @@ namespace Sgl
 	class Border: public ContentUIElement
 	{
 	public:
-		StylyableProperty<size_t> BorderWidth;
-		StylyableProperty<Color> BorderColor;
+		ObservableProperty<size_t> BorderWidth;
+		ObservableProperty<Color> BorderColor;
 	public:
 		static std::shared_ptr<Border> New() { return std::make_shared<Border>(); }
 
