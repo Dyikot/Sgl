@@ -18,33 +18,40 @@ namespace Sgl
         T _value;
     private:
         Action<TInput> _observer;
+        bool _isChanging;
     public:
         ObservableProperty() requires std::default_initializable<T>:
-            _value()
+            _value(),
+            _isChanging(false)
         {}
 
         ObservableProperty(TInput value):
-            _value(value)
+            _value(value),
+            _isChanging(false)
         {}
 
         ObservableProperty(const ObservableProperty& other):
             _value(other._value),
-            _observer(other._observer)
+            _observer(other._observer),
+            _isChanging(other._isChanging)
         {}
 
         ObservableProperty(ObservableProperty&& other) noexcept:
             _value(std::move(other._value)),
-            _observer(std::move(other._observer))
+            _observer(std::move(other._observer)),
+            _isChanging(other._isChanging)
         {}
 
         virtual ~ObservableProperty() = default;
 
         void Set(TInput value)
         {
-            if(_value != value)
+            if(!_isChanging)
             {
+                _isChanging = true;
                 _value = value;
                 OnChanged();
+                _isChanging = false;
             }
         }
 

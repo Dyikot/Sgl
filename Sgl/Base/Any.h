@@ -63,7 +63,7 @@ namespace Sgl
 
 			bool operator==(const IStorage& other) const override
 			{
-				return Value == other.Get<T>();
+				return Type() == other.Type() && Value == other.Get<T>();
 			}
 		};
 
