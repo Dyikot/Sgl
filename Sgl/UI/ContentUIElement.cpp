@@ -22,13 +22,13 @@ namespace Sgl
 		_contentPresenter(other._contentPresenter)
 	{}
 
-	ContentUIElement::ContentUIElement(ContentUIElement && other) noexcept:
+	ContentUIElement::ContentUIElement(ContentUIElement&& other) noexcept:
 		UIElement(std::move(other)),
 		ContentTemplate(std::move(other.ContentTemplate)),
 		Padding(std::move(other.Padding)),
 		HorizontalContentAlignment(std::move(other.HorizontalContentAlignment)),
 		VerticalContentAlignment(std::move(other.VerticalContentAlignment)),
-		_content(std::move(other._content)),
+		_content(std::exchange(other._content, nullptr)),
 		_contentPresenter(std::move(other._contentPresenter))
 	{}
 
@@ -103,7 +103,7 @@ namespace Sgl
 	{
 		auto contentTemplate = ContentTemplate.Get();
 
-		if(contentTemplate != nullptr && !_content.IsEmpty())
+		if(contentTemplate != nullptr && _content.HasValue())
 		{
 			_contentPresenter = contentTemplate->Build(_content);
 			_contentPresenter->_stylingParent = this;

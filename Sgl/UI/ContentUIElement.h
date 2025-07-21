@@ -33,14 +33,14 @@ namespace Sgl
 		VerticalAlignmentProperty VerticalContentAlignment;
 		HorizontalAlignmentProperty HorizontalContentAlignment;
 	protected:
-		AnyConstView _content;
+		Any _content;
 		shared_ptr<UIElement> _contentPresenter;
 	public:
 		ContentUIElement();
 		ContentUIElement(const ContentUIElement& other);
 		ContentUIElement(ContentUIElement&& other) noexcept;
 
-		template<typename T>
+		template<std::copyable T>
 		void SetContent(const T& value)
 		{
 			_content = value;
@@ -50,11 +50,11 @@ namespace Sgl
 		template<std::derived_from<UIElement> T>
 		void SetContent(const shared_ptr<T>& value)
 		{
-			_content = value;
+			_content = Any::New<shared_ptr<UIElement>>(value);
 			ContentTemplate = UIElementDataTemplate::New();
 		}
 
-		AnyConstView GetContent() const { return _content; }
+		const Any& GetContent() const { return _content; }
 		shared_ptr<UIElement> GetContentPresenter() const { return _contentPresenter; }
 
 		void OnRender(RenderContext context) const override;
