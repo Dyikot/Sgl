@@ -106,6 +106,7 @@ namespace Sgl
 		if(contentTemplate != nullptr && !_content.IsEmpty())
 		{
 			_contentPresenter = contentTemplate->Build(_content);
+			_contentPresenter->_stylingParent = this;
 			_contentPresenter->_layoutableParent = this;
 			InvalidateMeasure();
 		}
@@ -143,51 +144,11 @@ namespace Sgl
 		if(_contentPresenter)
 		{
 			auto padding = Padding.Get();
-			auto horizontalContentAlignment = HorizontalContentAlignment.Get();
-			auto verticalContentAlignment = VerticalContentAlignment.Get();
 			auto availableWidth = rect.w;
 			auto availableHeight = rect.h;
 			auto desireSize = _contentPresenter->GetDesiredSize();
 			auto x = rect.x;
 			auto y = rect.y;
-
-			/*if(horizontalContentAlignment != HorizontalAlignment::Stretch)
-			{
-				availableWidth = std::min(availableWidth, desireSize.Width);
-			}
-
-			if(verticalContentAlignment != VerticalAlignment::Stretch)
-			{
-				availableHeight = std::min(availableHeight, desireSize.Height);
-			}
-
- 			switch(horizontalContentAlignment)
-			{
-				case HorizontalAlignment::Right:
-					x += availableWidth - rect.w;
-					break;
-
-				case HorizontalAlignment::Center:
-					x += (availableWidth - rect.w) / 2.f;
-					break;
-
-				default:
-					break;
-			}
-
-			switch(verticalContentAlignment)
-			{
-				case VerticalAlignment::Bottom:
-					y += availableHeight - rect.h;
-					break;
-
-				case VerticalAlignment::Center:
-					y += (availableHeight - rect.h) / 2.f;
-					break;
-
-				default:
-					break;
-			}*/
 
 			FRect finalRect =
 			{
@@ -205,6 +166,19 @@ namespace Sgl
 			if(finalRect.h < 0)
 			{
 				finalRect.h = 0;
+			}
+
+			auto verticalContentAlignment = VerticalContentAlignment.Get();
+			auto horizontalContentAlignment = HorizontalContentAlignment.Get();
+
+			if(verticalContentAlignment != VerticalAlignment::Top)
+			{
+				_contentPresenter->VerticalAlignment = verticalContentAlignment;
+			}
+
+			if(horizontalContentAlignment != HorizontalAlignment::Left)
+			{
+				_contentPresenter->HorizontalAlignment = horizontalContentAlignment;		
 			}
 
 			_contentPresenter->Arrange(finalRect);
