@@ -17,9 +17,9 @@ namespace Sgl
 	private:
 		using ColorProperty = ObservableProperty<Color>;
 		using CursorProperty = ObservableProperty<std::reference_wrapper<const Cursor>, const Cursor&>;
-		using TextureProperty = ObservableProperty<shared_ptr<Texture>>;
+		using TextureProperty = ObservableProperty<std::shared_ptr<Texture>>;
 		using TagProperty = ObservableProperty<Any, const Any&>;
-		using ToolTipProperty = ObservableProperty<shared_ptr<UIElement>>;
+		using ToolTipProperty = ObservableProperty<std::shared_ptr<UIElement>>;
 		using ZIndexProperty = ObservableProperty<size_t>;
 
 		using KeyEventHandler = EventHandler<UIElement, KeyEventArgs>;
@@ -109,7 +109,7 @@ namespace Sgl
 
 	struct UIElementComparer
 	{
-		bool operator()(const shared_ptr<UIElement>& left, const shared_ptr<UIElement>& right) const
+		bool operator()(const std::shared_ptr<UIElement>& left, const std::shared_ptr<UIElement>& right) const
 		{
 			return left->ZIndex < right->ZIndex;
 		}

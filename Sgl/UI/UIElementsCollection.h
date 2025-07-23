@@ -8,7 +8,7 @@ namespace Sgl
 	class UIElementsCollection
 	{
 	private:
-		SortedVector<shared_ptr<UIElement>, UIElementComparer> _items;
+		SortedVector<std::shared_ptr<UIElement>, UIElementComparer> _items;
 		Layoutable& _owner;
 	public:
 		UIElementsCollection(Layoutable& layout):
@@ -32,7 +32,7 @@ namespace Sgl
 		auto begin() const { return _items.begin(); }
 		auto end() const { return _items.end(); }
 
-		void Add(const shared_ptr<UIElement>& element)
+		void Add(const std::shared_ptr<UIElement>& element)
 		{
 			_items.Add(element);
 			element->_stylingParent = &_owner;
@@ -54,7 +54,7 @@ namespace Sgl
 			_items.Clear();
 		}
 
-		bool Contains(const shared_ptr<UIElement>& element) const
+		bool Contains(const std::shared_ptr<UIElement>& element) const
 		{
 			return Contains(element);
 		}
@@ -64,12 +64,12 @@ namespace Sgl
 			return _items.ElementAt(index);
 		}
 
-		std::optional<size_t> Find(const shared_ptr<UIElement>& element) const
+		std::optional<size_t> Find(const std::shared_ptr<UIElement>& element) const
 		{
 			return _items.Find(element);
 		}
 
-		void Remove(const shared_ptr<UIElement>& element)
+		void Remove(const std::shared_ptr<UIElement>& element)
 		{
 			_items.Remove(element);
 		}

@@ -12,12 +12,12 @@ namespace Sgl
 	public:
 		Cursor Cursor;
 		Color BackgroundColor;
-		shared_ptr<Texture> BackgroundTexture;
+		std::shared_ptr<Texture> BackgroundTexture;
 
 		ResourcesMap Resources;
 		StyleMap Styles;
 	protected:
-		shared_ptr<UIElement> _uielement;
+		std::shared_ptr<UIElement> _uielement;
 		IStyleProvider* _stylingParent;
 	public:
 		Scene();
@@ -25,8 +25,8 @@ namespace Sgl
 		Scene(Scene&&) = delete;
 		virtual ~Scene() = default;
 
-		void SetUIElement(shared_ptr<UIElement> value);
-		shared_ptr<UIElement> GetUIElement() const { return _uielement; }
+		void SetUIElement(std::shared_ptr<UIElement> value);
+		std::shared_ptr<UIElement> GetUIElement() const { return _uielement; }
 
 		StyleMap& GetStyles() override { return Styles; }
 		IStyleProvider* GetStylingParent() { return _stylingParent; }

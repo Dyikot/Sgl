@@ -7,8 +7,6 @@
 
 namespace Sgl
 {
-    using std::shared_ptr;    
-
     template<typename T>
     class Style: public IStyle
     {

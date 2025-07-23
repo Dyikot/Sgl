@@ -6,13 +6,11 @@
 
 namespace Sgl
 {
-	using std::shared_ptr;
-
 	class Playlist
 	{
 	public:
 		using PlayListEventHandler = EventHandler<Playlist>;
-		using MusicCollection = std::vector<shared_ptr<Music>>;
+		using MusicCollection = std::vector<std::shared_ptr<Music>>;
 		using Iterator = MusicCollection::iterator;
 
 		Volume Volume;
@@ -27,7 +25,7 @@ namespace Sgl
 		Playlist(const Playlist& other);
 		Playlist(Playlist&& other) noexcept;
 
-		shared_ptr<Music> GetCurrent();		
+		std::shared_ptr<Music> GetCurrent();		
 		void Play();
 
 		Playlist& operator=(const Playlist& other);

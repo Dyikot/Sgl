@@ -7,12 +7,10 @@
 
 namespace Sgl
 {
-    using std::shared_ptr;
-
     class StyleMap
     {
     private:
-        std::unordered_map<std::string, shared_ptr<IStyle>> _items;
+        std::unordered_map<std::string, std::shared_ptr<IStyle>> _items;
     public:
         StyleMap() = default;
         StyleMap(const StyleMap& other);
@@ -32,7 +30,7 @@ namespace Sgl
             return *style.get();
         }
 
-        shared_ptr<IStyle> TryGet(const std::string& key) const;
+        std::shared_ptr<IStyle> TryGet(const std::string& key) const;
         void Remove(const std::string& key);
         bool IsEmpty() const;
 

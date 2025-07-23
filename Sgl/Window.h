@@ -9,8 +9,6 @@
 
 namespace Sgl
 {
-	using std::shared_ptr;
-
 	class Window
 	{
 	private:
@@ -29,7 +27,7 @@ namespace Sgl
 		SDL_Window* _window;
 		SDL_Renderer* _renderer;
 	private:
-		shared_ptr<Surface> _icon;
+		std::shared_ptr<Surface> _icon;
 		bool _hasVSync = false;
 	public:
 		Window() noexcept;
@@ -66,8 +64,8 @@ namespace Sgl
 		void SetWindowState(WindowState state) noexcept;
 		WindowState GetWindowState() const noexcept;
 
-		void SetIcon(shared_ptr<Surface> icon);
-		shared_ptr<Surface> GetIcon() const;
+		void SetIcon(std::shared_ptr<Surface> icon);
+		std::shared_ptr<Surface> GetIcon() const;
 
 		void SetVSync(bool value) noexcept;
 		bool HasVSync() const;

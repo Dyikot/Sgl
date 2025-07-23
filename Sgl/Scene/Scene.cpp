@@ -10,7 +10,7 @@ namespace Sgl
 		_stylingParent(App.Current())
 	{}
 
-	void Scene::SetUIElement(shared_ptr<UIElement> value)
+	void Scene::SetUIElement(std::shared_ptr<UIElement> value)
 	{
 		_uielement = value;
 		_uielement->_stylingParent = this;

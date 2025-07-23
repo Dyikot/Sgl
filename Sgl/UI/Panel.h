@@ -10,7 +10,7 @@ namespace Sgl
 	public:
 		UIElementsCollection Children;
 	private:
-		shared_ptr<UIElement> _currentChild;
+		std::shared_ptr<UIElement> _currentChild;
 	public:
 		Panel();
 		Panel(const Panel& other);

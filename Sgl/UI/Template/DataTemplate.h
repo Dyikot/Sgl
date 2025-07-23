@@ -5,7 +5,6 @@
 
 namespace Sgl
 {
-    using std::shared_ptr;
     class UIElement;
 
     class IDataTemplate
@@ -13,7 +12,7 @@ namespace Sgl
     public:
         virtual ~IDataTemplate() = default;
 
-        virtual shared_ptr<UIElement> Build(const Any& data) const = 0;
+        virtual std::shared_ptr<UIElement> Build(const Any& data) const = 0;
     };
 
     class UIElementDataTemplate: public IDataTemplate
@@ -24,9 +23,9 @@ namespace Sgl
             return std::make_shared<UIElementDataTemplate>();
         }
 
-        shared_ptr<UIElement> Build(const Any& data) const override
+        std::shared_ptr<UIElement> Build(const Any& data) const override
         {
-            return data.As<shared_ptr<UIElement>>();
+            return data.As<std::shared_ptr<UIElement>>();
         }
     };
 }

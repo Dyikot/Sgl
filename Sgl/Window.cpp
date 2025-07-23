@@ -189,13 +189,13 @@ namespace Sgl
         }
     }
 
-    void Window::SetIcon(shared_ptr<Surface> icon)
+    void Window::SetIcon(std::shared_ptr<Surface> icon)
     {
         _icon = std::move(icon);
         SDL_SetWindowIcon(_window, _icon->GetSDLSurface());
     }
 
-    shared_ptr<Surface> Window::GetIcon() const
+    std::shared_ptr<Surface> Window::GetIcon() const
     {
         return _icon;
     }

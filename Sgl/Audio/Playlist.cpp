@@ -14,7 +14,7 @@ namespace Sgl
 		_currentIt(std::move(other._currentIt))
 	{}
 
-	shared_ptr<Music> Playlist::GetCurrent()
+	std::shared_ptr<Music> Playlist::GetCurrent()
 	{
 		return _currentIt != Items.end() ? *_currentIt : nullptr;
 	}

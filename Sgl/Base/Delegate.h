@@ -76,8 +76,9 @@ namespace Sgl
 		{}
 
 		template<CFunc<TReturn, TArgs...> TFunc>
+		 requires !std::same_as<std::decay_t<TFunc>, Delegate>
 		Delegate(TFunc&& func):
-			_callable(std::make_unique<Callable<std::remove_reference_t<TFunc>>>(std::forward<TFunc>(func)))
+			_callable(std::make_unique<Callable<std::decay_t<TFunc>>>(std::forward<TFunc>(func)))
 		{}
 
 		void Reset() noexcept
@@ -107,9 +108,10 @@ namespace Sgl
 		}
 
 		template<CFunc<TReturn, TArgs...> TFunc>
+			requires !std::same_as<std::decay_t<TFunc>, Delegate>
 		Delegate& operator=(TFunc&& func)
 		{
-			_callable = std::make_unique<Callable<std::remove_reference_t<TFunc>>>(std::forward<TFunc>(func));
+			_callable = std::make_unique<Callable<std::decay_t<TFunc>>>(std::forward<TFunc>(func));
 			return *this;
 		}
 

@@ -8,10 +8,10 @@ namespace Sgl
 	class ContentUIElement: public UIElement
 	{
 	private:
-		class DataTemplateProperty: public ObservableProperty<shared_ptr<IDataTemplate>>
+		class DataTemplateProperty: public ObservableProperty<std::shared_ptr<IDataTemplate>>
 		{
 		private:
-			using base = ObservableProperty<shared_ptr<IDataTemplate>>;
+			using base = ObservableProperty<std::shared_ptr<IDataTemplate>>;
 			ContentUIElement& _owner;
 		public:
 			DataTemplateProperty(ContentUIElement& owner):
@@ -34,7 +34,7 @@ namespace Sgl
 		HorizontalAlignmentProperty HorizontalContentAlignment;
 	protected:
 		Any _content;
-		shared_ptr<UIElement> _contentPresenter;
+		std::shared_ptr<UIElement> _contentPresenter;
 	public:
 		ContentUIElement();
 		ContentUIElement(const ContentUIElement& other);
@@ -48,14 +48,14 @@ namespace Sgl
 		}
 
 		template<std::derived_from<UIElement> T>
-		void SetContent(const shared_ptr<T>& value)
+		void SetContent(const std::shared_ptr<T>& value)
 		{
-			_content = Any::New<shared_ptr<UIElement>>(value);
+			_content = Any::New<std::shared_ptr<UIElement>>(value);
 			ContentTemplate = UIElementDataTemplate::New();
 		}
 
 		const Any& GetContent() const { return _content; }
-		shared_ptr<UIElement> GetContentPresenter() const { return _contentPresenter; }
+		std::shared_ptr<UIElement> GetContentPresenter() const { return _contentPresenter; }
 
 		void OnRender(RenderContext context) const override;
 	protected:
