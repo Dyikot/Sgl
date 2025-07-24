@@ -17,9 +17,9 @@ namespace Sgl
 	private:
 		using ColorProperty = ObservableProperty<Color>;
 		using CursorProperty = ObservableProperty<std::reference_wrapper<const Cursor>, const Cursor&>;
-		using TextureProperty = ObservableProperty<std::shared_ptr<Texture>>;
+		using TextureProperty = ObservableProperty<Shared<Texture>>;
 		using TagProperty = ObservableProperty<Any, const Any&>;
-		using ToolTipProperty = ObservableProperty<std::shared_ptr<UIElement>>;
+		using ToolTipProperty = ObservableProperty<Shared<UIElement>>;
 		using ZIndexProperty = ObservableProperty<size_t>;
 
 		using KeyEventHandler = EventHandler<UIElement, KeyEventArgs>;
@@ -56,7 +56,7 @@ namespace Sgl
 		Scene& GetScene();
 		bool IsMouseOver() const { return _isMouseOver; }
 
-		void OnRender(RenderContext context) const override;
+		void Render(RenderContext context) const override;
 	protected:
 		virtual void OnKeyUp(const KeyEventArgs& e)
 		{
@@ -109,9 +109,9 @@ namespace Sgl
 
 	struct UIElementComparer
 	{
-		bool operator()(const std::shared_ptr<UIElement>& left, const std::shared_ptr<UIElement>& right) const
+		bool operator()(const UIElement& left, const UIElement& right) const
 		{
-			return left->ZIndex < right->ZIndex;
+			return left.ZIndex < right.ZIndex;
 		}
 	};
 }

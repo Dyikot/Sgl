@@ -2,16 +2,27 @@
 
 namespace Sgl
 {
+	static constexpr int FreeChannel = -1;
+
 	Music::Music(std::string_view path) noexcept:
-		_music(Mix_LoadMUS(path.data())),
-		Duration(TimeSpan::FromSeconds(Mix_MusicDuration(_music)))
+		_music(Mix_LoadMUS(path.data()))
 	{
 		Log::PrintSDLErrorIf(_music == nullptr);
 	}
 
+	Music::Music(Music&& other) noexcept:
+		_music(std::exchange(other._music, nullptr)),
+		Volume(other.Volume)
+	{}
+
 	Music::~Music() noexcept
 	{
 		Mix_FreeMusic(_music);
+	}
+
+	Mix_Music* Music::GetMixMusic() const noexcept
+	{
+		return _music;
 	}
 
 	void Music::Play(int loops) const
@@ -43,36 +54,69 @@ namespace Sgl
 		Mix_HaltMusic();
 	}
 
-	bool Music::IsPaused() noexcept
+	bool Music::IsPaused() const noexcept
 	{
 		return Mix_PausedMusic();
 	}
 
-	bool Music::IsPlaying() noexcept
+	bool Music::IsPlaying() const noexcept
 	{
 		return Mix_PlayingMusic();
 	}
 
-	SoundChunk::SoundChunk(std::string path) noexcept:
+	TimeSpan Music::Duration() const noexcept
+	{
+		if(_music)
+		{
+			return TimeSpan::FromSeconds(Mix_MusicDuration(_music));
+		}
+
+		return TimeSpan::Zero();
+	}
+
+	Music& Music::operator=(Music&& other) noexcept
+	{
+		_music = std::exchange(other._music, nullptr);
+		Volume = other.Volume;
+		return *this;
+	}
+
+	SoundChunk::SoundChunk(std::string_view path) noexcept:
 		_soundChunk(Mix_LoadWAV(path.data()))
 	{
 		Log::PrintSDLErrorIf(_soundChunk == nullptr);
 	}
+
+	SoundChunk::SoundChunk(SoundChunk&& other) noexcept:
+		_soundChunk(std::exchange(other._soundChunk, nullptr)),
+		Volume(other.Volume)
+	{}
 
 	SoundChunk::~SoundChunk() noexcept
 	{
 		Mix_FreeChunk(_soundChunk);
 	}
 
-	void SoundChunk::Play(int loops)
+	Mix_Chunk* SoundChunk::GetMixChunk() const noexcept
 	{
-		constexpr int freeChannel = -1;
-		Play(freeChannel, loops);
+		return _soundChunk;
+	}
+
+	void SoundChunk::Play(int loops)
+	{		
+		Play(FreeChannel, loops);
 	}
 
 	void SoundChunk::Play(int channel, int loops) const
 	{
 		Mix_VolumeChunk(_soundChunk, Volume.ToMixVolume());
 		Mix_PlayChannel(channel, _soundChunk, loops);
+	}
+
+	SoundChunk& SoundChunk::operator=(SoundChunk&& other) noexcept
+	{
+		_soundChunk = std::exchange(other._soundChunk, nullptr);
+		Volume = other.Volume;
+		return *this;
 	}
 }

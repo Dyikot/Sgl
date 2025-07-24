@@ -9,6 +9,6 @@ namespace Sgl
     public:
         virtual ~IRenderable() = default;
 
-        virtual void OnRender(RenderContext context) const = 0;
+        virtual void Render(RenderContext context) const = 0;
     };
 }

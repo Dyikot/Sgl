@@ -18,26 +18,26 @@ namespace Sgl
         Children(std::move(Children))
     {}
 
-    void Panel::OnRender(RenderContext context) const
+    void Panel::Render(RenderContext context) const
     {
         for(auto& child : Children)
         {
             if(child->IsVisible)
             {
-                child->OnRender(context);
+                child->Render(context);
             }
         }
 
-        UIElement::OnRender(context);
+        UIElement::Render(context);
     }
 
     void Panel::ApplyStyle()
     {
         StyleableElement::ApplyStyle();
 
-        for(auto& child : Children)
+        for(UIElement& child : Children)
         {
-            child->ApplyStyle();
+            child.ApplyStyle();
         }
     }
 
@@ -52,19 +52,19 @@ namespace Sgl
             return;
         }
 
-        for(auto& child : Children)
+        for(UIElement& child : Children)
         {
-            if(Math::IsPointInRect(e.Position, child->GetBounds()) && child->IsVisible)
+            if(Math::IsPointInRect(e.Position, child.GetBounds()) && child.IsVisible)
             {
                 if(_currentChild && _currentChild->IsVisible)
                 {
                     _currentChild->OnMouseLeave(e);
                 }
 
-                _currentChild = child;
-                Cursor::Set(child->Cursor);
-                child->OnMouseEnter(e);
-                child->OnMouseMove(e);
+                _currentChild = &child;
+                Cursor::Set(child.Cursor);
+                child.OnMouseEnter(e);
+                child.OnMouseMove(e);
 
                 return;
             }

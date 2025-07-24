@@ -29,6 +29,11 @@ namespace Sgl
         return _window;
     }
 
+    SDL_Renderer* Window::GetRenderer() const noexcept
+    {
+        return _renderer;
+    }
+
     void Window::SetWidth(size_t value) noexcept
     {
         SDL_SetWindowSize(_window, value, GetHeight());
@@ -189,13 +194,13 @@ namespace Sgl
         }
     }
 
-    void Window::SetIcon(std::shared_ptr<Surface> icon)
+    void Window::SetIcon(Unique<Surface> icon)
     {
         _icon = std::move(icon);
         SDL_SetWindowIcon(_window, _icon->GetSDLSurface());
     }
 
-    std::shared_ptr<Surface> Window::GetIcon() const
+    const Unique<Surface>& Window::GetIcon() const
     {
         return _icon;
     }

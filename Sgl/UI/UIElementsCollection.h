@@ -8,7 +8,7 @@ namespace Sgl
 	class UIElementsCollection
 	{
 	private:
-		SortedVector<std::shared_ptr<UIElement>, UIElementComparer> _items;
+		SortedVector<Ref<UIElement>, UIElementComparer> _items;
 		Layoutable& _owner;
 	public:
 		UIElementsCollection(Layoutable& layout):
@@ -32,11 +32,11 @@ namespace Sgl
 		auto begin() const { return _items.begin(); }
 		auto end() const { return _items.end(); }
 
-		void Add(const std::shared_ptr<UIElement>& element)
+		void Add(Ref<UIElement> element)
 		{
-			_items.Add(element);
 			element->_stylingParent = &_owner;
 			element->_layoutableParent = &_owner;
+			_items.Add(std::move(element));
 		}
 
 		size_t Count() const noexcept
@@ -54,22 +54,22 @@ namespace Sgl
 			_items.Clear();
 		}
 
-		bool Contains(const std::shared_ptr<UIElement>& element) const
+		bool Contains(const Ref<UIElement>& element) const
 		{
 			return Contains(element);
 		}
 
-		const std::shared_ptr<UIElement>& ElementAt(size_t index) const
+		const Ref<UIElement>& ElementAt(size_t index) const
 		{
 			return _items.ElementAt(index);
 		}
 
-		std::optional<size_t> Find(const std::shared_ptr<UIElement>& element) const
+		std::optional<size_t> Find(const Ref<UIElement>& element) const
 		{
 			return _items.Find(element);
 		}
 
-		void Remove(const std::shared_ptr<UIElement>& element)
+		void Remove(const Ref<UIElement>& element)
 		{
 			_items.Remove(element);
 		}

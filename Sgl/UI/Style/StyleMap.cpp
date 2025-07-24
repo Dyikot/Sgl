@@ -10,11 +10,11 @@ namespace Sgl
 		_items(std::move(other._items))
 	{}
 
-	std::shared_ptr<IStyle> StyleMap::TryGet(const std::string& key) const
+	const Ref<IStyle>* StyleMap::TryGet(const std::string& key) const
 	{
 		if(auto it = _items.find(key); it != _items.end())
 		{
-			return it->second;
+			return &it->second;
 		}
 
 		return nullptr;
@@ -41,6 +41,4 @@ namespace Sgl
 		_items = std::move(other._items);
 		return *this;
 	}
-
 }
-

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <list>
+#include <vector>
 #include "EventArgs.h"
 #include "Delegate.h"
 
@@ -18,7 +18,7 @@ namespace Sgl
 	public:
 		using EventHandler = EventHandler<TSender, TEventArgs>;
 	private:
-		std::list<EventHandler> _eventHandlers;
+		std::vector<EventHandler> _eventHandlers;
 	public:
 		Event() = default;
 
@@ -53,9 +53,9 @@ namespace Sgl
 			_eventHandlers.emplace_back(std::move(handler));
 		}
 
-		void operator-=(EventHandler handler)
+		void operator-=(const EventHandler& handler)
 		{
-			_eventHandlers.remove(std::move(handler));
+			std::erase(_eventHandlers, handler);
 		}
 
 		void operator()(TSender& sender, const TEventArgs& e) const
@@ -64,6 +64,26 @@ namespace Sgl
 			{
 				eventHandler(sender, e);
 			}
+		}
+
+		Event& operator=(const Event& other)
+		{
+			if(this != &other)
+			{
+				_eventHandlers = other._eventHandlers;
+			}
+
+			return *this;
+		}
+
+		Event& operator=(Event&& other) noexcept
+		{
+			if(this != &other)
+			{
+				_eventHandlers = std::move(other._eventHandlers);
+			}
+
+			return *this;
 		}
 	};
 }

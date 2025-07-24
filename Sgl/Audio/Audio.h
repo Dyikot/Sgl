@@ -97,22 +97,24 @@ namespace Sgl
 		Mix_Music* _music;
 	public:
 		Volume Volume;
-		const TimeSpan Duration;
 	public:
 		explicit Music(std::string_view path) noexcept;
 		Music(const Music&) = delete;
-		Music(Music&&) = delete;
+		Music(Music&& other) noexcept;
 		~Music() noexcept;
+
+		Mix_Music* GetMixMusic() const noexcept;
 
 		void Play(int loops = 0) const;
 		void Pause() noexcept;
 		void Resume() noexcept;
 		void Rewind() noexcept;
 		void Halt() noexcept;
-		bool IsPaused() noexcept;
-		bool IsPlaying() noexcept;
+		bool IsPaused() const noexcept;
+		bool IsPlaying() const noexcept;
+		TimeSpan Duration() const noexcept;
 
-		operator Mix_Music* () const noexcept { return _music; }
+		Music& operator=(Music&& other) noexcept;
 	};
 
 	class SoundChunk
@@ -122,14 +124,16 @@ namespace Sgl
 	public:
 		Volume Volume;
 	public:
-		explicit SoundChunk(std::string path) noexcept;
+		explicit SoundChunk(std::string_view path) noexcept;
 		SoundChunk(const SoundChunk&) = delete;
-		SoundChunk(SoundChunk&&) = delete;
+		SoundChunk(SoundChunk&& other) noexcept;
 		~SoundChunk() noexcept;
+
+		Mix_Chunk* GetMixChunk() const noexcept;
 
 		void Play(int loops = 0);
 		void Play(int channel, int loops = 0) const;
 
-		operator Mix_Chunk* () const noexcept { return _soundChunk; }
+		SoundChunk& operator=(SoundChunk&& other) noexcept;
 	};
 }

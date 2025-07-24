@@ -10,12 +10,10 @@ namespace Sgl
 		ObservableProperty<size_t> BorderWidth;
 		ObservableProperty<Color> BorderColor;
 	public:
-		static std::shared_ptr<Border> New() { return std::make_shared<Border>(); }
-
 		Border();
 		Border(const Border& other);
 		Border(Border&& other) noexcept;
 
-		void OnRender(RenderContext context) const final;
+		void Render(RenderContext context) const final;
 	};
 }

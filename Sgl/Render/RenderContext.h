@@ -18,6 +18,9 @@ namespace Sgl
 	public:
 		explicit RenderContext(SDL_Renderer* renderer) noexcept;
 		
+		void SetTarget(const Texture& texture);
+		void ResetTarget();
+
 		void DrawPoint(FPoint point, Color color);
 		void DrawPoints(std::span<const FPoint> points, Color color);
 
@@ -72,11 +75,14 @@ namespace Sgl
 		void DrawGeometry(std::span<const Vertex> vertices, std::span<const int> order, const Texture& texture);
 
 		void FillBackground(Color color);
+		void SetBlendMode(SDL_BlendMode mode);
 	private:
 		void SetColor(Color color) const noexcept
 		{
 			SDL_SetRenderDrawColor(_renderer, color.Red, color.Green, color.Blue, color.Alpha);
 		}
 	};
+
+	using RenderFragment = Action<RenderContext>;
 }
 

@@ -78,7 +78,7 @@ namespace Sgl
 		{
 			if(auto style = styles.TryGet(className); style != nullptr)	
 			{
-				_styles.push_back(style);
+				_styles.push_back(*style);
 			}
 		}
 	}

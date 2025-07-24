@@ -1,11 +1,11 @@
 #pragma once
 
 #include <optional>
-#include "Render/Renderer.h"
 #include "Render/Surface.h"
 #include "Base/Size.h"
 #include "Base/WindowEventArgs.h"
 #include "Base/Event.h"
+#include "Base/SmartPointers.h"
 
 namespace Sgl
 {
@@ -27,7 +27,7 @@ namespace Sgl
 		SDL_Window* _window;
 		SDL_Renderer* _renderer;
 	private:
-		std::shared_ptr<Surface> _icon;
+		Unique<Surface> _icon;
 		bool _hasVSync = false;
 	public:
 		Window() noexcept;
@@ -36,6 +36,7 @@ namespace Sgl
 		~Window() noexcept;
 		
 		SDL_Window* GetSDL_Window() const noexcept;
+		SDL_Renderer* GetRenderer() const noexcept;
 
 		void SetWidth(size_t value) noexcept;
 		size_t GetWidth() const noexcept;
@@ -64,8 +65,8 @@ namespace Sgl
 		void SetWindowState(WindowState state) noexcept;
 		WindowState GetWindowState() const noexcept;
 
-		void SetIcon(std::shared_ptr<Surface> icon);
-		std::shared_ptr<Surface> GetIcon() const;
+		void SetIcon(Unique<Surface> icon);
+		const Unique<Surface>& GetIcon() const;
 
 		void SetVSync(bool value) noexcept;
 		bool HasVSync() const;
@@ -83,6 +84,5 @@ namespace Sgl
 		void OnWindowSizeChanged(const WindowSizeChangedEventArgs& e);
 
 		friend class Application;
-		friend class Renderer;
 	};
 }

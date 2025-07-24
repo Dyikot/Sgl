@@ -10,13 +10,13 @@ namespace Sgl
 	public:
 		UIElementsCollection Children;
 	private:
-		std::shared_ptr<UIElement> _currentChild;
+		UIElement* _currentChild;
 	public:
 		Panel();
 		Panel(const Panel& other);
 		Panel(Panel&& other) noexcept;
 
-		void OnRender(RenderContext context) const override;
+		void Render(RenderContext context) const override;
 		void ApplyStyle() override;
 	protected:
 		void OnMouseMove(const MouseEventArgs& e) override;

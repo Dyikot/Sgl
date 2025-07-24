@@ -6,17 +6,17 @@ namespace Sgl
 {
 	Scene::Scene():
 		BackgroundColor(Colors::Black),
-		_uielement(nullptr),
+		_content(nullptr),
 		_stylingParent(App.Current())
 	{}
 
-	void Scene::SetUIElement(std::shared_ptr<UIElement> value)
+	void Scene::SetContent(Shared<UIElement> value)
 	{
-		_uielement = value;
-		_uielement->_stylingParent = this;
+		_content = std::move(value);
+		_content->_stylingParent = this;
 	}
 
-	void Sgl::Scene::OnRender(RenderContext context) const
+	void Scene::Render(RenderContext context) const
 	{
 		if(BackgroundTexture)
 		{
@@ -27,25 +27,25 @@ namespace Sgl
 			context.FillBackground(BackgroundColor);
 		}
 		
-		if(_uielement && _uielement->IsVisible)
+		if(_content && _content->IsVisible)
 		{
-			_uielement->OnRender(context);
+			_content->Render(context);
 		}
 	}
 
 	void Scene::Process(TimeSpan elapsed)
 	{
-		if(_uielement)
+		if(_content)
 		{
-			UpdateInvalidatedLayout();
+			UpdateInvalidatedLayoutAndStyle();
 		}
 	}
 
 	void Scene::OnCreated()
 	{
-		if(_uielement)
+		if(_content)
 		{
-			UpdateInvalidatedLayout();
+			UpdateInvalidatedLayoutAndStyle();
 		}
 	}
 
@@ -61,24 +61,24 @@ namespace Sgl
 
 	void Scene::OnMouseMove(const MouseEventArgs& e)
 	{
-		if(_uielement && _uielement->IsVisible)
+		if(_content && _content->IsVisible)
 		{
-			auto& element = *_uielement;
-			bool wasMouseOver = element._isMouseOver;
-			bool isMouseOver = Math::IsPointInRect(e.Position, element._bounds);
+			auto& content = *_content;
+			bool wasMouseOver = content._isMouseOver;
+			bool isMouseOver = Math::IsPointInRect(e.Position, content._bounds);
 
 			if(isMouseOver)
 			{
 				if(!wasMouseOver)
 				{
-					element.OnMouseEnter(e);
+					content.OnMouseEnter(e);
 				}
 
-				element.OnMouseMove(e);
+				content.OnMouseMove(e);
 			}
 			else if(wasMouseOver)
 			{
-				element.OnMouseLeave(e);
+				content.OnMouseLeave(e);
 				Cursor::Set(Cursor);
 			}
 		}
@@ -86,17 +86,17 @@ namespace Sgl
 
 	void Scene::OnMouseDown(const MouseButtonEventArgs& e)
 	{
-		if(_uielement && _uielement->IsMouseOver() && _uielement->IsVisible)
+		if(_content && _content->IsMouseOver() && _content->IsVisible)
 		{
-			_uielement->OnMouseDown(e);
+			_content->OnMouseDown(e);
 		}
 	}
 
 	void Scene::OnMouseUp(const MouseButtonEventArgs& e)
 	{
-		if(_uielement && _uielement->IsMouseOver() && _uielement->IsVisible)
+		if(_content && _content->IsMouseOver() && _content->IsVisible)
 		{
-			_uielement->OnMouseUp(e);
+			_content->OnMouseUp(e);
 		}
 	}
 
@@ -115,26 +115,26 @@ namespace Sgl
 		
 	}
 
-	void Scene::UpdateInvalidatedLayout()
+	void Scene::UpdateInvalidatedLayoutAndStyle()
 	{
-		if(!_uielement->IsStyleValid())
+		if(!_content->IsStyleValid())
 		{
-			_uielement->ApplyStyle();
+			_content->ApplyStyle();
 		}
 
-		if(!_uielement->IsMeasureValid())
+		if(!_content->IsMeasureValid())
 		{
 			auto& window = App->Window;
 			auto availableSize = FSize(window.GetWidth(), window.GetHeight());
-			_uielement->Measure(availableSize);
+			_content->Measure(availableSize);
 		}
 
-		if(!_uielement->IsArrangeValid())
+		if(!_content->IsArrangeValid())
 		{
 			auto& window = App->Window;
 			auto availableSize = FSize(window.GetWidth(), window.GetHeight());
 			auto bounds = FRect(0, 0, availableSize.Width, availableSize.Height);
-			_uielement->Arrange(bounds);
+			_content->Arrange(bounds);
 		}
 	}
 }

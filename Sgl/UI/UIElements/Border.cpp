@@ -18,7 +18,7 @@ namespace Sgl
 		BorderColor(other.BorderColor)
 	{}
 
-	void Border::OnRender(RenderContext context) const
+	void Border::Render(RenderContext context) const
 	{
 		Color backgroundColor = BackgroundColor;
 		Color borderColor = BorderColor;
@@ -33,7 +33,7 @@ namespace Sgl
 			context.DrawRectange(_bounds, borderColor);
 		}
 
-		ContentUIElement::OnRender(context);
+		ContentUIElement::Render(context);
 	}
 }
 

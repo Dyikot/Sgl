@@ -3,15 +3,16 @@
 #include <stack>
 #include <queue>
 #include "Scene.h"
+#include "../Base/SmartPointers.h"
 
 namespace Sgl
 {
 	class SceneManager
 	{
 	private:
-		using SceneFactory = Func<std::shared_ptr<Scene>>;
+		using SceneFactory = Func<Ref<Scene>>;
 
-		std::stack<std::shared_ptr<Scene>> _scenes;
+		std::stack<Ref<Scene>> _scenes;
 		std::queue<SceneFactory> _sceneFactoriesQueue;
 		size_t _scenesToDestory = 0;
 	public:
@@ -21,13 +22,13 @@ namespace Sgl
 		~SceneManager();
 
 		template<std::derived_from<Scene> TScene>
-		void Push() { _sceneFactoriesQueue.push([] { return std::make_shared<TScene>(); }); }
+		void Push() { _sceneFactoriesQueue.push([] { return CreateRef<TScene>(); }); }
 		void Push(SceneFactory sceneFactory);
 
 		void Pop() noexcept;
-		std::shared_ptr<Scene> GetCurrentScene();
+		Scene* GetCurrentScene();
 	private:
-		std::shared_ptr<Scene> GetNextScene();
+		Scene* GetNextScene();
 		void CreateScene();
 		void DestroyScene();
 

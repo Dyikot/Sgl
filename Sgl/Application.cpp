@@ -39,7 +39,7 @@ namespace Sgl
 
 		_running = true;
 		Window.Show();
-		Start();
+		RunApp();
 	}
 
 	void Application::Shutdown()
@@ -48,7 +48,7 @@ namespace Sgl
 		OnShutdown();
 	}
 
-	void Application::HandleEvents(std::shared_ptr<Scene> scene)
+	void Application::HandleEvents(Scene& scene)
 	{		
 		SDL_Event e;
 		while(SDL_PollEvent(&e))
@@ -140,7 +140,7 @@ namespace Sgl
 						.State = static_cast<ButtonState>(e.key.state),
 						.Key = e.key.keysym
 					};
-					scene->OnKeyDown(args);
+					scene.OnKeyDown(args);
 					break;
 				}
 
@@ -151,7 +151,7 @@ namespace Sgl
 						.State = static_cast<ButtonState>(e.key.state),
 						.Key = e.key.keysym
 					};
-					scene->OnKeyUp(args);
+					scene.OnKeyUp(args);
 					break;
 				}
 
@@ -163,7 +163,7 @@ namespace Sgl
 						.SelectionStart = static_cast<size_t>(e.edit.start),
 						.SelectionLength = static_cast<size_t>(e.edit.length)
 					};
-					scene->OnTextEditing(args);
+					scene.OnTextEditing(args);
 					break;
 				}
 
@@ -173,7 +173,7 @@ namespace Sgl
 					{
 						.Text = e.text.text
 					};
-					scene->OnTextInput(args);
+					scene.OnTextInput(args);
 					break;
 				}
 
@@ -186,7 +186,7 @@ namespace Sgl
 						.SelectionLength = static_cast<size_t>(e.edit.length)
 					};
 					SDL_free(e.editExt.text);
-					scene->OnTextEditing(args);
+					scene.OnTextEditing(args);
 					break;
 				}
 
@@ -200,7 +200,7 @@ namespace Sgl
 							.y = static_cast<float>(e.button.y)
 						}
 					};
-					scene->OnMouseMove(args);
+					scene.OnMouseMove(args);
 					break;
 				}
 
@@ -212,7 +212,7 @@ namespace Sgl
 						.State = static_cast<ButtonState>(e.button.state),
 						.ClicksNumber = e.button.clicks
 					};
-					scene->OnMouseDown(args);
+					scene.OnMouseDown(args);
 					break;
 				}
 
@@ -224,7 +224,7 @@ namespace Sgl
 						.State = static_cast<ButtonState>(e.button.state),
 						.ClicksNumber = e.button.clicks
 					};
-					scene->OnMouseUp(args);
+					scene.OnMouseUp(args);
 					break;
 				}
 
@@ -241,7 +241,7 @@ namespace Sgl
 						.ScrolledVertically = e.wheel.preciseY,
 						.Direction = static_cast<MouseWheelDirection>(e.wheel.direction)
 					};
-					scene->OnMouseWheelChanged(args);
+					scene.OnMouseWheelChanged(args);
 					break;
 				}
 
@@ -251,12 +251,13 @@ namespace Sgl
 		}
 	}
 
-	void Application::Start()
+	void Application::RunApp()
 	{
 		OnRun();
 
-		Renderer renderer;
-		renderer.SetBlendMode(SDL_BLENDMODE_BLEND);
+		auto renderer = Window.GetRenderer();
+		auto rendererContext = RenderContext(renderer);
+		rendererContext.SetBlendMode(SDL_BLENDMODE_BLEND);
 
 		Stopwatch delayStopwatch, sceneStopwatch;
 		sceneStopwatch.Start();
@@ -274,14 +275,14 @@ namespace Sgl
 			_fpsCounter.OnFrameStart();
 			delayStopwatch.Restart();
 
-			HandleEvents(scene);
+			HandleEvents(*scene);
 			scene->Process(sceneStopwatch.Elapsed());
 			sceneStopwatch.Reset();
 
 			if(Window.IsVisible() || Window.IsRenderableWhenMinimized)
 			{
-				scene->OnRender(renderer.CreateContext());
-				renderer.UpdateScreen();
+				scene->Render(rendererContext);
+				SDL_RenderPresent(renderer);
 			}
 
 			if(_maxFPS)

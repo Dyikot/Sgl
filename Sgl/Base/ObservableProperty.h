@@ -6,9 +6,7 @@
 namespace Sgl
 {
     template<typename T, typename TInput = T> 
-        requires std::constructible_from<T, TInput> && 
-                 std::convertible_to<T, TInput> && 
-                 std::copyable<T>
+        requires std::constructible_from<T, TInput> &&  std::copyable<T>
     class ObservableProperty
     {
     public:
@@ -91,6 +89,11 @@ namespace Sgl
             _observer.Reset();
         }
 
+        bool HasObserver() const 
+        {
+            return _observer.HasTarget();
+        }
+
         operator TInput() const 
         { 
             return TInput(_value); 
@@ -113,6 +116,7 @@ namespace Sgl
         {
             _value = std::move(other._value);
             _observer = std::move(other._observer);
+            _isChanging = std::exchange(other._isChanging, false);
             return *this;
         }
 

@@ -8,10 +8,10 @@ namespace Sgl
 	class ContentUIElement: public UIElement
 	{
 	private:
-		class DataTemplateProperty: public ObservableProperty<std::shared_ptr<IDataTemplate>>
+		class DataTemplateProperty: public ObservableProperty<Shared<IDataTemplate>>
 		{
 		private:
-			using base = ObservableProperty<std::shared_ptr<IDataTemplate>>;
+			using base = ObservableProperty<Shared<IDataTemplate>>;
 			ContentUIElement& _owner;
 		public:
 			DataTemplateProperty(ContentUIElement& owner):
@@ -34,7 +34,7 @@ namespace Sgl
 		HorizontalAlignmentProperty HorizontalContentAlignment;
 	protected:
 		Any _content;
-		std::shared_ptr<UIElement> _contentPresenter;
+		Shared<UIElement> _contentPresenter;
 	public:
 		ContentUIElement();
 		ContentUIElement(const ContentUIElement& other);
@@ -48,16 +48,17 @@ namespace Sgl
 		}
 
 		template<std::derived_from<UIElement> T>
-		void SetContent(const std::shared_ptr<T>& value)
+		void SetContent(const Shared<T>& value)
 		{
-			_content = Any::New<std::shared_ptr<UIElement>>(value);
-			ContentTemplate = UIElementDataTemplate::New();
+			_content = Any::New<Shared<UIElement>>(value);
+			ContentTemplate = CreateShared<UIElementDataTemplate>();
 		}
 
 		const Any& GetContent() const { return _content; }
-		std::shared_ptr<UIElement> GetContentPresenter() const { return _contentPresenter; }
+		Shared<UIElement> GetContentPresenter() const { return _contentPresenter; }
 
-		void OnRender(RenderContext context) const override;
+		void Render(RenderContext context) const override;
+		void ApplyStyle() override;
 	protected:
 		void OnMouseMove(const MouseEventArgs& e) override;
 		void OnMouseDown(const MouseButtonEventArgs& e) override;

@@ -59,7 +59,7 @@ namespace Sgl
 
 		size_t GetFPS() const { return _fpsCounter.GetFps(); }
 		StyleMap& GetStyles() override { return Styles; }
-		IStyleProvider* GetStylingParent() { return _stylingParent; }
+		IStyleProvider* GetStylingParent() override { return _stylingParent; }
 
 		void Run();
 		void Shutdown();
@@ -67,8 +67,8 @@ namespace Sgl
 		virtual void OnRun();
 		virtual void OnShutdown();
 	private:
-		void HandleEvents(std::shared_ptr<Scene> scene);
-		void Start();
+		void HandleEvents(Scene& scene);
+		void RunApp();
 	};	
 
 	inline Application::Context App;

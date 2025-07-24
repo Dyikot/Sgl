@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "StyleMap.h"
+#include "ClassesCollections.h"
 
 namespace Sgl
 {
@@ -9,12 +10,12 @@ namespace Sgl
 	{
 	public:
 		StyleMap Styles;
-		std::vector<std::string> Classes;
+		ClassesCollection Classes;
 	protected:
 		IStyleProvider* _stylingParent;
 	private:
 		bool _isStyleValid;
-		std::vector<std::shared_ptr<IStyle>> _styles;
+		std::vector<Ref<IStyle>> _styles;
 	public:
 		StyleableElement();
 		StyleableElement(const StyleableElement& other);

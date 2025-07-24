@@ -10,6 +10,16 @@ namespace Sgl
 		_renderer(renderer)
 	{}
 
+	void RenderContext::SetTarget(const Texture& texture)
+	{
+		SDL_SetRenderTarget(_renderer, texture.GetSDLTexture());
+	}
+
+	void RenderContext::ResetTarget()
+	{
+		SDL_SetRenderTarget(_renderer, nullptr);
+	}
+
 	void RenderContext::DrawPoint(FPoint point, Color color)
 	{
 		SetColor(color);
@@ -362,5 +372,10 @@ namespace Sgl
 	{
 		SetColor(color);
 		SDL_RenderClear(_renderer);
+	}
+
+	void RenderContext::SetBlendMode(SDL_BlendMode mode)
+	{
+		SDL_SetRenderDrawBlendMode(_renderer, mode);
 	}
 }

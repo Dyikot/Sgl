@@ -12,12 +12,12 @@ namespace Sgl
 	public:
 		Cursor Cursor;
 		Color BackgroundColor;
-		std::shared_ptr<Texture> BackgroundTexture;
+		Shared<Texture> BackgroundTexture;
 
 		ResourcesMap Resources;
 		StyleMap Styles;
 	protected:
-		std::shared_ptr<UIElement> _uielement;
+		Shared<UIElement> _content;
 		IStyleProvider* _stylingParent;
 	public:
 		Scene();
@@ -25,13 +25,13 @@ namespace Sgl
 		Scene(Scene&&) = delete;
 		virtual ~Scene() = default;
 
-		void SetUIElement(std::shared_ptr<UIElement> value);
-		std::shared_ptr<UIElement> GetUIElement() const { return _uielement; }
+		void SetContent(Shared<UIElement> value);
+		Shared<UIElement> GetContent() const { return _content; }
 
 		StyleMap& GetStyles() override { return Styles; }
 		IStyleProvider* GetStylingParent() { return _stylingParent; }
 
-		void OnRender(RenderContext context) const override;
+		void Render(RenderContext context) const override;
 		virtual void Process(TimeSpan elapsed);
 	protected:
 		virtual void OnResumed() {}
@@ -47,7 +47,7 @@ namespace Sgl
 		virtual void OnTextInput(const TextInputEventArgs& e);
 		virtual void OnTextEditing(const TextEditingEventArgs& e);
 	private:
-		void UpdateInvalidatedLayout();
+		void UpdateInvalidatedLayoutAndStyle();
 
 		friend class Application;
 		friend class SceneManager;

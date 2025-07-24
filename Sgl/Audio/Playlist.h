@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include "Audio.h"
 #include "../Base/Event.h"
 
@@ -10,25 +9,24 @@ namespace Sgl
 	{
 	public:
 		using PlayListEventHandler = EventHandler<Playlist>;
-		using MusicCollection = std::vector<std::shared_ptr<Music>>;
-		using Iterator = MusicCollection::iterator;
+		using Iterator = std::vector<Music>::iterator;
 
-		Volume Volume;
-		MusicCollection Items;
-		
 		Event<PlayListEventHandler> Started;
 		Event<PlayListEventHandler> Ended;
+
+		std::vector<Music> Items;
 	private:
 		Iterator _currentIt = Items.begin();
 	public:
 		Playlist() = default;
-		Playlist(const Playlist& other);
+		Playlist(const Playlist&) = delete;
 		Playlist(Playlist&& other) noexcept;
 
-		std::shared_ptr<Music> GetCurrent();		
+		Iterator GetCurrent() const;		
 		void Play();
+		void Pause();
 
-		Playlist& operator=(const Playlist& other);
+		Playlist& operator=(const Playlist&) = delete;
 		Playlist& operator=(Playlist&& other) noexcept;
 	};
 }

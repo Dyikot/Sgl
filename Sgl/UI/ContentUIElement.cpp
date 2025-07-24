@@ -32,14 +32,24 @@ namespace Sgl
 		_contentPresenter(std::move(other._contentPresenter))
 	{}
 
-	void ContentUIElement::OnRender(RenderContext context) const
+	void ContentUIElement::Render(RenderContext context) const
 	{
 		if(_contentPresenter && _contentPresenter->IsVisible)
 		{
-			_contentPresenter->OnRender(context);
+			_contentPresenter->Render(context);
 		}
 
-		UIElement::OnRender(context);
+		UIElement::Render(context);
+	}
+
+	void ContentUIElement::ApplyStyle()
+	{
+		StyleableElement::ApplyStyle();
+
+		if(_contentPresenter && _contentPresenter->IsVisible)
+		{
+			_contentPresenter->ApplyStyle();
+		}
 	}
 
 	void ContentUIElement::OnMouseMove(const MouseEventArgs& e)
