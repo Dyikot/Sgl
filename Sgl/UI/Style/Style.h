@@ -3,15 +3,16 @@
 #include <memory>
 #include <vector>
 #include "IStyle.h"
-#include "../../Base/Delegate.h"
+#include "Setter.h"
+#include "../../Base/SmartPointers.h"
 
 namespace Sgl
 {
-    template<typename T>
+    template<typename TTarget>
     class Style: public IStyle
     {
     private:
-        std::vector<Action<T&>> _setters;
+        std::vector<Unique<ISetter<TTarget>>> _setters;
     public:
         Style() = default;
 
@@ -22,22 +23,21 @@ namespace Sgl
         auto end() const { return _setters.end(); }
 
         template<typename TProperty>
-        Style<T>& AddSetter(TProperty T::* field, TProperty::InputType value)
+        Style<TTarget>& AddSetter(TProperty TTarget::* field, TProperty::InputType value)
         {
-            _setters.push_back([field, value = TProperty::Type(value)](T& target)
-            {
-                (target.*field).Set(value);
-            });
+            using TField = TProperty TTarget::*;
+            using TValue = TProperty::Type;
 
+            _setters.push_back(CreateUnique<Setter<TTarget, TField, TValue>>(field, value));
             return *this;
         }
 
         void Apply(StyleableElement& target) override
         {
-            T& targetElement = static_cast<T&>(target);
+            TTarget& targetElement = static_cast<TTarget&>(target);
             for(const auto& setter : _setters)
             {
-                setter(targetElement);
+                setter->Apply(targetElement);
             }
         }
     };    

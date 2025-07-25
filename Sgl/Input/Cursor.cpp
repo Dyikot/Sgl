@@ -63,6 +63,11 @@ namespace Sgl
         return _cursor;
     }
 
+    bool operator==(const Cursor& left, const Cursor& right)
+    {
+        return left._cursor == right._cursor;
+    }
+
     Cursor& Cursor::operator=(Cursor&& other) noexcept
     {
         _cursor = std::exchange(other._cursor, nullptr);

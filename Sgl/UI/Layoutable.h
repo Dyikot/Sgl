@@ -3,7 +3,7 @@
 #include "../Base/Layout.h"
 #include "../Base/Size.h"
 #include "Style/StyleableElement.h"
-#include "../Base/ObservableProperty.h"
+#include "../Base/Observable/ObservableProperty.h"
 #include "../Base/Primitives.h"
 
 namespace Sgl

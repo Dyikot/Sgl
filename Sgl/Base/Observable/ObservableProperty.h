@@ -1,13 +1,13 @@
 #pragma once
 
 #include <concepts>
-#include "Delegate.h"
+#include "IObserver.h"
 
 namespace Sgl
 {
     template<typename T, typename TInput = T> 
-        requires std::constructible_from<T, TInput> &&  std::copyable<T>
-    class ObservableProperty
+        requires std::constructible_from<T, TInput> && std::copyable<T>
+    class ObservableProperty: public IObserver<TInput>
     {
     public:
         using Type = T;
@@ -15,41 +15,36 @@ namespace Sgl
     protected:
         T _value;
     private:
-        Action<TInput> _observer;
-        bool _isChanging;
+        IObserver<TInput>* _observer;
     public:
         ObservableProperty() requires std::default_initializable<T>:
             _value(),
-            _isChanging(false)
+            _observer(nullptr)
         {}
 
         ObservableProperty(TInput value):
             _value(value),
-            _isChanging(false)
+            _observer(nullptr)
         {}
 
         ObservableProperty(const ObservableProperty& other):
             _value(other._value),
-            _observer(other._observer),
-            _isChanging(other._isChanging)
+            _observer(nullptr)
         {}
 
         ObservableProperty(ObservableProperty&& other) noexcept:
             _value(std::move(other._value)),
-            _observer(std::move(other._observer)),
-            _isChanging(other._isChanging)
+            _observer(std::exchange(other._observer, nullptr))
         {}
 
         virtual ~ObservableProperty() = default;
 
-        void Set(TInput value)
+        void OnNext(TInput value) override
         {
-            if(!_isChanging)
+            if(_value != value)
             {
-                _isChanging = true;
                 _value = value;
                 OnChanged();
-                _isChanging = false;
             }
         }
 
@@ -58,40 +53,25 @@ namespace Sgl
             return TInput(_value); 
         }
 
-        void SetObserver(T& observer)
+        void SetObserver(IObserver<TInput>& observer)
         {
-            _observer = [&observer](TInput value) { observer = value; };
+            _observer = &observer;
         }
 
-        void SetObserver(Action<TInput> observer)
+        void Bind(ObservableProperty& observer)
         {
-            _observer = std::move(observer);
-        }
-
-        void SetObserver(ObservableProperty& observer, bool twoWay = false)
-        {
-            _observer = [&observer](TInput value) { observer.Set(value); };
-
-            if(twoWay)
-            {
-                observer._observer = [this](TInput value) { Set(value); };
-            }
-        }
-
-        template<typename TObserver>
-        void SetObserver(TObserver& observer, void(TObserver::*setter)(TInput))
-        {
-            _observer = [&observer, setter](TInput value) { (observer.*setter)(value); };
+            SetObserver(observer);
+            observer.SetObserver(*this);
         }
 
         void RemoveObserver()
         {
-            _observer.Reset();
+            _observer = nullptr;
         }
 
         bool HasObserver() const 
         {
-            return _observer.HasTarget();
+            return _observer != nullptr;
         }
 
         operator TInput() const 
@@ -101,22 +81,25 @@ namespace Sgl
 
         ObservableProperty& operator=(TInput value)
         {
-            Set(value);
+            OnNext(value);
             return *this;
         }
 
         ObservableProperty& operator=(const ObservableProperty& other)
         {
-            _value = other._value;
-            _observer = other._observer;
+            if(this != &other)
+            {
+                _value = other._value;
+            }
+
             return *this;
         }
 
         ObservableProperty& operator=(ObservableProperty&& other) noexcept
         {
             _value = std::move(other._value);
-            _observer = std::move(other._observer);
-            _isChanging = std::exchange(other._isChanging, false);
+            _observer = std::exchange(other._observer, nullptr);
+
             return *this;
         }
 
@@ -124,9 +107,9 @@ namespace Sgl
     protected:
         virtual void OnChanged()
         {
-            if(_observer.HasTarget())
+            if(_observer)
             {
-                _observer(_value);
+                _observer->OnNext(_value);
             }
         }
     };

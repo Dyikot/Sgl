@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Base/Any.h"
-#include "../Base/Event.h"
+#include "../Base/Observable/Event.h"
 #include "../Base/Collections/ResourcesMap.h"
 #include "../Input/Cursor.h"
 #include "../Input/MouseAndKeyEventArgs.h"
@@ -35,7 +35,7 @@ namespace Sgl
 		Event<MouseButtonEventHandler> MouseUp;
 		Event<MouseButtonEventHandler> MouseDown;
 		Event<MouseWheelEventHandler> MouseWheel;
-		
+
 		CursorProperty Cursor;
 		TextureProperty BackgroundTexture;
 		ColorProperty BackgroundColor;

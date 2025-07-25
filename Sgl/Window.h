@@ -4,7 +4,7 @@
 #include "Render/Surface.h"
 #include "Base/Size.h"
 #include "Base/WindowEventArgs.h"
-#include "Base/Event.h"
+#include "Base/Observable/Event.h"
 #include "Base/SmartPointers.h"
 
 namespace Sgl

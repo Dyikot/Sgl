@@ -106,6 +106,28 @@ namespace Sgl
 		}
 
 		template<typename T>
+		T* TryAs()
+		{
+			if(HasValue() && _value->Type() == typeid(T))
+			{
+				return &As<T>();
+			}
+
+			return nullptr;
+		}
+
+		template<typename T>
+		const T* TryAs() const
+		{
+			if(HasValue() && _value->Type() == typeid(T))
+			{
+				return &As<T>();
+			}
+
+			return nullptr;
+		}
+
+		template<typename T>
 		bool Is() const
 		{
 			const auto& type = HasValue() ? _value->Type() : typeid(nullptr);
@@ -131,7 +153,15 @@ namespace Sgl
 
 		friend bool operator==(const Any& left, const Any& right)
 		{
-			return left.HasValue() && right.HasValue() && *left._value == *right._value;
+			bool leftHasValue = left.HasValue();
+			bool rightHasValue = right.HasValue();
+
+			if(leftHasValue && rightHasValue)
+			{
+				return *left._value == *right._value;
+			}
+			
+			return !leftHasValue && !rightHasValue;
 		}
 	};
 }

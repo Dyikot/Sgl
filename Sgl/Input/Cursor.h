@@ -26,6 +26,7 @@ namespace Sgl
 
 		SDL_Cursor* GetSDLCursor() const noexcept;
 
+		friend bool operator==(const Cursor& left, const Cursor& right);
 		Cursor& operator=(const Cursor&) = delete;
 		Cursor& operator=(Cursor&& other) noexcept;
 	private:
