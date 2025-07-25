@@ -34,44 +34,42 @@ Perfect for beginners learning game development and experienced developers who w
 ## Example
 This example shows how to create an application, set up a window, and style the scene.
 ```
-#include "../Sgl/Application.h"
-#include "../Sgl/UI/UIElement/UIElement.h"
-
 class MyScene: public Scene
 {
 public:
 	MyScene()
 	{
-		auto layout = Canvas::New();
-		layout->Classes = { "layout", "elementSize"};
-
 		BackgroundColor = Colors::Whitesmoke;
-		SetLayout(layout);
+		InitializeComponents();
+		InitializeStyles();
+	}
+private:
+	void InitializeComponents()
+	{
+		auto border = CreateShared<Border>();
+		border->Classes.Set("centerAlignment");
+		border->Width = 100;
+		border->BorderColor = Colors::Green;
+		border->Width = 300;
+		border->Height = 300;
+
+		auto child = CreateShared<Border>();
+		child->Classes.Set("centerAlignment");
+		child->BorderColor = Colors::Red;
+		child->Width = 250;
+		child->Height = 250;
+
+		border->SetContent(child);
+		SetContent(border);
 	}
 
-	void OnRender(RenderContext context) const override
+	void InitializeStyles()
 	{
-		Scene::OnRender(context);
-	}
-
-	void Process(TimeSpan elapsed) override
-	{
-		Scene::Process(elapsed);		
+		Styles.Add<UIElement>("centerAlignment")
+			.AddSetter(&UIElement::VerticalAlignment, VerticalAlignment::Center)
+			.AddSetter(&UIElement::HorizontalAlignment, HorizontalAlignment::Center);
 	}
 };
-
-static StyleMap CreateAppStyles()
-{
-	StyleMap styles;
-	styles.Add<Canvas>("layout")
-		.AddSetter(&Canvas::BackgroundColor, Colors::White)
-		.AddSetter(&Canvas::Cursor, Cursors::Hand);
-	styles.Add<UIElement>("elementSize")
-		.AddSetter(&UIElement::Width, 200)
-		.AddSetter(&UIElement::Height, 400);
-
-	return styles;
-}
 
 int main()
 {	
@@ -79,7 +77,6 @@ int main()
 	app.SetMaxFPS(60);
 	app.Window.SetTitle("Test");
 	app.SceneManager.Push<MyScene>();
-	app.Styles = CreateAppStyles();
 	app.Run();
 }
 ```
