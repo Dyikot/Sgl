@@ -2,16 +2,17 @@
 
 #include "UIElement.h"
 #include "Template/DataTemplate.h"
+#include "../Base/ContentPropertyBase.h"
 
 namespace Sgl
 {
 	class ContentUIElement: public UIElement
 	{
 	private:
-		class DataTemplateProperty: public ObservableProperty<Shared<IDataTemplate>>
+		class DataTemplateProperty: public BindableProperty<Shared<IDataTemplate>>
 		{
 		private:
-			using base = ObservableProperty<Shared<IDataTemplate>>;
+			using base = BindableProperty<Shared<IDataTemplate>>;
 			ContentUIElement& _owner;
 		public:
 			DataTemplateProperty(ContentUIElement& owner):
@@ -25,6 +26,33 @@ namespace Sgl
 
 			using base::operator=;
 		};
+
+		class ContentProperty: public ContentPropertyBase
+		{
+		private:
+			ContentUIElement& _owner;
+		public:
+			ContentProperty(ContentUIElement& owner):
+				_owner(owner)
+			{}
+
+			template<std::copyable T>
+			ContentProperty& operator=(T value)
+			{
+				_value = value;
+				_owner.TryCreatePresenter();
+				return *this;
+			}
+
+			template<std::derived_from<UIElement> T>
+			ContentProperty& operator=(const Shared<T>& value)
+			{
+				_value = Any::New<Shared<UIElement>>(value);
+				_owner.ContentTemplate = NewShared<UIElementDataTemplate>();
+				return *this;
+			}
+		};
+
 		using VerticalAlignmentProperty = ArrangedProperty<Sgl::VerticalAlignment>;
 		using HorizontalAlignmentProperty = ArrangedProperty<Sgl::HorizontalAlignment>;
 	public:
@@ -32,29 +60,14 @@ namespace Sgl
 		MeasuredProperty<Thickness> Padding;
 		VerticalAlignmentProperty VerticalContentAlignment;
 		HorizontalAlignmentProperty HorizontalContentAlignment;
+		ContentProperty Content;
 	protected:
-		Any _content;
 		Shared<UIElement> _contentPresenter;
 	public:
 		ContentUIElement();
 		ContentUIElement(const ContentUIElement& other);
 		ContentUIElement(ContentUIElement&& other) noexcept;
 
-		template<std::copyable T>
-		void SetContent(const T& value)
-		{
-			_content = value;
-			TryCreatePresenter();
-		}
-
-		template<std::derived_from<UIElement> T>
-		void SetContent(const Shared<T>& value)
-		{
-			_content = Any::New<Shared<UIElement>>(value);
-			ContentTemplate = CreateShared<UIElementDataTemplate>();
-		}
-
-		const Any& GetContent() const { return _content; }
 		Shared<UIElement> GetContentPresenter() const { return _contentPresenter; }
 
 		void Render(RenderContext context) const override;

@@ -26,7 +26,7 @@ namespace Sgl
         template<typename T>
         Style<T>& Add(std::string_view key)
         {
-            auto style = CreateRef<Style<T>>();
+            auto style = NewRef<Style<T>>();
             _items.emplace(key, style);
             return style;
         }

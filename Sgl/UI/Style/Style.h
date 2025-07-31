@@ -8,11 +8,11 @@
 
 namespace Sgl
 {
-    template<typename TTarget>
+    template<typename T>
     class Style: public IStyle
     {
     private:
-        std::vector<Unique<ISetter<TTarget>>> _setters;
+        std::vector<Unique<ISetter<T>>> _setters;
     public:
         Style() = default;
 
@@ -23,18 +23,21 @@ namespace Sgl
         auto end() const { return _setters.end(); }
 
         template<typename TProperty>
-        Style<TTarget>& AddSetter(TProperty TTarget::* field, TProperty::InputType value)
+        Style<T>& With(TProperty T::* field, TProperty::InputType value)
         {
-            using TField = TProperty TTarget::*;
-            using TValue = TProperty::Type;
+            _setters.push_back(NewUnique<Setter<T, TProperty>>(field, value));
+            return *this;
+        }
 
-            _setters.push_back(CreateUnique<Setter<TTarget, TField, TValue>>(field, value));
+        Style<T>& With(Unique<ISetter<T>> setter)
+        {
+            _setters.push_back(std::move(setter));
             return *this;
         }
 
         void Apply(StyleableElement& target) override
         {
-            TTarget& targetElement = static_cast<TTarget&>(target);
+            T& targetElement = static_cast<T&>(target);
             for(const auto& setter : _setters)
             {
                 setter->Apply(targetElement);

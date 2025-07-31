@@ -22,7 +22,7 @@ namespace Sgl
 		~SceneManager();
 
 		template<std::derived_from<Scene> TScene>
-		void Push() { _sceneFactoriesQueue.push([] { return CreateRef<TScene>(); }); }
+		void Push() { _sceneFactoriesQueue.push([] { return NewRef<TScene>(); }); }
 		void Push(SceneFactory sceneFactory);
 
 		void Pop() noexcept;

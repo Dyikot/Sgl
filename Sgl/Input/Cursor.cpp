@@ -65,7 +65,7 @@ namespace Sgl
 
     bool operator==(const Cursor& left, const Cursor& right)
     {
-        return left._cursor == right._cursor;
+        return left.GetSDLCursor() == right.GetSDLCursor();
     }
 
     Cursor& Cursor::operator=(Cursor&& other) noexcept

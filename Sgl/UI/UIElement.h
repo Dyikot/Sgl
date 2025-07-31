@@ -15,18 +15,18 @@ namespace Sgl
 	class UIElement: public Layoutable, public IRenderable
 	{
 	private:
-		using ColorProperty = ObservableProperty<Color>;
-		using CursorProperty = ObservableProperty<std::reference_wrapper<const Cursor>, const Cursor&>;
-		using TextureProperty = ObservableProperty<Shared<Texture>>;
-		using TagProperty = ObservableProperty<Any, const Any&>;
-		using ToolTipProperty = ObservableProperty<Shared<UIElement>>;
-		using ZIndexProperty = ObservableProperty<size_t>;
+		using ColorProperty = BindableProperty<Color>;
+		using CursorProperty = BindableProperty<std::reference_wrapper<const Cursor>, const Cursor&>;
+		using TextureProperty = BindableProperty<Shared<Texture>>;
+		using TagProperty = BindableProperty<Any, const Any&>;
+		using ToolTipProperty = BindableProperty<Shared<UIElement>>;
+		using ZIndexProperty = BindableProperty<size_t>;
 
 		using KeyEventHandler = EventHandler<UIElement, KeyEventArgs>;
 		using MouseEventHandler = EventHandler<UIElement, MouseEventArgs>;
 		using MouseButtonEventHandler = EventHandler<UIElement, MouseButtonEventArgs>;
 		using MouseWheelEventHandler = EventHandler<UIElement, MouseWheelEventArgs>;
-	public:		
+	public:
 		Event<KeyEventHandler> KeyUp;
 		Event<KeyEventHandler> KeyDown;
 		Event<MouseEventHandler> MouseMove;
@@ -114,4 +114,20 @@ namespace Sgl
 			return left.ZIndex < right.ZIndex;
 		}
 	};
+
+	template<typename T, typename TConfigurer>
+	Shared<T> Create(TConfigurer&& configurer)
+	{
+		auto element = NewShared<T>();
+		configurer(*element);
+		return element;
+	}
+
+	template<typename T, typename TConfigurer>
+	Ref<T> CreateRef(TConfigurer&& configurer)
+	{
+		auto element = NewRef<T>();
+		configurer(*element);
+		return element;
+	}
 }

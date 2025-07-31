@@ -1,13 +1,13 @@
 #pragma once
 
 #include <concepts>
-#include "IObserver.h"
+#include "IObservable.h"
 
 namespace Sgl
 {
     template<typename T, typename TInput = T> 
         requires std::constructible_from<T, TInput> && std::copyable<T>
-    class ObservableProperty: public IObserver<TInput>
+    class BindableProperty: public IObserver<TInput>, public IObservable<TInput>
     {
     public:
         using Type = T;
@@ -17,29 +17,38 @@ namespace Sgl
     private:
         IObserver<TInput>* _observer;
     public:
-        ObservableProperty() requires std::default_initializable<T>:
+        BindableProperty() requires std::default_initializable<T>:
             _value(),
             _observer(nullptr)
         {}
 
-        ObservableProperty(TInput value):
+        BindableProperty(TInput value):
             _value(value),
             _observer(nullptr)
         {}
 
-        ObservableProperty(const ObservableProperty& other):
+        BindableProperty(const BindableProperty& other):
             _value(other._value),
             _observer(nullptr)
         {}
 
-        ObservableProperty(ObservableProperty&& other) noexcept:
+        BindableProperty(BindableProperty&& other) noexcept:
             _value(std::move(other._value)),
             _observer(std::exchange(other._observer, nullptr))
         {}
 
-        virtual ~ObservableProperty() = default;
+        virtual ~BindableProperty() = default;
 
         void OnNext(TInput value) override
+        {
+            if(_value != value)
+            {
+                _value = value;
+                OnChanged();
+            }
+        }
+
+        void Set(TInput value)
         {
             if(_value != value)
             {
@@ -53,20 +62,23 @@ namespace Sgl
             return TInput(_value); 
         }
 
-        void SetObserver(IObserver<TInput>& observer)
+        void Subscribe(IObserver<TInput>& observer) override
         {
             _observer = &observer;
         }
 
-        void Bind(ObservableProperty& observer)
+        void Bind(BindableProperty& observer)
         {
-            SetObserver(observer);
-            observer.SetObserver(*this);
+            Subscribe(observer);
+            observer.Subscribe(*this);
         }
 
-        void RemoveObserver()
+        void Unsubscribe(IObserver<TInput>& observer) override
         {
-            _observer = nullptr;
+            if(_observer == &observer)
+            {
+                _observer = nullptr;
+            }
         }
 
         bool HasObserver() const 
@@ -79,13 +91,13 @@ namespace Sgl
             return TInput(_value); 
         }
 
-        ObservableProperty& operator=(TInput value)
+        BindableProperty& operator=(TInput value)
         {
             OnNext(value);
             return *this;
         }
 
-        ObservableProperty& operator=(const ObservableProperty& other)
+        BindableProperty& operator=(const BindableProperty& other)
         {
             if(this != &other)
             {
@@ -95,7 +107,7 @@ namespace Sgl
             return *this;
         }
 
-        ObservableProperty& operator=(ObservableProperty&& other) noexcept
+        BindableProperty& operator=(BindableProperty&& other) noexcept
         {
             _value = std::move(other._value);
             _observer = std::exchange(other._observer, nullptr);

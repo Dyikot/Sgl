@@ -73,5 +73,11 @@ namespace Sgl
 		{
 			_items.Remove(element);
 		}
+
+		UIElementsCollection& operator=(std::initializer_list<Ref<UIElement>> items)
+		{
+			_items = items;
+			return *this;
+		}
 	};
 }

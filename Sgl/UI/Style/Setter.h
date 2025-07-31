@@ -11,20 +11,24 @@ namespace Sgl
         virtual void Apply(TTarget& target) const = 0;
     };
 
-    template<typename TTarget, typename TField, typename TValue>
+    template<typename TTarget, typename TProperty>
     class Setter: public ISetter<TTarget>
     {
-    public:
+    public: 
+        using TValue = TProperty::Type;
+        using TInput = TProperty::InputType;
+        using TField = TProperty TTarget::*;
+
         TField Field;
         TValue Value;
     public:
-        Setter(TField field, TValue value):
+        Setter(TField field, TInput value):
             Field(field), Value(value)
         {}
 
         void Apply(TTarget& target) const
         {
-            (target.*Field).OnNext(Value);
+            (target.*Field).Set(Value);
         }
     };
 }

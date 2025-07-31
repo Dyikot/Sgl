@@ -5,10 +5,36 @@
 namespace Sgl
 {
 	Scene::Scene():
-		BackgroundColor(Colors::Black),
+		_cursor(Cursors::Arrow),
+		_background(Colors::Black, nullptr),
 		_content(nullptr),
 		_stylingParent(App.Current())
 	{}
+
+	void Scene::SetCursor(const Cursor& value)
+	{
+		_cursor = value;
+
+		if(!(_content && _content->IsMouseOver()))
+		{
+			Cursor::Set(value);
+		}
+	}
+
+	void Scene::SetBackground(Color value)
+	{
+		_background.Color = value;
+	}
+
+	void Scene::SetBackground(Shared<Texture> value)
+	{
+		_background.Texture = std::move(value);
+	}
+
+	void Scene::SetBackground(Color color, Shared<Texture> texture)
+	{
+		_background = Background(color, std::move(texture));
+	}
 
 	void Scene::SetContent(Shared<UIElement> value)
 	{
@@ -18,13 +44,13 @@ namespace Sgl
 
 	void Scene::Render(RenderContext context) const
 	{
-		if(BackgroundTexture)
+		if(_background.Texture)
 		{
-			context.DrawTexture(*BackgroundTexture, BackgroundColor);
+			context.DrawTexture(*_background.Texture, _background.Color);
 		}
 		else
 		{
-			context.FillBackground(BackgroundColor);
+			context.FillBackground(_background.Color);
 		}
 		
 		if(_content && _content->IsVisible)
@@ -79,7 +105,7 @@ namespace Sgl
 			else if(wasMouseOver)
 			{
 				content.OnMouseLeave(e);
-				Cursor::Set(Cursor);
+				Cursor::Set(_cursor);
 			}
 		}
 	}

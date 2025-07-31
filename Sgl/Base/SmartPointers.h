@@ -4,6 +4,7 @@
 #include <memory>
 #include <type_traits>
 #include <utility>
+#include <concepts>
 #include <stdexcept>
 
 namespace Sgl
@@ -20,14 +21,9 @@ namespace Sgl
     private:
         Shared<T> _ptr;
     public:
-        Ref(T* ptr):
-            _ptr(ptr)
-        {
-            if(ptr == nullptr)
-            {
-                throw std::invalid_argument("Ref cannot be constructed from nullptr");
-            }
-        }
+        Ref() requires std::default_initializable<T>:
+            _ptr(std::make_shared<T>())
+        {}
 
         Ref(Shared<T> ptr):
             _ptr(std::move(ptr))
@@ -92,9 +88,6 @@ namespace Sgl
         {
             return _ptr;
         }
-
-        template<typename TValue, typename... TArgs>
-        friend Ref<TValue> CreateRef(TArgs&&... args);
 
         Ref& operator=(T* ptr)
         {
@@ -163,20 +156,20 @@ namespace Sgl
     };
 
     template<typename TValue, typename... TArgs>
-    Unique<TValue> CreateUnique(TArgs&&... args)
+    Unique<TValue> NewUnique(TArgs&&... args)
     {
         return std::make_unique<TValue>(std::forward<TArgs>(args)...);
     }
 
     template<typename TValue, typename... TArgs>
-    Shared<TValue> CreateShared(TArgs&&... args)
+    Shared<TValue> NewShared(TArgs&&... args)
     {
         return std::make_shared<TValue>(std::forward<TArgs>(args)...);
     }
 
     template<typename TValue, typename... TArgs>
-    Ref<TValue> CreateRef(TArgs&&... args)
+    Ref<TValue> NewRef(TArgs&&... args)
     {
-        return Ref<TValue>(CreateShared<TValue>(std::forward<TArgs>(args)...));
+        return Ref<TValue>(NewShared<TValue>(std::forward<TArgs>(args)...));
     }
 }

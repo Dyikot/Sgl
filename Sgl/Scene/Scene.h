@@ -10,20 +10,33 @@ namespace Sgl
 	class Scene: public IRenderable, public IStyleProvider
 	{
 	public:
-		Cursor Cursor;
-		Color BackgroundColor;
-		Shared<Texture> BackgroundTexture;
+		struct Background
+		{
+			Color Color;
+			Shared<Texture> Texture;
+		};
 
 		ResourcesMap Resources;
 		StyleMap Styles;
 	protected:
 		Shared<UIElement> _content;
 		IStyleProvider* _stylingParent;
+	private:
+		Background _background;
+		std::reference_wrapper<const Cursor> _cursor;
 	public:
 		Scene();
 		Scene(const Scene&) = delete;
 		Scene(Scene&&) = delete;
 		virtual ~Scene() = default;
+
+		void SetBackground(Color value);
+		void SetBackground(Shared<Texture> value);
+		void SetBackground(Color color, Shared<Texture> texture);
+		Background GetBackground() const { return _background; }
+
+		void SetCursor(const Cursor& value);
+		const Cursor& GetCursor() const { return _cursor; }
 
 		void SetContent(Shared<UIElement> value);
 		Shared<UIElement> GetContent() const { return _content; }

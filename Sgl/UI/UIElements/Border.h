@@ -7,8 +7,8 @@ namespace Sgl
 	class Border: public ContentUIElement
 	{
 	public:
-		ObservableProperty<size_t> BorderWidth;
-		ObservableProperty<Color> BorderColor;
+		BindableProperty<size_t> BorderWidth;
+		BindableProperty<Color> BorderColor;
 	public:
 		Border();
 		Border(const Border& other);

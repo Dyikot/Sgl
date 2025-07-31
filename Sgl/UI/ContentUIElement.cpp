@@ -9,7 +9,8 @@ namespace Sgl
 		ContentTemplate(*this),
 		Padding(*this),
 		HorizontalContentAlignment(*this, HorizontalAlignment::Left),
-		VerticalContentAlignment(*this, VerticalAlignment::Top)
+		VerticalContentAlignment(*this, VerticalAlignment::Top),
+		Content(*this)
 	{}
 
 	ContentUIElement::ContentUIElement(const ContentUIElement& other):
@@ -18,7 +19,7 @@ namespace Sgl
 		Padding(other.Padding),
 		HorizontalContentAlignment(other.HorizontalContentAlignment),
 		VerticalContentAlignment(other.VerticalContentAlignment),
-		_content(other._content),
+		Content(other.Content),
 		_contentPresenter(other._contentPresenter)
 	{}
 
@@ -28,7 +29,7 @@ namespace Sgl
 		Padding(std::move(other.Padding)),
 		HorizontalContentAlignment(std::move(other.HorizontalContentAlignment)),
 		VerticalContentAlignment(std::move(other.VerticalContentAlignment)),
-		_content(std::exchange(other._content, nullptr)),
+		Content(std::move(other.Content)),
 		_contentPresenter(std::move(other._contentPresenter))
 	{}
 
@@ -71,7 +72,7 @@ namespace Sgl
 
 				content.OnMouseMove(e);
 			}
-			else
+			else if(wasMouseOver)
 			{
 				content.OnMouseLeave(e);
 				Cursor::Set(Cursor);
@@ -112,10 +113,11 @@ namespace Sgl
 	void ContentUIElement::TryCreatePresenter()
 	{
 		auto contentTemplate = ContentTemplate.Get();
-
-		if(contentTemplate != nullptr && _content.HasValue())
+		const auto& content = Content.Get();
+		
+		if(contentTemplate != nullptr && content.HasValue())
 		{
-			_contentPresenter = contentTemplate->Build(_content);
+			_contentPresenter = contentTemplate->Build(content);
 			_contentPresenter->_stylingParent = this;
 			_contentPresenter->_layoutableParent = this;
 			InvalidateMeasure();

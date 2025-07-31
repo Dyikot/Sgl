@@ -121,5 +121,12 @@ namespace Sgl
 				_items.erase(it);
 			}
 		}
+
+		SortedVector& operator=(std::initializer_list<T> items)
+		{
+			_items = items;
+			std::ranges::sort(_items, _comparer);
+			return *this;
+		}
 	};
 }
