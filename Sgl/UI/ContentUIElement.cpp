@@ -9,8 +9,7 @@ namespace Sgl
 		ContentTemplate(*this),
 		Padding(*this),
 		HorizontalContentAlignment(*this, HorizontalAlignment::Left),
-		VerticalContentAlignment(*this, VerticalAlignment::Top),
-		Content(*this)
+		VerticalContentAlignment(*this, VerticalAlignment::Top)
 	{}
 
 	ContentUIElement::ContentUIElement(const ContentUIElement& other):
@@ -19,7 +18,7 @@ namespace Sgl
 		Padding(other.Padding),
 		HorizontalContentAlignment(other.HorizontalContentAlignment),
 		VerticalContentAlignment(other.VerticalContentAlignment),
-		Content(other.Content),
+		_content(other._content),
 		_contentPresenter(other._contentPresenter)
 	{}
 
@@ -29,7 +28,7 @@ namespace Sgl
 		Padding(std::move(other.Padding)),
 		HorizontalContentAlignment(std::move(other.HorizontalContentAlignment)),
 		VerticalContentAlignment(std::move(other.VerticalContentAlignment)),
-		Content(std::move(other.Content)),
+		_content(std::move(other._content)),
 		_contentPresenter(std::move(other._contentPresenter))
 	{}
 
@@ -59,22 +58,22 @@ namespace Sgl
 
 		if(_contentPresenter)
 		{
-			auto& content = *_contentPresenter;
-			bool wasMouseOver = content._isMouseOver;
-			bool isMouseOver = Math::IsPointInRect(e.Position, content._bounds);
+			auto& _content = *_contentPresenter;
+			bool wasMouseOver = _content._isMouseOver;
+			bool isMouseOver = Math::IsPointInRect(e.Position, _content._bounds);
 
 			if(isMouseOver)
 			{
 				if(!wasMouseOver)
 				{
-					content.OnMouseEnter(e);
+					_content.OnMouseEnter(e);
 				}
 
-				content.OnMouseMove(e);
+				_content.OnMouseMove(e);
 			}
 			else if(wasMouseOver)
 			{
-				content.OnMouseLeave(e);
+				_content.OnMouseLeave(e);
 				Cursor::Set(Cursor);
 			}
 		}
@@ -113,11 +112,10 @@ namespace Sgl
 	void ContentUIElement::TryCreatePresenter()
 	{
 		auto contentTemplate = ContentTemplate.Get();
-		const auto& content = Content.Get();
 		
-		if(contentTemplate != nullptr && content.HasValue())
+		if(contentTemplate != nullptr && _content.HasValue())
 		{
-			_contentPresenter = contentTemplate->Build(content);
+			_contentPresenter = contentTemplate->Build(_content);
 			_contentPresenter->_stylingParent = this;
 			_contentPresenter->_layoutableParent = this;
 			InvalidateMeasure();

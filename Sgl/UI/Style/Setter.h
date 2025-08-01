@@ -1,8 +1,12 @@
 #pragma once
 
+#include <concepts>
+
 namespace Sgl
 {
-    template<typename TTarget>
+    class StyleableElement;
+
+    template<std::derived_from<StyleableElement> TTarget>
     class ISetter
     {
     public:

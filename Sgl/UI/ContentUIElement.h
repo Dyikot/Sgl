@@ -2,17 +2,16 @@
 
 #include "UIElement.h"
 #include "Template/DataTemplate.h"
-#include "../Base/ContentPropertyBase.h"
 
 namespace Sgl
 {
 	class ContentUIElement: public UIElement
 	{
 	private:
-		class DataTemplateProperty: public BindableProperty<Shared<IDataTemplate>>
+		class DataTemplateProperty: public StyleableProperty<Shared<IDataTemplate>>
 		{
 		private:
-			using base = BindableProperty<Shared<IDataTemplate>>;
+			using base = StyleableProperty<Shared<IDataTemplate>>;
 			ContentUIElement& _owner;
 		public:
 			DataTemplateProperty(ContentUIElement& owner):
@@ -26,47 +25,32 @@ namespace Sgl
 
 			using base::operator=;
 		};
-
-		class ContentProperty: public ContentPropertyBase
-		{
-		private:
-			ContentUIElement& _owner;
-		public:
-			ContentProperty(ContentUIElement& owner):
-				_owner(owner)
-			{}
-
-			template<std::copyable T>
-			ContentProperty& operator=(T value)
-			{
-				_value = value;
-				_owner.TryCreatePresenter();
-				return *this;
-			}
-
-			template<std::derived_from<UIElement> T>
-			ContentProperty& operator=(const Shared<T>& value)
-			{
-				_value = Any::New<Shared<UIElement>>(value);
-				_owner.ContentTemplate = NewShared<UIElementDataTemplate>();
-				return *this;
-			}
-		};
-
-		using VerticalAlignmentProperty = ArrangedProperty<Sgl::VerticalAlignment>;
-		using HorizontalAlignmentProperty = ArrangedProperty<Sgl::HorizontalAlignment>;
 	public:
 		DataTemplateProperty ContentTemplate;
 		MeasuredProperty<Thickness> Padding;
-		VerticalAlignmentProperty VerticalContentAlignment;
-		HorizontalAlignmentProperty HorizontalContentAlignment;
-		ContentProperty Content;
+		ArrangedProperty<Sgl::VerticalAlignment> VerticalContentAlignment;
+		ArrangedProperty<Sgl::HorizontalAlignment> HorizontalContentAlignment;
 	protected:
 		Shared<UIElement> _contentPresenter;
+		Any _content;
 	public:
 		ContentUIElement();
 		ContentUIElement(const ContentUIElement& other);
 		ContentUIElement(ContentUIElement&& other) noexcept;
+		
+		template<typename T>
+		void SetContent(T value)
+		{
+			_content = value;
+			TryCreatePresenter();
+		}
+
+		template<std::derived_from<UIElement> T>
+		void SetContent(const Shared<T>& value)
+		{
+			_content = Any::New<Shared<UIElement>>(value);
+			ContentTemplate = NewShared<UIElementDataTemplate>();
+		}
 
 		Shared<UIElement> GetContentPresenter() const { return _contentPresenter; }
 

@@ -3,7 +3,7 @@
 #include "../Base/Layout.h"
 #include "../Base/Size.h"
 #include "Style/StyleableElement.h"
-#include "../Base/Observable/BindableProperty.h"
+#include "Style/StyleableProperty.h"
 #include "../Base/Primitives.h"
 
 namespace Sgl
@@ -12,10 +12,10 @@ namespace Sgl
 	{
 	public:
 		template<typename T, typename TInput = T>
-		class MeasuredProperty: public BindableProperty<T, TInput>
+		class MeasuredProperty: public StyleableProperty<T, TInput>
 		{
 		private:
-			using base = BindableProperty<T, TInput>;
+			using base = StyleableProperty<T, TInput>;
 			Layoutable& _owner;
 		public:
 			MeasuredProperty(Layoutable& owner):
@@ -37,10 +37,10 @@ namespace Sgl
 		};
 
 		template<typename T, typename TInput = T>
-		class ArrangedProperty: public BindableProperty<T, TInput>
+		class ArrangedProperty: public StyleableProperty<T, TInput>
 		{
 		private:
-			using base = BindableProperty<T, TInput>;
+			using base = StyleableProperty<T, TInput>;
 			Layoutable& _owner;
 		public:
 			ArrangedProperty(Layoutable& owner):

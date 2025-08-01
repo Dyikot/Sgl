@@ -15,13 +15,6 @@ namespace Sgl
 	class UIElement: public Layoutable, public IRenderable
 	{
 	private:
-		using ColorProperty = BindableProperty<Color>;
-		using CursorProperty = BindableProperty<std::reference_wrapper<const Cursor>, const Cursor&>;
-		using TextureProperty = BindableProperty<Shared<Texture>>;
-		using TagProperty = BindableProperty<Any, const Any&>;
-		using ToolTipProperty = BindableProperty<Shared<UIElement>>;
-		using ZIndexProperty = BindableProperty<size_t>;
-
 		using KeyEventHandler = EventHandler<UIElement, KeyEventArgs>;
 		using MouseEventHandler = EventHandler<UIElement, MouseEventArgs>;
 		using MouseButtonEventHandler = EventHandler<UIElement, MouseButtonEventArgs>;
@@ -36,12 +29,12 @@ namespace Sgl
 		Event<MouseButtonEventHandler> MouseDown;
 		Event<MouseWheelEventHandler> MouseWheel;
 
-		CursorProperty Cursor;
-		TextureProperty BackgroundTexture;
-		ColorProperty BackgroundColor;
-		TagProperty Tag;
-		ToolTipProperty ToolTip;
-		ZIndexProperty ZIndex;
+		StyleableProperty<std::reference_wrapper<const Cursor>, const Cursor&> Cursor;
+		StyleableProperty<Shared<Texture>> BackgroundTexture;
+		StyleableProperty<Color> BackgroundColor;
+		StyleableProperty<Any, const Any&> Tag;
+		StyleableProperty<Shared<UIElement>> ToolTip;
+		StyleableProperty<size_t> ZIndex;
 
 		ResourcesMap Resources;
 		Any DataContext;
