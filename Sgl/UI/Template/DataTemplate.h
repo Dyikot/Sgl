@@ -2,6 +2,7 @@
 
 #include <memory>
 #include "../../Base/Any.h"
+#include "../../Base/SmartPointers.h"
 
 namespace Sgl
 {

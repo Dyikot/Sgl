@@ -1,36 +1,35 @@
 #include "Border.h"
 
-namespace Sgl
+namespace Sgl::UIElements
 {
 	Border::Border():
 		ContentUIElement(),
-		BorderWidth(1),
-		BorderColor(Colors::Black)
+		_borderWidth(BorderWidthProperty.DefaultValue),
+		_borderColor(BorderColorProperty.DefaultValue)
 	{}
 
 	Border::Border(const Border& other):
-		BorderWidth(other.BorderWidth),
-		BorderColor(other.BorderColor)
+		_borderWidth(other._borderWidth),
+		_borderColor(other._borderColor)
 	{}
 
 	Border::Border(Border&& other) noexcept:
-		BorderWidth(other.BorderWidth),
-		BorderColor(other.BorderColor)
+		_borderWidth(other._borderWidth),
+		_borderColor(other._borderColor)
 	{}
 
 	void Border::Render(RenderContext context) const
 	{
-		Color backgroundColor = BackgroundColor;
-		Color borderColor = BorderColor;
+		auto backgroundColor = GetBackgroundColor();
 
 		if(!backgroundColor.IsTransparent())
 		{
 			context.DrawFillRectangle(_bounds, backgroundColor);
 		}
 
-		if(!borderColor.IsTransparent() && BorderWidth > 0)
+		if(!_borderColor.IsTransparent() && _borderWidth > 0)
 		{
-			context.DrawRectange(_bounds, borderColor);
+			context.DrawRectange(_bounds, _borderColor);
 		}
 
 		ContentUIElement::Render(context);

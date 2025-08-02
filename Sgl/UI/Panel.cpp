@@ -22,7 +22,7 @@ namespace Sgl
     {
         for(auto& child : Children)
         {
-            if(child->IsVisible)
+            if(child->IsVisible())
             {
                 child->Render(context);
             }
@@ -45,7 +45,7 @@ namespace Sgl
     {
         UIElement::OnMouseMove(e);
 
-        bool isCurrentVisible = _currentChild && _currentChild->IsVisible;
+        bool isCurrentVisible = _currentChild && _currentChild->IsVisible();
         if(isCurrentVisible && Math::IsPointInRect(e.Position, _currentChild->GetBounds()))
         {
             _currentChild->OnMouseMove(e);
@@ -54,15 +54,15 @@ namespace Sgl
 
         for(UIElement& child : Children)
         {
-            if(Math::IsPointInRect(e.Position, child.GetBounds()) && child.IsVisible)
+            if(Math::IsPointInRect(e.Position, child.GetBounds()) && child.IsVisible())
             {
-                if(_currentChild && _currentChild->IsVisible)
+                if(_currentChild && _currentChild->IsVisible())
                 {
                     _currentChild->OnMouseLeave(e);
                 }
 
                 _currentChild = &child;
-                Cursor::Set(child.Cursor);
+                Cursor::Set(child.GetCursor());
                 child.OnMouseEnter(e);
                 child.OnMouseMove(e);
 
@@ -70,7 +70,7 @@ namespace Sgl
             }
         }
 
-        if(_currentChild && _currentChild->IsVisible)
+        if(_currentChild && _currentChild->IsVisible())
         {
             _currentChild->OnMouseLeave(e);
             _currentChild = nullptr;
@@ -81,7 +81,7 @@ namespace Sgl
     {
         UIElement::OnMouseDown(e);
 
-        if(_currentChild && _currentChild->IsMouseOver() && _currentChild->IsVisible)
+        if(_currentChild && _currentChild->IsMouseOver() && _currentChild->IsVisible())
         {
             _currentChild->OnMouseDown(e);
         }
@@ -91,7 +91,7 @@ namespace Sgl
     {
         UIElement::OnMouseUp(e);
 
-        if(_currentChild && _currentChild->IsMouseOver() && _currentChild->IsVisible)
+        if(_currentChild && _currentChild->IsMouseOver() && _currentChild->IsVisible())
         {
             _currentChild->OnMouseUp(e);
         }
@@ -101,7 +101,7 @@ namespace Sgl
     {
         UIElement::OnMouseLeave(e);
 
-        if(_currentChild && _currentChild->IsVisible)
+        if(_currentChild && _currentChild->IsVisible())
         {
             _currentChild->OnMouseLeave(e);
             _currentChild = nullptr;

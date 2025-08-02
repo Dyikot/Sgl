@@ -21,10 +21,6 @@ namespace Sgl
     private:
         Shared<T> _ptr;
     public:
-        Ref() requires std::default_initializable<T>:
-            _ptr(std::make_shared<T>())
-        {}
-
         Ref(Shared<T> ptr):
             _ptr(std::move(ptr))
         {

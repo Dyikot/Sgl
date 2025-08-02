@@ -3,10 +3,11 @@
 #include <vector>
 #include "StyleMap.h"
 #include "ClassesCollections.h"
+#include "../Binding/BindableObject.h"
 
 namespace Sgl
 {
-	class StyleableElement: public IStyleProvider
+	class StyleableElement: public BindableObject, public IStyleProvider
 	{
 	public:
 		StyleMap Styles;
@@ -15,7 +16,7 @@ namespace Sgl
 		IStyleProvider* _stylingParent;
 	private:
 		bool _isStyleValid;
-		std::vector<Ref<IStyle>> _styles;
+		std::vector<Ref<IStyle>> _styles;		
 	public:
 		StyleableElement();
 		StyleableElement(const StyleableElement& other);

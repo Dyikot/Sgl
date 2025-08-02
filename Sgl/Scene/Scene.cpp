@@ -53,7 +53,7 @@ namespace Sgl
 			context.FillBackground(_background.Color);
 		}
 		
-		if(_content && _content->IsVisible)
+		if(_content && _content->IsVisible())
 		{
 			_content->Render(context);
 		}
@@ -87,7 +87,7 @@ namespace Sgl
 
 	void Scene::OnMouseMove(const MouseEventArgs& e)
 	{
-		if(_content && _content->IsVisible)
+		if(_content && _content->IsVisible())
 		{
 			auto& content = *_content;
 			bool wasMouseOver = content._isMouseOver;
@@ -112,7 +112,7 @@ namespace Sgl
 
 	void Scene::OnMouseDown(const MouseButtonEventArgs& e)
 	{
-		if(_content && _content->IsMouseOver() && _content->IsVisible)
+		if(_content && _content->IsMouseOver() && _content->IsVisible())
 		{
 			_content->OnMouseDown(e);
 		}
@@ -120,7 +120,7 @@ namespace Sgl
 
 	void Scene::OnMouseUp(const MouseButtonEventArgs& e)
 	{
-		if(_content && _content->IsMouseOver() && _content->IsVisible)
+		if(_content && _content->IsMouseOver() && _content->IsVisible())
 		{
 			_content->OnMouseUp(e);
 		}

@@ -5,32 +5,38 @@ namespace Sgl
 {
 	UIElement::UIElement():
 		Layoutable(),
-		BackgroundColor(Colors::Transparent),
-		Cursor(Cursors::Arrow),
-		BackgroundTexture(),		
-		Tag(),
 		DataContext(),
-		_isMouseOver(false)
+		_isMouseOver(false),
+		_cursor(CursorProperty.DefaultValue),
+		_backgroundTexture(),
+		_backgroundColor(BackgroundColorProperty.DefaultValue),
+		_tag(),
+		_toolTip(),
+		_zIndex()
 	{}
 
 	UIElement::UIElement(const UIElement& other):
 		Layoutable(other),
-		BackgroundColor(other.BackgroundColor),
-		Cursor(other.Cursor),
-		BackgroundTexture(other.BackgroundTexture),		
-		Tag(other.Tag),
 		DataContext(other.DataContext),
-		_isMouseOver(other._isMouseOver)
+		_isMouseOver(other._isMouseOver),
+		_cursor(other._cursor),
+		_backgroundTexture(other._backgroundTexture),
+		_backgroundColor(other._backgroundColor),
+		_tag(other._tag),
+		_toolTip(other._toolTip),
+		_zIndex(other._zIndex)
 	{}
 
 	UIElement::UIElement(UIElement&& other) noexcept:
 		Layoutable(std::move(other)),
-		BackgroundColor(other.BackgroundColor),
-		Cursor(other.Cursor),
-		BackgroundTexture(std::move(other.BackgroundTexture)),		
-		Tag(std::move(other.Tag)),
 		DataContext(std::move(other.DataContext)),
-		_isMouseOver(other._isMouseOver)
+		_isMouseOver(other._isMouseOver),
+		_cursor(other._cursor),
+		_backgroundTexture(std::move(other._backgroundTexture)),
+		_backgroundColor(other._backgroundColor),
+		_tag(std::move(other._tag)),
+		_toolTip(std::move(other._toolTip)),
+		_zIndex(other._zIndex)
 	{}
 
 	Scene& UIElement::GetScene()
@@ -47,9 +53,9 @@ namespace Sgl
 
 	void UIElement::Render(RenderContext context) const
 	{		
-		if(const auto& toolTip = ToolTip.Get(); toolTip && toolTip->IsVisible)
+		if(_toolTip && _toolTip->IsVisible())
 		{
-			toolTip->Render(context);
+			_toolTip->Render(context);
 		}
 	}
 }

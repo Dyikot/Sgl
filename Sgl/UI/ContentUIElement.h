@@ -7,32 +7,14 @@ namespace Sgl
 {
 	class ContentUIElement: public UIElement
 	{
-	private:
-		class DataTemplateProperty: public StyleableProperty<Shared<IDataTemplate>>
-		{
-		private:
-			using base = StyleableProperty<Shared<IDataTemplate>>;
-			ContentUIElement& _owner;
-		public:
-			DataTemplateProperty(ContentUIElement& owner):
-				_owner(owner)
-			{}
-
-			void OnChanged() override
-			{
-				_owner.TryCreatePresenter();
-			}
-
-			using base::operator=;
-		};
-	public:
-		DataTemplateProperty ContentTemplate;
-		MeasuredProperty<Thickness> Padding;
-		ArrangedProperty<Sgl::VerticalAlignment> VerticalContentAlignment;
-		ArrangedProperty<Sgl::HorizontalAlignment> HorizontalContentAlignment;
 	protected:
 		Shared<UIElement> _contentPresenter;
 		Any _content;
+	private:
+		Shared<IDataTemplate> _contentTemplate;
+		Thickness _padding;
+		VerticalAlignment _verticalContentAlignment;
+		HorizontalAlignment _horizontalContentAlignment;
 	public:
 		ContentUIElement();
 		ContentUIElement(const ContentUIElement& other);
@@ -49,10 +31,58 @@ namespace Sgl
 		void SetContent(const Shared<T>& value)
 		{
 			_content = Any::New<Shared<UIElement>>(value);
-			ContentTemplate = NewShared<UIElementDataTemplate>();
+			_contentTemplate = NewShared<UIElementDataTemplate>();
+			TryCreatePresenter();
 		}
 
-		Shared<UIElement> GetContentPresenter() const { return _contentPresenter; }
+		Shared<UIElement> GetContentPresenter() const 
+		{
+			return _contentPresenter;
+		}
+
+		void SetContentTemplate(Shared<IDataTemplate> value)
+		{
+			SetProperty(ContentTemplateProperty, _contentTemplate, value);
+			TryCreatePresenter();
+		}
+
+		Shared<IDataTemplate> GetContentTemplate() const
+		{
+			return _contentTemplate;
+		}
+
+		void SetPadding(Thickness value)
+		{ 
+			SetProperty(PaddingProperty, _padding, value);
+			InvalidateMeasure();
+		}
+
+		Thickness GetPadding() const 
+		{ 
+			return _padding;
+		}
+
+		void SetVerticalContentAlignment(VerticalAlignment value)
+		{ 
+			SetProperty(VerticalContentAlignmentProperty, _verticalContentAlignment, value);
+			InvalidateArrange();
+		}
+
+		VerticalAlignment GetVerticalContentAlignment() const 
+		{ 
+			return _verticalContentAlignment;
+		}
+
+		void SetHorizontalContentAlignment(HorizontalAlignment value) 
+		{ 
+			SetProperty(HorizontalContentAlignmentProperty, _horizontalContentAlignment, value);
+			InvalidateArrange();
+		}
+
+		HorizontalAlignment GetHorizontalContentAlignment() const
+		{ 
+			return _horizontalContentAlignment;
+		}
 
 		void Render(RenderContext context) const override;
 		void ApplyStyle() override;
@@ -65,5 +95,17 @@ namespace Sgl
 		void TryCreatePresenter();
 		FSize MeasureContent(FSize avaliableSize) override;
 		void ArrangeContent(FRect rect) override;
+	public:
+		static inline BindableProperty<ContentUIElement, Shared<IDataTemplate>> ContentTemplateProperty =
+			BindableProperty<ContentUIElement, Shared<IDataTemplate>>(&SetContentTemplate);
+
+		static inline BindableProperty<ContentUIElement, Thickness> PaddingProperty =
+			BindableProperty<ContentUIElement, Thickness>(&SetPadding);
+
+		static inline BindableProperty<ContentUIElement, VerticalAlignment> VerticalContentAlignmentProperty =
+			BindableProperty<ContentUIElement, VerticalAlignment>(&SetVerticalContentAlignment, VerticalAlignment::Top);
+
+		static inline BindableProperty<ContentUIElement, HorizontalAlignment> HorizontalContentAlignmentProperty =
+			BindableProperty<ContentUIElement, HorizontalAlignment>(&SetHorizontalContentAlignment, HorizontalAlignment::Left);
 	};
 }

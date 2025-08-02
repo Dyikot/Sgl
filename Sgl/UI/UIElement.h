@@ -7,6 +7,7 @@
 #include "../Input/MouseAndKeyEventArgs.h"
 #include "../Render/IRenderable.h"
 #include "Layoutable.h"
+#include <type_traits>
 
 namespace Sgl
 {
@@ -29,23 +30,84 @@ namespace Sgl
 		Event<MouseButtonEventHandler> MouseDown;
 		Event<MouseWheelEventHandler> MouseWheel;
 
-		StyleableProperty<std::reference_wrapper<const Cursor>, const Cursor&> Cursor;
-		StyleableProperty<Shared<Texture>> BackgroundTexture;
-		StyleableProperty<Color> BackgroundColor;
-		StyleableProperty<Any, const Any&> Tag;
-		StyleableProperty<Shared<UIElement>> ToolTip;
-		StyleableProperty<size_t> ZIndex;
-
 		ResourcesMap Resources;
-		Any DataContext;
+		Shared<void> DataContext;
 	protected:
 		bool _isMouseOver;
+	private:
+		std::reference_wrapper<const Cursor> _cursor;
+		Shared<Texture> _backgroundTexture;
+		Color _backgroundColor;
+		Any _tag;
+		Shared<UIElement> _toolTip;
+		size_t _zIndex;
 	public:
 		UIElement();
 		UIElement(const UIElement& other);
 		UIElement(UIElement&& other) noexcept;
 		virtual ~UIElement() = default;
 		
+		void SetCursor(const Cursor& value)
+		{ 
+			SetProperty<UIElement, std::reference_wrapper<const Cursor>, const Cursor&>(
+				CursorProperty, _cursor, value);		
+		}
+
+		const Cursor& GetCursor() const
+		{ 
+			return _cursor;
+		}
+
+		void SetBackgroundTexture(Shared<Texture> value) 
+		{ 
+			SetProperty(BackgroundTextureProperty, _backgroundTexture, value);
+		}
+
+		Shared<Texture> GetBackgroundTexture() const
+		{ 
+			return _backgroundTexture; 
+		}
+
+		void SetBackgroundColor(Color value) 
+		{ 
+			SetProperty(BackgroundColorProperty, _backgroundColor, value);
+		}
+
+		Color GetBackgroundColor() const 
+		{ 
+			return _backgroundColor;
+		}
+
+		void SetTag(const Any& value) 
+		{ 
+			SetProperty<UIElement, Any, const Any&>(TagProperty, _tag, value);
+		}
+
+		const Any& GetTag() const 
+		{ 
+			return _tag;
+		}
+
+		void SetToolTip(Shared<UIElement> value) 
+		{ 
+			SetProperty(ToolTipProperty, _toolTip, value);
+		}
+
+		Shared<UIElement> GetToolTip() const
+		{ 
+			return _toolTip;
+		}
+
+		void SetZIndex(size_t value)
+		{ 
+			SetProperty(ZIndexProperty, _zIndex, value);
+		}
+
+		size_t GetZIndex() const 
+		{ 
+			return _zIndex;
+		}
+
 		Scene& GetScene();
 		bool IsMouseOver() const { return _isMouseOver; }
 
@@ -84,7 +146,7 @@ namespace Sgl
 		virtual void OnMouseEnter(const MouseEventArgs& e)
 		{
 			_isMouseOver = true;
-			Cursor::Set(Cursor);
+			Cursor::Set(_cursor);
 			MouseEnter.TryInvoke(*this, e);
 		}
 
@@ -98,13 +160,31 @@ namespace Sgl
 		friend class Panel;
 		friend class ContentUIElement;
 		friend class UIElementsCollection;
+	public:
+		static inline BindableProperty<UIElement, std::reference_wrapper<const Cursor>, const Cursor&> CursorProperty =
+			BindableProperty<UIElement, std::reference_wrapper<const Cursor>, const Cursor&>(&SetCursor, Cursors::Arrow);
+
+		static inline BindableProperty<UIElement, Shared<Texture>> BackgroundTextureProperty =
+			BindableProperty<UIElement, Shared<Texture>>(&SetBackgroundTexture);
+
+		static inline BindableProperty<UIElement, Color> BackgroundColorProperty =
+			BindableProperty<UIElement, Color>(&SetBackgroundColor, Colors::Transparent);
+
+		static inline BindableProperty<UIElement, Any, const Any&> TagProperty =
+			BindableProperty<UIElement, Any, const Any&>(&SetTag);
+
+		static inline BindableProperty<UIElement, Shared<UIElement>> ToolTipProperty =
+			BindableProperty<UIElement, Shared<UIElement>>(&SetToolTip);
+
+		static inline BindableProperty<UIElement, size_t> ZIndexProperty =
+			BindableProperty<UIElement, size_t>(&SetZIndex);
 	};
 
 	struct UIElementComparer
 	{
 		bool operator()(const UIElement& left, const UIElement& right) const
 		{
-			return left.ZIndex < right.ZIndex;
+			return left.GetZIndex() < right.GetZIndex();
 		}
 	};
 

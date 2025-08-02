@@ -5,57 +5,57 @@ namespace Sgl
 {
 	Layoutable::Layoutable():
 		StyleableElement(),
-		Width(*this),
-		Height(*this),
-		MinWidth(*this),
-		MinHeight(*this),
-		MaxWidth(*this, std::numeric_limits<float>::max()),
-		MaxHeight(*this, std::numeric_limits<float>::max()),
-		IsVisible(*this, true),
-		Margin(*this),
-		VerticalAlignment(*this, VerticalAlignment::Top),
-		HorizontalAlignment(*this, HorizontalAlignment::Left),
 		_bounds(),
 		_desiredSize(),
 		_layoutableParent(nullptr),
+		_width(),
+		_height(),
+		_minWidth(),
+		_minHeight(),
+		_maxWidth(MaxWidthProperty.DefaultValue),
+		_maxHeight(MaxHeightProperty.DefaultValue),
+		_isVisible(IsVisibleProperty.DefaultValue),
+		_margin(),
+		_verticalAlignment(VerticalAlignmentProperty.DefaultValue),
+		_horizontalAlignment(HorizontalAlignmentProperty.DefaultValue),
 		_isArrangeValid(false),
 		_isMeasureValid(false)
 	{}
 
 	Layoutable::Layoutable(const Layoutable& other):
 		StyleableElement(other),
-		Width(other.Width),
-		Height(other.Height),
-		MinWidth(other.MinWidth),
-		MinHeight(other.MinHeight),
-		MaxWidth(other.MaxWidth),
-		MaxHeight(other.MaxHeight),
-		IsVisible(other.IsVisible),
-		Margin(other.Margin),
-		VerticalAlignment(other.VerticalAlignment),
-		HorizontalAlignment(other.HorizontalAlignment),
 		_bounds(other._bounds),
 		_desiredSize(other._desiredSize),
 		_layoutableParent(other._layoutableParent),
+		_width(other._width),
+		_height(other._height),
+		_minWidth(other._minWidth),
+		_minHeight(other._minHeight),
+		_maxWidth(other._maxWidth),
+		_maxHeight(other._maxHeight),
+		_isVisible(other._isVisible),
+		_margin(other._margin),
+		_verticalAlignment(other._verticalAlignment),
+		_horizontalAlignment(other._horizontalAlignment),
 		_isArrangeValid(other._isArrangeValid),
 		_isMeasureValid(other._isMeasureValid)
 	{}
 
 	Layoutable::Layoutable(Layoutable&& other) noexcept:
 		StyleableElement(std::move(other)),
-		Width(other.Width),
-		Height(other.Height),
-		MinWidth(other.MinWidth),
-		MinHeight(other.MinHeight),
-		MaxWidth(other.MaxWidth),
-		MaxHeight(other.MaxHeight),
-		IsVisible(other.IsVisible),
-		Margin(other.Margin),
-		VerticalAlignment(other.VerticalAlignment),
-		HorizontalAlignment(other.HorizontalAlignment),
 		_bounds(other._bounds),
 		_desiredSize(other._desiredSize),
 		_layoutableParent(std::exchange(other._layoutableParent, nullptr)),
+		_width(other._width),
+		_height(other._height),
+		_minWidth(other._minWidth),
+		_minHeight(other._minHeight),
+		_maxWidth(other._maxWidth),
+		_maxHeight(other._maxHeight),
+		_isVisible(other._isVisible),
+		_margin(other._margin),
+		_verticalAlignment(other._verticalAlignment),
+		_horizontalAlignment(other._horizontalAlignment),
 		_isArrangeValid(other._isArrangeValid),
 		_isMeasureValid(other._isMeasureValid)
 	{}
@@ -67,14 +67,13 @@ namespace Sgl
 			Measure(FSize(rect.w, rect.h));
 		}
 
-		if(IsVisible)
+		if(_isVisible)
 		{
-			Thickness margin = Margin;
-			auto x = rect.x + margin.Left;
-			auto y = rect.y + margin.Top;
+			auto x = rect.x + _margin.Left;
+			auto y = rect.y + _margin.Top;
 
-			auto availableWidth = rect.w - margin.Left - margin.Right;
-			auto availableHeight = rect.h - margin.Top - margin.Bottom;
+			auto availableWidth = rect.w - _margin.Left - _margin.Right;
+			auto availableHeight = rect.h - _margin.Top - _margin.Bottom;
 
 			if(availableWidth < 0)
 			{
@@ -86,25 +85,23 @@ namespace Sgl
 				availableHeight = 0;
 			}
 
-			auto horizontalAlignment = HorizontalAlignment.Get();
-			auto verticalAlignment = VerticalAlignment.Get();
 			auto width = availableWidth;
 			auto height = availableHeight;
 
-			if(horizontalAlignment != HorizontalAlignment::Stretch)
+			if(_horizontalAlignment != HorizontalAlignment::Stretch)
 			{
-				width = std::fmin(width, _desiredSize.Width - margin.Left - margin.Right);
+				width = std::fmin(width, _desiredSize.Width - _margin.Left - _margin.Right);
 			}
 
-			if(verticalAlignment != VerticalAlignment::Stretch)
+			if(_verticalAlignment != VerticalAlignment::Stretch)
 			{
-				height = std::fmin(height, _desiredSize.Height - margin.Top - margin.Bottom);
+				height = std::fmin(height, _desiredSize.Height - _margin.Top - _margin.Bottom);
 			}
 
-			width = std::clamp<float>(width, MinWidth, MaxWidth);
-			height = std::clamp<float>(height, MinHeight, MaxHeight);
+			width = std::clamp<float>(width, _minWidth, _maxWidth);
+			height = std::clamp<float>(height, _minHeight, _maxHeight);
 
-			switch(horizontalAlignment)
+			switch(_horizontalAlignment)
 			{
 				case HorizontalAlignment::Right:
 					x += availableWidth - width;
@@ -118,7 +115,7 @@ namespace Sgl
 					break;
 			}
 
-			switch(verticalAlignment)
+			switch(_verticalAlignment)
 			{
 				case VerticalAlignment::Bottom:
 					y += availableHeight - height;
@@ -140,27 +137,25 @@ namespace Sgl
 
 	void Layoutable::Measure(FSize avaliableSize)
 	{
-		if(!_isMeasureValid && IsVisible)
+		if(!_isMeasureValid && _isVisible)
 		{
-			Thickness margin = Margin;
-
 			FSize contentAvaliableSize = 
 			{
-				.Width = std::clamp<float>(avaliableSize.Width - margin.Left - margin.Right,
-					MinWidth,
-					MaxWidth),
-				.Height = std::clamp<float>(avaliableSize.Height - margin.Top - margin.Bottom,
-					MinHeight,
-					MaxHeight)
+				.Width = std::clamp<float>(avaliableSize.Width - _margin.Left - _margin.Right,
+					_minWidth,
+					_maxWidth),
+				.Height = std::clamp<float>(avaliableSize.Height - _margin.Top - _margin.Bottom,
+					_minHeight,
+					_maxHeight)
 			};
 
 			auto [contentWidth, contentHeight] = MeasureContent(contentAvaliableSize);
 
-			float width = std::clamp<float>(std::fmax(Width, contentWidth), MinWidth, MaxWidth);
-			float height = std::clamp<float>(std::fmax(Height, contentHeight), MinHeight, MaxHeight);
+			float width = std::clamp<float>(std::fmax(_width, contentWidth), _minWidth, _maxWidth);
+			float height = std::clamp<float>(std::fmax(_height, contentHeight), _minHeight, _maxHeight);
 
-			width += margin.Left + margin.Right;
-			height += margin.Top + margin.Bottom;
+			width += _margin.Left + _margin.Right;
+			height += _margin.Top + _margin.Bottom;
 
 			if(width > avaliableSize.Width)
 			{

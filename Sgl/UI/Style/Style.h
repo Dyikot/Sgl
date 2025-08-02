@@ -23,9 +23,14 @@ namespace Sgl
         auto end() const { return _setters.end(); }
 
         template<typename TProperty>
-        Style<T>& With(TProperty T::* field, TProperty::InputType value)
+        Style<T>& With(TProperty& property, TProperty::InputType value)
         {
-            _setters.push_back(NewUnique<Setter<T, TProperty>>(field, value));
+            using TTarget = T;
+            using TOwner = TProperty::OwnerType;
+            using TValue = TProperty::Type;
+            using TInput = TProperty::InputType;
+
+            _setters.push_back(NewUnique<Setter<TTarget, TOwner, TValue, TInput>>(property, value));
             return *this;
         }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <concepts>
+#include "../Binding/BindableProperty.h"
 
 namespace Sgl
 {
@@ -15,24 +16,20 @@ namespace Sgl
         virtual void Apply(TTarget& target) const = 0;
     };
 
-    template<typename TTarget, typename TProperty>
+    template<typename TTarget, typename TOwner, typename TValue, typename TInput = TValue>
     class Setter: public ISetter<TTarget>
     {
     public: 
-        using TValue = TProperty::Type;
-        using TInput = TProperty::InputType;
-        using TField = TProperty TTarget::*;
-
-        TField Field;
+        BindableProperty<TOwner, TValue, TInput>& Property;
         TValue Value;
     public:
-        Setter(TField field, TInput value):
-            Field(field), Value(value)
+        Setter(BindableProperty<TOwner, TValue, TInput>& property, TInput value):
+            Property(property), Value(value)
         {}
 
         void Apply(TTarget& target) const
         {
-            (target.*Field).Set(Value);
+            (target.*(Property.PropertySetter))(Value);
         }
     };
 }
