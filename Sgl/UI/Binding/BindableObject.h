@@ -42,7 +42,7 @@ namespace Sgl
 		}
 	protected:
 		template<typename TOwner, typename T, typename TInput = T>
-		void SetProperty(BindableProperty<TOwner, T, TInput>& property, T& field, TInput value)
+		void SetProperty(BindableProperty<TOwner, T, TInput>& property, T& field, const std::remove_reference_t<TInput>& value)
 		{
 			if(field != value)
 			{

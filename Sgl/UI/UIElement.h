@@ -49,8 +49,7 @@ namespace Sgl
 		
 		void SetCursor(const Cursor& value)
 		{ 
-			SetProperty<UIElement, std::reference_wrapper<const Cursor>, const Cursor&>(
-				CursorProperty, _cursor, value);		
+			SetProperty(CursorProperty, _cursor, value);
 		}
 
 		const Cursor& GetCursor() const
@@ -80,7 +79,7 @@ namespace Sgl
 
 		void SetTag(const Any& value) 
 		{ 
-			SetProperty<UIElement, Any, const Any&>(TagProperty, _tag, value);
+			SetProperty(TagProperty, _tag, value);
 		}
 
 		const Any& GetTag() const 
