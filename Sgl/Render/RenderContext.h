@@ -6,11 +6,17 @@
 #include <SDL/SDL_render.h>
 #include "../Base/Delegate.h"
 #include "../Base/Primitives.h"
-#include "Surface.h"
-#include "Texture.h"
+#include "../Base/Media/Color.h"
 
 namespace Sgl
 {
+	class Texture;
+
+	enum class Orientation
+	{
+		Horizontal = 1, Vertical = 2
+	};
+
 	class RenderContext
 	{
 	private:
@@ -37,29 +43,29 @@ namespace Sgl
 		void DrawTexture(const Texture& texture, Color fill);
 		void DrawTexture(const Texture& texture, FRect target);
 		void DrawTexture(const Texture& texture, FRect target, Color fill);
-		void DrawTexture(const Texture& texture, FRect target, Rect source);
-		void DrawTexture(const Texture& texture, FRect target, Rect source, Color fill);
+		void DrawTexture(const Texture& texture, FRect target, Rect clip);
+		void DrawTexture(const Texture& texture, FRect target, Rect clip, Color fill);
 
 		void DrawTextureWithRotation(const Texture& texture, double angle, FPoint center);
 		void DrawTextureWithRotation(const Texture& texture, Color fill, double angle, FPoint center);
 		void DrawTextureWithRotation(const Texture& texture, FRect target, double angle, FPoint center);
 		void DrawTextureWithRotation(const Texture& texture, FRect target, Color fill, double angle, FPoint center);
-		void DrawTextureWithRotation(const Texture& texture, FRect target, Rect source, double angle, FPoint center);
-		void DrawTextureWithRotation(const Texture& texture, FRect target, Rect source, Color fill, double angle, FPoint center);
+		void DrawTextureWithRotation(const Texture& texture, FRect target, Rect clip, double angle, FPoint center);
+		void DrawTextureWithRotation(const Texture& texture, FRect target, Rect clip, Color fill, double angle, FPoint center);
 		
-		void DrawTextureWithFlip(const Texture& texture, TextureFlip flip);
-		void DrawTextureWithFlip(const Texture& texture, Color fill, TextureFlip flip);
-		void DrawTextureWithFlip(const Texture& texture, FRect target, TextureFlip flip);
-		void DrawTextureWithFlip(const Texture& texture, FRect target, Color fill, TextureFlip flip);
-		void DrawTextureWithFlip(const Texture& texture, FRect target, Rect source, TextureFlip flip);
-		void DrawTextureWithFlip(const Texture& texture, FRect target, Rect source, Color fill, TextureFlip flip);
+		void DrawTextureWithFlip(const Texture& texture, Orientation flip);
+		void DrawTextureWithFlip(const Texture& texture, Color fill, Orientation flip);
+		void DrawTextureWithFlip(const Texture& texture, FRect target, Orientation flip);
+		void DrawTextureWithFlip(const Texture& texture, FRect target, Color fill, Orientation flip);
+		void DrawTextureWithFlip(const Texture& texture, FRect target, Rect clip, Orientation flip);
+		void DrawTextureWithFlip(const Texture& texture, FRect target, Rect clip, Color fill, Orientation flip);
 
-		void DrawTextureWithRotationAndFlip(const Texture& texture, double angle, FPoint center, TextureFlip flip);
-		void DrawTextureWithRotationAndFlip(const Texture& texture, Color fill, double angle, FPoint center, TextureFlip flip);
-		void DrawTextureWithRotationAndFlip(const Texture& texture, FRect target, double angle, FPoint center, TextureFlip flip);
-		void DrawTextureWithRotationAndFlip(const Texture& texture, FRect target, Color fill, double angle, FPoint center, TextureFlip flip);
-		void DrawTextureWithRotationAndFlip(const Texture& texture, FRect target, Rect source, double angle, FPoint center, TextureFlip flip);
-		void DrawTextureWithRotationAndFlip(const Texture& texture, FRect target, Rect source, Color fill, double angle, FPoint center, TextureFlip flip);
+		void DrawTextureWithRotationAndFlip(const Texture& texture, double angle, FPoint center, Orientation flip);
+		void DrawTextureWithRotationAndFlip(const Texture& texture, Color fill, double angle, FPoint center, Orientation flip);
+		void DrawTextureWithRotationAndFlip(const Texture& texture, FRect target, double angle, FPoint center, Orientation flip);
+		void DrawTextureWithRotationAndFlip(const Texture& texture, FRect target, Color fill, double angle, FPoint center, Orientation flip);
+		void DrawTextureWithRotationAndFlip(const Texture& texture, FRect target, Rect clip, double angle, FPoint center, Orientation flip);
+		void DrawTextureWithRotationAndFlip(const Texture& texture, FRect target, Rect clip, Color fill, double angle, FPoint center, Orientation flip);
 
 		void DrawCircle(FPoint position, int diameter, Color color);
 		void DrawCircleFill(FPoint position, int diameter, Color color);

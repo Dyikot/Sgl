@@ -6,6 +6,7 @@
 #include "../Input/Cursor.h"
 #include "../Input/MouseAndKeyEventArgs.h"
 #include "../Render/IRenderable.h"
+#include "../Render/Texture.h"
 #include "Layoutable.h"
 #include <type_traits>
 
@@ -112,6 +113,8 @@ namespace Sgl
 
 		void Render(RenderContext context) const override;
 	protected:
+		void RenderBackground(RenderContext context) const;
+
 		virtual void OnKeyUp(const KeyEventArgs& e)
 		{
 			KeyUp.TryInvoke(*this, e);

@@ -58,4 +58,20 @@ namespace Sgl
 			_toolTip->Render(context);
 		}
 	}
+
+	void UIElement::RenderBackground(RenderContext context) const
+	{
+		auto backgroundColor = GetBackgroundColor();
+		auto backgroundTexture = GetBackgroundTexture();
+
+		if(!backgroundColor.IsTransparent())
+		{
+			context.DrawFillRectangle(_bounds, backgroundColor);
+		}
+
+		if(backgroundTexture)
+		{
+			context.DrawTexture(*backgroundTexture, _bounds);
+		}
+	}
 }

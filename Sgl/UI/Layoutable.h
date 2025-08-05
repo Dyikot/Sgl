@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Base/Layout.h"
+#include "../Base/Media/Layout.h"
 #include "../Base/Size.h"
 #include "Style/StyleableElement.h"
 #include "../Base/Primitives.h"
@@ -148,8 +148,10 @@ namespace Sgl
 		bool IsArrangeValid() const { return _isArrangeValid; }
 		bool IsMeasureValid() const { return _isMeasureValid; }
 
-		virtual void Arrange(FRect rect);
-		virtual void Measure(FSize avaliableSize);
+		void Arrange(FRect rect);
+		void Measure(FSize avaliableSize);
+		virtual void ArrangeCore(FRect rect);
+		virtual FSize MeasureCore(FSize avaliableSize);
 		void InvalidateArrange();
 		void InvalidateMeasure();
 	protected:

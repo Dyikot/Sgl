@@ -20,12 +20,7 @@ namespace Sgl::UIElements
 
 	void Border::Render(RenderContext context) const
 	{
-		auto backgroundColor = GetBackgroundColor();
-
-		if(!backgroundColor.IsTransparent())
-		{
-			context.DrawFillRectangle(_bounds, backgroundColor);
-		}
+		RenderBackground(context);
 
 		if(!_borderColor.IsTransparent() && _borderWidth > 0)
 		{

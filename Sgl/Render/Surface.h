@@ -2,9 +2,10 @@
 
 #include <SDL/SDL_image.h>
 #include <string_view>
-#include "../Base/Color.h"
-#include "../Base/Log.h"
+#include <string>
 #include "../Base/Size.h"
+#include "../Base/Media/Color.h"
+#include "../Base/Media/Font.h"
 
 namespace Sgl
 {
@@ -15,6 +16,7 @@ namespace Sgl
 	public:
 		explicit Surface(std::string_view path);
 		explicit Surface(SDL_Surface* surface);
+		Surface(const std::string& text, const Font& font);
 		Surface(Surface&& other) noexcept;
 		Surface(const Surface&) = delete;
 		~Surface();

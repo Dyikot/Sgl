@@ -1,4 +1,5 @@
 #include "Window.h"
+#include "Base/Log.h"
 
 namespace Sgl
 {

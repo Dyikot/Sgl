@@ -1,12 +1,8 @@
 #pragma once
 
 #include <utility>
-#include <string_view>
-#include <SDL/SDL_image.h>
-#include "../Base/Color.h"
-#include "../Base/Log.h"
-#include "../Base/Primitives.h"
-#include "../Base/Size.h"
+#include "Surface.h"
+#include "RenderContext.h"
 
 namespace Sgl
 {
@@ -15,17 +11,18 @@ namespace Sgl
 		Static, Streaming, Target
 	};
 
-	enum class TextureFlip
-	{
-		Horizontal = 1, Vertical = 2
-	};
-
 	class Texture
 	{
 	protected:
 		SDL_Texture* _texture = nullptr;
 	public:
-		Texture() = default;
+		explicit Texture(std::string_view path);
+		explicit Texture(const Surface& surface);
+		Texture(TextureAccess textureAccess, Size size);
+		Texture(TextureAccess textureAccess, Size size, RenderFragment renderFragment);
+		Texture(SDL_PixelFormatEnum pixelFormat, TextureAccess textureAccess, Size size);
+		Texture(SDL_PixelFormatEnum pixelFormat, TextureAccess textureAccess, Size size, RenderFragment renderFragment);
+		Texture(const std::string& text, const Font& font);
 		Texture(SDL_Texture* texture);
 		Texture(const Texture&) = delete;
 		Texture(Texture&& other) noexcept;

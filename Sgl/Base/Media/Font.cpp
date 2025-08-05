@@ -1,7 +1,7 @@
 #include "Font.h"
 #include <unordered_map>
 #include <filesystem>
-#include "../Base/Log.h"
+#include "../Log.h"
 
 namespace Sgl
 {
