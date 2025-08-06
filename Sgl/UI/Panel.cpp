@@ -5,17 +5,20 @@ namespace Sgl
 {  
     Panel::Panel():
         UIElement(),
-        Children(*this)
+        Children(*this),
+        _currentChild()
     {}
 
     Panel::Panel(const Panel& other):
         UIElement(other),
-        Children(other.Children)
+        Children(other.Children),
+        _currentChild(other._currentChild)
     {}
 
     Panel::Panel(Panel&& other) noexcept:
         UIElement(std::move(other)),
-        Children(std::move(Children))
+        Children(std::move(Children)),
+        _currentChild(std::exchange(other._currentChild, nullptr))
     {}
 
     void Panel::Render(RenderContext context) const

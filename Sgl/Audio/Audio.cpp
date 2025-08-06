@@ -71,7 +71,7 @@ namespace Sgl
 			return TimeSpan::FromSeconds(Mix_MusicDuration(_music));
 		}
 
-		return TimeSpan::Zero();
+		return TimeSpan::Zero;
 	}
 
 	Music& Music::operator=(Music&& other) noexcept

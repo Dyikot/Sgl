@@ -8,8 +8,7 @@ namespace Sgl
 		DataContext(),
 		_isMouseOver(false),
 		_cursor(CursorProperty.DefaultValue),
-		_backgroundTexture(),
-		_backgroundColor(BackgroundColorProperty.DefaultValue),
+		_background(BackgroundProperty.DefaultValue),
 		_tag(),
 		_toolTip(),
 		_zIndex()
@@ -20,8 +19,7 @@ namespace Sgl
 		DataContext(other.DataContext),
 		_isMouseOver(other._isMouseOver),
 		_cursor(other._cursor),
-		_backgroundTexture(other._backgroundTexture),
-		_backgroundColor(other._backgroundColor),
+		_background(other._background),
 		_tag(other._tag),
 		_toolTip(other._toolTip),
 		_zIndex(other._zIndex)
@@ -32,8 +30,7 @@ namespace Sgl
 		DataContext(std::move(other.DataContext)),
 		_isMouseOver(other._isMouseOver),
 		_cursor(other._cursor),
-		_backgroundTexture(std::move(other._backgroundTexture)),
-		_backgroundColor(other._backgroundColor),
+		_background(std::move(other._background)),
 		_tag(std::move(other._tag)),
 		_toolTip(std::move(other._toolTip)),
 		_zIndex(other._zIndex)
@@ -61,17 +58,23 @@ namespace Sgl
 
 	void UIElement::RenderBackground(RenderContext context) const
 	{
-		auto backgroundColor = GetBackgroundColor();
-		auto backgroundTexture = GetBackgroundTexture();
-
-		if(!backgroundColor.IsTransparent())
+		switch(_background.GetType())
 		{
-			context.DrawFillRectangle(_bounds, backgroundColor);
-		}
+			case Brush::Color:
+			{
+				if(auto color = _background.AsColor(); !color.IsTransparent())
+				{
+					context.DrawFillRectangle(_bounds, color);
+				}
 
-		if(backgroundTexture)
-		{
-			context.DrawTexture(*backgroundTexture, _bounds);
+				break;
+			}
+
+			case Brush::Texture:
+			{
+				context.DrawTexture(*_background.AsTexture(), _bounds);
+				break;
+			}
 		}
 	}
 }

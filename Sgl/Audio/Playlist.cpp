@@ -21,11 +21,11 @@ namespace Sgl
 
 		if(_currentIt == Items.begin())
 		{
-			Started.TryInvoke(*this, EmptyEventArgs);
+			Started.TryInvoke(*this, EventArgs());
 		}
 		else if(_currentIt == Items.end())
 		{
-			Ended.TryInvoke(*this, EmptyEventArgs);
+			Ended.TryInvoke(*this, EventArgs());
 			_currentIt = Items.begin();
 		}
 

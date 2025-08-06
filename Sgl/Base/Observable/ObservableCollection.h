@@ -3,7 +3,7 @@
 #include <vector>
 #include <ranges>
 #include <algorithm>
-#include "../Event.h"
+#include "Event.h"
 
 namespace Sgl
 {

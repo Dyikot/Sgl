@@ -15,7 +15,7 @@ namespace Sgl
 		using TimePoint = std::chrono::steady_clock::time_point;
 
 		bool _isRunning = false;
-		TimeSpan _elapsed = TimeSpan::Zero();
+		TimeSpan _elapsed = TimeSpan::Zero;
 		TimePoint _start;
 	public:
 		/// <summary>

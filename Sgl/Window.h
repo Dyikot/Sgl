@@ -22,13 +22,13 @@ namespace Sgl
 		Event<WindowPositionChangedEventHandler> PositionChanged;
 		Event<WindowSizeChangedEventHandler> SizeChanged;
 
-		bool IsRenderableWhenMinimized = false;
+		bool IsRenderableWhenMinimized;
 	protected:
 		SDL_Window* _window;
 		SDL_Renderer* _renderer;
 	private:
 		Unique<Surface> _icon;
-		bool _hasVSync = false;
+		bool _hasVSync;
 	public:
 		Window() noexcept;
 		Window(const Window&) = delete;

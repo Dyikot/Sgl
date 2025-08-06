@@ -8,14 +8,15 @@
 
 namespace Sgl
 {
-	class Cursor
+	class Cursor final
 	{
 	private:
 		mutable SDL_Cursor* _cursor;
+		mutable bool _hasTriedToCreate;
 		std::variant<std::string, SDL_SystemCursor> _creationArgs;
 	public:
 		static void Set(const Cursor& cursor);
-
+		
 		Cursor() noexcept;
 		explicit Cursor(std::string path);
 		explicit Cursor(SDL_SystemCursor systemCursor) noexcept;
@@ -35,17 +36,17 @@ namespace Sgl
 
 	namespace Cursors
 	{
-		inline const Cursor Arrow = Cursor(SDL_SYSTEM_CURSOR_ARROW);
-		inline const Cursor IBeam = Cursor(SDL_SYSTEM_CURSOR_IBEAM);
-		inline const Cursor Wait = Cursor(SDL_SYSTEM_CURSOR_WAIT);
-		inline const Cursor Crosshair = Cursor(SDL_SYSTEM_CURSOR_CROSSHAIR);
-		inline const Cursor WaitArrow = Cursor(SDL_SYSTEM_CURSOR_WAITARROW);
-		inline const Cursor ArrowNWSE = Cursor(SDL_SYSTEM_CURSOR_SIZENWSE);
-		inline const Cursor ArrowNESW = Cursor(SDL_SYSTEM_CURSOR_SIZENESW);
-		inline const Cursor ArrowWE = Cursor(SDL_SYSTEM_CURSOR_SIZEWE);
-		inline const Cursor ArrowNS = Cursor(SDL_SYSTEM_CURSOR_SIZENS);
-		inline const Cursor ArrowAll = Cursor(SDL_SYSTEM_CURSOR_SIZEALL);
-		inline const Cursor No = Cursor(SDL_SYSTEM_CURSOR_NO);
-		inline const Cursor Hand = Cursor(SDL_SYSTEM_CURSOR_HAND);
+		inline Cursor Arrow { SDL_SYSTEM_CURSOR_ARROW };
+		inline Cursor IBeam { SDL_SYSTEM_CURSOR_IBEAM };
+		inline Cursor Wait { SDL_SYSTEM_CURSOR_WAIT };
+		inline Cursor Crosshair { SDL_SYSTEM_CURSOR_CROSSHAIR };
+		inline Cursor WaitArrow { SDL_SYSTEM_CURSOR_WAITARROW };
+		inline Cursor ArrowNWSE { SDL_SYSTEM_CURSOR_SIZENWSE };
+		inline Cursor ArrowNESW { SDL_SYSTEM_CURSOR_SIZENESW };
+		inline Cursor ArrowWE { SDL_SYSTEM_CURSOR_SIZEWE };
+		inline Cursor ArrowNS { SDL_SYSTEM_CURSOR_SIZENS };
+		inline Cursor ArrowAll { SDL_SYSTEM_CURSOR_SIZEALL };
+		inline Cursor No { SDL_SYSTEM_CURSOR_NO };
+		inline Cursor Hand { SDL_SYSTEM_CURSOR_HAND };
 	}
 }

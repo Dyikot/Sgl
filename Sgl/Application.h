@@ -44,7 +44,7 @@ namespace Sgl
 	private:
 		static inline Application* _current;
 
-		bool _running = false;
+		bool _isRunning;
 		FPSCounter _fpsCounter;
 		std::optional<size_t> _maxFPS;
 		std::optional<TimeSpan> _maxFrameTime;

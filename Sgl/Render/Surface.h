@@ -12,7 +12,7 @@ namespace Sgl
 	class Surface
 	{
 	private:
-		SDL_Surface* _surface = nullptr;
+		SDL_Surface* _surface;
 	public:
 		explicit Surface(std::string_view path);
 		explicit Surface(SDL_Surface* surface);

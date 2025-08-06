@@ -4,21 +4,29 @@
 #include <SDL/SDL_mixer.h>
 #include "../Base/Log.h"
 #include "../Base/Time/TimeSpan.h"
+#include <compare>
 
 namespace Sgl
 {
 	class Volume
 	{
 	private:
+		struct VolumeMin {};
+		struct VolumeMax {};
+
 		static constexpr double MaxValue = 1;
 		static constexpr double MinValue = 0;
 		double _value;
 	public:
-		static constexpr Volume Min() { return Volume(MinValue); }
-		static constexpr Volume Max() { return Volume(MaxValue); }
-
-		constexpr Volume() noexcept:
+		static constexpr VolumeMax Max;
+		static constexpr VolumeMin Min;
+	public:
+		constexpr Volume(VolumeMax) noexcept:
 			_value(MaxValue)
+		{}
+
+		constexpr Volume(VolumeMin) noexcept:
+			_value(MinValue)
 		{}
 
 		constexpr explicit Volume(double value):
@@ -50,10 +58,7 @@ namespace Sgl
 			return Volume(left._value / right._value);
 		}
 
-		friend constexpr auto operator<=>(Volume left, Volume right)
-		{
-			return left._value <=> right._value;
-		}
+		friend constexpr auto operator<=>(Volume, Volume) noexcept = default;
 
 		constexpr Volume& operator+=(Volume volume)
 		{
@@ -96,7 +101,7 @@ namespace Sgl
 	private:
 		Mix_Music* _music;
 	public:
-		Volume Volume;
+		Volume Volume = Volume::Min;
 	public:
 		explicit Music(std::string_view path) noexcept;
 		Music(const Music&) = delete;
@@ -122,7 +127,7 @@ namespace Sgl
 	private:
 		Mix_Chunk* _soundChunk;
 	public:
-		Volume Volume;
+		Volume Volume = Volume::Min;
 	public:
 		explicit SoundChunk(std::string_view path) noexcept;
 		SoundChunk(const SoundChunk&) = delete;

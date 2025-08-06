@@ -74,7 +74,7 @@ namespace Sgl
 
 		if(_isElapsed)
 		{
-			Elapsed.TryInvoke(*this, EmptyEventArgs);
+			Elapsed.TryInvoke(*this, EventArgs());
 		}
 	}
 }

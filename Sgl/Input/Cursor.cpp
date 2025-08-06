@@ -30,18 +30,21 @@ namespace Sgl
     {}
 
     Cursor::Cursor(std::string path):
-        _cursor(nullptr),
-        _creationArgs(std::move(path))
+        _cursor(),
+        _creationArgs(std::move(path)),
+        _hasTriedToCreate()
     {}
 
     Cursor::Cursor(SDL_SystemCursor systemCursor) noexcept:
-        _cursor(nullptr),
-        _creationArgs(systemCursor)
+        _cursor(),
+        _creationArgs(systemCursor),
+        _hasTriedToCreate()
     {}
 
     Cursor::Cursor(Cursor&& other) noexcept:
         _cursor(std::exchange(other._cursor, nullptr)),
-        _creationArgs(std::move(other._creationArgs))
+        _creationArgs(std::move(other._creationArgs)),
+        _hasTriedToCreate(other._hasTriedToCreate)
     {}
 
     Cursor::~Cursor() noexcept
@@ -54,9 +57,10 @@ namespace Sgl
 
     SDL_Cursor* Cursor::GetSDLCursor() const noexcept
     {
-        if(!_cursor)
+        if(!_hasTriedToCreate)
         {
             _cursor = CreateCursor();
+            _hasTriedToCreate = true;
             Log::PrintSDLErrorIf(_cursor == nullptr);
         }
 
@@ -65,13 +69,14 @@ namespace Sgl
 
     bool operator==(const Cursor& left, const Cursor& right)
     {
-        return left.GetSDLCursor() == right.GetSDLCursor();
+        return left._creationArgs == right._creationArgs;
     }
 
     Cursor& Cursor::operator=(Cursor&& other) noexcept
     {
         _cursor = std::exchange(other._cursor, nullptr);
         _creationArgs = std::move(other._creationArgs);
+        _hasTriedToCreate = other._hasTriedToCreate;
         return *this;
     }
 

@@ -28,7 +28,7 @@ namespace Sgl
 	void Stopwatch::Reset()
 	{
 		_start = Clock::now();
-		_elapsed = TimeSpan::Zero();
+		_elapsed = TimeSpan::Zero;
 	}
 
 	void Stopwatch::Pause()

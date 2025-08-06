@@ -6,6 +6,4 @@ namespace Sgl
 	/// Base empty class for all event arguments
 	/// </summary>
 	struct EventArgs {};
-
-	constexpr inline EventArgs EmptyEventArgs;
 }

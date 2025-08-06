@@ -6,8 +6,8 @@ namespace Sgl
 {
 	Scene::Scene():
 		_cursor(Cursors::Arrow),
-		_background(Colors::Black, nullptr),
-		_content(nullptr),
+		_background(Colors::Black),
+		_content(),
 		_stylingParent(App.Current())
 	{}
 
@@ -21,21 +21,6 @@ namespace Sgl
 		}
 	}
 
-	void Scene::SetBackground(Color value)
-	{
-		_background.Color = value;
-	}
-
-	void Scene::SetBackground(Shared<Texture> value)
-	{
-		_background.Texture = std::move(value);
-	}
-
-	void Scene::SetBackground(Color color, Shared<Texture> texture)
-	{
-		_background = Background(color, std::move(texture));
-	}
-
 	void Scene::SetContent(Shared<UIElement> value)
 	{
 		_content = std::move(value);
@@ -43,16 +28,15 @@ namespace Sgl
 	}
 
 	void Scene::Render(RenderContext context) const
-	{
-		if(_background.Texture)
+	{		
+		switch(_background.GetType())
 		{
-			context.DrawTexture(*_background.Texture, _background.Color);
+			case Brush::Color:
+				context.FillBackground(_background.AsColor()); break;
+			case Brush::Texture:
+				context.DrawTexture(*_background.AsTexture()); break;
 		}
-		else
-		{
-			context.FillBackground(_background.Color);
-		}
-		
+
 		if(_content && _content->IsVisible())
 		{
 			_content->Render(context);

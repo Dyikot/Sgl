@@ -12,7 +12,7 @@ namespace Sgl
 		Stopwatch _stopwatch;
 		size_t _fps = 0;
 		size_t _frames = 0;
-		TimeSpan _elapsed = TimeSpan::Zero();
+		TimeSpan _elapsed = TimeSpan::Zero;
 	public:
 		size_t GetFps() const { return _fps; }
 
@@ -26,7 +26,7 @@ namespace Sgl
 				_fps = _frames;
 
 				_frames = 0;
-				_elapsed = TimeSpan::Zero();
+				_elapsed = TimeSpan::Zero;
 			}
 
 			_stopwatch.Restart();

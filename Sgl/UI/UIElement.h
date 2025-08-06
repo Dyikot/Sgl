@@ -8,6 +8,7 @@
 #include "../Render/IRenderable.h"
 #include "../Render/Texture.h"
 #include "Layoutable.h"
+#include "../Base/Media/Brush.h"
 #include <type_traits>
 
 namespace Sgl
@@ -37,8 +38,7 @@ namespace Sgl
 		bool _isMouseOver;
 	private:
 		std::reference_wrapper<const Cursor> _cursor;
-		Shared<Texture> _backgroundTexture;
-		Color _backgroundColor;
+		Brush _background;
 		Any _tag;
 		Shared<UIElement> _toolTip;
 		size_t _zIndex;
@@ -58,24 +58,14 @@ namespace Sgl
 			return _cursor;
 		}
 
-		void SetBackgroundTexture(Shared<Texture> value) 
+		void SetBackground(Brush value)
 		{ 
-			SetProperty(BackgroundTextureProperty, _backgroundTexture, value);
+			SetProperty(BackgroundProperty, _background, value);
 		}
 
-		Shared<Texture> GetBackgroundTexture() const
-		{ 
-			return _backgroundTexture; 
-		}
-
-		void SetBackgroundColor(Color value) 
-		{ 
-			SetProperty(BackgroundColorProperty, _backgroundColor, value);
-		}
-
-		Color GetBackgroundColor() const 
-		{ 
-			return _backgroundColor;
+		Brush GetBackground() const
+		{
+			return _background;
 		}
 
 		void SetTag(const Any& value) 
@@ -166,11 +156,8 @@ namespace Sgl
 		static inline BindableProperty<UIElement, std::reference_wrapper<const Cursor>, const Cursor&> CursorProperty =
 			BindableProperty<UIElement, std::reference_wrapper<const Cursor>, const Cursor&>(&SetCursor, Cursors::Arrow);
 
-		static inline BindableProperty<UIElement, Shared<Texture>> BackgroundTextureProperty =
-			BindableProperty<UIElement, Shared<Texture>>(&SetBackgroundTexture);
-
-		static inline BindableProperty<UIElement, Color> BackgroundColorProperty =
-			BindableProperty<UIElement, Color>(&SetBackgroundColor, Colors::Transparent);
+		static inline BindableProperty<UIElement, Brush> BackgroundProperty =
+			BindableProperty<UIElement, Brush>(&SetBackground, Colors::Transparent);
 
 		static inline BindableProperty<UIElement, Any, const Any&> TagProperty =
 			BindableProperty<UIElement, Any, const Any&>(&SetTag);

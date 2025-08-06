@@ -9,9 +9,11 @@ namespace Sgl
     constexpr static auto DefaultPosition = Point(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 
     Window::Window() noexcept:
+        IsRenderableWhenMinimized(),
         _window(SDL_CreateWindow(DefaultTitle, DefaultPosition.x, DefaultPosition.y,
                                  DefaultWidth, DefaultHeight, SDL_WINDOW_HIDDEN)),
-        _renderer(SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED))
+        _renderer(SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED)),
+        _hasVSync()
     {
         Log::PrintSDLErrorIf(_window == nullptr);
         Log::PrintSDLErrorIf(_renderer == nullptr);

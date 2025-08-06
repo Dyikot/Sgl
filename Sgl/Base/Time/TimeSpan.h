@@ -1,11 +1,21 @@
 #pragma once
 
 #include <format>
+#include <numeric>
+#include <compare>
 
 namespace Sgl
 {
 	class TimeSpan
 	{
+	private:
+		struct TimeSpanZero {};
+		struct TimeSpanMax {};
+		struct TimeSpanMin {};
+	public:
+		constexpr static TimeSpanZero Zero;
+		constexpr static TimeSpanMax MaxValue;
+		constexpr static TimeSpanMin MinValue;
 	private:
 		static constexpr double NanosecondsPerMicrosecond = 1e3;
 		static constexpr double NanosecondsPerMillisecond = 1e6;
@@ -19,10 +29,22 @@ namespace Sgl
 		static constexpr long long ThresholdSeconds = 10 * NanosecondsPerSecond;
 		static constexpr long long ThresholdMinutes = 10 * NanosecondsPerMinute;
 		static constexpr long long ThresholdHours = 10 * NanosecondsPerHour;
-		static constexpr long long ThresholdDays = 10 * NanosecondsPerHour;
+		static constexpr long long ThresholdDays = 10 * NanosecondsPerDay;
 
 		long long _nanoseconds;
 	public:
+		constexpr TimeSpan(TimeSpanZero):
+			_nanoseconds()
+		{}
+
+		constexpr TimeSpan(TimeSpanMax) :
+			_nanoseconds(std::numeric_limits<long long>::max())
+		{}
+
+		constexpr TimeSpan(TimeSpanMin) :
+			_nanoseconds(std::numeric_limits<long long>::min())
+		{}
+
 		constexpr explicit TimeSpan(long long nanoseconds) noexcept:
 			_nanoseconds(nanoseconds)
 		{}
@@ -33,37 +55,32 @@ namespace Sgl
 
 		static constexpr TimeSpan FromMicroseconds(long long value) noexcept
 		{
-			return TimeSpan(value * NanosecondsPerMicrosecond);
+			return TimeSpan(value * static_cast<long long>(NanosecondsPerMicrosecond));
 		}
 
 		static constexpr TimeSpan FromMilliseconds(long long value) noexcept
 		{
-			return TimeSpan(value * NanosecondsPerMillisecond);
+			return TimeSpan(value * static_cast<long long>(NanosecondsPerMillisecond));
 		}
 
 		static constexpr TimeSpan FromSeconds(long long value) noexcept
 		{
-			return TimeSpan(value * NanosecondsPerSecond);
+			return TimeSpan(value * static_cast<long long>(NanosecondsPerSecond));
 		}
 
 		static constexpr TimeSpan FromMinutes(long long value) noexcept
 		{
-			return TimeSpan(value * NanosecondsPerMinute);
+			return TimeSpan(value * static_cast<long long>(NanosecondsPerMinute));
 		}
 
 		static constexpr TimeSpan FromHours(long long value) noexcept
 		{
-			return TimeSpan(value * NanosecondsPerHour);
+			return TimeSpan(value * static_cast<long long>(NanosecondsPerHour));
 		}
 
 		static constexpr TimeSpan FromDays(long long value) noexcept
 		{
-			return TimeSpan(value * NanosecondsPerDay);
-		}
-
-		static constexpr TimeSpan Zero() noexcept
-		{
-			return TimeSpan(0);
+			return TimeSpan(value * static_cast<long long>(NanosecondsPerDay));
 		}
 
 		constexpr long long ToNanoseconds() const noexcept
@@ -148,10 +165,7 @@ namespace Sgl
 			return TimeSpan(-other._nanoseconds);
 		}
 
-		friend constexpr auto operator<=>(TimeSpan left, TimeSpan right) noexcept
-		{
-			return left._nanoseconds <=> right._nanoseconds;
-		}
+		friend constexpr auto operator<=>(TimeSpan, TimeSpan) noexcept = default;
 
 		constexpr TimeSpan& operator+=(TimeSpan other) noexcept
 		{

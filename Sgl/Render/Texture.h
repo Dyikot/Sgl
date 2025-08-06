@@ -14,7 +14,7 @@ namespace Sgl
 	class Texture
 	{
 	protected:
-		SDL_Texture* _texture = nullptr;
+		SDL_Texture* _texture;
 	public:
 		explicit Texture(std::string_view path);
 		explicit Texture(const Surface& surface);

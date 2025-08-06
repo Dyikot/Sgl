@@ -6,7 +6,8 @@
 namespace Sgl
 {
 	Application::Application() noexcept:
-		_stylingParent(nullptr)
+		_stylingParent(),
+		_isRunning()
 	{
 		_current = this;
 
@@ -32,19 +33,19 @@ namespace Sgl
 
 	void Application::Run()
 	{		
-		if(_running)
+		if(_isRunning)
 		{
 			return;
 		}
 
-		_running = true;
+		_isRunning = true;
 		Window.Show();
 		RunApp();
 	}
 
 	void Application::Shutdown()
 	{
-		_running = false;
+		_isRunning = false;
 		OnShutdown();
 	}
 
@@ -262,7 +263,7 @@ namespace Sgl
 		Stopwatch delayStopwatch, sceneStopwatch;
 		sceneStopwatch.Start();
 
-		while(_running)
+		while(_isRunning)
 		{
 			auto scene = SceneManager.GetNextScene();
 
@@ -294,11 +295,11 @@ namespace Sgl
 
 	void Application::OnRun()
 	{
-		Started.TryInvoke(*this, EmptyEventArgs);
+		Started.TryInvoke(*this, EventArgs());
 	}
 
 	void Application::OnShutdown()
 	{
-		Stopped.TryInvoke(*this, EmptyEventArgs);
+		Stopped.TryInvoke(*this, EventArgs());
 	}
 }
