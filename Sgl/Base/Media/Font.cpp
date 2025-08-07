@@ -14,7 +14,7 @@ namespace Sgl
 		return basePath.string();
 	}
 
-	FontFamily::FontFamily():
+	FontFamily::FontFamily(DefaultFontFamilty):
 		_source(FalimiesPath, DefaultFamily)
 	{}
 
@@ -101,64 +101,17 @@ namespace Sgl
 		return _style.to_ulong();
 	}
 
-	Font::Font(FontFamily fontFamily, size_t size):
-		Antialiasing(true),
-		Color(Colors::Black),
-		_style(),
-		_size(size),
-		_font(TTF_OpenFont(fontFamily.Source().data(), size)),
-		_fontFamily(std::move(fontFamily))
+	FontImpl::FontImpl(const FontFamily& fontFamily, size_t size):
+		_font(TTF_OpenFont(fontFamily.Source().data(), size))
 	{
 		Log::PrintSDLErrorIf(_font == nullptr);
 	}
 
-	Font::Font(Font&& other) noexcept:
-		Antialiasing(other.Antialiasing),
-		Color(other.Color),
-		_style(other._style),
-		_size(other._size),
-		_font(std::exchange(other._font, nullptr)),
-		_fontFamily(other._fontFamily)
-	{}
-
-	Font::~Font()
+	FontImpl::~FontImpl()
 	{
 		if(_font)
 		{
 			TTF_CloseFont(_font);
 		}
-	}
-
-	void Font::SetSize(size_t value)
-	{
-		TTF_SetFontSize(_font, value);
-		_size = value;
-	}
-
-	size_t Font::GetSize() const
-	{
-		return _size;
-	}
-
-	void Font::SetStyle(FontStyle value)
-	{
-		_style = value;
-		TTF_SetFontStyle(_font, _style.ToTTF_Style());
-	}
-
-	FontStyle Font::GetStyle() const
-	{
-		return _style;
-	}
-
-	Font& Font::operator=(Font&& other) noexcept
-	{
-		Antialiasing = other.Antialiasing;
-		Color = other.Color;
-		_style = other._style;
-		_size = other._size;
-		_font = std::exchange(other._font, nullptr);
-		_fontFamily = other._fontFamily;
-		return *this;
 	}
 }

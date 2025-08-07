@@ -1,15 +1,13 @@
 #pragma once
 
+#include <type_traits>
 #include "../Base/Any.h"
+#include "../Base/Media/Brush.h"
 #include "../Base/Observable/Event.h"
-#include "../Base/Collections/ResourcesMap.h"
 #include "../Input/Cursor.h"
 #include "../Input/MouseAndKeyEventArgs.h"
 #include "../Render/IRenderable.h"
-#include "../Render/Texture.h"
 #include "Layoutable.h"
-#include "../Base/Media/Brush.h"
-#include <type_traits>
 
 namespace Sgl
 {
@@ -31,12 +29,9 @@ namespace Sgl
 		Event<MouseButtonEventHandler> MouseUp;
 		Event<MouseButtonEventHandler> MouseDown;
 		Event<MouseWheelEventHandler> MouseWheel;
-
-		ResourcesMap Resources;
-		Shared<void> DataContext;
 	protected:
 		bool _isMouseOver;
-	private:
+	private:		
 		std::reference_wrapper<const Cursor> _cursor;
 		Brush _background;
 		Any _tag;
@@ -48,57 +43,21 @@ namespace Sgl
 		UIElement(UIElement&& other) noexcept;
 		virtual ~UIElement() = default;
 		
-		void SetCursor(const Cursor& value)
-		{ 
-			SetProperty(CursorProperty, _cursor, value);
-		}
+		void SetCursor(const Cursor& value) { SetProperty(CursorProperty, _cursor, value); }
+		const Cursor& GetCursor() const { return _cursor; }
 
-		const Cursor& GetCursor() const
-		{ 
-			return _cursor;
-		}
+		void SetBackground(Brush value) { SetProperty(BackgroundProperty, _background, value); }
+		Brush GetBackground() const { return _background; }
 
-		void SetBackground(Brush value)
-		{ 
-			SetProperty(BackgroundProperty, _background, value);
-		}
+		void SetTag(const Any& value) { SetProperty(TagProperty, _tag, value); }
+		const Any& GetTag() const { return _tag; }
 
-		Brush GetBackground() const
-		{
-			return _background;
-		}
+		void SetToolTip(Shared<UIElement> value) { SetProperty(ToolTipProperty, _toolTip, value); }
+		Shared<UIElement> GetToolTip() const { return _toolTip; }
 
-		void SetTag(const Any& value) 
-		{ 
-			SetProperty(TagProperty, _tag, value);
-		}
+		void SetZIndex(size_t value) { SetProperty(ZIndexProperty, _zIndex, value); }
+		size_t GetZIndex() const { return _zIndex; }
 
-		const Any& GetTag() const 
-		{ 
-			return _tag;
-		}
-
-		void SetToolTip(Shared<UIElement> value) 
-		{ 
-			SetProperty(ToolTipProperty, _toolTip, value);
-		}
-
-		Shared<UIElement> GetToolTip() const
-		{ 
-			return _toolTip;
-		}
-
-		void SetZIndex(size_t value)
-		{ 
-			SetProperty(ZIndexProperty, _zIndex, value);
-		}
-
-		size_t GetZIndex() const 
-		{ 
-			return _zIndex;
-		}
-
-		Scene& GetScene();
 		bool IsMouseOver() const { return _isMouseOver; }
 
 		void Render(RenderContext context) const override;
@@ -147,11 +106,6 @@ namespace Sgl
 			MouseLeave.TryInvoke(*this, e);
 			_isMouseOver = false;
 		}
-		
-		friend class Scene;
-		friend class Panel;
-		friend class ContentUIElement;
-		friend class UIElementsCollection;
 	public:
 		static inline BindableProperty<UIElement, std::reference_wrapper<const Cursor>, const Cursor&> CursorProperty =
 			BindableProperty<UIElement, std::reference_wrapper<const Cursor>, const Cursor&>(&SetCursor, Cursors::Arrow);
@@ -167,6 +121,11 @@ namespace Sgl
 
 		static inline BindableProperty<UIElement, size_t> ZIndexProperty =
 			BindableProperty<UIElement, size_t>(&SetZIndex);
+
+		friend class Scene;
+		friend class Panel;
+		friend class ContentUIElement;
+		friend class UIElementsCollection;
 	};
 
 	struct UIElementComparer

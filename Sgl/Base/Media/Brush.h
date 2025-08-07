@@ -62,28 +62,11 @@ namespace Sgl
 			return *this;
 		}
 
-		Brush& operator=(const Brush& other)
-		{
-			_value = other._value;
-			return *this;
-		}
+		Brush& operator=(const Brush&) = default;
+		Brush& operator=(Brush&&) noexcept = default;
+		friend bool operator==(const Brush&, const Brush&) = default;
 
-		Brush& operator=(Brush&& other) noexcept
-		{
-			_value = std::move(other._value);
-			return *this;
-		}
-
-		explicit operator Sgl::Color() const
-		{
-			return std::get<Sgl::Color>(_value);
-		}
-
-		explicit operator Shared<Sgl::Texture>() const
-		{
-			return std::get<Shared<Sgl::Texture>>(_value);
-		}
-
-		friend auto operator<=>(const Brush&, const Brush&) = default;
+		explicit operator Sgl::Color() const { return AsColor(); }
+		explicit operator Shared<Sgl::Texture>() const { return AsTexture(); }
 	};
 }

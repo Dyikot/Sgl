@@ -4,6 +4,7 @@
 #include "StyleMap.h"
 #include "ClassesCollections.h"
 #include "../Binding/BindableObject.h"
+#include "../../Base/Collections/ResourcesMap.h"
 
 namespace Sgl
 {
@@ -12,6 +13,8 @@ namespace Sgl
 	public:
 		StyleMap Styles;
 		ClassesCollection Classes;
+		ResourcesMap Resources;
+		Shared<void> DataContext;
 	protected:
 		IStyleProvider* _stylingParent;
 	private:

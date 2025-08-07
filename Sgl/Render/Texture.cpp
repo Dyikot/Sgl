@@ -58,10 +58,6 @@ namespace Sgl
 		RenderOnTexture(_texture, renderFragment);
 	}
 
-	Texture::Texture(const std::string& text, const Font& font):
-		Texture(Surface(text, font))
-	{}
-
 	Texture::Texture(SDL_Texture* texture):
 		_texture(texture)
 	{

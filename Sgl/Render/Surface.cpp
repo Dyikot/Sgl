@@ -15,14 +15,6 @@ namespace Sgl
 		Log::PrintSDLErrorIf(_surface == nullptr);
 	}
 
-	Surface::Surface(const std::string& text, const Font& font):
-		_surface(font.Antialiasing 
-			? TTF_RenderText_Blended(font, text.c_str(), font.Color)
-			: TTF_RenderText_Solid(font, text.c_str(), font.Color))
-	{
-		Log::PrintSDLErrorIf(_surface == nullptr);
-	}
-
 	Surface::Surface(Surface && other) noexcept:
 		_surface(std::exchange(other._surface, nullptr))
 	{}

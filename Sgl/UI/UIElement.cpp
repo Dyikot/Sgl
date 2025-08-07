@@ -1,11 +1,9 @@
 #include "UIElement.h"
-#include "../Scene/Scene.h"
 
 namespace Sgl
 {
 	UIElement::UIElement():
 		Layoutable(),
-		DataContext(),
 		_isMouseOver(false),
 		_cursor(CursorProperty.DefaultValue),
 		_background(BackgroundProperty.DefaultValue),
@@ -16,7 +14,6 @@ namespace Sgl
 
 	UIElement::UIElement(const UIElement& other):
 		Layoutable(other),
-		DataContext(other.DataContext),
 		_isMouseOver(other._isMouseOver),
 		_cursor(other._cursor),
 		_background(other._background),
@@ -27,7 +24,6 @@ namespace Sgl
 
 	UIElement::UIElement(UIElement&& other) noexcept:
 		Layoutable(std::move(other)),
-		DataContext(std::move(other.DataContext)),
 		_isMouseOver(other._isMouseOver),
 		_cursor(other._cursor),
 		_background(std::move(other._background)),
@@ -35,18 +31,6 @@ namespace Sgl
 		_toolTip(std::move(other._toolTip)),
 		_zIndex(other._zIndex)
 	{}
-
-	Scene& UIElement::GetScene()
-	{
-		Scene* scene = nullptr;
-
-		while(scene == nullptr)
-		{
-			scene = dynamic_cast<Scene*>(_stylingParent);
-		}
-
-		return *scene;
-	}
 
 	void UIElement::Render(RenderContext context) const
 	{		

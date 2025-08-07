@@ -7,15 +7,11 @@
 #include "../Base/Delegate.h"
 #include "../Base/Primitives.h"
 #include "../Base/Media/Color.h"
+#include "../Base/Media/Layout.h"
 
 namespace Sgl
 {
-	class Texture;
-
-	enum class Orientation
-	{
-		Horizontal = 1, Vertical = 2
-	};
+	class Texture;	
 
 	class RenderContext
 	{

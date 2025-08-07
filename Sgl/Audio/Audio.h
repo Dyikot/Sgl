@@ -16,6 +16,7 @@ namespace Sgl
 
 		static constexpr double MaxValue = 1;
 		static constexpr double MinValue = 0;
+
 		double _value;
 	public:
 		static constexpr VolumeMax Max;

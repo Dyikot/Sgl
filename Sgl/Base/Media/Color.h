@@ -4,38 +4,86 @@
 
 namespace Sgl
 {
+	/// <summary>
+	/// Represents a color with red, green, blue, and alpha components.
+	/// </summary>
 	class Color
 	{
 	public:
+		/// <summary>
+		/// Red component value (0-255)
+		/// </summary>
 		uint8_t Red;
+
+		/// <summary>
+		/// Green component value (0-255)
+		/// </summary>
 		uint8_t Green;
+
+		/// <summary>
+		/// Blue component value (0-255)
+		/// </summary>
 		uint8_t Blue;
+
+		/// <summary>
+		/// Alpha (transparency) component value (0-255, where 0 is fully transparent and 255 is fully opaque)
+		/// </summary>
 		uint8_t Alpha;
 	public:
+		/// <summary>
+		/// Initializes a new instance of the Color structure with individual RGBA values
+		/// </summary>
+		/// <param name="red">- red component value (0-255)</param>
+		/// <param name="green">- green component value (0-255)</param>
+		/// <param name="blue">- blue component value (0-255)</param>
+		/// <param name="alpha">- alpha component value (0-255)</param>
 		constexpr Color(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha):
 			Red(red), Green(green), Blue(blue), Alpha(alpha)
 		{}
 
+		/// <summary>
+		/// Initializes a new instance of the Color structure with RGB values and full opacity
+		/// </summary>
+		/// <param name="red">- red component value (0-255)</param>
+		/// <param name="green">- green component value (0-255)</param>
+		/// <param name="blue">- blue component value (0-255)</param>
 		constexpr Color(uint8_t red, uint8_t green, uint8_t blue):
 			Color(red, green, blue, 0xff)
 		{}
 
+		/// <summary>
+		/// Initializes a new instance of the Color structure from a 32-bit RGBA value
+		/// </summary>
+		/// <param name="rgba">- 32-bit value where bits 31-24 (Red), 23-16 (Green), 15-8 (Blue), 7-0 (Alpha)</param>
 		constexpr explicit Color(uint32_t rgba):
 			Red(rgba >> 24), Green(rgba >> 16), Blue(rgba >> 8), Alpha(rgba)
 		{}
 
-		constexpr bool IsTransparent() const noexcept 
+		/// <summary>
+		/// Determines whether this color is fully transparent
+		/// </summary>
+		/// <returns>True if Alpha is 0, false otherwise</returns>
+		constexpr bool IsTransparent() const noexcept
 		{
 			return Alpha == 0x00;
 		}
 
-		constexpr bool operator==(Color color) const 
+		/// <summary>
+		/// Compares this color with another color for equality (RGB components only)
+		/// </summary>
+		/// <param name="color">- the color to compare with</param>
+		/// <returns>True if RGB components are equal, false otherwise</returns>
+		constexpr bool operator==(Color color) const
 		{
 			return Red == color.Red && Green == color.Green && Blue == color.Blue;
 		}
 
-		constexpr operator SDL_Color() const 
-		{ 
+		/// <summary>
+		/// Converts this Color to an SDL_Color structure
+		/// </summary>
+		/// <returns>SDL_Color representation of this color</returns>
+		constexpr operator SDL_Color() const
+		{
 			return SDL_Color(Red, Green, Blue, Alpha);
 		}
 	};

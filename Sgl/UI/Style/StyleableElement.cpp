@@ -6,6 +6,8 @@ namespace Sgl
 		BindableObject(),
 		Styles(),
 		Classes(),
+		Resources(),
+		DataContext(),
 		_stylingParent(nullptr),
 		_isStyleValid(false),
 		_styles()
@@ -15,6 +17,8 @@ namespace Sgl
 		BindableObject(other),
 		Styles(other.Styles),
 		Classes(other.Classes),
+		Resources(other.Resources),
+		DataContext(other.DataContext),
 		_stylingParent(other._stylingParent),
 		_isStyleValid(other._isStyleValid),
 		_styles(other._styles)
@@ -24,6 +28,8 @@ namespace Sgl
 		BindableObject(std::move(other)),
 		Styles(std::move(other.Styles)),
 		Classes(std::move(other.Classes)),
+		Resources(std::move(other.Resources)),
+		DataContext(std::move(other.DataContext)),
 		_stylingParent(std::exchange(other._stylingParent, nullptr)),
 		_isStyleValid(other._isStyleValid),
 		_styles(std::move(other._styles))

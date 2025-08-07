@@ -16,7 +16,6 @@ namespace Sgl
 	public:
 		explicit Surface(std::string_view path);
 		explicit Surface(SDL_Surface* surface);
-		Surface(const std::string& text, const Font& font);
 		Surface(Surface&& other) noexcept;
 		Surface(const Surface&) = delete;
 		~Surface();

@@ -9,11 +9,15 @@
 namespace Sgl
 {
 	class FontFamily
-	{
+	{	
+	private:
+		struct DefaultFontFamilty {};
+	public:
+		static constexpr DefaultFontFamilty Default;
 	private:
 		std::string _source;
 	public:
-		FontFamily();
+		FontFamily(DefaultFontFamilty);
 		explicit FontFamily(const std::string& name);
 		FontFamily(const std::string& path, const std::string& name);
 		FontFamily(const FontFamily& other);
@@ -23,6 +27,11 @@ namespace Sgl
 
 		FontFamily& operator=(const FontFamily& other);
 		FontFamily& operator=(FontFamily&& other) noexcept;
+	};
+
+	enum class FontWeight
+	{
+		Normal, Bold
 	};
 
 	class FontStyle
@@ -48,30 +57,28 @@ namespace Sgl
 		int ToTTF_Style() const;
 	};
 
-	class Font
+	class FontImpl
 	{
-	public:
-		bool Antialiasing;
-		Color Color;
 	private:
-		size_t _size;
 		TTF_Font* _font;
-		FontStyle _style;
-		FontFamily _fontFamily;
 	public:
-		Font(FontFamily fontFamily, size_t size);
-		Font(const Font&) = delete;
-		Font(Font&& other) noexcept;
-		~Font();
+		FontImpl(const FontFamily& fontFamily, size_t size);
+		FontImpl(const FontImpl&) = delete;
+		FontImpl(FontImpl&&) = default;
+		~FontImpl();
 
-		void SetSize(size_t value);
-		size_t GetSize() const;		
-		
-		void SetStyle(FontStyle value);
-		FontStyle GetStyle() const;
+		void SetSize(size_t value)
+		{
+			TTF_SetFontSize(_font, value);
+		}
 
-		Font& operator=(const Font&) = delete;
-		Font& operator=(Font&& other) noexcept;
+		void SetStyle(FontStyle value)
+		{
+			TTF_SetFontStyle(_font, value.ToTTF_Style());
+		}
+
+		FontImpl& operator=(const FontImpl&) = delete;
+		FontImpl& operator=(FontImpl&&) = default;
 		operator TTF_Font* () const { return _font; }
 	};
 }

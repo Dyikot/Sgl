@@ -32,7 +32,7 @@ namespace Sgl
 		}
 		else
 		{
-			return std::format("{:.2f} hr", ToDays());
+			return std::format("{:.2f} days", ToDays());
 		}
 	}
 }

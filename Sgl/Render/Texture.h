@@ -22,7 +22,6 @@ namespace Sgl
 		Texture(TextureAccess textureAccess, Size size, RenderFragment renderFragment);
 		Texture(SDL_PixelFormatEnum pixelFormat, TextureAccess textureAccess, Size size);
 		Texture(SDL_PixelFormatEnum pixelFormat, TextureAccess textureAccess, Size size, RenderFragment renderFragment);
-		Texture(const std::string& text, const Font& font);
 		Texture(SDL_Texture* texture);
 		Texture(const Texture&) = delete;
 		Texture(Texture&& other) noexcept;

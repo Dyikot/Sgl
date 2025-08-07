@@ -15,6 +15,8 @@ namespace Sgl
         std::vector<Unique<ISetter<T>>> _setters;
     public:
         Style() = default;
+        Style(const Style&) = default;
+        Style(Style&&) = default;
 
         auto begin() { return _setters.begin(); }
         auto end() { return _setters.end(); }
@@ -23,15 +25,10 @@ namespace Sgl
         auto end() const { return _setters.end(); }
 
         template<typename TOwner, typename TValue, typename TInput = T>
-        Style<T>& With(BindableProperty<TOwner, TValue, TInput>& property, const std::remove_reference_t<TInput>& value)
+        Style<T>& With(BindableProperty<TOwner, TValue, TInput>& property, 
+                       const std::remove_reference_t<TInput>& value)
         {
             _setters.push_back(NewUnique<Setter<T, TOwner, TValue, TInput>>(property, value));
-            return *this;
-        }
-
-        Style<T>& With(Unique<ISetter<T>> setter)
-        {
-            _setters.push_back(std::move(setter));
             return *this;
         }
 
