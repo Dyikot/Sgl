@@ -22,16 +22,16 @@ namespace Sgl
 		switch(renderType)
 		{
 			case Sgl::FontRenderType::Blended:
-				_surface = TTF_RenderText_Blended(font, text.data(), foreground);
+				_surface = TTF_RenderUTF8_Blended(font, text.data(), foreground);
 				break;
 			case Sgl::FontRenderType::Solid:
-				_surface = TTF_RenderText_Solid(font, text.data(), foreground);
+				_surface = TTF_RenderUTF8_Solid(font, text.data(), foreground);
 				break;
 			case Sgl::FontRenderType::Shaded:
-				_surface = TTF_RenderText_Shaded(font, text.data(), foreground, background);
+				_surface = TTF_RenderUTF8_Shaded(font, text.data(), foreground, background);
 				break;
 			case Sgl::FontRenderType::LCD:
-				_surface = TTF_RenderText_LCD(font, text.data(), foreground, background);
+				_surface = TTF_RenderUTF8_LCD(font, text.data(), foreground, background);
 				break;
 		}
 
@@ -44,16 +44,16 @@ namespace Sgl
 		switch(renderType)
 		{
 			case Sgl::FontRenderType::Blended:
-				_surface = TTF_RenderText_Blended_Wrapped(font, text.data(), foreground, wrapLength);
+				_surface = TTF_RenderUTF8_Blended_Wrapped(font, text.data(), foreground, wrapLength);
 				break;
 			case Sgl::FontRenderType::Solid:
-				_surface = TTF_RenderText_Solid_Wrapped(font, text.data(), foreground, wrapLength);
+				_surface = TTF_RenderUTF8_Solid_Wrapped(font, text.data(), foreground, wrapLength);
 				break;
 			case Sgl::FontRenderType::Shaded:
-				_surface = TTF_RenderText_Shaded_Wrapped(font, text.data(), foreground, background, wrapLength);
+				_surface = TTF_RenderUTF8_Shaded_Wrapped(font, text.data(), foreground, background, wrapLength);
 				break;
 			case Sgl::FontRenderType::LCD:
-				_surface = TTF_RenderText_LCD_Wrapped(font, text.data(), foreground, background, wrapLength);
+				_surface = TTF_RenderUTF8_LCD_Wrapped(font, text.data(), foreground, background, wrapLength);
 				break;
 		}
 
