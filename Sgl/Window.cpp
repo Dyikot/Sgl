@@ -21,12 +21,6 @@ namespace Sgl
         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
     }
 
-    Window::~Window() noexcept
-    {
-        SDL_DestroyRenderer(_renderer);
-        SDL_DestroyWindow(_window);
-    }
-
     SDL_Window* Window::GetSDL_Window() const noexcept
     {
         return _window;

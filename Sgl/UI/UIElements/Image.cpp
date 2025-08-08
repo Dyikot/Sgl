@@ -26,7 +26,7 @@ namespace Sgl::UIElements
 		_sourceTexture(std::move(other._sourceTexture))
 	{}
 
-	void Image::Render(RenderContext context) const
+	void Image::Render(RenderContext context)
 	{
 		RenderBackground(context);
 

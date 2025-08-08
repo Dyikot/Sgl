@@ -34,7 +34,7 @@ namespace Sgl::UIElements
 			return _borderColor; 
 		}
 
-		void Render(RenderContext context) const final;
+		void Render(RenderContext context) final;
 	public:
 		static inline BindableProperty<Border, size_t> BorderWidthProperty =
 			BindableProperty<Border, size_t>(&SetBorderWidth, 1);

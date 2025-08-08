@@ -27,7 +27,7 @@ namespace Sgl
 		_content->_stylingParent = this;
 	}
 
-	void Scene::Render(RenderContext context) const
+	void Scene::Render(RenderContext context)
 	{		
 		switch(_background.GetType())
 		{

@@ -32,7 +32,7 @@ namespace Sgl
 		_zIndex(other._zIndex)
 	{}
 
-	void UIElement::Render(RenderContext context) const
+	void UIElement::Render(RenderContext context)
 	{		
 		if(_toolTip && _toolTip->IsVisible())
 		{

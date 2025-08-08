@@ -37,7 +37,7 @@ namespace Sgl
 		StyleMap& GetStyles() override { return Styles; }
 		IStyleProvider* GetStylingParent() { return _stylingParent; }
 
-		void Render(RenderContext context) const override;
+		void Render(RenderContext context) override;
 		virtual void Process(TimeSpan elapsed);
 	protected:
 		virtual void OnResumed() {}

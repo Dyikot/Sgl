@@ -16,6 +16,7 @@ namespace Sgl
         StyleMap() = default;
         StyleMap(const StyleMap& other);
         StyleMap(StyleMap&& other) noexcept;
+        ~StyleMap() = default;
 
         auto begin() { return _items.begin(); }
         auto end() { return _items.end(); }

@@ -26,6 +26,7 @@ namespace Sgl
 		void Push(SceneFactory sceneFactory);
 
 		void Pop() noexcept;
+		void Clear();
 		Scene* GetCurrentScene();
 	private:
 		Scene* GetNextScene();

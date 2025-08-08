@@ -27,44 +27,45 @@ namespace Sgl
 
 		FontFamily& operator=(const FontFamily& other);
 		FontFamily& operator=(FontFamily&& other) noexcept;
-	};
-
-	enum class FontWeight
-	{
-		Normal, Bold
+		friend bool operator==(const FontFamily&, const FontFamily&) = default;
 	};
 
 	class FontStyle
 	{
-	private:
-		std::bitset<4> _style;
 	public:
-		FontStyle() = default;
+		static constexpr unsigned long Bold = 1;
+		static constexpr unsigned long Italic = 2;
+		static constexpr unsigned long Underline = 4;
+		static constexpr unsigned long Strikethrough = 8;
+	private:
+		std::bitset<4> _flags;
+	public:
+		constexpr FontStyle() = default;
+		constexpr FontStyle(unsigned long flags): _flags(flags) {}
+		constexpr FontStyle(const FontStyle&) = default;
+		constexpr FontStyle(FontStyle&&) = default;
 
-		void SetItalic(bool value = true);
-		bool IsItalic() const;
+		constexpr bool IsItalic() const { return _flags[0]; }
+		constexpr bool IsBold() const { return _flags[1]; }
+		constexpr bool HasUnderline() const { return _flags[2]; }
+		constexpr bool HasStrikethrough() const { return _flags[3]; }
 
-		void SetBold(bool value = true);
-		bool IsBold() const;
+		constexpr FontStyle& operator=(const FontStyle&) = default;
+		constexpr FontStyle& operator=(FontStyle&&) = default;
 
-		void SetUnderline(bool value = true);
-		bool HasUnderline() const;
-
-		void SetStrikethrough(bool value = true);
-		bool HasStrikethrough() const;
-
-		bool IsNormal() const;
-		int ToTTF_Style() const;
+		friend bool operator==(const FontStyle&, const FontStyle&) = default;
+		operator unsigned long() const noexcept { return _flags.to_ulong(); }
 	};
 
 	class FontImpl
 	{
 	private:
-		TTF_Font* _font;
+		TTF_Font* _font = nullptr;
 	public:
+		FontImpl() = default;
 		FontImpl(const FontFamily& fontFamily, size_t size);
 		FontImpl(const FontImpl&) = delete;
-		FontImpl(FontImpl&&) = default;
+		FontImpl(FontImpl&& other) noexcept;
 		~FontImpl();
 
 		void SetSize(size_t value)
@@ -74,11 +75,16 @@ namespace Sgl
 
 		void SetStyle(FontStyle value)
 		{
-			TTF_SetFontStyle(_font, value.ToTTF_Style());
+			TTF_SetFontStyle(_font, static_cast<unsigned long>(value));
 		}
 
 		FontImpl& operator=(const FontImpl&) = delete;
-		FontImpl& operator=(FontImpl&&) = default;
+		FontImpl& operator=(FontImpl&& other) noexcept;
 		operator TTF_Font* () const { return _font; }
+	};
+
+	enum class FontRenderType
+	{
+		Blended, Solid, Shaded, LCD 
 	};
 }

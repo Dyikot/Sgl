@@ -6,7 +6,7 @@
 namespace Sgl
 {
 	static constexpr auto FalimiesPath = "C:/Windows/Fonts/";
-	static constexpr auto DefaultFamily = "Segoe UI";
+	static constexpr auto DefaultFamily = "segoeui.ttf";
 
 	static std::string GetFullPath(const std::string& path, const std::string& name)
 	{
@@ -15,7 +15,7 @@ namespace Sgl
 	}
 
 	FontFamily::FontFamily(DefaultFontFamilty):
-		_source(FalimiesPath, DefaultFamily)
+		FontFamily(FalimiesPath, DefaultFamily)
 	{}
 
 	FontFamily::FontFamily(const std::string& name):
@@ -51,58 +51,14 @@ namespace Sgl
 		return *this;
 	}
 
-	void FontStyle::SetItalic(bool value)
-	{
-		_style.set(TTF_STYLE_ITALIC, value);
-	}
-
-	bool FontStyle::IsItalic() const
-	{
-		return _style[TTF_STYLE_ITALIC];
-	}
-
-	void FontStyle::SetBold(bool value)
-	{
-		_style.set(TTF_STYLE_BOLD, value);
-	}
-
-	bool FontStyle::IsBold() const
-	{
-		return _style[TTF_STYLE_BOLD];
-	}
-
-	void FontStyle::SetUnderline(bool value)
-	{
-		_style.set(TTF_STYLE_UNDERLINE, value);
-	}
-
-	bool FontStyle::HasUnderline() const
-	{
-		return _style[TTF_STYLE_UNDERLINE];
-	}
-
-	void FontStyle::SetStrikethrough(bool value)
-	{
-		_style.set(TTF_STYLE_STRIKETHROUGH, value);
-	}
-
-	bool FontStyle::HasStrikethrough() const
-	{
-		return _style[TTF_STYLE_STRIKETHROUGH];
-	}
-
-	bool FontStyle::IsNormal() const
-	{
-		return _style.none();
-	}
-
-	int FontStyle::ToTTF_Style() const
-	{
-		return _style.to_ulong();
-	}
-
 	FontImpl::FontImpl(const FontFamily& fontFamily, size_t size):
 		_font(TTF_OpenFont(fontFamily.Source().data(), size))
+	{
+		Log::PrintSDLErrorIf(_font == nullptr);
+	}
+
+	FontImpl::FontImpl(FontImpl&& other) noexcept:
+		_font(std::exchange(other._font, nullptr))
 	{
 		Log::PrintSDLErrorIf(_font == nullptr);
 	}
@@ -113,5 +69,11 @@ namespace Sgl
 		{
 			TTF_CloseFont(_font);
 		}
+	}
+
+	FontImpl& FontImpl::operator=(FontImpl&& other) noexcept
+	{
+		_font = std::exchange(other._font, nullptr);
+		return *this;
 	}
 }

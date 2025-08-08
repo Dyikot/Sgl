@@ -32,7 +32,7 @@ namespace Sgl
 		_contentPresenter(std::move(other._contentPresenter))
 	{}
 
-	void ContentUIElement::Render(RenderContext context) const
+	void ContentUIElement::Render(RenderContext context)
 	{
 		if(_contentPresenter && _contentPresenter->IsVisible())
 		{
@@ -135,11 +135,13 @@ namespace Sgl
 			};
 
 			 _contentPresenter->Measure(contentAvaliableSize);
-			 auto contentSize = _contentPresenter->GetDesiredSize();
-			 contentSize.Width += _padding.Left + _padding.Right;
-			 contentSize.Height += _padding.Top + _padding.Bottom;
+			 auto [width, height] = _contentPresenter->GetDesiredSize();
 
-			 return contentSize;
+			 return FSize 
+			 {
+				 .Width = width + _padding.Left + _padding.Right,
+				 .Height = height + _padding.Top + _padding.Bottom
+			 };
 		}
 
 		return FSize();
@@ -149,18 +151,12 @@ namespace Sgl
 	{
 		if(_contentPresenter)
 		{
-			auto availableWidth = rect.w;
-			auto availableHeight = rect.h;
-			auto desireSize = _contentPresenter->GetDesiredSize();
-			auto x = rect.x;
-			auto y = rect.y;
-
 			FRect finalRect =
 			{
-				.x = x + _padding.Left,
-				.y = y + _padding.Top,
-				.w = availableWidth - _padding.Left - _padding.Right,
-				.h = availableHeight - _padding.Top - _padding.Bottom
+				.x = rect.x + _padding.Left,
+				.y = rect.y + _padding.Top,
+				.w = rect.w - _padding.Left - _padding.Right,
+				.h = rect.h - _padding.Top - _padding.Bottom
 			};
 
 			if(finalRect.w < 0)

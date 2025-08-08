@@ -40,7 +40,7 @@ namespace Sgl::UIElements
 			return _stretch;
 		}
 
-		void Render(RenderContext context) const override;
+		void Render(RenderContext context) override;
 	protected:
 		void ArrangeCore(FRect rect) override;
 	public:

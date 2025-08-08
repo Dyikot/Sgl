@@ -21,7 +21,7 @@ namespace Sgl
         _currentChild(std::exchange(other._currentChild, nullptr))
     {}
 
-    void Panel::Render(RenderContext context) const
+    void Panel::Render(RenderContext context)
     {
         for(auto& child : Children)
         {

@@ -4,10 +4,7 @@ namespace Sgl
 {
 	SceneManager::~SceneManager()
 	{
-		while(!_scenes.empty())
-		{
-			DestroyScene();
-		}
+		Clear();
 	}
 
 	void SceneManager::Push(SceneFactory sceneFactory)
@@ -20,6 +17,14 @@ namespace Sgl
 		if(_scenesToDestory < _scenes.size())
 		{
 			_scenesToDestory++;
+		}
+	}
+
+	void SceneManager::Clear()
+	{
+		while(!_scenes.empty())
+		{
+			DestroyScene();
 		}
 	}
 

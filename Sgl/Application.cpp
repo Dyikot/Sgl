@@ -19,6 +19,9 @@ namespace Sgl
 
 	Application::~Application() noexcept
 	{
+		SceneManager.Clear();
+		SDL_DestroyRenderer(Window.GetRenderer());
+		SDL_DestroyWindow(Window.GetSDL_Window());
 		TTF_Quit();
 		IMG_Quit();
 		Mix_Quit();

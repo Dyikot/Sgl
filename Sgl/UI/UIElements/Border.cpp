@@ -18,7 +18,7 @@ namespace Sgl::UIElements
 		_borderColor(other._borderColor)
 	{}
 
-	void Border::Render(RenderContext context) const
+	void Border::Render(RenderContext context)
 	{
 		RenderBackground(context);
 

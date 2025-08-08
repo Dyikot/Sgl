@@ -56,7 +56,7 @@ namespace Sgl
 		Window() noexcept;
 		Window(const Window&) = delete;
 		Window(Window&&) = delete;
-		~Window() noexcept;
+		~Window() = default;
 
 		/// <summary>
 		/// Gets the underlying SDL window handle

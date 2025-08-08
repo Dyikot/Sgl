@@ -14,6 +14,11 @@ namespace Sgl
 	public:
 		using KeysView = std::ranges::elements_view<std::ranges::ref_view<const std::unordered_map<std::string_view, Any>>, 0ui64>;
 		using ValuesView = std::ranges::elements_view<std::ranges::ref_view<const std::unordered_map<std::string_view, Any>>, 1Ui64>;
+	public:
+		ResourcesMap() = default;
+		ResourcesMap(const ResourcesMap&) = default;
+		ResourcesMap(ResourcesMap&&) = default;
+		~ResourcesMap() = default;
 
 		auto begin() { return _resources.begin(); }
 		auto end() { return _resources.end(); }

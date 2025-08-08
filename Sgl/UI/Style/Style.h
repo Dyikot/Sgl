@@ -17,6 +17,7 @@ namespace Sgl
         Style() = default;
         Style(const Style&) = default;
         Style(Style&&) = default;
+        ~Style() = default;
 
         auto begin() { return _setters.begin(); }
         auto end() { return _setters.end(); }

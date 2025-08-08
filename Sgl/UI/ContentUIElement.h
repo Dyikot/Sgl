@@ -1,7 +1,7 @@
 #pragma once
 
 #include "UIElement.h"
-#include "Template/DataTemplate.h"
+#include "Template/StringDataTemplate.h"
 
 namespace Sgl
 {
@@ -23,7 +23,16 @@ namespace Sgl
 		template<typename T>
 		void SetContent(T value)
 		{
-			_content = value;
+			if constexpr(std::convertible_to<T, std::string>)
+			{
+				_contentTemplate = NewShared<StringDataTemplate>();
+				_content = Any::New<std::string>(std::move(value));
+			}
+			else
+			{
+				_content = Any::New<T>(std::move(value));
+			}
+
 			TryCreatePresenter();
 		}
 
@@ -84,7 +93,7 @@ namespace Sgl
 			return _horizontalContentAlignment;
 		}
 
-		void Render(RenderContext context) const override;
+		void Render(RenderContext context) override;
 		void ApplyStyle() override;
 	protected:
 		void OnMouseMove(const MouseEventArgs& e) override;

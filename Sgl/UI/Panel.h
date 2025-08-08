@@ -16,7 +16,7 @@ namespace Sgl
 		Panel(const Panel& other);
 		Panel(Panel&& other) noexcept;
 
-		void Render(RenderContext context) const override;
+		void Render(RenderContext context) override;
 		void ApplyStyle() override;
 	protected:
 		void OnMouseMove(const MouseEventArgs& e) override;

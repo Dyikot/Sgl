@@ -27,14 +27,18 @@ namespace Sgl
 		Texture(Texture&& other) noexcept;
 		~Texture() noexcept;
 
-		SDL_Texture* GetSDLTexture() const noexcept { return _texture; }
-		Size GetSize() const;
+		SDL_Texture* GetSDLTexture() const noexcept
+		{
+			return _texture; 
+		}
 
 		void SetColor(Color color) const
 		{
 			SDL_SetTextureColorMod(_texture, color.Red, color.Green, color.Blue);
 			SDL_SetTextureAlphaMod(_texture, color.Alpha);
 		}
+
+		Size GetSize() const;
 
 		Texture& operator=(const Texture&) = delete;
 		Texture& operator=(Texture&& other) noexcept;

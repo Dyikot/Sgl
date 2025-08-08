@@ -60,7 +60,7 @@ namespace Sgl
 
 		bool IsMouseOver() const { return _isMouseOver; }
 
-		void Render(RenderContext context) const override;
+		void Render(RenderContext context) override;
 	protected:
 		void RenderBackground(RenderContext context) const;
 

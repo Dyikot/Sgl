@@ -31,5 +31,9 @@ namespace Sgl
 			DefaultValue(value),
 			PropertySetter(setter)
 		{}
+
+		BindableProperty(const BindableProperty&) = default;
+		BindableProperty(BindableProperty&&) = default;
+		~BindableProperty() = default;
 	};
 }
