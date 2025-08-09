@@ -29,7 +29,7 @@ namespace Sgl
 		template<typename TOwner, typename T, typename TInput = T>
 		Shared<IObserver<TInput>> GetObserver(BindableProperty<TOwner, T, TInput>& property)
 		{
-			return NewShared<PropertyObserver<TOwner, TInput>>(static_cast<TOwner&>(*this), property.PropertySetter);
+			return NewShared<PropertyObserver<TOwner, T, TInput>>(static_cast<TOwner&>(*this), property);
 		}
 
 		template<typename TOwner, typename T, typename TInput = T>
@@ -37,7 +37,7 @@ namespace Sgl
 		{
 			return [&property, owner = static_cast<TOwner*>(this)](TInput value)
 			{
-				(owner->*property.PropertySetter)(value);
+				std::invoke(property.PropertySetter, owner, value);
 			};
 		}
 	protected:

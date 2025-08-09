@@ -2,16 +2,6 @@
 
 namespace Sgl
 {
-	UIElement::UIElement():
-		Layoutable(),
-		_isMouseOver(false),
-		_cursor(CursorProperty.DefaultValue),
-		_background(BackgroundProperty.DefaultValue),
-		_tag(),
-		_toolTip(),
-		_zIndex()
-	{}
-
 	UIElement::UIElement(const UIElement& other):
 		Layoutable(other),
 		_isMouseOver(other._isMouseOver),

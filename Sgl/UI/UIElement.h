@@ -30,15 +30,15 @@ namespace Sgl
 		Event<MouseButtonEventHandler> MouseDown;
 		Event<MouseWheelEventHandler> MouseWheel;
 	protected:
-		bool _isMouseOver;
+		bool _isMouseOver = false;
 	private:		
-		std::reference_wrapper<const Cursor> _cursor;
-		Brush _background;
+		std::reference_wrapper<const Cursor> _cursor = Cursors::Arrow;
+		Brush _background = Colors::Transparent;
 		Any _tag;
 		Shared<UIElement> _toolTip;
-		size_t _zIndex;
+		size_t _zIndex {};
 	public:
-		UIElement();
+		UIElement() = default;
 		UIElement(const UIElement& other);
 		UIElement(UIElement&& other) noexcept;
 		virtual ~UIElement() = default;
@@ -108,10 +108,10 @@ namespace Sgl
 		}
 	public:
 		static inline BindableProperty<UIElement, std::reference_wrapper<const Cursor>, const Cursor&> CursorProperty =
-			BindableProperty<UIElement, std::reference_wrapper<const Cursor>, const Cursor&>(&SetCursor, Cursors::Arrow);
+			BindableProperty<UIElement, std::reference_wrapper<const Cursor>, const Cursor&>(&SetCursor);
 
 		static inline BindableProperty<UIElement, Brush> BackgroundProperty =
-			BindableProperty<UIElement, Brush>(&SetBackground, Colors::Transparent);
+			BindableProperty<UIElement, Brush>(&SetBackground);
 
 		static inline BindableProperty<UIElement, Any, const Any&> TagProperty =
 			BindableProperty<UIElement, Any, const Any&>(&SetTag);

@@ -45,13 +45,13 @@ namespace Sgl
 		/// <summary>
 		/// Determines if the window should be rendered when minimized
 		/// </summary>
-		bool IsRenderableWhenMinimized;
+		bool IsRenderableWhenMinimized = false;
 	protected:
 		SDL_Window* _window;
 		SDL_Renderer* _renderer;
 	private:
 		Unique<Surface> _icon;
-		bool _hasVSync;
+		bool _hasVSync = false;
 	public:
 		Window() noexcept;
 		Window(const Window&) = delete;

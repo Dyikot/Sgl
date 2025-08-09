@@ -11,8 +11,8 @@ namespace Sgl
 	class Cursor final
 	{
 	private:
-		mutable SDL_Cursor* _cursor;
-		mutable bool _hasTriedToCreate;
+		mutable SDL_Cursor* _cursor {};
+		mutable bool _hasTriedToCreate = false;
 		std::variant<std::string, SDL_SystemCursor> _creationArgs;
 	public:
 		static void Set(const Cursor& cursor);

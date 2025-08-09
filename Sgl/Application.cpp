@@ -5,9 +5,7 @@
 
 namespace Sgl
 {
-	Application::Application() noexcept:
-		_stylingParent(),
-		_isRunning()
+	Application::Application() noexcept
 	{
 		_current = this;
 

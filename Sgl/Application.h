@@ -40,11 +40,11 @@ namespace Sgl
 		ResourcesMap Resources;
 		StyleMap Styles;
 	protected:
-		IStyleProvider* _stylingParent;
+		IStyleProvider* _stylingParent {};
 	private:
 		static inline Application* _current;
 
-		bool _isRunning;
+		bool _isRunning = false;
 		FPSCounter _fpsCounter;
 		std::optional<size_t> _maxFPS;
 		std::optional<TimeSpan> _maxFrameTime;

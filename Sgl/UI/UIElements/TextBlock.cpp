@@ -3,23 +3,6 @@
 
 namespace Sgl::UIElements
 {
-	TextBlock::TextBlock():
-		UIElement(),
-		_text(),
-		_fontSize(FontSizeProperty.DefaultValue),
-		_fontFamily(FontFamilyProperty.DefaultValue),
-		_fontStyle(),
-		_foreground(ForegroundProperty.DefaultValue),
-		_textWrapping(TextWrappingProperty.DefaultValue),
-		_textAlignment(TextAlignmentProperty.DefaultValue),
-		_padding(),
-		_textTextureBounds(),
-		_fontImpl(),
-		_textTexture(),
-		_isTextTextureValid(),
-		_fontValidationFlags(_fontFamilyFlag)
-	{}
-
 	TextBlock::TextBlock(const TextBlock& other):
 		UIElement(other),
 		_text(other._text),
@@ -34,7 +17,7 @@ namespace Sgl::UIElements
 		_fontImpl(),
 		_textTexture(),
 		_isTextTextureValid(),
-		_fontValidationFlags(_fontFamilyFlag)
+		_fontValidationFlags(FontFamilyFlag)
 	{}
 
 	TextBlock::TextBlock(TextBlock&& other) noexcept:
@@ -117,19 +100,19 @@ namespace Sgl::UIElements
 	{
 		const auto flags = _fontValidationFlags.to_ulong();
 
-		if(flags & _fontFamilyFlag)
+		if(flags & FontFamilyFlag)
 		{
 			_fontImpl = FontImpl(_fontFamily, _fontSize);
 			_fontImpl.SetStyle(_fontStyle);
 			return;
 		}
 		
-		if(flags & _fontSizeFlag)
+		if(flags & FontSizeFlag)
 		{
 			_fontImpl.SetSize(_fontSize);
 		}
 
-		if(flags & _fontStyleFlag)
+		if(flags & FontStyleFlag)
 		{
 			_fontImpl.SetStyle(_fontStyle);
 		}

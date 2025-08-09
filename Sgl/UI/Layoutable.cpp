@@ -3,25 +3,6 @@
 
 namespace Sgl
 {
-	Layoutable::Layoutable():
-		StyleableElement(),
-		_bounds(),
-		_desiredSize(),
-		_layoutableParent(nullptr),
-		_width(),
-		_height(),
-		_minWidth(),
-		_minHeight(),
-		_maxWidth(MaxWidthProperty.DefaultValue),
-		_maxHeight(MaxHeightProperty.DefaultValue),
-		_isVisible(IsVisibleProperty.DefaultValue),
-		_margin(),
-		_verticalAlignment(VerticalAlignmentProperty.DefaultValue),
-		_horizontalAlignment(HorizontalAlignmentProperty.DefaultValue),
-		_isArrangeValid(false),
-		_isMeasureValid(false)
-	{}
-
 	Layoutable::Layoutable(const Layoutable& other):
 		StyleableElement(other),
 		_bounds(other._bounds),

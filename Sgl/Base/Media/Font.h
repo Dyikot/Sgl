@@ -60,7 +60,7 @@ namespace Sgl
 	class FontImpl
 	{
 	private:
-		TTF_Font* _font = nullptr;
+		TTF_Font* _font {};
 	public:
 		FontImpl() = default;
 		FontImpl(const FontFamily& fontFamily, size_t size);

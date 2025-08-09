@@ -99,10 +99,10 @@ namespace Sgl
 
 	class Music
 	{
-	private:
-		Mix_Music* _music;
 	public:
 		Volume Volume = Volume::Min;
+	private:
+		Mix_Music* _music;
 	public:
 		explicit Music(std::string_view path) noexcept;
 		Music(const Music&) = delete;
@@ -125,10 +125,10 @@ namespace Sgl
 
 	class SoundChunk
 	{
-	private:
-		Mix_Chunk* _soundChunk;
 	public:
 		Volume Volume = Volume::Min;
+	private:
+		Mix_Chunk* _soundChunk;
 	public:
 		explicit SoundChunk(std::string_view path) noexcept;
 		SoundChunk(const SoundChunk&) = delete;

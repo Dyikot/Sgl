@@ -5,9 +5,6 @@
 namespace Sgl
 {
 	Scene::Scene():
-		_cursor(Cursors::Arrow),
-		_background(Colors::Black),
-		_content(),
 		_stylingParent(App.Current())
 	{}
 

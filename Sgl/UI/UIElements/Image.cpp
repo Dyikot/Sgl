@@ -2,14 +2,6 @@
 
 namespace Sgl::UIElements
 {
-	Image::Image():
-		UIElement(),
-		_source(),
-		_sourceBounds(),
-		_stretch(StretchProperty.DefaultValue),
-		_sourceTexture()
-	{}
-
 	Image::Image(const Image& other):
 		UIElement(other),
 		_sourceBounds(other._sourceBounds),

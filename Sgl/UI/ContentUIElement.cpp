@@ -4,17 +4,6 @@
 
 namespace Sgl
 {
-	ContentUIElement::ContentUIElement():
-		UIElement(),
-		_contentPresenter(),
-		_content(),
-		_contentTemplate(),
-		_padding(),
-		_horizontalContentAlignment(HorizontalAlignmentProperty.DefaultValue),
-		_verticalContentAlignment(VerticalContentAlignmentProperty.DefaultValue),
-		_isContentPresenterValid()
-	{}
-
 	ContentUIElement::ContentUIElement(const ContentUIElement& other):
 		UIElement(other),
 		_content(other._content),

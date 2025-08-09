@@ -30,15 +30,11 @@ namespace Sgl
     {}
 
     Cursor::Cursor(std::string path):
-        _cursor(),
-        _creationArgs(std::move(path)),
-        _hasTriedToCreate()
+        _creationArgs(std::move(path))
     {}
 
     Cursor::Cursor(SDL_SystemCursor systemCursor) noexcept:
-        _cursor(),
-        _creationArgs(systemCursor),
-        _hasTriedToCreate()
+        _creationArgs(systemCursor)
     {}
 
     Cursor::Cursor(Cursor&& other) noexcept:

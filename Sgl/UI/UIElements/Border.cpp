@@ -2,12 +2,6 @@
 
 namespace Sgl::UIElements
 {
-	Border::Border():
-		ContentUIElement(),
-		_borderWidth(BorderWidthProperty.DefaultValue),
-		_borderColor(BorderColorProperty.DefaultValue)
-	{}
-
 	Border::Border(const Border& other):
 		_borderWidth(other._borderWidth),
 		_borderColor(other._borderColor)

@@ -8,27 +8,29 @@ namespace Sgl::UIElements
 {
 	class TextBlock: public UIElement
 	{
+	public:
+		static constexpr size_t DefaultFontSize = 14;
 	private:
-		static constexpr unsigned long _fontFamilyFlag = 1;
-		static constexpr unsigned long _fontSizeFlag = 2;
-		static constexpr unsigned long _fontStyleFlag = 4;
+		static constexpr unsigned long FontFamilyFlag = 1;
+		static constexpr unsigned long FontSizeFlag = 2;
+		static constexpr unsigned long FontStyleFlag = 4;
 
 		std::string _text;
-		size_t _fontSize;
-		FontFamily _fontFamily;
+		size_t _fontSize = DefaultFontSize;
+		FontFamily _fontFamily = FontFamily::Default;
 		FontStyle _fontStyle;
-		Color _foreground;
-		TextWrapping _textWrapping;
-		TextAlignment _textAlignment;
+		Color _foreground = Colors::Black;
+		TextWrapping _textWrapping = TextWrapping::NoWrap;
+		TextAlignment _textAlignment = TextAlignment::Left;
 		Thickness _padding;
 
-		FRect _textTextureBounds;
+		FRect _textTextureBounds {};
 		FontImpl _fontImpl;
 		Unique<Texture> _textTexture;
-		bool _isTextTextureValid;
-		std::bitset<3> _fontValidationFlags;
+		bool _isTextTextureValid = false;
+		std::bitset<3> _fontValidationFlags = FontFamilyFlag;
 	public:
-		TextBlock();
+		TextBlock() = default;
 		TextBlock(const TextBlock& other);
 		TextBlock(TextBlock&& other) noexcept;
 		~TextBlock() = default;
@@ -48,7 +50,7 @@ namespace Sgl::UIElements
 		void SetFontSize(size_t value)
 		{
 			SetProperty(FontSizeProperty, _fontSize, value);
-			InvalidateFont(_fontSizeFlag);
+			InvalidateFont(FontSizeFlag);
 			InvalidateTextTexture();
 			InvalidateMeasure();
 		}
@@ -61,7 +63,7 @@ namespace Sgl::UIElements
 		void SetFontFamily(const FontFamily& value)
 		{
 			SetProperty(FontFamilyProperty, _fontFamily, value);
-			InvalidateFont(_fontFamilyFlag);
+			InvalidateFont(FontFamilyFlag);
 			InvalidateTextTexture();
 			InvalidateMeasure();
 		}
@@ -74,7 +76,7 @@ namespace Sgl::UIElements
 		void SetFontStyle(FontStyle value)
 		{
 			SetProperty(FontStyleProperty, _fontStyle, value);
-			InvalidateFont(_fontStyleFlag);
+			InvalidateFont(FontStyleFlag);
 			InvalidateTextTexture();
 		}
 
@@ -143,22 +145,22 @@ namespace Sgl::UIElements
 			BindableProperty<TextBlock, std::string, const std::string&>(&SetText);
 
 		static inline BindableProperty<TextBlock, size_t> FontSizeProperty =
-			BindableProperty<TextBlock, size_t>(&SetFontSize, 14);
+			BindableProperty<TextBlock, size_t>(&SetFontSize);
 
 		static inline BindableProperty<TextBlock, FontFamily, const FontFamily&> FontFamilyProperty =
-			BindableProperty<TextBlock, FontFamily, const FontFamily&>(&SetFontFamily, FontFamily::Default);
+			BindableProperty<TextBlock, FontFamily, const FontFamily&>(&SetFontFamily);
 
 		static inline BindableProperty<TextBlock, FontStyle> FontStyleProperty =
 			BindableProperty<TextBlock, FontStyle>(&SetFontStyle);
 
 		static inline BindableProperty<TextBlock, Color> ForegroundProperty =
-			BindableProperty<TextBlock, Color>(&SetForeground, Colors::Black);
+			BindableProperty<TextBlock, Color>(&SetForeground);
 
 		static inline BindableProperty<TextBlock, TextWrapping> TextWrappingProperty =
-			BindableProperty<TextBlock, TextWrapping>(&SetTextWrapping, TextWrapping::NoWrap);
+			BindableProperty<TextBlock, TextWrapping>(&SetTextWrapping);
 
 		static inline BindableProperty<TextBlock, TextAlignment> TextAlignmentProperty =
-			BindableProperty<TextBlock, TextAlignment>(&SetTextAlignment, TextAlignment::Left);
+			BindableProperty<TextBlock, TextAlignment>(&SetTextAlignment);
 
 		static inline BindableProperty<TextBlock, Thickness> PaddingProperty =
 			BindableProperty<TextBlock, Thickness>(&SetPadding);

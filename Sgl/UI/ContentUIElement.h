@@ -12,11 +12,11 @@ namespace Sgl
 		DataTemplate _contentTemplate;
 		Shared<UIElement> _contentPresenter;
 		Thickness _padding;
-		VerticalAlignment _verticalContentAlignment;
-		HorizontalAlignment _horizontalContentAlignment;
-		bool _isContentPresenterValid;
+		VerticalAlignment _verticalContentAlignment = VerticalAlignment::Top;
+		HorizontalAlignment _horizontalContentAlignment = HorizontalAlignment::Left;
+		bool _isContentPresenterValid = false;
 	public:
-		ContentUIElement();
+		ContentUIElement() = default;
 		ContentUIElement(const ContentUIElement& other);
 		ContentUIElement(ContentUIElement&& other) noexcept;
 		~ContentUIElement() = default;
@@ -120,9 +120,9 @@ namespace Sgl
 			BindableProperty<ContentUIElement, Thickness>(&SetPadding);
 
 		static inline BindableProperty<ContentUIElement, VerticalAlignment> VerticalContentAlignmentProperty =
-			BindableProperty<ContentUIElement, VerticalAlignment>(&SetVerticalContentAlignment, VerticalAlignment::Top);
+			BindableProperty<ContentUIElement, VerticalAlignment>(&SetVerticalContentAlignment);
 
 		static inline BindableProperty<ContentUIElement, HorizontalAlignment> HorizontalContentAlignmentProperty =
-			BindableProperty<ContentUIElement, HorizontalAlignment>(&SetHorizontalContentAlignment, HorizontalAlignment::Left);
+			BindableProperty<ContentUIElement, HorizontalAlignment>(&SetHorizontalContentAlignment);
 	};
 }

@@ -2,17 +2,6 @@
 
 namespace Sgl
 {
-	StyleableElement::StyleableElement():
-		BindableObject(),
-		Styles(),
-		Classes(),
-		Resources(),
-		DataContext(),
-		_stylingParent(nullptr),
-		_isStyleValid(false),
-		_styles()
-	{}
-
 	StyleableElement::StyleableElement(const StyleableElement& other):
 		BindableObject(other),
 		Styles(other.Styles),

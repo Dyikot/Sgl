@@ -7,10 +7,10 @@ namespace Sgl::UIElements
 	class Border: public ContentUIElement
 	{
 	private:
-		size_t _borderWidth;
-		Color _borderColor;
+		size_t _borderWidth = 1;
+		Color _borderColor = Colors::Black;
 	public:
-		Border();
+		Border() = default;
 		Border(const Border& other);
 		Border(Border&& other) noexcept;
 
@@ -37,9 +37,9 @@ namespace Sgl::UIElements
 		void Render(RenderContext context) final;
 	public:
 		static inline BindableProperty<Border, size_t> BorderWidthProperty =
-			BindableProperty<Border, size_t>(&SetBorderWidth, 1);
+			BindableProperty<Border, size_t>(&SetBorderWidth);
 
 		static inline BindableProperty<Border, Color> BorderColorProperty =
-			BindableProperty<Border, Color>(&SetBorderColor, Colors::Black);
+			BindableProperty<Border, Color>(&SetBorderColor);
 	};
 }

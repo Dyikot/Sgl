@@ -9,26 +9,18 @@ namespace Sgl
 	class BindableProperty
 	{
 	public:
+		using PropertyId = size_t;
 		using Type = T;
 		using InputType = TInput;
 		using Setter = void(TOwner::*)(TInput);
 		using OwnerType = TOwner;
 
-		const size_t Id;
-		const T DefaultValue;
+		const PropertyId Id = _id++;
 		const Setter PropertySetter;
 	private:
-		static inline size_t _id = 0;
+		static inline PropertyId _id = 0;
 	public:
-		BindableProperty(Setter setter) requires std::default_initializable<T>:
-			Id(_id++),
-			DefaultValue(),
-			PropertySetter(setter)
-		{}
-
-		BindableProperty(Setter setter, TInput value):
-			Id(_id++),
-			DefaultValue(value),
+		BindableProperty(Setter setter):
 			PropertySetter(setter)
 		{}
 

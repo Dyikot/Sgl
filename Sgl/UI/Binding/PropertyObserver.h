@@ -1,26 +1,27 @@
 #pragma once
 
 #include "../../Base/Observable/IObserver.h"
+#include "BindableProperty.h"
 
 namespace Sgl
 {
-	template<typename TOwner, typename T>
-	class PropertyObserver: public IObserver<T>
+	template<typename TOwner, typename T, typename TInput = T>
+	class PropertyObserver: public IObserver<TInput>
 	{
 	public:
-		using Setter = void(TOwner::*)(T);
+		using BindableProperty = BindableProperty<TOwner, T, TInput>;
 	private:
 		TOwner& _owner;
-		Setter _setter;
+		BindableProperty& _property;
 	public:
-		PropertyObserver(TOwner& owner, Setter setter):
+		PropertyObserver(TOwner& owner, BindableProperty& property):
 			_owner(owner),
-			_setter(setter)
+			_property(property)
 		{}
 
-		void OnNext(T value) override
+		void OnNext(TInput value) override
 		{
-			(_owner.*_setter)(value);
+			std::invoke(_property.PropertySetter, _owner, value);
 		}
 	};
 }

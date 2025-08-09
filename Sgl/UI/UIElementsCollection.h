@@ -12,7 +12,6 @@ namespace Sgl
 		Layoutable& _owner;
 	public:
 		UIElementsCollection(Layoutable& layout):
-			_items(),
 			_owner(layout)
 		{}
 

@@ -12,9 +12,7 @@ namespace Sgl
         return buffer.str();
     }
 
-    LocalizationFileParser::LocalizationFileParser(const std::string& filePath):
-        _source(),
-        _position()
+    LocalizationFileParser::LocalizationFileParser(const std::string& filePath)
     {
         if(!std::filesystem::exists(filePath))
         {

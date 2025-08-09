@@ -17,8 +17,8 @@ namespace Sgl
 		Unique<UIElement> _content;
 		IStyleProvider* _stylingParent;
 	private:
-		Brush _background;
-		std::reference_wrapper<const Cursor> _cursor;
+		Brush _background = Colors::Black;
+		std::reference_wrapper<const Cursor> _cursor = Cursors::Arrow;
 	public:
 		Scene();
 		Scene(const Scene&) = delete;

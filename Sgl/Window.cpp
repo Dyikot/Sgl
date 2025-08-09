@@ -3,17 +3,15 @@
 
 namespace Sgl
 {
-    constexpr static auto DefaultTitle = "Window";
-    constexpr static auto DefaultWidth = 1280;
-    constexpr static auto DefaultHeight = 720;
-    constexpr static auto DefaultPosition = Point(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+    constexpr auto DefaultTitle = "Window";
+    constexpr auto DefaultWidth = 1280;
+    constexpr auto DefaultHeight = 720;
+    constexpr auto DefaultPosition = Point(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 
     Window::Window() noexcept:
-        IsRenderableWhenMinimized(),
         _window(SDL_CreateWindow(DefaultTitle, DefaultPosition.x, DefaultPosition.y,
                                  DefaultWidth, DefaultHeight, SDL_WINDOW_HIDDEN)),
-        _renderer(SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED)),
-        _hasVSync()
+        _renderer(SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED))
     {
         Log::PrintSDLErrorIf(_window == nullptr);
         Log::PrintSDLErrorIf(_renderer == nullptr);

@@ -11,7 +11,7 @@ namespace Sgl
     {
     private:
         std::string _source;
-        size_t _position;
+        size_t _position = 0;
     public:
         explicit LocalizationFileParser(const std::string& filePath);
         LocalizationFileParser(const LocalizationFileParser&) = delete;

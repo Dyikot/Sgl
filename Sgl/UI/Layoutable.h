@@ -10,24 +10,24 @@ namespace Sgl
 	class Layoutable: public StyleableElement
 	{
 	protected:
-		FRect _bounds;
-		FSize _desiredSize;
-		Layoutable* _layoutableParent;
+		FRect _bounds {};
+		FSize _desiredSize {};
+		Layoutable* _layoutableParent {};
 	private:
-		float _width;
-		float _height;
-		float _minWidth;
-		float _minHeight;
-		float _maxWidth;
-		float _maxHeight;
-		bool _isVisible;
+		float _width {};
+		float _height {};
+		float _minWidth {};
+		float _minHeight {};
+		float _maxWidth = std::numeric_limits<float>::max();
+		float _maxHeight = std::numeric_limits<float>::max();
+		bool _isVisible = true;
 		Thickness _margin;
-		VerticalAlignment _verticalAlignment;
-		HorizontalAlignment _horizontalAlignment;
-		bool _isArrangeValid;
-		bool _isMeasureValid;
+		VerticalAlignment _verticalAlignment = VerticalAlignment::Top;
+		HorizontalAlignment _horizontalAlignment = HorizontalAlignment::Left;
+		bool _isArrangeValid = false;
+		bool _isMeasureValid = false;
 	public:
-		Layoutable();
+		Layoutable() = default;
 		Layoutable(const Layoutable& other);
 		Layoutable(Layoutable&& other) noexcept;
 		virtual ~Layoutable() = default;
@@ -171,21 +171,21 @@ namespace Sgl
 			BindableProperty<Layoutable, float>(&SetMinHeight);
 
 		static inline BindableProperty<Layoutable, float> MaxWidthProperty =
-			BindableProperty<Layoutable, float>(&SetMaxWidth, std::numeric_limits<float>::max());
+			BindableProperty<Layoutable, float>(&SetMaxWidth);
 
 		static inline BindableProperty<Layoutable, float> MaxHeightProperty =
-			BindableProperty<Layoutable, float>(&SetMaxHeight, std::numeric_limits<float>::max());
+			BindableProperty<Layoutable, float>(&SetMaxHeight);
 
 		static inline BindableProperty<Layoutable, bool> IsVisibleProperty =
-			BindableProperty<Layoutable, bool>(&SetIsVisible, true);
+			BindableProperty<Layoutable, bool>(&SetIsVisible);
 
 		static inline BindableProperty<Layoutable, Thickness> MarginProperty =
 			BindableProperty<Layoutable, Thickness>(&SetMargin);
 
 		static inline BindableProperty<Layoutable, VerticalAlignment> VerticalAlignmentProperty =
-			BindableProperty<Layoutable, VerticalAlignment>(&SetVerticalAlignment, VerticalAlignment::Top);
+			BindableProperty<Layoutable, VerticalAlignment>(&SetVerticalAlignment);
 
 		static inline BindableProperty<Layoutable, HorizontalAlignment> HorizontalAlignmentProperty =
-			BindableProperty<Layoutable, HorizontalAlignment>(&SetHorizontalAlignment, HorizontalAlignment::Left);
+			BindableProperty<Layoutable, HorizontalAlignment>(&SetHorizontalAlignment);
 	};
 }

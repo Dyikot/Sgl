@@ -9,11 +9,11 @@ namespace Sgl::UIElements
 	{
 	private:
 		std::string _source;
-		FRect _sourceBounds;
-		Stretch _stretch;
+		FRect _sourceBounds {};
+		Stretch _stretch = Stretch::Uniform;
 		Shared<Texture> _sourceTexture;
 	public:
-		Image();
+		Image() = default;
 		Image(const Image& other);
 		Image(Image&& other) noexcept;
 
@@ -48,6 +48,6 @@ namespace Sgl::UIElements
 			BindableProperty<Image, std::string, const std::string&>(&SetSource);
 
 		static inline BindableProperty<Image, Stretch> StretchProperty =
-			BindableProperty<Image, Stretch>(&SetStretch, Stretch::Uniform);
+			BindableProperty<Image, Stretch>(&SetStretch);
 	};
 }

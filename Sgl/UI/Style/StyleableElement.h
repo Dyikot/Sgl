@@ -16,12 +16,12 @@ namespace Sgl
 		ResourcesMap Resources;
 		Shared<void> DataContext;
 	protected:
-		IStyleProvider* _stylingParent;
+		IStyleProvider* _stylingParent {};
 	private:
-		bool _isStyleValid;
-		std::vector<Ref<IStyle>> _styles;		
+		bool _isStyleValid = false;
+		std::vector<Ref<IStyle>> _styles;
 	public:
-		StyleableElement();
+		StyleableElement() = default;
 		StyleableElement(const StyleableElement& other);
 		StyleableElement(StyleableElement&& other) noexcept;
 		virtual ~StyleableElement() = default;
