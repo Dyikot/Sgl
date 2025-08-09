@@ -55,6 +55,18 @@ namespace Sgl
         return height;
     }
 
+    void Window::SetSize(Size size) noexcept
+    {
+        SDL_SetWindowSize(_window, size.Width, size.Height);
+    }
+
+    Size Window::GetSize() const noexcept
+    {
+        int width = 0, height = 0;
+        SDL_GetWindowSize(_window, &width, &height);
+        return Size(width, height);
+    }
+
     void Window::SetLogicalSize(Size size) noexcept
     {
         SDL_RenderSetLogicalSize(_renderer, size.Width, size.Height);

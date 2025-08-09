@@ -80,7 +80,7 @@ namespace Sgl
 
 		Any() = default;
 
-		template<std::copyable T>
+		template<typename T>
 		Any(T&& value):
 			_value(std::make_unique<Storage<std::decay_t<T>>>(std::forward<T>(value)))
 		{}
@@ -137,6 +137,13 @@ namespace Sgl
 		bool HasValue() const noexcept
 		{
 			return _value != nullptr;
+		}
+
+		template<typename T>
+		Any& operator=(T&& value)
+		{
+			_value = std::make_unique<Storage<std::decay_t<T>>>(std::forward<T>(value));
+			return *this;
 		}
 
 		Any& operator=(const Any& other)

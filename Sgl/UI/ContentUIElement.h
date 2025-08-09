@@ -1,47 +1,52 @@
 #pragma once
 
-#include "UIElement.h"
-#include "Template/StringDataTemplate.h"
+#include "Template/DataTemplate.h"
+#include "UIElements/TextBlock.h"
 
 namespace Sgl
 {
 	class ContentUIElement: public UIElement
 	{
-	protected:
-		Shared<UIElement> _contentPresenter;
-		Any _content;
 	private:
-		Shared<IDataTemplate> _contentTemplate;
+		Any _content;
+		DataTemplate _contentTemplate;
+		Shared<UIElement> _contentPresenter;
 		Thickness _padding;
 		VerticalAlignment _verticalContentAlignment;
 		HorizontalAlignment _horizontalContentAlignment;
+		bool _isContentPresenterValid;
 	public:
 		ContentUIElement();
 		ContentUIElement(const ContentUIElement& other);
 		ContentUIElement(ContentUIElement&& other) noexcept;
-		
+		~ContentUIElement() = default;
+
 		template<typename T>
-		void SetContent(T value)
+		void SetContent(T&& value)
 		{
-			if constexpr(std::convertible_to<T, std::string>)
+			using TContent = std::decay_t<T>;
+
+			if constexpr(std::convertible_to<TContent, std::string>)
 			{
-				_contentTemplate = NewShared<StringDataTemplate>();
-				_content = Any::New<std::string>(std::move(value));
+				_content = Any::New<std::string>(std::forward<T>(value));
+				_contentTemplate = StringDataTemplate();
 			}
 			else
 			{
-				_content = Any::New<T>(std::move(value));
+				_content = Any::New<TContent>(std::forward<T>(value));
 			}
 
-			TryCreatePresenter();
+			InvalidateMeasure();
+			InvalidateContentPresenter();
 		}
 
 		template<std::derived_from<UIElement> T>
-		void SetContent(const Shared<T>& value)
+		void SetContent(Shared<T> value)
 		{
-			_content = Any::New<Shared<UIElement>>(value);
-			_contentTemplate = NewShared<UIElementDataTemplate>();
-			TryCreatePresenter();
+			_content = Any::New<Shared<UIElement>>(std::move(value));
+			_contentTemplate = UIElementDataTemplate();
+			InvalidateMeasure();
+			InvalidateContentPresenter();
 		}
 
 		Shared<UIElement> GetContentPresenter() const 
@@ -49,13 +54,14 @@ namespace Sgl
 			return _contentPresenter;
 		}
 
-		void SetContentTemplate(Shared<IDataTemplate> value)
+		void SetContentTemplate(DataTemplate value)
 		{
 			SetProperty(ContentTemplateProperty, _contentTemplate, value);
-			TryCreatePresenter();
+			InvalidateMeasure();
+			InvalidateContentPresenter();
 		}
 
-		Shared<IDataTemplate> GetContentTemplate() const
+		DataTemplate GetContentTemplate() const
 		{
 			return _contentTemplate;
 		}
@@ -101,12 +107,14 @@ namespace Sgl
 		void OnMouseUp(const MouseButtonEventArgs& e) override;
 		void OnMouseLeave(const MouseEventArgs& e) override;
 
-		void TryCreatePresenter();
 		FSize MeasureContent(FSize avaliableSize) override;
 		void ArrangeContent(FRect rect) override;
+	private:
+		bool TryCreatePresenter();
+		void InvalidateContentPresenter() { _isContentPresenterValid = false; }
 	public:
-		static inline BindableProperty<ContentUIElement, Shared<IDataTemplate>> ContentTemplateProperty =
-			BindableProperty<ContentUIElement, Shared<IDataTemplate>>(&SetContentTemplate);
+		static inline BindableProperty<ContentUIElement, DataTemplate> ContentTemplateProperty =
+			BindableProperty<ContentUIElement, DataTemplate>(&SetContentTemplate);
 
 		static inline BindableProperty<ContentUIElement, Thickness> PaddingProperty =
 			BindableProperty<ContentUIElement, Thickness>(&SetPadding);

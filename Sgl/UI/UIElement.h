@@ -136,19 +136,11 @@ namespace Sgl
 		}
 	};
 
-	template<typename T, typename TConfigurer>
-	Shared<T> Create(TConfigurer&& configurer)
+	struct UIElementDataTemplate
 	{
-		auto element = NewShared<T>();
-		configurer(*element);
-		return element;
-	}
-
-	template<typename T, typename TConfigurer>
-	Ref<T> CreateRef(TConfigurer&& configurer)
-	{
-		auto element = NewRef<T>();
-		configurer(*element);
-		return element;
-	}
+		Shared<UIElement> operator()(const Any& data) const
+		{
+			return data.As<Shared<UIElement>>();
+		}
+	};
 }

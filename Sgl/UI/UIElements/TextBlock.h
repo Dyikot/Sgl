@@ -164,3 +164,17 @@ namespace Sgl::UIElements
 			BindableProperty<TextBlock, Thickness>(&SetPadding);
 	};
 }
+
+namespace Sgl
+{
+	struct StringDataTemplate
+	{
+		Shared<UIElement> operator()(const Any& data) const
+		{
+			const auto& text = data.As<std::string>();
+			auto textBlock = NewShared<UIElements::TextBlock>();
+			textBlock->SetText(text);
+			return textBlock;
+		}
+	};
+}

@@ -21,10 +21,19 @@ namespace Sgl
 		}
 	}
 
-	void Scene::SetContent(Shared<UIElement> value)
+	void Scene::SetContent(Unique<UIElement> value)
 	{
+		if(_content)
+		{
+			_content->_stylingParent = nullptr;
+		}
+
 		_content = std::move(value);
-		_content->_stylingParent = this;
+
+		if(_content)
+		{
+			_content->_stylingParent = this;
+		}
 	}
 
 	void Scene::Render(RenderContext context)
@@ -47,7 +56,7 @@ namespace Sgl
 	{
 		if(_content)
 		{
-			UpdateInvalidatedLayoutAndStyle();
+			UpdateLayoutAndStyle();
 		}
 	}
 
@@ -55,7 +64,7 @@ namespace Sgl
 	{
 		if(_content)
 		{
-			UpdateInvalidatedLayoutAndStyle();
+			UpdateLayoutAndStyle();
 		}
 	}
 
@@ -125,7 +134,7 @@ namespace Sgl
 		
 	}
 
-	void Scene::UpdateInvalidatedLayoutAndStyle()
+	void Scene::UpdateLayoutAndStyle()
 	{
 		if(!_content->IsStyleValid())
 		{
@@ -134,17 +143,14 @@ namespace Sgl
 
 		if(!_content->IsMeasureValid())
 		{
-			auto& window = App->Window;
-			auto availableSize = FSize(window.GetWidth(), window.GetHeight());
-			_content->Measure(availableSize);
+			auto [width, height] = App->Window.GetSize();
+			_content->Measure(FSize(width, height));
 		}
 
 		if(!_content->IsArrangeValid())
 		{
-			auto& window = App->Window;
-			auto availableSize = FSize(window.GetWidth(), window.GetHeight());
-			auto bounds = FRect(0, 0, availableSize.Width, availableSize.Height);
-			_content->Arrange(bounds);
+			auto [width, height] = App->Window.GetSize();
+			_content->Arrange(FRect(0, 0, width, height));
 		}
 	}
 }

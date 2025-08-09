@@ -14,7 +14,7 @@ namespace Sgl
 		ResourcesMap Resources;
 		StyleMap Styles;
 	protected:
-		Shared<UIElement> _content;
+		Unique<UIElement> _content;
 		IStyleProvider* _stylingParent;
 	private:
 		Brush _background;
@@ -31,8 +31,8 @@ namespace Sgl
 		void SetCursor(const Cursor& value);
 		const Cursor& GetCursor() const { return _cursor; }
 
-		void SetContent(Shared<UIElement> value);
-		Shared<UIElement> GetContent() const { return _content; }
+		void SetContent(Unique<UIElement> value);
+		const UIElement* GetContent() const { return _content.get(); }
 
 		StyleMap& GetStyles() override { return Styles; }
 		IStyleProvider* GetStylingParent() { return _stylingParent; }
@@ -53,7 +53,7 @@ namespace Sgl
 		virtual void OnTextInput(const TextInputEventArgs& e);
 		virtual void OnTextEditing(const TextEditingEventArgs& e);
 	private:
-		void UpdateInvalidatedLayoutAndStyle();
+		void UpdateLayoutAndStyle();
 
 		friend class Application;
 		friend class SceneManager;

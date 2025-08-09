@@ -6,20 +6,24 @@ namespace Sgl
 {
 	ContentUIElement::ContentUIElement():
 		UIElement(),
+		_contentPresenter(),
+		_content(),
 		_contentTemplate(),
 		_padding(),
 		_horizontalContentAlignment(HorizontalAlignmentProperty.DefaultValue),
-		_verticalContentAlignment(VerticalContentAlignmentProperty.DefaultValue)
+		_verticalContentAlignment(VerticalContentAlignmentProperty.DefaultValue),
+		_isContentPresenterValid()
 	{}
 
 	ContentUIElement::ContentUIElement(const ContentUIElement& other):
 		UIElement(other),
+		_content(other._content),
+		_contentPresenter(other._contentPresenter),
 		_contentTemplate(other._contentTemplate),
 		_padding(other._padding),
 		_horizontalContentAlignment(other._horizontalContentAlignment),
 		_verticalContentAlignment(other._verticalContentAlignment),
-		_content(other._content),
-		_contentPresenter(other._contentPresenter)
+		_isContentPresenterValid(other._isContentPresenterValid)
 	{}
 
 	ContentUIElement::ContentUIElement(ContentUIElement&& other) noexcept:
@@ -29,7 +33,8 @@ namespace Sgl
 		_horizontalContentAlignment(std::move(other._horizontalContentAlignment)),
 		_verticalContentAlignment(std::move(other._verticalContentAlignment)),
 		_content(std::move(other._content)),
-		_contentPresenter(std::move(other._contentPresenter))
+		_contentPresenter(std::move(other._contentPresenter)),
+		_isContentPresenterValid(other._isContentPresenterValid)
 	{}
 
 	void ContentUIElement::Render(RenderContext context)
@@ -109,19 +114,26 @@ namespace Sgl
 		}
 	}
 
-	void ContentUIElement::TryCreatePresenter()
+	bool ContentUIElement::TryCreatePresenter()
 	{
-		if(_contentTemplate && _content.HasValue())
+		if(_contentTemplate.HasTarget() && _content.HasValue())
 		{
-			_contentPresenter = _contentTemplate->Build(_content);
+			_contentPresenter = _contentTemplate(_content);
 			_contentPresenter->_stylingParent = this;
 			_contentPresenter->_layoutableParent = this;
-			InvalidateMeasure();
+			return true;
 		}
+
+		return false;
 	}
 
 	FSize ContentUIElement::MeasureContent(FSize avaliableSize)
 	{
+		if(!_isContentPresenterValid && TryCreatePresenter())
+		{			
+			_isContentPresenterValid = true;
+		}
+
 		if(_contentPresenter)
 		{
 			FSize contentAvaliableSize =

@@ -33,7 +33,7 @@ namespace Sgl
 		}
 
 		template<typename TOwner, typename T, typename TInput = T>
-		Action<TInput> GetActionObserver(BindableProperty<TOwner, T, TInput>& property)
+		Action<TInput> GetFuncObserver(BindableProperty<TOwner, T, TInput>& property)
 		{
 			return [&property, owner = static_cast<TOwner*>(this)](TInput value)
 			{

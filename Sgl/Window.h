@@ -95,6 +95,18 @@ namespace Sgl
 		size_t GetHeight() const noexcept;
 
 		/// <summary>
+		/// Set the width width and height
+		/// </summary>
+		/// <param name="size">- the new width and height in pixels</param>
+		void SetSize(Size size) noexcept;
+
+		/// <summary>
+		/// Gets the window size
+		/// </summary>
+		/// <returns>The current width and height in pixels</returns>
+		Size GetSize() const noexcept;
+
+		/// <summary>
 		/// Sets the window title
 		/// </summary>
 		/// <param name="value">- the new window title</param>
