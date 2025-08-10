@@ -47,7 +47,7 @@ namespace Sgl
 		{
 			if(bindingMode != BindingMode::OneWay)
 			{
-				Bind(targetProperty, sourceProperty.PropertySetter);
+				Bind(targetProperty, sourceProperty.Setter);
 			}
 
 			if(bindingMode == BindingMode::OneWayToSource)
@@ -65,7 +65,7 @@ namespace Sgl
 				auto source = static_cast<TSource*>(DataContext.get());
 				auto observer = [&targetProperty, target = static_cast<TTarget*>(this)](const void* value)
 				{
-					std::invoke(targetProperty.PropertySetter, target, *static_cast<const TValue*>(value));
+					std::invoke(targetProperty.Setter, target, *static_cast<const TValue*>(value));
 				};
 
 				std::invoke(&ObservableObject::SetObserver, source, sourceProperty.Id, observer);
@@ -104,7 +104,7 @@ namespace Sgl
 		{
 			return [&property, owner = static_cast<TOwner*>(this)](TValue value)
 			{
-				std::invoke(property.PropertySetter, owner, value);
+				std::invoke(property.Setter, owner, value);
 			};
 		}
 	protected:

@@ -29,7 +29,7 @@ namespace Sgl
 
         void Apply(TTarget& target) const
         {
-            (target.*(Property.PropertySetter))(Value);
+            (target.*(Property.Setter))(Value);
         }
     };
 }
