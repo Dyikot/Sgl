@@ -1,7 +1,7 @@
 #pragma once
 
 #include <unordered_map>
-#include <assert.h>
+#include <cassert>
 #include "BindableProperty.h"
 #include "../../Base/SmartPointers.h"
 #include "../../Base/Delegate.h"
@@ -22,45 +22,44 @@ namespace Sgl
 		BindableObject(BindableObject&& other) noexcept;
 		virtual ~BindableObject() = default;
 
-		template<typename TSource, typename TOwner, typename T, typename TInput = T>
-		void Bind(BindableProperty<TOwner, T, TInput>& property, T TSource::* observer)
+		template<typename TSource, typename TOwner, typename TField, typename TValue>
+		void Bind(BindableProperty<TOwner, TValue>& property, TField TSource::* observer)
 		{
 			_observers[property.Id] = [observer](void* dataContext, const void* value)
 			{
 				auto source = static_cast<TSource*>(dataContext);
-				const auto& inputValue = *static_cast<const TInput*>(value);
-				std::invoke(observer, source) = inputValue;
+				std::invoke(observer, source) = *static_cast<const TValue*>(value);
 			};
 		}
 
-		template<typename TSource, typename TOwner, typename T, typename TInput = T>
-		void Bind(BindableProperty<TOwner, T, TInput>& property, void (TSource::*observer)(TInput))
+		template<typename TSource, typename TOwner, typename TValue>
+		void Bind(BindableProperty<TOwner, TValue>& property, void (TSource::*observer)(TValue))
 		{
 			_observers[property.Id] = [observer](void* dataContext, const void* value)
 			{
 				auto source = static_cast<TSource*>(dataContext);
-				const auto& inputValue = *static_cast<const TInput*>(value);
-				std::invoke(observer, source, inputValue);
+				std::invoke(observer, source, *static_cast<const TValue*>(value));
 			};
 		}
 
-		template<typename TOwner, typename T, typename TInput = T>
-		void Unbind(BindableProperty<TOwner, T, TInput>& property)
+		template<typename TOwner, typename TValue>
+		void Unbind(BindableProperty<TOwner, TValue>& property)
 		{
 			_observers.erase(property.Id);
 		}
 
-		template<typename TOwner, typename T, typename TInput = T>
-		Action<TInput> GetObserver(BindableProperty<TOwner, T, TInput>& property)
+		template<typename TOwner, typename TValue>
+		Action<TValue> GetObserver(BindableProperty<TOwner, TValue>& property)
 		{
-			return [&property, owner = static_cast<TOwner*>(this)](TInput value)
+			return [&property, owner = static_cast<TOwner*>(this)](TValue value)
 			{
 				std::invoke(property.PropertySetter, owner, value);
 			};
 		}
 	protected:
-		template<typename TOwner, typename T, typename TInput = T>
-		void SetProperty(BindableProperty<TOwner, T, TInput>& property, T& field, const std::remove_reference_t<TInput>& value)
+		template<typename TOwner, typename TField, typename TValue>
+		void SetProperty(BindableProperty<TOwner, TValue>& property, TField& field, 
+						 BindableProperty<TOwner, TValue>::Value value)
 		{
 			if(field != value)
 			{
@@ -68,7 +67,11 @@ namespace Sgl
 
 				if(auto it = _observers.find(property.Id); it != _observers.end())
 				{
-					assert(DataContext != nullptr);
+					if(DataContext == nullptr)
+					{
+						throw std::exception("DataContext is null");
+					}
+
 					it->second(DataContext.get(), &value);
 				}
 			}

@@ -11,7 +11,7 @@ namespace Sgl
     class StyleMap
     {
     private:
-        std::unordered_map<std::string_view, Ref<IStyle>> _items;
+        std::unordered_map<std::string_view, Shared<IStyle>> _items;
     public:
         StyleMap() = default;
         StyleMap(const StyleMap& other);
@@ -27,13 +27,12 @@ namespace Sgl
         template<typename T>
         Style<T>& Add(std::string_view key)
         {
-            auto style = NewRef<Style<T>>();
-            _items.emplace(key, style);
-            return style;
+            auto [it, _] = _items.emplace(key, NewShared<Style<T>>());
+            return static_cast<Style<T>&>(*it->second);
         }
 
-        const Ref<IStyle>* TryGet(const std::string& key) const;
-        void Remove(const std::string& key);
+        Shared<IStyle> TryGet(std::string_view key) const;
+        void Remove(std::string_view key);
         bool IsEmpty() const;
 
         StyleMap& operator=(const StyleMap& other);

@@ -141,14 +141,14 @@ namespace Sgl::UIElements
 		void CreateOrUpdateFont();
 		void CreateTextTextureIfInvalid(float maxLineWidth);
 	public:
-		static inline BindableProperty<TextBlock, std::string, const std::string&> TextProperty =
-			BindableProperty<TextBlock, std::string, const std::string&>(&SetText);
+		static inline BindableProperty<TextBlock, const std::string&> TextProperty =
+			BindableProperty<TextBlock, const std::string&>(&SetText);
 
 		static inline BindableProperty<TextBlock, size_t> FontSizeProperty =
 			BindableProperty<TextBlock, size_t>(&SetFontSize);
 
-		static inline BindableProperty<TextBlock, FontFamily, const FontFamily&> FontFamilyProperty =
-			BindableProperty<TextBlock, FontFamily, const FontFamily&>(&SetFontFamily);
+		static inline BindableProperty<TextBlock, const FontFamily&> FontFamilyProperty =
+			BindableProperty<TextBlock,const FontFamily&>(&SetFontFamily);
 
 		static inline BindableProperty<TextBlock, FontStyle> FontStyleProperty =
 			BindableProperty<TextBlock, FontStyle>(&SetFontStyle);

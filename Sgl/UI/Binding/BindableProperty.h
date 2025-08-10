@@ -4,26 +4,21 @@
 
 namespace Sgl
 {
-	template<typename TOwner, typename T, typename TInput = T>
-		requires std::constructible_from<T, TInput> && std::copyable<T>
+	template<typename TOwner, typename TValue>
 	class BindableProperty
 	{
 	public:
+		using Owner = TOwner;
+		using Value = TValue;
 		using PropertyId = size_t;
-		using Type = T;
-		using InputType = TInput;
-		using Setter = void(TOwner::*)(TInput);
-		using OwnerType = TOwner;
+		using Setter = void(TOwner::*)(TValue);
 
 		const PropertyId Id = _id++;
 		const Setter PropertySetter;
 	private:
 		static inline PropertyId _id = 0;
 	public:
-		BindableProperty(Setter setter):
-			PropertySetter(setter)
-		{}
-
+		BindableProperty(Setter setter): PropertySetter(setter) {}
 		BindableProperty(const BindableProperty&) = default;
 		BindableProperty(BindableProperty&&) = default;
 		~BindableProperty() = default;

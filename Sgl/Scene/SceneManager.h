@@ -10,9 +10,9 @@ namespace Sgl
 	class SceneManager
 	{
 	private:
-		using SceneFactory = Func<Ref<Scene>>;
+		using SceneFactory = Func<Unique<Scene>>;
 
-		std::stack<Ref<Scene>> _scenes;
+		std::stack<Unique<Scene>> _scenes;
 		std::queue<SceneFactory> _sceneFactoriesQueue;
 		size_t _scenesToDestory = 0;
 	public:
@@ -22,7 +22,7 @@ namespace Sgl
 		~SceneManager();
 
 		template<std::derived_from<Scene> TScene>
-		void Push() { _sceneFactoriesQueue.push([] { return NewRef<TScene>(); }); }
+		void Push() { _sceneFactoriesQueue.push([] { return NewUnique<TScene>(); }); }
 		void Push(SceneFactory sceneFactory);
 
 		void Pop() noexcept;

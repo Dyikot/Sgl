@@ -8,7 +8,7 @@ namespace Sgl
 	class UIElementsCollection
 	{
 	private:
-		SortedVector<Ref<UIElement>, UIElementComparer> _items;
+		SortedVector<Shared<UIElement>, UIElementComparer> _items;
 		Layoutable& _owner;
 	public:
 		UIElementsCollection(Layoutable& layout):
@@ -31,8 +31,13 @@ namespace Sgl
 		auto begin() const { return _items.begin(); }
 		auto end() const { return _items.end(); }
 
-		void Add(Ref<UIElement> element)
+		void Add(Shared<UIElement> element)
 		{
+			if(element == nullptr)
+			{
+				throw std::invalid_argument("UIElement can not be null");
+			}
+
 			element->_stylingParent = &_owner;
 			element->_layoutableParent = &_owner;
 			_items.Add(std::move(element));
@@ -53,27 +58,27 @@ namespace Sgl
 			_items.Clear();
 		}
 
-		bool Contains(const Ref<UIElement>& element) const
+		bool Contains(Shared<UIElement> element) const
 		{
 			return Contains(element);
 		}
 
-		const Ref<UIElement>& ElementAt(size_t index) const
+		Shared<UIElement> ElementAt(size_t index) const
 		{
 			return _items.ElementAt(index);
 		}
 
-		std::optional<size_t> Find(const Ref<UIElement>& element) const
+		std::optional<size_t> Find(Shared<UIElement> element) const
 		{
 			return _items.Find(element);
 		}
 
-		void Remove(const Ref<UIElement>& element)
+		void Remove(Shared<UIElement> element)
 		{
 			_items.Remove(element);
 		}
 
-		UIElementsCollection& operator=(std::initializer_list<Ref<UIElement>> items)
+		UIElementsCollection& operator=(std::initializer_list<Shared<UIElement>> items)
 		{
 			_items = items;
 			return *this;

@@ -25,11 +25,11 @@ namespace Sgl
         auto begin() const { return _setters.begin(); }
         auto end() const { return _setters.end(); }
 
-        template<typename TOwner, typename TValue, typename TInput = T>
-        Style<T>& With(BindableProperty<TOwner, TValue, TInput>& property, 
-                       const std::remove_reference_t<TInput>& value)
+        template<typename TOwner, typename TValue>
+        Style<T>& With(BindableProperty<TOwner, TValue>& property, 
+                       BindableProperty<TOwner, TValue>::Value value)
         {
-            _setters.push_back(NewUnique<Setter<T, TOwner, TValue, TInput>>(property, value));
+            _setters.push_back(NewUnique<Setter<T, TOwner, TValue>>(property, value));
             return *this;
         }
 

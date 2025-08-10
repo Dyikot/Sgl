@@ -38,9 +38,9 @@ namespace Sgl
     {
         StyleableElement::ApplyStyle();
 
-        for(UIElement& child : Children)
+        for(auto& child : Children)
         {
-            child.ApplyStyle();
+            child->ApplyStyle();
         }
     }
 
@@ -55,19 +55,21 @@ namespace Sgl
             return;
         }
 
-        for(UIElement& child : Children)
+        for(auto& child : Children)
         {
-            if(Math::IsPointInRect(e.Position, child.GetBounds()) && child.IsVisible())
+            UIElement& element = *child;
+
+            if(Math::IsPointInRect(e.Position, element.GetBounds()) && element.IsVisible())
             {
                 if(_currentChild && _currentChild->IsVisible())
                 {
                     _currentChild->OnMouseLeave(e);
                 }
 
-                _currentChild = &child;
-                Cursor::Set(child.GetCursor());
-                child.OnMouseEnter(e);
-                child.OnMouseMove(e);
+                _currentChild = &element;
+                Cursor::Set(element.GetCursor());
+                element.OnMouseEnter(e);
+                element.OnMouseMove(e);
 
                 return;
             }

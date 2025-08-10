@@ -16,14 +16,14 @@ namespace Sgl
         virtual void Apply(TTarget& target) const = 0;
     };
 
-    template<typename TTarget, typename TOwner, typename TValue, typename TInput = TValue>
+    template<typename TTarget, typename TOwner, typename TValue>
     class Setter: public ISetter<TTarget>
     {
     public: 
-        BindableProperty<TOwner, TValue, TInput>& Property;
+        BindableProperty<TOwner, TValue>& Property;
         TValue Value;
     public:
-        Setter(BindableProperty<TOwner, TValue, TInput>& property, TInput value):
+        Setter(BindableProperty<TOwner, TValue>& property, TValue value):
             Property(property), Value(value)
         {}
 

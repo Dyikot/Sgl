@@ -1,4 +1,5 @@
 #include "SceneManager.h"
+#include <exception>
 
 namespace Sgl
 {
@@ -30,7 +31,7 @@ namespace Sgl
 
 	Scene* SceneManager::GetCurrentScene()
 	{
-		return _scenes.empty() ? nullptr : _scenes.top().Pointer();
+		return _scenes.empty() ? nullptr : _scenes.top().get();
 	}
 
 	Scene* SceneManager::GetNextScene()
@@ -55,6 +56,12 @@ namespace Sgl
 	void SceneManager::CreateScene()
 	{
 		auto scene = _sceneFactoriesQueue.front()();
+
+		if(scene == nullptr)
+		{
+			throw std::invalid_argument("Scene can not be null");
+		}
+
 		scene->OnCreated();
 
 		if(!_scenes.empty())

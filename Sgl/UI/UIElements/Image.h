@@ -44,8 +44,8 @@ namespace Sgl::UIElements
 	protected:
 		void ArrangeCore(FRect rect) override;
 	public:
-		static inline BindableProperty<Image, std::string, const std::string&> SourceProperty =
-			BindableProperty<Image, std::string, const std::string&>(&SetSource);
+		static inline BindableProperty<Image, const std::string&> SourceProperty =
+			BindableProperty<Image, const std::string&>(&SetSource);
 
 		static inline BindableProperty<Image, Stretch> StretchProperty =
 			BindableProperty<Image, Stretch>(&SetStretch);

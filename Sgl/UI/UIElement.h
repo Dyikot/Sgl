@@ -43,22 +43,60 @@ namespace Sgl
 		UIElement(UIElement&& other) noexcept;
 		virtual ~UIElement() = default;
 		
-		void SetCursor(const Cursor& value) { SetProperty(CursorProperty, _cursor, value); }
-		const Cursor& GetCursor() const { return _cursor; }
+		void SetCursor(const Cursor& value)
+		{
+			SetProperty(CursorProperty, _cursor, value);
+		}
 
-		void SetBackground(Brush value) { SetProperty(BackgroundProperty, _background, value); }
-		Brush GetBackground() const { return _background; }
+		const Cursor& GetCursor() const 
+		{
+			return _cursor;
+		}
 
-		void SetTag(const Any& value) { SetProperty(TagProperty, _tag, value); }
-		const Any& GetTag() const { return _tag; }
+		void SetBackground(Brush value) 
+		{ 
+			SetProperty(BackgroundProperty, _background, value);
+		}
 
-		void SetToolTip(Shared<UIElement> value) { SetProperty(ToolTipProperty, _toolTip, value); }
-		Shared<UIElement> GetToolTip() const { return _toolTip; }
+		Brush GetBackground() const
+		{ 
+			return _background;
+		}
 
-		void SetZIndex(size_t value) { SetProperty(ZIndexProperty, _zIndex, value); }
-		size_t GetZIndex() const { return _zIndex; }
+		void SetTag(const Any& value) 
+		{ 
+			SetProperty(TagProperty, _tag, value);
+		}
 
-		bool IsMouseOver() const { return _isMouseOver; }
+		const Any& GetTag() const
+		{ 
+			return _tag;
+		}
+
+		void SetToolTip(Shared<UIElement> value) 
+		{ 
+			SetProperty(ToolTipProperty, _toolTip, value);
+		}
+
+		Shared<UIElement> GetToolTip() const 
+		{ 
+			return _toolTip;
+		}
+
+		void SetZIndex(size_t value) 
+		{ 
+			SetProperty(ZIndexProperty, _zIndex, value);
+		}
+
+		size_t GetZIndex() const 
+		{ 
+			return _zIndex;
+		}
+
+		bool IsMouseOver() const 
+		{
+			return _isMouseOver;
+		}
 
 		void Render(RenderContext context) override;
 	protected:
@@ -107,14 +145,14 @@ namespace Sgl
 			_isMouseOver = false;
 		}
 	public:
-		static inline BindableProperty<UIElement, std::reference_wrapper<const Cursor>, const Cursor&> CursorProperty =
-			BindableProperty<UIElement, std::reference_wrapper<const Cursor>, const Cursor&>(&SetCursor);
+		static inline BindableProperty<UIElement, const Cursor&> CursorProperty =
+			BindableProperty<UIElement, const Cursor&>(&SetCursor);
 
 		static inline BindableProperty<UIElement, Brush> BackgroundProperty =
 			BindableProperty<UIElement, Brush>(&SetBackground);
 
-		static inline BindableProperty<UIElement, Any, const Any&> TagProperty =
-			BindableProperty<UIElement, Any, const Any&>(&SetTag);
+		static inline BindableProperty<UIElement, const Any&> TagProperty =
+			BindableProperty<UIElement, const Any&>(&SetTag);
 
 		static inline BindableProperty<UIElement, Shared<UIElement>> ToolTipProperty =
 			BindableProperty<UIElement, Shared<UIElement>>(&SetToolTip);
@@ -130,9 +168,9 @@ namespace Sgl
 
 	struct UIElementComparer
 	{
-		bool operator()(const UIElement& left, const UIElement& right) const
+		bool operator()(const Shared<UIElement>& left, const Shared<UIElement>& right) const
 		{
-			return left.GetZIndex() < right.GetZIndex();
+			return left->GetZIndex() < right->GetZIndex();
 		}
 	};
 
