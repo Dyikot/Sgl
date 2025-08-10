@@ -5,7 +5,7 @@
 namespace Sgl
 {
 	template<typename TOwner, typename TValue>
-	class BindableProperty
+	class ObservableProperty
 	{
 	public:
 		using Owner = TOwner;
@@ -18,9 +18,9 @@ namespace Sgl
 	private:
 		static inline PropertyId _id = 0;
 	public:
-		BindableProperty(Setter setter): PropertySetter(setter) {}
-		BindableProperty(const BindableProperty&) = default;
-		BindableProperty(BindableProperty&&) = default;
-		~BindableProperty() = default;
+		ObservableProperty(Setter setter): PropertySetter(setter) {}
+		ObservableProperty(const ObservableProperty&) = delete;
+		ObservableProperty(ObservableProperty&&) = delete;
+		~ObservableProperty() = default;
 	};
 }

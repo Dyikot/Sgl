@@ -141,29 +141,29 @@ namespace Sgl::UIElements
 		void CreateOrUpdateFont();
 		void CreateTextTextureIfInvalid(float maxLineWidth);
 	public:
-		static inline BindableProperty<TextBlock, const std::string&> TextProperty =
-			BindableProperty<TextBlock, const std::string&>(&SetText);
+		static inline ObservableProperty<TextBlock, const std::string&> TextProperty =
+			ObservableProperty<TextBlock, const std::string&>(&SetText);
 
-		static inline BindableProperty<TextBlock, size_t> FontSizeProperty =
-			BindableProperty<TextBlock, size_t>(&SetFontSize);
+		static inline ObservableProperty<TextBlock, size_t> FontSizeProperty =
+			ObservableProperty<TextBlock, size_t>(&SetFontSize);
 
-		static inline BindableProperty<TextBlock, const FontFamily&> FontFamilyProperty =
-			BindableProperty<TextBlock,const FontFamily&>(&SetFontFamily);
+		static inline ObservableProperty<TextBlock, const FontFamily&> FontFamilyProperty =
+			ObservableProperty<TextBlock,const FontFamily&>(&SetFontFamily);
 
-		static inline BindableProperty<TextBlock, FontStyle> FontStyleProperty =
-			BindableProperty<TextBlock, FontStyle>(&SetFontStyle);
+		static inline ObservableProperty<TextBlock, FontStyle> FontStyleProperty =
+			ObservableProperty<TextBlock, FontStyle>(&SetFontStyle);
 
-		static inline BindableProperty<TextBlock, Color> ForegroundProperty =
-			BindableProperty<TextBlock, Color>(&SetForeground);
+		static inline ObservableProperty<TextBlock, Color> ForegroundProperty =
+			ObservableProperty<TextBlock, Color>(&SetForeground);
 
-		static inline BindableProperty<TextBlock, TextWrapping> TextWrappingProperty =
-			BindableProperty<TextBlock, TextWrapping>(&SetTextWrapping);
+		static inline ObservableProperty<TextBlock, TextWrapping> TextWrappingProperty =
+			ObservableProperty<TextBlock, TextWrapping>(&SetTextWrapping);
 
-		static inline BindableProperty<TextBlock, TextAlignment> TextAlignmentProperty =
-			BindableProperty<TextBlock, TextAlignment>(&SetTextAlignment);
+		static inline ObservableProperty<TextBlock, TextAlignment> TextAlignmentProperty =
+			ObservableProperty<TextBlock, TextAlignment>(&SetTextAlignment);
 
-		static inline BindableProperty<TextBlock, Thickness> PaddingProperty =
-			BindableProperty<TextBlock, Thickness>(&SetPadding);
+		static inline ObservableProperty<TextBlock, Thickness> PaddingProperty =
+			ObservableProperty<TextBlock, Thickness>(&SetPadding);
 	};
 }
 

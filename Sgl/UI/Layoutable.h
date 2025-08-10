@@ -158,34 +158,34 @@ namespace Sgl
 		virtual FSize MeasureContent(FSize avaliableSize) { return FSize(); }
 		virtual void ArrangeContent(FRect rect) { }
 	public:
-		static inline BindableProperty<Layoutable, float> WidthProperty =
-			BindableProperty<Layoutable, float>(&SetWidth);
+		static inline ObservableProperty<Layoutable, float> WidthProperty =
+			ObservableProperty<Layoutable, float>(&SetWidth);
 
-		static inline BindableProperty<Layoutable, float> HeightProperty =
-			BindableProperty<Layoutable, float>(&SetHeight);
+		static inline ObservableProperty<Layoutable, float> HeightProperty =
+			ObservableProperty<Layoutable, float>(&SetHeight);
 
-		static inline BindableProperty<Layoutable, float> MinWidthProperty =
-			BindableProperty<Layoutable, float>(&SetMinWidth);
+		static inline ObservableProperty<Layoutable, float> MinWidthProperty =
+			ObservableProperty<Layoutable, float>(&SetMinWidth);
 
-		static inline BindableProperty<Layoutable, float> MinHeightProperty =
-			BindableProperty<Layoutable, float>(&SetMinHeight);
+		static inline ObservableProperty<Layoutable, float> MinHeightProperty =
+			ObservableProperty<Layoutable, float>(&SetMinHeight);
 
-		static inline BindableProperty<Layoutable, float> MaxWidthProperty =
-			BindableProperty<Layoutable, float>(&SetMaxWidth);
+		static inline ObservableProperty<Layoutable, float> MaxWidthProperty =
+			ObservableProperty<Layoutable, float>(&SetMaxWidth);
 
-		static inline BindableProperty<Layoutable, float> MaxHeightProperty =
-			BindableProperty<Layoutable, float>(&SetMaxHeight);
+		static inline ObservableProperty<Layoutable, float> MaxHeightProperty =
+			ObservableProperty<Layoutable, float>(&SetMaxHeight);
 
-		static inline BindableProperty<Layoutable, bool> IsVisibleProperty =
-			BindableProperty<Layoutable, bool>(&SetIsVisible);
+		static inline ObservableProperty<Layoutable, bool> IsVisibleProperty =
+			ObservableProperty<Layoutable, bool>(&SetIsVisible);
 
-		static inline BindableProperty<Layoutable, Thickness> MarginProperty =
-			BindableProperty<Layoutable, Thickness>(&SetMargin);
+		static inline ObservableProperty<Layoutable, Thickness> MarginProperty =
+			ObservableProperty<Layoutable, Thickness>(&SetMargin);
 
-		static inline BindableProperty<Layoutable, VerticalAlignment> VerticalAlignmentProperty =
-			BindableProperty<Layoutable, VerticalAlignment>(&SetVerticalAlignment);
+		static inline ObservableProperty<Layoutable, VerticalAlignment> VerticalAlignmentProperty =
+			ObservableProperty<Layoutable, VerticalAlignment>(&SetVerticalAlignment);
 
-		static inline BindableProperty<Layoutable, HorizontalAlignment> HorizontalAlignmentProperty =
-			BindableProperty<Layoutable, HorizontalAlignment>(&SetHorizontalAlignment);
+		static inline ObservableProperty<Layoutable, HorizontalAlignment> HorizontalAlignmentProperty =
+			ObservableProperty<Layoutable, HorizontalAlignment>(&SetHorizontalAlignment);
 	};
 }

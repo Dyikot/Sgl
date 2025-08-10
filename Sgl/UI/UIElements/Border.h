@@ -36,10 +36,10 @@ namespace Sgl::UIElements
 
 		void Render(RenderContext context) final;
 	public:
-		static inline BindableProperty<Border, size_t> BorderWidthProperty =
-			BindableProperty<Border, size_t>(&SetBorderWidth);
+		static inline ObservableProperty<Border, size_t> BorderWidthProperty =
+			ObservableProperty<Border, size_t>(&SetBorderWidth);
 
-		static inline BindableProperty<Border, Color> BorderColorProperty =
-			BindableProperty<Border, Color>(&SetBorderColor);
+		static inline ObservableProperty<Border, Color> BorderColorProperty =
+			ObservableProperty<Border, Color>(&SetBorderColor);
 	};
 }

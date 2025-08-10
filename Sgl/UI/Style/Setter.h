@@ -1,7 +1,7 @@
 #pragma once
 
 #include <concepts>
-#include "../Binding/BindableProperty.h"
+#include "../../Base/Observable/ObservableProperty.h"
 
 namespace Sgl
 {
@@ -20,10 +20,10 @@ namespace Sgl
     class Setter: public ISetter<TTarget>
     {
     public: 
-        BindableProperty<TOwner, TValue>& Property;
+        ObservableProperty<TOwner, TValue>& Property;
         TValue Value;
     public:
-        Setter(BindableProperty<TOwner, TValue>& property, TValue value):
+        Setter(ObservableProperty<TOwner, TValue>& property, TValue value):
             Property(property), Value(value)
         {}
 

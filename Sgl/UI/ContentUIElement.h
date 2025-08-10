@@ -113,16 +113,16 @@ namespace Sgl
 		bool TryCreatePresenter();
 		void InvalidateContentPresenter() { _isContentPresenterValid = false; }
 	public:
-		static inline BindableProperty<ContentUIElement, DataTemplate> ContentTemplateProperty =
-			BindableProperty<ContentUIElement, DataTemplate>(&SetContentTemplate);
+		static inline ObservableProperty<ContentUIElement, DataTemplate> ContentTemplateProperty =
+			ObservableProperty<ContentUIElement, DataTemplate>(&SetContentTemplate);
 
-		static inline BindableProperty<ContentUIElement, Thickness> PaddingProperty =
-			BindableProperty<ContentUIElement, Thickness>(&SetPadding);
+		static inline ObservableProperty<ContentUIElement, Thickness> PaddingProperty =
+			ObservableProperty<ContentUIElement, Thickness>(&SetPadding);
 
-		static inline BindableProperty<ContentUIElement, VerticalAlignment> VerticalContentAlignmentProperty =
-			BindableProperty<ContentUIElement, VerticalAlignment>(&SetVerticalContentAlignment);
+		static inline ObservableProperty<ContentUIElement, VerticalAlignment> VerticalContentAlignmentProperty =
+			ObservableProperty<ContentUIElement, VerticalAlignment>(&SetVerticalContentAlignment);
 
-		static inline BindableProperty<ContentUIElement, HorizontalAlignment> HorizontalContentAlignmentProperty =
-			BindableProperty<ContentUIElement, HorizontalAlignment>(&SetHorizontalContentAlignment);
+		static inline ObservableProperty<ContentUIElement, HorizontalAlignment> HorizontalContentAlignmentProperty =
+			ObservableProperty<ContentUIElement, HorizontalAlignment>(&SetHorizontalContentAlignment);
 	};
 }

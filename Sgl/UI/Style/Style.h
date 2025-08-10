@@ -26,8 +26,8 @@ namespace Sgl
         auto end() const { return _setters.end(); }
 
         template<typename TOwner, typename TValue>
-        Style<T>& With(BindableProperty<TOwner, TValue>& property, 
-                       BindableProperty<TOwner, TValue>::Value value)
+        Style<T>& With(ObservableProperty<TOwner, TValue>& property, 
+                       ObservableProperty<TOwner, TValue>::Value value)
         {
             _setters.push_back(NewUnique<Setter<T, TOwner, TValue>>(property, value));
             return *this;

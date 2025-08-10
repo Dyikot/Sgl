@@ -145,20 +145,20 @@ namespace Sgl
 			_isMouseOver = false;
 		}
 	public:
-		static inline BindableProperty<UIElement, const Cursor&> CursorProperty =
-			BindableProperty<UIElement, const Cursor&>(&SetCursor);
+		static inline ObservableProperty<UIElement, const Cursor&> CursorProperty =
+			ObservableProperty<UIElement, const Cursor&>(&SetCursor);
 
-		static inline BindableProperty<UIElement, Brush> BackgroundProperty =
-			BindableProperty<UIElement, Brush>(&SetBackground);
+		static inline ObservableProperty<UIElement, Brush> BackgroundProperty =
+			ObservableProperty<UIElement, Brush>(&SetBackground);
 
-		static inline BindableProperty<UIElement, const Any&> TagProperty =
-			BindableProperty<UIElement, const Any&>(&SetTag);
+		static inline ObservableProperty<UIElement, const Any&> TagProperty =
+			ObservableProperty<UIElement, const Any&>(&SetTag);
 
-		static inline BindableProperty<UIElement, Shared<UIElement>> ToolTipProperty =
-			BindableProperty<UIElement, Shared<UIElement>>(&SetToolTip);
+		static inline ObservableProperty<UIElement, Shared<UIElement>> ToolTipProperty =
+			ObservableProperty<UIElement, Shared<UIElement>>(&SetToolTip);
 
-		static inline BindableProperty<UIElement, size_t> ZIndexProperty =
-			BindableProperty<UIElement, size_t>(&SetZIndex);
+		static inline ObservableProperty<UIElement, size_t> ZIndexProperty =
+			ObservableProperty<UIElement, size_t>(&SetZIndex);
 
 		friend class Scene;
 		friend class Panel;
