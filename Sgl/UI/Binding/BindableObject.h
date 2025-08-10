@@ -1,39 +1,57 @@
 #pragma once
 
 #include <unordered_map>
+#include <assert.h>
 #include "BindableProperty.h"
-#include "PropertyObserver.h"
+#include "../../Base/SmartPointers.h"
 #include "../../Base/Delegate.h"
 
 namespace Sgl
 {
 	class BindableObject
 	{
+	public:
+		Shared<void> DataContext;
 	private:
 		using PropertyId = size_t;
 
-		std::unordered_map<PropertyId, void*> _observers;
+		std::unordered_map<PropertyId, Action<void*, const void*>> _observers;
 	public:
-		template<typename TOwner, typename T, typename TInput = T>
-		void Subscribe(BindableProperty<TOwner, T, TInput>& property, IObserver<TInput>& observer)
+		BindableObject() = default;
+		BindableObject(const BindableObject& other);
+		BindableObject(BindableObject&& other) noexcept;
+		virtual ~BindableObject() = default;
+
+		template<typename TSource, typename TOwner, typename T, typename TInput = T>
+		void Bind(BindableProperty<TOwner, T, TInput>& property, T TSource::* observer)
 		{
-			_observers[property.Id] = &observer;
+			_observers[property.Id] = [observer](void* dataContext, const void* value)
+			{
+				auto source = static_cast<TSource*>(dataContext);
+				const auto& inputValue = *static_cast<const TInput*>(value);
+				std::invoke(observer, source) = inputValue;
+			};
+		}
+
+		template<typename TSource, typename TOwner, typename T, typename TInput = T>
+		void Bind(BindableProperty<TOwner, T, TInput>& property, void (TSource::*observer)(TInput))
+		{
+			_observers[property.Id] = [observer](void* dataContext, const void* value)
+			{
+				auto source = static_cast<TSource*>(dataContext);
+				const auto& inputValue = *static_cast<const TInput*>(value);
+				std::invoke(observer, source, inputValue);
+			};
 		}
 
 		template<typename TOwner, typename T, typename TInput = T>
-		void Unsubscribe(BindableProperty<TOwner, T, TInput>& property)
+		void Unbind(BindableProperty<TOwner, T, TInput>& property)
 		{
 			_observers.erase(property.Id);
 		}
 
 		template<typename TOwner, typename T, typename TInput = T>
-		Shared<IObserver<TInput>> GetObserver(BindableProperty<TOwner, T, TInput>& property)
-		{
-			return NewShared<PropertyObserver<TOwner, T, TInput>>(static_cast<TOwner&>(*this), property);
-		}
-
-		template<typename TOwner, typename T, typename TInput = T>
-		Action<TInput> GetFuncObserver(BindableProperty<TOwner, T, TInput>& property)
+		Action<TInput> GetObserver(BindableProperty<TOwner, T, TInput>& property)
 		{
 			return [&property, owner = static_cast<TOwner*>(this)](TInput value)
 			{
@@ -50,7 +68,8 @@ namespace Sgl
 
 				if(auto it = _observers.find(property.Id); it != _observers.end())
 				{
-					static_cast<IObserver<TInput>*>(it->second)->OnNext(value);
+					assert(DataContext != nullptr);
+					it->second(DataContext.get(), &value);
 				}
 			}
 		}

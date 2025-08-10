@@ -14,7 +14,6 @@ namespace Sgl
 		StyleMap Styles;
 		ClassesCollection Classes;
 		ResourcesMap Resources;
-		Shared<void> DataContext;
 	protected:
 		IStyleProvider* _stylingParent {};
 	private:
