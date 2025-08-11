@@ -146,19 +146,19 @@ namespace Sgl
 		}
 	public:
 		static inline ObservableProperty<UIElement, const Cursor&> CursorProperty =
-			ObservableProperty<UIElement, const Cursor&>(&SetCursor);
+			ObservableProperty<UIElement, const Cursor&>(&SetCursor, &GetCursor);
 
 		static inline ObservableProperty<UIElement, Brush> BackgroundProperty =
-			ObservableProperty<UIElement, Brush>(&SetBackground);
+			ObservableProperty<UIElement, Brush>(&SetBackground, &GetBackground);
 
 		static inline ObservableProperty<UIElement, const Any&> TagProperty =
-			ObservableProperty<UIElement, const Any&>(&SetTag);
+			ObservableProperty<UIElement, const Any&>(&SetTag, &GetTag);
 
 		static inline ObservableProperty<UIElement, Shared<UIElement>> ToolTipProperty =
-			ObservableProperty<UIElement, Shared<UIElement>>(&SetToolTip);
+			ObservableProperty<UIElement, Shared<UIElement>>(&SetToolTip, &GetToolTip);
 
 		static inline ObservableProperty<UIElement, size_t> ZIndexProperty =
-			ObservableProperty<UIElement, size_t>(&SetZIndex);
+			ObservableProperty<UIElement, size_t>(&SetZIndex, &GetZIndex);
 
 		friend class Scene;
 		friend class Panel;

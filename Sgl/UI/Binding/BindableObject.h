@@ -26,7 +26,8 @@ namespace Sgl
 			_observers[property.Id] = [observer](void* dataContext, const void* value)
 			{
 				auto source = static_cast<TSource*>(dataContext);
-				std::invoke(observer, source) = *static_cast<const TValue*>(value);
+				const auto& ref = *static_cast<const std::decay_t<TValue>*>(value);
+				std::invoke(observer, source) = ref;
 			};
 		}
 
@@ -36,7 +37,8 @@ namespace Sgl
 			_observers[property.Id] = [observer](void* dataContext, const void* value)
 			{
 				auto source = static_cast<TSource*>(dataContext);
-				std::invoke(observer, source, *static_cast<const TValue*>(value));
+				const auto& ref = *static_cast<const std::decay_t<TValue>*>(value);
+				std::invoke(observer, source, ref);
 			};
 		}
 
@@ -63,11 +65,16 @@ namespace Sgl
 				}
 
 				auto source = static_cast<TSource*>(DataContext.get());
-				auto observer = [&targetProperty, target = static_cast<TTarget*>(this)](const void* value)
-				{
-					std::invoke(targetProperty.Setter, target, *static_cast<const TValue*>(value));
-				};
+				auto target = static_cast<TTarget*>(this);
 
+				auto currentValue = std::invoke(sourceProperty.Getter, source);
+				std::invoke(targetProperty.Setter, target, currentValue);
+
+				auto observer = [&targetProperty, target](const void* value)
+				{
+					const auto& ref = *static_cast<const std::decay_t<TValue>*>(value);
+					std::invoke(targetProperty.Setter, target, ref);
+				};
 				std::invoke(&ObservableObject::SetObserver, source, sourceProperty.Id, observer);
 			}
 		}

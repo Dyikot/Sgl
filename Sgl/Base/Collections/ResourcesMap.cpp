@@ -4,7 +4,7 @@ namespace Sgl
 {
 	void ResourcesMap::Add(std::string_view key, Any item)
 	{
-		_resources[key] = item;
+		_resources[key] = std::move(item);
 	}
 
 	bool ResourcesMap::TryAdd(std::string_view key, Any item)

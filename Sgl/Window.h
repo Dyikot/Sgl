@@ -206,7 +206,7 @@ namespace Sgl
 		/// Enables or disables VSync
 		/// </summary>
 		/// <param name="value">- true to enable VSync, false to disable</param>
-		void SetVSync(bool value) noexcept;
+		void SetVSync(bool value = true) noexcept;
 
 		/// <summary>
 		/// Checks if VSync is enabled
@@ -218,7 +218,7 @@ namespace Sgl
 		/// Sets whether the window is resizable
 		/// </summary>
 		/// <param name="value">- true to make resizable, false otherwise</param>
-		void SetResizable(bool value) noexcept;
+		void SetResizable(bool value = true) noexcept;
 
 		/// <summary>
 		/// Checks if the window is resizable

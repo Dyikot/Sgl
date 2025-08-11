@@ -159,33 +159,33 @@ namespace Sgl
 		virtual void ArrangeContent(FRect rect) { }
 	public:
 		static inline ObservableProperty<Layoutable, float> WidthProperty =
-			ObservableProperty<Layoutable, float>(&SetWidth);
+			ObservableProperty<Layoutable, float>(&SetWidth, &GetWidth);
 
 		static inline ObservableProperty<Layoutable, float> HeightProperty =
-			ObservableProperty<Layoutable, float>(&SetHeight);
+			ObservableProperty<Layoutable, float>(&SetHeight, &GetHeight);
 
 		static inline ObservableProperty<Layoutable, float> MinWidthProperty =
-			ObservableProperty<Layoutable, float>(&SetMinWidth);
+			ObservableProperty<Layoutable, float>(&SetMinWidth, &GetMinWidth);
 
 		static inline ObservableProperty<Layoutable, float> MinHeightProperty =
-			ObservableProperty<Layoutable, float>(&SetMinHeight);
+			ObservableProperty<Layoutable, float>(&SetMinHeight, &GetMinHeight);
 
 		static inline ObservableProperty<Layoutable, float> MaxWidthProperty =
-			ObservableProperty<Layoutable, float>(&SetMaxWidth);
+			ObservableProperty<Layoutable, float>(&SetMaxWidth, &GetMaxWidth);
 
 		static inline ObservableProperty<Layoutable, float> MaxHeightProperty =
-			ObservableProperty<Layoutable, float>(&SetMaxHeight);
+			ObservableProperty<Layoutable, float>(&SetMaxHeight, &GetMaxHeight);
 
 		static inline ObservableProperty<Layoutable, bool> IsVisibleProperty =
-			ObservableProperty<Layoutable, bool>(&SetIsVisible);
+			ObservableProperty<Layoutable, bool>(&SetIsVisible, &IsVisible);
 
 		static inline ObservableProperty<Layoutable, Thickness> MarginProperty =
-			ObservableProperty<Layoutable, Thickness>(&SetMargin);
+			ObservableProperty<Layoutable, Thickness>(&SetMargin, &GetMargin);
 
 		static inline ObservableProperty<Layoutable, VerticalAlignment> VerticalAlignmentProperty =
-			ObservableProperty<Layoutable, VerticalAlignment>(&SetVerticalAlignment);
+			ObservableProperty<Layoutable, VerticalAlignment>(&SetVerticalAlignment, &GetVerticalAlignment);
 
 		static inline ObservableProperty<Layoutable, HorizontalAlignment> HorizontalAlignmentProperty =
-			ObservableProperty<Layoutable, HorizontalAlignment>(&SetHorizontalAlignment);
+			ObservableProperty<Layoutable, HorizontalAlignment>(&SetHorizontalAlignment, &GetHorizontalAlignment);
 	};
 }

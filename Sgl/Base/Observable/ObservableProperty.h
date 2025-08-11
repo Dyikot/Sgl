@@ -12,13 +12,17 @@ namespace Sgl
 		using Value = TValue;
 		using PropertyId = size_t;
 		using PropertySetter = void(TOwner::*)(TValue);
+		using PropertyGetter = TValue(TOwner::*)() const;
 
 		const PropertyId Id = _id++;
 		const PropertySetter Setter;
+		const PropertyGetter Getter;
 	private:
 		static inline PropertyId _id = 0;
 	public:
-		ObservableProperty(PropertySetter setter): Setter(setter) {}
+		ObservableProperty(PropertySetter setter, PropertyGetter getter):
+			Setter(setter), Getter(getter)
+		{}
 		ObservableProperty(const ObservableProperty&) = delete;
 		ObservableProperty(ObservableProperty&&) = delete;
 		~ObservableProperty() = default;

@@ -130,15 +130,18 @@ namespace Sgl::UIElements
 		{
 			TTF_SetFontWrappedAlign(_fontImpl, static_cast<int>(_textAlignment));
 
-			if(_textWrapping == TextWrapping::NoWrap)
+			if(_text != "")
 			{
-				_textTexture = NewUnique<Texture>(
-					Surface(FontRenderType::Blended, _fontImpl, _text, _foreground));
-			}
-			else
-			{
-				_textTexture = NewUnique<Texture>(
-					Surface(FontRenderType::Blended, _fontImpl, _text, maxLineWidth, _foreground));
+				if(_textWrapping == TextWrapping::NoWrap)
+				{
+					_textTexture = NewUnique<Texture>(
+						Surface(FontRenderType::Blended, _fontImpl, _text, _foreground));
+				}
+				else
+				{
+					_textTexture = NewUnique<Texture>(
+						Surface(FontRenderType::Blended, _fontImpl, _text, maxLineWidth, _foreground));
+				}
 			}
 
 			_isTextTextureValid = true;

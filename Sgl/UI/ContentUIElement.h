@@ -114,15 +114,15 @@ namespace Sgl
 		void InvalidateContentPresenter() { _isContentPresenterValid = false; }
 	public:
 		static inline ObservableProperty<ContentUIElement, DataTemplate> ContentTemplateProperty =
-			ObservableProperty<ContentUIElement, DataTemplate>(&SetContentTemplate);
+			ObservableProperty<ContentUIElement, DataTemplate>(&SetContentTemplate, &GetContentTemplate);
 
 		static inline ObservableProperty<ContentUIElement, Thickness> PaddingProperty =
-			ObservableProperty<ContentUIElement, Thickness>(&SetPadding);
+			ObservableProperty<ContentUIElement, Thickness>(&SetPadding, &GetPadding);
 
 		static inline ObservableProperty<ContentUIElement, VerticalAlignment> VerticalContentAlignmentProperty =
-			ObservableProperty<ContentUIElement, VerticalAlignment>(&SetVerticalContentAlignment);
+			ObservableProperty<ContentUIElement, VerticalAlignment>(&SetVerticalContentAlignment, &GetVerticalContentAlignment);
 
 		static inline ObservableProperty<ContentUIElement, HorizontalAlignment> HorizontalContentAlignmentProperty =
-			ObservableProperty<ContentUIElement, HorizontalAlignment>(&SetHorizontalContentAlignment);
+			ObservableProperty<ContentUIElement, HorizontalAlignment>(&SetHorizontalContentAlignment, &GetHorizontalContentAlignment);
 	};
 }
