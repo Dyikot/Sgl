@@ -38,11 +38,6 @@ namespace Sgl
 		return _soundChunk ? Volume(_soundChunk->volume) : Volume::Min;
 	}
 
-	SoundChunk::operator Mix_Chunk* () const noexcept
-	{
-		return _soundChunk.get();
-	}
-
 	bool operator==(const SoundChunk& left, const SoundChunk& right)
 	{
 		return left._soundChunk == right._soundChunk;

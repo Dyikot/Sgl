@@ -19,12 +19,12 @@ namespace Sgl
         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
     }
 
-    SDL_Window* Window::GetSDL_Window() const noexcept
+    SDL_Window* Window::GetSDLWindow() const noexcept
     {
         return _window;
     }
 
-    SDL_Renderer* Window::GetRenderer() const noexcept
+    SDL_Renderer* Window::GetSDLRenderer() const noexcept
     {
         return _renderer;
     }
@@ -204,7 +204,7 @@ namespace Sgl
     void Window::SetIcon(Surface icon)
     {
         _icon = std::move(icon);
-        SDL_SetWindowIcon(_window, static_cast<SDL_Surface*>(_icon));
+        SDL_SetWindowIcon(_window, _icon.ToSDLSurface());
     }
 
     Surface Window::GetIcon() const

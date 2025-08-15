@@ -4,7 +4,7 @@
 namespace Sgl
 {
 	Layoutable::Layoutable(const Layoutable& other):
-		StyleableElement(other),
+		Renderable(other),
 		_bounds(other._bounds),
 		_desiredSize(other._desiredSize),
 		_layoutableParent(other._layoutableParent),
@@ -14,8 +14,8 @@ namespace Sgl
 		_minHeight(other._minHeight),
 		_maxWidth(other._maxWidth),
 		_maxHeight(other._maxHeight),
-		_isVisible(other._isVisible),
 		_margin(other._margin),
+		_isVisible(other._isVisible),
 		_verticalAlignment(other._verticalAlignment),
 		_horizontalAlignment(other._horizontalAlignment),
 		_isArrangeValid(other._isArrangeValid),
@@ -23,7 +23,7 @@ namespace Sgl
 	{}
 
 	Layoutable::Layoutable(Layoutable&& other) noexcept:
-		StyleableElement(std::move(other)),
+		Renderable(std::move(other)),
 		_bounds(other._bounds),
 		_desiredSize(other._desiredSize),
 		_layoutableParent(std::exchange(other._layoutableParent, nullptr)),
@@ -33,13 +33,73 @@ namespace Sgl
 		_minHeight(other._minHeight),
 		_maxWidth(other._maxWidth),
 		_maxHeight(other._maxHeight),
-		_isVisible(other._isVisible),
 		_margin(other._margin),
+		_isVisible(other._isVisible),
 		_verticalAlignment(other._verticalAlignment),
 		_horizontalAlignment(other._horizontalAlignment),
 		_isArrangeValid(other._isArrangeValid),
 		_isMeasureValid(other._isMeasureValid)
 	{}
+
+	void Layoutable::SetWidth(float value)
+	{
+		SetProperty(WidthProperty, _width, value);
+		InvalidateMeasure();
+	}
+
+	void Layoutable::SetHeight(float value)
+	{
+		SetProperty(HeightProperty, _height, value);
+		InvalidateMeasure();
+	}
+
+	void Layoutable::SetMinWidth(float value)
+	{
+		SetProperty(MinWidthProperty, _minWidth, value);
+		InvalidateMeasure();
+	}
+
+	void Layoutable::SetMinHeight(float value)
+	{
+		SetProperty(MinHeightProperty, _minHeight, value);
+		InvalidateMeasure();
+	}
+
+	void Layoutable::SetMaxWidth(float value)
+	{
+		SetProperty(MaxWidthProperty, _maxWidth, value);
+		InvalidateMeasure();
+	}
+
+	void Layoutable::SetMaxHeight(float value)
+	{
+		SetProperty(MaxHeightProperty, _maxHeight, value);
+		InvalidateMeasure();
+	}
+
+	void Layoutable::SetMargin(Thickness value)
+	{
+		SetProperty(MarginProperty, _margin, value);
+		InvalidateMeasure();
+	}
+
+	void Layoutable::SetIsVisible(bool value)
+	{
+		SetProperty(IsVisibleProperty, _isVisible, value);
+		InvalidateMeasure();
+	}
+
+	void Layoutable::SetVerticalAlignment(VerticalAlignment value)
+	{
+		SetProperty(VerticalAlignmentProperty, _verticalAlignment, value);
+		InvalidateArrange();
+	}
+
+	void Layoutable::SetHorizontalAlignment(HorizontalAlignment value)
+	{
+		SetProperty(HorizontalAlignmentProperty, _horizontalAlignment, value);
+		InvalidateArrange();
+	}
 
 	void Layoutable::Arrange(FRect rect)
 	{
@@ -48,7 +108,7 @@ namespace Sgl
 			Measure(FSize(rect.w, rect.h));
 		}
 
-		if(_isVisible)
+		if(IsVisible())
 		{
 			_isArrangeValid = true;
 			ArrangeCore(rect);
@@ -57,7 +117,7 @@ namespace Sgl
 
 	void Layoutable::Measure(FSize avaliableSize)
 	{
-		if(!_isMeasureValid && _isVisible)
+		if(!_isMeasureValid && IsVisible())
 		{
 			_isMeasureValid = true;
 			_desiredSize = MeasureCore(avaliableSize);
@@ -173,6 +233,8 @@ namespace Sgl
 
 	void Layoutable::InvalidateArrange()
 	{
+		InvalidateRender();
+
 		if(_isArrangeValid)
 		{
 			_isArrangeValid = false;
@@ -186,10 +248,12 @@ namespace Sgl
 
 	void Layoutable::InvalidateMeasure()
 	{
+		InvalidateRender();
+
 		if(_isMeasureValid)
 		{
 			_isMeasureValid = false;
-			_isArrangeValid = false;
+			_isArrangeValid = false;			
 
 			if(_layoutableParent != nullptr)
 			{

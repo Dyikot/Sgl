@@ -11,16 +11,16 @@ namespace Sgl
 	{
 	private:
 		std::shared_ptr<SDL_Cursor> _cursor;
-	public:
-		static void Set(const Cursor& cursor);
-		
+	public:		
 		Cursor(SDL_SystemCursor systemCursor) noexcept;
 		explicit Cursor(std::string_view path);
 		Cursor(const Cursor& other);
 		Cursor(Cursor&& other) noexcept;
 		~Cursor() = default;
 
-		SDL_Cursor* GetSDLCursor() const noexcept { return _cursor.get(); }
+		static void Set(const Cursor& cursor);
+
+		SDL_Cursor* ToSDLCursor() const noexcept { return _cursor.get(); }
 
 		Cursor& operator=(const Cursor&) = default;
 		Cursor& operator=(Cursor&&) noexcept = default;

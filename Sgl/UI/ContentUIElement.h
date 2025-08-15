@@ -54,54 +54,22 @@ namespace Sgl
 			return _contentPresenter;
 		}
 
-		void SetContentTemplate(DataTemplate value)
-		{
-			SetProperty(ContentTemplateProperty, _contentTemplate, value);
-			InvalidateMeasure();
-			InvalidateContentPresenter();
-		}
+		void SetContentTemplate(DataTemplate value);
+		DataTemplate GetContentTemplate() const { return _contentTemplate; }
 
-		DataTemplate GetContentTemplate() const
-		{
-			return _contentTemplate;
-		}
+		void SetPadding(Thickness value);
+		Thickness GetPadding() const { return _padding; }
 
-		void SetPadding(Thickness value)
-		{ 
-			SetProperty(PaddingProperty, _padding, value);
-			InvalidateMeasure();
-		}
+		void SetVerticalContentAlignment(VerticalAlignment value);
+		VerticalAlignment GetVerticalContentAlignment() const { return _verticalContentAlignment; }
 
-		Thickness GetPadding() const 
-		{ 
-			return _padding;
-		}
-
-		void SetVerticalContentAlignment(VerticalAlignment value)
-		{ 
-			SetProperty(VerticalContentAlignmentProperty, _verticalContentAlignment, value);
-			InvalidateArrange();
-		}
-
-		VerticalAlignment GetVerticalContentAlignment() const 
-		{ 
-			return _verticalContentAlignment;
-		}
-
-		void SetHorizontalContentAlignment(HorizontalAlignment value) 
-		{ 
-			SetProperty(HorizontalContentAlignmentProperty, _horizontalContentAlignment, value);
-			InvalidateArrange();
-		}
-
-		HorizontalAlignment GetHorizontalContentAlignment() const
-		{ 
-			return _horizontalContentAlignment;
-		}
+		void SetHorizontalContentAlignment(HorizontalAlignment value);
+		HorizontalAlignment GetHorizontalContentAlignment() const { return _horizontalContentAlignment; }
 
 		void Render(RenderContext context) override;
 		void ApplyStyle() override;
 	protected:
+		void OnCursorChanged(const Cursor& cursor) override;
 		void OnMouseMove(const MouseEventArgs& e) override;
 		void OnMouseDown(const MouseButtonEventArgs& e) override;
 		void OnMouseUp(const MouseButtonEventArgs& e) override;

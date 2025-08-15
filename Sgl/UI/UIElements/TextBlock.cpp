@@ -37,6 +37,64 @@ namespace Sgl::UIElements
 		_fontValidationFlags(other._fontValidationFlags)
 	{}
 
+	void TextBlock::SetText(const std::string& value)
+	{
+		SetProperty(TextProperty, _text, value);
+		InvalidateTextTexture();
+		InvalidateMeasure();
+	}	
+
+	void TextBlock::SetFontSize(size_t value)
+	{
+		SetProperty(FontSizeProperty, _fontSize, value);
+		InvalidateFont(FontSizeFlag);
+		InvalidateTextTexture();
+		InvalidateMeasure();
+	}
+
+	void TextBlock::SetFontFamily(const FontFamily& value)
+	{
+		SetProperty(FontFamilyProperty, _fontFamily, value);
+		InvalidateFont(FontFamilyFlag);
+		InvalidateTextTexture();
+		InvalidateMeasure();
+	}
+
+	void TextBlock::SetFontStyle(FontStyle value)
+	{
+		SetProperty(FontStyleProperty, _fontStyle, value);
+		InvalidateFont(FontStyleFlag);
+		InvalidateTextTexture();
+		InvalidateRender();
+	}
+
+	void TextBlock::SetForeground(Color value)
+	{
+		SetProperty(ForegroundProperty, _foreground, value);
+		InvalidateTextTexture();
+		InvalidateRender();
+	}
+
+	void TextBlock::SetTextWrapping(TextWrapping value)
+	{
+		SetProperty(TextWrappingProperty, _textWrapping, value);
+		InvalidateTextTexture();
+		InvalidateMeasure();
+	}
+
+	void TextBlock::SetTextAlignment(TextAlignment value)
+	{
+		SetProperty(TextAlignmentProperty, _textAlignment, value);
+		InvalidateTextTexture();
+		InvalidateMeasure();
+	}
+
+	void TextBlock::SetPadding(Thickness value)
+	{
+		SetProperty(PaddingProperty, _padding, value);
+		InvalidateMeasure();
+	}
+
 	void TextBlock::Render(RenderContext context)
 	{
 		RenderBackground(context);

@@ -3,8 +3,9 @@
 #include <vector>
 #include "StyleMap.h"
 #include "ClassesCollections.h"
-#include "../Binding/BindableObject.h"
-#include "../../Base/Collections/ResourcesMap.h"
+#include "../Data/BindableObject.h"
+#include "../Base/Ref.h"
+#include "../Base/Collections/ResourcesMap.h"
 
 namespace Sgl
 {
@@ -32,7 +33,7 @@ namespace Sgl
 		virtual void ApplyStyle();
 		void InvalidateStyle();
 	private:
-		void UpdateStyle();
+		void UpdateStyles();
 		void GetStylesFrom(const StyleMap& styles);
 	};
 }

@@ -3,7 +3,7 @@
 #include "../Base/Log.h"
 #include "../Base/Math.h"
 #include "../Base/Time/Stopwatch.h"
-#include "Texture.h"
+#include "../Application.h"
 
 namespace Sgl
 {
@@ -11,13 +11,13 @@ namespace Sgl
 	static const auto SinRange = Math::SinRange<MaxPointsNumber>();
 	static const auto CosRange = Math::CosRange<MaxPointsNumber>();
 
-	RenderContext::RenderContext(SDL_Renderer* renderer) noexcept:
-		_renderer(renderer)
+	RenderContext::RenderContext():
+		_renderer(App->Window.GetSDLRenderer())
 	{}
 
 	void RenderContext::SetTarget(const Texture& texture)
 	{
-		SDL_SetRenderTarget(_renderer, static_cast<SDL_Texture*>(texture));
+		SDL_SetRenderTarget(_renderer, texture.ToSDLTexture());
 	}
 
 	void RenderContext::ResetTarget()
@@ -66,9 +66,9 @@ namespace Sgl
 		SDL_RenderDrawRectF(_renderer, &rect);
 	}
 
-	void RenderContext::DrawRectangleFill(FRect rect, Color fill)
+	void RenderContext::DrawRectangleFill(FRect rect, Color color)
 	{
-		SetColor(fill);
+		SetColor(color);
 		SDL_RenderFillRectF(_renderer, &rect);
 	}
 
@@ -78,9 +78,9 @@ namespace Sgl
 		SDL_RenderDrawRectsF(_renderer, rects.data(), rects.size());
 	}	
 
-	void RenderContext::DrawRectanglesFill(std::span<const FRect> rects, Color fill)
+	void RenderContext::DrawRectanglesFill(std::span<const FRect> rects, Color color)
 	{
-		SetColor(fill);
+		SetColor(color);
 		SDL_RenderFillRectsF(_renderer, rects.data(), rects.size());
 	}
 
@@ -226,8 +226,10 @@ namespace Sgl
 		}
 	}
 
-	static void CalculateEllipseFill(std::span<Vertex> vertices, size_t angleStep,
-									 Rect rect, Color color)
+	static void ComputeEllipseVertices(std::span<Vertex> vertices, 
+									   size_t angleStep,
+									   Rect rect, 
+									   Color color)
 	{
 		auto angle = 0ull;
 		auto radiusX = rect.w * 0.5f;
@@ -253,122 +255,99 @@ namespace Sgl
 		constexpr auto pointNumber = MaxPointsNumber / 2;
 		auto vertices = std::array<Vertex, pointNumber + 1>();
 
-		CalculateEllipseFill(vertices, MaxPointsNumber / pointNumber, rect, color);
+		ComputeEllipseVertices(vertices, MaxPointsNumber / pointNumber, rect, color);
 		auto order = Math::TriangulateEllipse(pointNumber);
 		DrawGeometry(vertices, order);
 	}
 
-	void RenderContext::DrawEllipseFill(Rect rect, const Texture& texture, Color color)
+	void RenderContext::DrawEllipseFill(Rect rect, const Texture& texture)
 	{
 		constexpr auto pointNumber = MaxPointsNumber / 2;
 		auto vertices = std::array<Vertex, pointNumber + 1>();
+		auto color = texture.GetColor();
 
-		CalculateEllipseFill(vertices, MaxPointsNumber / pointNumber, rect, color);
+		ComputeEllipseVertices(vertices, MaxPointsNumber / pointNumber, rect, color);
 		auto order = Math::TriangulateEllipse(pointNumber);
-		DrawGeometry(vertices, order, texture);
+		DrawGeometry(vertices, order, &texture);
 	}
 
-	void RenderContext::DrawGeometry(std::span<const Vertex> vertices)
+	void RenderContext::DrawGeometry(std::span<const Vertex> vertices, 
+									 std::span<const int> order, 
+									 const Texture* texture)
 	{
-		SDL_RenderGeometry(_renderer, nullptr, vertices.data(), vertices.size(), nullptr, 0);
-	}
-
-	void RenderContext::DrawGeometry(std::span<const Vertex> vertices, const Texture& texture)
-	{
-		SDL_RenderGeometry(_renderer, static_cast<SDL_Texture*>(texture), 
-						  vertices.data(), vertices.size(), nullptr, 0);
-	}
-
-	void RenderContext::DrawGeometry(std::span<const Vertex> vertices, std::span<const int> order)
-	{
-		SDL_RenderGeometry(_renderer, nullptr, 
-						   vertices.data(), vertices.size(),
-						   order.data(), order.size());
-	}
-
-	void RenderContext::DrawGeometry(std::span<const Vertex> vertices, std::span<const int> order,
-									 const Texture& texture)
-	{
-		SDL_RenderGeometry(_renderer, static_cast<SDL_Texture*>(texture), 
+		SDL_RenderGeometry(_renderer, texture ? texture->ToSDLTexture() : nullptr,
 						   vertices.data(), vertices.size(),
 						   order.data(), order.size());
 	}
 
 	void RenderContext::DrawTexture(const Texture& texture)
 	{
-		SDL_RenderCopyF(_renderer, static_cast<SDL_Texture*>(texture), nullptr, nullptr);
+		SDL_RenderCopyF(_renderer, texture.ToSDLTexture(), nullptr, nullptr);
 	}
 
 	void RenderContext::DrawTexture(const Texture& texture, FRect target)
 	{
-		SDL_RenderCopyF(_renderer, static_cast<SDL_Texture*>(texture), nullptr, &target);
+		SDL_RenderCopyF(_renderer, texture.ToSDLTexture(), nullptr, &target);
 	}
 
 	void RenderContext::DrawTexture(const Texture& texture, FRect target, Rect clip)
 	{
-		SDL_RenderCopyF(_renderer, static_cast<SDL_Texture*>(texture), &clip, &target);
+		SDL_RenderCopyF(_renderer, texture.ToSDLTexture(), &clip, &target);
 	}
 
-	void RenderContext::DrawTextureWithRotation(const Texture& texture, double angle, 
+	void RenderContext::DrawTextureRotated(const Texture& texture, double angle, 
 												FPoint center)
 	{
-		SDL_RenderCopyExF(_renderer, static_cast<SDL_Texture*>(texture), nullptr, nullptr,
+		SDL_RenderCopyExF(_renderer, texture.ToSDLTexture(), nullptr, nullptr,
 						  angle, &center, SDL_FLIP_NONE);
 	}
 
-	void RenderContext::DrawTextureWithRotation(const Texture& texture, FRect target,
-												double angle, FPoint center)
+	void RenderContext::DrawTextureRotated(const Texture& texture, double angle, FPoint center, FRect target)
 	{
-		SDL_RenderCopyExF(_renderer, static_cast<SDL_Texture*>(texture), nullptr, &target,
-						  angle, &center, SDL_FLIP_NONE);
+		SDL_RenderCopyExF(_renderer, texture.ToSDLTexture(), nullptr, &target,
+			angle, &center, SDL_FLIP_NONE);
 	}
 
-	void RenderContext::DrawTextureWithRotation(const Texture& texture, FRect target, Rect clip,
-												double angle, FPoint center)
+	void RenderContext::DrawTextureRotated(const Texture& texture, double angle, FPoint center, FRect target, Rect clip)
 	{
-		SDL_RenderCopyExF(_renderer, static_cast<SDL_Texture*>(texture), &clip, &target,
-						  angle, &center, SDL_FLIP_NONE);
+		SDL_RenderCopyExF(_renderer, texture.ToSDLTexture(), &clip, &target,
+			angle, &center, SDL_FLIP_NONE);
 	}
 
-	void RenderContext::DrawTextureWithFlip(const Texture& texture, Orientation flip)
+	void RenderContext::DrawTextureFlipped(const Texture& texture, Orientation flip)
 	{
-		SDL_RenderCopyExF(_renderer, static_cast<SDL_Texture*>(texture), nullptr, nullptr,
+		SDL_RenderCopyExF(_renderer, texture.ToSDLTexture(), nullptr, nullptr,
 			0, nullptr, static_cast<SDL_RendererFlip>(flip));
 	}
 
-	void RenderContext::DrawTextureWithFlip(const Texture& texture, FRect target, Orientation flip)
+	void RenderContext::DrawTextureFlipped(const Texture& texture, Orientation flip, FRect target)
 	{
-		SDL_RenderCopyExF(_renderer, static_cast<SDL_Texture*>(texture), nullptr, &target,
+		SDL_RenderCopyExF(_renderer, texture.ToSDLTexture(), nullptr, &target,
 			0, nullptr, static_cast<SDL_RendererFlip>(flip));
 	}
 
-	void RenderContext::DrawTextureWithFlip(const Texture& texture, FRect target, Rect clip,
-											Orientation flip)
+	void RenderContext::DrawTextureFlipped(const Texture& texture, Orientation flip, FRect target, Rect clip)
 	{
-		SDL_RenderCopyExF(_renderer, static_cast<SDL_Texture*>(texture), &clip, &target,
+		SDL_RenderCopyExF(_renderer, texture.ToSDLTexture(), &clip, &target,
 			0, nullptr, static_cast<SDL_RendererFlip>(flip));
 	}
 
-	void RenderContext::DrawTextureWithRotationAndFlip(const Texture& texture, double angle,
+	void RenderContext::DrawTextureTransformed(const Texture& texture, double angle,
 													   FPoint center, Orientation flip)
 	{
-		SDL_RenderCopyExF(_renderer, static_cast<SDL_Texture*>(texture), nullptr, nullptr,
+		SDL_RenderCopyExF(_renderer, texture.ToSDLTexture(), nullptr, nullptr,
 			angle, &center, static_cast<SDL_RendererFlip>(flip));
 	}
 
-	void RenderContext::DrawTextureWithRotationAndFlip(const Texture& texture, FRect target,
-													   double angle, FPoint center, 
-													   Orientation flip)
+	void RenderContext::DrawTextureTransformed(const Texture& texture, double angle, FPoint center, Orientation flip, FRect target)
 	{
-		SDL_RenderCopyExF(_renderer, static_cast<SDL_Texture*>(texture), nullptr,
+		SDL_RenderCopyExF(_renderer, texture.ToSDLTexture(), nullptr,
 			&target, angle, &center, static_cast<SDL_RendererFlip>(flip));
 	}
 
-	void RenderContext::DrawTextureWithRotationAndFlip(const Texture& texture, FRect target,
-													   Rect clip, double angle, FPoint center, 
-													   Orientation flip)
+	void RenderContext::DrawTextureTransformed(const Texture& texture, double angle, FPoint center, Orientation flip, FRect target, Rect clip)
 	{
-		SDL_RenderCopyExF(_renderer, static_cast<SDL_Texture*>(texture), &clip, 
+		SDL_RenderCopyExF(_renderer, texture.ToSDLTexture(), &clip,
 			&target, angle, &center, static_cast<SDL_RendererFlip>(flip));
 	}
 }

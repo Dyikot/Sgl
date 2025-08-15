@@ -1,10 +1,9 @@
 #pragma once
 
 #include <unordered_map>
-#include "../../Base/Ref.h"
-#include "../../Base/Delegate.h"
-#include "../../Base/Observable/ObservableObject.h"
 #include "BindingMode.h"
+#include "ObservableObject.h"
+#include "../Base/Ref.h"
 
 namespace Sgl
 {
@@ -31,8 +30,8 @@ namespace Sgl
 			};
 		}
 
-		template<typename TTarrget, typename TValue, typename TSource>
-		void Bind(ObservableProperty<TTarrget, TValue>& property, void (TSource::*observer)(TValue))
+		template<typename TTarget, typename TValue, typename TSource>
+		void Bind(ObservableProperty<TTarget, TValue>& property, void (TSource::*observer)(TValue))
 		{
 			_observers[property.Id] = [observer](void* dataContext, const void* value)
 			{
@@ -121,7 +120,7 @@ namespace Sgl
 			if(field != value)
 			{
 				field = value;
-
+				
 				if(auto it = _observers.find(property.Id); it != _observers.end())
 				{
 					if(DataContext == nullptr)

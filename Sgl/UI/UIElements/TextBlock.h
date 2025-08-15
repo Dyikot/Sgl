@@ -35,101 +35,29 @@ namespace Sgl::UIElements
 		TextBlock(TextBlock&& other) noexcept;
 		~TextBlock() = default;
 
-		void SetText(const std::string& value)
-		{
-			SetProperty(TextProperty, _text, value);
-			InvalidateTextTexture();
-			InvalidateMeasure();
-		}
+		void SetText(const std::string& value);
+		const std::string& GetText() const { return _text; }
 
-		const std::string& GetText() const
-		{
-			return _text;
-		}
+		void SetFontSize(size_t value); 
+		size_t GetFontSize() const { return _fontSize; }
 
-		void SetFontSize(size_t value)
-		{
-			SetProperty(FontSizeProperty, _fontSize, value);
-			InvalidateFont(FontSizeFlag);
-			InvalidateTextTexture();
-			InvalidateMeasure();
-		}
+		void SetFontFamily(const FontFamily& value);
+		const FontFamily& GetFontFamily() const { return _fontFamily; }
 
-		size_t GetFontSize() const
-		{
-			return _fontSize;
-		}
+		void SetFontStyle(FontStyle value);
+		FontStyle GetFontStyle() const { return _fontStyle; }
 
-		void SetFontFamily(const FontFamily& value)
-		{
-			SetProperty(FontFamilyProperty, _fontFamily, value);
-			InvalidateFont(FontFamilyFlag);
-			InvalidateTextTexture();
-			InvalidateMeasure();
-		}
+		void SetForeground(Color value);
+		Color GetForeground() const { return _foreground; }
 
-		const FontFamily& GetFontFamily() const
-		{
-			return _fontFamily;
-		}
+		void SetTextWrapping(TextWrapping value); 
+		TextWrapping GetTextWrapping() const { return _textWrapping; }
 
-		void SetFontStyle(FontStyle value)
-		{
-			SetProperty(FontStyleProperty, _fontStyle, value);
-			InvalidateFont(FontStyleFlag);
-			InvalidateTextTexture();
-		}
+		void SetTextAlignment(TextAlignment value);
+		TextAlignment GetTextAlignment() const { return _textAlignment; }
 
-		FontStyle GetFontStyle() const
-		{
-			return _fontStyle;
-		}
-
-		void SetForeground(Color value)
-		{
-			SetProperty(ForegroundProperty, _foreground, value);
-			InvalidateTextTexture();
-		}
-
-		Color GetForeground() const
-		{
-			return _foreground;
-		}
-
-		void SetTextWrapping(TextWrapping value)
-		{
-			SetProperty(TextWrappingProperty, _textWrapping, value);
-			InvalidateTextTexture();
-			InvalidateMeasure();
-		}
-
-		TextWrapping GetTextWrapping() const
-		{
-			return _textWrapping;
-		}
-
-		void SetTextAlignment(TextAlignment value)
-		{
-			SetProperty(TextAlignmentProperty, _textAlignment, value);
-			InvalidateTextTexture();
-			InvalidateMeasure();
-		}
-
-		TextAlignment GetTextAlignment() const
-		{
-			return _textAlignment;
-		}
-
-		void SetPadding(Thickness value)
-		{
-			SetProperty(PaddingProperty, _padding, value);
-			InvalidateMeasure();
-		}
-
-		Thickness GetPadding() const
-		{
-			return _padding;
-		}
+		void SetPadding(Thickness value);
+		Thickness GetPadding() const { return _padding; }
 
 		void Render(RenderContext context) override;
 	protected:

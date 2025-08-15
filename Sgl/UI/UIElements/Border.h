@@ -14,25 +14,11 @@ namespace Sgl::UIElements
 		Border(const Border& other);
 		Border(Border&& other) noexcept;
 
-		void SetBorderWidth(size_t value)
-		{ 
-			SetProperty(BorderWidthProperty, _borderWidth, value);
-		}
+		void SetBorderWidth(size_t value);
+		size_t GetBorderWidth() const { return _borderWidth; }
 
-		size_t GetBorderWidth() const
-		{ 
-			return _borderWidth;
-		}
-
-		void SetBorderColor(Color value)
-		{ 
-			SetProperty(BorderColorProperty, _borderColor, value);
-		}
-
-		Color GetBorderColor() const
-		{ 
-			return _borderColor; 
-		}
+		void SetBorderColor(Color value);
+		Color GetBorderColor() const { return _borderColor; }
 
 		void Render(RenderContext context) final;
 	public:

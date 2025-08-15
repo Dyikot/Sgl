@@ -38,11 +38,6 @@ namespace Sgl
 		return TimeSpan::Zero;
 	}
 
-	Music::operator Mix_Music* () const noexcept
-	{
-		return _music.get();
-	}
-
 	bool operator==(const Music& left, const Music& right)
 	{
 		return left._music == right._music;

@@ -62,13 +62,13 @@ namespace Sgl
 		/// Gets the underlying SDL window handle
 		/// </summary>
 		/// <returns>Pointer to the SDL_Window</returns>
-		SDL_Window* GetSDL_Window() const noexcept;
+		SDL_Window* GetSDLWindow() const noexcept;
 
 		/// <summary>
 		/// Gets the underlying SDL renderer handle
 		/// </summary>
 		/// <returns>Pointer to the SDL_Renderer</returns>
-		SDL_Renderer* GetRenderer() const noexcept;
+		SDL_Renderer* GetSDLRenderer() const noexcept;
 
 		/// <summary>
 		/// Sets the window width

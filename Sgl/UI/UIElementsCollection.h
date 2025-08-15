@@ -40,6 +40,7 @@ namespace Sgl
 
 			element->_stylingParent = &_owner;
 			element->_layoutableParent = &_owner;
+			element->_renderableParent = &_owner;
 			_items.Add(std::move(element));
 		}
 

@@ -20,11 +20,12 @@ namespace Sgl
 
 		void SetVolume(Volume value);
 		Volume GetVolume() const;
+
+		Mix_Chunk* ToMixChunk() const noexcept { return _soundChunk.get(); }
 		
 		SoundChunk& operator=(const SoundChunk&) = default;
 		SoundChunk& operator=(SoundChunk&&) noexcept = default;
 		friend bool operator==(const SoundChunk& left, const SoundChunk& right);
 		explicit operator bool() const noexcept { return _soundChunk != nullptr; }
-		explicit operator Mix_Chunk* ()const noexcept;
 	};
 }

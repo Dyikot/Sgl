@@ -1,13 +1,13 @@
 #pragma once
 
-#include "../Base/Media/Layout.h"
 #include "../Base/Size.h"
-#include "Style/StyleableElement.h"
 #include "../Base/Primitives.h"
+#include "../Base/Media/Layout.h"
+#include "../Render/Renderable.h"
 
 namespace Sgl
 {
-	class Layoutable: public StyleableElement
+	class Layoutable: public Renderable
 	{
 	protected:
 		FRect _bounds {};
@@ -20,10 +20,11 @@ namespace Sgl
 		float _minHeight {};
 		float _maxWidth = std::numeric_limits<float>::max();
 		float _maxHeight = std::numeric_limits<float>::max();
-		bool _isVisible = true;
 		Thickness _margin;
+		bool _isVisible = true;
 		VerticalAlignment _verticalAlignment = VerticalAlignment::Top;
 		HorizontalAlignment _horizontalAlignment = HorizontalAlignment::Left;
+
 		bool _isArrangeValid = false;
 		bool _isMeasureValid = false;
 	public:
@@ -32,115 +33,35 @@ namespace Sgl
 		Layoutable(Layoutable&& other) noexcept;
 		virtual ~Layoutable() = default;
 
-		void SetWidth(float value) 
-		{
-			SetProperty(WidthProperty, _width, value);
-			InvalidateMeasure();
-		}
+		void SetWidth(float value);
+		float GetWidth() const { return _width; }
 
-		float GetWidth() const 
-		{
-			return _width;
-		}
+		void SetHeight(float value);
+		float GetHeight() const { return _height; }
 
-		void SetHeight(float value)
-		{ 
-			SetProperty(HeightProperty, _height, value);
-			InvalidateMeasure();
-		}
+		void SetMinWidth(float value);
+		float GetMinWidth() const { return _minWidth; }
 
-		float GetHeight() const 
-		{
-			return _height;
-		}
+		void SetMinHeight(float value);
+		float GetMinHeight() const { return _minHeight; }
 
-		void SetMinWidth(float value)
-		{ 
-			SetProperty(MinWidthProperty, _minWidth, value);
-			InvalidateMeasure();
-		}
+		void SetMaxWidth(float value);
+		float GetMaxWidth() const { return _maxWidth; }
 
-		float GetMinWidth() const 
-		{
-			return _minWidth;
-		}
+		void SetMaxHeight(float value);
+		float GetMaxHeight() const { return _maxHeight; }		
 
-		void SetMinHeight(float value)
-		{
-			SetProperty(MinHeightProperty, _minHeight, value);
-			InvalidateMeasure();
-		}
+		void SetMargin(Thickness value);
+		Thickness GetMargin() const { return _margin; }
 
-		float GetMinHeight() const 
-		{
-			return _minHeight; 
-		}
+		void SetIsVisible(bool value);
+		bool IsVisible() const { return _isVisible; }
 
-		void SetMaxWidth(float value) 
-		{
-			SetProperty(MaxWidthProperty, _maxWidth, value); 
-			InvalidateMeasure();
-		}
+		void SetVerticalAlignment(VerticalAlignment value);
+		VerticalAlignment GetVerticalAlignment() const { return _verticalAlignment; }
 
-		float GetMaxWidth() const
-		{ 
-			return _maxWidth; 
-		}
-
-		void SetMaxHeight(float value)
-		{ 
-			SetProperty(MaxHeightProperty, _maxHeight, value);
-			InvalidateMeasure();
-		}
-
-		float GetMaxHeight() const
-		{ 
-			return _maxHeight;
-		}
-
-		void SetIsVisible(bool value)
-		{ 
-			SetProperty(IsVisibleProperty, _isVisible, value);
-			InvalidateMeasure();
-		}
-
-		bool IsVisible() const
-		{
-			return _isVisible;
-		}
-
-		void SetMargin(Thickness value)
-		{ 
-			SetProperty(MarginProperty, _margin, value);
-			InvalidateMeasure();
-		}
-
-		Thickness GetMargin() const 
-		{ 
-			return _margin; 
-		}
-
-		void SetVerticalAlignment(VerticalAlignment value)
-		{ 
-			SetProperty(VerticalAlignmentProperty, _verticalAlignment, value);
-			InvalidateArrange();
-		}
-
-		VerticalAlignment GetVerticalAlignment() const
-		{ 
-			return _verticalAlignment;
-		}
-
-		void SetHorizontalAlignment(HorizontalAlignment value)
-		{ 
-			SetProperty(HorizontalAlignmentProperty, _horizontalAlignment, value);
-			InvalidateArrange();
-		}
-
-		HorizontalAlignment GetHorizontalAlignment() const
-		{ 
-			return _horizontalAlignment; 
-		}
+		void SetHorizontalAlignment(HorizontalAlignment value);
+		HorizontalAlignment GetHorizontalAlignment() const { return _horizontalAlignment; }
 
 		FSize GetDesiredSize() const { return _desiredSize; }
 		FRect GetBounds() const { return _bounds; }
@@ -176,11 +97,11 @@ namespace Sgl
 		static inline ObservableProperty<Layoutable, float> MaxHeightProperty =
 			ObservableProperty<Layoutable, float>(&SetMaxHeight, &GetMaxHeight);
 
-		static inline ObservableProperty<Layoutable, bool> IsVisibleProperty =
-			ObservableProperty<Layoutable, bool>(&SetIsVisible, &IsVisible);
-
 		static inline ObservableProperty<Layoutable, Thickness> MarginProperty =
 			ObservableProperty<Layoutable, Thickness>(&SetMargin, &GetMargin);
+
+		static inline ObservableProperty<Layoutable, bool> IsVisibleProperty =
+			ObservableProperty<Layoutable, bool>(&SetIsVisible, &IsVisible);
 
 		static inline ObservableProperty<Layoutable, VerticalAlignment> VerticalAlignmentProperty =
 			ObservableProperty<Layoutable, VerticalAlignment>(&SetVerticalAlignment, &GetVerticalAlignment);

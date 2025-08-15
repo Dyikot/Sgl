@@ -22,7 +22,7 @@ namespace Sgl
 		if(_current)
 		{
 			return TimeSpan::FromMilliseconds(
-				Mix_GetMusicPosition(static_cast<Mix_Music*>(_current)) * 1e3);
+				Mix_GetMusicPosition(_current.ToMixMusic()) * 1e3);
 		}
 
 		return TimeSpan::Zero;
@@ -116,7 +116,7 @@ namespace Sgl
 	{
 		_current = music;
 		_isHalt = false;
-		Mix_PlayMusic(static_cast<Mix_Music*>(music), loops);
+		Mix_PlayMusic(music.ToMixMusic(), loops);
 	}
 
 	void MusicPlayer::PlayNext()

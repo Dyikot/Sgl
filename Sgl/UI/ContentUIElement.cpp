@@ -26,6 +26,31 @@ namespace Sgl
 		_isContentPresenterValid(other._isContentPresenterValid)
 	{}
 
+	void ContentUIElement::SetContentTemplate(DataTemplate value)
+	{
+		SetProperty(ContentTemplateProperty, _contentTemplate, value);
+		InvalidateMeasure();
+		InvalidateContentPresenter();
+	}
+
+	void ContentUIElement::SetPadding(Thickness value)
+	{
+		SetProperty(PaddingProperty, _padding, value);
+		InvalidateMeasure();
+	}
+
+	void ContentUIElement::SetVerticalContentAlignment(VerticalAlignment value)
+	{
+		SetProperty(VerticalContentAlignmentProperty, _verticalContentAlignment, value);
+		InvalidateArrange();
+	}
+
+	void ContentUIElement::SetHorizontalContentAlignment(HorizontalAlignment value)
+	{
+		SetProperty(HorizontalContentAlignmentProperty, _horizontalContentAlignment, value);
+		InvalidateArrange();
+	}
+		
 	void ContentUIElement::Render(RenderContext context)
 	{
 		if(_contentPresenter && _contentPresenter->IsVisible())
@@ -40,9 +65,22 @@ namespace Sgl
 	{
 		StyleableElement::ApplyStyle();
 
+		if(!_isContentPresenterValid && TryCreatePresenter())
+		{
+			_isContentPresenterValid = true;
+		}
+
 		if(_contentPresenter && _contentPresenter->IsVisible())
 		{
 			_contentPresenter->ApplyStyle();
+		}
+	}
+
+	void ContentUIElement::OnCursorChanged(const Cursor& cursor)
+	{
+		if(IsMouseOver() && !(_contentPresenter && _contentPresenter->IsMouseOver()))
+		{
+			Cursor::Set(cursor);
 		}
 	}
 
@@ -110,6 +148,7 @@ namespace Sgl
 			_contentPresenter = _contentTemplate(_content);
 			_contentPresenter->_stylingParent = this;
 			_contentPresenter->_layoutableParent = this;
+			_contentPresenter->_renderableParent = this;
 			return true;
 		}
 

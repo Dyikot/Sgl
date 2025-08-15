@@ -95,7 +95,7 @@ namespace Sgl
             return *_value;
         }
 
-        template<typename TValue = T> requires !std::is_void_v<TValue>
+        template<typename TValue> requires !std::is_void_v<TValue>
         TValue& GetValueAs() const
         {
             return static_cast<TValue&>(*_value);

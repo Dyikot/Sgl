@@ -20,11 +20,11 @@ namespace Sgl
 		~Music() = default;
 
 		TimeSpan Duration() const noexcept;
+		Mix_Music* ToMixMusic() const noexcept { return _music.get(); }
 
 		Music& operator=(Music&&) noexcept = default;
 		Music& operator=(const Music&) = default;
 		friend bool operator==(const Music& left, const Music& right);
 		explicit operator bool() const noexcept { return _music != nullptr; }
-		explicit operator Mix_Music* () const noexcept;
 	};
 }

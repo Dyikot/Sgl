@@ -11,15 +11,6 @@ namespace Sgl
         }
     };
 
-    void Cursor::Set(const Cursor& cursor)
-    {
-        auto sdlCursor = cursor.GetSDLCursor();
-        if(sdlCursor && sdlCursor != SDL_GetCursor())
-        {
-            SDL_SetCursor(sdlCursor);
-        }
-    }
-
     static std::shared_ptr<SDL_Cursor> GetSystemCursor(SDL_SystemCursor cursor)
     {
         switch(cursor)
@@ -106,4 +97,13 @@ namespace Sgl
     Cursor::Cursor(Cursor&& other) noexcept:
         _cursor(std::exchange(other._cursor, nullptr))
     {}
+
+    void Cursor::Set(const Cursor & cursor)
+    {
+        auto sdlCursor = cursor.ToSDLCursor();
+        if(sdlCursor && sdlCursor != SDL_GetCursor())
+        {
+            SDL_SetCursor(sdlCursor);
+        }
+    }
 }

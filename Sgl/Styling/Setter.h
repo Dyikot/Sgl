@@ -1,7 +1,7 @@
 #pragma once
 
 #include <concepts>
-#include "../../Base/Observable/ObservableProperty.h"
+#include "../Data/ObservableProperty.h"
 
 namespace Sgl
 {

@@ -19,6 +19,7 @@ namespace Sgl
 		void Render(RenderContext context) override;
 		void ApplyStyle() override;
 	protected:
+		void OnCursorChanged(const Cursor& cursor) override;
 		void OnMouseMove(const MouseEventArgs& e) override;
 		void OnMouseDown(const MouseButtonEventArgs& e) override;
 		void OnMouseUp(const MouseButtonEventArgs& e) override;

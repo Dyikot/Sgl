@@ -4,25 +4,18 @@
 
 namespace Sgl
 {
-	Scene::Scene():
-		_stylingParent(App.Current())
-	{}
-
-	void Scene::SetCursor(const Cursor& value)
+	Scene::Scene()
 	{
-		_cursor = value;
-
-		if(!(_content && _content->IsMouseOver()))
-		{
-			Cursor::Set(value);
-		}
-	}
+		_stylingParent = App.Current();
+		SetBackground(Colors::White);
+	}	
 
 	void Scene::SetContent(Ref<UIElement> value)
 	{
 		if(_content)
 		{
 			_content->_stylingParent = nullptr;
+			_content->_renderableParent = nullptr;
 		}
 
 		_content = std::move(value);
@@ -30,51 +23,44 @@ namespace Sgl
 		if(_content)
 		{
 			_content->_stylingParent = this;
+			_content->_renderableParent = this;
 		}
 	}
 
 	void Scene::Render(RenderContext context)
 	{	
-		_isRenderValid = true;
-
-		switch(_background.GetType())
+		switch(auto background = GetBackground(); background.GetType())
 		{
 			case Brush::Color:
-				context.SetBackground(_background.AsColor()); break;
+				context.SetBackground(background.AsColor()); break;
 			case Brush::Texture:
-				context.DrawTexture(_background.AsTexture()); break;
+				context.DrawTexture(background.AsTexture()); break;
 		}
 
 		if(_content && _content->IsVisible())
 		{
 			_content->Render(context);
 		}
+
+		Renderable::Render(context);
 	}
 
 	void Scene::Process(TimeSpan elapsed)
 	{
-		if(_content)
+		UpdateStyleAndLayout();
+	}
+
+	void Scene::OnCursorChanged(const Cursor& cursor)
+	{
+		if(!(_content && _content->IsMouseOver()))
 		{
-			UpdateLayoutAndStyle();
+			Cursor::Set(cursor);
 		}
 	}
 
 	void Scene::OnCreated()
 	{
-		if(_content)
-		{
-			UpdateLayoutAndStyle();
-		}
-	}
-
-	void Scene::OnKeyUp(const KeyEventArgs& e)
-	{
-		
-	}
-
-	void Scene::OnKeyDown(const KeyEventArgs& e)
-	{
-		
+		UpdateStyleAndLayout();
 	}
 
 	void Scene::OnMouseMove(const MouseEventArgs& e)
@@ -97,7 +83,7 @@ namespace Sgl
 			else if(wasMouseOver)
 			{
 				content.OnMouseLeave(e);
-				Cursor::Set(_cursor);
+				Cursor::Set(GetCursor());
 			}
 		}
 	}
@@ -118,38 +104,31 @@ namespace Sgl
 		}
 	}
 
-	void Scene::OnMouseWheelChanged(const MouseWheelEventArgs& e)
+	void Scene::UpdateStyleAndLayout()
 	{
-		
-	}
-
-	void Scene::OnTextInput(const TextInputEventArgs& e)
-	{
-		
-	}
-
-	void Scene::OnTextEditing(const TextEditingEventArgs& e)
-	{
-		
-	}
-
-	void Scene::UpdateLayoutAndStyle()
-	{
-		if(!_content->IsStyleValid())
+		if(!IsStyleValid())
 		{
-			_content->ApplyStyle();
+			ApplyStyle();
 		}
 
-		if(!_content->IsMeasureValid())
+		if(_content)
 		{
-			auto [width, height] = App->Window.GetSize();
-			_content->Measure(FSize(width, height));
-		}
+			if(!_content->IsStyleValid())
+			{
+				_content->ApplyStyle();
+			}
 
-		if(!_content->IsArrangeValid())
-		{
-			auto [width, height] = App->Window.GetSize();
-			_content->Arrange(FRect(0, 0, width, height));
+			if(!_content->IsMeasureValid())
+			{
+				auto [width, height] = App->Window.GetSize();
+				_content->Measure(FSize(width, height));
+			}
+
+			if(!_content->IsArrangeValid())
+			{
+				auto [width, height] = App->Window.GetSize();
+				_content->Arrange(FRect(0, 0, width, height));
+			}
 		}
 	}
 }

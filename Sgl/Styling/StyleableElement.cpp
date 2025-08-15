@@ -24,10 +24,8 @@ namespace Sgl
 
 	void StyleableElement::ApplyStyle()
 	{
-		if(!_isStyleValid)
-		{
-			UpdateStyle();
-		}
+		_isStyleValid = true;
+		UpdateStyles();
 
 		for(int i = _styles.size() - 1; i >= 0; i--)
 		{
@@ -49,7 +47,7 @@ namespace Sgl
 		}
 	}
 
-	void StyleableElement::UpdateStyle()
+	void StyleableElement::UpdateStyles()
 	{
 		_styles.clear();
 

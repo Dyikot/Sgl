@@ -1,0 +1,50 @@
+#include "Renderable.h"
+
+namespace Sgl
+{
+	Renderable::Renderable(const Renderable& other):
+		StyleableElement(other),
+		_renderableParent(other._renderableParent),
+		_cursor(other._cursor),
+		_background(other._background),
+		_isRenderValid(other._isRenderValid)
+	{}
+
+	Renderable::Renderable(Renderable&& other) noexcept:
+		StyleableElement(std::move(other)),
+		_renderableParent(std::exchange(other._renderableParent, nullptr)),
+		_cursor(other._cursor),
+		_background(std::move(other._background)),
+		_isRenderValid(other._isRenderValid)
+	{}
+
+	void Renderable::SetCursor(const Cursor& value)
+	{
+		SetProperty(CursorProperty, _cursor, value);
+		OnCursorChanged(value);
+	}
+
+	void Renderable::SetBackground(Brush value)
+	{
+		SetProperty(BackgroundProperty, _background, value);
+		InvalidateRender();
+	}
+
+	void Renderable::Render(RenderContext context)
+	{
+		_isRenderValid = true;
+	}
+
+	void Renderable::InvalidateRender()
+	{
+		if(_isRenderValid)
+		{
+			_isRenderValid = false;
+
+			if(_renderableParent)
+			{
+				_renderableParent->InvalidateRender();
+			}
+		}
+	}
+}

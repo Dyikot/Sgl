@@ -44,6 +44,22 @@ namespace Sgl
         }
     }
 
+    void Panel::OnCursorChanged(const Cursor& cursor)
+    {
+        if(IsMouseOver())
+        {
+            for(auto& child : Children)
+            {
+                if(child->IsMouseOver())
+                {
+                    return;
+                }
+            }
+
+            Cursor::Set(cursor);
+        }
+    }
+
     void Panel::OnMouseMove(const MouseEventArgs& e)
     {
         UIElement::OnMouseMove(e);

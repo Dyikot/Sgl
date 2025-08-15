@@ -34,6 +34,7 @@ namespace Sgl
 		SDL_BlendMode GetBlendMode() const;
 
 		Size GetSize() const;
+		SDL_Surface* ToSDLSurface() const noexcept { return _surface.get(); }
 
 		void Lock();
 		void Unlock();
@@ -42,6 +43,5 @@ namespace Sgl
 		Surface& operator=(Surface&&) noexcept = default;
 		friend bool operator==(const Surface&, const Surface&) = default;
 		explicit operator bool() { return _surface != nullptr; }
-		explicit operator SDL_Surface* () const noexcept { return _surface.get(); }
 	};
 }

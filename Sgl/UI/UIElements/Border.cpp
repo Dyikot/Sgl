@@ -12,6 +12,18 @@ namespace Sgl::UIElements
 		_borderColor(other._borderColor)
 	{}
 
+	void Border::SetBorderWidth(size_t value)
+	{
+		SetProperty(BorderWidthProperty, _borderWidth, value);
+		InvalidateMeasure();
+	}
+
+	void Border::SetBorderColor(Color value)
+	{
+		SetProperty(BorderColorProperty, _borderColor, value);
+		InvalidateRender();
+	}
+
 	void Border::Render(RenderContext context)
 	{
 		RenderBackground(context);

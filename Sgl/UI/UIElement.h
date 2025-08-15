@@ -2,18 +2,15 @@
 
 #include <type_traits>
 #include "../Base/Any.h"
-#include "../Base/Media/Brush.h"
 #include "../Base/Observable/Event.h"
-#include "../Input/Cursor.h"
 #include "../Input/MouseAndKeyEventArgs.h"
-#include "../Render/IRenderable.h"
 #include "Layoutable.h"
 
 namespace Sgl
 {
 	class Scene;
 
-	class UIElement: public Layoutable, public IRenderable
+	class UIElement: public Layoutable
 	{
 	private:
 		using KeyEventHandler = EventHandler<UIElement, KeyEventArgs>;
@@ -29,128 +26,42 @@ namespace Sgl
 		Event<MouseButtonEventHandler> MouseUp;
 		Event<MouseButtonEventHandler> MouseDown;
 		Event<MouseWheelEventHandler> MouseWheel;
-	protected:
-		bool _isMouseOver = false;
 	private:		
-		Cursor _cursor = Cursors::Arrow;
-		Brush _background = Colors::Transparent;
 		Any _tag;
 		Ref<UIElement> _toolTip;
 		size_t _zIndex = 0;
+
+		bool _isMouseOver = false;
 	public:
 		UIElement() = default;
 		UIElement(const UIElement& other);
 		UIElement(UIElement&& other) noexcept;
 		virtual ~UIElement() = default;
 		
-		void SetCursor(const Cursor& value)
-		{
-			SetProperty(CursorProperty, _cursor, value);
-		}
+		void SetTag(const Any& value);
+		const Any& GetTag() const { return _tag; }
 
-		const Cursor& GetCursor() const 
-		{
-			return _cursor;
-		}
+		void SetToolTip(Ref<UIElement> value);
+		Ref<UIElement> GetToolTip() const { return _toolTip; }
 
-		void SetBackground(Brush value) 
-		{ 
-			SetProperty(BackgroundProperty, _background, value);
-		}
+		void SetZIndex(size_t value);
+		size_t GetZIndex() const { return _zIndex; }
 
-		Brush GetBackground() const
-		{ 
-			return _background;
-		}
-
-		void SetTag(const Any& value) 
-		{ 
-			SetProperty(TagProperty, _tag, value);
-		}
-
-		const Any& GetTag() const
-		{ 
-			return _tag;
-		}
-
-		void SetToolTip(Ref<UIElement> value) 
-		{ 
-			SetProperty(ToolTipProperty, _toolTip, value);
-		}
-
-		Ref<UIElement> GetToolTip() const 
-		{ 
-			return _toolTip;
-		}
-
-		void SetZIndex(size_t value) 
-		{ 
-			SetProperty(ZIndexProperty, _zIndex, value);
-		}
-
-		size_t GetZIndex() const 
-		{ 
-			return _zIndex;
-		}
-
-		bool IsMouseOver() const 
-		{
-			return _isMouseOver;
-		}
+		bool IsMouseOver() const { return _isMouseOver; }
 
 		void Render(RenderContext context) override;
 	protected:
-		void RenderBackground(RenderContext context) const;
-
-		virtual void OnKeyUp(const KeyEventArgs& e)
-		{
-			KeyUp.TryInvoke(*this, e);
-		}
-
-		virtual void OnKeyDown(const KeyEventArgs& e)
-		{
-			KeyDown.TryInvoke(*this, e);
-		}
-
-		virtual void OnMouseMove(const MouseEventArgs& e)
-		{
-			MouseMove.TryInvoke(*this, e);
-		}
-
-		virtual void OnMouseDown(const MouseButtonEventArgs& e)
-		{
-			MouseDown.TryInvoke(*this, e);
-		}
-
-		virtual void OnMouseUp(const MouseButtonEventArgs& e)
-		{ 
-			MouseUp.TryInvoke(*this, e);
-		}
-
-		virtual void OnMouseWheelChanged(const MouseWheelEventArgs& e)
-		{ 
-			MouseWheel.TryInvoke(*this, e);
-		}
-
-		virtual void OnMouseEnter(const MouseEventArgs& e)
-		{
-			_isMouseOver = true;
-			Cursor::Set(_cursor);
-			MouseEnter.TryInvoke(*this, e);
-		}
-
-		virtual void OnMouseLeave(const MouseEventArgs& e)
-		{
-			MouseLeave.TryInvoke(*this, e);
-			_isMouseOver = false;
-		}
+		void RenderBackground(RenderContext context);
+		void OnCursorChanged(const Cursor& cursor) override;
+		virtual void OnKeyUp(const KeyEventArgs& e);
+		virtual void OnKeyDown(const KeyEventArgs& e);
+		virtual void OnMouseMove(const MouseEventArgs& e);
+		virtual void OnMouseDown(const MouseButtonEventArgs& e);
+		virtual void OnMouseUp(const MouseButtonEventArgs& e);
+		virtual void OnMouseWheelChanged(const MouseWheelEventArgs& e);
+		virtual void OnMouseEnter(const MouseEventArgs& e);
+		virtual void OnMouseLeave(const MouseEventArgs& e);
 	public:
-		static inline ObservableProperty<UIElement, const Cursor&> CursorProperty =
-			ObservableProperty<UIElement, const Cursor&>(&SetCursor, &GetCursor);
-
-		static inline ObservableProperty<UIElement, Brush> BackgroundProperty =
-			ObservableProperty<UIElement, Brush>(&SetBackground, &GetBackground);
-
 		static inline ObservableProperty<UIElement, const Any&> TagProperty =
 			ObservableProperty<UIElement, const Any&>(&SetTag, &GetTag);
 

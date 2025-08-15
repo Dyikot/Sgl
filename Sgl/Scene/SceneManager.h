@@ -27,9 +27,9 @@ namespace Sgl
 
 		void Pop() noexcept;
 		void Clear();
-		Scene* GetCurrentScene();
+		Ref<Scene> GetCurrentScene();
 	private:
-		Scene* GetNextScene();
+		Ref<Scene> GetNextScene();
 		void CreateScene();
 		void DestroyScene();
 

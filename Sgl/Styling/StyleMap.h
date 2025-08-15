@@ -4,7 +4,7 @@
 #include <memory>
 #include <string>
 #include "Style.h"
-#include "../../Base/Ref.h"
+#include "../Base/Ref.h"
 
 namespace Sgl
 {

@@ -18,8 +18,8 @@ namespace Sgl
 	Application::~Application() noexcept
 	{
 		SceneManager.Clear();
-		SDL_DestroyRenderer(Window.GetRenderer());
-		SDL_DestroyWindow(Window.GetSDL_Window());
+		SDL_DestroyRenderer(Window.GetSDLRenderer());
+		SDL_DestroyWindow(Window.GetSDLWindow());
 		TTF_Quit();
 		IMG_Quit();
 		Mix_Quit();
@@ -48,6 +48,7 @@ namespace Sgl
 		_isRunning = true;
 		Window.Show();
 		RunApp();
+		Window.Hide();
 	}
 
 	void Application::Shutdown()
@@ -263,9 +264,10 @@ namespace Sgl
 	{
 		OnRun();
 
-		auto renderer = Window.GetRenderer();
-		auto rendererContext = RenderContext(renderer);
-		rendererContext.SetBlendMode(SDL_BLENDMODE_BLEND);
+		auto renderer = Window.GetSDLRenderer();
+
+		RenderContext context;
+		context.SetBlendMode(SDL_BLENDMODE_BLEND);
 
 		Stopwatch frameStopwatch, processStopwatch;
 		processStopwatch.Start();
@@ -278,10 +280,10 @@ namespace Sgl
 			if(scene == nullptr)
 			{
 				Shutdown();
-				continue;
+				break;
 			}
 
-			HandleEvents(*scene);
+			HandleEvents(scene.GetValue());
 
 			scene->Process(processStopwatch.Elapsed());
 			processStopwatch.Restart();
@@ -290,7 +292,7 @@ namespace Sgl
 			{
 				if(scene->NeedsRendering())
 				{
-					scene->Render(rendererContext);
+					scene->Render(context);
 				}
 
 				SDL_RenderPresent(renderer);				

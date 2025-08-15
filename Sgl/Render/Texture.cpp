@@ -14,16 +14,8 @@ namespace Sgl
 
 	static SDL_Renderer* GetRenderer()
 	{
-		static auto renderer = App->Window.GetRenderer();
+		static auto renderer = App->Window.GetSDLRenderer();
 		return renderer;
-	}
-
-	static void RenderOnTexture(const Texture& texture, const RenderFragment& renderFragment)
-	{
-		auto context = RenderContext(GetRenderer());
-		context.SetTarget(texture);
-		renderFragment(context);
-		context.ResetTarget();
 	}
 
 	Texture::Texture(std::nullptr_t)
@@ -35,35 +27,23 @@ namespace Sgl
 		Log::PrintSDLErrorIf(_texture == nullptr);
 	}
 
-	Texture::Texture(TextureAccess access, Size size):
-		Texture(SDL_PIXELFORMAT_RGBA8888, access, size)
-	{}
-
-	Texture::Texture(Size size, RenderFragment renderFragment):
-		Texture(SDL_PIXELFORMAT_RGBA8888, size, renderFragment)
-	{
-		RenderOnTexture(*this, renderFragment);
-	}
-
-	Texture::Texture(SDL_PixelFormatEnum format, TextureAccess access, Size size):
-		_texture(SDL_CreateTexture(
-			GetRenderer(),
-			format, 
-			SDL_TextureAccess(access),
-			size.Width, 
-			size.Height), TextureDeleter())
+	Texture::Texture(Size size, TextureAccess access, SDL_PixelFormatEnum format):
+		_texture(
+			SDL_CreateTexture(GetRenderer(),
+							  format,
+							  SDL_TextureAccess(access),
+							  size.Width,
+							  size.Height),
+			TextureDeleter())
 	{
 		Log::PrintSDLErrorIf(_texture == nullptr);
 	}
 
-	Texture::Texture(SDL_PixelFormatEnum format, Size size, RenderFragment renderFragment):
-		Texture(format, TextureAccess::Target, size)
-	{
-		RenderOnTexture(*this, renderFragment);
-	}
-
-	Texture::Texture(FontRenderType renderType, TTF_Font* font, std::string_view text, 
-					 Color foreground, Color background)
+	Texture::Texture(FontRenderType renderType, 
+					 TTF_Font* font, 
+					 std::string_view text, 
+					 Color foreground, 
+					 Color background)
 	{
 		SDL_Surface* surface = nullptr;
 
@@ -89,8 +69,12 @@ namespace Sgl
 		Log::PrintSDLErrorIf(_texture == nullptr);
 	}
 
-	Texture::Texture(FontRenderType renderType, TTF_Font * font, std::string_view text,
-					 unsigned int wrapLength, Color foreground, Color background)
+	Texture::Texture(FontRenderType renderType, 
+					 TTF_Font * font, 
+					 std::string_view text,
+					 unsigned int wrapLength, 
+					 Color foreground, 
+					 Color background)
 	{
 		SDL_Surface* surface = nullptr;
 
@@ -188,7 +172,7 @@ namespace Sgl
 		const Rect* lockRect = rect.has_value() ? &rect.value() : nullptr;
 		_height = lockRect ? lockRect->h : texture.GetSize().Height;
 
-		if(SDL_LockTexture(static_cast<SDL_Texture*>(_texture), lockRect, &_pixels, &_pitch) < 0)
+		if(SDL_LockTexture(_texture.ToSDLTexture(), lockRect, &_pixels, &_pitch) < 0)
 		{
 			Log::PrintSDLError();
 		}
@@ -198,7 +182,7 @@ namespace Sgl
 	{
 		if(_pixels)
 		{
-			SDL_UnlockTexture(static_cast<SDL_Texture*>(_texture));
-		}	
+			SDL_UnlockTexture(_texture.ToSDLTexture());
+		}
 	}
 }

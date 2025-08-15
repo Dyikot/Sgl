@@ -17,28 +17,11 @@ namespace Sgl::UIElements
 		Image(const Image& other);
 		Image(Image&& other) noexcept;
 
-		void SetSource(const std::string& value) 
-		{ 
-			SetProperty(SourceProperty, _source, value);
-			_sourceTexture = Texture(value);
-			InvalidateArrange();
-		}
+		void SetSource(const std::string& value);
+		const std::string& GetSource() const { return _source; }
 
-		const std::string& GetSource() const
-		{ 
-			return _source; 
-		}
-
-		void SetStretch(Stretch value)
-		{ 
-			SetProperty(StretchProperty, _stretch, value);
-			InvalidateArrange();
-		}
-
-		Stretch GetStretch() const
-		{ 
-			return _stretch;
-		}
+		void SetStretch(Stretch value);
+		Stretch GetStretch() const { return _stretch; }
 
 		void Render(RenderContext context) override;
 	protected:

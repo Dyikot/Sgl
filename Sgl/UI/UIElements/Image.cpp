@@ -18,6 +18,19 @@ namespace Sgl::UIElements
 		_sourceTexture(std::move(other._sourceTexture))
 	{}
 
+	void Image::SetSource(const std::string & value)
+	{
+		SetProperty(SourceProperty, _source, value);
+		_sourceTexture = Texture(value);
+		InvalidateArrange();
+	}
+
+	void Image::SetStretch(Stretch value)
+	{
+		SetProperty(StretchProperty, _stretch, value);
+		InvalidateArrange();
+	}
+
 	void Image::Render(RenderContext context)
 	{
 		RenderBackground(context);

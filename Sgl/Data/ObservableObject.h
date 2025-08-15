@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Event.h"
+#include <unordered_map>
 #include "ObservableProperty.h"
+#include "../Base/Observable/Event.h"
 
 namespace Sgl
 {
@@ -10,14 +11,17 @@ namespace Sgl
 	private:
 		std::unordered_map<size_t, Action<const void*>> _observers;
 	public:
-		void SetObserver(size_t propertyId, Action<const void*> observer)
+		template<typename TTarget, typename TValue>
+		void SetObserver(ObservableProperty<TTarget, TValue>& property,
+						 Action<const void*> observer)
 		{
-			_observers[propertyId] = std::move(observer);
+			_observers[property.Id] = std::move(observer);
 		}
 
-		void RemoveObserver(size_t propertyId)
+		template<typename TTarget, typename TValue>
+		void RemoveObserver(ObservableProperty<TTarget, TValue>& property)
 		{
-			_observers.erase(propertyId);
+			_observers.erase(property.Id);
 		}
 	protected:
 		template<typename TOwner, typename TValue, typename TField>
