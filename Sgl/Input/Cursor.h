@@ -2,51 +2,45 @@
 
 #include <SDL/SDL_mouse.h>
 #include <SDL/SDL_image.h>
+#include <string_view>
 #include <memory>
-#include <variant>
-#include <string>
 
 namespace Sgl
 {
 	class Cursor final
 	{
 	private:
-		mutable SDL_Cursor* _cursor {};
-		mutable bool _hasTriedToCreate = false;
-		std::variant<std::string, SDL_SystemCursor> _creationArgs;
+		std::shared_ptr<SDL_Cursor> _cursor;
 	public:
 		static void Set(const Cursor& cursor);
 		
-		Cursor() noexcept;
-		explicit Cursor(std::string path);
-		explicit Cursor(SDL_SystemCursor systemCursor) noexcept;
-
-		Cursor(const Cursor&) = delete;
+		Cursor(SDL_SystemCursor systemCursor) noexcept;
+		explicit Cursor(std::string_view path);
+		Cursor(const Cursor& other);
 		Cursor(Cursor&& other) noexcept;
-		~Cursor() noexcept;
+		~Cursor() = default;
 
-		SDL_Cursor* GetSDLCursor() const noexcept;
+		SDL_Cursor* GetSDLCursor() const noexcept { return _cursor.get(); }
 
-		friend bool operator==(const Cursor& left, const Cursor& right);
-		Cursor& operator=(const Cursor&) = delete;
-		Cursor& operator=(Cursor&& other) noexcept;
-	private:
-		SDL_Cursor* CreateCursor() const;
+		Cursor& operator=(const Cursor&) = default;
+		Cursor& operator=(Cursor&&) noexcept = default;
+		friend bool operator==(const Cursor&, const Cursor&) = default;
 	};
 
-	namespace Cursors
+	class Cursors
 	{
-		inline Cursor Arrow { SDL_SYSTEM_CURSOR_ARROW };
-		inline Cursor IBeam { SDL_SYSTEM_CURSOR_IBEAM };
-		inline Cursor Wait { SDL_SYSTEM_CURSOR_WAIT };
-		inline Cursor Crosshair { SDL_SYSTEM_CURSOR_CROSSHAIR };
-		inline Cursor WaitArrow { SDL_SYSTEM_CURSOR_WAITARROW };
-		inline Cursor ArrowNWSE { SDL_SYSTEM_CURSOR_SIZENWSE };
-		inline Cursor ArrowNESW { SDL_SYSTEM_CURSOR_SIZENESW };
-		inline Cursor ArrowWE { SDL_SYSTEM_CURSOR_SIZEWE };
-		inline Cursor ArrowNS { SDL_SYSTEM_CURSOR_SIZENS };
-		inline Cursor ArrowAll { SDL_SYSTEM_CURSOR_SIZEALL };
-		inline Cursor No { SDL_SYSTEM_CURSOR_NO };
-		inline Cursor Hand { SDL_SYSTEM_CURSOR_HAND };
-	}
+	public:
+		static constexpr SDL_SystemCursor Arrow = SDL_SYSTEM_CURSOR_ARROW;
+		static constexpr SDL_SystemCursor IBeam = SDL_SYSTEM_CURSOR_IBEAM;
+		static constexpr SDL_SystemCursor Wait = SDL_SYSTEM_CURSOR_WAIT;
+		static constexpr SDL_SystemCursor Crosshair = SDL_SYSTEM_CURSOR_CROSSHAIR;
+		static constexpr SDL_SystemCursor WaitArrow = SDL_SYSTEM_CURSOR_WAITARROW;
+		static constexpr SDL_SystemCursor SizeNWSE = SDL_SYSTEM_CURSOR_SIZENWSE;
+		static constexpr SDL_SystemCursor SizeNESW = SDL_SYSTEM_CURSOR_SIZENESW;
+		static constexpr SDL_SystemCursor SizeWE = SDL_SYSTEM_CURSOR_SIZEWE;
+		static constexpr SDL_SystemCursor SizeNS = SDL_SYSTEM_CURSOR_SIZENS;
+		static constexpr SDL_SystemCursor SizeAll = SDL_SYSTEM_CURSOR_SIZEALL;
+		static constexpr SDL_SystemCursor No = SDL_SYSTEM_CURSOR_NO;
+		static constexpr SDL_SystemCursor Hand = SDL_SYSTEM_CURSOR_HAND;
+	};
 }

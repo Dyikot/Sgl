@@ -4,7 +4,6 @@
 #include <vector>
 #include "IStyle.h"
 #include "Setter.h"
-#include "../../Base/SmartPointers.h"
 
 namespace Sgl
 {
@@ -12,7 +11,7 @@ namespace Sgl
     class Style: public IStyle
     {
     private:
-        std::vector<Unique<ISetter<T>>> _setters;
+        std::vector<std::unique_ptr<ISetter<T>>> _setters;
     public:
         Style() = default;
         Style(const Style&) = default;
@@ -29,7 +28,7 @@ namespace Sgl
         Style<T>& With(ObservableProperty<TOwner, TValue>& property, 
                        ObservableProperty<TOwner, TValue>::Value value)
         {
-            _setters.push_back(NewUnique<Setter<T, TOwner, TValue>>(property, value));
+            _setters.push_back(std::make_unique<Setter<T, TOwner, TValue>>(property, value));
             return *this;
         }
 

@@ -28,7 +28,7 @@ public:
 private:
 	void InitializeComponents()
 	{
-		auto text = NewUnique<TextBlock>();
+		auto text = New<TextBlock>();
 		text->Classes.Set("centerAlignment h2");
 		text->SetText("Hello World");
 		text->SetFontStyle(FontStyle::Italic | FontStyle::Underline);
@@ -36,7 +36,7 @@ private:
 		text->SetForeground(Colors::Black);
 		text->SetBackground(Colors::Coral);
 
-		SetContent(std::move(text));
+		SetContent(text);
 	}
 
 	void InitializeStyles()

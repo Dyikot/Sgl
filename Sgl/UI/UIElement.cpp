@@ -38,7 +38,7 @@ namespace Sgl
 			{
 				if(auto color = _background.AsColor(); !color.IsTransparent())
 				{
-					context.DrawFillRectangle(_bounds, color);
+					context.DrawRectangleFill(_bounds, color);
 				}
 
 				break;
@@ -46,7 +46,7 @@ namespace Sgl
 
 			case Brush::Texture:
 			{
-				context.DrawTexture(*_background.AsTexture(), _bounds);
+				context.DrawTexture(_background.AsTexture(), _bounds);
 				break;
 			}
 		}

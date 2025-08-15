@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Time/Stopwatch.h"
+#include "Stopwatch.h"
 
 namespace Sgl
 {
@@ -9,17 +9,16 @@ namespace Sgl
 	private:
 		static constexpr TimeSpan Period = TimeSpan::FromSeconds(1);
 
-		Stopwatch _stopwatch;
 		size_t _fps = 0;
 		size_t _frames = 0;
 		TimeSpan _elapsed = TimeSpan::Zero;
 	public:
 		size_t GetFps() const { return _fps; }
 
-		void OnFrameStart()
+		void Update(TimeSpan elapsed)
 		{
-			_elapsed += _stopwatch.Elapsed();
 			_frames++;
+			_elapsed += elapsed;
 
 			if(_elapsed >= Period)
 			{
@@ -28,8 +27,6 @@ namespace Sgl
 				_frames = 0;
 				_elapsed = TimeSpan::Zero;
 			}
-
-			_stopwatch.Restart();
 		}
 	};
 }

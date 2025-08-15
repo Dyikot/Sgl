@@ -20,15 +20,16 @@ namespace Sgl
 
 	void Stopwatch::Restart()
 	{
-		_isRunning = false;
-		Reset();
-		Start();
+		_start = Clock::now();
+		_elapsed = TimeSpan::Zero;
+		_isRunning = true;
 	}
 
 	void Stopwatch::Reset()
 	{
 		_start = Clock::now();
 		_elapsed = TimeSpan::Zero;
+		_isRunning = false;
 	}
 
 	void Stopwatch::Pause()
@@ -49,8 +50,7 @@ namespace Sgl
 	{
 		if(_isRunning)
 		{
-			_elapsed += GetElapsedTime();
-			_start = Clock::now();
+			return _elapsed + GetElapsedTime();
 		}
 
 		return _elapsed;

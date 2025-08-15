@@ -18,7 +18,7 @@ namespace Sgl
 		IStyleProvider* _stylingParent {};
 	private:
 		bool _isStyleValid = false;
-		std::vector<Shared<IStyle>> _styles;
+		std::vector<Ref<IStyle>> _styles;
 	public:
 		StyleableElement() = default;
 		StyleableElement(const StyleableElement& other);

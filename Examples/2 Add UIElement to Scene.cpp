@@ -23,7 +23,7 @@ public:
 private:
 	void InitializeComponents()
 	{
-		auto text = NewUnique<UIElements::TextBlock>();
+		auto text = New<UIElements::TextBlock>();
 		text->SetText("Hello World");
 		text->SetFontSize(20);
 		text->SetFontStyle(FontStyle::Italic | FontStyle::Underline);
@@ -33,7 +33,7 @@ private:
 		text->SetHorizontalAlignment(HorizontalAlignment::Center);
 		text->SetVerticalAlignment(VerticalAlignment::Center);
 
-		SetContent(std::move(text));
+		SetContent(text);
 	}
 };
 

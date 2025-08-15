@@ -32,11 +32,11 @@ namespace Sgl
 	protected:
 		bool _isMouseOver = false;
 	private:		
-		std::reference_wrapper<const Cursor> _cursor = Cursors::Arrow;
+		Cursor _cursor = Cursors::Arrow;
 		Brush _background = Colors::Transparent;
 		Any _tag;
-		Shared<UIElement> _toolTip;
-		size_t _zIndex {};
+		Ref<UIElement> _toolTip;
+		size_t _zIndex = 0;
 	public:
 		UIElement() = default;
 		UIElement(const UIElement& other);
@@ -73,12 +73,12 @@ namespace Sgl
 			return _tag;
 		}
 
-		void SetToolTip(Shared<UIElement> value) 
+		void SetToolTip(Ref<UIElement> value) 
 		{ 
 			SetProperty(ToolTipProperty, _toolTip, value);
 		}
 
-		Shared<UIElement> GetToolTip() const 
+		Ref<UIElement> GetToolTip() const 
 		{ 
 			return _toolTip;
 		}
@@ -154,8 +154,8 @@ namespace Sgl
 		static inline ObservableProperty<UIElement, const Any&> TagProperty =
 			ObservableProperty<UIElement, const Any&>(&SetTag, &GetTag);
 
-		static inline ObservableProperty<UIElement, Shared<UIElement>> ToolTipProperty =
-			ObservableProperty<UIElement, Shared<UIElement>>(&SetToolTip, &GetToolTip);
+		static inline ObservableProperty<UIElement, Ref<UIElement>> ToolTipProperty =
+			ObservableProperty<UIElement, Ref<UIElement>>(&SetToolTip, &GetToolTip);
 
 		static inline ObservableProperty<UIElement, size_t> ZIndexProperty =
 			ObservableProperty<UIElement, size_t>(&SetZIndex, &GetZIndex);
@@ -168,7 +168,7 @@ namespace Sgl
 
 	struct UIElementComparer
 	{
-		bool operator()(const Shared<UIElement>& left, const Shared<UIElement>& right) const
+		bool operator()(const Ref<UIElement>& left, const Ref<UIElement>& right) const
 		{
 			return left->GetZIndex() < right->GetZIndex();
 		}
@@ -176,9 +176,9 @@ namespace Sgl
 
 	struct UIElementDataTemplate
 	{
-		Shared<UIElement> operator()(const Any& data) const
+		Ref<UIElement> operator()(const Any& data) const
 		{
-			return data.As<Shared<UIElement>>();
+			return data.As<Ref<UIElement>>();
 		}
 	};
 }

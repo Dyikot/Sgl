@@ -2,6 +2,8 @@
 
 #include <SDL/SDL_rect.h>
 #include <SDL/SDL_render.h>
+#include <array>
+#include <span>
 
 namespace Sgl
 {

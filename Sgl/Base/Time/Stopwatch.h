@@ -30,7 +30,7 @@ namespace Sgl
 		void Start();
 
 		/// <summary>
-		/// Stops, resets, and restarts the stopwatch.
+		/// Resets, and restarts the stopwatch.
 		/// </summary>
 		void Restart();
 

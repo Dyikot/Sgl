@@ -1,7 +1,7 @@
 #pragma once
 
 #include <unordered_map>
-#include "../../Base/SmartPointers.h"
+#include "../../Base/Ref.h"
 #include "../../Base/Delegate.h"
 #include "../../Base/Observable/ObservableObject.h"
 #include "BindingMode.h"
@@ -11,7 +11,7 @@ namespace Sgl
 	class BindableObject
 	{
 	public:
-		Shared<void> DataContext;
+		Ref<void> DataContext;
 	private:
 		std::unordered_map<size_t, Action<void*, const void*>> _observers;
 	public:
@@ -64,7 +64,7 @@ namespace Sgl
 					throw std::exception("Cannot bind to a nullable source");
 				}
 
-				auto source = static_cast<TSource*>(DataContext.get());
+				auto source = DataContext.GetAs<TSource>();
 				auto target = static_cast<TTarget*>(this);
 
 				auto currentValue = std::invoke(sourceProperty.Getter, source);
@@ -93,8 +93,7 @@ namespace Sgl
 				throw std::exception("Cannot remove a binding from a nullable source");
 			}
 
-			auto source = static_cast<TSource*>(DataContext.get());
-
+			auto source = DataContext.GetAs<TSource>();
 			std::invoke(&ObservableObject::RemoveObserver, source, property.Id);
 		}
 
@@ -130,7 +129,7 @@ namespace Sgl
 						throw std::exception("DataContext is null");
 					}
 
-					it->second(DataContext.get(), &value);
+					it->second(DataContext.Get(), &value);
 				}
 			}
 		}

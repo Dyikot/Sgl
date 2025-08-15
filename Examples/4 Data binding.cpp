@@ -55,12 +55,12 @@ public:
 private:
 	void InitializeComponents()
 	{
-		auto text = NewUnique<TextBlock>();
-		text->DataContext = NewShared<SceneViewModel>("Alex");
+		auto text = New<TextBlock>();
+		text->DataContext = New<SceneViewModel>("Alex");
 		text->Bind(TextBlock::TextProperty, SceneViewModel::NameProperty);
 		text->Bind(TextBlock::IsVisibleProperty, &SceneViewModel::IsTextBlockVisible);
 
-		SetContent(std::move(text));
+		SetContent(text);
 	}
 };
 

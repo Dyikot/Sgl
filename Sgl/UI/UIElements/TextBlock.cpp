@@ -44,7 +44,7 @@ namespace Sgl::UIElements
 
 		if(_textTexture)
 		{
-			context.DrawTexture(*_textTexture, _textTextureBounds);
+			context.DrawTexture(_textTexture, _textTextureBounds);
 		}
 
 		UIElement::Render(context);
@@ -56,7 +56,7 @@ namespace Sgl::UIElements
 
 		if(_textTexture)
 		{
-			auto [width, height] = _textTexture->GetSize();
+			auto [width, height] = _textTexture.GetSize();
 
 			return FSize
 			{
@@ -72,7 +72,7 @@ namespace Sgl::UIElements
 	{
 		if(_textTexture)
 		{
-			Size textureSize = _textTexture->GetSize();
+			Size textureSize = _textTexture.GetSize();
 			float width = std::fmin(rect.w - _padding.Left - _padding.Right, textureSize.Width);
 			float height = std::fmin(rect.h - _padding.Top - _padding.Bottom, textureSize.Height);
 
@@ -134,13 +134,11 @@ namespace Sgl::UIElements
 			{
 				if(_textWrapping == TextWrapping::NoWrap)
 				{
-					_textTexture = NewUnique<Texture>(
-						Surface(FontRenderType::Blended, _fontImpl, _text, _foreground));
+					_textTexture = Texture(FontRenderType::Blended, _fontImpl, _text, _foreground);
 				}
 				else
 				{
-					_textTexture = NewUnique<Texture>(
-						Surface(FontRenderType::Blended, _fontImpl, _text, maxLineWidth, _foreground));
+					_textTexture = Texture(FontRenderType::Blended, _fontImpl, _text, maxLineWidth, _foreground);
 				}
 			}
 

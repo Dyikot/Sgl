@@ -1,9 +1,7 @@
 #pragma once
 
-#include <string_view>
 #include <SDL/SDL_mixer.h>
-#include "../Base/Log.h"
-#include "../Base/Time/TimeSpan.h"
+#include <algorithm>
 #include <compare>
 
 namespace Sgl
@@ -31,10 +29,14 @@ namespace Sgl
 		{}
 
 		constexpr explicit Volume(double value):
-			_value(Adjust(value > MinValue ? value : -value))
+			_value(Adjust(std::abs(value)))
 		{}
 
-		constexpr int ToMixVolume() const noexcept
+		constexpr explicit Volume(uint8_t mixValue):
+			Volume(static_cast<double>(mixValue) / (MIX_MAX_VOLUME))
+		{}		
+
+		constexpr uint8_t ToMixVolume() const noexcept
 		{
 			return _value * MIX_MAX_VOLUME;
 		}
@@ -51,15 +53,13 @@ namespace Sgl
 
 		friend constexpr Volume operator*(Volume left, Volume right)
 		{
-			return Volume(left._value * right._value); 
+			return Volume(left._value * right._value);
 		}
 
 		friend constexpr Volume operator/(Volume left, Volume right)
 		{
 			return Volume(left._value / right._value);
 		}
-
-		friend constexpr auto operator<=>(Volume, Volume) noexcept = default;
 
 		constexpr Volume& operator+=(Volume volume)
 		{
@@ -90,56 +90,12 @@ namespace Sgl
 			_value = Adjust(_value / value);
 			return *this;
 		}
+
+		friend constexpr auto operator<=>(Volume, Volume) noexcept = default;
 	private:
 		static constexpr double Adjust(double value)
 		{
 			return std::min(value, MaxValue);
 		}
-	};
-
-	class Music
-	{
-	public:
-		Volume Volume = Volume::Min;
-	private:
-		Mix_Music* _music;
-	public:
-		explicit Music(std::string_view path) noexcept;
-		Music(const Music&) = delete;
-		Music(Music&& other) noexcept;
-		~Music() noexcept;
-
-		Mix_Music* GetMixMusic() const noexcept;
-
-		void Play(int loops = 0) const;
-		void Pause() noexcept;
-		void Resume() noexcept;
-		void Rewind() noexcept;
-		void Halt() noexcept;
-		bool IsPaused() const noexcept;
-		bool IsPlaying() const noexcept;
-		TimeSpan Duration() const noexcept;
-
-		Music& operator=(Music&& other) noexcept;
-	};
-
-	class SoundChunk
-	{
-	public:
-		Volume Volume = Volume::Min;
-	private:
-		Mix_Chunk* _soundChunk;
-	public:
-		explicit SoundChunk(std::string_view path) noexcept;
-		SoundChunk(const SoundChunk&) = delete;
-		SoundChunk(SoundChunk&& other) noexcept;
-		~SoundChunk() noexcept;
-
-		Mix_Chunk* GetMixChunk() const noexcept;
-
-		void Play(int loops = 0);
-		void Play(int channel, int loops = 0) const;
-
-		SoundChunk& operator=(SoundChunk&& other) noexcept;
 	};
 }

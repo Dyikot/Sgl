@@ -26,7 +26,7 @@ namespace Sgl::UIElements
 
 		FRect _textTextureBounds {};
 		FontImpl _fontImpl;
-		Unique<Texture> _textTexture;
+		Texture _textTexture;
 		bool _isTextTextureValid = false;
 		std::bitset<3> _fontValidationFlags = FontFamilyFlag;
 	public:
@@ -171,10 +171,10 @@ namespace Sgl
 {
 	struct StringDataTemplate
 	{
-		Shared<UIElement> operator()(const Any& data) const
+		Ref<UIElement> operator()(const Any& data) const
 		{
 			const auto& text = data.As<std::string>();
-			auto textBlock = NewShared<UIElements::TextBlock>();
+			auto textBlock = New<UIElements::TextBlock>();
 			textBlock->SetText(text);
 			return textBlock;
 		}

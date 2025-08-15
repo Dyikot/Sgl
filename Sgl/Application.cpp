@@ -28,6 +28,12 @@ namespace Sgl
 
 	void Application::SetMaxFPS(size_t value) noexcept
 	{
+		if(value == 0)
+		{
+			_maxFPS = std::nullopt;
+			return;
+		}
+
 		_maxFPS = value;
 		_maxFrameTime = TimeSpan(1e9 / value);
 	}
@@ -261,36 +267,47 @@ namespace Sgl
 		auto rendererContext = RenderContext(renderer);
 		rendererContext.SetBlendMode(SDL_BLENDMODE_BLEND);
 
-		Stopwatch delayStopwatch, sceneStopwatch;
-		sceneStopwatch.Start();
+		Stopwatch frameStopwatch, processStopwatch;
+		processStopwatch.Start();
 
 		while(_isRunning)
 		{
-			auto scene = SceneManager.GetNextScene();
+			frameStopwatch.Restart();
 
+			auto scene = SceneManager.GetNextScene();
 			if(scene == nullptr)
 			{
 				Shutdown();
 				continue;
 			}
-			
-			_fpsCounter.OnFrameStart();
-			delayStopwatch.Restart();
 
 			HandleEvents(*scene);
-			scene->Process(sceneStopwatch.Elapsed());
-			sceneStopwatch.Reset();
+
+			scene->Process(processStopwatch.Elapsed());
+			processStopwatch.Restart();
 
 			if(Window.IsVisible() || Window.IsRenderableWhenMinimized)
 			{
-				scene->Render(rendererContext);
-				SDL_RenderPresent(renderer);
+				if(scene->NeedsRendering())
+				{
+					scene->Render(rendererContext);
+				}
+
+				SDL_RenderPresent(renderer);				
 			}
 
 			if(_maxFPS)
-			{
-				SleepFor(_maxFrameTime.value() - delayStopwatch.Elapsed());
+			{				
+				auto frameTime = frameStopwatch.Elapsed();
+				auto maxTime = _maxFrameTime.value();
+
+				if(maxTime > frameTime)
+				{
+					SleepFor(maxTime - frameTime);
+				}
 			}
+
+			_fpsCounter.Update(frameStopwatch.Elapsed());
 		}
 	}
 

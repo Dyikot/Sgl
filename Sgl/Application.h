@@ -4,7 +4,7 @@
 #include <SDL/SDL_mixer.h>
 #include <SDL/SDL_image.h>
 #include "Window.h"
-#include "Base/FPSCounter.h"
+#include "Base/Time/FPSCounter.h"
 #include "Scene/SceneManager.h"
 
 namespace Sgl

@@ -5,6 +5,7 @@
 #include "../Base/Time/TimeSpan.h"
 #include "../Input/TextEventArgs.h"
 #include "../Base/Media/Brush.h"
+#include "../Base/Ref.h"
 
 namespace Sgl
 {	
@@ -14,11 +15,12 @@ namespace Sgl
 		ResourcesMap Resources;
 		StyleMap Styles;
 	protected:
-		Unique<UIElement> _content;
+		Ref<UIElement> _content;
 		IStyleProvider* _stylingParent;
 	private:
 		Brush _background = Colors::Black;
-		std::reference_wrapper<const Cursor> _cursor = Cursors::Arrow;
+		Cursor _cursor = Cursors::Arrow;
+		bool _isRenderValid = false;
 	public:
 		Scene();
 		Scene(const Scene&) = delete;
@@ -31,13 +33,15 @@ namespace Sgl
 		void SetCursor(const Cursor& value);
 		const Cursor& GetCursor() const { return _cursor; }
 
-		void SetContent(Unique<UIElement> value);
-		const UIElement* GetContent() const { return _content.get(); }
+		void SetContent(Ref<UIElement> value);
+		Ref<UIElement> GetContent() { return _content; }
 
 		StyleMap& GetStyles() override { return Styles; }
 		IStyleProvider* GetStylingParent() { return _stylingParent; }
+		bool NeedsRendering() const noexcept { return !_isRenderValid; }
 
 		void Render(RenderContext context) override;
+		void InvalidateRender() { _isRenderValid = false; }
 		virtual void Process(TimeSpan elapsed);
 	protected:
 		virtual void OnResumed() {}

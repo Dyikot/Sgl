@@ -24,6 +24,13 @@ namespace Sgl
 		static constexpr double NanosecondsPerHour = 36e11;
 		static constexpr double NanosecondsPerDay = 864e11;
 
+		static constexpr double ToMicrosecondsCoefficient = 1 / NanosecondsPerMicrosecond;
+		static constexpr double ToMillisecondsCoefficient = 1 / NanosecondsPerMillisecond;
+		static constexpr double ToSecondsCoefficient = 1 / NanosecondsPerSecond;
+		static constexpr double ToMinutesCoefficient = 1 / NanosecondsPerMinute;
+		static constexpr double ToHoursCoefficient = 1 / NanosecondsPerHour;
+		static constexpr double ToDaysCoefficient = 1 / NanosecondsPerDay;
+
 		static constexpr long long ThresholdMicroseconds = 10 * NanosecondsPerMicrosecond;
 		static constexpr long long ThresholdMilliseconds = 10 * NanosecondsPerMillisecond;
 		static constexpr long long ThresholdSeconds = 10 * NanosecondsPerSecond;
@@ -37,11 +44,11 @@ namespace Sgl
 			_nanoseconds()
 		{}
 
-		constexpr TimeSpan(TimeSpanMax) :
+		constexpr TimeSpan(TimeSpanMax):
 			_nanoseconds(std::numeric_limits<long long>::max())
 		{}
 
-		constexpr TimeSpan(TimeSpanMin) :
+		constexpr TimeSpan(TimeSpanMin):
 			_nanoseconds(std::numeric_limits<long long>::min())
 		{}
 
@@ -90,32 +97,32 @@ namespace Sgl
 
 		constexpr double ToMicroseconds() const noexcept
 		{
-			return _nanoseconds / NanosecondsPerMicrosecond;
+			return _nanoseconds * ToMicrosecondsCoefficient;
 		}
 
 		constexpr double ToMilliseconds() const noexcept
 		{ 
-			return _nanoseconds / NanosecondsPerMillisecond;
+			return _nanoseconds * ToMillisecondsCoefficient;
 		}
 
 		constexpr double ToSeconds() const noexcept
 		{ 
-			return _nanoseconds / NanosecondsPerSecond; 
+			return _nanoseconds * ToSecondsCoefficient; 
 		}
 
 		constexpr double ToMinutes() const noexcept
 		{ 
-			return _nanoseconds / NanosecondsPerMinute;
+			return _nanoseconds * ToMinutesCoefficient;
 		}
 
 		constexpr double ToHours() const noexcept
 		{ 
-			return _nanoseconds / NanosecondsPerHour;
+			return _nanoseconds * ToHoursCoefficient;
 		}
 
 		constexpr double ToDays() const noexcept 
 		{ 
-			return _nanoseconds / NanosecondsPerDay;
+			return _nanoseconds * ToDaysCoefficient;
 		}
 
 		constexpr TimeSpan Duration() const noexcept
@@ -163,9 +170,7 @@ namespace Sgl
 		friend constexpr TimeSpan operator-(TimeSpan other) noexcept
 		{
 			return TimeSpan(-other._nanoseconds);
-		}
-
-		friend constexpr auto operator<=>(TimeSpan, TimeSpan) noexcept = default;
+		}		
 
 		constexpr TimeSpan& operator+=(TimeSpan other) noexcept
 		{
@@ -202,5 +207,7 @@ namespace Sgl
 			_nanoseconds /= number;
 			return *this;
 		}
+
+		friend constexpr auto operator<=>(TimeSpan, TimeSpan) noexcept = default;
 	};
 }

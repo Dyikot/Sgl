@@ -11,7 +11,7 @@ namespace Sgl::UIElements
 		std::string _source;
 		FRect _sourceBounds {};
 		Stretch _stretch = Stretch::Uniform;
-		Shared<Texture> _sourceTexture;
+		Texture _sourceTexture;
 	public:
 		Image() = default;
 		Image(const Image& other);
@@ -20,7 +20,7 @@ namespace Sgl::UIElements
 		void SetSource(const std::string& value) 
 		{ 
 			SetProperty(SourceProperty, _source, value);
-			_sourceTexture = NewShared<Texture>(value);
+			_sourceTexture = Texture(value);
 			InvalidateArrange();
 		}
 

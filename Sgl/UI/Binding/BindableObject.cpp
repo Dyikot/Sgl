@@ -7,7 +7,7 @@ namespace Sgl
 		_observers(other._observers)
 	{}
 
-	BindableObject::BindableObject(BindableObject && other) noexcept:
+	BindableObject::BindableObject(BindableObject&& other) noexcept:
 		DataContext(std::move(other.DataContext)),
 		_observers(std::move(other._observers))
 	{}

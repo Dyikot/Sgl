@@ -4,14 +4,14 @@
 #include <memory>
 #include <string>
 #include "Style.h"
-#include "../../Base/SmartPointers.h"
+#include "../../Base/Ref.h"
 
 namespace Sgl
 {
     class StyleMap
     {
     private:
-        std::unordered_map<std::string_view, Shared<IStyle>> _items;
+        std::unordered_map<std::string_view, Ref<IStyle>> _items;
     public:
         StyleMap() = default;
         StyleMap(const StyleMap& other);
@@ -27,11 +27,11 @@ namespace Sgl
         template<typename T>
         Style<T>& Add(std::string_view key)
         {
-            auto [it, _] = _items.emplace(key, NewShared<Style<T>>());
-            return static_cast<Style<T>&>(*it->second);
+            auto [it, _] = _items.emplace(key, New<Style<T>>());
+            return it->second.GetValueAs<Style<T>>();
         }
 
-        Shared<IStyle> TryGet(std::string_view key) const;
+        Ref<IStyle> TryGet(std::string_view key) const;
         void Remove(std::string_view key);
         bool IsEmpty() const;
 

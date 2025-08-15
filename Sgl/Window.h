@@ -5,7 +5,7 @@
 #include "Base/Size.h"
 #include "Base/WindowEventArgs.h"
 #include "Base/Observable/Event.h"
-#include "Base/SmartPointers.h"
+#include "Base/Ref.h"
 
 namespace Sgl
 {
@@ -50,7 +50,7 @@ namespace Sgl
 		SDL_Window* _window;
 		SDL_Renderer* _renderer;
 	private:
-		Unique<Surface> _icon;
+		Surface _icon;
 		bool _hasVSync = false;
 	public:
 		Window() noexcept;
@@ -110,7 +110,7 @@ namespace Sgl
 		/// Sets the window title
 		/// </summary>
 		/// <param name="value">- the new window title</param>
-		void SetTitle(std::string value) noexcept;
+		void SetTitle(std::string_view value) noexcept;
 
 		/// <summary>
 		/// Gets the window title
@@ -119,16 +119,16 @@ namespace Sgl
 		std::string_view GetTitle() const noexcept;
 
 		/// <summary>
-		/// Sets the logical size of the window for rendering
+		/// Sets the render size
 		/// </summary>
 		/// <param name="size">- the logical size</param>
-		void SetLogicalSize(Size size) noexcept;
+		void SetRenderSize(Size size) noexcept;
 
 		/// <summary>
-		/// Gets the logical size of the window
+		/// Gets the render size
 		/// </summary>
 		/// <returns>The current logical size</returns>
-		Size GetLogicalSize() const noexcept;
+		Size GetRenderSize() const noexcept;
 
 		/// <summary>
 		/// Sets the maximum size of the window
@@ -194,13 +194,13 @@ namespace Sgl
 		/// Sets the window icon
 		/// </summary>
 		/// <param name="icon">- the icon surface to set</param>
-		void SetIcon(Unique<Surface> icon);
+		void SetIcon(Surface icon);
 
 		/// <summary>
 		/// Gets the current window icon
 		/// </summary>
 		/// <returns>Reference to the icon surface</returns>
-		const Unique<Surface>& GetIcon() const;
+		Surface GetIcon() const;
 
 		/// <summary>
 		/// Enables or disables VSync

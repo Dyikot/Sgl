@@ -31,7 +31,7 @@ namespace Sgl
 
 	Scene* SceneManager::GetCurrentScene()
 	{
-		return _scenes.empty() ? nullptr : _scenes.top().get();
+		return _scenes.empty() ? nullptr : _scenes.top().Get();
 	}
 
 	Scene* SceneManager::GetNextScene()

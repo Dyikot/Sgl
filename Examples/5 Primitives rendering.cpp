@@ -32,11 +32,10 @@ private:
 		context.DrawRectange(rect, Colors::Blue);
 
 		auto fillRect = FRect(200, 100, 50, 50);
-		context.DrawFillRectangle(fillRect, Colors::DarkCyan);
+		context.DrawRectangleFill(fillRect, Colors::DarkCyan);
 
-		auto circlePosition = FPoint(300, 100);
-		int diameter = 50;
-		context.DrawCircle(circlePosition, diameter, Colors::Red);
+		auto cirleRect = Rect(300, 100, 50, 50);
+		context.DrawEllipse(cirleRect, Colors::Red);
 
 		auto homeTextureTarget = FRect(400, 100, 48, 48);
 		context.DrawTexture(_homeTexture, homeTextureTarget);

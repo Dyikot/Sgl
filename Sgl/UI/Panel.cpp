@@ -57,7 +57,7 @@ namespace Sgl
 
         for(auto& child : Children)
         {
-            UIElement& element = *child;
+            auto& element = child.GetValue();
 
             if(Math::IsPointInRect(e.Position, element.GetBounds()) && element.IsVisible())
             {
@@ -66,7 +66,7 @@ namespace Sgl
                     _currentChild->OnMouseLeave(e);
                 }
 
-                _currentChild = &element;
+                _currentChild = child;
                 Cursor::Set(element.GetCursor());
                 element.OnMouseEnter(e);
                 element.OnMouseMove(e);

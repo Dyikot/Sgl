@@ -10,7 +10,7 @@ namespace Sgl
 	public:
 		UIElementsCollection Children;
 	private:
-		UIElement* _currentChild;
+		Ref<UIElement> _currentChild;
 	public:
 		Panel();
 		Panel(const Panel& other);

@@ -3,16 +3,11 @@
 
 namespace Sgl
 {
-    struct CursorFactory
+    struct CursorDeleter
     {
-        SDL_Cursor* operator()(const std::string& path) const
+        void operator()(SDL_Cursor* cursor) const
         {
-            return SDL_CreateColorCursor(IMG_Load(path.data()), 0, 0);
-        }
-
-        SDL_Cursor* operator()(SDL_SystemCursor systemCursor) const
-        {
-            return SDL_CreateSystemCursor(systemCursor);
+            SDL_FreeCursor(cursor);
         }
     };
 
@@ -25,59 +20,90 @@ namespace Sgl
         }
     }
 
-    Cursor::Cursor() noexcept:
-        Cursor(SDL_SYSTEM_CURSOR_ARROW)
-    {}
+    static std::shared_ptr<SDL_Cursor> GetSystemCursor(SDL_SystemCursor cursor)
+    {
+        switch(cursor)
+        {
+            case SDL_SYSTEM_CURSOR_ARROW:
+            {
+                static std::shared_ptr<SDL_Cursor> arrow(SDL_CreateSystemCursor(cursor), CursorDeleter());
+                return arrow;
+            }
+            case SDL_SYSTEM_CURSOR_IBEAM: 
+            {
+                static std::shared_ptr<SDL_Cursor> ibeam(SDL_CreateSystemCursor(cursor), CursorDeleter());
+                return ibeam;
+            }
+            case SDL_SYSTEM_CURSOR_WAIT:
+            {
+                static std::shared_ptr<SDL_Cursor> wait(SDL_CreateSystemCursor(cursor), CursorDeleter());
+                return wait;
+            }
+            case SDL_SYSTEM_CURSOR_CROSSHAIR:
+            {
+                static std::shared_ptr<SDL_Cursor> crossHair(SDL_CreateSystemCursor(cursor), CursorDeleter());
+                return crossHair;
+            }
+            case SDL_SYSTEM_CURSOR_WAITARROW:
+            {
+                static std::shared_ptr<SDL_Cursor> waitArrow(SDL_CreateSystemCursor(cursor), CursorDeleter());
+                return waitArrow;
+            }
+            case SDL_SYSTEM_CURSOR_SIZENWSE:
+            {
+                static std::shared_ptr<SDL_Cursor> sizeNWSE(SDL_CreateSystemCursor(cursor), CursorDeleter());
+                return sizeNWSE;
+            }
+            case SDL_SYSTEM_CURSOR_SIZENESW:
+            {
+                static std::shared_ptr<SDL_Cursor> sizeNESW(SDL_CreateSystemCursor(cursor), CursorDeleter());
+                return sizeNESW;
+            }
+            case SDL_SYSTEM_CURSOR_SIZEWE:
+            {
+                static std::shared_ptr<SDL_Cursor> sizeWE(SDL_CreateSystemCursor(cursor), CursorDeleter());
+                return sizeWE;
+            }
+            case SDL_SYSTEM_CURSOR_SIZENS:
+            {
+                static std::shared_ptr<SDL_Cursor> sizeNS(SDL_CreateSystemCursor(cursor), CursorDeleter());
+                return sizeNS;
+            }
+            case SDL_SYSTEM_CURSOR_SIZEALL:
+            {
+                static std::shared_ptr<SDL_Cursor> sizeALL(SDL_CreateSystemCursor(cursor), CursorDeleter());
+                return sizeALL;
+            }
+            case SDL_SYSTEM_CURSOR_NO:
+            {
+                static std::shared_ptr<SDL_Cursor> sizeNO(SDL_CreateSystemCursor(cursor), CursorDeleter());
+                return sizeNO;
+            }
+            case SDL_SYSTEM_CURSOR_HAND: 
+            {
+                static std::shared_ptr<SDL_Cursor> hand(SDL_CreateSystemCursor(cursor), CursorDeleter());
+                return hand;
+            }
+            default:
+                throw std::invalid_argument("Selected system cursor does exist");
+        }
+    }
 
-    Cursor::Cursor(std::string path):
-        _creationArgs(std::move(path))
-    {}
+    Cursor::Cursor(std::string_view path):
+        _cursor(SDL_CreateColorCursor(IMG_Load(path.data()), 0, 0), CursorDeleter())
+    {
+        Log::PrintSDLErrorIf(_cursor == nullptr);
+    }
 
     Cursor::Cursor(SDL_SystemCursor systemCursor) noexcept:
-        _creationArgs(systemCursor)
+        _cursor(GetSystemCursor(systemCursor))
+    {}
+
+    Cursor::Cursor(const Cursor& other):
+        _cursor(other._cursor)
     {}
 
     Cursor::Cursor(Cursor&& other) noexcept:
-        _cursor(std::exchange(other._cursor, nullptr)),
-        _creationArgs(std::move(other._creationArgs)),
-        _hasTriedToCreate(other._hasTriedToCreate)
+        _cursor(std::exchange(other._cursor, nullptr))
     {}
-
-    Cursor::~Cursor() noexcept
-    {
-        if(_cursor)
-        {
-            SDL_FreeCursor(_cursor);
-        }
-    }
-
-    SDL_Cursor* Cursor::GetSDLCursor() const noexcept
-    {
-        if(!_hasTriedToCreate)
-        {
-            _cursor = CreateCursor();
-            _hasTriedToCreate = true;
-            Log::PrintSDLErrorIf(_cursor == nullptr);
-        }
-
-        return _cursor;
-    }
-
-    bool operator==(const Cursor& left, const Cursor& right)
-    {
-        return left._creationArgs == right._creationArgs;
-    }
-
-    Cursor& Cursor::operator=(Cursor&& other) noexcept
-    {
-        _cursor = std::exchange(other._cursor, nullptr);
-        _creationArgs = std::move(other._creationArgs);
-        _hasTriedToCreate = other._hasTriedToCreate;
-        return *this;
-    }
-
-    SDL_Cursor* Cursor::CreateCursor() const
-    {
-        return std::visit(CursorFactory(), _creationArgs);
-    }
 }

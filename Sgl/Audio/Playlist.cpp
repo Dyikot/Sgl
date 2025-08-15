@@ -1,59 +1,86 @@
 #include "Playlist.h"
 
+
 namespace Sgl
 {
-	Playlist::Playlist(Playlist&& other) noexcept:
-		Items(std::move(other.Items)),
-		_currentIt(std::move(other._currentIt))
+	Playlist::Playlist(std::initializer_list<Music> init):
+		_items(init),
+		_current(_items.begin())
 	{}
 
-	Playlist::Iterator Playlist::GetCurrent() const
+	Playlist::Playlist(const Playlist& other):
+		_items(other._items), 
+		_current(_items.begin()) {}
+
+	Playlist::Playlist(Playlist&& other) noexcept:
+		_items(std::move(other._items)),
+		_current(_items.begin())
+	{}
+
+	size_t Playlist::Count() const noexcept
 	{
-		return _currentIt;
+		return _items.size();
 	}
 
-	void Playlist::Play()
+	bool Playlist::Contains(const Music& song) const
 	{
-		if(Items.size() == 0)
-		{
-			return;
-		}
-
-		if(_currentIt == Items.begin())
-		{
-			Started.TryInvoke(*this, EventArgs());
-		}
-		else if(_currentIt == Items.end())
-		{
-			Ended.TryInvoke(*this, EventArgs());
-			_currentIt = Items.begin();
-		}
-
-		auto& current = *_currentIt;
-
-		if(!current.IsPlaying())
-		{
-			current.Play();
-			_currentIt++;
-		}
-		else if(current.IsPaused())
-		{
-			current.Resume();
-		}
+		return std::ranges::find(_items, song) != _items.end();
 	}
 
-	void Playlist::Pause()
+	bool Playlist::MoveCurrentNext()
 	{
-		if(_currentIt != Items.end())
+		if(_items.empty() || _current == _items.end())
 		{
-			_currentIt->Pause();
+			return false;
 		}
+
+		return ++_current != _items.end();
+	}
+
+	void Playlist::MoveCurrentToBegin()
+	{
+		_current = _items.begin();
+	}
+
+	bool Playlist::Empty() const
+	{
+		return _items.empty();
+	}
+
+	Music Playlist::Current() const
+	{
+		if(_items.empty() || _current == _items.end())
+		{
+			throw std::runtime_error("Playlist is empty or no current song");
+		}
+
+		return *_current;
+	}
+
+	Playlist& Playlist::operator=(const Playlist & other)
+	{
+		if(this != &other)
+		{
+			_items = other._items;
+			_current = _items.begin();
+		}
+
+		return *this;
 	}
 
 	Playlist& Playlist::operator=(Playlist&& other) noexcept
 	{
-		Items = std::move(other.Items);
-		_currentIt = std::move(other._currentIt);
+		if(this != &other)
+		{
+			_items = std::move(other._items);
+			_current = _items.begin();
+		}
+
 		return *this;
+	}
+
+	const Music& Playlist::operator[](size_t index) const
+	{
+		return _items[index];
 	}
 }

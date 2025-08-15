@@ -3,16 +3,16 @@
 #include <stack>
 #include <queue>
 #include "Scene.h"
-#include "../Base/SmartPointers.h"
+#include "../Base/Ref.h"
 
 namespace Sgl
 {
 	class SceneManager
 	{
 	private:
-		using SceneFactory = Func<Unique<Scene>>;
+		using SceneFactory = Func<Ref<Scene>>;
 
-		std::stack<Unique<Scene>> _scenes;
+		std::stack<Ref<Scene>> _scenes;
 		std::queue<SceneFactory> _sceneFactoriesQueue;
 		size_t _scenesToDestory = 0;
 	public:
@@ -22,7 +22,7 @@ namespace Sgl
 		~SceneManager();
 
 		template<std::derived_from<Scene> TScene>
-		void Push() { _sceneFactoriesQueue.push([] { return NewUnique<TScene>(); }); }
+		void Push() { _sceneFactoriesQueue.push([] { return New<TScene>(); }); }
 		void Push(SceneFactory sceneFactory);
 
 		void Pop() noexcept;

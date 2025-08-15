@@ -10,7 +10,7 @@ namespace Sgl
 	private:
 		Any _content;
 		DataTemplate _contentTemplate;
-		Shared<UIElement> _contentPresenter;
+		Ref<UIElement> _contentPresenter;
 		Thickness _padding;
 		VerticalAlignment _verticalContentAlignment = VerticalAlignment::Top;
 		HorizontalAlignment _horizontalContentAlignment = HorizontalAlignment::Left;
@@ -41,15 +41,15 @@ namespace Sgl
 		}
 
 		template<std::derived_from<UIElement> T>
-		void SetContent(Shared<T> value)
+		void SetContent(Ref<T> value)
 		{
-			_content = Any::New<Shared<UIElement>>(std::move(value));
+			_content = Any::New<Ref<UIElement>>(std::move(value));
 			_contentTemplate = UIElementDataTemplate();
 			InvalidateMeasure();
 			InvalidateContentPresenter();
 		}
 
-		Shared<UIElement> GetContentPresenter() const 
+		Ref<UIElement> GetContentPresenter() const 
 		{
 			return _contentPresenter;
 		}

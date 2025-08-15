@@ -1,32 +1,32 @@
 #pragma once
 
-#include "Audio.h"
-#include "../Base/Observable/Event.h"
+#include <vector>
+#include <ranges>
+#include "IPlaylist.h"
 
 namespace Sgl
 {
-	class Playlist
-	{
-	public:
-		using PlayListEventHandler = EventHandler<Playlist>;
-		using Iterator = std::vector<Music>::iterator;
+    class Playlist: public IPlaylist
+    {
+    private:
+        std::vector<Music> _items;
+        std::vector<Music>::const_iterator _current = _items.begin();
+    public:
+        Playlist() = default;
+        Playlist(std::initializer_list<Music> init);
+        Playlist(const Playlist& other);
+        Playlist(Playlist&& other) noexcept;
+        ~Playlist() = default;
 
-		Event<PlayListEventHandler> Started;
-		Event<PlayListEventHandler> Ended;
+        size_t Count() const noexcept;
+        bool Contains(const Music& song) const;
+        bool MoveCurrentNext() override;
+        void MoveCurrentToBegin() override;
+        bool Empty() const override;
+        Music Current() const override;
 
-		std::vector<Music> Items;
-	private:
-		Iterator _currentIt = Items.begin();
-	public:
-		Playlist() = default;
-		Playlist(const Playlist&) = delete;
-		Playlist(Playlist&& other) noexcept;
-
-		Iterator GetCurrent() const;		
-		void Play();
-		void Pause();
-
-		Playlist& operator=(const Playlist&) = delete;
-		Playlist& operator=(Playlist&& other) noexcept;
-	};
+        Playlist& operator=(const Playlist& other);
+        Playlist& operator=(Playlist&& other) noexcept;
+        const Music& operator[](size_t index) const;
+    };
 }

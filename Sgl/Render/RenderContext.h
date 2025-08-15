@@ -23,6 +23,9 @@ namespace Sgl
 		void SetTarget(const Texture& texture);
 		void ResetTarget();
 
+		void SetBackground(Color color);
+		void SetBlendMode(SDL_BlendMode mode);
+
 		void DrawPoint(FPoint point, Color color);
 		void DrawPoints(std::span<const FPoint> points, Color color);
 
@@ -30,54 +33,36 @@ namespace Sgl
 		void DrawLines(std::span<const FPoint> points, Color color);
 
 		void DrawRectange(FRect rect, Color color);
+		void DrawRectangleFill(FRect rect, Color fill);
+
 		void DrawRectangles(std::span<const FRect> rects, Color color);
+		void DrawRectanglesFill(std::span<const FRect> rects, Color fill);
 
-		void DrawFillRectangle(FRect rect, Color fill);
-		void DrawFillRectangles(std::span<const FRect> rects, Color fill);
-
-		void DrawTexture(const Texture& texture);
-		void DrawTexture(const Texture& texture, Color fill);
-		void DrawTexture(const Texture& texture, FRect target);
-		void DrawTexture(const Texture& texture, FRect target, Color fill);
-		void DrawTexture(const Texture& texture, FRect target, Rect clip);
-		void DrawTexture(const Texture& texture, FRect target, Rect clip, Color fill);
-
-		void DrawTextureWithRotation(const Texture& texture, double angle, FPoint center);
-		void DrawTextureWithRotation(const Texture& texture, Color fill, double angle, FPoint center);
-		void DrawTextureWithRotation(const Texture& texture, FRect target, double angle, FPoint center);
-		void DrawTextureWithRotation(const Texture& texture, FRect target, Color fill, double angle, FPoint center);
-		void DrawTextureWithRotation(const Texture& texture, FRect target, Rect clip, double angle, FPoint center);
-		void DrawTextureWithRotation(const Texture& texture, FRect target, Rect clip, Color fill, double angle, FPoint center);
-		
-		void DrawTextureWithFlip(const Texture& texture, Orientation flip);
-		void DrawTextureWithFlip(const Texture& texture, Color fill, Orientation flip);
-		void DrawTextureWithFlip(const Texture& texture, FRect target, Orientation flip);
-		void DrawTextureWithFlip(const Texture& texture, FRect target, Color fill, Orientation flip);
-		void DrawTextureWithFlip(const Texture& texture, FRect target, Rect clip, Orientation flip);
-		void DrawTextureWithFlip(const Texture& texture, FRect target, Rect clip, Color fill, Orientation flip);
-
-		void DrawTextureWithRotationAndFlip(const Texture& texture, double angle, FPoint center, Orientation flip);
-		void DrawTextureWithRotationAndFlip(const Texture& texture, Color fill, double angle, FPoint center, Orientation flip);
-		void DrawTextureWithRotationAndFlip(const Texture& texture, FRect target, double angle, FPoint center, Orientation flip);
-		void DrawTextureWithRotationAndFlip(const Texture& texture, FRect target, Color fill, double angle, FPoint center, Orientation flip);
-		void DrawTextureWithRotationAndFlip(const Texture& texture, FRect target, Rect clip, double angle, FPoint center, Orientation flip);
-		void DrawTextureWithRotationAndFlip(const Texture& texture, FRect target, Rect clip, Color fill, double angle, FPoint center, Orientation flip);
-
-		void DrawCircle(FPoint position, int diameter, Color color);
-		void DrawCircleFill(FPoint position, int diameter, Color color);
-		void DrawCircleFill(FPoint position, int diameter, const Texture& texture, Color color);
-
-		void DrawEllipse(FPoint position, int width, int height, Color color);
-		void DrawEllipseFill(FPoint position, int width, int height, Color color);
-		void DrawEllipseFill(FPoint position, int width, int height, const Texture& texture, Color color);
+		void DrawEllipse(Rect rect, Color color);
+		void DrawEllipseSmooth(Rect rect, Color color);
+		void DrawEllipseFill(Rect rect, Color color);
+		void DrawEllipseFill(Rect rect, const Texture& texture, Color color);
 
 		void DrawGeometry(std::span<const Vertex> vertices);
 		void DrawGeometry(std::span<const Vertex> vertices, const Texture& texture);
 		void DrawGeometry(std::span<const Vertex> vertices, std::span<const int> order);
 		void DrawGeometry(std::span<const Vertex> vertices, std::span<const int> order, const Texture& texture);
 
-		void FillBackground(Color color);
-		void SetBlendMode(SDL_BlendMode mode);
+		void DrawTexture(const Texture& texture);
+		void DrawTexture(const Texture& texture, FRect target);
+		void DrawTexture(const Texture& texture, FRect target, Rect clip);
+
+		void DrawTextureWithRotation(const Texture& texture, double angle, FPoint center);
+		void DrawTextureWithRotation(const Texture& texture, FRect target, double angle, FPoint center);
+		void DrawTextureWithRotation(const Texture& texture, FRect target, Rect clip, double angle, FPoint center);
+		
+		void DrawTextureWithFlip(const Texture& texture, Orientation flip);
+		void DrawTextureWithFlip(const Texture& texture, FRect target, Orientation flip);
+		void DrawTextureWithFlip(const Texture& texture, FRect target, Rect clip, Orientation flip);
+
+		void DrawTextureWithRotationAndFlip(const Texture& texture, double angle, FPoint center, Orientation flip);
+		void DrawTextureWithRotationAndFlip(const Texture& texture, FRect target, double angle, FPoint center, Orientation flip);
+		void DrawTextureWithRotationAndFlip(const Texture& texture, FRect target, Rect clip, double angle, FPoint center, Orientation flip);
 	private:
 		void SetColor(Color color) const noexcept
 		{

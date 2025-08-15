@@ -4,7 +4,6 @@
 #include <compare>
 #include "Color.h"
 #include "../../Render/Texture.h"
-#include "../SmartPointers.h"
 
 namespace Sgl
 {
@@ -16,13 +15,13 @@ namespace Sgl
 		static constexpr Type Color = 0;
 		static constexpr Type Texture = 1;
 	private:
-		std::variant<Sgl::Color, Shared<Sgl::Texture>> _value;
+		std::variant<Sgl::Color, Sgl::Texture> _value;
 	public:
 		Brush(Sgl::Color color):
 			_value(color)
 		{}
 
-		Brush(Shared<Sgl::Texture> texture):
+		Brush(Sgl::Texture texture):
 			_value(std::move(texture))
 		{}
 
@@ -45,9 +44,9 @@ namespace Sgl
 			return std::get<Sgl::Color>(_value);
 		}
 
-		const Shared<Sgl::Texture>& AsTexture() const
+		const Sgl::Texture& AsTexture() const
 		{
-			return std::get<Shared<Sgl::Texture>>(_value);
+			return std::get<Sgl::Texture>(_value);
 		}
 
 		Brush& operator=(Sgl::Color color)
@@ -56,7 +55,7 @@ namespace Sgl
 			return *this;
 		}
 
-		Brush& operator=(Shared<Sgl::Texture> texture)
+		Brush& operator=(Sgl::Texture texture)
 		{
 			_value = std::move(texture);
 			return *this;
@@ -67,6 +66,6 @@ namespace Sgl
 		friend bool operator==(const Brush&, const Brush&) = default;
 
 		explicit operator Sgl::Color() const { return AsColor(); }
-		explicit operator Shared<Sgl::Texture>() const { return AsTexture(); }
+		explicit operator Sgl::Texture() const { return AsTexture(); }
 	};
 }

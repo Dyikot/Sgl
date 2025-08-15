@@ -65,12 +65,12 @@ namespace Sgl
         return Size(width, height);
     }
 
-    void Window::SetLogicalSize(Size size) noexcept
+    void Window::SetRenderSize(Size size) noexcept
     {
         SDL_RenderSetLogicalSize(_renderer, size.Width, size.Height);
     }
 
-    Size Window::GetLogicalSize() const noexcept
+    Size Window::GetRenderSize() const noexcept
     {
         int width = 0, height = 0;
         SDL_RenderGetLogicalSize(_renderer, &width, &height);
@@ -101,7 +101,7 @@ namespace Sgl
         return Size(width, height);
     }
 
-    void Window::SetTitle(std::string value) noexcept
+    void Window::SetTitle(std::string_view value) noexcept
     {
         SDL_SetWindowTitle(_window, value.data());
     }
@@ -201,13 +201,13 @@ namespace Sgl
         }
     }
 
-    void Window::SetIcon(Unique<Surface> icon)
+    void Window::SetIcon(Surface icon)
     {
         _icon = std::move(icon);
-        SDL_SetWindowIcon(_window, _icon->GetSDLSurface());
+        SDL_SetWindowIcon(_window, static_cast<SDL_Surface*>(_icon));
     }
 
-    const Unique<Surface>& Window::GetIcon() const
+    Surface Window::GetIcon() const
     {
         return _icon;
     }

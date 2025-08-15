@@ -10,7 +10,7 @@ namespace Sgl
 		_items(std::move(other._items))
 	{}
 
-	Shared<IStyle> StyleMap::TryGet(std::string_view key) const
+	Ref<IStyle> StyleMap::TryGet(std::string_view key) const
 	{
 		if(auto it = _items.find(key); it != _items.end())
 		{

@@ -36,14 +36,14 @@ namespace Sgl::UIElements
 						.h = static_cast<int>(_sourceBounds.h)
 					};
 
-					context.DrawTexture(*_sourceTexture, _sourceBounds, clip);
+					context.DrawTexture(_sourceTexture, _sourceBounds, clip);
 					break;
 				}
 
 				case Stretch::Fill:
 				case Stretch::Uniform:
 				{
-					context.DrawTexture(*_sourceTexture, _sourceBounds);
+					context.DrawTexture(_sourceTexture, _sourceBounds);
 					break;
 				}
 
@@ -57,7 +57,7 @@ namespace Sgl::UIElements
 						.h = static_cast<int>(_sourceBounds.h)
 					};
 
-					context.DrawTexture(*_sourceTexture, _bounds, clip);
+					context.DrawTexture(_sourceTexture, _bounds, clip);
 					break;
 				}
 			}
@@ -75,7 +75,7 @@ namespace Sgl::UIElements
 			return;
 		}
 
-		auto source = _sourceTexture->GetSize();
+		auto source = _sourceTexture.GetSize();
 		float width = _bounds.w;
 		float height = _bounds.h;
 

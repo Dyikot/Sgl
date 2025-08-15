@@ -18,7 +18,7 @@ namespace Sgl
 		}
 	}
 
-	void Scene::SetContent(Unique<UIElement> value)
+	void Scene::SetContent(Ref<UIElement> value)
 	{
 		if(_content)
 		{
@@ -34,13 +34,15 @@ namespace Sgl
 	}
 
 	void Scene::Render(RenderContext context)
-	{		
+	{	
+		_isRenderValid = true;
+
 		switch(_background.GetType())
 		{
 			case Brush::Color:
-				context.FillBackground(_background.AsColor()); break;
+				context.SetBackground(_background.AsColor()); break;
 			case Brush::Texture:
-				context.DrawTexture(*_background.AsTexture()); break;
+				context.DrawTexture(_background.AsTexture()); break;
 		}
 
 		if(_content && _content->IsVisible())
@@ -79,7 +81,7 @@ namespace Sgl
 	{
 		if(_content && _content->IsVisible())
 		{
-			auto& content = *_content;
+			auto& content = _content.GetValue();
 			bool wasMouseOver = content._isMouseOver;
 			bool isMouseOver = Math::IsPointInRect(e.Position, content._bounds);
 
