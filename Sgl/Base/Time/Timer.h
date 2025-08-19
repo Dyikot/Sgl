@@ -1,7 +1,7 @@
 #pragma once
 
 #include <future>
-#include "../Observable/Event.h"
+#include "../Event/Event.h"
 #include "Stopwatch.h"
 
 namespace Sgl

@@ -25,6 +25,8 @@ namespace Sgl
 			_owner(other._owner)
 		{}
 
+		~UIElementsCollection() = default;
+
 		auto begin() { return _items.begin(); }
 		auto end() { return _items.end(); }
 
@@ -61,7 +63,7 @@ namespace Sgl
 
 		bool Contains(Ref<UIElement> element) const
 		{
-			return Contains(element);
+			return _items.Contains(element);
 		}
 
 		Ref<UIElement> ElementAt(size_t index) const

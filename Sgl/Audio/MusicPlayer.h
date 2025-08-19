@@ -1,7 +1,7 @@
 #pragma once
 
 #include "IPlaylist.h"
-#include "../Base/Observable/Event.h"
+#include "../Base/Event/Event.h"
 
 namespace Sgl
 {

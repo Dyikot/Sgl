@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "../Base/Observable/EventArgs.h"
+#include "../Base/Event/EventArgs.h"
 
 namespace Sgl
 {
