@@ -2,7 +2,7 @@
 
 #include <unordered_map>
 #include "ObservableProperty.h"
-#include "../Base/Event/Event.h"
+#include "../Base/Event.h"
 
 namespace Sgl
 {

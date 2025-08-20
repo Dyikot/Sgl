@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Event/EventArgs.h"
+#include "EventArgs.h"
 #include "Primitives.h"
 
 namespace Sgl

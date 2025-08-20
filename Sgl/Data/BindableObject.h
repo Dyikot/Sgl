@@ -24,9 +24,9 @@ namespace Sgl
 		{
 			_observers[property.Id] = [observer](void* dataContext, const void* value)
 			{
-				auto source = static_cast<TSource*>(dataContext);
-				const auto& ref = *static_cast<const std::decay_t<TValue>*>(value);
-				std::invoke(observer, source) = ref;
+				auto source = As<TSource>(dataContext);
+				const auto& targetValue = AsValue<TValue>(value);
+				std::invoke(observer, source) = targetValue;
 			};
 		}
 
@@ -35,9 +35,9 @@ namespace Sgl
 		{
 			_observers[property.Id] = [observer](void* dataContext, const void* value)
 			{
-				auto source = static_cast<TSource*>(dataContext);
-				const auto& ref = *static_cast<const std::decay_t<TValue>*>(value);
-				std::invoke(observer, source, ref);
+				auto source = As<TSource>(dataContext);
+				const auto& targetValue = AsValue<TValue>(value);
+				std::invoke(observer, source, targetValue);
 			};
 		}
 
@@ -64,16 +64,17 @@ namespace Sgl
 				}
 
 				auto source = DataContext.GetAs<TSource>();
-				auto target = static_cast<TTarget*>(this);
+				auto target = As<TTarget>(this);
 
 				auto currentValue = std::invoke(sourceProperty.Getter, source);
 				std::invoke(targetProperty.Setter, target, currentValue);
 
 				auto observer = [&targetProperty, target](const void* value)
 				{
-					const auto& ref = *static_cast<const std::decay_t<TValue>*>(value);
-					std::invoke(targetProperty.Setter, target, ref);
+					const auto& sourceValue = AsValue<TValue>(value);
+					std::invoke(targetProperty.Setter, target, sourceValue);
 				};
+
 				std::invoke(&ObservableObject::SetObserver, source, sourceProperty.Id, observer);
 			}
 		}
@@ -82,7 +83,7 @@ namespace Sgl
 		void ClearBinding(ObservableProperty<TTarget, TValue>& property)
 		{
 			_observers.erase(property.Id);
-		}	
+		}
 
 		template<std::derived_from<ObservableObject> TSource, typename TValue>
 		void ClearBinding(ObservableProperty<TSource, TValue>& property)
@@ -131,6 +132,18 @@ namespace Sgl
 					it->second(DataContext.Get(), &value);
 				}
 			}
+		}
+	private:
+		template<typename T>
+		T* As(void* value)
+		{
+			return static_cast<T*>(value);
+		}
+
+		template<typename T>
+		const T& AsValue(const void* value)
+		{
+			return *static_cast<const std::decay_t<T>*>(value);
 		}
 	};
 }

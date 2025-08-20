@@ -2,7 +2,7 @@
 
 #include <vector>
 #include "EventArgs.h"
-#include "../Delegate.h"
+#include "Delegate.h"
 
 namespace Sgl
 {

@@ -2,7 +2,7 @@
 
 #include <algorithm>
 #include "Collection.h"
-#include "../Event/Event.h"
+#include "../Event.h"
 
 namespace Sgl
 {
