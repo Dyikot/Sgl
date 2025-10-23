@@ -208,12 +208,4 @@ namespace Sgl
     {
         return Ref<T>(new RefMemoryBlock<T>(std::forward<TArgs>(args)...));
     }
-
-    template<typename T, typename TConfigurer>
-    Ref<T> CreateWith(TConfigurer&& configurer)
-    {
-        auto element = New<T>();
-        configurer(element.GetValue());
-        return element;
-    }
 }

@@ -1,13 +1,14 @@
 #include "StyleableElement.h"
+#include <sstream>
+#include "../Application.h"
 
 namespace Sgl
 {
 	StyleableElement::StyleableElement(const StyleableElement& other):
 		ObservableObject(other),
 		Styles(other.Styles),
-		Classes(other.Classes),
-		Resources(other.Resources),
-		_stylingParent(other._stylingParent),
+		_classList(other._classList),
+		_parent(other._parent),
 		_isStyleValid(other._isStyleValid),
 		_styles(other._styles)
 	{}
@@ -15,12 +16,37 @@ namespace Sgl
 	StyleableElement::StyleableElement(StyleableElement&& other) noexcept:
 		ObservableObject(std::move(other)),
 		Styles(std::move(other.Styles)),
-		Classes(std::move(other.Classes)),
-		Resources(std::move(other.Resources)),
-		_stylingParent(std::exchange(other._stylingParent, nullptr)),
+		_classList(std::move(other._classList)),
+		_parent(std::exchange(other._parent, nullptr)),
 		_isStyleValid(other._isStyleValid),
 		_styles(std::move(other._styles))
 	{}
+
+	void StyleableElement::SetClasses(std::string classNames)
+	{
+		_classList.clear();
+
+		auto stream = std::stringstream(classNames);
+		std::string buffer;
+
+		while(stream >> buffer)
+		{
+			_classList.push_back(buffer);
+		}
+
+		InvalidateStyle();
+	}
+
+	void StyleableElement::SetClasses(std::vector<std::string> classList)
+	{
+		_classList = std::move(classList);
+		InvalidateStyle();
+	}
+
+	const std::vector<std::string>& StyleableElement::GetClasses() const
+	{
+		return _classList;
+	}
 
 	void StyleableElement::ApplyStyle()
 	{
@@ -35,15 +61,14 @@ namespace Sgl
 
 	void StyleableElement::InvalidateStyle()
 	{
-		_isStyleValid = false;
-
-		if(_stylingParent != nullptr)
+		if(_isStyleValid)
 		{
-			auto styleableParent = dynamic_cast<StyleableElement*>(_stylingParent);
-			if(styleableParent != nullptr)
+			_isStyleValid = false;
+
+			if(_parent)
 			{
-				styleableParent->InvalidateStyle();
-			}
+				_parent->InvalidateStyle();				
+			}			
 		}
 	}
 
@@ -53,12 +78,14 @@ namespace Sgl
 
 		GetStylesFrom(Styles);
 		
-		auto parent = _stylingParent;
+		auto parent = _parent;
 		while(parent != nullptr)
 		{
-			GetStylesFrom(parent->GetStyles());
-			parent = parent->GetStylingParent();
+			GetStylesFrom(parent->Styles);
+			parent = parent->GetParent();
 		}
+
+		GetStylesFrom(App->Styles);
 	}
 
 	void StyleableElement::GetStylesFrom(const StyleMap& styles)
@@ -68,7 +95,7 @@ namespace Sgl
 			return;
 		}
 
-		for(auto& className : Classes)
+		for(auto& className : _classList)
 		{
 			if(auto style = styles.TryGet(className); style != nullptr)	
 			{

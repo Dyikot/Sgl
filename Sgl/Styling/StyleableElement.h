@@ -2,23 +2,20 @@
 
 #include <vector>
 #include "StyleMap.h"
-#include "ClassesCollections.h"
 #include "../Data/ObservableObject.h"
 #include "../Base/Ref.h"
-#include "../Base/Collections/ResourcesMap.h"
 
 namespace Sgl
 {
-	class StyleableElement: public ObservableObject, public IStyleProvider
+	class StyleableElement : public ObservableObject
 	{
 	public:
 		StyleMap Styles;
-		ClassesCollection Classes;
-		ResourcesMap Resources;
 	protected:
-		IStyleProvider* _stylingParent {};
+		StyleableElement* _parent = nullptr;
 	private:
 		bool _isStyleValid = false;
+		std::vector<std::string> _classList;
 		std::vector<Ref<IStyle>> _styles;
 	public:
 		StyleableElement() = default;
@@ -26,9 +23,12 @@ namespace Sgl
 		StyleableElement(StyleableElement&& other) noexcept;
 		virtual ~StyleableElement() = default;
 
+		void SetClasses(std::string classNames);
+		void SetClasses(std::vector<std::string> classList);
+		const std::vector<std::string>& GetClasses() const;
+
 		bool IsStyleValid() const { return _isStyleValid; }
-		StyleMap& GetStyles() override { return Styles; }
-		IStyleProvider* GetStylingParent() override { return _stylingParent; }
+		StyleableElement* GetParent() { return _parent; }
 
 		virtual void ApplyStyle();
 		void InvalidateStyle();

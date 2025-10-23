@@ -37,14 +37,5 @@ namespace Sgl
 
         StyleMap& operator=(const StyleMap& other);
         StyleMap& operator=(StyleMap&& other) noexcept;
-    };
-
-    class IStyleProvider
-    {
-    public:
-        virtual ~IStyleProvider() = default;
-
-        virtual StyleMap& GetStyles() = 0;
-        virtual IStyleProvider* GetStylingParent() = 0;
-    };
+    };    
 }

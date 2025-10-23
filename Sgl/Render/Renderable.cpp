@@ -4,7 +4,6 @@ namespace Sgl
 {
 	Renderable::Renderable(const Renderable& other):
 		StyleableElement(other),
-		_renderableParent(other._renderableParent),
 		_cursor(other._cursor),
 		_background(other._background),
 		_isRenderValid(other._isRenderValid)
@@ -12,7 +11,6 @@ namespace Sgl
 
 	Renderable::Renderable(Renderable&& other) noexcept:
 		StyleableElement(std::move(other)),
-		_renderableParent(std::exchange(other._renderableParent, nullptr)),
 		_cursor(other._cursor),
 		_background(std::move(other._background)),
 		_isRenderValid(other._isRenderValid)
@@ -41,9 +39,9 @@ namespace Sgl
 		{
 			_isRenderValid = false;
 
-			if(_renderableParent)
+			if(_parent)
 			{
-				_renderableParent->InvalidateRender();
+				static_cast<Renderable*>(_parent)->InvalidateRender();
 			}
 		}
 	}

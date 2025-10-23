@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Template/DataTemplate.h"
+#include "../Data/DataTemplate.h"
 #include "UIElements/TextBlock.h"
 
 namespace Sgl

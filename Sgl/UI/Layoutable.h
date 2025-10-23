@@ -10,14 +10,13 @@ namespace Sgl
 	class Layoutable: public Renderable
 	{
 	protected:
-		FRect _bounds {};
-		FSize _desiredSize {};
-		Layoutable* _layoutableParent {};
+		FRect _bounds = {};
+		FSize _desiredSize = {};
 	private:
-		float _width {};
-		float _height {};
-		float _minWidth {};
-		float _minHeight {};
+		float _width = 0;
+		float _height = 0;
+		float _minWidth = 0;
+		float _minHeight = 0;
 		float _maxWidth = std::numeric_limits<float>::max();
 		float _maxHeight = std::numeric_limits<float>::max();
 		Thickness _margin;
@@ -65,7 +64,6 @@ namespace Sgl
 
 		FSize GetDesiredSize() const { return _desiredSize; }
 		FRect GetBounds() const { return _bounds; }
-		Layoutable* GetLayoutableParent() const { return _layoutableParent; }
 		bool IsArrangeValid() const { return _isArrangeValid; }
 		bool IsMeasureValid() const { return _isMeasureValid; }
 

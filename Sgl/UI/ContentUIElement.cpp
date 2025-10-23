@@ -146,9 +146,7 @@ namespace Sgl
 		if(_contentTemplate.HasTarget() && _content.HasValue())
 		{
 			_contentPresenter = _contentTemplate(_content);
-			_contentPresenter->_stylingParent = this;
-			_contentPresenter->_layoutableParent = this;
-			_contentPresenter->_renderableParent = this;
+			_contentPresenter->_parent = this;
 			return true;
 		}
 

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../Base/Any.h"
-#include "../../Base/Ref.h"
-#include "../../Base/Delegate.h"
+#include "../Base/Any.h"
+#include "../Base/Ref.h"
+#include "../Base/Delegate.h"
 
 namespace Sgl
 {

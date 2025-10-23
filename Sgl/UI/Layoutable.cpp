@@ -7,7 +7,6 @@ namespace Sgl
 		Renderable(other),
 		_bounds(other._bounds),
 		_desiredSize(other._desiredSize),
-		_layoutableParent(other._layoutableParent),
 		_width(other._width),
 		_height(other._height),
 		_minWidth(other._minWidth),
@@ -26,7 +25,6 @@ namespace Sgl
 		Renderable(std::move(other)),
 		_bounds(other._bounds),
 		_desiredSize(other._desiredSize),
-		_layoutableParent(std::exchange(other._layoutableParent, nullptr)),
 		_width(other._width),
 		_height(other._height),
 		_minWidth(other._minWidth),
@@ -239,9 +237,9 @@ namespace Sgl
 		{
 			_isArrangeValid = false;
 
-			if(_layoutableParent != nullptr)
+			if(_parent)
 			{
-				_layoutableParent->InvalidateArrange();
+				static_cast<Layoutable*>(_parent)->InvalidateArrange();
 			}
 		}
 	}
@@ -255,9 +253,9 @@ namespace Sgl
 			_isMeasureValid = false;
 			_isArrangeValid = false;			
 
-			if(_layoutableParent != nullptr)
+			if(_parent)
 			{
-				_layoutableParent->InvalidateMeasure();
+				static_cast<Layoutable*>(_parent)->InvalidateArrange();
 			}
 		}
 	}

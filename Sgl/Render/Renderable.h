@@ -9,8 +9,6 @@ namespace Sgl
 {
     class Renderable: public StyleableElement
     {
-    protected:
-        Renderable* _renderableParent {};
     private:
         Cursor _cursor = Cursors::Arrow;
         Brush _background = Colors::Transparent;
@@ -28,7 +26,6 @@ namespace Sgl
         void SetBackground(Brush value);
         Brush GetBackground() const { return _background; }
         
-        Renderable* GetRenderableParent() const { return _renderableParent; }
         bool NeedsRendering() const { return !_isRenderValid; }
 
         virtual void Render(RenderContext context);

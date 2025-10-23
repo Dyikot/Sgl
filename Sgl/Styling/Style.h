@@ -2,16 +2,26 @@
 
 #include <memory>
 #include <vector>
-#include "IStyle.h"
-#include "Setter.h"
+#include "../Base/Delegate.h"
+#include "../Data/ObservableProperty.h"
 
 namespace Sgl
 {
+    class StyleableElement;
+
+    class IStyle
+    {
+    public:
+        virtual ~IStyle() = default;
+
+        virtual void Apply(StyleableElement& target) = 0;
+    };
+
     template<typename T>
-    class Style: public IStyle
+    class Style : public IStyle
     {
     private:
-        std::vector<std::unique_ptr<ISetter<T>>> _setters;
+        std::vector<Action<T&>> _setters;
     public:
         Style() = default;
         Style(const Style&) = default;
@@ -28,7 +38,11 @@ namespace Sgl
         Style<T>& With(ObservableProperty<TOwner, TValue>& property, 
                        ObservableProperty<TOwner, TValue>::Value value)
         {
-            _setters.push_back(std::make_unique<Setter<T, TOwner, TValue>>(property, value));
+            _setters.emplace_back([&property, value](T& target)
+            {
+                std::invoke(property.Setter, target, value);
+            });
+
             return *this;
         }
 
@@ -37,7 +51,7 @@ namespace Sgl
             T& targetElement = static_cast<T&>(target);
             for(const auto& setter : _setters)
             {
-                setter->Apply(targetElement);
+                setter(targetElement);
             }
         }
     };    

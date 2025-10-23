@@ -40,9 +40,7 @@ namespace Sgl
 				throw std::invalid_argument("UIElement can not be null");
 			}
 
-			element->_stylingParent = &_owner;
-			element->_layoutableParent = &_owner;
-			element->_renderableParent = &_owner;
+			element->_parent = &_owner;
 			_items.Add(std::move(element));
 		}
 

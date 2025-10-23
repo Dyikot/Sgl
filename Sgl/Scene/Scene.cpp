@@ -6,24 +6,21 @@ namespace Sgl
 {
 	Scene::Scene()
 	{
-		_stylingParent = App.Current();
 		SetBackground(Colors::White);
-	}	
+	}
 
 	void Scene::SetContent(Ref<UIElement> value)
 	{
 		if(_content)
 		{
-			_content->_stylingParent = nullptr;
-			_content->_renderableParent = nullptr;
+			_content->_parent = nullptr;
 		}
 
 		_content = std::move(value);
 
 		if(_content)
 		{
-			_content->_stylingParent = this;
-			_content->_renderableParent = this;
+			_content->_parent = this;
 		}
 	}
 

@@ -9,7 +9,7 @@
 
 namespace Sgl
 {
-	class Application: public IStyleProvider
+	class Application
 	{
 	private:
 		using ApplicationEventHandler = EventHandler<Application>;
@@ -37,10 +37,7 @@ namespace Sgl
 
 		Window Window;
 		SceneManager SceneManager;
-		ResourcesMap Resources;
 		StyleMap Styles;
-	protected:
-		IStyleProvider* _stylingParent {};
 	private:
 		static inline Application* _current;
 
@@ -56,10 +53,7 @@ namespace Sgl
 
 		void SetMaxFPS(size_t value) noexcept;
 		auto GetMaxFPS() const noexcept { return _maxFPS; }
-
 		size_t GetFPS() const { return _fpsCounter.GetFps(); }
-		StyleMap& GetStyles() override { return Styles; }
-		IStyleProvider* GetStylingParent() override { return _stylingParent; }
 
 		void Run();
 		void Shutdown();
