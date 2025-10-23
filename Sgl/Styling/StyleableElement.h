@@ -3,13 +3,13 @@
 #include <vector>
 #include "StyleMap.h"
 #include "ClassesCollections.h"
-#include "../Data/BindableObject.h"
+#include "../Data/ObservableObject.h"
 #include "../Base/Ref.h"
 #include "../Base/Collections/ResourcesMap.h"
 
 namespace Sgl
 {
-	class StyleableElement: public BindableObject, public IStyleProvider
+	class StyleableElement: public ObservableObject, public IStyleProvider
 	{
 	public:
 		StyleMap Styles;

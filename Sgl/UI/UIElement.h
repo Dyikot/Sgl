@@ -3,6 +3,7 @@
 #include <type_traits>
 #include "../Base/Any.h"
 #include "../Base/Event.h"
+#include"../Data/BindingMode.h"
 #include "../Input/MouseAndKeyEventArgs.h"
 #include "Layoutable.h"
 
@@ -30,6 +31,7 @@ namespace Sgl
 		Any _tag;
 		Ref<UIElement> _toolTip;
 		size_t _zIndex = 0;
+		Ref<ObservableObject> _dataContext;
 
 		bool _isMouseOver = false;
 	public:
@@ -47,9 +49,43 @@ namespace Sgl
 		void SetZIndex(size_t value);
 		size_t GetZIndex() const { return _zIndex; }
 
+		void SetDataContext(Ref<ObservableObject> value);
+		Ref<ObservableObject> GetDataContext() const { return _dataContext; }
+
 		bool IsMouseOver() const { return _isMouseOver; }
 
 		void Render(RenderContext context) override;
+
+		template<typename TObservable, typename TObserver, typename TMember>
+		void Bind(ObservableProperty<TObservable, TMember>& observableProperty,
+				  ObservableProperty<TObserver, TMember>& observerProperty,
+				  BindingMode mode = BindingMode::OneWay)
+		{
+			if(_dataContext)
+			{
+				auto& observer = _dataContext.GetValueAs<TObserver>();
+
+				switch(mode)
+				{
+					case Sgl::BindingMode::OneWay:
+						SetObserver(observableProperty, observer, observerProperty);
+						break;
+
+					case Sgl::BindingMode::OneWayToSource:
+						observer.SetObserver(observerProperty, *this, observableProperty);
+						break;
+
+					case Sgl::BindingMode::TwoWay:
+						SetObserver(observableProperty, observer, observerProperty);
+						observer.SetObserver(observerProperty, *this, observableProperty);
+						break;
+				}				
+			}
+			else
+			{
+				throw std::exception("Data context is null");
+			}
+		}
 	protected:
 		void RenderBackground(RenderContext context);
 		void OnCursorChanged(const Cursor& cursor) override;
@@ -70,6 +106,9 @@ namespace Sgl
 
 		static inline ObservableProperty<UIElement, size_t> ZIndexProperty =
 			ObservableProperty<UIElement, size_t>(&SetZIndex, &GetZIndex);
+
+		static inline ObservableProperty<UIElement, Ref<ObservableObject>> DataContextProperty =
+			ObservableProperty<UIElement, Ref<ObservableObject>>(&SetDataContext, &GetDataContext);
 
 		friend class Scene;
 		friend class Panel;

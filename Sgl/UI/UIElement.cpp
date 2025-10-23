@@ -39,6 +39,11 @@ namespace Sgl
 		InvalidateRender();
 	}
 
+	void UIElement::SetDataContext(Ref<ObservableObject> value)
+	{
+		SetProperty(DataContextProperty, _dataContext, value);
+	}
+
 	void UIElement::Render(RenderContext context)
 	{		
 		if(_toolTip && _toolTip->IsVisible())

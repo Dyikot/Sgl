@@ -3,7 +3,7 @@
 namespace Sgl
 {
 	StyleableElement::StyleableElement(const StyleableElement& other):
-		BindableObject(other),
+		ObservableObject(other),
 		Styles(other.Styles),
 		Classes(other.Classes),
 		Resources(other.Resources),
@@ -13,7 +13,7 @@ namespace Sgl
 	{}
 
 	StyleableElement::StyleableElement(StyleableElement&& other) noexcept:
-		BindableObject(std::move(other)),
+		ObservableObject(std::move(other)),
 		Styles(std::move(other.Styles)),
 		Classes(std::move(other.Classes)),
 		Resources(std::move(other.Resources)),
