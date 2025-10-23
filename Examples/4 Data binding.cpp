@@ -15,7 +15,6 @@
 */
 
 #include "../Sgl/Application.h"
-#include "../Sgl/UI/Binding/BindableObject.h"
 #include "../Sgl/UI/UIElements/TextBlock.h"
 
 using namespace Sgl;
@@ -26,9 +25,7 @@ class SceneViewModel: public ObservableObject
 private:
 	std::string _name;
 public:
-	bool IsTextBlockVisible = true;
-public:
-	SceneViewModel(std::string name): _name(std::move(name)) {}
+	SceneViewModel(std::string name) : _name(std::move(name)) {}
 
 	void SetName(const std::string& value)
 	{
@@ -56,9 +53,8 @@ private:
 	void InitializeComponents()
 	{
 		auto text = New<TextBlock>();
-		text->DataContext = New<SceneViewModel>("Alex");
+		text->SetDataContext(New<SceneViewModel>("Alex"));
 		text->Bind(TextBlock::TextProperty, SceneViewModel::NameProperty);
-		text->Bind(TextBlock::IsVisibleProperty, &SceneViewModel::IsTextBlockVisible);
 
 		SetContent(text);
 	}
