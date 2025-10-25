@@ -1,16 +1,18 @@
 #include "StringLocalizer.h"
 
-
 namespace Sgl
 {
 	StringLocalizer::StringLocalizer(std::vector<std::string> headers,
-									 std::vector<std::string> records, 
-									 const std::string& culture) :
+									 std::vector<std::string> records) :
 		_headers(std::move(headers)),
 		_records(std::move(records)),
-		_culture(culture),
 		_headersCount(_headers.size())
 	{
+		if(_headers.size() < 2 || _records.size() < 2)
+		{
+			throw std::length_error("Storage is empty");
+		}
+
 		int index = 0;
 		for(size_t i = 0; i < _records.size(); i += _headersCount)
 		{
@@ -20,28 +22,27 @@ namespace Sgl
 
 	const std::string& StringLocalizer::operator()(const std::string& name) const
 	{
-		if(_headers.size() < 2 || _records.size() < 2)
-		{
-			throw std::length_error("Storage is empty");
-		}
-
-		size_t cultureIndex = GetCurrentCultureIndex();
 		size_t recordIndex = GetRecordIndex(name);
-
-		return _records[recordIndex * _headersCount + cultureIndex];
+		return _records[recordIndex * _headersCount + _cultureIndex];
 	}
 
-	size_t StringLocalizer::GetCurrentCultureIndex() const
+	void StringLocalizer::SetCulture(const std::string& culture)
 	{
 		for(size_t i = 1; i < _headers.size(); i++)
 		{
-			if(_headers[i] == _culture)
+			if(_headers[i] == culture)
 			{
-				return i;
+				_cultureIndex = i;
+				return;
 			}
 		}
 
 		throw std::out_of_range("The current culture does not exist in the storage");
+	}
+
+	const std::string& StringLocalizer::GetCulture() const
+	{
+		return _headers[_cultureIndex];
 	}
 
 	size_t StringLocalizer::GetRecordIndex(const std::string& record) const

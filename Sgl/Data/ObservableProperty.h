@@ -20,7 +20,7 @@ namespace Sgl
 	private:
 		static inline PropertyId _id = 0;
 	public:
-		ObservableProperty(PropertySetter setter, PropertyGetter getter):
+		ObservableProperty(PropertySetter setter, PropertyGetter getter) :
 			Setter(setter), Getter(getter)
 		{}
 		ObservableProperty(const ObservableProperty&) = delete;

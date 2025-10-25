@@ -43,6 +43,11 @@ namespace Sgl
 	void Application::SetCulture(std::string value)
 	{
 		_culture = std::move(value);
+
+		if(_localizer)
+		{
+			_localizer->SetCulture(_culture);
+		}
 	}
 
 	void Application::SetLocalizer(std::string csvFile, char delimeter)
@@ -53,24 +58,25 @@ namespace Sgl
 
 		if(csvParser.ParseTo(headers, records))
 		{
-			_localizer = std::make_unique<StringLocalizer>(
-				std::move(headers),
-				std::move(records),
-				_culture
-			);
+			SetLocalizer(std::make_unique<StringLocalizer>(std::move(headers), std::move(records)));
 		}
 	}
 
-	void Application::SetLocalizer(Func<std::unique_ptr<IStringLocalizer>, std::string> localizerFactory)
+	void Application::SetLocalizer(std::unique_ptr<IStringLocalizer> localizer)
 	{
-		_localizer = localizerFactory(_culture);
+		_localizer = std::move(localizer);
+
+		if(_localizer)
+		{
+			_localizer->SetCulture(_culture);
+		}
 	}
 
 	const IStringLocalizer& Application::GetLocalizer() const
 	{
 		if(_localizer == nullptr)
 		{
-			throw std::runtime_error("Localization is not set");
+			throw std::runtime_error("Localizaer is not set");
 		}
 
 		return *_localizer;
@@ -353,11 +359,11 @@ namespace Sgl
 
 	void Application::OnRun()
 	{
-		Started.TryInvoke(*this, EventArgs());
+		Started.TryInvoke(*this);
 	}
 
 	void Application::OnShutdown()
 	{
-		Stopped.TryInvoke(*this, EventArgs());
+		Stopped.TryInvoke(*this);
 	}
 }

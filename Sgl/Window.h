@@ -3,7 +3,7 @@
 #include <optional>
 #include "Render/Surface.h"
 #include "Base/Size.h"
-#include "Base/WindowEventArgs.h"
+#include "Base/EventArgs/WindowEventArgs.h"
 #include "Base/Event.h"
 #include "Base/Ref.h"
 
@@ -242,10 +242,10 @@ namespace Sgl
 		/// <returns>- true if visible, false otherwise</returns>
 		bool IsVisible() const;
 	protected:
-		void OnWindowStateChanged(const WindowStateEventArgs& e);
-		void OnVisibilityChanged(const WindowVisibilityEventArgs& e);
-		void OnPositionChanged(const WindowPositionChangedEventArgs& e);
-		void OnWindowSizeChanged(const WindowSizeChangedEventArgs& e);
+		void OnWindowStateChanged(WindowStateEventArgs& e);
+		void OnVisibilityChanged(WindowVisibilityEventArgs& e);
+		void OnPositionChanged(WindowPositionChangedEventArgs& e);
+		void OnWindowSizeChanged(WindowSizeChangedEventArgs& e);
 
 		friend class Application;
 	};

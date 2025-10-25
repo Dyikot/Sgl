@@ -254,22 +254,22 @@ namespace Sgl
         return !(SDL_GetWindowFlags(_window) & (SDL_WINDOW_HIDDEN | SDL_WINDOW_MINIMIZED));
     }
 
-    void Window::OnWindowStateChanged(const WindowStateEventArgs& e)
+    void Window::OnWindowStateChanged(WindowStateEventArgs& e)
     {
         WindowStateChanged.TryInvoke(*this, e);
     }
 
-    void Window::OnVisibilityChanged(const WindowVisibilityEventArgs& e)
+    void Window::OnVisibilityChanged(WindowVisibilityEventArgs& e)
     {
         VisibilityChanged.TryInvoke(*this, e);
     }
 
-    void Window::OnPositionChanged(const WindowPositionChangedEventArgs& e)
+    void Window::OnPositionChanged(WindowPositionChangedEventArgs& e)
     {
         PositionChanged.TryInvoke(*this, e);
     }
 
-    void Window::OnWindowSizeChanged(const WindowSizeChangedEventArgs& e)
+    void Window::OnWindowSizeChanged(WindowSizeChangedEventArgs& e)
     {
         SizeChanged.TryInvoke(*this, e);
     }

@@ -1,18 +1,17 @@
 #pragma once
 
 #include <string>
-#include "../Base/EventArgs.h"
 
 namespace Sgl
 {
-	struct TextEditingEventArgs: EventArgs
+	struct TextEditingEventArgs
 	{
 		std::string Text;
 		size_t SelectionStart;
 		size_t SelectionLength;
 	};
 
-	struct TextInputEventArgs: EventArgs
+	struct TextInputEventArgs
 	{
 		std::string Text;
 	};

@@ -62,7 +62,7 @@ namespace Sgl
 		const std::string& GetCulture() const { return _culture; }
 
 		void SetLocalizer(std::string csvFile, char delimeter = ',');
-		void SetLocalizer(Func<std::unique_ptr<IStringLocalizer>, std::string> localizerFactory);
+		void SetLocalizer(std::unique_ptr<IStringLocalizer> localizer);
 		const IStringLocalizer& GetLocalizer() const;
 
 		void Run();

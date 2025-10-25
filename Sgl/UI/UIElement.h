@@ -89,14 +89,14 @@ namespace Sgl
 	protected:
 		void RenderBackground(RenderContext context);
 		void OnCursorChanged(const Cursor& cursor) override;
-		virtual void OnKeyUp(const KeyEventArgs& e);
-		virtual void OnKeyDown(const KeyEventArgs& e);
-		virtual void OnMouseMove(const MouseEventArgs& e);
-		virtual void OnMouseDown(const MouseButtonEventArgs& e);
-		virtual void OnMouseUp(const MouseButtonEventArgs& e);
-		virtual void OnMouseWheelChanged(const MouseWheelEventArgs& e);
-		virtual void OnMouseEnter(const MouseEventArgs& e);
-		virtual void OnMouseLeave(const MouseEventArgs& e);
+		virtual void OnKeyUp(KeyEventArgs& e);
+		virtual void OnKeyDown(KeyEventArgs& e);
+		virtual void OnMouseMove(MouseEventArgs& e);
+		virtual void OnMouseDown(MouseButtonEventArgs& e);
+		virtual void OnMouseUp(MouseButtonEventArgs& e);
+		virtual void OnMouseWheelChanged(MouseWheelEventArgs& e);
+		virtual void OnMouseEnter(MouseEventArgs& e);
+		virtual void OnMouseLeave(MouseEventArgs& e);
 	public:
 		static inline ObservableProperty<UIElement, const Any&> TagProperty =
 			ObservableProperty<UIElement, const Any&>(&SetTag, &GetTag);

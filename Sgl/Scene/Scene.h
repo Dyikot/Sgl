@@ -28,14 +28,14 @@ namespace Sgl
 		virtual void OnStopped() {}
 		virtual void OnCreated();
 		virtual void OnDestroying() {}
-		virtual void OnKeyUp(const KeyEventArgs& e) {}
-		virtual void OnKeyDown(const KeyEventArgs& e) {}
-		virtual void OnMouseMove(const MouseEventArgs& e); 
-		virtual void OnMouseDown(const MouseButtonEventArgs& e); 
-		virtual void OnMouseUp(const MouseButtonEventArgs& e); 
-		virtual void OnMouseWheelChanged(const MouseWheelEventArgs& e) {}
-		virtual void OnTextInput(const TextInputEventArgs& e) {}
-		virtual void OnTextEditing(const TextEditingEventArgs& e) {}
+		virtual void OnKeyUp(KeyEventArgs& e) {}
+		virtual void OnKeyDown(KeyEventArgs& e) {}
+		virtual void OnMouseMove(MouseEventArgs& e); 
+		virtual void OnMouseDown(MouseButtonEventArgs& e); 
+		virtual void OnMouseUp(MouseButtonEventArgs& e); 
+		virtual void OnMouseWheelChanged(MouseWheelEventArgs& e) {}
+		virtual void OnTextInput(TextInputEventArgs& e) {}
+		virtual void OnTextEditing(TextEditingEventArgs& e) {}
 	private:
 		void UpdateStyleAndLayout();
 

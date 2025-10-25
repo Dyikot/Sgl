@@ -60,7 +60,7 @@ namespace Sgl
         }
     }
 
-    void Panel::OnMouseMove(const MouseEventArgs& e)
+    void Panel::OnMouseMove(MouseEventArgs& e)
     {
         UIElement::OnMouseMove(e);
 
@@ -98,7 +98,7 @@ namespace Sgl
         }    
     }
 
-    void Panel::OnMouseDown(const MouseButtonEventArgs& e)
+    void Panel::OnMouseDown(MouseButtonEventArgs& e)
     {
         UIElement::OnMouseDown(e);
 
@@ -108,7 +108,7 @@ namespace Sgl
         }
     }
 
-    void Panel::OnMouseUp(const MouseButtonEventArgs& e)
+    void Panel::OnMouseUp(MouseButtonEventArgs& e)
     {
         UIElement::OnMouseUp(e);
 
@@ -118,7 +118,7 @@ namespace Sgl
         }
     }
 
-    void Panel::OnMouseLeave(const MouseEventArgs& e)
+    void Panel::OnMouseLeave(MouseEventArgs& e)
     {
         UIElement::OnMouseLeave(e);
 

@@ -20,9 +20,9 @@ namespace Sgl
 		void ApplyStyle() override;
 	protected:
 		void OnCursorChanged(const Cursor& cursor) override;
-		void OnMouseMove(const MouseEventArgs& e) override;
-		void OnMouseDown(const MouseButtonEventArgs& e) override;
-		void OnMouseUp(const MouseButtonEventArgs& e) override;
-		void OnMouseLeave(const MouseEventArgs& e) override;
+		void OnMouseMove(MouseEventArgs& e) override;
+		void OnMouseDown(MouseButtonEventArgs& e) override;
+		void OnMouseUp(MouseButtonEventArgs& e) override;
+		void OnMouseLeave(MouseEventArgs& e) override;
 	};
 }

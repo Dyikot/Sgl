@@ -84,44 +84,44 @@ namespace Sgl
 		}
 	}
 
-	void UIElement::OnKeyUp(const KeyEventArgs& e)
+	void UIElement::OnKeyUp(KeyEventArgs& e)
 	{
 		KeyUp.TryInvoke(*this, e);
 	}
 
-	void UIElement::OnKeyDown(const KeyEventArgs& e)
+	void UIElement::OnKeyDown(KeyEventArgs& e)
 	{
 		KeyDown.TryInvoke(*this, e);
 	}
 
-	void UIElement::OnMouseMove(const MouseEventArgs& e)
+	void UIElement::OnMouseMove(MouseEventArgs& e)
 	{
 		MouseMove.TryInvoke(*this, e);
 	}
 
-	void UIElement::OnMouseDown(const MouseButtonEventArgs& e)
+	void UIElement::OnMouseDown(MouseButtonEventArgs& e)
 	{
 		MouseDown.TryInvoke(*this, e);
 	}
 
-	void UIElement::OnMouseUp(const MouseButtonEventArgs& e)
+	void UIElement::OnMouseUp(MouseButtonEventArgs& e)
 	{
 		MouseUp.TryInvoke(*this, e);
 	}
 
-	void UIElement::OnMouseWheelChanged(const MouseWheelEventArgs& e)
+	void UIElement::OnMouseWheelChanged(MouseWheelEventArgs& e)
 	{
 		MouseWheel.TryInvoke(*this, e);
 	}
 
-	void UIElement::OnMouseEnter(const MouseEventArgs& e)
+	void UIElement::OnMouseEnter(MouseEventArgs& e)
 	{
 		_isMouseOver = true;
 		Cursor::Set(GetCursor());
 		MouseEnter.TryInvoke(*this, e);
 	}
 
-	void UIElement::OnMouseLeave(const MouseEventArgs& e)
+	void UIElement::OnMouseLeave(MouseEventArgs& e)
 	{
 		MouseLeave.TryInvoke(*this, e);
 		_isMouseOver = false;

@@ -11,6 +11,9 @@ namespace Sgl
     public:
         virtual ~IStringLocalizer() = default;
 
+        virtual void SetCulture(const std::string& culture) = 0;
+        virtual const std::string& GetCulture() const = 0;
+
         virtual const std::string& operator()(const std::string& name) const = 0;
 
         template<typename... TArgs>

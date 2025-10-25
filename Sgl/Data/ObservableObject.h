@@ -55,6 +55,21 @@ namespace Sgl
 				}
 			}
 		}
+
+		template<typename TOwner, typename TMember>
+		void OnPropertyChanged(ObservableProperty<TOwner, TMember>& property,
+							   ObservableProperty<TOwner, TMember>::Value value)
+		{
+			auto currentValue = std::invoke(property.Getter, this);
+
+			if(currentValue != value)
+			{
+				if(auto it = _observers.find(property.Id); it != _observers.end())
+				{
+					it->second(&value);
+				}
+			}
+		}
 	private:
 		template<typename T>
 		static const T& AsValue(const void* value)

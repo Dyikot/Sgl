@@ -1,16 +1,20 @@
 #pragma once
 
 #include <vector>
-#include "EventArgs.h"
 #include "Delegate.h"
 
 namespace Sgl
 {
 	/// <summary>
+	/// Default class for all event arguments
+	/// </summary>
+	struct EventArgs {};
+
+	/// <summary>
 	/// Represents a delegate for handling events with a sender and event arguments.
 	/// </summary>
-	template<typename TSender, std::derived_from<EventArgs> TEventArgs = EventArgs>
-	using EventHandler = Delegate<void(TSender&, const TEventArgs&)>;
+	template<typename TSender, typename TEventArgs = EventArgs>
+	using EventHandler = Delegate<void(TSender&, TEventArgs&)>;
 
 	template<typename T>
 	class Event;
@@ -60,12 +64,22 @@ namespace Sgl
 		/// </summary>
 		/// <param name="sender"> - The sender object that is raising the event.</param>
 		/// <param name="e"> - The event arguments containing data about the event.</param>
-		void TryInvoke(TSender& sender, const TEventArgs& e) const
+		void TryInvoke(TSender& sender, TEventArgs& e) const
 		{
 			if(HasTarget())
 			{
 				operator()(sender, e);
 			}
+		}
+
+		/// <summary>
+		/// Invokes the event if there are any registered handlers.
+		/// </summary>
+		/// <param name="sender"> - The sender object that is raising the event.</param>
+		void TryInvoke(TSender& sender) const requires std::default_initializable<TEventArgs>
+		{
+			TEventArgs e = {};
+			TryInvoke(sender, e);
 		}
 
 		/// <summary>
@@ -100,7 +114,7 @@ namespace Sgl
 		/// </summary>
 		/// <param name="sender"> - The sender object that is raising the event.</param>
 		/// <param name="e"> - The event arguments containing data about the event.</param>
-		void operator()(TSender& sender, const TEventArgs& e) const
+		void operator()(TSender& sender, TEventArgs& e) const
 		{
 			for(const EventHandler& eventHandler : _eventHandlers)
 			{

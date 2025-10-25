@@ -3,7 +3,6 @@
 #include <string>
 #include <SDL/SDL_mouse.h>
 #include <SDL/SDL_keyboard.h>
-#include "../Base/EventArgs.h"
 #include "../Base/Primitives.h"
 
 namespace Sgl
@@ -23,25 +22,25 @@ namespace Sgl
 		Normal, Flipped
 	};
 
-	struct KeyEventArgs: EventArgs
+	struct KeyEventArgs
 	{
 		ButtonState State;
 		SDL_Keysym Key;
 	};
 
-	struct MouseEventArgs: EventArgs
+	struct MouseEventArgs
 	{
 		FPoint Position;
 	};
 
-	struct MouseButtonEventArgs: EventArgs
+	struct MouseButtonEventArgs
 	{
 		MouseButton Button;
 		ButtonState State;
 		int ClicksNumber;
 	};
 
-	struct MouseWheelEventArgs: EventArgs
+	struct MouseWheelEventArgs
 	{
 		FPoint Position;
 		float ScrolledHorizontally;

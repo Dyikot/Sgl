@@ -60,7 +60,7 @@ namespace Sgl
 		UpdateStyleAndLayout();
 	}
 
-	void Scene::OnMouseMove(const MouseEventArgs& e)
+	void Scene::OnMouseMove(MouseEventArgs& e)
 	{
 		if(_content && _content->IsVisible())
 		{
@@ -85,7 +85,7 @@ namespace Sgl
 		}
 	}
 
-	void Scene::OnMouseDown(const MouseButtonEventArgs& e)
+	void Scene::OnMouseDown(MouseButtonEventArgs& e)
 	{
 		if(_content && _content->IsMouseOver() && _content->IsVisible())
 		{
@@ -93,7 +93,7 @@ namespace Sgl
 		}
 	}
 
-	void Scene::OnMouseUp(const MouseButtonEventArgs& e)
+	void Scene::OnMouseUp(MouseButtonEventArgs& e)
 	{
 		if(_content && _content->IsMouseOver() && _content->IsVisible())
 		{

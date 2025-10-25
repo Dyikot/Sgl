@@ -1,7 +1,6 @@
 #pragma once
 
-#include "EventArgs.h"
-#include "Primitives.h"
+#include "../Primitives.h"
 
 namespace Sgl
 {
@@ -15,22 +14,22 @@ namespace Sgl
 		Normal, Minimized, Maximized
 	};
 
-	struct WindowStateEventArgs: EventArgs
+	struct WindowStateEventArgs
 	{
 		WindowState State;
 	};
 
-	struct WindowVisibilityEventArgs: EventArgs
+	struct WindowVisibilityEventArgs
 	{
 		bool IsVisible;
 	};
 
-	struct WindowPositionChangedEventArgs: EventArgs
+	struct WindowPositionChangedEventArgs
 	{
 		Point Position;
 	};
 
-	struct WindowSizeChangedEventArgs: EventArgs
+	struct WindowSizeChangedEventArgs
 	{
 		size_t Width;
 		size_t Height;
