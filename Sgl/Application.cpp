@@ -2,6 +2,8 @@
 #include "Base/Log.h"
 #include "Base/Time/Timer.h"
 #include "Base/Time/Delay.h"
+#include "Base/Localization/CSVParser.h"
+#include "Base/Localization/StringLocalizer.h"
 
 namespace Sgl
 {
@@ -36,6 +38,42 @@ namespace Sgl
 
 		_maxFPS = value;
 		_maxFrameTime = TimeSpan(1e9 / value);
+	}
+
+	void Application::SetCulture(std::string value)
+	{
+		_culture = std::move(value);
+	}
+
+	void Application::SetLocalizer(std::string csvFile, char delimeter)
+	{
+		CSVParser csvParser(std::move(csvFile), delimeter);
+		std::vector<std::string> headers;
+		std::vector<std::string> records;
+
+		if(csvParser.ParseTo(headers, records))
+		{
+			_localizer = std::make_unique<StringLocalizer>(
+				std::move(headers),
+				std::move(records),
+				_culture
+			);
+		}
+	}
+
+	void Application::SetLocalizer(Func<std::unique_ptr<IStringLocalizer>, std::string> localizerFactory)
+	{
+		_localizer = localizerFactory(_culture);
+	}
+
+	const IStringLocalizer& Application::GetLocalizer() const
+	{
+		if(_localizer == nullptr)
+		{
+			throw std::runtime_error("Localization is not set");
+		}
+
+		return *_localizer;
 	}
 
 	void Application::Run()

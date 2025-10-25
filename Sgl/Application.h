@@ -4,8 +4,9 @@
 #include <SDL/SDL_mixer.h>
 #include <SDL/SDL_image.h>
 #include "Window.h"
-#include "Base/Time/FPSCounter.h"
 #include "Scene/SceneManager.h"
+#include "Base/Time/FPSCounter.h"
+#include "Base/Localization/IStringLocalizer.h"
 
 namespace Sgl
 {
@@ -45,6 +46,8 @@ namespace Sgl
 		FPSCounter _fpsCounter;
 		std::optional<size_t> _maxFPS;
 		std::optional<TimeSpan> _maxFrameTime;
+		std::string _culture = "en";
+		std::unique_ptr<IStringLocalizer>  _localizer;
 	public:
 		Application() noexcept;
 		Application(const Application&) = delete;
@@ -54,6 +57,13 @@ namespace Sgl
 		void SetMaxFPS(size_t value) noexcept;
 		auto GetMaxFPS() const noexcept { return _maxFPS; }
 		size_t GetFPS() const { return _fpsCounter.GetFps(); }
+
+		void SetCulture(std::string value);
+		const std::string& GetCulture() const { return _culture; }
+
+		void SetLocalizer(std::string csvFile, char delimeter = ',');
+		void SetLocalizer(Func<std::unique_ptr<IStringLocalizer>, std::string> localizerFactory);
+		const IStringLocalizer& GetLocalizer() const;
 
 		void Run();
 		void Shutdown();
