@@ -16,7 +16,7 @@ namespace Sgl
 			_content->_parent = nullptr;
 		}
 
-		_content = std::move(value);
+		SetProperty(ContentProperty, _content, std::move(value));
 
 		if(_content)
 		{

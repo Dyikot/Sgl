@@ -18,7 +18,7 @@ namespace Sgl
 		virtual ~Scene() = default;
 
 		void SetContent(Ref<UIElement> value);
-		Ref<UIElement> GetContent() { return _content; }
+		Ref<UIElement> GetContent() const { return _content; }
 
 		void Render(RenderContext context) override;
 		virtual void Process(TimeSpan elapsed);
@@ -41,5 +41,8 @@ namespace Sgl
 
 		friend class Application;
 		friend class SceneManager;
+	public:
+		static inline ObservableProperty<Scene, Ref<UIElement>> ContentProperty =
+			ObservableProperty<Scene, Ref<UIElement>>(&SetContent, &GetContent);
 	};
 }

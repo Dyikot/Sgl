@@ -49,10 +49,7 @@ namespace Sgl
 			InvalidateContentPresenter();
 		}
 
-		Ref<UIElement> GetContentPresenter() const 
-		{
-			return _contentPresenter;
-		}
+		const Ref<UIElement>& GetContentPresenter() const { return _contentPresenter; }
 
 		void SetContentTemplate(DataTemplate value);
 		DataTemplate GetContentTemplate() const { return _contentTemplate; }
