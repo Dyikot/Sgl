@@ -154,6 +154,16 @@ namespace Sgl
             return *this;
         }
 
+        operator T& ()
+        {
+            return *_value;
+        }
+
+        operator const T& () const
+        {
+            return *_value;
+        }
+
         explicit operator bool() const noexcept
         {
             return _memoryBlock != nullptr;

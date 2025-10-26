@@ -7,7 +7,7 @@ namespace Sgl::UIElements
 		element.SetAttachProperty(LeftProperty, value);
 	}
 
-	int Canvas::GetLeft(UIElement& element)
+	int Canvas::GetLeft(const UIElement& element)
 	{
 		return element.GetAttachProperty(LeftProperty);
 	}
@@ -17,7 +17,7 @@ namespace Sgl::UIElements
 		element.SetAttachProperty(TopProperty, value);
 	}
 
-	int Canvas::GetTop(UIElement& element)
+	int Canvas::GetTop(const UIElement& element)
 	{
 		return element.GetAttachProperty(TopProperty);
 	}
@@ -27,7 +27,7 @@ namespace Sgl::UIElements
 		element.SetAttachProperty(RightProperty, value);
 	}
 
-	int Canvas::GetRight(UIElement& element)
+	int Canvas::GetRight(const UIElement& element)
 	{
 		return element.GetAttachProperty(RightProperty);
 	}
@@ -37,63 +37,42 @@ namespace Sgl::UIElements
 		element.SetAttachProperty(BottomProperty, value);
 	}
 
-	int Canvas::GetBottom(UIElement& element)
+	int Canvas::GetBottom(const UIElement& element)
 	{
 		return element.GetAttachProperty(BottomProperty);
 	}
 
-	void Canvas::Render(RenderContext context)
+	FSize Canvas::MeasureContent(FSize avaliableSize)
 	{
-		RenderBackground(context);
-		Panel::Render(context);
+		for(UIElement& child : Children)
+		{
+			child.Measure(avaliableSize);
+		}
+
+		return FSize();
 	}
 
 	void Canvas::ArrangeContent(FRect rect)
 	{
-		for(auto& child : Children)
+		for(UIElement& child : Children)
 		{
-			FRect childRect = rect;
+			int left = GetLeft(child);
+			int top = GetTop(child);
 
-			auto left = GetLeft(child.GetValue());
-			auto top = GetTop(child.GetValue());
-			auto right = GetRight(child.GetValue());
-			auto bottom = GetBottom(child.GetValue());
+			auto [width, height] = child.GetDesiredSize();
 
-			bool isRightValid = right != 0;
-			bool isBottomValid = bottom != 0;
-
-			FSize avaliableSize =
+			FRect childRect =
 			{
-				.Width = isRightValid ? rect.w - right : rect.w + left,
-				.Height = isBottomValid ? rect.h - bottom : rect.h + top
+				.w = width,
+				.h = height
 			};
 
-			child->Measure(avaliableSize);
-			auto [width, height] = child->GetDesiredSize();
-
-			if(isRightValid)
-			{
-				childRect.x += rect.w - right - width;
-				childRect.w -= right;
-			}
-			else
-			{
-				childRect.x += left;
-				childRect.w -= left;
-			}
-
-			if(isBottomValid)
-			{
-				childRect.y += rect.h - bottom - height;
-				childRect.h -= bottom;
-			}
-			else
-			{
-				childRect.y += top;
-				childRect.h -= top;
-			}
+			childRect.x = rect.x + (left != 0 ? left : rect.w - GetRight(child) - width);
+			childRect.y = rect.y + (top != 0 ? top : rect.h - GetBottom(child) - height);
 			
-			child->Arrange(childRect);
+			child.Arrange(childRect);
 		}
 	}
+
+	
 }

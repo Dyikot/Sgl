@@ -15,6 +15,7 @@ namespace Sgl
 		Panel();
 		Panel(const Panel& other);
 		Panel(Panel&& other) noexcept;
+		~Panel() = default;
 
 		void Render(RenderContext context) override;
 		void ApplyStyle() override;

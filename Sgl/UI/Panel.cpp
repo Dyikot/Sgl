@@ -5,8 +5,7 @@ namespace Sgl
 {  
     Panel::Panel():
         UIElement(),
-        Children(*this),
-        _currentChild()
+        Children(*this)
     {}
 
     Panel::Panel(const Panel& other):
@@ -23,6 +22,8 @@ namespace Sgl
 
     void Panel::Render(RenderContext context)
     {
+        RenderBackground(context);
+
         for(auto& child : Children)
         {
             if(child->IsVisible())

@@ -18,19 +18,18 @@ namespace Sgl::UIElements
 		~Canvas() = default;
 
 		static void SetLeft(UIElement& element, int value);
-		static int GetLeft(UIElement& element);
+		static int GetLeft(const UIElement& element);
 
 		static void SetTop(UIElement& element, int value);
-		static int GetTop(UIElement& element);
+		static int GetTop(const UIElement& element);
 
 		static void SetRight(UIElement& element, int value);
-		static int GetRight(UIElement& element);
+		static int GetRight(const UIElement& element);
 
 		static void SetBottom(UIElement& element, int value);
-		static int GetBottom(UIElement& element);
-
-		void Render(RenderContext context) override;
+		static int GetBottom(const UIElement& element);
 	protected:
+		FSize MeasureContent(FSize avaliableSize) override;
 		void ArrangeContent(FRect rect) override;
 	};
 }
