@@ -120,35 +120,35 @@ namespace Sgl
 					{
 						case SDL_WINDOWEVENT_MAXIMIZED:
 						{
-							WindowStateEventArgs args = { .State = WindowState::Maximized };
+							WindowStateEventArgs args(WindowState::Maximized);
 							Window.OnWindowStateChanged(args);
 							break;
 						}
 						
 						case SDL_WINDOWEVENT_MINIMIZED:
 						{
-							WindowStateEventArgs args = { .State = WindowState::Minimized };
+							WindowStateEventArgs args(WindowState::Minimized);
 							Window.OnWindowStateChanged(args);
 							break;
 						}
 
 						case SDL_WINDOWEVENT_RESTORED:
 						{
-							WindowStateEventArgs args = { .State = WindowState::Normal };
+							WindowStateEventArgs args(WindowState::Normal);
 							Window.OnWindowStateChanged(args);
 							break;
 						}
 
 						case SDL_WINDOWEVENT_SHOWN:
 						{
-							WindowVisibilityEventArgs args = { .IsVisible = true };
+							WindowVisibilityEventArgs args(true);
 							Window.OnVisibilityChanged(args);
 							break;
 						}
 
 						case SDL_WINDOWEVENT_HIDDEN:
 						{
-							WindowVisibilityEventArgs args = { .IsVisible = false };
+							WindowVisibilityEventArgs args(false);
 							Window.OnVisibilityChanged(args);
 							break;
 						}
@@ -178,7 +178,6 @@ namespace Sgl
 							break;
 						}
 
-
 						default:
 							break;
 					}
@@ -190,7 +189,7 @@ namespace Sgl
 				{
 					KeyEventArgs args =
 					{
-						.State = static_cast<ButtonState>(e.key.state),
+						.State = ButtonState::Pressed,
 						.Key = e.key.keysym
 					};
 					scene.OnKeyDown(args);
@@ -201,7 +200,7 @@ namespace Sgl
 				{
 					KeyEventArgs args =
 					{
-						.State = static_cast<ButtonState>(e.key.state),
+						.State = ButtonState::Released,
 						.Key = e.key.keysym
 					};
 					scene.OnKeyUp(args);
@@ -222,10 +221,7 @@ namespace Sgl
 
 				case SDL_TEXTINPUT:
 				{
-					TextInputEventArgs args
-					{
-						.Text = e.text.text
-					};
+					TextInputEventArgs args(e.text.text);
 					scene.OnTextInput(args);
 					break;
 				}
@@ -262,7 +258,7 @@ namespace Sgl
 					MouseButtonEventArgs args =
 					{
 						.Button = static_cast<MouseButton>(e.button.button),
-						.State = static_cast<ButtonState>(e.button.state),
+						.State = ButtonState::Pressed,
 						.ClicksNumber = e.button.clicks
 					};
 					scene.OnMouseDown(args);
@@ -274,7 +270,7 @@ namespace Sgl
 					MouseButtonEventArgs args =
 					{
 						.Button = static_cast<MouseButton>(e.button.button),
-						.State = static_cast<ButtonState>(e.button.state),
+						.State = ButtonState::Released,
 						.ClicksNumber = e.button.clicks
 					};
 					scene.OnMouseUp(args);

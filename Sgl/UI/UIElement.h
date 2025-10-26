@@ -104,9 +104,6 @@ namespace Sgl
 		static inline ObservableProperty<UIElement, Ref<UIElement>> ToolTipProperty =
 			ObservableProperty<UIElement, Ref<UIElement>>(&SetToolTip, &GetToolTip);
 
-		static inline ObservableProperty<UIElement, size_t> ZIndexProperty =
-			ObservableProperty<UIElement, size_t>(&SetZIndex, &GetZIndex);
-
 		static inline ObservableProperty<UIElement, Ref<ObservableObject>> DataContextProperty =
 			ObservableProperty<UIElement, Ref<ObservableObject>>(&SetDataContext, &GetDataContext);
 
@@ -114,14 +111,6 @@ namespace Sgl
 		friend class Panel;
 		friend class ContentUIElement;
 		friend class UIElementsCollection;
-	};
-
-	struct UIElementComparer
-	{
-		bool operator()(const Ref<UIElement>& left, const Ref<UIElement>& right) const
-		{
-			return left->GetZIndex() < right->GetZIndex();
-		}
 	};
 
 	struct UIElementDataTemplate

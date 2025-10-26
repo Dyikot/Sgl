@@ -90,7 +90,7 @@ namespace Sgl
 
 		if(_contentPresenter)
 		{
-			auto& _content = _contentPresenter.GetValue();
+			UIElement& _content = _contentPresenter;
 			bool wasMouseOver = _content._isMouseOver;
 			bool isMouseOver = Math::IsPointInRect(e.Position, _content._bounds);
 

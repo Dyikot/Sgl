@@ -63,6 +63,11 @@ namespace Sgl
 			requires std::same_as<std::ranges::range_value_t<TRange>, T>
 		void AddRange(TRange&& range)
 		{
+			if constexpr(std::ranges::sized_range<TRange>)
+			{
+				_items.reserve(_items.size() + std::ranges::size(range));
+			}
+
 			_items.insert(_items.end(), std::ranges::begin(range), std::ranges::end(range));
 			std::ranges::sort(_items, _comparer);
 		}
@@ -75,6 +80,11 @@ namespace Sgl
 		size_t Capacity() const noexcept
 		{
 			return _items.capacity();
+		}
+
+		bool IsEmpty() const noexcept
+		{
+			return _items.size() == 0;
 		}
 
 		void Clear() noexcept
@@ -130,5 +140,13 @@ namespace Sgl
 			std::ranges::sort(_items, _comparer);
 			return *this;
 		}
+
+		const T& operator[](size_t index) const
+		{
+			return _items[index]; 
+		}
+
+		SortedVector& operator=(const SortedVector&) = default;
+		SortedVector& operator=(SortedVector&&) noexcept = default;
 	};
 }

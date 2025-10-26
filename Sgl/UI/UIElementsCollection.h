@@ -1,88 +1,75 @@
 #pragma once
 
 #include "UIElement.h"
-#include "../Base/Collections/SortedVector.h"
+#include "../Base/Collections/Collection.h"
 
 namespace Sgl
 {
-	class UIElementsCollection
+	class UIElementsCollection : public Collection<Ref<UIElement>>
 	{
 	private:
-		SortedVector<Ref<UIElement>, UIElementComparer> _items;
+		using base = Collection<Ref<UIElement>>;
 		Layoutable& _owner;
 	public:
 		UIElementsCollection(Layoutable& layout):
+			base(),
 			_owner(layout)
 		{}
 
-		UIElementsCollection(const UIElementsCollection& other):
-			_items(other._items),
+		UIElementsCollection(const UIElementsCollection& other) :
+			base(other),
 			_owner(other._owner)
 		{}
 
-		UIElementsCollection(UIElementsCollection&& other) noexcept:
-			_items(std::move(other._items)),
+		UIElementsCollection(UIElementsCollection&& other) noexcept :
+			base(std::move(other)),
 			_owner(other._owner)
 		{}
 
 		~UIElementsCollection() = default;
-
-		auto begin() { return _items.begin(); }
-		auto end() { return _items.end(); }
-
-		auto begin() const { return _items.begin(); }
-		auto end() const { return _items.end(); }
-
-		void Add(Ref<UIElement> element)
+	protected:
+		void ClearItems() override
 		{
-			if(element == nullptr)
+			auto& items = Items();
+			for(UIElement& item : items)
+			{
+				item._parent = nullptr;
+			}
+
+			_owner.InvalidateMeasure();
+		}
+
+		void InsertItem(size_t index, const Ref<UIElement>& item) override
+		{
+			if(item == nullptr)
 			{
 				throw std::invalid_argument("UIElement can not be null");
 			}
 
-			element->_parent = &_owner;
-			_items.Add(std::move(element));
+			item->_parent = &_owner;
+			base::InsertItem(index, item);
+			_owner.InvalidateMeasure();
 		}
 
-		size_t Count() const noexcept
+		void SetItem(size_t index, const Ref<UIElement>& item) override
 		{
-			return _items.Count();
+			if(item == nullptr)
+			{
+				throw std::invalid_argument("UIElement can not be null");
+			}
+
+			item->_parent = &_owner;
+			base::SetItem(index, item);
+			_owner.InvalidateMeasure();
 		}
 
-		size_t Capacity() const noexcept
+		void RemoveItem(size_t index) override
 		{
-			return _items.Capacity();
-		}
+			auto& item = ElementAt(index);
+			item->_parent = nullptr;
 
-		void Clear() noexcept
-		{
-			_items.Clear();
-		}
-
-		bool Contains(Ref<UIElement> element) const
-		{
-			return _items.Contains(element);
-		}
-
-		Ref<UIElement> ElementAt(size_t index) const
-		{
-			return _items.ElementAt(index);
-		}
-
-		std::optional<size_t> Find(Ref<UIElement> element) const
-		{
-			return _items.Find(element);
-		}
-
-		void Remove(Ref<UIElement> element)
-		{
-			_items.Remove(element);
-		}
-
-		UIElementsCollection& operator=(std::initializer_list<Ref<UIElement>> items)
-		{
-			_items = items;
-			return *this;
+			base::RemoveItem(index);
+			_owner.InvalidateMeasure();
 		}
 	};
 }

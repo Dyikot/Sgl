@@ -36,6 +36,11 @@ namespace Sgl
 			return _items.size();
 		}
 
+		bool IsEmpty() const noexcept
+		{
+			return _items.size() == 0;
+		}
+
 		void Add(const T& item)
 		{
 			InsertItem(_items.size(), item);
@@ -98,16 +103,6 @@ namespace Sgl
 		Collection& operator=(const Collection&) = default;
 		Collection& operator=(Collection&&) noexcept = default;
 	protected:
-		std::vector<T>& Items()
-		{
-			return _items;
-		}
-
-		const std::vector<T>& Items() const
-		{
-			return _items;
-		}
-
 		virtual void ClearItems()
 		{
 			_items.clear();
@@ -126,6 +121,16 @@ namespace Sgl
 		virtual void RemoveItem(size_t index)
 		{
 			_items.erase(_items.begin() + index);
+		}
+
+		std::vector<T>& Items()
+		{
+			return _items;
+		}
+
+		const std::vector<T>& Items() const
+		{
+			return _items;
 		}
 	};
 }

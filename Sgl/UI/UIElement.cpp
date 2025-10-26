@@ -6,16 +6,14 @@ namespace Sgl
 		Layoutable(other),
 		_isMouseOver(other._isMouseOver),
 		_tag(other._tag),
-		_toolTip(other._toolTip),
-		_zIndex(other._zIndex)
+		_toolTip(other._toolTip)
 	{}
 
 	UIElement::UIElement(UIElement&& other) noexcept:
 		Layoutable(std::move(other)),
 		_isMouseOver(other._isMouseOver),
 		_tag(std::move(other._tag)),
-		_toolTip(std::move(other._toolTip)),
-		_zIndex(other._zIndex)
+		_toolTip(std::move(other._toolTip))
 	{}
 
 	void UIElement::SetTag(const Any & value)
@@ -31,12 +29,6 @@ namespace Sgl
 		{
 			InvalidateRender();
 		}
-	}
-
-	void UIElement::SetZIndex(size_t value)
-	{
-		SetProperty(ZIndexProperty, _zIndex, value);
-		InvalidateRender();
 	}
 
 	void UIElement::SetDataContext(Ref<ObservableObject> value)

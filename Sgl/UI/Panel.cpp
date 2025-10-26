@@ -24,11 +24,11 @@ namespace Sgl
     {
         RenderBackground(context);
 
-        for(auto& child : Children)
+        for(UIElement& child : Children)
         {
-            if(child->IsVisible())
+            if(child.IsVisible())
             {
-                child->Render(context);
+                child.Render(context);
             }
         }
 
@@ -39,9 +39,9 @@ namespace Sgl
     {
         StyleableElement::ApplyStyle();
 
-        for(auto& child : Children)
+        for(UIElement& child : Children)
         {
-            child->ApplyStyle();
+            child.ApplyStyle();
         }
     }
 
@@ -49,9 +49,9 @@ namespace Sgl
     {
         if(IsMouseOver())
         {
-            for(auto& child : Children)
+            for(UIElement& child : Children)
             {
-                if(child->IsMouseOver())
+                if(child.IsMouseOver())
                 {
                     return;
                 }

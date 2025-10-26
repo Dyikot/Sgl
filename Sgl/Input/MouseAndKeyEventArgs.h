@@ -9,7 +9,7 @@ namespace Sgl
 {	
 	enum class ButtonState
 	{
-		Release, Pressed
+		Released, Pressed
 	};	
 
 	enum class MouseButton

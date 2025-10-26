@@ -72,7 +72,5 @@ namespace Sgl::UIElements
 			
 			child.Arrange(childRect);
 		}
-	}
-
-	
+	}	
 }
