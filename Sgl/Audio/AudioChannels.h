@@ -59,23 +59,23 @@ namespace Sgl
 
 		static void Play(size_t channel, SoundChunk soundChunk, size_t loops = 0)
 		{
-			Mix_PlayChannel(channel, static_cast<Mix_Chunk*>(soundChunk), loops);
+			Mix_PlayChannel(channel, soundChunk.ToMixChunk(), loops);
 		}
 
 		static void Play(SoundChunk soundChunk, size_t loops = 0)
 		{
-			Mix_PlayChannel(FreeChannel, static_cast<Mix_Chunk*>(soundChunk), loops);
+			Mix_PlayChannel(FreeChannel, soundChunk.ToMixChunk(), loops);
 		}
 
 		static void PlayFor(size_t channel, SoundChunk soundChunk, TimeSpan duration, size_t loops = 0)
 		{
-			Mix_PlayChannelTimed(channel, static_cast<Mix_Chunk*>(soundChunk), loops, 
+			Mix_PlayChannelTimed(channel, soundChunk.ToMixChunk(), loops,
 				duration.ToMilliseconds());
 		}
 
 		static void Play(SoundChunk soundChunk, TimeSpan duration, size_t loops = 0)
 		{
-			Mix_PlayChannelTimed(FreeChannel, static_cast<Mix_Chunk*>(soundChunk), loops,
+			Mix_PlayChannelTimed(FreeChannel, soundChunk.ToMixChunk(), loops,
 				duration.ToMilliseconds());
 		}
 

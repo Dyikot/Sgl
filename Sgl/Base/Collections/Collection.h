@@ -14,11 +14,11 @@ namespace Sgl
 	public:
 		Collection() = default;
 
-		Collection(std::initializer_list<T> init):
+		Collection(std::initializer_list<T> init) :
 			_items(init)
 		{}
 
-		explicit Collection(std::vector<T> range):
+		explicit Collection(std::vector<T> range) :
 			_items(std::move(range))
 		{}
 
