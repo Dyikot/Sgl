@@ -123,19 +123,19 @@ namespace Sgl
         return position;
     }
 
-    void Window::SetDisplayMode(DisplayMode displayMode)
+    void Window::SetDisplayMode(WindowDisplayMode displayMode)
     {
         switch(displayMode)
         {
-            case DisplayMode::Window: 
+            case WindowDisplayMode::Window: 
                 SDL_SetWindowFullscreen(_window, 0);
                 break;
 
-            case DisplayMode::BorderlessWindow:
+            case WindowDisplayMode::BorderlessWindow:
                 SDL_SetWindowBordered(_window, SDL_FALSE);
                 break;
 
-            case DisplayMode::Fullscreen:
+            case WindowDisplayMode::Fullscreen:
                 SDL_SetWindowFullscreen(_window, SDL_WINDOW_FULLSCREEN_DESKTOP);
                 break;
 
@@ -144,7 +144,7 @@ namespace Sgl
         }
     }
 
-    DisplayMode Window::GetDisplayMode() const noexcept
+    WindowDisplayMode Window::GetDisplayMode() const noexcept
     {
         auto flags = SDL_GetWindowFlags(_window);
         auto state = SDL_WindowFlags(flags & (SDL_WINDOW_FULLSCREEN | SDL_WINDOW_BORDERLESS));
@@ -152,13 +152,13 @@ namespace Sgl
         switch(state)
         {
             case SDL_WINDOW_FULLSCREEN:
-                return DisplayMode::Fullscreen;
+                return WindowDisplayMode::Fullscreen;
 
             case SDL_WINDOW_BORDERLESS:
-                return DisplayMode::BorderlessWindow;
+                return WindowDisplayMode::BorderlessWindow;
 
             default:
-                return DisplayMode::Window;
+                return WindowDisplayMode::Window;
         }
     }
 

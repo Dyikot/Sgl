@@ -77,9 +77,12 @@ namespace Sgl
 		/// </summary>
 		/// <param name="sender"> - The sender object that is raising the event.</param>
 		void TryInvoke(TSender& sender) const requires std::default_initializable<TEventArgs>
-		{
-			TEventArgs e = {};
-			TryInvoke(sender, e);
+		{			
+			if(HasTarget())
+			{
+				TEventArgs e = {};
+				operator()(sender, e);
+			}
 		}
 
 		/// <summary>

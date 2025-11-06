@@ -24,11 +24,11 @@ namespace Sgl
     {
         RenderBackground(context);
 
-        for(UIElement& child : Children)
+        for(auto& child : Children)
         {
-            if(child.IsVisible())
+            if(child->IsVisible())
             {
-                child.Render(context);
+                child->Render(context);
             }
         }
 
@@ -39,9 +39,9 @@ namespace Sgl
     {
         StyleableElement::ApplyStyle();
 
-        for(UIElement& child : Children)
+        for(auto& child : Children)
         {
-            child.ApplyStyle();
+            child->ApplyStyle();
         }
     }
 
@@ -49,9 +49,9 @@ namespace Sgl
     {
         if(IsMouseOver())
         {
-            for(UIElement& child : Children)
+            for(auto& child : Children)
             {
-                if(child.IsMouseOver())
+                if(child->IsMouseOver())
                 {
                     return;
                 }
@@ -74,9 +74,7 @@ namespace Sgl
 
         for(auto& child : Children)
         {
-            auto& element = child.GetValue();
-
-            if(Math::IsPointInRect(e.Position, element.GetBounds()) && element.IsVisible())
+            if(Math::IsPointInRect(e.Position, child->GetBounds()) && child->IsVisible())
             {
                 if(_currentChild && _currentChild->IsVisible())
                 {
@@ -84,9 +82,9 @@ namespace Sgl
                 }
 
                 _currentChild = child;
-                Cursor::Set(element.GetCursor());
-                element.OnMouseEnter(e);
-                element.OnMouseMove(e);
+                Cursor::Set(child->GetCursor());
+                child->OnMouseEnter(e);
+                child->OnMouseMove(e);
 
                 return;
             }

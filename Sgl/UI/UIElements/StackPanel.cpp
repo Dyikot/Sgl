@@ -37,10 +37,10 @@ namespace Sgl
 
 		if(_orientation == Orientation::Vertical)
 		{
-			for(UIElement& child : Children)
+			for(auto& child : Children)
 			{
-				child.Measure(avaliableSize);
-				auto [width, height] = child.GetDesiredSize();
+				child->Measure(avaliableSize);
+				auto [width, height] = child->GetDesiredSize();
 
 				size.Width = std::max(size.Width, width);
 				size.Height += height;
@@ -50,10 +50,10 @@ namespace Sgl
 		}
 		else
 		{
-			for(UIElement& child : Children)
+			for(auto& child : Children)
 			{
-				child.Measure(avaliableSize);
-				auto [width, height] = child.GetDesiredSize();
+				child->Measure(avaliableSize);
+				auto [width, height] = child->GetDesiredSize();
 
 				size.Width += width;
 				size.Height = std::max(size.Height, height);
@@ -71,15 +71,15 @@ namespace Sgl
 		{
 			float totalHeight = 0;
 
-			for(UIElement& child : Children)
+			for(auto& child : Children)
 			{
-				auto [_, height] = child.GetDesiredSize();
+				auto [_, height] = child->GetDesiredSize();
 
 				FRect childRect = rect;
 				childRect.y += totalHeight;
 				childRect.h = height;
 
-				child.Arrange(childRect);
+				child->Arrange(childRect);
 
 				totalHeight += height + _spacing;
 			}
@@ -88,15 +88,15 @@ namespace Sgl
 		{
 			float totalWidth = 0;
 
-			for(UIElement& child : Children)
+			for(auto& child : Children)
 			{
-				auto [width, _] = child.GetDesiredSize();
+				auto [width, _] = child->GetDesiredSize();
 
 				FRect childRect = rect;
 				childRect.x += totalWidth;
 				childRect.w = width;
 
-				child.Arrange(childRect);
+				child->Arrange(childRect);
 
 				totalWidth += width + _spacing;
 			}

@@ -17,7 +17,7 @@ namespace Sgl
 		Log::PrintSDLErrorIf(Mix_OpenAudio(48000, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 2048) < 0);
 	}
 
-	Application::~Application() noexcept
+	Application::~Application()
 	{
 		SceneManager.Clear();
 		SDL_DestroyRenderer(Window.GetSDLRenderer());
@@ -28,16 +28,20 @@ namespace Sgl
 		SDL_Quit();
 	}
 
-	void Application::SetMaxFPS(size_t value) noexcept
+	void Application::SetFpsLimit(size_t value) noexcept
 	{
-		if(value == 0)
-		{
-			_maxFPS = std::nullopt;
-			return;
-		}
+		_fpsLimit = value;
+		_frameTimeLimit = TimeSpan(1e9 / value);
+	}
 
-		_maxFPS = value;
-		_maxFrameTime = TimeSpan(1e9 / value);
+	size_t Application::GetFpsLimit() const noexcept
+	{
+		return _fpsLimit;
+	}
+
+	size_t Application::GetFps() const
+	{
+		return _fpsCounter.GetFps();
 	}
 
 	void Application::SetCulture(std::string value)
@@ -62,7 +66,7 @@ namespace Sgl
 		}
 	}
 
-	void Application::SetLocalizer(std::unique_ptr<IStringLocalizer> localizer)
+	void Application::SetLocalizer(std::unique_ptr<StringLocalizerBase> localizer)
 	{
 		_localizer = std::move(localizer);
 
@@ -72,7 +76,7 @@ namespace Sgl
 		}
 	}
 
-	const IStringLocalizer& Application::GetLocalizer() const
+	const StringLocalizerBase& Application::GetLocalizer() const
 	{
 		if(_localizer == nullptr)
 		{
@@ -338,14 +342,13 @@ namespace Sgl
 				SDL_RenderPresent(renderer);				
 			}
 
-			if(_maxFPS)
+			if(_fpsLimit != UnlimitedFps)
 			{				
 				auto frameTime = frameStopwatch.Elapsed();
-				auto maxTime = _maxFrameTime.value();
 
-				if(maxTime > frameTime)
+				if(_frameTimeLimit > frameTime)
 				{
-					SleepFor(maxTime - frameTime);
+					SleepFor(_frameTimeLimit - frameTime);
 				}
 			}
 

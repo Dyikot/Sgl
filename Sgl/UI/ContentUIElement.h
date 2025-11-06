@@ -5,7 +5,7 @@
 
 namespace Sgl
 {
-	class ContentUIElement: public UIElement
+	class ContentUIElement : public UIElement
 	{
 	private:
 		Any _content;
@@ -20,30 +20,30 @@ namespace Sgl
 		ContentUIElement(const ContentUIElement& other);
 		ContentUIElement(ContentUIElement&& other) noexcept;
 		~ContentUIElement() = default;
-
+		
 		template<typename T>
-		void SetContent(T&& value)
+		void SetContent(T&& content)
 		{
 			using TContent = std::decay_t<T>;
 
 			if constexpr(std::convertible_to<TContent, std::string>)
 			{
-				_content = Any::New<std::string>(std::forward<T>(value));
+				_content = Any::New<std::string>(std::forward<T>(content));
 				_contentTemplate = StringDataTemplate();
 			}
 			else
 			{
-				_content = Any::New<TContent>(std::forward<T>(value));
+				_content = Any::New<TContent>(std::forward<T>(content));
 			}
 
 			InvalidateMeasure();
 			InvalidateContentPresenter();
 		}
-
+		
 		template<std::derived_from<UIElement> T>
-		void SetContent(Ref<T> value)
+		void SetContent(Ref<T> content)
 		{
-			_content = Any::New<Ref<UIElement>>(std::move(value));
+			_content = Any::New<Ref<UIElement>>(std::move(content));
 			_contentTemplate = UIElementDataTemplate();
 			InvalidateMeasure();
 			InvalidateContentPresenter();

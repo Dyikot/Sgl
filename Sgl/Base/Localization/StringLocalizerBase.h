@@ -6,10 +6,10 @@
 
 namespace Sgl
 {
-    class IStringLocalizer
+    class StringLocalizerBase
     {
     public:
-        virtual ~IStringLocalizer() = default;
+        virtual ~StringLocalizerBase() = default;
 
         virtual void SetCulture(const std::string& culture) = 0;
         virtual const std::string& GetCulture() const = 0;

@@ -14,7 +14,7 @@ namespace Sgl
     };
 
     template<typename T>
-    struct RefMemoryBlock: RefMemoryBlockBase
+    struct RefMemoryBlock : RefMemoryBlockBase
     {
         T Value;
 
@@ -25,11 +25,11 @@ namespace Sgl
     };
 
     template<typename T>
-    class Ref
+    class Ref final
     {
     private:
         RefMemoryBlockBase* _memoryBlock = nullptr;
-        T* _value = nullptr;
+        T* _data = nullptr;
     public:
         Ref() noexcept = default;
         Ref(std::nullptr_t) noexcept {}
@@ -37,7 +37,7 @@ namespace Sgl
         template<typename... TArgs>
         Ref(std::in_place_t, TArgs&&... args):
             _memoryBlock(new RefMemoryBlock<T>(std::forward<TArgs>(args)... )),
-            _value(&static_cast<RefMemoryBlock<T>*>(_memoryBlock)->Value)
+            _data(&static_cast<RefMemoryBlock<T>*>(_memoryBlock)->Value)
         {}
 
         Ref(const Ref& other) noexcept
@@ -74,36 +74,42 @@ namespace Sgl
 
         T* Get() const noexcept
         {
-            return _value;
+            return _data;
         }
 
         template<typename TOther>
         TOther* GetAs() const
         {
-            return static_cast<TOther*>(_value);
+            return static_cast<TOther*>(_data);
         }
 
         template<std::derived_from<T> TOther>
         TOther* TryGetAs() const
         {
-            return dynamic_cast<TOther*>(_value);
+            return dynamic_cast<TOther*>(_data);
         }
         
         template<typename TValue = T> requires !std::is_void_v<TValue>
         TValue& GetValue() const
         {
-            return *_value;
+            return *_data;
         }
 
         template<typename TValue> requires !std::is_void_v<TValue>
         TValue& GetValueAs() const
         {
-            return static_cast<TValue&>(*_value);
+            return static_cast<TValue&>(*_data);
         }
 
         T* operator->() const
         {
-            return _value;
+            return _data;
+        }
+
+        template<typename TValue = T> requires !std::is_void_v<TValue>
+        TValue& operator*() const
+        {
+            return *_data;
         }
 
         Ref& operator=(const Ref& other) noexcept
@@ -154,16 +160,6 @@ namespace Sgl
             return *this;
         }
 
-        operator T& ()
-        {
-            return *_value;
-        }
-
-        operator const T& () const
-        {
-            return *_value;
-        }
-
         explicit operator bool() const noexcept
         {
             return _memoryBlock != nullptr;
@@ -171,12 +167,12 @@ namespace Sgl
 
         friend bool operator==(const Ref& left, const Ref& right)
         {
-            return left._value == right._value;
+            return left._data == right._data;
         }
     private:
         explicit Ref(RefMemoryBlock<T>* memoryBlock):
             _memoryBlock(memoryBlock),
-            _value(&memoryBlock->Value)
+            _data(&memoryBlock->Value)
         {}
 
         void TryDeleteMemoryBlock()
@@ -191,7 +187,7 @@ namespace Sgl
         void CopyConstructFrom(const Ref<TOther>& other) noexcept
         {
             _memoryBlock = other._memoryBlock;
-            _value = other._value;
+            _data = other._data;
 
             if(_memoryBlock)
             {
@@ -203,10 +199,10 @@ namespace Sgl
         void MoveConstructFrom(Ref<TOther>&& other) noexcept
         {
             _memoryBlock = other._memoryBlock;
-            _value = other._value;
+            _data = other._data;
 
             other._memoryBlock = nullptr;
-            other._value = nullptr;
+            other._data = nullptr;
         }
 
         template<typename TDerived>

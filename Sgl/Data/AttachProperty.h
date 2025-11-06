@@ -15,7 +15,7 @@ namespace Sgl
 		static inline PropertyId _id = 0;
 	public:
 		AttachedProperty() requires std::default_initializable<T> = default;
-		AttachedProperty(const T& defaultValue) : DefaultValue(defaultValue) {}
+		AttachedProperty(const T& defaultValue): DefaultValue(defaultValue) {}
 		AttachedProperty(const AttachedProperty&) = delete;
 		AttachedProperty(AttachedProperty&&) = delete;
 		~AttachedProperty() = default;

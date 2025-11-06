@@ -4,7 +4,7 @@ namespace Sgl
 {
 	std::vector<int> Math::TriangulateEllipse(size_t pointsNumber)
 	{
-		auto order = std::vector<int>(pointsNumber * 3);
+		std::vector<int> order(pointsNumber * 3);
 		constexpr int center = 0;
 		int step = center;
 

@@ -3,12 +3,43 @@
 #include <optional>
 #include "Render/Surface.h"
 #include "Base/Size.h"
-#include "Base/EventArgs/WindowEventArgs.h"
 #include "Base/Event.h"
 #include "Base/Ref.h"
+#include "Base/Primitives.h"
 
 namespace Sgl
 {
+	enum class WindowDisplayMode
+	{
+		Window, BorderlessWindow, Fullscreen
+	};
+
+	enum class WindowState
+	{
+		Normal, Minimized, Maximized
+	};
+
+	struct WindowStateEventArgs
+	{
+		WindowState State;
+	};
+
+	struct WindowVisibilityEventArgs
+	{
+		bool IsVisible;
+	};
+
+	struct WindowPositionChangedEventArgs
+	{
+		Point Position;
+	};
+
+	struct WindowSizeChangedEventArgs
+	{
+		size_t Width;
+		size_t Height;
+	};
+
 	/// <summary>
 	/// The Window class provides a high-level interface for creating and managing window,
 	/// handling events, and rendering graphics. It encapsulates SDL_Window and SDL_Renderer
@@ -170,13 +201,13 @@ namespace Sgl
 		/// Sets the window display mode (Window, Borderless, Fullscreen)
 		/// </summary>
 		/// <param name="displayMode">- the display mode to set</param>
-		void SetDisplayMode(DisplayMode displayMode);
+		void SetDisplayMode(WindowDisplayMode displayMode);
 
 		/// <summary>
 		/// Gets the current display mode
 		/// </summary>
 		/// <returns>The current display mode</returns>
-		DisplayMode GetDisplayMode() const noexcept;
+		WindowDisplayMode GetDisplayMode() const noexcept;
 
 		/// <summary>
 		/// Sets the window state (Normal, Minimized, Maximized)

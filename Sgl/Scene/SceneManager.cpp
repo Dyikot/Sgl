@@ -15,9 +15,9 @@ namespace Sgl
 
 	void SceneManager::Pop() noexcept
 	{
-		if(_scenesToDestory < _scenes.size())
+		if(_scenesToDestroy < _scenes.size())
 		{
-			_scenesToDestory++;
+			_scenesToDestroy++;
 		}
 	}
 
@@ -38,7 +38,7 @@ namespace Sgl
 	{
 		while(true)
 		{
-			if(_scenesToDestory > 0)
+			if(_scenesToDestroy > 0)
 			{
 				DestroyScene();
 			}
@@ -75,7 +75,7 @@ namespace Sgl
 
 	void SceneManager::DestroyScene()
 	{
-		_scenesToDestory--;
+		_scenesToDestroy--;
 		_scenes.top()->OnDestroying();
 		_scenes.pop();
 

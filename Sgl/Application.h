@@ -6,7 +6,7 @@
 #include "Window.h"
 #include "Scene/SceneManager.h"
 #include "Base/Time/FPSCounter.h"
-#include "Base/Localization/IStringLocalizer.h"
+#include "Base/Localization/StringLocalizerBase.h"
 
 namespace Sgl
 {
@@ -17,21 +17,12 @@ namespace Sgl
 	public:
 		struct Context
 		{
-			Application* Current()
-			{
-				return Application::_current;
-			}
-
-			Application* operator->()
-			{
-				return Application::_current;
-			}
-
-			const Application* operator->() const
-			{
-				return Application::_current;
-			}
+			Application* Current() { return Application::_current; }
+			Application* operator->() { return Application::_current; }
+			const Application* operator->() const { return Application::_current; }
 		};
+
+		static constexpr size_t UnlimitedFps = 0;
 
 		Event<ApplicationEventHandler> Started;
 		Event<ApplicationEventHandler> Stopped;
@@ -44,26 +35,26 @@ namespace Sgl
 
 		bool _isRunning = false;
 		FPSCounter _fpsCounter;
-		std::optional<size_t> _maxFPS;
-		std::optional<TimeSpan> _maxFrameTime;
+		size_t _fpsLimit = UnlimitedFps;
+		TimeSpan _frameTimeLimit = TimeSpan::Zero;
 		std::string _culture = "en";
-		std::unique_ptr<IStringLocalizer>  _localizer;
+		std::unique_ptr<StringLocalizerBase> _localizer;
 	public:
 		Application() noexcept;
 		Application(const Application&) = delete;
 		Application(Application&&) = delete;
-		~Application() noexcept;
+		~Application();
 
-		void SetMaxFPS(size_t value) noexcept;
-		auto GetMaxFPS() const noexcept { return _maxFPS; }
-		size_t GetFPS() const { return _fpsCounter.GetFps(); }
+		void SetFpsLimit(size_t value) noexcept;
+		size_t GetFpsLimit() const noexcept;
+		size_t GetFps() const;
 
 		void SetCulture(std::string value);
 		const std::string& GetCulture() const { return _culture; }
 
 		void SetLocalizer(std::string csvFile, char delimeter = ',');
-		void SetLocalizer(std::unique_ptr<IStringLocalizer> localizer);
-		const IStringLocalizer& GetLocalizer() const;
+		void SetLocalizer(std::unique_ptr<StringLocalizerBase> localizer);
+		const StringLocalizerBase& GetLocalizer() const;
 
 		void Run();
 		void Shutdown();

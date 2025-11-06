@@ -7,21 +7,21 @@
 
 namespace Sgl
 {
+	enum class BrushType
+	{
+		Color, Texture
+	};
+
 	class Brush
 	{
-	public:
-		using Type = size_t;
-
-		static constexpr Type Color = 0;
-		static constexpr Type Texture = 1;
 	private:
-		std::variant<Sgl::Color, Sgl::Texture> _value;
+		std::variant<Color, Texture> _value;
 	public:
-		Brush(Sgl::Color color):
+		Brush(Color color):
 			_value(color)
 		{}
 
-		Brush(Sgl::Texture texture):
+		Brush(Texture texture):
 			_value(std::move(texture))
 		{}
 
@@ -34,28 +34,28 @@ namespace Sgl
 			return std::holds_alternative<T>(_value);
 		}
 
-		Type GetType() const noexcept
+		BrushType GetType() const noexcept
 		{
-			return _value.index();
+			return static_cast<BrushType>(_value.index());
 		}
 
-		Sgl::Color AsColor() const
+		Color AsColor() const
 		{
-			return std::get<Sgl::Color>(_value);
+			return std::get<Color>(_value);
 		}
 
-		const Sgl::Texture& AsTexture() const
+		const Texture& AsTexture() const
 		{
-			return std::get<Sgl::Texture>(_value);
+			return std::get<Texture>(_value);
 		}
 
-		Brush& operator=(Sgl::Color color)
+		Brush& operator=(Color color)
 		{
 			_value = color;
 			return *this;
 		}
 
-		Brush& operator=(Sgl::Texture texture)
+		Brush& operator=(Texture texture)
 		{
 			_value = std::move(texture);
 			return *this;
@@ -65,7 +65,7 @@ namespace Sgl
 		Brush& operator=(Brush&&) noexcept = default;
 		friend bool operator==(const Brush&, const Brush&) = default;
 
-		explicit operator Sgl::Color() const { return AsColor(); }
-		explicit operator Sgl::Texture() const { return AsTexture(); }
+		explicit operator Color() const { return AsColor(); }
+		explicit operator Texture() const { return AsTexture(); }
 	};
 }

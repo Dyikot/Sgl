@@ -31,9 +31,9 @@ namespace Sgl
 		void ClearItems() override
 		{
 			auto& items = Items();
-			for(UIElement& item : items)
+			for(auto& item : items)
 			{
-				item._parent = nullptr;
+				item->_parent = nullptr;
 			}
 
 			_owner.InvalidateMeasure();

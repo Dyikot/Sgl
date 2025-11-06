@@ -1,12 +1,12 @@
 #pragma once
 
-#include "IStringLocalizer.h"
 #include <vector>
 #include <unordered_map>
+#include "StringLocalizerBase.h"
 
 namespace Sgl
 {
-    class StringLocalizer : public IStringLocalizer
+    class StringLocalizer : public StringLocalizerBase
     {
     private:
         std::vector<std::string> _headers;

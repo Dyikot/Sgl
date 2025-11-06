@@ -14,7 +14,7 @@ namespace Sgl
 
 		std::stack<Ref<Scene>> _scenes;
 		std::queue<SceneFactory> _sceneFactoriesQueue;
-		size_t _scenesToDestory = 0;
+		size_t _scenesToDestroy = 0;
 	public:
 		SceneManager() = default;
 		SceneManager(const SceneManager&) = delete;

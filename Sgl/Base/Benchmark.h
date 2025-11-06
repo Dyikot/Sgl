@@ -10,7 +10,7 @@ namespace Sgl
 	class Benchmark
 	{
 	private:
-		constexpr static size_t DefaultLoopsNumber = 1e2;
+		constexpr static size_t DefaultLoopsNumber = 100;
 		constexpr static auto DefaultName = "Benchmark";
 
 		std::string _name;
@@ -24,8 +24,8 @@ namespace Sgl
 		Benchmark(const Benchmark&) = delete;
 		Benchmark(Benchmark&&) = delete;
 
-		template<typename... TArgs> 
-		void Run(CAction<TArgs...> auto&& action, TArgs&&... args)
+		template<typename TAction, typename... TArgs> 
+		void Run(TAction action, TArgs&&... args)
 		{
 			Stopwatch stopwatch;
 			stopwatch.Start();

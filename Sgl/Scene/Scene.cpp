@@ -28,9 +28,9 @@ namespace Sgl
 	{	
 		switch(auto background = GetBackground(); background.GetType())
 		{
-			case Brush::Color:
+			case BrushType::Color:
 				context.SetBackground(background.AsColor()); break;
-			case Brush::Texture:
+			case BrushType::Texture:
 				context.DrawTexture(background.AsTexture()); break;
 		}
 

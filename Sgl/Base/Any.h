@@ -32,7 +32,7 @@ namespace Sgl
 		};
 
 		template<typename T>
-		class Storage: public IStorage
+		class Storage : public IStorage
 		{
 		public:
 			T Value;
@@ -68,47 +68,47 @@ namespace Sgl
 			}
 		};
 
-		std::unique_ptr<IStorage> _value;
+		std::unique_ptr<IStorage> _data;
 	public:
 		template<typename T, typename... TArgs>
 		static Any New(TArgs&&... args)
 		{
 			Any obj;
-			obj._value = std::make_unique<Storage<std::decay_t<T>>>(std::forward<TArgs>(args)...);
+			obj._data = std::make_unique<Storage<std::decay_t<T>>>(std::forward<TArgs>(args)...);
 			return obj;
 		}
 
 		Any() = default;
 
 		template<typename T>
-		Any(T&& value):
-			_value(std::make_unique<Storage<std::decay_t<T>>>(std::forward<T>(value)))
+		explicit Any(T&& value):
+			_data(std::make_unique<Storage<std::decay_t<T>>>(std::forward<T>(value)))
 		{}
 
 		Any(const Any& other):
-			_value(other._value->Copy())
+			_data(other._data ? other._data->Copy() : nullptr)
 		{}
 
 		Any(Any&& other) noexcept:
-			_value(std::move(other._value))
+			_data(std::move(other._data))
 		{}
 
 		template<typename T>
 		T& As()
 		{
-			return _value->Get<T>();
+			return _data->Get<T>();
 		}
 
 		template<typename T>
 		const T& As() const
 		{
-			return _value->Get<T>();
+			return _data->Get<T>();
 		}
 
 		template<typename T>
 		T* TryAs()
 		{
-			if(HasValue() && _value->Type() == typeid(T))
+			if(HasValue() && _data->Type() == typeid(T))
 			{
 				return &As<T>();
 			}
@@ -119,7 +119,7 @@ namespace Sgl
 		template<typename T>
 		const T* TryAs() const
 		{
-			if(HasValue() && _value->Type() == typeid(T))
+			if(HasValue() && _data->Type() == typeid(T))
 			{
 				return &As<T>();
 			}
@@ -130,31 +130,31 @@ namespace Sgl
 		template<typename T>
 		bool Is() const
 		{
-			const auto& type = HasValue() ? _value->Type() : typeid(nullptr);
+			const auto& type = HasValue() ? _data->Type() : typeid(nullptr);
 			return type == typeid(T);
 		}
 
 		bool HasValue() const noexcept
 		{
-			return _value != nullptr;
+			return _data != nullptr;
 		}
 
 		template<typename T>
 		Any& operator=(T&& value)
 		{
-			_value = std::make_unique<Storage<std::decay_t<T>>>(std::forward<T>(value));
+			_data = std::make_unique<Storage<std::decay_t<T>>>(std::forward<T>(value));
 			return *this;
 		}
 
 		Any& operator=(const Any& other)
 		{
-			_value = other._value->Copy();
+			_data = other._data->Copy();
 			return *this;
 		}
 
 		Any& operator=(Any&& other) noexcept
 		{
-			_value = std::move(other._value);
+			_data = std::move(other._data);
 			return *this;
 		}
 
@@ -165,7 +165,7 @@ namespace Sgl
 
 			if(leftHasValue && rightHasValue)
 			{
-				return *left._value == *right._value;
+				return *left._data == *right._data;
 			}
 			
 			return !leftHasValue && !rightHasValue;

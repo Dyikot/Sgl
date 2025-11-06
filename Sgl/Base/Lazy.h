@@ -3,6 +3,7 @@
 #include <memory>
 #include <tuple>
 #include "Delegate.h"
+#include "Nullable.h"
 
 namespace Sgl
 {
@@ -10,67 +11,70 @@ namespace Sgl
 	class Lazy final
 	{
 	private:
-		mutable std::unique_ptr<T> _value;
-		mutable Func<T> _valueFactory;
+		using DataFactory = Func<T*>;
+
+		mutable Nullable<T> _data;
+		mutable DataFactory _dataFactory;
 	public:
 		Lazy() requires std::default_initializable<T>:
-			_valueFactory([] { return T(); })
+			_dataFactory([] { return new T(); })
 		{}
 
-		template<typename... TArgs> requires std::constructible_from<T, TArgs...>
-		Lazy(TArgs&&... args)
+		explicit Lazy(DataFactory dataFactory):
+			_dataFactory(std::move(dataFactory))
+		{}
+
+		Lazy(const Lazy&) = default;
+		Lazy(Lazy&&) noexcept = default;
+
+		T& GetValue()
 		{
-			_valueFactory = [args = std::make_tuple(std::forward<TArgs>(args)...)]
-			{
-				return std::apply(
-					[](auto&&... args)
-					{
-						return T(std::forward<decltype(args)>(args)...);
-					}, 
-					std::move(args)
-				);
-			};
+			EnsureCreated();
+			return _data.GetValue();
 		}
 
-		Lazy(Func<T> valueFactory):
-			_valueFactory(std::move(valueFactory))
-		{}
-
-		Lazy(const Lazy& other) = delete;
-
-		Lazy(Lazy&& other) noexcept:
-			_value(std::move(other._value)), _valueFactory(std::move(other._valueFactory))
-		{}
-
-		T& Value()
+		const T& GetValue() const
 		{
-			CreateValueIfNull();
-			return *_value;
-		}
-
-		const T& Value() const
-		{
-			CreateValueIfNull();
-			return *_value;
+			EnsureCreated();
+			return _data.GetValue();
 		}
 
 		bool IsValueCreated() const 
 		{ 
-			return _value.operator bool();
+			return _data.operator bool();
 		}
 
-		T& operator*() { return Value(); }
-		const T& operator*() const { return Value(); }
+		Lazy& operator=(const Lazy&) = default;
+		Lazy& operator=(Lazy&&) noexcept = default;
 
-		T* operator->() {  return &Value(); }
-		const T* operator->() const { return &Value(); }
+		T& operator*() 
+		{ 
+			return GetValue();
+		}
+
+		const T& operator*() const 
+		{ 
+			return GetValue(); 
+		}
+
+		T* operator->() 
+		{  
+			EnsureCreated();
+			return _data.Get();
+		}
+
+		const T* operator->() const 
+		{ 
+			EnsureCreated();
+			return _data.Get();
+		}
 	private:
-		void CreateValueIfNull() const
+		void EnsureCreated() const
 		{
-			if(!_value)
+			if(!_data)
 			{
-				_value = std::make_unique<T>(_valueFactory());
-				_valueFactory = nullptr;
+				_data = Nullable<T>(_dataFactory());
+				_dataFactory = nullptr;
 			}
 		}
 	};

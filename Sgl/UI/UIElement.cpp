@@ -50,7 +50,7 @@ namespace Sgl
 	{
 		switch(auto background = GetBackground(); background.GetType())
 		{
-			case Brush::Color:
+			case BrushType::Color:
 			{
 				if(auto color = background.AsColor(); !color.IsTransparent())
 				{
@@ -60,7 +60,7 @@ namespace Sgl
 				break;
 			}
 
-			case Brush::Texture:
+			case BrushType::Texture:
 			{
 				context.DrawTexture(background.AsTexture(), _bounds);
 				break;

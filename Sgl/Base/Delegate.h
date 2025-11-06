@@ -5,15 +5,6 @@
 
 namespace Sgl
 {
-	template<typename TInvocable, typename... TArgs>
-	concept CAction = std::invocable<TInvocable, TArgs...>;
-
-	template<typename TInvocable, typename... TArgs>
-	concept CPredicate = std::is_invocable_r_v<bool, TInvocable, TArgs...>;
-
-	template<typename TInvocable, typename TResult, typename... TArgs>
-	concept CFunc = std::is_invocable_r_v<TResult, TInvocable, TArgs...>;
-
 	template<typename T>
 	class Delegate;
 
@@ -36,7 +27,7 @@ namespace Sgl
 		};
 
 		template<typename TCallable>
-		struct Callable: public ICallable<TReturn, TArgs...>
+		struct Callable : public ICallable<TReturn, TArgs...>
 		{
 		private:
 			TCallable _callable;
@@ -78,8 +69,8 @@ namespace Sgl
 		/// Constructs a delegate with the specified callable object.
 		/// </summary>
 		/// <param name="func"> - The callable object to wrap.</param>
-		template<CFunc<TReturn, TArgs...> TFunc>
-		 requires !std::same_as<std::decay_t<TFunc>, Delegate>
+		template<typename TFunc>
+			requires !std::same_as<std::decay_t<TFunc>, Delegate>
 		Delegate(TFunc&& func):
 			_callable(std::make_unique<Callable<std::decay_t<TFunc>>>(std::forward<TFunc>(func)))
 		{}
@@ -151,7 +142,7 @@ namespace Sgl
 		/// Assignment operator for callable objects.
 		/// </summary>
 		/// <param name="func"> - The callable object to assign.</param>
-		template<CFunc<TReturn, TArgs...> TFunc>
+		template<typename TFunc>
 			requires !std::same_as<std::decay_t<TFunc>, Delegate>
 		Delegate& operator=(TFunc&& func)
 		{

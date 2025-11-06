@@ -44,9 +44,9 @@ namespace Sgl::UIElements
 
 	FSize Canvas::MeasureContent(FSize avaliableSize)
 	{
-		for(UIElement& child : Children)
+		for(auto& child : Children)
 		{
-			child.Measure(avaliableSize);
+			child->Measure(avaliableSize);
 		}
 
 		return FSize();
@@ -54,12 +54,12 @@ namespace Sgl::UIElements
 
 	void Canvas::ArrangeContent(FRect rect)
 	{
-		for(UIElement& child : Children)
+		for(auto& child : Children)
 		{
-			int left = GetLeft(child);
-			int top = GetTop(child);
+			int left = GetLeft(*child);
+			int top = GetTop(*child);
 
-			auto [width, height] = child.GetDesiredSize();
+			auto [width, height] = child->GetDesiredSize();
 
 			FRect childRect =
 			{
@@ -67,10 +67,10 @@ namespace Sgl::UIElements
 				.h = height
 			};
 
-			childRect.x = rect.x + (left != 0 ? left : rect.w - GetRight(child) - width);
-			childRect.y = rect.y + (top != 0 ? top : rect.h - GetBottom(child) - height);
+			childRect.x = rect.x + (left != 0 ? left : rect.w - GetRight(*child) - width);
+			childRect.y = rect.y + (top != 0 ? top : rect.h - GetBottom(*child) - height);
 			
-			child.Arrange(childRect);
+			child->Arrange(childRect);
 		}
 	}	
 }

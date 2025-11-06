@@ -90,22 +90,21 @@ namespace Sgl
 
 		if(_contentPresenter)
 		{
-			UIElement& _content = _contentPresenter;
-			bool wasMouseOver = _content._isMouseOver;
-			bool isMouseOver = Math::IsPointInRect(e.Position, _content._bounds);
+			bool wasMouseOver = _contentPresenter->_isMouseOver;
+			bool isMouseOver = Math::IsPointInRect(e.Position, _contentPresenter->_bounds);
 
 			if(isMouseOver)
 			{
 				if(!wasMouseOver)
 				{
-					_content.OnMouseEnter(e);
+					_contentPresenter->OnMouseEnter(e);
 				}
 
-				_content.OnMouseMove(e);
+				_contentPresenter->OnMouseMove(e);
 			}
 			else if(wasMouseOver)
 			{
-				_content.OnMouseLeave(e);
+				_contentPresenter->OnMouseLeave(e);
 				Cursor::Set(GetCursor());
 			}
 		}
