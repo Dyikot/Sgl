@@ -5,7 +5,7 @@
 
 namespace Sgl::UIElements
 {
-	class Image: public UIElement
+	class Image : public UIElement
 	{
 	private:
 		std::string _source;

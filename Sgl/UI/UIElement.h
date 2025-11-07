@@ -4,6 +4,7 @@
 #include "../Base/Any.h"
 #include "../Base/Event.h"
 #include"../Data/BindingMode.h"
+#include "../Data/DataTemplate.h"
 #include "../Input/MouseAndKeyEventArgs.h"
 #include "Layoutable.h"
 
@@ -11,7 +12,7 @@ namespace Sgl
 {
 	class Scene;
 
-	class UIElement: public Layoutable
+	class UIElement : public Layoutable, public IData
 	{
 	private:
 		using KeyEventHandler = EventHandler<UIElement, KeyEventArgs>;
@@ -29,8 +30,8 @@ namespace Sgl
 		Event<MouseWheelEventHandler> MouseWheel;
 	private:		
 		Any _tag;
+		std::string _name;
 		Ref<UIElement> _toolTip;
-		size_t _zIndex = 0;
 		Ref<ObservableObject> _dataContext;
 
 		bool _isMouseOver = false;
@@ -43,11 +44,11 @@ namespace Sgl
 		void SetTag(const Any& value);
 		const Any& GetTag() const { return _tag; }
 
+		void SetName(const std::string& value);
+		const std::string& GetName() const { return _name; }
+
 		void SetToolTip(Ref<UIElement> value);
 		Ref<UIElement> GetToolTip() const { return _toolTip; }
-
-		void SetZIndex(size_t value);
-		size_t GetZIndex() const { return _zIndex; }
 
 		void SetDataContext(Ref<ObservableObject> value);
 		Ref<ObservableObject> GetDataContext() const { return _dataContext; }
@@ -115,9 +116,9 @@ namespace Sgl
 
 	struct UIElementDataTemplate
 	{
-		Ref<UIElement> operator()(const Any& data) const
+		Ref<UIElement> operator()(const Ref<IData>& data) const
 		{
-			return data.As<Ref<UIElement>>();
+			return data.As<UIElement>();
 		}
 	};
 }

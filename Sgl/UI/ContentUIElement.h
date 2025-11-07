@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../Data/DataTemplate.h"
 #include "UIElements/TextBlock.h"
 
 namespace Sgl
@@ -8,7 +7,7 @@ namespace Sgl
 	class ContentUIElement : public UIElement
 	{
 	private:
-		Any _content;
+		Ref<IData> _content;
 		DataTemplate _contentTemplate;
 		Ref<UIElement> _contentPresenter;
 		Thickness _padding;
@@ -21,35 +20,10 @@ namespace Sgl
 		ContentUIElement(ContentUIElement&& other) noexcept;
 		~ContentUIElement() = default;
 		
-		template<typename T>
-		void SetContent(T&& content)
-		{
-			using TContent = std::decay_t<T>;
-
-			if constexpr(std::convertible_to<TContent, std::string>)
-			{
-				_content = Any::New<std::string>(std::forward<T>(content));
-				_contentTemplate = StringDataTemplate();
-			}
-			else
-			{
-				_content = Any::New<TContent>(std::forward<T>(content));
-			}
-
-			InvalidateMeasure();
-			InvalidateContentPresenter();
-		}
-		
-		template<std::derived_from<UIElement> T>
-		void SetContent(Ref<T> content)
-		{
-			_content = Any::New<Ref<UIElement>>(std::move(content));
-			_contentTemplate = UIElementDataTemplate();
-			InvalidateMeasure();
-			InvalidateContentPresenter();
-		}
-
 		const Ref<UIElement>& GetContentPresenter() const { return _contentPresenter; }
+
+		void SetContent(Ref<IData> content);
+		Ref<IData> GetContent() const { return _content; }
 
 		void SetContentTemplate(DataTemplate value);
 		DataTemplate GetContentTemplate() const { return _contentTemplate; }
@@ -78,6 +52,9 @@ namespace Sgl
 		bool TryCreatePresenter();
 		void InvalidateContentPresenter() { _isContentPresenterValid = false; }
 	public:
+		static inline ObservableProperty<ContentUIElement, Ref<IData>> ContentProperty =
+			ObservableProperty<ContentUIElement, Ref<IData>>(&SetContent, &GetContent);
+
 		static inline ObservableProperty<ContentUIElement, DataTemplate> ContentTemplateProperty =
 			ObservableProperty<ContentUIElement, DataTemplate>(&SetContentTemplate, &GetContentTemplate);
 

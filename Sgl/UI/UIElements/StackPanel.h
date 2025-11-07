@@ -4,7 +4,7 @@
 
 namespace Sgl
 {
-	class StackPanel: public Panel
+	class StackPanel : public Panel
 	{
 	private:
 		float _spacing = 0;

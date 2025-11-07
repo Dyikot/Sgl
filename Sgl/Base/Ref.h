@@ -64,6 +64,18 @@ namespace Sgl
             MoveConstructFrom(std::move(other));
         }
 
+        template<typename TBase> requires std::is_base_of_v<TBase, T>
+        Ref(const Ref<TBase>& base, T* data) noexcept
+        {
+            CopyConstructFromBase(base, data);
+        }
+
+        template<typename TBase> requires std::is_base_of_v<TBase, T>
+        Ref(Ref<TBase>&& base, T* data) noexcept
+        {
+            MoveConstructFromBase(std::move(base), data);
+        }
+
         ~Ref()
         {
             TryDeleteMemoryBlock();            
@@ -71,6 +83,18 @@ namespace Sgl
 
         template<typename T, typename... TArgs>
         friend Ref<T> New(TArgs&&... args);
+
+        template<typename TDerived> 
+        Ref<TDerived> As() const
+        {
+            return Ref<TDerived>(*this, GetAs<TDerived>());
+        }
+
+        template<std::derived_from<T> TDerived>
+        bool Is() const
+        {
+            return dynamic_cast<TDerived*>(_data);
+        }
 
         T* Get() const noexcept
         {
@@ -81,12 +105,6 @@ namespace Sgl
         TOther* GetAs() const
         {
             return static_cast<TOther*>(_data);
-        }
-
-        template<std::derived_from<T> TOther>
-        TOther* TryGetAs() const
-        {
-            return dynamic_cast<TOther*>(_data);
         }
         
         template<typename TValue = T> requires !std::is_void_v<TValue>
@@ -203,6 +221,28 @@ namespace Sgl
 
             other._memoryBlock = nullptr;
             other._data = nullptr;
+        }
+
+        template<typename TBase>
+        void CopyConstructFromBase(const Ref<TBase>& base, T* data) noexcept
+        {
+            _memoryBlock = base._memoryBlock;
+            _data = data;
+
+            if(_memoryBlock)
+            {
+                _memoryBlock->References++;
+            }
+        }
+
+        template<typename TBase>
+        void MoveConstructFromBase(Ref<TBase>&& base, T* data) noexcept
+        {
+            _memoryBlock = base._memoryBlock;
+            _data = data;
+
+            base._memoryBlock = nullptr;
+            base._data = nullptr;
         }
 
         template<typename TDerived>

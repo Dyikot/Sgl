@@ -4,7 +4,7 @@
 
 namespace Sgl::UIElements
 {
-	class Border: public ContentUIElement
+	class Border : public ContentUIElement
 	{
 	private:
 		size_t _borderWidth = 1;

@@ -17,14 +17,33 @@ namespace Sgl
 
 	ContentUIElement::ContentUIElement(ContentUIElement&& other) noexcept:
 		UIElement(std::move(other)),
+		_content(std::move(other._content)),
 		_contentTemplate(std::move(other._contentTemplate)),
 		_padding(std::move(other._padding)),
 		_horizontalContentAlignment(std::move(other._horizontalContentAlignment)),
 		_verticalContentAlignment(std::move(other._verticalContentAlignment)),
-		_content(std::move(other._content)),
 		_contentPresenter(std::move(other._contentPresenter)),
 		_isContentPresenterValid(other._isContentPresenterValid)
 	{}
+
+	void ContentUIElement::SetContent(Ref<IData> content)
+	{
+		SetProperty(ContentProperty, _content, content);
+
+		if(content.Is<UIElement>())
+		{
+			SetContentTemplate(UIElementDataTemplate());
+		}
+		else if(content.Is<TextContent>())
+		{
+			SetContentTemplate(TextDataTemplate());
+		}
+		else
+		{
+			InvalidateMeasure();
+			InvalidateContentPresenter();
+		}
+	}
 
 	void ContentUIElement::SetContentTemplate(DataTemplate value)
 	{
@@ -142,7 +161,7 @@ namespace Sgl
 
 	bool ContentUIElement::TryCreatePresenter()
 	{
-		if(_contentTemplate.HasTarget() && _content.HasValue())
+		if(_contentTemplate.HasTarget() && _content != nullptr)
 		{
 			_contentPresenter = _contentTemplate(_content);
 			_contentPresenter->_parent = this;

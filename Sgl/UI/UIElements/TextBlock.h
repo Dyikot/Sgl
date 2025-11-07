@@ -6,7 +6,7 @@
 
 namespace Sgl::UIElements
 {
-	class TextBlock: public UIElement
+	class TextBlock : public UIElement
 	{
 	public:
 		static constexpr size_t DefaultFontSize = 14;
@@ -97,11 +97,19 @@ namespace Sgl::UIElements
 
 namespace Sgl
 {
-	struct StringDataTemplate
+	class TextContent : public IData
 	{
-		Ref<UIElement> operator()(const Any& data) const
+	public:
+		std::string Text;
+	public:
+		TextContent(std::string Text): Text(std::move(Text)) {}
+	};
+
+	struct TextDataTemplate
+	{
+		Ref<UIElement> operator()(const Ref<IData>& data) const
 		{
-			const auto& text = data.As<std::string>();
+			const auto& text = data.GetValueAs<TextContent>().Text;
 			auto textBlock = New<UIElements::TextBlock>();
 			textBlock->SetText(text);
 			return textBlock;

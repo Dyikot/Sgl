@@ -4,7 +4,7 @@
 
 namespace Sgl::UIElements
 {
-	class Canvas: public Panel
+	class Canvas : public Panel
 	{
 	public:
 		static inline AttachedProperty<int> LeftProperty;
