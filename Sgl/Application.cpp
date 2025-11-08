@@ -44,9 +44,9 @@ namespace Sgl
 		return _fpsCounter.GetFps();
 	}
 
-	void Application::SetCulture(std::string value)
+	void Application::SetCulture(const std::string& value)
 	{
-		_culture = std::move(value);
+		_culture = value;
 
 		if(_localizer)
 		{
@@ -320,7 +320,7 @@ namespace Sgl
 		{
 			frameStopwatch.Restart();
 
-			auto scene = SceneManager.GetNextScene();
+			Scene* scene = SceneManager.GetNextScene();
 			if(scene == nullptr)
 			{
 				Shutdown();

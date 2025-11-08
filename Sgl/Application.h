@@ -49,7 +49,7 @@ namespace Sgl
 		size_t GetFpsLimit() const noexcept;
 		size_t GetFps() const;
 
-		void SetCulture(std::string value);
+		void SetCulture(const std::string& value);
 		const std::string& GetCulture() const { return _culture; }
 
 		void SetLocalizer(std::string csvFile, char delimeter = ',');

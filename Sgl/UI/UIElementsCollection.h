@@ -2,6 +2,7 @@
 
 #include "UIElement.h"
 #include "../Base/Collections/Collection.h"
+#include <cassert>
 
 namespace Sgl
 {
@@ -41,11 +42,8 @@ namespace Sgl
 
 		void InsertItem(size_t index, const Ref<UIElement>& item) override
 		{
-			if(item == nullptr)
-			{
-				throw std::invalid_argument("UIElement can not be null");
-			}
-
+			assert(item != nullptr);
+			
 			item->_parent = &_owner;
 			base::InsertItem(index, item);
 			_owner.InvalidateMeasure();
@@ -53,10 +51,7 @@ namespace Sgl
 
 		void SetItem(size_t index, const Ref<UIElement>& item) override
 		{
-			if(item == nullptr)
-			{
-				throw std::invalid_argument("UIElement can not be null");
-			}
+			assert(item != nullptr);
 
 			item->_parent = &_owner;
 			base::SetItem(index, item);

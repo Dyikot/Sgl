@@ -8,8 +8,8 @@
 namespace Sgl
 {
 	static constexpr size_t MaxPointsNumber = 180;
-	static const auto SinRange = Math::SinRange<MaxPointsNumber>();
-	static const auto CosRange = Math::CosRange<MaxPointsNumber>();
+	static const auto SinRange = Math::SinRange(MaxPointsNumber);
+	static const auto CosRange = Math::CosRange(MaxPointsNumber);
 
 	RenderContext::RenderContext():
 		_renderer(App->Window.GetSDLRenderer())

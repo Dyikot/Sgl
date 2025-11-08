@@ -1,9 +1,9 @@
 #pragma once
 
 #include <SDL/SDL_timer.h>
-#include "TimeSpan.h"
 #include <chrono>
 #include <thread>
+#include "TimeSpan.h"
 
 namespace Sgl
 {
@@ -13,11 +13,13 @@ namespace Sgl
 	/// <param name="duration"> - sleep time duration</param>
 	inline void SleepFor(TimeSpan duration)
 	{
+		using namespace std::chrono;
+
 		constexpr auto millisecondsThreshold = TimeSpan::FromMilliseconds(15);
 		constexpr auto microsecondsThreshold = TimeSpan::FromMicroseconds(100);
 
-		auto start = std::chrono::high_resolution_clock::now();
-		auto end = start + std::chrono::nanoseconds(duration.ToNanoseconds());
+		auto start = high_resolution_clock::now();
+		auto end = start + nanoseconds(duration.ToNanoseconds());
 
 		if(duration >= millisecondsThreshold)
 		{
@@ -25,7 +27,7 @@ namespace Sgl
 		}
 		else if(duration >= microsecondsThreshold)
 		{
-			while(std::chrono::high_resolution_clock::now() < end)
+			while(high_resolution_clock::now() < end)
 			{
 				std::this_thread::yield();
 			}
