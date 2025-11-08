@@ -1,6 +1,7 @@
 #pragma once
 
 #include "UIElements/TextBlock.h"
+#include "../Data/TextData.h"
 
 namespace Sgl
 {
@@ -50,7 +51,7 @@ namespace Sgl
 		void ArrangeContent(FRect rect) override;
 	private:
 		bool TryCreatePresenter();
-		void InvalidateContentPresenter() { _isContentPresenterValid = false; }
+		void InvalidateContentPresenter();
 	public:
 		static inline ObservableProperty<ContentUIElement, Ref<IData>> ContentProperty =
 			ObservableProperty<ContentUIElement, Ref<IData>>(&SetContent, &GetContent);

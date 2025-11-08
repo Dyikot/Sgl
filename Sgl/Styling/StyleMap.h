@@ -4,17 +4,16 @@
 #include <memory>
 #include <string>
 #include "Style.h"
-#include "../Base/Ref.h"
 
 namespace Sgl
 {
     class StyleMap
     {
     private:
-        std::unordered_map<std::string_view, Ref<IStyle>> _items;
+        std::unordered_map<std::string_view, std::unique_ptr<IStyle>> _items;
     public:
         StyleMap() = default;
-        StyleMap(const StyleMap& other);
+        StyleMap(const StyleMap&) = delete;
         StyleMap(StyleMap&& other) noexcept;
         ~StyleMap() = default;
 
@@ -27,15 +26,15 @@ namespace Sgl
         template<typename T>
         Style<T>& Add(std::string_view key)
         {
-            auto [it, _] = _items.emplace(key, New<Style<T>>());
-            return it->second.GetValueAs<Style<T>>();
+            auto [it, _] = _items.emplace(key, std::make_unique<Style<T>>());
+            return static_cast<Style<T>&>(*it->second);
         }
 
-        Ref<IStyle> TryGet(std::string_view key) const;
+        IStyle* TryGet(std::string_view key) const;
         void Remove(std::string_view key);
         bool IsEmpty() const;
 
-        StyleMap& operator=(const StyleMap& other);
+        StyleMap& operator=(const StyleMap&) = delete;
         StyleMap& operator=(StyleMap&& other) noexcept;
     };    
 }

@@ -5,13 +5,16 @@
 
 namespace Sgl
 {
+    class IData;
     class UIElement;
-    
+
+    using DataTemplate = Delegate<Ref<UIElement>(const Ref<IData>&)>;
+
     class IData
     {
     public:
         virtual ~IData() = default;
-    };
 
-    using DataTemplate = Delegate<Ref<UIElement>(const Ref<IData>&)>;
+        virtual DataTemplate GetDefaultDataTemplate() const = 0;
+    };
 }

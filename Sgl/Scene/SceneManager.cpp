@@ -29,12 +29,12 @@ namespace Sgl
 		}
 	}
 
-	Ref<Scene> SceneManager::GetCurrentScene()
+	Scene* SceneManager::GetCurrentScene()
 	{
-		return _scenes.empty() ? nullptr : _scenes.top();
+		return _scenes.empty() ? nullptr : _scenes.top().get();
 	}
 
-	Ref<Scene> SceneManager::GetNextScene()
+	Scene* SceneManager::GetNextScene()
 	{
 		while(true)
 		{

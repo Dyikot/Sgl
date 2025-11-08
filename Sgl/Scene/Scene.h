@@ -7,7 +7,7 @@
 
 namespace Sgl
 {	
-	class Scene: public Renderable
+	class Scene : public Renderable
 	{
 	protected:
 		Ref<UIElement> _content;

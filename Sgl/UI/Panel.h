@@ -5,7 +5,7 @@
 
 namespace Sgl
 {
-	class Panel: public UIElement
+	class Panel : public UIElement
 	{
 	public:
 		UIElementsCollection Children;

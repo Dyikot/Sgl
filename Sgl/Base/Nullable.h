@@ -4,8 +4,7 @@
 #include <memory>
 
 namespace Sgl
-{
-	
+{	
 	template<typename T>
 		requires std::is_object_v<T> && std::copy_constructible<T>
 	class Nullable final

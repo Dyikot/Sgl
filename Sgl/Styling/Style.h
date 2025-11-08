@@ -17,7 +17,7 @@ namespace Sgl
         virtual void Apply(StyleableElement& target) = 0;
     };
 
-    template<typename T>
+    template<std::derived_from<StyleableElement> T>
     class Style : public IStyle
     {
     private:
@@ -48,10 +48,9 @@ namespace Sgl
 
         void Apply(StyleableElement& target) override
         {
-            T& targetElement = static_cast<T&>(target);
             for(const auto& setter : _setters)
             {
-                setter(targetElement);
+                setter(static_cast<T&>(target));
             }
         }
     };    

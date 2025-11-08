@@ -3,16 +3,15 @@
 #include <stack>
 #include <queue>
 #include "Scene.h"
-#include "../Base/Ref.h"
 
 namespace Sgl
 {
 	class SceneManager
 	{
 	private:
-		using SceneFactory = Func<Ref<Scene>>;
+		using SceneFactory = Func<std::unique_ptr<Scene>>;
 
-		std::stack<Ref<Scene>> _scenes;
+		std::stack<std::unique_ptr<Scene>> _scenes;
 		std::queue<SceneFactory> _sceneFactoriesQueue;
 		size_t _scenesToDestroy = 0;
 	public:
@@ -22,14 +21,14 @@ namespace Sgl
 		~SceneManager();
 
 		template<std::derived_from<Scene> TScene>
-		void Push() { _sceneFactoriesQueue.push([] { return New<TScene>(); }); }
+		void Push() { _sceneFactoriesQueue.push([] { return std::make_unique<TScene>(); }); }
 		void Push(SceneFactory sceneFactory);
 
 		void Pop() noexcept;
 		void Clear();
-		Ref<Scene> GetCurrentScene();
+		Scene* GetCurrentScene();
 	private:
-		Ref<Scene> GetNextScene();
+		Scene* GetNextScene();
 		void CreateScene();
 		void DestroyScene();
 

@@ -6,7 +6,6 @@ namespace Sgl
 {
 	StyleableElement::StyleableElement(const StyleableElement& other):
 		ObservableObject(other),
-		Styles(other.Styles),
 		_classList(other._classList),
 		_parent(other._parent),
 		_isStyleValid(other._isStyleValid),
@@ -22,16 +21,16 @@ namespace Sgl
 		_styles(std::move(other._styles))
 	{}
 
-	void StyleableElement::SetClasses(std::string classNames)
+	void StyleableElement::SetClasses(const std::string& classNames)
 	{
 		_classList.clear();
 
-		auto stream = std::stringstream(classNames);
+		std::stringstream stream(classNames);
 		std::string buffer;
 
 		while(stream >> buffer)
 		{
-			_classList.push_back(buffer);
+			_classList.push_back(std::move(buffer));
 		}
 
 		InvalidateStyle();

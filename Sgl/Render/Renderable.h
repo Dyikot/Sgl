@@ -7,7 +7,7 @@
 
 namespace Sgl
 {
-    class Renderable: public StyleableElement
+    class Renderable : public StyleableElement
     {
     private:
         Cursor _cursor = Cursors::Arrow;

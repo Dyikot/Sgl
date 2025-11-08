@@ -30,19 +30,18 @@ namespace Sgl
 	{
 		SetProperty(ContentProperty, _content, content);
 
-		if(content.Is<UIElement>())
+		if(content != nullptr)
 		{
-			SetContentTemplate(UIElementDataTemplate());
+			auto dataTemplate = content->GetDefaultDataTemplate();
+			if(dataTemplate != nullptr)
+			{
+				SetContentTemplate(std::move(dataTemplate));
+				return;
+			}			
 		}
-		else if(content.Is<TextContent>())
-		{
-			SetContentTemplate(TextDataTemplate());
-		}
-		else
-		{
-			InvalidateMeasure();
-			InvalidateContentPresenter();
-		}
+
+		InvalidateMeasure();
+		InvalidateContentPresenter();
 	}
 
 	void ContentUIElement::SetContentTemplate(DataTemplate value)
@@ -169,6 +168,11 @@ namespace Sgl
 		}
 
 		return false;
+	}
+
+	void ContentUIElement::InvalidateContentPresenter()
+	{
+		_isContentPresenterValid = false;
 	}
 
 	FSize ContentUIElement::MeasureContent(FSize avaliableSize)

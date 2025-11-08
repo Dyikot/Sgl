@@ -94,25 +94,3 @@ namespace Sgl::UIElements
 			ObservableProperty<TextBlock, Thickness>(&SetPadding, &GetPadding);
 	};
 }
-
-namespace Sgl
-{
-	class TextContent : public IData
-	{
-	public:
-		std::string Text;
-	public:
-		TextContent(std::string Text): Text(std::move(Text)) {}
-	};
-
-	struct TextDataTemplate
-	{
-		Ref<UIElement> operator()(const Ref<IData>& data) const
-		{
-			const auto& text = data.GetValueAs<TextContent>().Text;
-			auto textBlock = New<UIElements::TextBlock>();
-			textBlock->SetText(text);
-			return textBlock;
-		}
-	};
-}

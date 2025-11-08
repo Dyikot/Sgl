@@ -327,7 +327,7 @@ namespace Sgl
 				break;
 			}
 
-			HandleEvents(scene.GetValue());
+			HandleEvents(*scene);
 
 			scene->Process(processStopwatch.Elapsed());
 			processStopwatch.Restart();

@@ -56,6 +56,7 @@ namespace Sgl
 		bool IsMouseOver() const { return _isMouseOver; }
 
 		void Render(RenderContext context) override;
+		DataTemplate GetDefaultDataTemplate() const override;
 
 		template<typename TObservable, typename TObserver, typename TMember>
 		void Bind(ObservableProperty<TObservable, TMember>& observableProperty,
@@ -112,13 +113,5 @@ namespace Sgl
 		friend class Panel;
 		friend class ContentUIElement;
 		friend class UIElementsCollection;
-	};
-
-	struct UIElementDataTemplate
-	{
-		Ref<UIElement> operator()(const Ref<IData>& data) const
-		{
-			return data.As<UIElement>();
-		}
-	};
+	};	
 }

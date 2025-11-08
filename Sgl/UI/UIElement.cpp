@@ -53,6 +53,14 @@ namespace Sgl
 		Renderable::Render(context);
 	}
 
+	DataTemplate UIElement::GetDefaultDataTemplate() const
+	{
+		return [](const Ref<IData>& data)
+		{
+			return data.As<UIElement>();
+		};
+	}
+
 	void UIElement::RenderBackground(RenderContext context)
 	{
 		switch(auto background = GetBackground(); background.GetType())

@@ -7,7 +7,7 @@
 
 namespace Sgl
 {
-	class Layoutable: public Renderable
+	class Layoutable : public Renderable
 	{
 	protected:
 		FRect _bounds = {};

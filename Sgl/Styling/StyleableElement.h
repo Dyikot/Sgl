@@ -17,14 +17,14 @@ namespace Sgl
 	private:
 		bool _isStyleValid = false;
 		std::vector<std::string> _classList;
-		std::vector<Ref<IStyle>> _styles;
+		std::vector<IStyle*> _styles;
 	public:
 		StyleableElement() = default;
 		StyleableElement(const StyleableElement& other);
 		StyleableElement(StyleableElement&& other) noexcept;
 		virtual ~StyleableElement() = default;
 
-		void SetClasses(std::string classNames);
+		void SetClasses(const std::string& classNames);
 		void SetClasses(std::vector<std::string> classList);
 		const std::vector<std::string>& GetClasses() const;
 

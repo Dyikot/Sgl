@@ -6,7 +6,7 @@
 
 namespace Sgl
 {
-    class Playlist: public IPlaylist
+    class Playlist : public IPlaylist
     {
     private:
         std::vector<Music> _items;
