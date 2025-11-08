@@ -3,7 +3,6 @@
 #include <memory>
 #include <tuple>
 #include "Delegate.h"
-#include "Nullable.h"
 
 namespace Sgl
 {
@@ -11,13 +10,13 @@ namespace Sgl
 	class Lazy final
 	{
 	private:
-		using DataFactory = Func<T*>;
+		using DataFactory = Func<std::unique_ptr<T>>;
 
-		mutable Nullable<T> _data;
+		mutable std::unique_ptr<T> _data;
 		mutable DataFactory _dataFactory;
 	public:
 		Lazy() requires std::default_initializable<T>:
-			_dataFactory([] { return new T(); })
+			_dataFactory([] { return std::make_unique<T>(); })
 		{}
 
 		explicit Lazy(DataFactory dataFactory):
@@ -30,13 +29,13 @@ namespace Sgl
 		T& GetValue()
 		{
 			EnsureCreated();
-			return _data.GetValue();
+			return *_data;
 		}
 
 		const T& GetValue() const
 		{
 			EnsureCreated();
-			return _data.GetValue();
+			return *_data;
 		}
 
 		bool IsValueCreated() const 
@@ -73,7 +72,7 @@ namespace Sgl
 		{
 			if(!_data)
 			{
-				_data = Nullable<T>(_dataFactory());
+				_data = _dataFactory();
 				_dataFactory = nullptr;
 			}
 		}

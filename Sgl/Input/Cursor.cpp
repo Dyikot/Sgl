@@ -98,7 +98,7 @@ namespace Sgl
         _cursor(std::exchange(other._cursor, nullptr))
     {}
 
-    void Cursor::Set(const Cursor & cursor)
+    void Cursor::Set(const Cursor& cursor)
     {
         auto sdlCursor = cursor.ToSDLCursor();
         if(sdlCursor && sdlCursor != SDL_GetCursor())
