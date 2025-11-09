@@ -4,6 +4,12 @@
 
 namespace Sgl
 {
+	inline size_t GenerateUniquePropertyId()
+	{
+		static size_t counter = 0;
+		return counter++;
+	}
+
 	template<typename TOwner, typename TValue>
 	class ObservableProperty
 	{
@@ -14,17 +20,20 @@ namespace Sgl
 		using PropertySetter = void(TOwner::*)(TValue);
 		using PropertyGetter = TValue(TOwner::*)() const;
 
-		const PropertyId Id = _id++;
+		const PropertyId Id;
 		const PropertySetter Setter;
 		const PropertyGetter Getter;
-	private:
-		static inline PropertyId _id = 0;
 	public:
-		ObservableProperty(PropertySetter setter, PropertyGetter getter) :
-			Setter(setter), Getter(getter)
+		ObservableProperty(PropertySetter setter, PropertyGetter getter):
+			Setter(setter), 
+			Getter(getter), 
+			Id(GenerateUniquePropertyId())
 		{}
-		ObservableProperty(const ObservableProperty&) = delete;
-		ObservableProperty(ObservableProperty&&) = delete;
+		ObservableProperty(const ObservableProperty&) = default;
+		ObservableProperty(ObservableProperty&&) = default;
 		~ObservableProperty() = default;
 	};
+
+	template<typename TOwner, typename TValue>
+	ObservableProperty(void(TOwner::*)(TValue), TValue(TOwner::*)() const) -> ObservableProperty<TOwner, TValue>;
 }

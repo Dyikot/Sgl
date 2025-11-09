@@ -69,28 +69,13 @@ namespace Sgl::UIElements
 		void CreateOrUpdateFont();
 		void CreateTextTextureIfInvalid(float maxLineWidth);
 	public:
-		static inline ObservableProperty<TextBlock, const std::string&> TextProperty =
-			ObservableProperty<TextBlock, const std::string&>(&SetText, &GetText);
-
-		static inline ObservableProperty<TextBlock, size_t> FontSizeProperty =
-			ObservableProperty<TextBlock, size_t>(&SetFontSize, &GetFontSize);
-
-		static inline ObservableProperty<TextBlock, const FontFamily&> FontFamilyProperty =
-			ObservableProperty<TextBlock,const FontFamily&>(&SetFontFamily, &GetFontFamily);
-
-		static inline ObservableProperty<TextBlock, FontStyle> FontStyleProperty =
-			ObservableProperty<TextBlock, FontStyle>(&SetFontStyle, &GetFontStyle);
-
-		static inline ObservableProperty<TextBlock, Color> ForegroundProperty =
-			ObservableProperty<TextBlock, Color>(&SetForeground, &GetForeground);
-
-		static inline ObservableProperty<TextBlock, TextWrapping> TextWrappingProperty =
-			ObservableProperty<TextBlock, TextWrapping>(&SetTextWrapping, &GetTextWrapping);
-
-		static inline ObservableProperty<TextBlock, TextAlignment> TextAlignmentProperty =
-			ObservableProperty<TextBlock, TextAlignment>(&SetTextAlignment, &GetTextAlignment);
-
-		static inline ObservableProperty<TextBlock, Thickness> PaddingProperty =
-			ObservableProperty<TextBlock, Thickness>(&SetPadding, &GetPadding);
+		static inline ObservableProperty TextProperty { &SetText, &GetText };
+		static inline ObservableProperty FontSizeProperty { &SetFontSize, &GetFontSize };
+		static inline ObservableProperty FontFamilyProperty { &SetFontFamily, &GetFontFamily };
+		static inline ObservableProperty FontStyleProperty { &SetFontStyle, &GetFontStyle };
+		static inline ObservableProperty ForegroundProperty { &SetForeground, &GetForeground };
+		static inline ObservableProperty TextWrappingProperty { &SetTextWrapping, &GetTextWrapping };
+		static inline ObservableProperty TextAlignmentProperty { &SetTextAlignment, &GetTextAlignment };
+		static inline ObservableProperty PaddingProperty { &SetPadding, &GetPadding };
 	};
 }

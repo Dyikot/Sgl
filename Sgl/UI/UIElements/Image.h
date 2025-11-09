@@ -27,10 +27,7 @@ namespace Sgl::UIElements
 	protected:
 		void ArrangeCore(FRect rect) override;
 	public:
-		static inline ObservableProperty<Image, const std::string&> SourceProperty =
-			ObservableProperty<Image, const std::string&>(&SetSource, &GetSource);
-
-		static inline ObservableProperty<Image, Stretch> StretchProperty =
-			ObservableProperty<Image, Stretch>(&SetStretch, &GetStretch);
+		static inline ObservableProperty SourceProperty { &SetSource, &GetSource };
+		static inline ObservableProperty StretchProperty { &SetStretch, &GetStretch };
 	};
 }

@@ -25,8 +25,23 @@ namespace Sgl
 				[&observerProperty, obs = &static_cast<TObserver&>(observer)]
 				(const void* value)
 			{
-				const auto& val = AsValue<TMember>(value);
-				std::invoke(observerProperty.Setter, obs, val);
+				(obs->*observerProperty.Setter)(AsValue<TMember>(value));
+			};
+		}
+
+		template<typename TObservable, typename TObservableMember,
+				 typename TObserver, typename TObserverMember,
+				 typename TConverter>
+		void SetObserver(ObservableProperty<TObservable, TObservableMember>& observableProperty,
+						 ObservableObject& observer,
+						 ObservableProperty<TObserver, TObserverMember>& observerProperty,
+						 TConverter converter)
+		{
+			_observers[observableProperty.Id] =
+				[&observerProperty, obs = &static_cast<TObserver&>(observer), converter]
+				(const void* value)
+			{
+				(obs->*observerProperty.Setter)(converter(AsValue<TObservableMember>(value)));
 			};
 		}
 

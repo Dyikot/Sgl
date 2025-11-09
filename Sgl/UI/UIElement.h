@@ -59,29 +59,83 @@ namespace Sgl
 		DataTemplate GetDefaultDataTemplate() const override;
 
 		template<typename TObservable, typename TObserver, typename TMember>
-		void Bind(ObservableProperty<TObservable, TMember>& observableProperty,
-				  ObservableProperty<TObserver, TMember>& observerProperty,
+		void Bind(ObservableProperty<TObserver, TMember>& targetProperty,
+				  ObservableProperty<TObservable, TMember>& sourceProperty,				  
 				  BindingMode mode = BindingMode::OneWay)
 		{
 			if(_dataContext)
 			{
-				auto& observer = _dataContext.GetValueAs<TObserver>();
+				auto& source = _dataContext.GetValueAs<TObservable>();
+				auto& target = static_cast<TObserver&>(*this);
 
 				switch(mode)
 				{
 					case Sgl::BindingMode::OneWay:
-						SetObserver(observableProperty, observer, observerProperty);
+					{
+						(target.*targetProperty.Setter)((source.*sourceProperty.Getter)());
+						source.SetObserver(sourceProperty, target, targetProperty);
 						break;
+					}
 
 					case Sgl::BindingMode::OneWayToSource:
-						observer.SetObserver(observerProperty, *this, observableProperty);
+					{
+						(source.*sourceProperty.Setter)((target.*targetProperty.Getter)());
+						SetObserver(targetProperty, source, sourceProperty);
 						break;
+					}
 
 					case Sgl::BindingMode::TwoWay:
-						SetObserver(observableProperty, observer, observerProperty);
-						observer.SetObserver(observerProperty, *this, observableProperty);
+					{
+						(target.*targetProperty.Setter)((source.*sourceProperty.Getter)());
+						source.SetObserver(sourceProperty, target, targetProperty);
+						SetObserver(targetProperty, source, sourceProperty);
 						break;
+					}
 				}				
+			}
+			else
+			{
+				throw std::exception("Data context is null");
+			}
+		}
+
+		template<typename TObserver, typename TObserverMember,
+				 typename TObservable, typename TObservableMember,
+				 typename TConverter>
+		void Bind(ObservableProperty<TObserver, TObserverMember>& targetProperty,
+				  ObservableProperty<TObservable, TObservableMember>& sourceProperty,
+				  TConverter converter,
+				  BindingMode mode = BindingMode::OneWay)
+		{
+			if(_dataContext)
+			{
+				auto& source = _dataContext.GetValueAs<TObservable>();
+				auto& target = static_cast<TObserver&>(*this);
+
+				switch(mode)
+				{
+					case Sgl::BindingMode::OneWay:
+					{
+						(target.*targetProperty.Setter)(converter((source.*sourceProperty.Getter)()));
+						source.SetObserver(sourceProperty, target, targetProperty, converter);
+						break;
+					}
+
+					case Sgl::BindingMode::OneWayToSource:
+					{
+						(source.*sourceProperty.Setter)(converter((target.*targetProperty.Getter)()));
+						SetObserver(targetProperty, source, sourceProperty, converter);
+						break;
+					}
+
+					case Sgl::BindingMode::TwoWay:
+					{
+						(target.*targetProperty.Setter)(converter((source.*sourceProperty.Getter)()));
+						source.SetObserver(sourceProperty, target, targetProperty, converter);
+						SetObserver(targetProperty, source, sourceProperty, converter);
+						break;
+					}
+				}
 			}
 			else
 			{
@@ -100,14 +154,9 @@ namespace Sgl
 		virtual void OnMouseEnter(MouseEventArgs& e);
 		virtual void OnMouseLeave(MouseEventArgs& e);
 	public:
-		static inline ObservableProperty<UIElement, const Any&> TagProperty =
-			ObservableProperty<UIElement, const Any&>(&SetTag, &GetTag);
-
-		static inline ObservableProperty<UIElement, Ref<UIElement>> ToolTipProperty =
-			ObservableProperty<UIElement, Ref<UIElement>>(&SetToolTip, &GetToolTip);
-
-		static inline ObservableProperty<UIElement, Ref<ObservableObject>> DataContextProperty =
-			ObservableProperty<UIElement, Ref<ObservableObject>>(&SetDataContext, &GetDataContext);
+		static inline ObservableProperty TagProperty { &SetTag, &GetTag };
+		static inline ObservableProperty ToolTipProperty { &SetToolTip, &GetToolTip };
+		static inline ObservableProperty DataContextProperty { &SetDataContext, &GetDataContext };
 
 		friend class Scene;
 		friend class Panel;

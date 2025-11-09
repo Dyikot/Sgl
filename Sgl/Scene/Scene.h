@@ -42,7 +42,6 @@ namespace Sgl
 		friend class Application;
 		friend class SceneManager;
 	public:
-		static inline ObservableProperty<Scene, Ref<UIElement>> ContentProperty =
-			ObservableProperty<Scene, Ref<UIElement>>(&SetContent, &GetContent);
+		static inline ObservableProperty ContentProperty { &SetContent, &GetContent };
 	};
 }

@@ -33,10 +33,7 @@ namespace Sgl
     protected:
         virtual void OnCursorChanged(const Cursor& cursor) {}
     public:
-        static inline ObservableProperty<Renderable, const Cursor&> CursorProperty =
-            ObservableProperty<Renderable, const Cursor&>(&SetCursor, &GetCursor);
-
-        static inline ObservableProperty<Renderable, Brush> BackgroundProperty =
-            ObservableProperty<Renderable, Brush>(&SetBackground, &GetBackground);        
+        static inline ObservableProperty CursorProperty { &SetCursor, &GetCursor };
+        static inline ObservableProperty BackgroundProperty { &SetBackground, &GetBackground };
     };
 }
