@@ -158,8 +158,8 @@ namespace Sgl
 		static inline ObservableProperty ToolTipProperty { &SetToolTip, &GetToolTip };
 		static inline ObservableProperty DataContextProperty { &SetDataContext, &GetDataContext };
 
-		friend class Scene;
 		friend class Panel;
+		friend class Window;
 		friend class ContentUIElement;
 		friend class UIElementsCollection;
 	};	

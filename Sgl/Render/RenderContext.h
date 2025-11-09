@@ -17,7 +17,7 @@ namespace Sgl
 	private:
 		SDL_Renderer* _renderer;
 	public:
-		RenderContext();
+		RenderContext(SDL_Renderer* renderer);
 		
 		void SetTarget(const Texture& texture);
 		void ResetTarget();

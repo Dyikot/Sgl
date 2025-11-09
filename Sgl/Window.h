@@ -6,6 +6,10 @@
 #include "Base/Event.h"
 #include "Base/Ref.h"
 #include "Base/Primitives.h"
+#include "Base/Time/Stopwatch.h"
+#include "Input/MouseAndKeyEventArgs.h"
+#include "Input/TextEventArgs.h"
+#include "UI/UIElement.h"
 
 namespace Sgl
 {
@@ -45,7 +49,7 @@ namespace Sgl
 	/// handling events, and rendering graphics. It encapsulates SDL_Window and SDL_Renderer
 	/// objects and provides convenient methods for common window operations.
 	/// </summary>
-	class Window
+	class Window : public Renderable
 	{
 	private:
 		using WindowStateEventHandler = EventHandler<Window, WindowStateEventArgs>;
@@ -80,14 +84,17 @@ namespace Sgl
 	protected:
 		SDL_Window* _window;
 		SDL_Renderer* _renderer;
+		RenderContext _context;
+		Ref<UIElement> _content;
 	private:
+		int _id = 0;
 		Surface _icon;
-		bool _hasVSync = false;
+		Stopwatch _stopwatch;
 	public:
 		Window() noexcept;
 		Window(const Window&) = delete;
 		Window(Window&&) = delete;
-		~Window() = default;
+		virtual ~Window();
 
 		/// <summary>
 		/// Gets the underlying SDL window handle
@@ -100,6 +107,8 @@ namespace Sgl
 		/// </summary>
 		/// <returns>Pointer to the SDL_Renderer</returns>
 		SDL_Renderer* GetSDLRenderer() const noexcept;
+
+		int GetId() const noexcept;
 
 		/// <summary>
 		/// Sets the window width
@@ -234,18 +243,6 @@ namespace Sgl
 		Surface GetIcon() const;
 
 		/// <summary>
-		/// Enables or disables VSync
-		/// </summary>
-		/// <param name="value">- true to enable VSync, false to disable</param>
-		void SetVSync(bool value = true) noexcept;
-
-		/// <summary>
-		/// Checks if VSync is enabled
-		/// </summary>
-		/// <returns>True if VSync is enabled, false otherwise</returns>
-		bool HasVSync() const;
-
-		/// <summary>
 		/// Sets whether the window is resizable
 		/// </summary>
 		/// <param name="value">- true to make resizable, false otherwise</param>
@@ -257,6 +254,9 @@ namespace Sgl
 		/// <returns>True if resizable, false otherwise</returns>
 		bool IsResizable() const;
 
+		void SetContent(Ref<UIElement> value);
+		Ref<UIElement> GetContent() const;
+
 		/// <summary>
 		/// Shows the window
 		/// </summary>
@@ -267,17 +267,42 @@ namespace Sgl
 		/// </summary>
 		void Hide();
 
+		void Focus();
+
 		/// <summary>
 		/// Checks if the window is visible
 		/// </summary>
 		/// <returns>- true if visible, false otherwise</returns>
 		bool IsVisible() const;
+
+		void Render(RenderContext context) override;
+		virtual void Process(TimeSpan elapsed);
 	protected:
-		void OnWindowStateChanged(WindowStateEventArgs& e);
-		void OnVisibilityChanged(WindowVisibilityEventArgs& e);
-		void OnPositionChanged(WindowPositionChangedEventArgs& e);
-		void OnWindowSizeChanged(WindowSizeChangedEventArgs& e);
+		void OnCursorChanged(const Cursor& cursor) override;
+		virtual void OnWindowStateChanged(WindowStateEventArgs& e);
+		virtual void OnVisibilityChanged(WindowVisibilityEventArgs& e);
+		virtual void OnPositionChanged(WindowPositionChangedEventArgs& e);
+		virtual void OnWindowSizeChanged(WindowSizeChangedEventArgs& e);
+		virtual void OnKeyUp(KeyEventArgs& e) {}
+		virtual void OnKeyDown(KeyEventArgs& e) {}
+		virtual void OnMouseMove(MouseEventArgs& e);
+		virtual void OnMouseDown(MouseButtonEventArgs& e);
+		virtual void OnMouseUp(MouseButtonEventArgs& e);
+		virtual void OnMouseWheelChanged(MouseWheelEventArgs& e) {}
+		virtual void OnTextInput(TextInputEventArgs& e) {}
+		virtual void OnTextEditing(TextEditingEventArgs& e) {}
+		virtual void OnMouseEnter() {}
+		virtual void OnMouseLeave() {}
+		virtual void OnGotFocus() {}
+		virtual void OnLostFocus() {}
+		virtual void OnClosing() {}
+	private:
+		void RenderCore();
+		void ProcessCore();
+		void UpdateStyleAndLayout();
 
 		friend class Application;
+	public:
+		static inline ObservableProperty ContentProperty { &SetContent, &GetContent };
 	};
 }

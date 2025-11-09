@@ -1,5 +1,8 @@
 #include "Window.h"
 #include "Base/Log.h"
+#include "Base/Math.h"
+#include "Base/Time/Delay.h"
+#include "Application.h"
 
 namespace Sgl
 {
@@ -7,16 +10,29 @@ namespace Sgl
     constexpr auto DefaultWidth = 1280;
     constexpr auto DefaultHeight = 720;
     constexpr auto DefaultPosition = Point(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
-
+    
     Window::Window() noexcept:
         _window(SDL_CreateWindow(DefaultTitle, DefaultPosition.x, DefaultPosition.y,
                                  DefaultWidth, DefaultHeight, SDL_WINDOW_HIDDEN)),
-        _renderer(SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED))
+        _renderer(SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC)),
+        _context(_renderer)
     {
         Log::PrintSDLErrorIf(_window == nullptr);
         Log::PrintSDLErrorIf(_renderer == nullptr);
 
+        _id = SDL_GetWindowID(_window);
+        _context.SetBlendMode(SDL_BLENDMODE_BLEND);
         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+        SetBackground(Colors::White);
+
+        App->AddWindow(this);
+    }
+
+    Window::~Window()
+    {
+        App->RemoveWindow(this);
+        SDL_DestroyRenderer(GetSDLRenderer());
+        SDL_DestroyWindow(GetSDLWindow());
     }
 
     SDL_Window* Window::GetSDLWindow() const noexcept
@@ -27,6 +43,11 @@ namespace Sgl
     SDL_Renderer* Window::GetSDLRenderer() const noexcept
     {
         return _renderer;
+    }
+
+    int Window::GetId() const noexcept
+    {
+        return _id;
     }
 
     void Window::SetWidth(size_t value) noexcept
@@ -212,23 +233,6 @@ namespace Sgl
         return _icon;
     }
 
-    void Window::SetVSync(bool value) noexcept
-    {
-        if(!SDL_RenderSetVSync(_renderer, static_cast<int>(value)))
-        {
-            _hasVSync = value;
-        }
-        else
-        {
-            Log::PrintSDLError();
-        }
-    }
-
-    bool Window::HasVSync() const
-    {
-        return _hasVSync;
-    }
-
     void Window::SetResizable(bool value) noexcept
     {
         SDL_SetWindowResizable(_window, SDL_bool(value));
@@ -237,6 +241,26 @@ namespace Sgl
     bool Window::IsResizable() const
     {
         return SDL_GetWindowFlags(_window) & SDL_WINDOW_RESIZABLE;
+    }
+
+    void Window::SetContent(Ref<UIElement> value)
+    {
+        if(_content)
+        {
+            _content->_parent = nullptr;
+        }
+
+        SetProperty(ContentProperty, _content, std::move(value));
+
+        if(_content)
+        {
+            _content->_parent = this;
+        }
+    }
+
+    Ref<UIElement> Window::GetContent() const 
+    {
+        return _content; 
     }
 
     void Window::Show()
@@ -249,9 +273,45 @@ namespace Sgl
         SDL_HideWindow(_window);
     }
 
+    void Window::Focus()
+    {
+        SDL_RaiseWindow(_window);
+    }
+
     bool Window::IsVisible() const
     {
         return !(SDL_GetWindowFlags(_window) & (SDL_WINDOW_HIDDEN | SDL_WINDOW_MINIMIZED));
+    }
+
+    void Window::Render(RenderContext context)
+    {
+        switch(auto background = GetBackground(); background.GetType())
+        {
+            case BrushType::Color:
+                context.SetBackground(background.AsColor()); break;
+            case BrushType::Texture:
+                context.DrawTexture(background.AsTexture()); break;
+        }
+
+        if(_content && _content->IsVisible())
+        {
+            _content->Render(context);
+        }
+
+        Renderable::Render(context);
+    }
+
+    void Window::Process(TimeSpan elapsed)
+    {
+        UpdateStyleAndLayout();
+    }
+
+    void Window::OnCursorChanged(const Cursor& cursor)
+    {
+        if(!(_content && _content->IsMouseOver()))
+        {
+            Cursor::Set(cursor);
+        }
     }
 
     void Window::OnWindowStateChanged(WindowStateEventArgs& e)
@@ -272,5 +332,93 @@ namespace Sgl
     void Window::OnWindowSizeChanged(WindowSizeChangedEventArgs& e)
     {
         SizeChanged.TryInvoke(*this, e);
+    }
+
+    void Window::OnMouseMove(MouseEventArgs& e)
+    {
+        if(_content && _content->IsVisible())
+        {
+            auto& content = _content.GetValue();
+            bool wasMouseOver = content._isMouseOver;
+            bool isMouseOver = Math::IsPointInRect(e.Position, content._bounds);
+
+            if(isMouseOver)
+            {
+                if(!wasMouseOver)
+                {
+                    content.OnMouseEnter(e);
+                }
+
+                content.OnMouseMove(e);
+            }
+            else if(wasMouseOver)
+            {
+                content.OnMouseLeave(e);
+                Cursor::Set(GetCursor());
+            }
+        }
+    }
+
+    void Window::OnMouseDown(MouseButtonEventArgs& e)
+    {
+        if(_content && _content->IsMouseOver() && _content->IsVisible())
+        {
+            _content->OnMouseDown(e);
+        }
+    }
+
+    void Window::OnMouseUp(MouseButtonEventArgs& e)
+    {
+        if(_content && _content->IsMouseOver() && _content->IsVisible())
+        {
+            _content->OnMouseUp(e);
+        }
+    }
+
+    void Window::RenderCore()
+    {
+        if(IsVisible() || IsRenderableWhenMinimized)
+        {
+            if(NeedsRendering())
+            {
+                Render(_context);
+            }
+
+            SDL_RenderPresent(_renderer);
+        }
+    }
+
+    void Window::ProcessCore()
+    {
+        Process(_stopwatch.Elapsed());
+        _stopwatch.Restart();
+    }
+
+    void Window::UpdateStyleAndLayout()
+    {
+        if(!IsStyleValid())
+        {
+            ApplyStyle();
+        }
+
+        if(_content)
+        {
+            if(!_content->IsStyleValid())
+            {
+                _content->ApplyStyle();
+            }
+
+            if(!_content->IsMeasureValid())
+            {
+                auto [width, height] = GetSize();
+                _content->Measure(FSize(width, height));
+            }
+
+            if(!_content->IsArrangeValid())
+            {
+                auto [width, height] = GetSize();
+                _content->Arrange(FRect(0, 0, width, height));
+            }
+        }
     }
 }

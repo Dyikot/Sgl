@@ -3,7 +3,6 @@
 #include "../Base/Log.h"
 #include "../Base/Math.h"
 #include "../Base/Time/Stopwatch.h"
-#include "../Application.h"
 
 namespace Sgl
 {
@@ -11,8 +10,8 @@ namespace Sgl
 	static const auto SinRange = Math::SinRange(MaxPointsNumber);
 	static const auto CosRange = Math::CosRange(MaxPointsNumber);
 
-	RenderContext::RenderContext():
-		_renderer(App->Window.GetSDLRenderer())
+	RenderContext::RenderContext(SDL_Renderer* renderer):
+		_renderer(renderer)
 	{}
 
 	void RenderContext::SetTarget(const Texture& texture)

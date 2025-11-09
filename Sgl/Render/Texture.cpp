@@ -14,7 +14,7 @@ namespace Sgl
 
 	static SDL_Renderer* GetRenderer()
 	{
-		static auto renderer = App->Window.GetSDLRenderer();
+		static auto renderer = App->GetMainWindow().GetSDLRenderer();
 		return renderer;
 	}
 
