@@ -70,21 +70,21 @@ namespace Sgl
 
 				switch(mode)
 				{
-					case Sgl::BindingMode::OneWay:
+					case BindingMode::OneWay:
 					{
 						(target.*targetProperty.Setter)((source.*sourceProperty.Getter)());
 						source.SetObserver(sourceProperty, target, targetProperty);
 						break;
 					}
 
-					case Sgl::BindingMode::OneWayToSource:
+					case BindingMode::OneWayToSource:
 					{
 						(source.*sourceProperty.Setter)((target.*targetProperty.Getter)());
 						SetObserver(targetProperty, source, sourceProperty);
 						break;
 					}
 
-					case Sgl::BindingMode::TwoWay:
+					case BindingMode::TwoWay:
 					{
 						(target.*targetProperty.Setter)((source.*sourceProperty.Getter)());
 						source.SetObserver(sourceProperty, target, targetProperty);
@@ -114,21 +114,21 @@ namespace Sgl
 
 				switch(mode)
 				{
-					case Sgl::BindingMode::OneWay:
+					case BindingMode::OneWay:
 					{
 						(target.*targetProperty.Setter)(converter((source.*sourceProperty.Getter)()));
 						source.SetObserver(sourceProperty, target, targetProperty, converter);
 						break;
 					}
 
-					case Sgl::BindingMode::OneWayToSource:
+					case BindingMode::OneWayToSource:
 					{
 						(source.*sourceProperty.Setter)(converter((target.*targetProperty.Getter)()));
 						SetObserver(targetProperty, source, sourceProperty, converter);
 						break;
 					}
 
-					case Sgl::BindingMode::TwoWay:
+					case BindingMode::TwoWay:
 					{
 						(target.*targetProperty.Setter)(converter((source.*sourceProperty.Getter)()));
 						source.SetObserver(sourceProperty, target, targetProperty, converter);

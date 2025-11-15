@@ -3,9 +3,9 @@
 #include <SDL/SDL_ttf.h>
 #include <SDL/SDL_mixer.h>
 #include <SDL/SDL_image.h>
+#include <ranges>
 #include "Window.h"
 #include "Base/Localization/StringLocalizerBase.h"
-#include <ranges>
 
 namespace Sgl
 {
@@ -32,8 +32,8 @@ namespace Sgl
 		bool _isRunning = false;
 		std::string _culture = "en";
 		std::vector<Window*> _windows;
-		Window* _currentWindow = nullptr;
-		mutable std::unique_ptr<Window> _mainWindow;
+		Window* _focusedWindow = nullptr;
+		std::unique_ptr<Window> _mainWindow;
 		std::unique_ptr<StringLocalizerBase> _localizer;
 	public:
 		Application() noexcept;
@@ -49,11 +49,12 @@ namespace Sgl
 		const StringLocalizerBase& GetLocalizer() const;
 
 		void SetMainWindow(std::unique_ptr<Window> value);
-		Window& GetMainWindow() const;
+		Window* GetMainWindow() const;
 
 		const std::vector<Window*> GetWindows() const noexcept;
 
 		void Run();
+		void Run(std::unique_ptr<Window> window);
 		void Shutdown();
 	protected:
 		virtual void OnRun();

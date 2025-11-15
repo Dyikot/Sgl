@@ -8,7 +8,7 @@
 
 namespace Sgl
 {
-	class StyleableElement : public ObservableObject, public AttachableObject
+	class StyleableElement : public AttachableObject
 	{
 	public:
 		StyleMap Styles;

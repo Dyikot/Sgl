@@ -24,15 +24,13 @@ namespace Sgl
         _context.SetBlendMode(SDL_BLENDMODE_BLEND);
         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
         SetBackground(Colors::White);
-
-        App->AddWindow(this);
     }
 
     Window::~Window()
     {
-        App->RemoveWindow(this);
-        SDL_DestroyRenderer(GetSDLRenderer());
-        SDL_DestroyWindow(GetSDLWindow());
+        Close();
+        SDL_DestroyRenderer(_renderer);
+        SDL_DestroyWindow(_window);
     }
 
     SDL_Window* Window::GetSDLWindow() const noexcept
@@ -243,6 +241,16 @@ namespace Sgl
         return SDL_GetWindowFlags(_window) & SDL_WINDOW_RESIZABLE;
     }
 
+    void Window::SetIsAlwayOnTop(bool value)
+    {
+        SDL_SetWindowAlwaysOnTop(_window, value ? SDL_TRUE : SDL_FALSE);
+    }
+
+    bool Window::IsAlwayOnTop() const
+    {
+        return SDL_GetWindowFlags(_window) & SDL_WINDOW_ALWAYS_ON_TOP;
+    }
+
     void Window::SetContent(Ref<UIElement> value)
     {
         if(_content)
@@ -261,16 +269,23 @@ namespace Sgl
     Ref<UIElement> Window::GetContent() const 
     {
         return _content; 
-    }
+    }    
 
     void Window::Show()
     {
+        App->AddWindow(this);
         SDL_ShowWindow(_window);
     }
 
     void Window::Hide()
     {
         SDL_HideWindow(_window);
+    }
+
+    void Window::Close()
+    {
+        App->RemoveWindow(this);
+        Hide();
     }
 
     void Window::Focus()

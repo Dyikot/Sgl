@@ -1,33 +1,25 @@
 #pragma once
 
 #include <concepts>
+#include "SglProperty.h"
 
 namespace Sgl
 {
-	inline size_t GenerateUniquePropertyId()
-	{
-		static size_t counter = 0;
-		return counter++;
-	}
-
 	template<typename TOwner, typename TValue>
-	class ObservableProperty
+	class ObservableProperty : public SglProperty
 	{
 	public:
 		using Owner = TOwner;
 		using Value = TValue;
-		using PropertyId = size_t;
 		using PropertySetter = void(TOwner::*)(TValue);
 		using PropertyGetter = TValue(TOwner::*)() const;
 
-		const PropertyId Id;
 		const PropertySetter Setter;
 		const PropertyGetter Getter;
 	public:
 		ObservableProperty(PropertySetter setter, PropertyGetter getter):
 			Setter(setter), 
-			Getter(getter), 
-			Id(GenerateUniquePropertyId())
+			Getter(getter)
 		{}
 		ObservableProperty(const ObservableProperty&) = default;
 		ObservableProperty(ObservableProperty&&) = default;

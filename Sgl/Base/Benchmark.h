@@ -3,40 +3,43 @@
 #include <format>
 #include <iostream>
 #include "Time/Stopwatch.h"
-#include "Delegate.h"
 
 namespace Sgl
 {
 	class Benchmark
 	{
 	private:
-		constexpr static size_t DefaultLoopsNumber = 100;
-		constexpr static auto DefaultName = "Benchmark";
+		constexpr static size_t DefaultLoopsNumber = 1000;
 
 		std::string _name;
 		size_t _loopsNumber;
 	public:
-		Benchmark(std::string name = DefaultName, size_t loopsNumber = DefaultLoopsNumber):
+		explicit Benchmark(std::string name):
 			_name(std::move(name)),
-			_loopsNumber(loopsNumber)
+			_loopsNumber(DefaultLoopsNumber)
 		{}
 
 		Benchmark(const Benchmark&) = delete;
 		Benchmark(Benchmark&&) = delete;
 
-		template<typename TAction, typename... TArgs> 
-		void Run(TAction action, TArgs&&... args)
+		Benchmark& Loops(size_t value)
 		{
-			Stopwatch stopwatch;
-			stopwatch.Start();
+			_loopsNumber = value;
+			return *this;
+		}
+
+		template<std::invocable TAction> 
+		void Run(TAction action)
+		{
+			Stopwatch stopwatch = Stopwatch::StartNew();
 
 			for(size_t i = 0; i < _loopsNumber; i++)
 			{
-				std::invoke(action, std::forward<TArgs>(args)...);
+				action();
 			}
 
 			stopwatch.Pause();
-			auto elapsed = stopwatch.Elapsed() / _loopsNumber;
+			auto elapsed = stopwatch.Elapsed() / static_cast<double>(_loopsNumber);
 			std::cout << std::format("{}: {}\n", _name, elapsed.ToString());
 		}
 	};

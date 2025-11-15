@@ -40,7 +40,7 @@ namespace Sgl
         {
             _setters.emplace_back([&property, value](T& target)
             {
-                std::invoke(property.Setter, target, value);
+                (target.*property.Setter)(value);
             });
 
             return *this;

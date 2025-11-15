@@ -10,7 +10,7 @@ namespace Sgl
 	public:
 		std::string Text;
 	public:
-		TextData(std::string Text): Text(std::move(Text)) {}
+		TextData(std::string text);
 		TextData(const TextData&) = default;
 		TextData(TextData&&) noexcept = default;
 

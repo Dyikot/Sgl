@@ -1,18 +1,16 @@
 #pragma once
 
+#include "SglProperty.h"
+
 namespace Sgl
 {
 	template<typename T>
-	class AttachedProperty
+	class AttachedProperty : public SglProperty
 	{
 	public:
 		using Value = T;
-		using PropertyId = size_t;
 
-		const PropertyId Id = _id++;
 		const T DefaultValue = {};
-	private:
-		static inline PropertyId _id = 0;
 	public:
 		AttachedProperty() requires std::default_initializable<T> = default;
 		AttachedProperty(const T& defaultValue): DefaultValue(defaultValue) {}

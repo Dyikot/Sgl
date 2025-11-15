@@ -5,7 +5,7 @@
 namespace Sgl
 {
 	StyleableElement::StyleableElement(const StyleableElement& other):
-		ObservableObject(other),
+		AttachableObject(other),
 		_classList(other._classList),
 		_parent(other._parent),
 		_isStyleValid(other._isStyleValid),
@@ -13,7 +13,7 @@ namespace Sgl
 	{}
 
 	StyleableElement::StyleableElement(StyleableElement&& other) noexcept:
-		ObservableObject(std::move(other)),
+		AttachableObject(std::move(other)),
 		Styles(std::move(other.Styles)),
 		_classList(std::move(other._classList)),
 		_parent(std::exchange(other._parent, nullptr)),

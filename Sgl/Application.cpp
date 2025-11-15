@@ -21,7 +21,7 @@ namespace Sgl
 
 	Application::~Application()
 	{
-		_mainWindow.release();		
+        _mainWindow.release();
 		TTF_Quit();
 		IMG_Quit();
 		Mix_Quit();
@@ -72,22 +72,12 @@ namespace Sgl
 
     void Application::SetMainWindow(std::unique_ptr<Window> value)
     {
-        if(value == nullptr)
-        {
-            throw std::invalid_argument("Window canot be null");
-        }
-
         _mainWindow = std::move(value);
     }
 
-    Window& Application::GetMainWindow() const
+    Window* Application::GetMainWindow() const
     {
-        if(_mainWindow == nullptr)
-        {
-            _mainWindow = std::make_unique<Window>();
-        }
-
-        return *_mainWindow;
+        return _mainWindow != nullptr ? _mainWindow.get() : nullptr;
     }
 
     const std::vector<Window*> Application::GetWindows() const noexcept
@@ -100,13 +90,17 @@ namespace Sgl
 		if(_isRunning)
 		{
 			return;
-		}
-
-        auto& mainWindow = GetMainWindow();
+		}        
 
 		OnRun();
 		_isRunning = true;
-		mainWindow.Show();
+
+        if(_mainWindow == nullptr)
+        {
+            throw std::runtime_error("MainWindow is null");
+        }
+
+		_mainWindow->Show();
 
 		while(_isRunning)
 		{
@@ -128,9 +122,15 @@ namespace Sgl
             }
 		}
 
-		mainWindow.Hide();
+		_mainWindow->Close();
 		OnStop();
 	}
+
+    void Application::Run(std::unique_ptr<Window> window)
+    {
+        _mainWindow = std::move(window);
+        Run();
+    }
 
 	void Application::Shutdown()
 	{
@@ -254,29 +254,32 @@ namespace Sgl
 
                         case SDL_WINDOWEVENT_FOCUS_GAINED:
                         {
-                            _currentWindow = window;
-                            window->OnGotFocus();
+                            _focusedWindow = window;
+                            window->OnActivated();
                             break;
                         }
 
                         case SDL_WINDOWEVENT_FOCUS_LOST:
                         {
-                            window->OnLostFocus();
+                            window->OnDeactivated();
                             break;
                         }
 
                         case SDL_WINDOWEVENT_CLOSE:
                         {
+                            window->OnClosing();
+
                             if(window == _mainWindow.get())
                             {
                                 Shutdown();
                             }
                             else
                             {
-                                window->Hide();
+                                window->Close();
                             }
 
-                            window->OnClosing();
+                            window->OnClosed();
+
                             break;
                         }
 
@@ -300,7 +303,7 @@ namespace Sgl
                         .Key = e.key.keysym
                     };
 
-                    _currentWindow->OnKeyDown(args);
+                    _focusedWindow->OnKeyDown(args);
                     break;
                 }
 
@@ -311,7 +314,7 @@ namespace Sgl
                         .State = ButtonState::Released,
                         .Key = e.key.keysym
                     };
-                    _currentWindow->OnKeyUp(args);
+                    _focusedWindow->OnKeyUp(args);
                     break;
                 }
 
@@ -323,14 +326,14 @@ namespace Sgl
                         .SelectionStart = static_cast<size_t>(e.edit.start),
                         .SelectionLength = static_cast<size_t>(e.edit.length)
                     };
-                    _currentWindow->OnTextEditing(args);
+                    _focusedWindow->OnTextEditing(args);
                     break;
                 }
 
                 case SDL_TEXTINPUT:
                 {
                     TextInputEventArgs args(e.text.text);
-                    _currentWindow->OnTextInput(args);
+                    _focusedWindow->OnTextInput(args);
                     break;
                 }
 
@@ -343,7 +346,7 @@ namespace Sgl
                         .SelectionLength = static_cast<size_t>(e.edit.length)
                     };
                     SDL_free(e.editExt.text);
-                    _currentWindow->OnTextEditing(args);
+                    _focusedWindow->OnTextEditing(args);
                     break;
                 }
 
@@ -357,7 +360,7 @@ namespace Sgl
                             .y = static_cast<float>(e.button.y)
                         }
                     };
-                    _currentWindow->OnMouseMove(args);
+                    _focusedWindow->OnMouseMove(args);
                     break;
                 }
 
@@ -369,7 +372,7 @@ namespace Sgl
                         .State = ButtonState::Pressed,
                         .ClicksNumber = e.button.clicks
                     };
-                    _currentWindow->OnMouseDown(args);
+                    _focusedWindow->OnMouseDown(args);
                     break;
                 }
 
@@ -381,7 +384,7 @@ namespace Sgl
                         .State = ButtonState::Released,
                         .ClicksNumber = e.button.clicks
                     };
-                    _currentWindow->OnMouseUp(args);
+                    _focusedWindow->OnMouseUp(args);
                     break;
                 }
 
@@ -398,7 +401,7 @@ namespace Sgl
                         .ScrolledVertically = e.wheel.preciseY,
                         .Direction = static_cast<MouseWheelDirection>(e.wheel.direction)
                     };
-                    _currentWindow->OnMouseWheelChanged(args);
+                    _focusedWindow->OnMouseWheelChanged(args);
                     break;
                 }
 
@@ -410,7 +413,10 @@ namespace Sgl
 
     void Application::AddWindow(Window* window)
     {
-        _windows.push_back(window);
+        if(std::ranges::find(_windows, window) == _windows.end())
+        {
+            _windows.push_back(window);
+        }
     }
 
     void Application::RemoveWindow(Window* window)

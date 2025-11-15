@@ -3,6 +3,10 @@
 
 namespace Sgl
 {
+	TextData::TextData(std::string text):
+		Text(std::move(text))
+	{}
+
 	DataTemplate TextData::GetDefaultDataTemplate() const
 	{
 		return [](const Ref<IData>& data)

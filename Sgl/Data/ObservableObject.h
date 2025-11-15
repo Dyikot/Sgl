@@ -25,7 +25,8 @@ namespace Sgl
 				[&observerProperty, obs = &static_cast<TObserver&>(observer)]
 				(const void* value)
 			{
-				(obs->*observerProperty.Setter)(AsValue<TMember>(value));
+				const auto& val = *static_cast<const std::decay_t<TMember>*>(value);
+				(obs->*observerProperty.Setter)(val);
 			};
 		}
 
@@ -41,7 +42,8 @@ namespace Sgl
 				[&observerProperty, obs = &static_cast<TObserver&>(observer), converter]
 				(const void* value)
 			{
-				(obs->*observerProperty.Setter)(converter(AsValue<TObservableMember>(value)));
+				const auto& val = *static_cast<const std::decay_t<TObservableMember>*>(value);
+				(obs->*observerProperty.Setter)(converter(val));
 			};
 		}
 
@@ -69,27 +71,6 @@ namespace Sgl
 					it->second(&value);
 				}
 			}
-		}
-
-		template<typename TOwner, typename TMember>
-		void OnPropertyChanged(ObservableProperty<TOwner, TMember>& property,
-							   ObservableProperty<TOwner, TMember>::Value value)
-		{
-			auto currentValue = std::invoke(property.Getter, this);
-
-			if(currentValue != value)
-			{
-				if(auto it = _observers.find(property.Id); it != _observers.end())
-				{
-					it->second(&value);
-				}
-			}
-		}
-	private:
-		template<typename T>
-		static const T& AsValue(const void* value)
-		{
-			return *static_cast<const std::decay_t<T>*>(value);
 		}
 	};
 }

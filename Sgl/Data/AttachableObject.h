@@ -4,10 +4,11 @@
 #include <stdexcept>
 #include "../Base/Any.h"
 #include "AttachProperty.h"
+#include "ObservableObject.h"
 
 namespace Sgl
 {
-	class AttachableObject
+	class AttachableObject : public ObservableObject
 	{
 	private:
 		std::unordered_map<size_t, Any> _attachedProperties;

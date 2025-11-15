@@ -254,8 +254,11 @@ namespace Sgl
 		/// <returns>True if resizable, false otherwise</returns>
 		bool IsResizable() const;
 
+		void SetIsAlwayOnTop(bool value = true);
+		bool IsAlwayOnTop() const;
+
 		void SetContent(Ref<UIElement> value);
-		Ref<UIElement> GetContent() const;
+		Ref<UIElement> GetContent() const;		
 
 		/// <summary>
 		/// Shows the window
@@ -267,7 +270,8 @@ namespace Sgl
 		/// </summary>
 		void Hide();
 
-		void Focus();
+		void Close();
+		void Focus();		
 
 		/// <summary>
 		/// Checks if the window is visible
@@ -293,9 +297,10 @@ namespace Sgl
 		virtual void OnTextEditing(TextEditingEventArgs& e) {}
 		virtual void OnMouseEnter() {}
 		virtual void OnMouseLeave() {}
-		virtual void OnGotFocus() {}
-		virtual void OnLostFocus() {}
+		virtual void OnActivated() {}
+		virtual void OnDeactivated() {}
 		virtual void OnClosing() {}
+		virtual void OnClosed() {}
 	private:
 		void RenderCore();
 		void ProcessCore();
