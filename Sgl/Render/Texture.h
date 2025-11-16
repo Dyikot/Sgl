@@ -3,6 +3,7 @@
 #include <memory>
 #include <span>
 #include <optional>
+#include <SDL3/SDL_render.h>
 #include "../Base/Primitives.h"
 #include "../Base/Media/Font.h"
 #include "../Base/Size.h"
@@ -27,9 +28,9 @@ namespace Sgl
 		TextureLockContext(Texture& texture, std::optional<Rect> rect);
 		~TextureLockContext();
 
-		bool HasLock() const noexcept { return _pixels != nullptr; }
-		void* GetPixels() const noexcept { return _pixels; }
-		int GetPitch() const noexcept { return _pitch; }
+		bool HasLock() const noexcept;
+		void* GetPixels() const noexcept;
+		int GetPitch() const noexcept;
 
 		template<typename T = uint32_t>
 		std::span<T> GetPixelsAs()
@@ -56,7 +57,7 @@ namespace Sgl
 		explicit Texture(std::string_view path);
 		Texture(Size size, 
 				TextureAccess access = TextureAccess::Static,
-				SDL_PixelFormatEnum format = SDL_PIXELFORMAT_RGBA8888);
+				SDL_PixelFormat format = SDL_PIXELFORMAT_RGBA8888);
 		Texture(FontRenderType renderType, 
 				TTF_Font* font, 
 				std::string_view text,
@@ -65,7 +66,7 @@ namespace Sgl
 		Texture(FontRenderType renderType, 
 				TTF_Font* font,
 				std::string_view text, 
-				unsigned int wrapLength,
+				int wrapWidth,
 				Color foreground, 
 				Color background = Colors::White);
 		Texture(const Texture&) = default;
@@ -83,8 +84,8 @@ namespace Sgl
 
 		Size GetSize() const;
 		TextureAccess GetAccess() const;
-		SDL_PixelFormatEnum GetFormat() const;
-		SDL_Texture* ToSDLTexture() const noexcept { return _texture.get(); }
+		SDL_PixelFormat GetFormat() const;
+		SDL_Texture* GetSDLTexture() const noexcept;
 
 		TextureLockContext Lock(std::optional<Rect> rect = std::nullopt);
 		

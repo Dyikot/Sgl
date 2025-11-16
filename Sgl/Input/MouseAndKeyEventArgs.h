@@ -1,8 +1,7 @@
 #pragma once
 
 #include <string>
-#include <SDL/SDL_mouse.h>
-#include <SDL/SDL_keyboard.h>
+#include <SDL3/SDL_keyboard.h>
 #include "../Base/Primitives.h"
 
 namespace Sgl
@@ -25,7 +24,8 @@ namespace Sgl
 	struct KeyEventArgs
 	{
 		ButtonState State;
-		SDL_Keysym Key;
+		SDL_Keycode Key;
+		SDL_Keymod Modifier;
 	};
 
 	struct MouseEventArgs

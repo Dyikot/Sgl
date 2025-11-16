@@ -26,7 +26,7 @@ namespace Sgl
 		}
 
 		_isPaused = false;
-		_thread = std::thread([this] { Wait(); });
+		_thread = std::thread(&Timer::Wait, this);
 	}
 
 	void Timer::Restart() noexcept

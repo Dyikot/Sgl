@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SDL/SDL_pixels.h>
+#include <SDL3/SDL_pixels.h>
 
 namespace Sgl
 {
@@ -85,6 +85,16 @@ namespace Sgl
 		constexpr operator SDL_Color() const
 		{
 			return SDL_Color(Red, Green, Blue, Alpha);
+		}
+
+		constexpr operator SDL_FColor() const
+		{
+			return SDL_FColor(
+				static_cast<float>(Red) / 255.f, 
+				static_cast<float>(Green) / 255.f, 
+				static_cast<float>(Blue) / 255.f, 
+				static_cast<float>(Alpha) / 255.f
+			);
 		}
 	};
 

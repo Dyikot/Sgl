@@ -23,27 +23,6 @@ namespace Sgl
 		Normal, Minimized, Maximized
 	};
 
-	struct WindowStateEventArgs
-	{
-		WindowState State;
-	};
-
-	struct WindowVisibilityEventArgs
-	{
-		bool IsVisible;
-	};
-
-	struct WindowPositionChangedEventArgs
-	{
-		Point Position;
-	};
-
-	struct WindowSizeChangedEventArgs
-	{
-		size_t Width;
-		size_t Height;
-	};
-
 	/// <summary>
 	/// The Window class provides a high-level interface for creating and managing window,
 	/// handling events, and rendering graphics. It encapsulates SDL_Window and SDL_Renderer
@@ -52,20 +31,14 @@ namespace Sgl
 	class Window : public Renderable
 	{
 	private:
-		using WindowStateEventHandler = EventHandler<Window, WindowStateEventArgs>;
-		using WindowVisibilityEventHandler = EventHandler<Window, WindowVisibilityEventArgs>;
-		using WindowPositionChangedEventHandler = EventHandler<Window, WindowPositionChangedEventArgs>;
-		using WindowSizeChangedEventHandler = EventHandler<Window, WindowSizeChangedEventArgs>;
+		using WindowStateEventHandler = EventHandler<Window, WindowState>;
+		using WindowPositionChangedEventHandler = EventHandler<Window, Point>;
+		using WindowSizeChangedEventHandler = EventHandler<Window, Size>;
 	public:
 		/// <summary>
 		/// Event triggered when the window's state changes (minimized, maximized, restored)
 		/// </summary>
 		Event<WindowStateEventHandler> WindowStateChanged;
-
-		/// <summary>
-		/// Event triggered when the window's visibility changes (shown/hidden)
-		/// </summary>
-		Event<WindowVisibilityEventHandler> VisibilityChanged;
 
 		/// <summary>
 		/// Event triggered when the window's position changes
@@ -88,10 +61,13 @@ namespace Sgl
 		Ref<UIElement> _content;
 	private:
 		int _id = 0;
+		bool _isClosing = false;
+		bool _isModal = false;
+		Window* _owner = nullptr;
 		Surface _icon;
 		Stopwatch _stopwatch;
 	public:
-		Window() noexcept;
+		Window();
 		Window(const Window&) = delete;
 		Window(Window&&) = delete;
 		virtual ~Window();
@@ -108,6 +84,10 @@ namespace Sgl
 		/// <returns>Pointer to the SDL_Renderer</returns>
 		SDL_Renderer* GetSDLRenderer() const noexcept;
 
+		/// <summary>
+		/// Gets window id
+		/// </summary>
+		/// <returns>Window unique id</returns>
 		int GetId() const noexcept;
 
 		/// <summary>
@@ -157,18 +137,6 @@ namespace Sgl
 		/// </summary>
 		/// <returns>String view of the current window title</returns>
 		std::string_view GetTitle() const noexcept;
-
-		/// <summary>
-		/// Sets the render size
-		/// </summary>
-		/// <param name="size">- the logical size</param>
-		void SetRenderSize(Size size) noexcept;
-
-		/// <summary>
-		/// Gets the render size
-		/// </summary>
-		/// <returns>The current logical size</returns>
-		Size GetRenderSize() const noexcept;
 
 		/// <summary>
 		/// Sets the maximum size of the window
@@ -254,8 +222,11 @@ namespace Sgl
 		/// <returns>True if resizable, false otherwise</returns>
 		bool IsResizable() const;
 
-		void SetIsAlwayOnTop(bool value = true);
+		void SetAlwayOnTop(bool value = true);
 		bool IsAlwayOnTop() const;
+
+		void SetOwner(Window* owner);
+		Window* GetOwner() const;
 
 		void SetContent(Ref<UIElement> value);
 		Ref<UIElement> GetContent() const;		
@@ -266,12 +237,25 @@ namespace Sgl
 		void Show();
 
 		/// <summary>
+		/// Set the window as modal and show it
+		/// </summary>
+		/// <param name="owner"> - the window that will own this window</param>
+		void ShowModal(Window& owner);
+
+		/// <summary>
 		/// Hides the window
 		/// </summary>
 		void Hide();
 
+		/// <summary>
+		/// Close the window
+		/// </summary>
 		void Close();
-		void Focus();		
+
+		/// <summary>
+		/// Window gain a focus
+		/// </summary>
+		void Focus();
 
 		/// <summary>
 		/// Checks if the window is visible
@@ -279,14 +263,19 @@ namespace Sgl
 		/// <returns>- true if visible, false otherwise</returns>
 		bool IsVisible() const;
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		bool IsModal() const;
+
 		void Render(RenderContext context) override;
 		virtual void Process(TimeSpan elapsed);
 	protected:
 		void OnCursorChanged(const Cursor& cursor) override;
-		virtual void OnWindowStateChanged(WindowStateEventArgs& e);
-		virtual void OnVisibilityChanged(WindowVisibilityEventArgs& e);
-		virtual void OnPositionChanged(WindowPositionChangedEventArgs& e);
-		virtual void OnWindowSizeChanged(WindowSizeChangedEventArgs& e);
+		virtual void OnWindowStateChanged(WindowState& e);
+		virtual void OnPositionChanged(Point& e);
+		virtual void OnWindowSizeChanged(Size& e);
 		virtual void OnKeyUp(KeyEventArgs& e) {}
 		virtual void OnKeyDown(KeyEventArgs& e) {}
 		virtual void OnMouseMove(MouseEventArgs& e);
@@ -297,8 +286,10 @@ namespace Sgl
 		virtual void OnTextEditing(TextEditingEventArgs& e) {}
 		virtual void OnMouseEnter() {}
 		virtual void OnMouseLeave() {}
-		virtual void OnActivated() {}
-		virtual void OnDeactivated() {}
+		virtual void OnActivated();
+		virtual void OnDeactivated();
+		virtual void OnShow() {}
+		virtual void OnHide() {}
 		virtual void OnClosing() {}
 		virtual void OnClosed() {}
 	private:

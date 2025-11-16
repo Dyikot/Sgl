@@ -1,18 +1,27 @@
 #pragma once
 
-#include <SDL/SDL_ttf.h>
-#include <SDL/SDL_mixer.h>
-#include <SDL/SDL_image.h>
 #include <ranges>
 #include "Window.h"
 #include "Base/Localization/StringLocalizerBase.h"
 
 namespace Sgl
 {
+	enum class ThemeMode
+	{
+		System, Light, Dark
+	};
+
+	enum class SystemTheme
+	{
+		Light = 1, Dark
+	};
+
 	class Application
 	{
 	private:
 		using ApplicationEventHandler = EventHandler<Application>;
+		using ThemeModeChangedEventHanlder = EventHandler<Application, ThemeMode>;
+		using SystemThemeChangedEventHanlder = EventHandler<Application, SystemTheme>;
 	public:
 		struct Context
 		{
@@ -23,23 +32,33 @@ namespace Sgl
 
 		Event<ApplicationEventHandler> Started;
 		Event<ApplicationEventHandler> Stopped;
+		Event<ThemeModeChangedEventHanlder> ThemeModeChanged;
+		Event<SystemThemeChangedEventHanlder> SystemThemeChanged;
 
 		StyleMap Styles;
 	private:
 		static inline Application* _current;
 
-		int _visibleWindows = 0;
 		bool _isRunning = false;
+		TimeSpan _delayDuration = TimeSpan::FromMicroseconds(16666);
+		Stopwatch _stopwatch;
+		ThemeMode _themeMode;
+		SystemTheme _systemTheme;
 		std::string _culture = "en";
-		std::vector<Window*> _windows;
 		Window* _focusedWindow = nullptr;
-		std::unique_ptr<Window> _mainWindow;
+		std::vector<Window*> _activeWindows;
+		std::unordered_map<int, Window*> _windows;
+		Window* _mainWindow;
 		std::unique_ptr<StringLocalizerBase> _localizer;
 	public:
 		Application() noexcept;
 		Application(const Application&) = delete;
 		Application(Application&&) = delete;
-		~Application();
+		virtual ~Application();
+
+		void SetThemeMode(ThemeMode value);
+		ThemeMode GetThemeMode() const;
+		SystemTheme GetSystemTheme() const;
 
 		void SetCulture(const std::string& value);
 		const std::string& GetCulture() const { return _culture; }
@@ -48,21 +67,26 @@ namespace Sgl
 		void SetLocalizer(std::unique_ptr<StringLocalizerBase> localizer);
 		const StringLocalizerBase& GetLocalizer() const;
 
-		void SetMainWindow(std::unique_ptr<Window> value);
+		void SetMainWindow(Window* value);
 		Window* GetMainWindow() const;
 
 		const std::vector<Window*> GetWindows() const noexcept;
 
 		void Run();
-		void Run(std::unique_ptr<Window> window);
 		void Shutdown();
 	protected:
 		virtual void OnRun();
 		virtual void OnStop();
+		virtual void OnThemeModeChanged(ThemeMode theme);
+		virtual void OnSystemThemeChanged(SystemTheme theme);
 	private:
+		SystemTheme QuerySystemTheme() const;
+		void Delay();
 		void HandleEvents();
 		void AddWindow(Window* window);
+		void AddActiveWindow(Window* window);
 		void RemoveWindow(Window* window);
+		void RemoveActiveWindow(Window* window);
 		Window* GetWindowById(int id);
 
 		friend class Window;

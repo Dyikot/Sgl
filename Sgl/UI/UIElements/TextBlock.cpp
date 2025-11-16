@@ -1,5 +1,6 @@
 #include "TextBlock.h"
 #include <algorithm>
+#include <SDL3_ttf/SDL_ttf.h>
 
 namespace Sgl::UIElements
 {
@@ -186,7 +187,7 @@ namespace Sgl::UIElements
 
 		if(!_isTextTextureValid)
 		{
-			TTF_SetFontWrappedAlign(_fontImpl, static_cast<int>(_textAlignment));
+			TTF_SetFontWrapAlignment(_fontImpl, TTF_HorizontalAlignment(_textAlignment));
 
 			if(_text != "")
 			{

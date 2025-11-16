@@ -1,5 +1,9 @@
 #include "Application.h"
-#include "Base/Log.h"
+
+#include <SDL3/SDL_log.h>
+#include <SDL3/SDL_init.h>
+#include <SDL3_ttf/SDL_ttf.h>
+
 #include "Base/Time/Timer.h"
 #include "Base/Time/Delay.h"
 #include "Base/Localization/CSVParser.h"
@@ -7,28 +11,60 @@
 
 namespace Sgl
 {
-    constexpr auto SleepDuration = TimeSpan::FromMilliseconds(100);
-
 	Application::Application() noexcept
 	{
 		_current = this;
 
-		Log::PrintSDLErrorIf(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_AUDIO) < 0);
-		Log::PrintSDLErrorIf(TTF_Init() < 0);
-		Log::PrintSDLErrorIf(!IMG_Init(IMG_InitFlags::IMG_INIT_PNG | IMG_InitFlags::IMG_INIT_JPG));
-		Log::PrintSDLErrorIf(Mix_OpenAudio(48000, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 2048) < 0);
+        if(!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS))
+        {
+            SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
+        }
+
+        if(!TTF_Init())
+        {
+            SDL_Log("Unable to initialize TTF: %s", SDL_GetError());
+        }
+
+        _systemTheme = QuerySystemTheme();
+        auto displayMode = SDL_GetCurrentDisplayMode(SDL_GetPrimaryDisplay());
+
+        if(displayMode == nullptr)
+        {
+            SDL_Log("Unable to get display mode: %s", SDL_GetError());
+        }
+        else
+        {            
+            if(displayMode->refresh_rate != 0.f)
+            {
+                _delayDuration = TimeSpan(1.f / displayMode->refresh_rate * 1e9f);
+            }
+        }
 	}
 
 	Application::~Application()
-	{
-        _mainWindow.release();
+	{        
+        delete _mainWindow;
 		TTF_Quit();
-		IMG_Quit();
-		Mix_Quit();
 		SDL_Quit();
 	}
 
-	void Application::SetCulture(const std::string& value)
+    void Application::SetThemeMode(ThemeMode value)
+    {
+        _themeMode = value;
+        OnThemeModeChanged(value);
+    }
+
+    ThemeMode Application::GetThemeMode() const
+    {
+        return _themeMode;
+    }
+
+    SystemTheme Application::GetSystemTheme() const
+    {
+        return _systemTheme;        
+    }
+
+    void Application::SetCulture(const std::string& value)
 	{
 		_culture = value;
 
@@ -70,19 +106,20 @@ namespace Sgl
 		return *_localizer;
 	}
 
-    void Application::SetMainWindow(std::unique_ptr<Window> value)
+    void Application::SetMainWindow(Window* value)
     {
-        _mainWindow = std::move(value);
+        delete _mainWindow;
+        _mainWindow = value;
     }
 
     Window* Application::GetMainWindow() const
     {
-        return _mainWindow != nullptr ? _mainWindow.get() : nullptr;
+        return _mainWindow;
     }
 
     const std::vector<Window*> Application::GetWindows() const noexcept
     {
-        return _windows;
+        return _activeWindows;
     }
 
     void Application::Run()
@@ -101,36 +138,29 @@ namespace Sgl
         }
 
 		_mainWindow->Show();
+        _stopwatch.Start();
 
 		while(_isRunning)
 		{
 			HandleEvents();
 
-            for(auto window : _windows)
+            for(auto window : _activeWindows)
             {
 			    window->ProcessCore();
             }
 
-            for(auto window : _windows)
+            for(auto window : _activeWindows)
             {
 			    window->RenderCore();
             }
 
-            if(_visibleWindows == 0)
-            {
-                SleepFor(SleepDuration);
-            }
+            Delay();
 		}
 
+        _stopwatch.Reset();
 		_mainWindow->Close();
 		OnStop();
 	}
-
-    void Application::Run(std::unique_ptr<Window> window)
-    {
-        _mainWindow = std::move(window);
-        Run();
-    }
 
 	void Application::Shutdown()
 	{
@@ -147,228 +177,224 @@ namespace Sgl
 		Stopped.TryInvoke(*this);
 	}
 
-	void Application::HandleEvents()
+    void Application::OnThemeModeChanged(ThemeMode theme)
+    {
+        ThemeModeChanged.TryInvoke(*this, theme);
+    }
+
+    void Application::OnSystemThemeChanged(SystemTheme theme)
+    {
+        SystemThemeChanged.TryInvoke(*this, theme);
+    }
+
+    SystemTheme Application::QuerySystemTheme() const
+    {
+        auto theme = SDL_GetSystemTheme();
+
+        if(theme == SDL_SystemTheme::SDL_SYSTEM_THEME_UNKNOWN)
+        {
+            SDL_Log("System theme unknown");
+            return SystemTheme::Light;
+        }
+
+        return SystemTheme(theme);
+    }
+
+    void Application::Delay()
+    {
+        auto elapsed = _stopwatch.Elapsed();
+        _stopwatch.Restart();
+
+        if(elapsed < _delayDuration)
+        {
+            SleepFor(_delayDuration - elapsed);
+        }
+    }
+
+    void Application::HandleEvents()
 	{
         SDL_Event e;
 		while(SDL_PollEvent(&e))
 		{
             switch(e.type)
             {
-                case SDL_QUIT:
+                case SDL_EVENT_QUIT:
                 {
                     Shutdown();
                     break;
                 }
 
-                case SDL_WINDOWEVENT:
+                case SDL_EVENT_SYSTEM_THEME_CHANGED:
+                {
+                    _systemTheme = QuerySystemTheme();
+                    OnSystemThemeChanged(_systemTheme);
+                    break;
+                };
+
+                case SDL_EVENT_WINDOW_SHOWN:
                 {
                     auto window = GetWindowById(e.window.windowID);
+                    window->OnShow();
+                    break;
+                }
 
-                    switch(e.window.event)
+                case SDL_EVENT_WINDOW_HIDDEN:
+                {
+                    auto window = GetWindowById(e.window.windowID);
+                    window->OnHide();
+                    break;
+                }
+
+                case SDL_EVENT_WINDOW_EXPOSED:
+                {
+                    break;
+                }
+
+                case SDL_EVENT_WINDOW_MOVED:
+                {
+                    auto window = GetWindowById(e.window.windowID);
+                    Point args(e.window.data1, e.window.data2);
+                    window->OnPositionChanged(args);
+                    break;
+                }
+
+                case SDL_EVENT_WINDOW_RESIZED:
+                {
+                    auto window = GetWindowById(e.window.windowID);
+                    Size args(e.window.data1, e.window.data2);
+                    window->OnWindowSizeChanged(args);
+                    break;
+                }
+
+                case SDL_EVENT_WINDOW_MINIMIZED:
+                {
+                    auto window = GetWindowById(e.window.windowID);
+                    WindowState args = WindowState::Minimized;
+                    window->OnWindowStateChanged(args);
+                    break;
+                }
+
+                case SDL_EVENT_WINDOW_MAXIMIZED:
+                {
+                    auto window = GetWindowById(e.window.windowID);
+                    WindowState args  = WindowState::Maximized;
+                    window->OnWindowStateChanged(args);
+                    break;
+                }
+
+                case SDL_EVENT_WINDOW_RESTORED:
+                {
+                    auto window = GetWindowById(e.window.windowID);
+                    WindowState args = WindowState::Normal;
+                    window->OnWindowStateChanged(args);
+                    break;
+                }
+
+                case SDL_EVENT_WINDOW_MOUSE_ENTER:
+                {
+                    auto window = GetWindowById(e.window.windowID);
+                    window->OnMouseEnter();
+                    break;
+                }
+
+                case SDL_EVENT_WINDOW_MOUSE_LEAVE:
+                {
+                    auto window = GetWindowById(e.window.windowID);
+                    window->OnMouseLeave();
+                    break;
+                }
+
+                case SDL_EVENT_WINDOW_FOCUS_GAINED:
+                {
+                    auto window = GetWindowById(e.window.windowID);
+                    window->OnActivated();
+                    _focusedWindow = window;
+                    break;
+                }
+
+                case SDL_EVENT_WINDOW_FOCUS_LOST:
+                {                    
+                    auto window = GetWindowById(e.window.windowID);
+                    window->OnDeactivated();
+                    _focusedWindow = nullptr;
+                    break;
+                }
+
+                case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
+                {
+                    auto window = GetWindowById(e.window.windowID);
+                    window->OnClosing();
+
+                    if(window == _mainWindow)
                     {
-                        case SDL_WINDOWEVENT_SHOWN:
-                        {
-                            ++_visibleWindows;
-                            WindowVisibilityEventArgs args(true);
-                            window->OnVisibilityChanged(args);
-                            break;
-                        }
-
-                        case SDL_WINDOWEVENT_HIDDEN:
-                        {
-                            --_visibleWindows;
-                            WindowVisibilityEventArgs args(false);
-                            window->OnVisibilityChanged(args);
-                            break;
-                        }
-
-                        case SDL_WINDOWEVENT_EXPOSED:
-                        {
-                            break;
-                        }
-
-                        case SDL_WINDOWEVENT_MOVED:
-                        {
-                            WindowPositionChangedEventArgs args =
-                            {
-                                .Position =
-                                {
-                                    .x = e.window.data1,
-                                    .y = e.window.data2
-                                }
-                            };
-                            window->OnPositionChanged(args);
-                            break;
-                        }
-
-                        case SDL_WINDOWEVENT_RESIZED:
-                        {
-                            break;
-                        }
-
-                        case SDL_WINDOWEVENT_SIZE_CHANGED:
-                        {
-                            WindowSizeChangedEventArgs args =
-                            {
-                                .Width = static_cast<size_t>(e.window.data1),
-                                .Height = static_cast<size_t>(e.window.data2)
-                            };
-                            window->OnWindowSizeChanged(args);
-                            break;
-                        }
-
-                        case SDL_WINDOWEVENT_MINIMIZED:
-                        {
-                            --_visibleWindows;
-                            WindowStateEventArgs args(WindowState::Minimized);
-                            window->OnWindowStateChanged(args);
-                            break;
-                        }
-
-                        case SDL_WINDOWEVENT_MAXIMIZED:
-                        {
-                            WindowStateEventArgs args(WindowState::Maximized);
-                            window->OnWindowStateChanged(args);
-                            break;
-                        }                        
-
-                        case SDL_WINDOWEVENT_RESTORED:
-                        {
-                            ++_visibleWindows;
-                            WindowStateEventArgs args(WindowState::Normal);
-                            window->OnWindowStateChanged(args);
-                            break;
-                        }
-
-                        case SDL_WINDOWEVENT_ENTER:
-                        {
-                            window->OnMouseEnter();
-                            break;
-                        }
-
-                        case SDL_WINDOWEVENT_LEAVE:
-                        {
-                            window->OnMouseLeave();
-                            break;
-                        }
-
-                        case SDL_WINDOWEVENT_FOCUS_GAINED:
-                        {
-                            _focusedWindow = window;
-                            window->OnActivated();
-                            break;
-                        }
-
-                        case SDL_WINDOWEVENT_FOCUS_LOST:
-                        {
-                            window->OnDeactivated();
-                            break;
-                        }
-
-                        case SDL_WINDOWEVENT_CLOSE:
-                        {
-                            window->OnClosing();
-
-                            if(window == _mainWindow.get())
-                            {
-                                Shutdown();
-                            }
-                            else
-                            {
-                                window->Close();
-                            }
-
-                            window->OnClosed();
-
-                            break;
-                        }
-
-                        case SDL_WINDOWEVENT_TAKE_FOCUS:
-                        {
-                            break;
-                        }
-
-                        default:
-                            break;
+                        Shutdown();
                     }
+                    else
+                    {
+                        window->Close();
+                    }
+
+                    window->OnClosed();
 
                     break;
                 }
 
-                case SDL_KEYDOWN:
+                case SDL_EVENT_KEY_DOWN:
                 {
                     KeyEventArgs args =
                     {
                         .State = ButtonState::Pressed,
-                        .Key = e.key.keysym
+                        .Key = e.key.key,
+                        .Modifier = e.key.mod
                     };
-
                     _focusedWindow->OnKeyDown(args);
                     break;
                 }
 
-                case SDL_KEYUP:
+                case SDL_EVENT_KEY_UP:
                 {
                     KeyEventArgs args =
                     {
                         .State = ButtonState::Released,
-                        .Key = e.key.keysym
+                        .Key = e.key.key,
+                        .Modifier = e.key.mod
                     };
                     _focusedWindow->OnKeyUp(args);
                     break;
                 }
 
-                case SDL_TEXTEDITING:
+                case SDL_EVENT_TEXT_EDITING:
                 {
                     TextEditingEventArgs args
                     {
                         .Text = e.edit.text,
-                        .SelectionStart = static_cast<size_t>(e.edit.start),
-                        .SelectionLength = static_cast<size_t>(e.edit.length)
+                        .SelectionStart = e.edit.start,
+                        .SelectionLength = e.edit.length
                     };
                     _focusedWindow->OnTextEditing(args);
                     break;
                 }
 
-                case SDL_TEXTINPUT:
+                case SDL_EVENT_TEXT_INPUT:
                 {
                     TextInputEventArgs args(e.text.text);
                     _focusedWindow->OnTextInput(args);
                     break;
                 }
 
-                case SDL_TEXTEDITING_EXT:
+                case SDL_EVENT_MOUSE_MOTION:
                 {
-                    TextEditingEventArgs args
-                    {
-                        .Text = e.editExt.text,
-                        .SelectionStart = static_cast<size_t>(e.edit.start),
-                        .SelectionLength = static_cast<size_t>(e.edit.length)
-                    };
-                    SDL_free(e.editExt.text);
-                    _focusedWindow->OnTextEditing(args);
+                    auto window = GetWindowById(e.window.windowID);
+                    MouseEventArgs args(FPoint(e.button.x, e.button.y));
+                    window->OnMouseMove(args);
                     break;
                 }
 
-                case SDL_MOUSEMOTION:
-                {
-                    MouseEventArgs args =
-                    {
-                        .Position =
-                        {
-                            .x = static_cast<float>(e.button.x),
-                            .y = static_cast<float>(e.button.y)
-                        }
-                    };
-                    _focusedWindow->OnMouseMove(args);
-                    break;
-                }
-
-                case SDL_MOUSEBUTTONDOWN:
+                case SDL_EVENT_MOUSE_BUTTON_DOWN:
                 {
                     MouseButtonEventArgs args =
                     {
-                        .Button = static_cast<MouseButton>(e.button.button),
+                        .Button = MouseButton(e.button.button),
                         .State = ButtonState::Pressed,
                         .ClicksNumber = e.button.clicks
                     };
@@ -376,11 +402,11 @@ namespace Sgl
                     break;
                 }
 
-                case SDL_MOUSEBUTTONUP:
+                case SDL_EVENT_MOUSE_BUTTON_UP:
                 {
                     MouseButtonEventArgs args =
                     {
-                        .Button = static_cast<MouseButton>(e.button.button),
+                        .Button = MouseButton(e.button.button),
                         .State = ButtonState::Released,
                         .ClicksNumber = e.button.clicks
                     };
@@ -388,18 +414,18 @@ namespace Sgl
                     break;
                 }
 
-                case SDL_MOUSEWHEEL:
+                case SDL_EVENT_MOUSE_WHEEL:
                 {
                     MouseWheelEventArgs args =
                     {
                         .Position =
                         {
-                            .x = static_cast<float>(e.button.x),
-                            .y = static_cast<float>(e.button.y)
+                            .x = e.button.x,
+                            .y = e.button.y
                         },
-                        .ScrolledHorizontally = e.wheel.preciseX,
-                        .ScrolledVertically = e.wheel.preciseY,
-                        .Direction = static_cast<MouseWheelDirection>(e.wheel.direction)
+                        .ScrolledHorizontally = e.wheel.x,
+                        .ScrolledVertically = e.wheel.y,
+                        .Direction = MouseWheelDirection(e.wheel.direction)
                     };
                     _focusedWindow->OnMouseWheelChanged(args);
                     break;
@@ -413,27 +439,30 @@ namespace Sgl
 
     void Application::AddWindow(Window* window)
     {
-        if(std::ranges::find(_windows, window) == _windows.end())
+        _windows[window->_id] = window;
+    }
+
+    void Application::AddActiveWindow(Window* window)
+    {
+        if(std::ranges::find(_activeWindows, window) == _activeWindows.end())
         {
-            _windows.push_back(window);
+            _activeWindows.push_back(window);
         }
     }
 
     void Application::RemoveWindow(Window* window)
     {
-        std::erase(_windows, window);
+        RemoveActiveWindow(window);
+        _windows.erase(window->_id);
+    }
+
+    void Application::RemoveActiveWindow(Window* window)
+    {
+        std::erase(_activeWindows, window);
     }
 
     Window* Application::GetWindowById(int id)
     {
-        for(auto window : _windows)
-        {
-            if(window->_id == id)
-            {
-                return window;
-            }
-        }
-
-        return nullptr;
+        return _windows[id];
     }
 }

@@ -1,5 +1,7 @@
 #include "Surface.h"
-#include "../Base/Log.h"
+#include <SDL3/SDL_log.h>
+#include <SDL3/SDL_surface.h>
+#include <SDL3_image/SDL_image.h>
 
 namespace Sgl
 {
@@ -7,69 +9,44 @@ namespace Sgl
 	{
 		void operator()(SDL_Surface* surface) const
 		{
-			SDL_FreeSurface(surface);
+			SDL_DestroySurface(surface);
 		}
 	};
 
-	Surface::Surface(std::nullptr_t)
+	Surface::Surface(std::nullptr_t):
+		_surface(nullptr)
 	{}
 
 	Surface::Surface(std::string_view path):
 		_surface(IMG_Load(path.data()), SurfaceDeleter())
 	{
-		Log::PrintSDLErrorIf(_surface == nullptr);
+		if(_surface == nullptr)
+		{
+			SDL_Log("Unable to load a surface: %s", SDL_GetError());
+		}
 	}
 
-	Surface::Surface(uint32_t flags, Size size, int depth, uint32_t format):
-		_surface(SDL_CreateRGBSurfaceWithFormat(
-			flags, 
-			size.Width, 
-			size.Height, 
-			depth, 
-			format),
-			SurfaceDeleter())
+	Surface::Surface(SDL_Surface* sdlSurface):
+		_surface(sdlSurface, SurfaceDeleter())
+	{}
+
+	Surface::Surface(Size size, SDL_PixelFormat format):
+		_surface(SDL_CreateSurface(size.Width, size.Height, format), SurfaceDeleter())
 	{
-		Log::PrintSDLErrorIf(_surface == nullptr);
+		if(_surface == nullptr)
+		{
+			SDL_Log("Unable to create a surface: %s", SDL_GetError());
+		}
 	}
 
-	Surface::Surface(void* pixels, Size size, int depth, int pitch, uint32_t format):
-		_surface(SDL_CreateRGBSurfaceWithFormatFrom(
-			pixels, 
-			size.Width, 
-			size.Height, 
-			depth,
-			pitch,
-			format),
-			SurfaceDeleter())
+	Surface::Surface(Size size, SDL_PixelFormat format,
+					 void* pixels, size_t pitch):
+		_surface(SDL_CreateSurfaceFrom(size.Width, size.Height, format, pixels, pitch), SurfaceDeleter())
 	{
-		Log::PrintSDLErrorIf(_surface == nullptr);
-	}
-
-	Surface::Surface(uint32_t flags, Size size, int depth, 
-					 uint32_t rmask, uint32_t gmask, uint32_t bmask, uint32_t amask):
-		_surface(SDL_CreateRGBSurface(
-			flags, 
-			size.Width, 
-			size.Height, 
-			depth,
-			rmask, gmask, bmask, amask),
-			SurfaceDeleter())
-	{
-		Log::PrintSDLErrorIf(_surface == nullptr);
-	}
-
-	Surface::Surface(void* pixels, Size size, int depth, int pitch,
-					 uint32_t rmask, uint32_t gmask, uint32_t bmask, uint32_t amask):
-		_surface(SDL_CreateRGBSurfaceFrom(
-			pixels,
-			size.Width,
-			size.Height,
-			depth,
-			pitch,
-			rmask, gmask, bmask, amask),
-			SurfaceDeleter())
-	{
-		Log::PrintSDLErrorIf(_surface == nullptr);
+		if(_surface == nullptr)
+		{
+			SDL_Log("Unable to create a surface: %s", SDL_GetError());
+		}
 	}
 
 	void Surface::SetColor(Color value)
@@ -111,5 +88,15 @@ namespace Sgl
 	void Surface::Unlock()
 	{
 		SDL_UnlockSurface(_surface.get());
+	}
+
+	void Surface::Flip(SDL_FlipMode flipMode)
+	{
+		SDL_FlipSurface(_surface.get(), flipMode);
+	}
+
+	Surface Surface::Clone() const
+	{
+		return Surface(SDL_DuplicateSurface(_surface.get()));
 	}
 }

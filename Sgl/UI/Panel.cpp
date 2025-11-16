@@ -66,15 +66,22 @@ namespace Sgl
         UIElement::OnMouseMove(e);
 
         bool isCurrentVisible = _currentChild && _currentChild->IsVisible();
-        if(isCurrentVisible && Math::IsPointInRect(e.Position, _currentChild->GetBounds()))
+        if(isCurrentVisible)
         {
-            _currentChild->OnMouseMove(e);
-            return;
+            auto bounds = _currentChild->GetBounds();
+
+            if(SDL_PointInRectFloat(&e.Position, &bounds))
+            {
+                _currentChild->OnMouseMove(e);
+                return;
+            }
         }
 
         for(auto& child : Children)
         {
-            if(Math::IsPointInRect(e.Position, child->GetBounds()) && child->IsVisible())
+            auto bounds = _currentChild->GetBounds();
+
+            if(SDL_PointInRectFloat(&e.Position, &bounds) && child->IsVisible())
             {
                 if(_currentChild && _currentChild->IsVisible())
                 {

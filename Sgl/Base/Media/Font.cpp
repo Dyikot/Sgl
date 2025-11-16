@@ -1,11 +1,16 @@
 #include "Font.h"
+#include <SDL3/SDL_log.h>
+#include <SDL3_ttf/SDL_ttf.h>
+#include <SDL3/SDL_platform.h>
 #include <unordered_map>
 #include <filesystem>
-#include "../Log.h"
 
 namespace Sgl
 {
+	#ifdef SDL_PLATFORM_WINDOWS
 	static constexpr auto FalimiesPath = "C:/Windows/Fonts/";
+	#endif
+
 	static constexpr auto DefaultFamily = "segoeui.ttf";
 
 	static std::string GetFullPath(const std::string& path, const std::string& name)
@@ -54,13 +59,19 @@ namespace Sgl
 	FontImpl::FontImpl(const FontFamily& fontFamily, size_t size):
 		_font(TTF_OpenFont(fontFamily.Source().data(), size))
 	{
-		Log::PrintSDLErrorIf(_font == nullptr);
+		if(_font == nullptr)
+		{
+			SDL_Log("Unable to create a font: %s", SDL_GetError());
+		}
 	}
 
 	FontImpl::FontImpl(FontImpl&& other) noexcept:
 		_font(std::exchange(other._font, nullptr))
 	{
-		Log::PrintSDLErrorIf(_font == nullptr);
+		if(_font == nullptr)
+		{
+			SDL_Log("Unable to create a font: %s", SDL_GetError());
+		}
 	}
 
 	FontImpl::~FontImpl()
@@ -69,6 +80,16 @@ namespace Sgl
 		{
 			TTF_CloseFont(_font);
 		}
+	}
+
+	void FontImpl::SetSize(size_t value)
+	{
+		TTF_SetFontSize(_font, value);
+	}
+
+	void FontImpl::SetStyle(FontStyle value)
+	{
+		TTF_SetFontStyle(_font, static_cast<unsigned long>(value));
 	}
 
 	FontImpl& FontImpl::operator=(FontImpl&& other) noexcept

@@ -45,12 +45,4 @@ namespace Sgl
 
 		return order;
 	}
-
-	bool Math::IsPointInRect(FPoint point, FRect rect) noexcept
-	{
-		return point.x >= rect.x &&
-			   point.x <= rect.x + rect.w &&
-			   point.y >= rect.y &&
-			   point.y <= rect.y + rect.h;
-	}
 }

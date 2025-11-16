@@ -3,8 +3,9 @@
 #include <string>
 #include <bitset>
 #include <memory>
-#include <SDL/SDL_ttf.h>
 #include "Color.h"
+
+struct TTF_Font;
 
 namespace Sgl
 {
@@ -68,15 +69,8 @@ namespace Sgl
 		FontImpl(FontImpl&& other) noexcept;
 		~FontImpl();
 
-		void SetSize(size_t value)
-		{
-			TTF_SetFontSize(_font, value);
-		}
-
-		void SetStyle(FontStyle value)
-		{
-			TTF_SetFontStyle(_font, static_cast<unsigned long>(value));
-		}
+		void SetSize(size_t value);
+		void SetStyle(FontStyle value);
 
 		FontImpl& operator=(const FontImpl&) = delete;
 		FontImpl& operator=(FontImpl&& other) noexcept;

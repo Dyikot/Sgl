@@ -41,12 +41,12 @@ namespace Sgl::UIElements
 			{
 				case Stretch::None:
 				{
-					Rect clip =
+					FRect clip =
 					{
 						.x = 0,
 						.y = 0,
-						.w = static_cast<int>(_sourceBounds.w),
-						.h = static_cast<int>(_sourceBounds.h)
+						.w = _sourceBounds.w,
+						.h = _sourceBounds.h
 					};
 
 					context.DrawTexture(_sourceTexture, _sourceBounds, clip);
@@ -62,12 +62,12 @@ namespace Sgl::UIElements
 
 				case Stretch::UniformToFill:
 				{
-					Rect clip =
+					FRect clip =
 					{
-						.x = static_cast<int>(_sourceBounds.x),
-						.y = static_cast<int>(_sourceBounds.y),
-						.w = static_cast<int>(_sourceBounds.w),
-						.h = static_cast<int>(_sourceBounds.h)
+						.x = _sourceBounds.x,
+						.y = _sourceBounds.y,
+						.w = _sourceBounds.w,
+						.h = _sourceBounds.h
 					};
 
 					context.DrawTexture(_sourceTexture, _bounds, clip);

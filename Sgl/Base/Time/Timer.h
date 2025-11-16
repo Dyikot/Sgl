@@ -36,8 +36,8 @@ namespace Sgl
 		/// <param name="timespan"> - The time span representing the timer duration.</param>
 		Timer(TimeSpan timespan) noexcept;
 
-		Timer(const Timer& timer) = delete;
-		Timer(Timer&& timer) = delete;
+		Timer(const Timer&) = delete;
+		Timer(Timer&&) = delete;
 		~Timer();
 
 		/// <summary>

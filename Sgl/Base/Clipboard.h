@@ -1,35 +1,16 @@
 #pragma once
 
-#include <SDL/SDL_clipboard.h>
-#include <string_view>
 #include <string>
+#include <string_view>
 
 namespace Sgl
 {
 	class Clipboard
 	{
 	public:
-		static void SetText(const std::string& text)
-		{
-			SDL_SetClipboardText(text.data());
-		}
-
-		static std::string GetText()
-		{
-			auto rawText = SDL_GetClipboardText();
-			std::string text = rawText;
-			SDL_free(rawText);
-			return text;
-		}
-
-		static void Clear()
-		{ 
-			SetText(""); 
-		}
-
-		static bool IsEmpty()
-		{
-			return SDL_HasClipboardText() == SDL_FALSE;
-		}
+		static void SetText(std::string_view text);
+		static std::string GetText();
+		static void Clear();
+		static bool IsEmpty();
 	};
 }

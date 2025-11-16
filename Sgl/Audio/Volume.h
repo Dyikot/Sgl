@@ -1,6 +1,5 @@
 #pragma once
 
-#include <SDL/SDL_mixer.h>
 #include <algorithm>
 #include <compare>
 
@@ -30,16 +29,7 @@ namespace Sgl
 
 		constexpr explicit Volume(double value):
 			_value(Adjust(std::abs(value)))
-		{}
-
-		constexpr explicit Volume(uint8_t mixValue):
-			Volume(static_cast<double>(mixValue) / (MIX_MAX_VOLUME))
 		{}		
-
-		constexpr uint8_t ToMixVolume() const noexcept
-		{
-			return _value * MIX_MAX_VOLUME;
-		}
 
 		friend constexpr Volume operator+(Volume left, Volume right)
 		{

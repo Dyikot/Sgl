@@ -1,5 +1,7 @@
 #include "Cursor.h"
-#include "../Base/Log.h"
+#include <SDL3/SDL_log.h>
+#include <SDL3_image/SDL_image.h>
+#include <stdexcept>
 
 namespace Sgl
 {
@@ -7,7 +9,7 @@ namespace Sgl
     {
         void operator()(SDL_Cursor* cursor) const
         {
-            SDL_FreeCursor(cursor);
+            SDL_DestroyCursor(cursor);
         }
     };
 
@@ -15,65 +17,65 @@ namespace Sgl
     {
         switch(cursor)
         {
-            case SDL_SYSTEM_CURSOR_ARROW:
+            case Cursors::Arrow:
             {
                 static std::shared_ptr<SDL_Cursor> arrow(SDL_CreateSystemCursor(cursor), CursorDeleter());
                 return arrow;
             }
-            case SDL_SYSTEM_CURSOR_IBEAM: 
+            case Cursors::IBeam:
             {
                 static std::shared_ptr<SDL_Cursor> ibeam(SDL_CreateSystemCursor(cursor), CursorDeleter());
                 return ibeam;
             }
-            case SDL_SYSTEM_CURSOR_WAIT:
+            case Cursors::Wait:
             {
                 static std::shared_ptr<SDL_Cursor> wait(SDL_CreateSystemCursor(cursor), CursorDeleter());
                 return wait;
             }
-            case SDL_SYSTEM_CURSOR_CROSSHAIR:
+            case Cursors::Crosshair:
             {
                 static std::shared_ptr<SDL_Cursor> crossHair(SDL_CreateSystemCursor(cursor), CursorDeleter());
                 return crossHair;
             }
-            case SDL_SYSTEM_CURSOR_WAITARROW:
+            case Cursors::Progress:
             {
-                static std::shared_ptr<SDL_Cursor> waitArrow(SDL_CreateSystemCursor(cursor), CursorDeleter());
-                return waitArrow;
+                static std::shared_ptr<SDL_Cursor> progress(SDL_CreateSystemCursor(cursor), CursorDeleter());
+                return progress;
             }
-            case SDL_SYSTEM_CURSOR_SIZENWSE:
+            case Cursors::ResizeNWSE:
             {
-                static std::shared_ptr<SDL_Cursor> sizeNWSE(SDL_CreateSystemCursor(cursor), CursorDeleter());
-                return sizeNWSE;
+                static std::shared_ptr<SDL_Cursor> nwse(SDL_CreateSystemCursor(cursor), CursorDeleter());
+                return nwse;
             }
-            case SDL_SYSTEM_CURSOR_SIZENESW:
+            case Cursors::ResizeNESW:
             {
-                static std::shared_ptr<SDL_Cursor> sizeNESW(SDL_CreateSystemCursor(cursor), CursorDeleter());
-                return sizeNESW;
+                static std::shared_ptr<SDL_Cursor> nesw(SDL_CreateSystemCursor(cursor), CursorDeleter());
+                return nesw;
             }
-            case SDL_SYSTEM_CURSOR_SIZEWE:
+            case Cursors::ResizeEW:
             {
-                static std::shared_ptr<SDL_Cursor> sizeWE(SDL_CreateSystemCursor(cursor), CursorDeleter());
-                return sizeWE;
+                static std::shared_ptr<SDL_Cursor> ew(SDL_CreateSystemCursor(cursor), CursorDeleter());
+                return ew;
             }
-            case SDL_SYSTEM_CURSOR_SIZENS:
+            case Cursors::ResizeNS:
             {
-                static std::shared_ptr<SDL_Cursor> sizeNS(SDL_CreateSystemCursor(cursor), CursorDeleter());
-                return sizeNS;
+                static std::shared_ptr<SDL_Cursor> ns(SDL_CreateSystemCursor(cursor), CursorDeleter());
+                return ns;
             }
-            case SDL_SYSTEM_CURSOR_SIZEALL:
+            case Cursors::Move:
             {
-                static std::shared_ptr<SDL_Cursor> sizeALL(SDL_CreateSystemCursor(cursor), CursorDeleter());
-                return sizeALL;
+                static std::shared_ptr<SDL_Cursor> move(SDL_CreateSystemCursor(cursor), CursorDeleter());
+                return move;
             }
-            case SDL_SYSTEM_CURSOR_NO:
+            case Cursors::NotAllowed:
             {
-                static std::shared_ptr<SDL_Cursor> sizeNO(SDL_CreateSystemCursor(cursor), CursorDeleter());
-                return sizeNO;
+                static std::shared_ptr<SDL_Cursor> nowAllowed(SDL_CreateSystemCursor(cursor), CursorDeleter());
+                return nowAllowed;
             }
-            case SDL_SYSTEM_CURSOR_HAND: 
+            case Cursors::Pointer:
             {
-                static std::shared_ptr<SDL_Cursor> hand(SDL_CreateSystemCursor(cursor), CursorDeleter());
-                return hand;
+                static std::shared_ptr<SDL_Cursor> pointer(SDL_CreateSystemCursor(cursor), CursorDeleter());
+                return pointer;
             }
             default:
                 throw std::invalid_argument("Selected system cursor does exist");
@@ -83,7 +85,10 @@ namespace Sgl
     Cursor::Cursor(std::string_view path):
         _cursor(SDL_CreateColorCursor(IMG_Load(path.data()), 0, 0), CursorDeleter())
     {
-        Log::PrintSDLErrorIf(_cursor == nullptr);
+        if(_cursor == nullptr)
+        {
+            SDL_Log("Unable to create a cursor: %s", SDL_GetError());
+        }
     }
 
     Cursor::Cursor(SDL_SystemCursor systemCursor) noexcept:
@@ -100,10 +105,31 @@ namespace Sgl
 
     void Cursor::Set(const Cursor& cursor)
     {
-        auto sdlCursor = cursor.ToSDLCursor();
+        auto sdlCursor = cursor.GetSDLCursor();
         if(sdlCursor && sdlCursor != SDL_GetCursor())
         {
             SDL_SetCursor(sdlCursor);
         }
+    }
+
+    void Cursor::Show()
+    {
+        if(SDL_ShowCursor())
+        {
+            SDL_Log("Unable to show a cursor: %s", SDL_GetError());
+        }
+    }
+
+    void Cursor::Hide()
+    {
+        if(SDL_HideCursor())
+        {
+            SDL_Log("Unable to hide a cursor: %s", SDL_GetError());
+        }
+    }
+
+    bool Cursor::IsVisible()
+    {
+        return SDL_CursorVisible();
     }
 }

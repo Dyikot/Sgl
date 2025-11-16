@@ -109,7 +109,7 @@ namespace Sgl
 		if(_contentPresenter)
 		{
 			bool wasMouseOver = _contentPresenter->_isMouseOver;
-			bool isMouseOver = Math::IsPointInRect(e.Position, _contentPresenter->_bounds);
+			bool isMouseOver = SDL_PointInRectFloat(&e.Position, &_contentPresenter->_bounds);
 
 			if(isMouseOver)
 			{

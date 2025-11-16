@@ -1,7 +1,6 @@
 #pragma once
 
-#include <SDL/SDL_mouse.h>
-#include <SDL/SDL_image.h>
+#include <SDL3/SDL_mouse.h>
 #include <string_view>
 #include <memory>
 
@@ -19,8 +18,11 @@ namespace Sgl
 		~Cursor() = default;
 
 		static void Set(const Cursor& cursor);
+		static void Show();
+		static void Hide();
+		static bool IsVisible();
 
-		SDL_Cursor* ToSDLCursor() const noexcept { return _cursor.get(); }
+		SDL_Cursor* GetSDLCursor() const noexcept { return _cursor.get(); }
 
 		Cursor& operator=(const Cursor&) = default;
 		Cursor& operator=(Cursor&&) noexcept = default;
@@ -30,17 +32,17 @@ namespace Sgl
 	class Cursors
 	{
 	public:
-		static constexpr SDL_SystemCursor Arrow = SDL_SYSTEM_CURSOR_ARROW;
-		static constexpr SDL_SystemCursor IBeam = SDL_SYSTEM_CURSOR_IBEAM;
+		static constexpr SDL_SystemCursor Arrow = SDL_SYSTEM_CURSOR_DEFAULT;
+		static constexpr SDL_SystemCursor IBeam = SDL_SYSTEM_CURSOR_TEXT;
 		static constexpr SDL_SystemCursor Wait = SDL_SYSTEM_CURSOR_WAIT;
 		static constexpr SDL_SystemCursor Crosshair = SDL_SYSTEM_CURSOR_CROSSHAIR;
-		static constexpr SDL_SystemCursor WaitArrow = SDL_SYSTEM_CURSOR_WAITARROW;
-		static constexpr SDL_SystemCursor SizeNWSE = SDL_SYSTEM_CURSOR_SIZENWSE;
-		static constexpr SDL_SystemCursor SizeNESW = SDL_SYSTEM_CURSOR_SIZENESW;
-		static constexpr SDL_SystemCursor SizeWE = SDL_SYSTEM_CURSOR_SIZEWE;
-		static constexpr SDL_SystemCursor SizeNS = SDL_SYSTEM_CURSOR_SIZENS;
-		static constexpr SDL_SystemCursor SizeAll = SDL_SYSTEM_CURSOR_SIZEALL;
-		static constexpr SDL_SystemCursor No = SDL_SYSTEM_CURSOR_NO;
-		static constexpr SDL_SystemCursor Hand = SDL_SYSTEM_CURSOR_HAND;
+		static constexpr SDL_SystemCursor Progress = SDL_SYSTEM_CURSOR_PROGRESS;
+		static constexpr SDL_SystemCursor ResizeNWSE = SDL_SYSTEM_CURSOR_NWSE_RESIZE;
+		static constexpr SDL_SystemCursor ResizeNESW = SDL_SYSTEM_CURSOR_NESW_RESIZE;
+		static constexpr SDL_SystemCursor ResizeEW = SDL_SYSTEM_CURSOR_EW_RESIZE;
+		static constexpr SDL_SystemCursor ResizeNS = SDL_SYSTEM_CURSOR_NS_RESIZE;
+		static constexpr SDL_SystemCursor Move = SDL_SYSTEM_CURSOR_MOVE;
+		static constexpr SDL_SystemCursor NotAllowed = SDL_SYSTEM_CURSOR_NOT_ALLOWED;
+		static constexpr SDL_SystemCursor Pointer = SDL_SYSTEM_CURSOR_POINTER;
 	};
 }

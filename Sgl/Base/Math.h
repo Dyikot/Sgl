@@ -14,6 +14,5 @@ namespace Sgl
 		static std::vector<float> SinRange(size_t size) noexcept;
 		static std::vector<float> CosRange(size_t size) noexcept;
 		static std::vector<int> TriangulateEllipse(size_t pointsNumber);
-		static bool IsPointInRect(FPoint point, FRect rect) noexcept;
 	};
 }

@@ -7,8 +7,8 @@ namespace Sgl
 	struct TextEditingEventArgs
 	{
 		std::string Text;
-		size_t SelectionStart;
-		size_t SelectionLength;
+		int SelectionStart;
+		int SelectionLength;
 	};
 
 	struct TextInputEventArgs

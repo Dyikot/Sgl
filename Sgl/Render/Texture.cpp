@@ -1,6 +1,8 @@
 #include "Texture.h"
 #include "../Application.h"
-#include "../Base/Log.h"
+#include <SDL3/SDL_log.h>
+#include <SDL3_ttf/SDL_ttf.h>
+#include <SDL3_image/SDL_image.h>
 
 namespace Sgl
 {
@@ -18,25 +20,32 @@ namespace Sgl
 		return renderer;
 	}
 
-	Texture::Texture(std::nullptr_t)
+	Texture::Texture(std::nullptr_t):
+		_texture(nullptr)
 	{}
 
 	Texture::Texture(std::string_view path):
 		_texture(IMG_LoadTexture(GetRenderer(), path.data()), TextureDeleter())
 	{
-		Log::PrintSDLErrorIf(_texture == nullptr);
+		if(_texture == nullptr)
+		{
+			SDL_Log("Unable to create a texture: %s", SDL_GetError());
+		}
 	}
 
-	Texture::Texture(Size size, TextureAccess access, SDL_PixelFormatEnum format):
+	Texture::Texture(Size size, TextureAccess access, SDL_PixelFormat format):
 		_texture(
 			SDL_CreateTexture(GetRenderer(),
-							  format,
-							  SDL_TextureAccess(access),
-							  size.Width,
-							  size.Height),
+				format,
+				SDL_TextureAccess(access),
+				size.Width,
+				size.Height),
 			TextureDeleter())
 	{
-		Log::PrintSDLErrorIf(_texture == nullptr);
+		if(_texture == nullptr)
+		{
+			SDL_Log("Unable to create a texture: %s", SDL_GetError());
+		}
 	}
 
 	Texture::Texture(FontRenderType renderType, 
@@ -50,29 +59,32 @@ namespace Sgl
 		switch(renderType)
 		{
 			case Sgl::FontRenderType::Blended:
-				surface = TTF_RenderUTF8_Blended(font, text.data(), foreground);
+				surface = TTF_RenderText_Blended(font, text.data(), text.length(), foreground);
 				break;
 			case Sgl::FontRenderType::Solid:
-				surface = TTF_RenderUTF8_Solid(font, text.data(), foreground);
+				surface = TTF_RenderText_Solid(font, text.data(), text.length(), foreground);
 				break;
 			case Sgl::FontRenderType::Shaded:
-				surface = TTF_RenderUTF8_Shaded(font, text.data(), foreground, background);
+				surface = TTF_RenderText_Shaded(font, text.data(), text.length(), foreground, background);
 				break;
 			case Sgl::FontRenderType::LCD:
-				surface = TTF_RenderUTF8_LCD(font, text.data(), foreground, background);
+				surface = TTF_RenderText_LCD(font, text.data(), text.length(), foreground, background);
 				break;
 		}
 
 		_texture = { SDL_CreateTextureFromSurface(GetRenderer(), surface), TextureDeleter() };
-		SDL_FreeSurface(surface);
+		SDL_DestroySurface(surface);
 
-		Log::PrintSDLErrorIf(_texture == nullptr);
+		if(_texture == nullptr)
+		{
+			SDL_Log("Unable to create a texture: %s", SDL_GetError());
+		}
 	}
 
 	Texture::Texture(FontRenderType renderType, 
 					 TTF_Font * font, 
 					 std::string_view text,
-					 unsigned int wrapLength, 
+					 int wrapWidth, 
 					 Color foreground, 
 					 Color background)
 	{
@@ -81,23 +93,26 @@ namespace Sgl
 		switch(renderType)
 		{
 			case Sgl::FontRenderType::Blended:
-				surface = TTF_RenderUTF8_Blended_Wrapped(font, text.data(), foreground, wrapLength);
+				surface = TTF_RenderText_Blended_Wrapped(font, text.data(), text.length(), foreground, wrapWidth);
 				break;
 			case Sgl::FontRenderType::Solid:
-				surface = TTF_RenderUTF8_Solid_Wrapped(font, text.data(), foreground, wrapLength);
+				surface = TTF_RenderText_Solid_Wrapped(font, text.data(), text.length(), foreground, wrapWidth);
 				break;
 			case Sgl::FontRenderType::Shaded:
-				surface = TTF_RenderUTF8_Shaded_Wrapped(font, text.data(), foreground, background, wrapLength);
+				surface = TTF_RenderText_Shaded_Wrapped(font, text.data(), text.length(), foreground, background, wrapWidth);
 				break;
 			case Sgl::FontRenderType::LCD:
-				surface = TTF_RenderUTF8_LCD_Wrapped(font, text.data(), foreground, background, wrapLength);
+				surface = TTF_RenderText_LCD_Wrapped(font, text.data(), text.length(), foreground, background, wrapWidth);
 				break;
 		}
 
 		_texture = { SDL_CreateTextureFromSurface(GetRenderer(), surface), TextureDeleter() };
-		SDL_FreeSurface(surface);
+		SDL_DestroySurface(surface);
 
-		Log::PrintSDLErrorIf(_texture == nullptr);
+		if(_texture == nullptr)
+		{
+			SDL_Log("Unable to create a texture: %s", SDL_GetError());
+		}
 	}
 
 	void Texture::SetColor(Color value)
@@ -133,30 +148,36 @@ namespace Sgl
 
 	SDL_ScaleMode Texture::GetScaleMode() const
 	{
-		SDL_ScaleMode scaleMode = SDL_ScaleModeBest;
+		SDL_ScaleMode scaleMode = SDL_SCALEMODE_LINEAR;
 		SDL_GetTextureScaleMode(_texture.get(), &scaleMode);
 		return scaleMode;
 	}
 
 	Size Texture::GetSize() const
 	{
-		int width = 0, height = 0;
-		SDL_QueryTexture(_texture.get(), nullptr, nullptr, &width, &height);
-		return Size(width, height);
+		return Size(_texture->w, _texture->h);
 	}
 
 	TextureAccess Texture::GetAccess() const
 	{
-		int access = 0;
-		SDL_QueryTexture(_texture.get(), nullptr, &access, nullptr, nullptr);
-		return TextureAccess(access);
+		auto id = SDL_GetTextureProperties(_texture.get());
+
+		if(id == 0)
+		{
+			SDL_Log("Unable to get a texture property: %s", SDL_GetError());
+		}
+
+		return TextureAccess(SDL_GetNumberProperty(id, SDL_PROP_TEXTURE_ACCESS_NUMBER, 0));
 	}
 
-	SDL_PixelFormatEnum Texture::GetFormat() const
+	SDL_PixelFormat Texture::GetFormat() const
 	{
-		unsigned int format = 0;
-		SDL_QueryTexture(_texture.get(), &format, nullptr, nullptr, nullptr);
-		return SDL_PixelFormatEnum(format);
+		return _texture->format;
+	}
+
+	SDL_Texture* Texture::GetSDLTexture() const noexcept
+	{
+		return _texture.get();
 	}
 
 	TextureLockContext Texture::Lock(std::optional<Rect> rect)
@@ -172,9 +193,9 @@ namespace Sgl
 		const Rect* lockRect = rect.has_value() ? &rect.value() : nullptr;
 		_height = lockRect ? lockRect->h : texture.GetSize().Height;
 
-		if(SDL_LockTexture(_texture.ToSDLTexture(), lockRect, &_pixels, &_pitch) < 0)
+		if(SDL_LockTexture(_texture.GetSDLTexture(), lockRect, &_pixels, &_pitch) < 0)
 		{
-			Log::PrintSDLError();
+			SDL_Log("Unable to lock a texture: %s", SDL_GetError());
 		}
 	}
 
@@ -182,7 +203,22 @@ namespace Sgl
 	{
 		if(_pixels)
 		{
-			SDL_UnlockTexture(_texture.ToSDLTexture());
+			SDL_UnlockTexture(_texture.GetSDLTexture());
 		}
+	}
+
+	bool TextureLockContext::HasLock() const noexcept
+	{
+		return _pixels != nullptr;
+	}
+
+	void* TextureLockContext::GetPixels() const noexcept
+	{
+		return _pixels;
+	}
+
+	int TextureLockContext::GetPitch() const noexcept
+	{
+		return _pitch;
 	}
 }

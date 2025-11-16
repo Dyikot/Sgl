@@ -3,7 +3,6 @@
 #include <string_view>
 #include <array>
 #include <span>
-#include <SDL/SDL_render.h>
 #include "../Base/Delegate.h"
 #include "../Base/Primitives.h"
 #include "../Base/Media/Color.h"
@@ -12,6 +11,8 @@
 
 namespace Sgl
 {
+	using Vertex = SDL_Vertex;
+
 	class RenderContext
 	{
 	private:
@@ -46,19 +47,19 @@ namespace Sgl
 
 		void DrawTexture(const Texture& texture);
 		void DrawTexture(const Texture& texture, FRect target);
-		void DrawTexture(const Texture& texture, FRect target, Rect clip);
+		void DrawTexture(const Texture& texture, FRect target, FRect clip);
 
 		void DrawTextureRotated(const Texture& texture, double angle, FPoint center);
 		void DrawTextureRotated(const Texture& texture, double angle, FPoint center, FRect target);
-		void DrawTextureRotated(const Texture& texture, double angle, FPoint center, FRect target, Rect clip);
+		void DrawTextureRotated(const Texture& texture, double angle, FPoint center, FRect target, FRect clip);
 		
 		void DrawTextureFlipped(const Texture& texture, Orientation flip);
 		void DrawTextureFlipped(const Texture& texture, Orientation flip, FRect target);
-		void DrawTextureFlipped(const Texture& texture, Orientation flip, FRect target, Rect clip);
+		void DrawTextureFlipped(const Texture& texture, Orientation flip, FRect target, FRect clip);
 
 		void DrawTextureTransformed(const Texture& texture, double angle, FPoint center, Orientation flip);
 		void DrawTextureTransformed(const Texture& texture, double angle, FPoint center, Orientation flip, FRect target);
-		void DrawTextureTransformed(const Texture& texture, double angle, FPoint center, Orientation flip, FRect target, Rect clip);
+		void DrawTextureTransformed(const Texture& texture, double angle, FPoint center, Orientation flip, FRect target, FRect clip);
 	private:
 		void SetColor(Color color) const noexcept
 		{
@@ -66,4 +67,3 @@ namespace Sgl
 		}
 	};
 }
-
