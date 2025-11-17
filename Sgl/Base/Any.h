@@ -64,7 +64,8 @@ namespace Sgl
 
 			bool operator==(const IStorage& other) const override
 			{
-				return Type() == other.Type() && Value == other.Get<T>();
+				const auto& otherStorage = static_cast<const Storage<T>&>(other);
+				return Type() == otherStorage.Type() && Value == otherStorage.Get<T>();
 			}
 		};
 
@@ -79,18 +80,12 @@ namespace Sgl
 		}
 
 		Any() = default;
+		Any(const Any& other);
+		Any(Any&& other) noexcept;
 
 		template<typename T>
 		explicit Any(T&& value):
 			_data(std::make_unique<Storage<std::decay_t<T>>>(std::forward<T>(value)))
-		{}
-
-		Any(const Any& other):
-			_data(other._data ? other._data->Copy() : nullptr)
-		{}
-
-		Any(Any&& other) noexcept:
-			_data(std::move(other._data))
 		{}
 
 		template<typename T>
@@ -106,38 +101,14 @@ namespace Sgl
 		}
 
 		template<typename T>
-		T* TryAs()
-		{
-			if(HasValue() && _data->Type() == typeid(T))
-			{
-				return &As<T>();
-			}
-
-			return nullptr;
-		}
-
-		template<typename T>
-		const T* TryAs() const
-		{
-			if(HasValue() && _data->Type() == typeid(T))
-			{
-				return &As<T>();
-			}
-
-			return nullptr;
-		}
-
-		template<typename T>
 		bool Is() const
 		{
 			const auto& type = HasValue() ? _data->Type() : typeid(nullptr);
 			return type == typeid(T);
 		}
 
-		bool HasValue() const noexcept
-		{
-			return _data != nullptr;
-		}
+		bool Is(const std::type_info& typeInfo);
+		bool HasValue() const noexcept { return _data.get() != nullptr; }
 
 		template<typename T>
 		Any& operator=(T&& value)
@@ -146,29 +117,8 @@ namespace Sgl
 			return *this;
 		}
 
-		Any& operator=(const Any& other)
-		{
-			_data = other._data->Copy();
-			return *this;
-		}
-
-		Any& operator=(Any&& other) noexcept
-		{
-			_data = std::move(other._data);
-			return *this;
-		}
-
-		friend bool operator==(const Any& left, const Any& right)
-		{
-			bool leftHasValue = left.HasValue();
-			bool rightHasValue = right.HasValue();
-
-			if(leftHasValue && rightHasValue)
-			{
-				return *left._data == *right._data;
-			}
-			
-			return !leftHasValue && !rightHasValue;
-		}
+		Any& operator=(const Any& other);
+		Any& operator=(Any&& other) noexcept;
+		friend bool operator==(const Any& left, const Any& right);
 	};
 }

@@ -3,8 +3,9 @@
 #include <type_traits>
 #include "../Base/Any.h"
 #include "../Base/Event.h"
+#include "../Data/IData.h"
+#include "../Data/IDataTemplate.h"
 #include"../Data/BindingMode.h"
-#include "../Data/DataTemplate.h"
 #include "../Input/MouseAndKeyEventArgs.h"
 #include "Layoutable.h"
 
@@ -56,7 +57,6 @@ namespace Sgl
 		bool IsMouseOver() const { return _isMouseOver; }
 
 		void Render(RenderContext context) override;
-		DataTemplate GetDefaultDataTemplate() const override;
 
 		template<typename TObservable, typename TObserver, typename TMember>
 		void Bind(ObservableProperty<TObserver, TMember>& targetProperty,
@@ -163,4 +163,11 @@ namespace Sgl
 		friend class ContentUIElement;
 		friend class UIElementsCollection;
 	};	
+
+	class UIElementDataTemplate : public IDataTemplate
+	{
+	public:
+		Ref<UIElement> Build(const Ref<IData>& data) const override;
+		bool Match(const Ref<IData>& data) const override;
+	};
 }

@@ -1,7 +1,8 @@
 #include "Window.h"
+#include <SDL3/SDL_log.h>
 #include "Base/Time/Delay.h"
 #include "Application.h"
-#include <SDL3/SDL_log.h>
+#include "Render/BackgroundFiller.h"
 
 namespace Sgl
 {
@@ -224,15 +225,19 @@ namespace Sgl
         }
     }
 
-    void Window::SetIcon(Surface icon)
+    void Window::SetIcon(const std::string& iconSource)
     {
-        _icon = std::move(icon);
-        SDL_SetWindowIcon(_window, _icon.GetSDLSurface());
+        _icon = Surface(iconSource);
+
+        if(!SDL_SetWindowIcon(_window, _icon.GetSDLSurface()))
+        {
+            SDL_Log("Unable to set a window icon: %s", SDL_GetError());
+        }
     }
 
-    Surface Window::GetIcon() const
+    const std::string& Window::GetIcon() const
     {
-        return _icon;
+        return _iconSource;
     }
 
     void Window::SetResizable(bool value) noexcept
@@ -330,7 +335,7 @@ namespace Sgl
         SDL_HideWindow(_window);
     }
 
-    void Window::Focus()
+    void Window::Activate()
     {
         SDL_RaiseWindow(_window);
     }
@@ -347,13 +352,7 @@ namespace Sgl
 
     void Window::Render(RenderContext context)
     {
-        switch(auto background = GetBackground(); background.GetType())
-        {
-            case BrushType::Color:
-                context.SetBackground(background.AsColor()); break;
-            case BrushType::Texture:
-                context.DrawTexture(background.AsTexture()); break;
-        }
+        std::visit(BackgroundFiller(context), GetBackground());
 
         if(_content && _content->IsVisible())
         {

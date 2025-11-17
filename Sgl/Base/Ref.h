@@ -130,6 +130,12 @@ namespace Sgl
             return *_data;
         }
 
+        Ref& operator=(std::nullptr_t)
+        {
+            TryDeleteMemoryBlock();
+            return *this;
+        }
+
         Ref& operator=(const Ref& other) noexcept
         {
             if(this != &other)

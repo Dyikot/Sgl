@@ -23,7 +23,7 @@ namespace Sgl
 		SDL_SetRenderTarget(_renderer, nullptr);
 	}
 
-	void RenderContext::SetBackground(Color color)
+	void RenderContext::FillBackground(Color color)
 	{
 		SetColor(color);
 		SDL_RenderClear(_renderer);

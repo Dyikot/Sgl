@@ -29,22 +29,11 @@ namespace Sgl
 	void ContentUIElement::SetContent(Ref<IData> content)
 	{
 		SetProperty(ContentProperty, _content, content);
-
-		if(content != nullptr)
-		{
-			auto dataTemplate = content->GetDefaultDataTemplate();
-			if(dataTemplate != nullptr)
-			{
-				SetContentTemplate(std::move(dataTemplate));
-				return;
-			}			
-		}
-
 		InvalidateMeasure();
 		InvalidateContentPresenter();
 	}
 
-	void ContentUIElement::SetContentTemplate(DataTemplate value)
+	void ContentUIElement::SetContentTemplate(Ref<IDataTemplate> value)
 	{
 		SetProperty(ContentTemplateProperty, _contentTemplate, value);
 		InvalidateMeasure();
@@ -160,9 +149,9 @@ namespace Sgl
 
 	bool ContentUIElement::TryCreatePresenter()
 	{
-		if(_contentTemplate.HasTarget() && _content != nullptr)
+		if(_contentTemplate != nullptr && _contentTemplate->Match(_content))
 		{
-			_contentPresenter = _contentTemplate(_content);
+			_contentPresenter = _contentTemplate->Build(_content);
 			_contentPresenter->_parent = this;
 			return true;
 		}

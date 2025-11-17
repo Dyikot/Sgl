@@ -1,4 +1,5 @@
 #include "UIElement.h"
+#include "../Render/BackgroundFiller.h"
 
 namespace Sgl
 {
@@ -53,34 +54,9 @@ namespace Sgl
 		Renderable::Render(context);
 	}
 
-	DataTemplate UIElement::GetDefaultDataTemplate() const
-	{
-		return [](const Ref<IData>& data)
-		{
-			return data.As<UIElement>();
-		};
-	}
-
 	void UIElement::RenderBackground(RenderContext context)
 	{
-		switch(auto background = GetBackground(); background.GetType())
-		{
-			case BrushType::Color:
-			{
-				if(auto color = background.AsColor(); !color.IsTransparent())
-				{
-					context.DrawRectangleFill(_bounds, color);
-				}
-
-				break;
-			}
-
-			case BrushType::Texture:
-			{
-				context.DrawTexture(background.AsTexture(), _bounds);
-				break;
-			}
-		}
+		std::visit(RectBackgroundFiller(context, _bounds), GetBackground());
 	}
 
 	void UIElement::OnCursorChanged(const Cursor& cursor)
@@ -132,5 +108,15 @@ namespace Sgl
 	{
 		MouseLeave.TryInvoke(*this, e);
 		_isMouseOver = false;
+	}
+
+	Ref<UIElement> UIElementDataTemplate::Build(const Ref<IData>& data) const
+	{
+		return data.As<UIElement>();
+	}
+
+	bool UIElementDataTemplate::Match(const Ref<IData>& data) const
+	{
+		return data.Is<UIElement>();
 	}
 }

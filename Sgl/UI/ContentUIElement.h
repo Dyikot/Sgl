@@ -1,7 +1,6 @@
 #pragma once
 
 #include "UIElements/TextBlock.h"
-#include "../Data/TextData.h"
 
 namespace Sgl
 {
@@ -9,7 +8,7 @@ namespace Sgl
 	{
 	private:
 		Ref<IData> _content;
-		DataTemplate _contentTemplate;
+		Ref<IDataTemplate> _contentTemplate = New<UIElementDataTemplate>();
 		Ref<UIElement> _contentPresenter;
 		Thickness _padding;
 		VerticalAlignment _verticalContentAlignment = VerticalAlignment::Top;
@@ -26,8 +25,8 @@ namespace Sgl
 		void SetContent(Ref<IData> content);
 		Ref<IData> GetContent() const { return _content; }
 
-		void SetContentTemplate(DataTemplate value);
-		DataTemplate GetContentTemplate() const { return _contentTemplate; }
+		void SetContentTemplate(Ref<IDataTemplate> value);
+		Ref<IDataTemplate> GetContentTemplate() const { return _contentTemplate; }
 
 		void SetPadding(Thickness value);
 		Thickness GetPadding() const { return _padding; }

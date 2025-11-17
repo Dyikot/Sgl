@@ -65,6 +65,7 @@ namespace Sgl
 		bool _isModal = false;
 		Window* _owner = nullptr;
 		Surface _icon;
+		std::string _iconSource;
 		Stopwatch _stopwatch;
 	public:
 		Window();
@@ -201,14 +202,14 @@ namespace Sgl
 		/// <summary>
 		/// Sets the window icon
 		/// </summary>
-		/// <param name="icon">- the icon surface to set</param>
-		void SetIcon(Surface icon);
+		/// <param name="iconSource">- path to an icon</param>
+		void SetIcon(const std::string& iconSource);
 
 		/// <summary>
 		/// Gets the current window icon
 		/// </summary>
-		/// <returns>Reference to the icon surface</returns>
-		Surface GetIcon() const;
+		/// <returns>Path to the icon</returns>
+		const std::string& GetIcon() const;
 
 		/// <summary>
 		/// Sets whether the window is resizable
@@ -255,7 +256,7 @@ namespace Sgl
 		/// <summary>
 		/// Window gain a focus
 		/// </summary>
-		void Focus();
+		void Activate();
 
 		/// <summary>
 		/// Checks if the window is visible

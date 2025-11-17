@@ -18,9 +18,9 @@ namespace Sgl
         ~StyleMap() = default;
 
         auto begin() { return _items.begin(); }
-        auto end() { return _items.end(); }
-
         auto begin() const { return _items.begin(); }
+
+        auto end() { return _items.end(); }
         auto end() const { return _items.end(); }
 
         template<typename T>

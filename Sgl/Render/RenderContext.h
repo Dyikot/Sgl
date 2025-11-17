@@ -18,12 +18,12 @@ namespace Sgl
 	private:
 		SDL_Renderer* _renderer;
 	public:
-		RenderContext(SDL_Renderer* renderer);
+		explicit RenderContext(SDL_Renderer* renderer);
 		
 		void SetTarget(const Texture& texture);
 		void ResetTarget();
 
-		void SetBackground(Color color);
+		void FillBackground(Color color);
 		void SetBlendMode(SDL_BlendMode mode);
 
 		void DrawPoint(FPoint point, Color color);
