@@ -38,12 +38,13 @@ namespace Sgl
 		void DrawRectangles(std::span<const FRect> rects, Color color);
 		void DrawRectanglesFill(std::span<const FRect> rects, Color color);
 
-		void DrawEllipse(Rect rect, Color color);
-		void DrawEllipseSmooth(Rect rect, Color color);
-		void DrawEllipseFill(Rect rect, Color color);
-		void DrawEllipseFill(Rect rect, const Texture& texture);
+		void DrawEllipse(FRect rect, Color color);
+		void DrawEllipseSmooth(FRect rect, Color color);
+		void DrawEllipseFill(FRect rect, Color color);
+		void DrawEllipseFill(FRect rect, const Texture& texture);
 
-		void DrawGeometry(std::span<const Vertex> vertices, std::span<const int> order = {}, const Texture* texture = nullptr);
+		void DrawGeometry(std::span<const Vertex> vertices, std::span<const int> order = {});
+		void DrawGeometry(std::span<const Vertex> vertices, const Texture& texture, std::span<const int> order = {});
 
 		void DrawTexture(const Texture& texture);
 		void DrawTexture(const Texture& texture, FRect target);

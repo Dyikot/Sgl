@@ -5,9 +5,12 @@
 
 namespace Sgl
 {
-	static constexpr size_t MaxPointsNumber = 180;
-	static const auto SinRange = Math::SinRange(MaxPointsNumber);
-	static const auto CosRange = Math::CosRange(MaxPointsNumber);
+	static constexpr size_t VerticesNumber = 181;
+	static constexpr size_t EllipseVerticesNumber = 91;
+	static constexpr size_t EllipseAngleStep = 2;
+
+	static const std::vector<float> SinRange = Math::SinRange(VerticesNumber);
+	static const std::vector<float> CosRange = Math::CosRange(VerticesNumber);
 
 	RenderContext::RenderContext(SDL_Renderer* renderer):
 		_renderer(renderer)
@@ -82,31 +85,29 @@ namespace Sgl
 		SDL_RenderFillRects(_renderer, rects.data(), rects.size());
 	}
 
-	void RenderContext::DrawEllipse(Rect rect, Color color)
+	void RenderContext::DrawEllipse(FRect rect, Color color)
 	{
-		std::vector<FPoint> points;
-		points.reserve(MaxPointsNumber + 1);
+		std::vector<FPoint> points(VerticesNumber);
 
 		float radiusX = 0.5f * rect.w;
 		float radiusY = 0.5f * rect.h;
 		FPoint center(rect.x + radiusX, rect.y + radiusY);
 
-		for(size_t i = 0; i < points.size() - 1; i++)
+		for(size_t i = 0; i < VerticesNumber; i++)
 		{
-			points.emplace_back(
-				center.x + radiusX * CosRange[i],
-				center.y + radiusY * SinRange[i]
-			);
+			points[i].x = center.x + radiusX * CosRange[i];
+			points[i].y = center.y + radiusY * SinRange[i];
 		}
-
-		points.push_back(points[0]);
 
 		DrawLines(points, color);
 	}
 
-	void RenderContext::DrawEllipseSmooth(Rect rect, Color color)
+	void RenderContext::DrawEllipseSmooth(FRect rect, Color color)
 	{
-		if(rect.w <= 0 || rect.h <= 0) return;
+		if(rect.w <= 0 || rect.h <= 0)
+		{
+			return;
+		}
 
 		int a = rect.w * 0.5;
 		int b = rect.h * 0.5;
@@ -228,56 +229,79 @@ namespace Sgl
 		}
 	}
 
-	static void ComputeEllipseVertices(std::span<Vertex> vertices, 
-									   size_t angleStep,
-									   Rect rect, 
-									   Color color)
+	static std::vector<Vertex> ComputeEllipseVertices(FRect rect, Color color, bool hasTexture)
 	{
-		int angle = 0;
+		std::vector<Vertex> vertices(EllipseVerticesNumber);
+
+		size_t angleStep = 0;
 		float radiusX = rect.w * 0.5f;
 		float radiusY = rect.h * 0.5f;
 		FPoint center(rect.x + radiusX, rect.y + radiusY);
 
-		auto& first = vertices[0];
-		first.position.x = center.x + radiusX * CosRange[0];
-		first.position.y = center.y + radiusY * SinRange[0];
-		first.color = color;
-
-		for(size_t i = 1; i < vertices.size(); i++)
+		if(hasTexture)
 		{
-			angle = (i - 1) * angleStep;
-			vertices[i].position.x = center.x + radiusX * CosRange[angle];
-			vertices[i].position.y = center.y + radiusY * SinRange[angle];
-			vertices[i].color = color;
+			for(size_t i = 0; i < EllipseVerticesNumber; i++)
+			{
+				float cos = CosRange[angleStep];
+				float sin = SinRange[angleStep];
+				float u = (cos + 1.0f) * 0.5f;
+				float v = (sin + 1.0f) * 0.5f;
+
+				vertices[i].position.x = center.x + radiusX * cos;
+				vertices[i].position.y = center.y + radiusY * sin;
+				vertices[i].color = color;
+				vertices[i].tex_coord = FPoint(u, v);
+
+				angleStep += EllipseAngleStep;
+			}
 		}
+		else
+		{
+			for(size_t i = 0; i < EllipseVerticesNumber; i++)
+			{
+				float cos = CosRange[angleStep];
+				float sin = SinRange[angleStep];
+
+				vertices[i].position.x = center.x + radiusX * cos;
+				vertices[i].position.y = center.y + radiusY * sin;
+				vertices[i].color = color;
+
+				angleStep += EllipseAngleStep;
+			}
+		}
+
+		return vertices;
 	}
 
-	void RenderContext::DrawEllipseFill(Rect rect, Color color)
+	void RenderContext::DrawEllipseFill(FRect rect, Color color)
 	{
-		constexpr auto pointNumber = MaxPointsNumber / 2;
-		std::vector<Vertex> vertices(pointNumber + 1);
+		auto vertices = ComputeEllipseVertices(rect, color, false);
+		auto order = Math::TriangulateEllipse(EllipseVerticesNumber - 1);
 
-		ComputeEllipseVertices(vertices, MaxPointsNumber / pointNumber, rect, color);
-		auto order = Math::TriangulateEllipse(pointNumber);
 		DrawGeometry(vertices, order);
 	}
 
-	void RenderContext::DrawEllipseFill(Rect rect, const Texture& texture)
+	void RenderContext::DrawEllipseFill(FRect rect, const Texture& texture)
 	{
-		constexpr auto pointNumber = MaxPointsNumber / 2;
-		std::vector<Vertex> vertices(pointNumber + 1);
 		auto color = texture.GetColor();
+		auto vertices = ComputeEllipseVertices(rect, color, true);
+		auto order = Math::TriangulateEllipse(EllipseVerticesNumber - 1);
 
-		ComputeEllipseVertices(vertices, MaxPointsNumber / pointNumber, rect, color);
-		auto order = Math::TriangulateEllipse(pointNumber);
-		DrawGeometry(vertices, order, &texture);
+		DrawGeometry(vertices, texture, order);
+	}
+
+	void RenderContext::DrawGeometry(std::span<const Vertex> vertices, std::span<const int> order)
+	{
+		SDL_RenderGeometry(_renderer, nullptr, 
+						   vertices.data(), vertices.size(),
+						   order.data(), order.size());
 	}
 
 	void RenderContext::DrawGeometry(std::span<const Vertex> vertices, 
-									 std::span<const int> order, 
-									 const Texture* texture)
+									 const Texture& texture, 
+									 std::span<const int> order)
 	{
-		SDL_RenderGeometry(_renderer, texture ? texture->GetSDLTexture() : nullptr,
+		SDL_RenderGeometry(_renderer, texture.GetSDLTexture(),
 						   vertices.data(), vertices.size(),
 						   order.data(), order.size());
 	}

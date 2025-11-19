@@ -7,8 +7,12 @@
 
 namespace Sgl
 {
-	#ifdef SDL_PLATFORM_WINDOWS
-	static constexpr auto FalimiesPath = "C:/Windows/Fonts/";
+	#ifdef SDL_PLATFORM_WIN32
+	static constexpr auto FamiliesPath = "C:/Windows/Fonts/";
+	#elif SDL_PLATFORM_LINUX
+	static constexpr auto FamiliesPath = "/usr/share/fonts/";
+	#elif SDL_PLATFORM_MACOS
+	static constexpr auto FamiliesPath = "/System/Library/Fonts/";
 	#endif
 
 	static constexpr auto DefaultFamily = "segoeui.ttf";
@@ -20,11 +24,11 @@ namespace Sgl
 	}
 
 	FontFamily::FontFamily(DefaultFontFamilty):
-		FontFamily(FalimiesPath, DefaultFamily)
+		FontFamily(FamiliesPath, DefaultFamily)
 	{}
 
 	FontFamily::FontFamily(const std::string& name):
-		FontFamily(FalimiesPath, name)
+		FontFamily(FamiliesPath, name)
 	{}
 
 	FontFamily::FontFamily(const std::string& path, const std::string& name):
