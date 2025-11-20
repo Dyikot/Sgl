@@ -4,6 +4,8 @@
 
 namespace Sgl::UIElements
 {
+	
+
 	TextBlock::TextBlock(const TextBlock& other):
 		UIElement(other),
 		_text(other._text),
@@ -18,7 +20,7 @@ namespace Sgl::UIElements
 		_fontImpl(),
 		_textTexture(),
 		_isTextTextureValid(),
-		_fontValidationFlags(FontFamilyFlag)
+		_fontValidationBits(FontFamilyBit)
 	{}
 
 	TextBlock::TextBlock(TextBlock&& other) noexcept:
@@ -35,7 +37,7 @@ namespace Sgl::UIElements
 		_fontImpl(std::move(other._fontImpl)),
 		_textTexture(std::move(other._textTexture)),
 		_isTextTextureValid(other._isTextTextureValid),
-		_fontValidationFlags(other._fontValidationFlags)
+		_fontValidationBits(other._fontValidationBits)
 	{}
 
 	void TextBlock::SetText(const std::string& value)
@@ -45,10 +47,18 @@ namespace Sgl::UIElements
 		InvalidateMeasure();
 	}	
 
-	void TextBlock::SetFontSize(size_t value)
+	void TextBlock::SetFontSize(float value)
 	{
 		SetProperty(FontSizeProperty, _fontSize, value);
-		InvalidateFont(FontSizeFlag);
+		InvalidateFont(FontSizeBit);
+		InvalidateTextTexture();
+		InvalidateMeasure();
+	}
+
+	void TextBlock::SetFontOutline(int value)
+	{
+		SetProperty(FontOutlineProperty, _outline, value);
+		InvalidateFont(FontOutlineBit);
 		InvalidateTextTexture();
 		InvalidateMeasure();
 	}
@@ -56,7 +66,15 @@ namespace Sgl::UIElements
 	void TextBlock::SetFontFamily(const FontFamily& value)
 	{
 		SetProperty(FontFamilyProperty, _fontFamily, value);
-		InvalidateFont(FontFamilyFlag);
+		InvalidateFont(FontFamilyBit);
+		InvalidateTextTexture();
+		InvalidateMeasure();
+	}
+
+	void TextBlock::SetFlowDirection(FlowDirection value)
+	{
+		SetProperty(FlowDirectionProperty, _flowDirection, value);
+		InvalidateFont(FlowDirectionBit);
 		InvalidateTextTexture();
 		InvalidateMeasure();
 	}
@@ -64,7 +82,7 @@ namespace Sgl::UIElements
 	void TextBlock::SetFontStyle(FontStyle value)
 	{
 		SetProperty(FontStyleProperty, _fontStyle, value);
-		InvalidateFont(FontStyleFlag);
+		InvalidateFont(FontStyleBit);
 		InvalidateTextTexture();
 		InvalidateRender();
 	}
@@ -86,6 +104,7 @@ namespace Sgl::UIElements
 	void TextBlock::SetTextAlignment(TextAlignment value)
 	{
 		SetProperty(TextAlignmentProperty, _textAlignment, value);
+		InvalidateFont(TextAlignmentBit);
 		InvalidateTextTexture();
 		InvalidateMeasure();
 	}
@@ -99,7 +118,7 @@ namespace Sgl::UIElements
 	void TextBlock::Render(RenderContext context)
 	{
 		RenderBackground(context);
-		CreateTextTextureIfInvalid(_textTextureBounds.w);
+		UpdateTextTexture(_textTextureBounds.w);
 
 		if(_textTexture)
 		{
@@ -111,7 +130,7 @@ namespace Sgl::UIElements
 
 	FSize TextBlock::MeasureContent(FSize avaliableSize)
 	{
-		CreateTextTextureIfInvalid(GetWidth());
+		UpdateTextTexture(GetWidth());
 
 		if(_textTexture)
 		{
@@ -155,50 +174,64 @@ namespace Sgl::UIElements
 		}
 	}
 
-	void TextBlock::CreateOrUpdateFont()
+	void TextBlock::UpdateFont()
 	{
-		const auto flags = _fontValidationFlags.to_ulong();
-
-		if(flags & FontFamilyFlag)
+		if(_fontValidationBits[FontFamilyBit])
 		{
 			_fontImpl = FontImpl(_fontFamily, _fontSize);
-			_fontImpl.SetStyle(_fontStyle);
-			return;
 		}
-		
-		if(flags & FontSizeFlag)
+		else if(_fontValidationBits[FontSizeBit])
 		{
 			_fontImpl.SetSize(_fontSize);
 		}
 
-		if(flags & FontStyleFlag)
+		if(_fontValidationBits[FontStyleBit])
 		{
 			_fontImpl.SetStyle(_fontStyle);
 		}
+
+		if(_fontValidationBits[FontOutlineBit])
+		{
+			_fontImpl.SetOutline(_outline);
+		}
+
+		if(_fontValidationBits[FlowDirectionBit])
+		{
+			_fontImpl.SetFlowDirection(_flowDirection);
+		}
+
+		if(_fontValidationBits[TextAlignmentBit])
+		{
+			_fontImpl.SetTextAligment(_textAlignment);
+		}
 	}
 
-	void TextBlock::CreateTextTextureIfInvalid(float maxLineWidth)
+	void TextBlock::UpdateTextTexture(float maxLineWidth)
 	{
-		if(_fontValidationFlags.any())
+		if(_fontValidationBits.any())
 		{
-			CreateOrUpdateFont();
-			_fontValidationFlags = 0;
+			UpdateFont();
+			_fontValidationBits = 0;
 		}
 
 		if(!_isTextTextureValid)
 		{
-			TTF_SetFontWrapAlignment(_fontImpl, TTF_HorizontalAlignment(_textAlignment));
-
 			if(_text != "")
 			{
-				if(_textWrapping == TextWrapping::NoWrap)
+				switch(_textWrapping)
 				{
-					_textTexture = Texture(FontRenderType::Blended, _fontImpl, _text, _foreground);
+					case Sgl::TextWrapping::NoWrap:
+						_textTexture = Texture(FontQuality::Blended, _fontImpl, _text, _foreground);
+						break;
+
+					case Sgl::TextWrapping::Wrap:
+						_textTexture = Texture(FontQuality::Blended, _fontImpl, _text, maxLineWidth, _foreground);
+						break;
 				}
-				else
-				{
-					_textTexture = Texture(FontRenderType::Blended, _fontImpl, _text, maxLineWidth, _foreground);
-				}
+			}
+			else
+			{
+				_textTexture = nullptr;
 			}
 
 			_isTextTextureValid = true;

@@ -1,7 +1,8 @@
 #include "RenderContext.h"
 #include <SDL3_image/SDL_image.h>
 #include "../Base/Math.h"
-#include "../Base/Time/Stopwatch.h"
+#include "../Base/Media/Font.h"
+#include <SDL3_ttf/SDL_ttf.h>
 
 namespace Sgl
 {
@@ -373,5 +374,14 @@ namespace Sgl
 	{
 		SDL_RenderTextureRotated(_renderer, texture.GetSDLTexture(), &clip,
 			&target, angle, &center, static_cast<SDL_FlipMode>(flip));
+	}
+
+	void RenderContext::DrawText(FPoint position, std::string_view text, size_t size, Color color, const FontFamily& fontFamily)
+	{
+		FontImpl font(fontFamily, size);
+		Texture texture(FontQuality::Blended, font, text, color);
+		auto [width, height] = texture.GetSize();
+		FRect rect(position.x, position.y, width, height);
+		DrawTexture(texture, rect);
 	}
 }

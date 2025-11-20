@@ -43,7 +43,7 @@ namespace Sgl
 		_source(std::move(other._source))
 	{}
 
-	const std::string& FontFamily::Source() const
+	const std::string& FontFamily::GetSource() const
 	{
 		return _source;
 	}
@@ -60,8 +60,8 @@ namespace Sgl
 		return *this;
 	}
 
-	FontImpl::FontImpl(const FontFamily& fontFamily, size_t size):
-		_font(TTF_OpenFont(fontFamily.Source().data(), size))
+	FontImpl::FontImpl(const FontFamily& fontFamily, float size):
+		_font(TTF_OpenFont(fontFamily.GetSource().data(), size))
 	{
 		if(_font == nullptr)
 		{
@@ -71,12 +71,7 @@ namespace Sgl
 
 	FontImpl::FontImpl(FontImpl&& other) noexcept:
 		_font(std::exchange(other._font, nullptr))
-	{
-		if(_font == nullptr)
-		{
-			SDL_Log("Unable to create a font: %s", SDL_GetError());
-		}
-	}
+	{}
 
 	FontImpl::~FontImpl()
 	{
@@ -86,19 +81,35 @@ namespace Sgl
 		}
 	}
 
-	void FontImpl::SetSize(size_t value)
+	void FontImpl::SetSize(float size)
 	{
-		TTF_SetFontSize(_font, value);
+		TTF_SetFontSize(_font, size);
 	}
 
-	void FontImpl::SetStyle(FontStyle value)
+	void FontImpl::SetStyle(FontStyle fontStyle)
 	{
-		TTF_SetFontStyle(_font, static_cast<unsigned long>(value));
+		TTF_SetFontStyle(_font, static_cast<unsigned long>(fontStyle));
+	}
+
+	void FontImpl::SetOutline(int outline)
+	{
+		TTF_SetFontOutline(_font, outline);
+	}
+
+	void FontImpl::SetFlowDirection(FlowDirection flowDirection)
+	{
+		auto ttfDirection = static_cast<TTF_Direction>(static_cast<int>(flowDirection) + 4);
+		TTF_SetFontDirection(_font, ttfDirection);
+	}
+
+	void FontImpl::SetTextAligment(TextAlignment textAlignment)
+	{
+		TTF_SetFontWrapAlignment(_font, TTF_HorizontalAlignment(textAlignment));
 	}
 
 	FontImpl& FontImpl::operator=(FontImpl&& other) noexcept
 	{
-		_font = std::exchange(other._font, nullptr);
+		_font = std::exchange(other._font, _font);
 		return *this;
 	}
 }

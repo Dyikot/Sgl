@@ -58,17 +58,17 @@ namespace Sgl
 		Texture(Size size, 
 				TextureAccess access = TextureAccess::Static,
 				SDL_PixelFormat format = SDL_PIXELFORMAT_RGBA8888);
-		Texture(FontRenderType renderType, 
+		Texture(FontQuality fontQuality,
 				TTF_Font* font, 
 				std::string_view text,
 				Color foreground, 
-				Color background = Colors::White);
-		Texture(FontRenderType renderType, 
+				Color background = Colors::Transparent);
+		Texture(FontQuality fontQuality, 
 				TTF_Font* font,
 				std::string_view text, 
 				int wrapWidth,
 				Color foreground, 
-				Color background = Colors::White);
+				Color background = Colors::Transparent);
 		Texture(const Texture&) = default;
 		Texture(Texture&&) noexcept = default;
 		~Texture() = default;

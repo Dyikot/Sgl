@@ -16,8 +16,7 @@ namespace Sgl
 
 	static SDL_Renderer* GetRenderer()
 	{
-		static auto renderer = App->GetMainWindow()->GetSDLRenderer();
-		return renderer;
+		return App->GetMainWindow()->GetSDLRenderer();
 	}
 
 	Texture::Texture(std::nullptr_t):
@@ -48,7 +47,7 @@ namespace Sgl
 		}
 	}
 
-	Texture::Texture(FontRenderType renderType, 
+	Texture::Texture(FontQuality fontQuality,
 					 TTF_Font* font, 
 					 std::string_view text, 
 					 Color foreground, 
@@ -56,18 +55,18 @@ namespace Sgl
 	{
 		SDL_Surface* surface = nullptr;
 
-		switch(renderType)
+		switch(fontQuality)
 		{
-			case Sgl::FontRenderType::Blended:
+			case FontQuality::Blended:
 				surface = TTF_RenderText_Blended(font, text.data(), text.length(), foreground);
 				break;
-			case Sgl::FontRenderType::Solid:
+			case FontQuality::Solid:
 				surface = TTF_RenderText_Solid(font, text.data(), text.length(), foreground);
 				break;
-			case Sgl::FontRenderType::Shaded:
+			case FontQuality::Shaded:
 				surface = TTF_RenderText_Shaded(font, text.data(), text.length(), foreground, background);
 				break;
-			case Sgl::FontRenderType::LCD:
+			case FontQuality::LCD:
 				surface = TTF_RenderText_LCD(font, text.data(), text.length(), foreground, background);
 				break;
 		}
@@ -81,7 +80,7 @@ namespace Sgl
 		}
 	}
 
-	Texture::Texture(FontRenderType renderType, 
+	Texture::Texture(FontQuality fontQuality,
 					 TTF_Font * font, 
 					 std::string_view text,
 					 int wrapWidth, 
@@ -90,18 +89,18 @@ namespace Sgl
 	{
 		SDL_Surface* surface = nullptr;
 
-		switch(renderType)
+		switch(fontQuality)
 		{
-			case Sgl::FontRenderType::Blended:
+			case FontQuality::Blended:
 				surface = TTF_RenderText_Blended_Wrapped(font, text.data(), text.length(), foreground, wrapWidth);
 				break;
-			case Sgl::FontRenderType::Solid:
+			case FontQuality::Solid:
 				surface = TTF_RenderText_Solid_Wrapped(font, text.data(), text.length(), foreground, wrapWidth);
 				break;
-			case Sgl::FontRenderType::Shaded:
+			case FontQuality::Shaded:
 				surface = TTF_RenderText_Shaded_Wrapped(font, text.data(), text.length(), foreground, background, wrapWidth);
 				break;
-			case Sgl::FontRenderType::LCD:
+			case FontQuality::LCD:
 				surface = TTF_RenderText_LCD_Wrapped(font, text.data(), text.length(), foreground, background, wrapWidth);
 				break;
 		}

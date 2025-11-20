@@ -2,22 +2,26 @@
 
 #include "../UIElement.h"
 #include "../../Base/Media/Font.h"
-#include "../../Base/Media/Text.h"
 
 namespace Sgl::UIElements
 {
 	class TextBlock : public UIElement
 	{
 	public:
-		static constexpr size_t DefaultFontSize = 14;
+		static constexpr float DefaultFontSize = 14;
 	private:
-		static constexpr unsigned long FontFamilyFlag = 1;
-		static constexpr unsigned long FontSizeFlag = 2;
-		static constexpr unsigned long FontStyleFlag = 4;
+		static constexpr size_t FontFamilyBit		= 0;
+		static constexpr size_t FontSizeBit			= 1;
+		static constexpr size_t FontStyleBit		= 2;
+		static constexpr size_t FontOutlineBit		= 3;
+		static constexpr size_t FlowDirectionBit	= 4;
+		static constexpr size_t TextAlignmentBit	= 5;
 
 		std::string _text;
-		size_t _fontSize = DefaultFontSize;
+		float _fontSize = DefaultFontSize;
+		int _outline = 0;
 		FontFamily _fontFamily = FontFamily::Default;
+		FlowDirection _flowDirection = FlowDirection::BottomToTop;
 		FontStyle _fontStyle;
 		Color _foreground = Colors::Black;
 		TextWrapping _textWrapping = TextWrapping::NoWrap;
@@ -28,7 +32,7 @@ namespace Sgl::UIElements
 		FontImpl _fontImpl;
 		Texture _textTexture;
 		bool _isTextTextureValid = false;
-		std::bitset<3> _fontValidationFlags = FontFamilyFlag;
+		std::bitset<6> _fontValidationBits = 1;
 	public:
 		TextBlock() = default;
 		TextBlock(const TextBlock& other);
@@ -38,11 +42,17 @@ namespace Sgl::UIElements
 		void SetText(const std::string& value);
 		const std::string& GetText() const { return _text; }
 
-		void SetFontSize(size_t value); 
-		size_t GetFontSize() const { return _fontSize; }
+		void SetFontSize(float value); 
+		float GetFontSize() const { return _fontSize; }
+
+		void SetFontOutline(int value);
+		int GetFontOutline() const { return _outline; }
 
 		void SetFontFamily(const FontFamily& value);
 		const FontFamily& GetFontFamily() const { return _fontFamily; }
+
+		void SetFlowDirection(FlowDirection value);
+		FlowDirection GetFlowDirection() const { return _flowDirection; }
 
 		void SetFontStyle(FontStyle value);
 		FontStyle GetFontStyle() const { return _fontStyle; }
@@ -65,13 +75,15 @@ namespace Sgl::UIElements
 		FSize MeasureContent(FSize avaliableSize) override;
 		void ArrangeContent(FRect rect) override;
 	private:
-		void InvalidateFont(size_t flag) { _fontValidationFlags |= flag; }
-		void CreateOrUpdateFont();
-		void CreateTextTextureIfInvalid(float maxLineWidth);
+		void InvalidateFont(size_t bit) { _fontValidationBits.set(bit); }
+		void UpdateFont();
+		void UpdateTextTexture(float maxLineWidth);
 	public:
 		static inline ObservableProperty TextProperty { &SetText, &GetText };
 		static inline ObservableProperty FontSizeProperty { &SetFontSize, &GetFontSize };
+		static inline ObservableProperty FontOutlineProperty { &SetFontOutline, &GetFontOutline };
 		static inline ObservableProperty FontFamilyProperty { &SetFontFamily, &GetFontFamily };
+		static inline ObservableProperty FlowDirectionProperty { &SetFlowDirection, &GetFlowDirection };
 		static inline ObservableProperty FontStyleProperty { &SetFontStyle, &GetFontStyle };
 		static inline ObservableProperty ForegroundProperty { &SetForeground, &GetForeground };
 		static inline ObservableProperty TextWrappingProperty { &SetTextWrapping, &GetTextWrapping };

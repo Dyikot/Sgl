@@ -6,15 +6,15 @@
 
 namespace Sgl
 {
-    constexpr auto DefaultTitle = "Window";
-    constexpr auto DefaultWidth = 1280;
-    constexpr auto DefaultHeight = 720;
-    constexpr auto DefaultPosition = Point(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+    static constexpr auto DefaultTitle = "Window";
+    static constexpr auto DefaultWidth = 1280;
+    static constexpr auto DefaultHeight = 720;
+    static constexpr auto DefaultPosition = Point(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
     
     Window::Window():
         _window(SDL_CreateWindow(DefaultTitle, DefaultWidth, DefaultHeight, SDL_WINDOW_HIDDEN)),
         _renderer(SDL_CreateRenderer(_window, nullptr)),
-        _context(_renderer)
+        _renderContext(_renderer)
     {
         if(_window == nullptr)
         {
@@ -468,7 +468,7 @@ namespace Sgl
         {
             if(NeedsRendering())
             {
-                Render(_context);
+                Render(_renderContext);
                 SDL_RenderPresent(_renderer);
             }
         }

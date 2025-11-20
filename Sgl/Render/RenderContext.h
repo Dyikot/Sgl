@@ -61,6 +61,8 @@ namespace Sgl
 		void DrawTextureTransformed(const Texture& texture, double angle, FPoint center, Orientation flip);
 		void DrawTextureTransformed(const Texture& texture, double angle, FPoint center, Orientation flip, FRect target);
 		void DrawTextureTransformed(const Texture& texture, double angle, FPoint center, Orientation flip, FRect target, FRect clip);
+
+		void DrawText(FPoint position, std::string_view text, size_t size, Color color, const FontFamily& fontFamily = FontFamily::Default);
 	private:
 		void SetColor(Color color) const noexcept
 		{

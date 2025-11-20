@@ -54,12 +54,11 @@ namespace Sgl
 		/// Determines if the window should be rendered when minimized
 		/// </summary>
 		bool IsRenderableWhenMinimized = false;
-	protected:
+	private:
 		SDL_Window* _window;
 		SDL_Renderer* _renderer;
-		RenderContext _context;
+		RenderContext _renderContext;
 		Ref<UIElement> _content;
-	private:
 		int _id = 0;
 		bool _isClosing = false;
 		bool _isModal = false;
