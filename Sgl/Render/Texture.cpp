@@ -1,5 +1,4 @@
 #include "Texture.h"
-#include "../Application.h"
 #include <SDL3/SDL_log.h>
 #include <SDL3_ttf/SDL_ttf.h>
 #include <SDL3_image/SDL_image.h>
@@ -14,17 +13,12 @@ namespace Sgl
 		}
 	};
 
-	static SDL_Renderer* GetRenderer()
-	{
-		return App->GetMainWindow()->GetSDLRenderer();
-	}
-
 	Texture::Texture(std::nullptr_t):
 		_texture(nullptr)
 	{}
 
-	Texture::Texture(std::string_view path):
-		_texture(IMG_LoadTexture(GetRenderer(), path.data()), TextureDeleter())
+	Texture::Texture(SDL_Renderer* renderer, std::string_view path):
+		_texture(IMG_LoadTexture(renderer, path.data()), TextureDeleter())
 	{
 		if(_texture == nullptr)
 		{
@@ -32,9 +26,11 @@ namespace Sgl
 		}
 	}
 
-	Texture::Texture(Size size, TextureAccess access, SDL_PixelFormat format):
+	Texture::Texture(SDL_Renderer* renderer, Size size, 
+					 TextureAccess access, 
+					 SDL_PixelFormat format):
 		_texture(
-			SDL_CreateTexture(GetRenderer(),
+			SDL_CreateTexture(renderer,
 				format,
 				SDL_TextureAccess(access),
 				size.Width,
@@ -47,11 +43,8 @@ namespace Sgl
 		}
 	}
 
-	Texture::Texture(FontQuality fontQuality,
-					 TTF_Font* font, 
-					 std::string_view text, 
-					 Color foreground, 
-					 Color background)
+	Texture::Texture(SDL_Renderer* renderer, FontQuality fontQuality, TTF_Font* font, 
+					 std::string_view text, Color foreground, Color background)
 	{
 		SDL_Surface* surface = nullptr;
 
@@ -71,7 +64,7 @@ namespace Sgl
 				break;
 		}
 
-		_texture = { SDL_CreateTextureFromSurface(GetRenderer(), surface), TextureDeleter() };
+		_texture = { SDL_CreateTextureFromSurface(renderer, surface), TextureDeleter() };
 		SDL_DestroySurface(surface);
 
 		if(_texture == nullptr)
@@ -80,12 +73,8 @@ namespace Sgl
 		}
 	}
 
-	Texture::Texture(FontQuality fontQuality,
-					 TTF_Font * font, 
-					 std::string_view text,
-					 int wrapWidth, 
-					 Color foreground, 
-					 Color background)
+	Texture::Texture(SDL_Renderer* renderer, FontQuality fontQuality, TTF_Font* font, 
+					 std::string_view text, int wrapWidth, Color foreground, Color background)
 	{
 		SDL_Surface* surface = nullptr;
 
@@ -105,7 +94,7 @@ namespace Sgl
 				break;
 		}
 
-		_texture = { SDL_CreateTextureFromSurface(GetRenderer(), surface), TextureDeleter() };
+		_texture = { SDL_CreateTextureFromSurface(renderer, surface), TextureDeleter() };
 		SDL_DestroySurface(surface);
 
 		if(_texture == nullptr)

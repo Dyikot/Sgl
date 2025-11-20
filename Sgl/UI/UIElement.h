@@ -11,7 +11,7 @@
 
 namespace Sgl
 {
-	class Scene;
+	class Window;
 
 	class UIElement : public Layoutable, public IData
 	{
@@ -57,6 +57,7 @@ namespace Sgl
 		bool IsMouseOver() const { return _isMouseOver; }
 
 		void Render(RenderContext context) override;
+		Window* GetWindow() const;
 
 		template<typename TObservable, typename TObserver, typename TMember>
 		void Bind(ObservableProperty<TObserver, TMember>& targetProperty,

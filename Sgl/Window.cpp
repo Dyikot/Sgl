@@ -53,7 +53,7 @@ namespace Sgl
         return _window;
     }
 
-    SDL_Renderer* Window::GetSDLRenderer() const noexcept
+    SDL_Renderer* Window::GetRenderer() const noexcept
     {
         return _renderer;
     }

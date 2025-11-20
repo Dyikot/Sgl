@@ -1,4 +1,5 @@
 #include "Image.h"
+#include "../../Window.h"
 
 namespace Sgl::UIElements
 {
@@ -7,7 +8,8 @@ namespace Sgl::UIElements
 		_sourceBounds(other._sourceBounds),
 		_source(other._source),
 		_stretch(other._stretch),
-		_sourceTexture(other._sourceTexture)
+		_sourceTexture(other._sourceTexture),
+		_isImageTextureValid(other._isImageTextureValid)
 	{}
 
 	Image::Image(Image&& other) noexcept:
@@ -15,13 +17,14 @@ namespace Sgl::UIElements
 		_sourceBounds(other._sourceBounds),
 		_source(std::move(other._source)),
 		_stretch(other._stretch),
-		_sourceTexture(std::move(other._sourceTexture))
+		_sourceTexture(std::move(other._sourceTexture)),
+		_isImageTextureValid(other._isImageTextureValid)
 	{}
 
 	void Image::SetSource(const std::string & value)
 	{
 		SetProperty(SourceProperty, _source, value);
-		_sourceTexture = Texture(value);
+		InvalidateImageTexture();
 		InvalidateArrange();
 	}
 
@@ -83,6 +86,11 @@ namespace Sgl::UIElements
 	{
 		UIElement::ArrangeCore(rect);
 
+		if(!_isImageTextureValid)
+		{
+			UpdateImageTexture();
+		}
+		
 		if(!_sourceTexture)
 		{
 			return;
@@ -165,5 +173,12 @@ namespace Sgl::UIElements
 				.h = height
 			};
 		}	
+	}
+
+	void Image::UpdateImageTexture()
+	{
+		auto renderer = GetWindow()->GetRenderer();
+		_sourceTexture = Texture(renderer, _source);
+		_isImageTextureValid = true;
 	}
 }

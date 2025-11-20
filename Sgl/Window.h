@@ -82,7 +82,7 @@ namespace Sgl
 		/// Gets the underlying SDL renderer handle
 		/// </summary>
 		/// <returns>Pointer to the SDL_Renderer</returns>
-		SDL_Renderer* GetSDLRenderer() const noexcept;
+		SDL_Renderer* GetRenderer() const noexcept;
 
 		/// <summary>
 		/// Gets window id

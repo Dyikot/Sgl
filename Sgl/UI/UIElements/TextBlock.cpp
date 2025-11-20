@@ -1,16 +1,18 @@
 #include "TextBlock.h"
+#include "../../Window.h"
 #include <algorithm>
 #include <SDL3_ttf/SDL_ttf.h>
+#include <iostream>
 
 namespace Sgl::UIElements
 {
-	
-
 	TextBlock::TextBlock(const TextBlock& other):
 		UIElement(other),
 		_text(other._text),
 		_fontSize(other._fontSize),
+		_outline(other._outline),
 		_fontFamily(other._fontFamily),
+		_flowDirection(other._flowDirection),
 		_fontStyle(other._fontStyle),
 		_foreground(other._foreground),
 		_textWrapping(other._textWrapping),
@@ -27,7 +29,9 @@ namespace Sgl::UIElements
 		UIElement(std::move(other)),
 		_text(std::move(other._text)),
 		_fontSize(other._fontSize),
+		_outline(other._outline),
 		_fontFamily(std::move(other._fontFamily)),
+		_flowDirection(other._flowDirection),
 		_fontStyle(other._fontStyle),
 		_foreground(other._foreground),
 		_textWrapping(other._textWrapping),
@@ -218,14 +222,15 @@ namespace Sgl::UIElements
 		{
 			if(_text != "")
 			{
+				auto renderer = GetWindow()->GetRenderer();
 				switch(_textWrapping)
 				{
 					case Sgl::TextWrapping::NoWrap:
-						_textTexture = Texture(FontQuality::Blended, _fontImpl, _text, _foreground);
+						_textTexture = Texture(renderer, FontQuality::Blended, _fontImpl, _text, _foreground);
 						break;
-
+						
 					case Sgl::TextWrapping::Wrap:
-						_textTexture = Texture(FontQuality::Blended, _fontImpl, _text, maxLineWidth, _foreground);
+						_textTexture = Texture(renderer, FontQuality::Blended, _fontImpl, _text, maxLineWidth, _foreground);
 						break;
 				}
 			}

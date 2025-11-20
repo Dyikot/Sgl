@@ -1,5 +1,6 @@
 #include "UIElement.h"
 #include "../Render/BackgroundFiller.h"
+#include "../Window.h"
 
 namespace Sgl
 {
@@ -52,6 +53,27 @@ namespace Sgl
 		}
 
 		Renderable::Render(context);
+	}
+
+	Window* UIElement::GetWindow() const
+	{
+		StyleableElement* current = GetParent();
+		StyleableElement* parent = nullptr;
+
+		while(current != nullptr)
+		{
+			parent = current;
+			current = current->GetParent();
+		}
+
+		if(parent == nullptr)
+		{
+			return nullptr;
+		}
+		else
+		{
+			return static_cast<Window*>(parent);
+		}
 	}
 
 	void UIElement::RenderBackground(RenderContext context)

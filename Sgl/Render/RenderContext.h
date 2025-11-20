@@ -20,8 +20,10 @@ namespace Sgl
 	public:
 		explicit RenderContext(SDL_Renderer* renderer);
 		
+		SDL_Renderer* GetRenderer() const noexcept { return _renderer; }
+
 		void SetTarget(const Texture& texture);
-		void ResetTarget();
+		void SetTargetWindow();
 
 		void FillBackground(Color color);
 		void SetBlendMode(SDL_BlendMode mode);

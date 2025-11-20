@@ -29,7 +29,7 @@ namespace Sgl
 		const std::vector<std::string>& GetClasses() const;
 
 		bool IsStyleValid() const { return _isStyleValid; }
-		StyleableElement* GetParent() { return _parent; }
+		StyleableElement* GetParent() const { return _parent; }
 
 		virtual void ApplyStyle();
 		void InvalidateStyle();
