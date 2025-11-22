@@ -43,7 +43,7 @@ namespace Sgl
 
 	Application::~Application()
 	{        
-        delete _mainWindow;
+        _mainWindow.reset();
 		TTF_Quit();
 		SDL_Quit();
 	}
@@ -106,15 +106,14 @@ namespace Sgl
 		return *_localizer;
 	}
 
-    void Application::SetMainWindow(Window* value)
+    void Application::SetMainWindow(std::unique_ptr<Window> value)
     {
-        delete _mainWindow;
-        _mainWindow = value;
+        _mainWindow = std::move(value);
     }
 
     Window* Application::GetMainWindow() const
     {
-        return _mainWindow;
+        return _mainWindow.get();
     }
 
     const std::vector<Window*> Application::GetWindows() const noexcept
@@ -325,7 +324,7 @@ namespace Sgl
                     auto window = GetWindowById(e.window.windowID);
                     window->OnClosing();
 
-                    if(window == _mainWindow)
+                    if(window == _mainWindow.get())
                     {
                         Shutdown();
                     }

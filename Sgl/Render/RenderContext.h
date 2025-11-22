@@ -25,8 +25,10 @@ namespace Sgl
 		void SetTarget(const Texture& texture);
 		void SetTargetWindow();
 
-		void FillBackground(Color color);
 		void SetBlendMode(SDL_BlendMode mode);
+		Texture LoadTexture(std::string_view path);
+
+		void DrawBackground(Color color);
 
 		void DrawPoint(FPoint point, Color color);
 		void DrawPoints(std::span<const FPoint> points, Color color);

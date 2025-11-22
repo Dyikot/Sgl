@@ -16,6 +16,7 @@ namespace Sgl
 	class UIElement : public Layoutable, public IData
 	{
 	private:
+		using UIElementEventHandler = EventHandler<UIElement>;
 		using KeyEventHandler = EventHandler<UIElement, KeyEventArgs>;
 		using MouseEventHandler = EventHandler<UIElement, MouseEventArgs>;
 		using MouseButtonEventHandler = EventHandler<UIElement, MouseButtonEventArgs>;
@@ -29,6 +30,8 @@ namespace Sgl
 		Event<MouseButtonEventHandler> MouseUp;
 		Event<MouseButtonEventHandler> MouseDown;
 		Event<MouseWheelEventHandler> MouseWheel;
+		Event<UIElementEventHandler> Attached;
+		Event<UIElementEventHandler> Detached;
 	private:		
 		Any _tag;
 		std::string _name;
@@ -154,6 +157,8 @@ namespace Sgl
 		virtual void OnMouseWheelChanged(MouseWheelEventArgs& e);
 		virtual void OnMouseEnter(MouseEventArgs& e);
 		virtual void OnMouseLeave(MouseEventArgs& e);
+		virtual void OnAttached();
+		virtual void OnDetached();
 	public:
 		static inline ObservableProperty TagProperty { &SetTag, &GetTag };
 		static inline ObservableProperty ToolTipProperty { &SetToolTip, &GetToolTip };

@@ -26,6 +26,15 @@ namespace Sgl
 		_isContentPresenterValid(other._isContentPresenterValid)
 	{}
 
+	ContentUIElement::~ContentUIElement()
+	{
+		if(_contentPresenter)
+		{
+			_contentPresenter->OnDetached();
+			_contentPresenter->_parent = nullptr;
+		}
+	}
+
 	void ContentUIElement::SetContent(Ref<IData> content)
 	{
 		SetProperty(ContentProperty, _content, content);
@@ -151,8 +160,16 @@ namespace Sgl
 	{
 		if(_contentTemplate != nullptr && _contentTemplate->Match(_content))
 		{
+			if(_contentPresenter)
+			{
+				_contentPresenter->OnDetached();
+				_contentPresenter->_parent = nullptr;
+			}
+
 			_contentPresenter = _contentTemplate->Build(_content);
 			_contentPresenter->_parent = this;
+			_contentPresenter->OnAttached();
+
 			return true;
 		}
 

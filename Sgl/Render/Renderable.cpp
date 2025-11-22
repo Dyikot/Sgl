@@ -22,7 +22,7 @@ namespace Sgl
 		OnCursorChanged(value);
 	}
 
-	void Renderable::SetBackground(Brush value)
+	void Renderable::SetBackground(const Brush& value)
 	{
 		SetProperty(BackgroundProperty, _background, value);
 		InvalidateRender();

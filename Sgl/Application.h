@@ -48,7 +48,7 @@ namespace Sgl
 		Window* _focusedWindow = nullptr;
 		std::vector<Window*> _activeWindows;
 		std::unordered_map<int, Window*> _windows;
-		Window* _mainWindow;
+		std::unique_ptr<Window> _mainWindow;
 		std::unique_ptr<StringLocalizerBase> _localizer;
 	public:
 		Application() noexcept;
@@ -67,7 +67,7 @@ namespace Sgl
 		void SetLocalizer(std::unique_ptr<StringLocalizerBase> localizer);
 		const StringLocalizerBase& GetLocalizer() const;
 
-		void SetMainWindow(Window* value);
+		void SetMainWindow(std::unique_ptr<Window> value);
 		Window* GetMainWindow() const;
 
 		const std::vector<Window*> GetWindows() const noexcept;

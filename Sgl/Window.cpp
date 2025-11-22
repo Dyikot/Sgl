@@ -2,7 +2,7 @@
 #include <SDL3/SDL_log.h>
 #include "Base/Time/Delay.h"
 #include "Application.h"
-#include "Render/BackgroundFiller.h"
+#include "Render/BackgroundRenderer.h"
 
 namespace Sgl
 {
@@ -42,6 +42,12 @@ namespace Sgl
 
     Window::~Window()
     {
+        if(_content)
+        {
+            _content->OnDetached();
+            _content->_parent = nullptr;
+        }
+
         Close();
         App->RemoveWindow(this);
         SDL_DestroyRenderer(_renderer);
@@ -286,6 +292,7 @@ namespace Sgl
     {
         if(_content)
         {
+            _content->OnDetached();
             _content->_parent = nullptr;
         }
 
@@ -294,6 +301,7 @@ namespace Sgl
         if(_content)
         {
             _content->_parent = this;
+            _content->OnAttached();
         }
     }
 
@@ -352,7 +360,7 @@ namespace Sgl
 
     void Window::Render(RenderContext context)
     {
-        std::visit(BackgroundFiller(context), GetBackground());
+        std::visit(WindowBackgroundRenderer(context), GetBackground());
 
         if(_content && _content->IsVisible())
         {

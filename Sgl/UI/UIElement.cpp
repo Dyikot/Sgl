@@ -1,5 +1,5 @@
 #include "UIElement.h"
-#include "../Render/BackgroundFiller.h"
+#include "../Render/BackgroundRenderer.h"
 #include "../Window.h"
 
 namespace Sgl
@@ -78,7 +78,7 @@ namespace Sgl
 
 	void UIElement::RenderBackground(RenderContext context)
 	{
-		std::visit(RectBackgroundFiller(context, _bounds), GetBackground());
+		std::visit(UIElementBackgroundRenderer(context, _bounds), GetBackground());
 	}
 
 	void UIElement::OnCursorChanged(const Cursor& cursor)
@@ -130,6 +130,16 @@ namespace Sgl
 	{
 		MouseLeave.TryInvoke(*this, e);
 		_isMouseOver = false;
+	}
+
+	void UIElement::OnAttached()
+	{
+		Attached.TryInvoke(*this);
+	}
+
+	void UIElement::OnDetached()
+	{
+		Detached.TryInvoke(*this);
 	}
 
 	Ref<UIElement> UIElementDataTemplate::Build(const Ref<IData>& data) const

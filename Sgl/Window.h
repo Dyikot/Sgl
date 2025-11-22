@@ -70,7 +70,7 @@ namespace Sgl
 		Window();
 		Window(const Window&) = delete;
 		Window(Window&&) = delete;
-		virtual ~Window();
+		~Window();
 
 		/// <summary>
 		/// Gets the underlying SDL window handle

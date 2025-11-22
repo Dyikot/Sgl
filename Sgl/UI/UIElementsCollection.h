@@ -27,13 +27,17 @@ namespace Sgl
 			_owner(other._owner)
 		{}
 
-		~UIElementsCollection() = default;
+		~UIElementsCollection()
+		{
+			ClearItems();
+		}
 	protected:
 		void ClearItems() override
 		{
 			auto& items = Items();
 			for(auto& item : items)
 			{
+				item->OnDetached();
 				item->_parent = nullptr;
 			}
 
@@ -45,6 +49,7 @@ namespace Sgl
 			assert(item != nullptr);
 			
 			item->_parent = &_owner;
+			item->OnAttached();
 			base::InsertItem(index, item);
 			_owner.InvalidateMeasure();
 		}
@@ -54,6 +59,7 @@ namespace Sgl
 			assert(item != nullptr);
 
 			item->_parent = &_owner;
+			item->OnAttached();
 			base::SetItem(index, item);
 			_owner.InvalidateMeasure();
 		}
@@ -61,6 +67,7 @@ namespace Sgl
 		void RemoveItem(size_t index) override
 		{
 			auto& item = ElementAt(index);
+			item->OnDetached();
 			item->_parent = nullptr;
 
 			base::RemoveItem(index);

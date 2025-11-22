@@ -1,8 +1,8 @@
 #include "RenderContext.h"
+#include <SDL3_ttf/SDL_ttf.h>
 #include <SDL3_image/SDL_image.h>
 #include "../Base/Math.h"
 #include "../Base/Media/Font.h"
-#include <SDL3_ttf/SDL_ttf.h>
 
 namespace Sgl
 {
@@ -27,15 +27,20 @@ namespace Sgl
 		SDL_SetRenderTarget(_renderer, nullptr);
 	}
 
-	void RenderContext::FillBackground(Color color)
-	{
-		SetColor(color);
-		SDL_RenderClear(_renderer);
-	}
-
 	void RenderContext::SetBlendMode(SDL_BlendMode mode)
 	{
 		SDL_SetRenderDrawBlendMode(_renderer, mode);
+	}
+
+	Texture RenderContext::LoadTexture(std::string_view path)
+	{
+		return Texture(_renderer, path);
+	}
+
+	void RenderContext::DrawBackground(Color color)
+	{
+		SetColor(color);
+		SDL_RenderClear(_renderer);
 	}
 
 	void RenderContext::DrawPoint(FPoint point, Color color)

@@ -3,7 +3,7 @@
 #include "RenderContext.h"
 #include "../Styling/StyleableElement.h"
 #include "../Input/Cursor.h"
-#include "../Base/Media/Brush.h"
+#include "../Base/Media/ImageBrush.h"
 
 namespace Sgl
 {
@@ -23,8 +23,8 @@ namespace Sgl
         void SetCursor(const Cursor& value);
         const Cursor& GetCursor() const { return _cursor; }
 
-        void SetBackground(Brush value);
-        Brush GetBackground() const { return _background; }
+        void SetBackground(const Brush& value);
+        const Brush& GetBackground() const { return _background; }
         
         bool NeedsRendering() const { return !_isRenderValid; }
 

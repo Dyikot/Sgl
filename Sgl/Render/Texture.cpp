@@ -5,20 +5,12 @@
 
 namespace Sgl
 {
-	struct TextureDeleter
-	{
-		void operator()(SDL_Texture* texture) const
-		{
-			SDL_DestroyTexture(texture);
-		}
-	};
-
 	Texture::Texture(std::nullptr_t):
 		_texture(nullptr)
 	{}
 
 	Texture::Texture(SDL_Renderer* renderer, std::string_view path):
-		_texture(IMG_LoadTexture(renderer, path.data()), TextureDeleter())
+		_texture(IMG_LoadTexture(renderer, path.data()))
 	{
 		if(_texture == nullptr)
 		{
@@ -29,13 +21,11 @@ namespace Sgl
 	Texture::Texture(SDL_Renderer* renderer, Size size, 
 					 TextureAccess access, 
 					 SDL_PixelFormat format):
-		_texture(
-			SDL_CreateTexture(renderer,
+		_texture(SDL_CreateTexture(renderer,
 				format,
 				SDL_TextureAccess(access),
 				size.Width,
-				size.Height),
-			TextureDeleter())
+				size.Height))
 	{
 		if(_texture == nullptr)
 		{
@@ -64,7 +54,7 @@ namespace Sgl
 				break;
 		}
 
-		_texture = { SDL_CreateTextureFromSurface(renderer, surface), TextureDeleter() };
+		_texture = SDL_CreateTextureFromSurface(renderer, surface);
 		SDL_DestroySurface(surface);
 
 		if(_texture == nullptr)
@@ -94,7 +84,7 @@ namespace Sgl
 				break;
 		}
 
-		_texture = { SDL_CreateTextureFromSurface(renderer, surface), TextureDeleter() };
+		_texture = SDL_CreateTextureFromSurface(renderer, surface);
 		SDL_DestroySurface(surface);
 
 		if(_texture == nullptr)
@@ -103,41 +93,49 @@ namespace Sgl
 		}
 	}
 
+	Texture::~Texture()
+	{
+		if(_texture != nullptr)
+		{
+			SDL_DestroyTexture(_texture);
+		}
+	}
+
 	void Texture::SetColor(Color value)
 	{
-		SDL_SetTextureColorMod(_texture.get(), value.Red, value.Green, value.Blue);
-		SDL_SetTextureAlphaMod(_texture.get(), value.Alpha);
+		SDL_SetTextureColorMod(_texture, value.Red, value.Green, value.Blue);
+		SDL_SetTextureAlphaMod(_texture, value.Alpha);
 	}
 
 	Color Texture::GetColor() const
 	{
 		Color color = Colors::Transparent;
-		SDL_GetTextureColorMod(_texture.get(), &color.Red, &color.Green, &color.Blue);
-		SDL_GetTextureAlphaMod(_texture.get(), &color.Alpha);
+		SDL_GetTextureColorMod(_texture, &color.Red, &color.Green, &color.Blue);
+		SDL_GetTextureAlphaMod(_texture, &color.Alpha);
 		return color;
 	}
 
 	void Texture::SetBlendMode(SDL_BlendMode value)
 	{
-		SDL_SetTextureBlendMode(_texture.get(), value);
+		SDL_SetTextureBlendMode(_texture, value);
 	}
 
 	SDL_BlendMode Texture::GetBlendMode() const
 	{
 		SDL_BlendMode blendMode = SDL_BLENDMODE_NONE;
-		SDL_GetTextureBlendMode(_texture.get(), &blendMode);
+		SDL_GetTextureBlendMode(_texture, &blendMode);
 		return blendMode;
 	}
 
 	void Texture::SetScaleMode(SDL_ScaleMode value)
 	{
-		SDL_SetTextureScaleMode(_texture.get(), value);
+		SDL_SetTextureScaleMode(_texture, value);
 	}
 
 	SDL_ScaleMode Texture::GetScaleMode() const
 	{
 		SDL_ScaleMode scaleMode = SDL_SCALEMODE_LINEAR;
-		SDL_GetTextureScaleMode(_texture.get(), &scaleMode);
+		SDL_GetTextureScaleMode(_texture, &scaleMode);
 		return scaleMode;
 	}
 
@@ -148,7 +146,7 @@ namespace Sgl
 
 	TextureAccess Texture::GetAccess() const
 	{
-		auto id = SDL_GetTextureProperties(_texture.get());
+		auto id = SDL_GetTextureProperties(_texture);
 
 		if(id == 0)
 		{
@@ -165,13 +163,19 @@ namespace Sgl
 
 	SDL_Texture* Texture::GetSDLTexture() const noexcept
 	{
-		return _texture.get();
+		return _texture;
 	}
 
 	TextureLockContext Texture::Lock(std::optional<Rect> rect)
 	{
 		return TextureLockContext(*this, rect);
-	}	
+	}
+
+	Texture& Texture::operator=(Texture&& other) noexcept
+	{
+		_texture = std::exchange(other._texture, _texture);
+		return *this;
+	}
 
 	TextureLockContext::TextureLockContext(Texture& texture, std::optional<Rect> rect):
 		_texture(texture),

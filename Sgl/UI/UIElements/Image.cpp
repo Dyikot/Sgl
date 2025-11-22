@@ -8,7 +8,7 @@ namespace Sgl::UIElements
 		_sourceBounds(other._sourceBounds),
 		_source(other._source),
 		_stretch(other._stretch),
-		_sourceTexture(other._sourceTexture),
+		_sourceTexture(nullptr),
 		_isImageTextureValid(other._isImageTextureValid)
 	{}
 

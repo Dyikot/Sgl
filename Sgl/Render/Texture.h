@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>
 #include <span>
 #include <optional>
 #include <SDL3/SDL_render.h>
@@ -50,7 +49,7 @@ namespace Sgl
 	class Texture final
 	{
 	private:
-		std::shared_ptr<SDL_Texture> _texture;
+		SDL_Texture* _texture = nullptr;
 	public:
 		Texture() = default;
 		Texture(std::nullptr_t);
@@ -72,9 +71,9 @@ namespace Sgl
 				int wrapWidth,
 				Color foreground, 
 				Color background = Colors::Transparent);
-		Texture(const Texture&) = default;
+		Texture(const Texture&) = delete;
 		Texture(Texture&&) noexcept = default;
-		~Texture() = default;
+		~Texture();
 
 		void SetColor(Color value);
 		Color GetColor() const;
@@ -92,8 +91,8 @@ namespace Sgl
 
 		TextureLockContext Lock(std::optional<Rect> rect = std::nullopt);
 		
-		Texture& operator=(const Texture&) = default;
-		Texture& operator=(Texture&&) noexcept = default;
+		Texture& operator=(const Texture&) = delete;
+		Texture& operator=(Texture&& other) noexcept;
 		friend bool operator==(const Texture&, const Texture&) = default;
 		explicit operator bool() { return _texture != nullptr; }
 	};
