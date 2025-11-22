@@ -37,8 +37,9 @@ namespace Sgl
 			auto& items = Items();
 			for(auto& item : items)
 			{
-				item->OnDetached();
 				item->_parent = nullptr;
+				item->SetVisualRoot(_owner.GetVisualRoot());
+				item->OnDetached();
 			}
 
 			_owner.InvalidateMeasure();
@@ -49,6 +50,7 @@ namespace Sgl
 			assert(item != nullptr);
 			
 			item->_parent = &_owner;
+			item->SetVisualRoot(_owner.GetVisualRoot());
 			item->OnAttached();
 			base::InsertItem(index, item);
 			_owner.InvalidateMeasure();
@@ -59,6 +61,7 @@ namespace Sgl
 			assert(item != nullptr);
 
 			item->_parent = &_owner;
+			item->SetVisualRoot(_owner.GetVisualRoot());
 			item->OnAttached();
 			base::SetItem(index, item);
 			_owner.InvalidateMeasure();
@@ -67,8 +70,9 @@ namespace Sgl
 		void RemoveItem(size_t index) override
 		{
 			auto& item = ElementAt(index);
-			item->OnDetached();
 			item->_parent = nullptr;
+			item->SetVisualRoot(_owner.GetVisualRoot());
+			item->OnDetached();
 
 			base::RemoveItem(index);
 			_owner.InvalidateMeasure();

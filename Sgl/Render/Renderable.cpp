@@ -4,6 +4,7 @@ namespace Sgl
 {
 	Renderable::Renderable(const Renderable& other):
 		StyleableElement(other),
+		_visualRoot(other._visualRoot),
 		_cursor(other._cursor),
 		_background(other._background),
 		_isRenderValid(other._isRenderValid)
@@ -11,6 +12,7 @@ namespace Sgl
 
 	Renderable::Renderable(Renderable&& other) noexcept:
 		StyleableElement(std::move(other)),
+		_visualRoot(std::exchange(other._visualRoot, nullptr)),
 		_cursor(other._cursor),
 		_background(std::move(other._background)),
 		_isRenderValid(other._isRenderValid)
@@ -26,6 +28,11 @@ namespace Sgl
 	{
 		SetProperty(BackgroundProperty, _background, value);
 		InvalidateRender();
+	}
+
+	void Renderable::SetVisualRoot(IVisualRoot* value)
+	{
+		_visualRoot = value;
 	}
 
 	void Renderable::Render(RenderContext context)

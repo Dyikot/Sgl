@@ -1,15 +1,17 @@
 #pragma once
 
-#include "RenderContext.h"
 #include "../Styling/StyleableElement.h"
 #include "../Input/Cursor.h"
 #include "../Base/Media/ImageBrush.h"
+#include "IVisualRoot.h"
+#include "RenderContext.h"
 
 namespace Sgl
 {
     class Renderable : public StyleableElement
     {
     private:
+        IVisualRoot* _visualRoot = nullptr;
         Cursor _cursor = Cursors::Arrow;
         Brush _background = Colors::Transparent;
 
@@ -25,6 +27,9 @@ namespace Sgl
 
         void SetBackground(const Brush& value);
         const Brush& GetBackground() const { return _background; }
+
+        virtual void SetVisualRoot(IVisualRoot* value);
+        IVisualRoot* GetVisualRoot() const { return _visualRoot; }
         
         bool NeedsRendering() const { return !_isRenderValid; }
 

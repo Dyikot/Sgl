@@ -67,6 +67,16 @@ namespace Sgl
 		InvalidateArrange();
 	}
 		
+	void ContentUIElement::SetVisualRoot(IVisualRoot* value)
+	{
+		Renderable::SetVisualRoot(value);
+
+		if(_contentPresenter)
+		{
+			_contentPresenter->SetVisualRoot(value);
+		}
+	}
+
 	void ContentUIElement::Render(RenderContext context)
 	{
 		if(_contentPresenter && _contentPresenter->IsVisible())
@@ -162,12 +172,14 @@ namespace Sgl
 		{
 			if(_contentPresenter)
 			{
-				_contentPresenter->OnDetached();
 				_contentPresenter->_parent = nullptr;
+				_contentPresenter->SetVisualRoot(nullptr);
+				_contentPresenter->OnDetached();
 			}
 
 			_contentPresenter = _contentTemplate->Build(_content);
 			_contentPresenter->_parent = this;
+			_contentPresenter->SetVisualRoot(GetVisualRoot());
 			_contentPresenter->OnAttached();
 
 			return true;

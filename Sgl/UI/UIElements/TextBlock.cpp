@@ -222,7 +222,7 @@ namespace Sgl::UIElements
 		{
 			if(_text != "")
 			{
-				auto renderer = GetWindow()->GetRenderer();
+				auto renderer = GetVisualRoot()->GetRenderer();
 				switch(_textWrapping)
 				{
 					case Sgl::TextWrapping::NoWrap:

@@ -36,7 +36,7 @@ namespace Sgl
             SDL_Log("Unable to create a renderer: %s", SDL_GetError());
         }
 
-        
+        SetVisualRoot(this);
         SetBackground(Colors::White);
     }
 
@@ -44,8 +44,9 @@ namespace Sgl
     {
         if(_content)
         {
-            _content->OnDetached();
             _content->_parent = nullptr;
+            _content->SetVisualRoot(nullptr);
+            _content->OnDetached();
         }
 
         Close();
@@ -292,8 +293,9 @@ namespace Sgl
     {
         if(_content)
         {
-            _content->OnDetached();
             _content->_parent = nullptr;
+            _content->SetVisualRoot(nullptr);
+            _content->OnDetached();
         }
 
         SetProperty(ContentProperty, _content, std::move(value));
@@ -301,6 +303,7 @@ namespace Sgl
         if(_content)
         {
             _content->_parent = this;
+            _content->SetVisualRoot(this);
             _content->OnAttached();
         }
     }

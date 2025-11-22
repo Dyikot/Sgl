@@ -55,27 +55,6 @@ namespace Sgl
 		Renderable::Render(context);
 	}
 
-	Window* UIElement::GetWindow() const
-	{
-		StyleableElement* current = GetParent();
-		StyleableElement* parent = nullptr;
-
-		while(current != nullptr)
-		{
-			parent = current;
-			current = current->GetParent();
-		}
-
-		if(parent == nullptr)
-		{
-			return nullptr;
-		}
-		else
-		{
-			return static_cast<Window*>(parent);
-		}
-	}
-
 	void UIElement::RenderBackground(RenderContext context)
 	{
 		std::visit(UIElementBackgroundRenderer(context, _bounds), GetBackground());

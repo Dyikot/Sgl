@@ -177,8 +177,7 @@ namespace Sgl::UIElements
 
 	void Image::UpdateImageTexture()
 	{
-		auto renderer = GetWindow()->GetRenderer();
-		_sourceTexture = Texture(renderer, _source);
+		_sourceTexture = Texture(GetVisualRoot()->GetRenderer(), _source);
 		_isImageTextureValid = true;
 	}
 }

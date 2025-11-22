@@ -28,7 +28,7 @@ namespace Sgl
 	/// handling events, and rendering graphics. It encapsulates SDL_Window and SDL_Renderer
 	/// objects and provides convenient methods for common window operations.
 	/// </summary>
-	class Window : public Renderable
+	class Window : public Renderable, public IVisualRoot
 	{
 	private:
 		using WindowStateEventHandler = EventHandler<Window, WindowState>;
@@ -82,7 +82,7 @@ namespace Sgl
 		/// Gets the underlying SDL renderer handle
 		/// </summary>
 		/// <returns>Pointer to the SDL_Renderer</returns>
-		SDL_Renderer* GetRenderer() const noexcept;
+		SDL_Renderer* GetRenderer() const noexcept override;
 
 		/// <summary>
 		/// Gets window id
