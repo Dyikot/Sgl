@@ -1,5 +1,5 @@
 #include "Panel.h"
-#include "../Base/Math.h"
+#include "../Layout/LayoutHelper.h"
 
 namespace Sgl
 {  
@@ -66,22 +66,19 @@ namespace Sgl
         UIElement::OnMouseMove(e);
 
         bool isCurrentVisible = _currentChild && _currentChild->IsVisible();
-        if(isCurrentVisible)
-        {
-            auto bounds = _currentChild->GetBounds();
+        bool isMouseOverCurrent = LayoutHelper::IsPointInRect(e.X, e.Y, _currentChild->GetBounds());
 
-            if(SDL_PointInRectFloat(&e.Position, &bounds))
-            {
-                _currentChild->OnMouseMove(e);
-                return;
-            }
+        if(isCurrentVisible && isMouseOverCurrent)
+        {
+            _currentChild->OnMouseMove(e);
+            return;
         }
 
         for(auto& child : Children)
         {
-            auto bounds = _currentChild->GetBounds();
+            bool isMouseOver = LayoutHelper::IsPointInRect(e.X, e.Y, _currentChild->GetBounds());
 
-            if(SDL_PointInRectFloat(&e.Position, &bounds) && child->IsVisible())
+            if(isMouseOver && child->IsVisible())
             {
                 if(_currentChild && _currentChild->IsVisible())
                 {

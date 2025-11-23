@@ -1,8 +1,7 @@
 #pragma once
 
-#include "../Base/Size.h"
 #include "../Base/Primitives.h"
-#include "../Base/Media/Layout.h"
+#include "Layout.h"
 #include "../Render/Renderable.h"
 
 namespace Sgl

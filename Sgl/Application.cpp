@@ -168,22 +168,22 @@ namespace Sgl
 
 	void Application::OnRun()
 	{
-		Started.TryInvoke(*this);
+		Started(*this);
 	}
 
 	void Application::OnStop()
 	{
-		Stopped.TryInvoke(*this);
+		Stopped(*this);
 	}
 
     void Application::OnThemeModeChanged(ThemeMode theme)
     {
-        ThemeModeChanged.TryInvoke(*this, theme);
+        ThemeModeChanged(*this, theme);
     }
 
     void Application::OnSystemThemeChanged(SystemTheme theme)
     {
-        SystemThemeChanged.TryInvoke(*this, theme);
+        SystemThemeChanged(*this, theme);
     }
 
     SystemTheme Application::QuerySystemTheme() const
@@ -252,7 +252,11 @@ namespace Sgl
                 case SDL_EVENT_WINDOW_MOVED:
                 {
                     auto window = GetWindowById(e.window.windowID);
-                    Point args(e.window.data1, e.window.data2);
+                    WindowPositionChangedEventArgs args
+                    {
+                        .X = e.window.data1,
+                        .Y = e.window.data2
+                    };
                     window->OnPositionChanged(args);
                     break;
                 }
@@ -260,7 +264,11 @@ namespace Sgl
                 case SDL_EVENT_WINDOW_RESIZED:
                 {
                     auto window = GetWindowById(e.window.windowID);
-                    Size args(e.window.data1, e.window.data2);
+                    WindowSizeChangedEventArgs args
+                    {
+                        .Width = e.window.data1,
+                        .Height = e.window.data2
+                    };
                     window->OnWindowSizeChanged(args);
                     break;
                 }
@@ -268,7 +276,7 @@ namespace Sgl
                 case SDL_EVENT_WINDOW_MINIMIZED:
                 {
                     auto window = GetWindowById(e.window.windowID);
-                    WindowState args = WindowState::Minimized;
+                    WindowStateChangedEventArgs args(WindowState::Minimized);
                     window->OnWindowStateChanged(args);
                     break;
                 }
@@ -276,7 +284,7 @@ namespace Sgl
                 case SDL_EVENT_WINDOW_MAXIMIZED:
                 {
                     auto window = GetWindowById(e.window.windowID);
-                    WindowState args  = WindowState::Maximized;
+                    WindowStateChangedEventArgs args(WindowState::Maximized);
                     window->OnWindowStateChanged(args);
                     break;
                 }
@@ -284,7 +292,7 @@ namespace Sgl
                 case SDL_EVENT_WINDOW_RESTORED:
                 {
                     auto window = GetWindowById(e.window.windowID);
-                    WindowState args = WindowState::Normal;
+                    WindowStateChangedEventArgs args(WindowState::Normal);
                     window->OnWindowStateChanged(args);
                     break;
                 }
@@ -384,7 +392,11 @@ namespace Sgl
                 case SDL_EVENT_MOUSE_MOTION:
                 {
                     auto window = GetWindowById(e.window.windowID);
-                    MouseEventArgs args(FPoint(e.button.x, e.button.y));
+                    MouseEventArgs args
+                    {
+                        .X = e.button.x,
+                        .Y = e.button.y
+                    };
                     window->OnMouseMove(args);
                     break;
                 }
@@ -417,11 +429,8 @@ namespace Sgl
                 {
                     MouseWheelEventArgs args =
                     {
-                        .Position =
-                        {
-                            .x = e.button.x,
-                            .y = e.button.y
-                        },
+                        .X = e.wheel.mouse_x,
+                        .Y = e.wheel.mouse_y,
                         .ScrolledHorizontally = e.wheel.x,
                         .ScrolledVertically = e.wheel.y,
                         .Direction = MouseWheelDirection(e.wheel.direction)

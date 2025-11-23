@@ -7,7 +7,7 @@
 #include "../Data/IDataTemplate.h"
 #include"../Data/BindingMode.h"
 #include "../Input/MouseAndKeyEventArgs.h"
-#include "Layoutable.h"
+#include "../Layout/Layoutable.h"
 
 namespace Sgl
 {

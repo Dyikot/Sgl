@@ -70,55 +70,55 @@ namespace Sgl
 
 	void UIElement::OnKeyUp(KeyEventArgs& e)
 	{
-		KeyUp.TryInvoke(*this, e);
+		KeyUp(*this, e);
 	}
 
 	void UIElement::OnKeyDown(KeyEventArgs& e)
 	{
-		KeyDown.TryInvoke(*this, e);
+		KeyDown(*this, e);
 	}
 
 	void UIElement::OnMouseMove(MouseEventArgs& e)
 	{
-		MouseMove.TryInvoke(*this, e);
+		MouseMove(*this, e);
 	}
 
 	void UIElement::OnMouseDown(MouseButtonEventArgs& e)
 	{
-		MouseDown.TryInvoke(*this, e);
+		MouseDown(*this, e);
 	}
 
 	void UIElement::OnMouseUp(MouseButtonEventArgs& e)
 	{
-		MouseUp.TryInvoke(*this, e);
+		MouseUp(*this, e);
 	}
 
 	void UIElement::OnMouseWheelChanged(MouseWheelEventArgs& e)
 	{
-		MouseWheel.TryInvoke(*this, e);
+		MouseWheel(*this, e);
 	}
 
 	void UIElement::OnMouseEnter(MouseEventArgs& e)
 	{
 		_isMouseOver = true;
 		Cursor::Set(GetCursor());
-		MouseEnter.TryInvoke(*this, e);
+		MouseEnter(*this, e);
 	}
 
 	void UIElement::OnMouseLeave(MouseEventArgs& e)
 	{
-		MouseLeave.TryInvoke(*this, e);
+		MouseLeave(*this, e);
 		_isMouseOver = false;
 	}
 
 	void UIElement::OnAttached()
 	{
-		Attached.TryInvoke(*this);
+		Attached(*this);
 	}
 
 	void UIElement::OnDetached()
 	{
-		Detached.TryInvoke(*this);
+		Detached(*this);
 	}
 
 	Ref<UIElement> UIElementDataTemplate::Build(const Ref<IData>& data) const

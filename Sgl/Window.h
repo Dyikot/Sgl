@@ -2,12 +2,8 @@
 
 #include <optional>
 #include "Render/Surface.h"
-#include "Base/Size.h"
 #include "Base/Event.h"
-#include "Base/Ref.h"
-#include "Base/Primitives.h"
 #include "Base/Time/Stopwatch.h"
-#include "Input/MouseAndKeyEventArgs.h"
 #include "Input/TextEventArgs.h"
 #include "UI/UIElement.h"
 
@@ -23,6 +19,23 @@ namespace Sgl
 		Normal, Minimized, Maximized
 	};
 
+	struct WindowStateChangedEventArgs
+	{
+		WindowState State;
+	};
+
+	struct WindowPositionChangedEventArgs
+	{
+		int X;
+		int Y;
+	};
+
+	struct WindowSizeChangedEventArgs
+	{
+		int Width;
+		int Height;
+	};
+
 	/// <summary>
 	/// The Window class provides a high-level interface for creating and managing window,
 	/// handling events, and rendering graphics. It encapsulates SDL_Window and SDL_Renderer
@@ -31,9 +44,9 @@ namespace Sgl
 	class Window : public Renderable, public IVisualRoot
 	{
 	private:
-		using WindowStateEventHandler = EventHandler<Window, WindowState>;
-		using WindowPositionChangedEventHandler = EventHandler<Window, Point>;
-		using WindowSizeChangedEventHandler = EventHandler<Window, Size>;
+		using WindowStateEventHandler = EventHandler<Window, WindowStateChangedEventArgs>;
+		using WindowPositionChangedEventHandler = EventHandler<Window, WindowPositionChangedEventArgs>;
+		using WindowSizeChangedEventHandler = EventHandler<Window, WindowSizeChangedEventArgs>;
 	public:
 		/// <summary>
 		/// Event triggered when the window's state changes (minimized, maximized, restored)
@@ -273,9 +286,9 @@ namespace Sgl
 		virtual void Process(TimeSpan elapsed);
 	protected:
 		void OnCursorChanged(const Cursor& cursor) override;
-		virtual void OnWindowStateChanged(WindowState& e);
-		virtual void OnPositionChanged(Point& e);
-		virtual void OnWindowSizeChanged(Size& e);
+		virtual void OnWindowStateChanged(WindowStateChangedEventArgs& e);
+		virtual void OnPositionChanged(WindowPositionChangedEventArgs& e);
+		virtual void OnWindowSizeChanged(WindowSizeChangedEventArgs& e);
 		virtual void OnKeyUp(KeyEventArgs& e) {}
 		virtual void OnKeyDown(KeyEventArgs& e) {}
 		virtual void OnMouseMove(MouseEventArgs& e);

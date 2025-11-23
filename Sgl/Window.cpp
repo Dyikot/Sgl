@@ -3,6 +3,7 @@
 #include "Base/Time/Delay.h"
 #include "Application.h"
 #include "Render/BackgroundRenderer.h"
+#include "Layout/LayoutHelper.h"
 
 namespace Sgl
 {
@@ -391,19 +392,24 @@ namespace Sgl
         }
     }
 
-    void Window::OnWindowStateChanged(WindowState& e)
+    void Window::OnWindowStateChanged(WindowStateChangedEventArgs& e)
     {
-        WindowStateChanged.TryInvoke(*this, e);
+        WindowStateChanged(*this, e);
     }
 
-    void Window::OnPositionChanged(Point& e)
+    void Window::OnPositionChanged(WindowPositionChangedEventArgs& e)
     {
-        PositionChanged.TryInvoke(*this, e);
+        PositionChanged(*this, e);
     }
 
-    void Window::OnWindowSizeChanged(Size& e)
+    void Window::OnWindowSizeChanged(WindowSizeChangedEventArgs& e)
     {
-        SizeChanged.TryInvoke(*this, e);
+        /*if(_content)
+        {
+            _content->InvalidateMeasure();
+        }*/
+
+        SizeChanged(*this, e);
     }
 
     void Window::OnMouseMove(MouseEventArgs& e)
@@ -412,7 +418,7 @@ namespace Sgl
         {
             auto& content = _content.GetValue();
             bool wasMouseOver = content._isMouseOver;
-            bool isMouseOver = SDL_PointInRectFloat(&e.Position, &content._bounds);
+            bool isMouseOver = LayoutHelper::IsPointInRect(e.X, e.Y, content._bounds);
 
             if(isMouseOver)
             {

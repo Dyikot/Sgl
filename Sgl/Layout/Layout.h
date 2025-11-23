@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Color.h"
-
 namespace Sgl
 {
 	/// <summary>

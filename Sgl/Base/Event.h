@@ -20,7 +20,7 @@ namespace Sgl
 	class Event;
 
 	/// <summary>
-	/// Specialized event container for EventHandler delegates.
+	/// Thread-unsafe event container for EventHandler delegates.
 	/// </summary>
 	template<typename TSender, typename TEventArgs>
 	class Event<EventHandler<TSender, TEventArgs>> final
@@ -35,21 +35,8 @@ namespace Sgl
 		/// </summary>
 		Event() = default;
 
-		/// <summary>
-		/// Copy constructor. Creates a new event with copies of all handlers from another event.
-		/// </summary>
-		/// <param name="other"> - The event to copy from.</param>
-		Event(const Event& other):
-			_eventHandlers(other._eventHandlers)
-		{}
-
-		/// <summary>
-		/// Move constructor. Transfers ownership of handlers from another event.
-		/// </summary>
-		/// <param name="other"> - The event to move from.</param>
-		Event(Event&& other) noexcept:
-			_eventHandlers(std::move(other._eventHandlers))
-		{}
+		Event(const Event&) = delete;
+		Event(Event&&) = delete;
 
 		/// <summary>
 		/// Removes all event handlers from the event.
@@ -60,36 +47,18 @@ namespace Sgl
 		}
 
 		/// <summary>
-		/// Invokes the event if there are any registered handlers.
+		/// Gets the number of registered handlers
 		/// </summary>
-		/// <param name="sender"> - The sender object that is raising the event.</param>
-		/// <param name="e"> - The event arguments containing data about the event.</param>
-		void TryInvoke(TSender& sender, TEventArgs& e) const
+		size_t Count() const noexcept
 		{
-			if(HasTarget())
-			{
-				operator()(sender, e);
-			}
-		}
-
-		/// <summary>
-		/// Invokes the event if there are any registered handlers.
-		/// </summary>
-		/// <param name="sender"> - The sender object that is raising the event.</param>
-		void TryInvoke(TSender& sender) const requires std::default_initializable<TEventArgs>
-		{			
-			if(HasTarget())
-			{
-				TEventArgs e = {};
-				operator()(sender, e);
-			}
+			return _eventHandlers.size();
 		}
 
 		/// <summary>
 		/// Checks whether the event has any registered handlers.
 		/// </summary>
 		/// <returns>True if there are registered handlers; otherwise, false.</returns>
-		bool HasTarget() const
+		bool HasHandlers() const noexcept
 		{
 			return !_eventHandlers.empty();
 		}
@@ -123,6 +92,16 @@ namespace Sgl
 			{
 				eventHandler(sender, e);
 			}
+		}
+
+		/// <summary>
+		/// Invokes event with default-constructed event arguments.
+		/// </summary>
+		/// <param name="sender">The sender object raising the event</param>
+		void operator()(TSender& sender) const
+		{
+			TEventArgs e {};
+			operator()(sender, e);
 		}
 
 		/// <summary>

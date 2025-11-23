@@ -4,7 +4,6 @@
 #include <numbers>
 #include <numeric>
 #include <cmath>
-#include "Primitives.h"
 
 namespace Sgl
 {

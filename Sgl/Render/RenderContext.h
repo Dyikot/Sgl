@@ -6,7 +6,7 @@
 #include "../Base/Delegate.h"
 #include "../Base/Primitives.h"
 #include "../Base/Media/Color.h"
-#include "../Base/Media/Layout.h"
+#include "../Layout/Layout.h"
 #include "Texture.h"
 
 namespace Sgl

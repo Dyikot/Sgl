@@ -6,7 +6,7 @@ namespace Sgl
 		_data(other._data ? other._data->Copy() : nullptr)
 	{}
 
-	Any::Any(Any && other) noexcept:
+	Any::Any(Any&& other) noexcept:
 		_data(std::move(other._data))
 	{}
 

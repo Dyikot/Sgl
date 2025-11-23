@@ -2,7 +2,6 @@
 
 #include <string>
 #include <SDL3/SDL_keyboard.h>
-#include "../Base/Primitives.h"
 
 namespace Sgl
 {	
@@ -30,7 +29,8 @@ namespace Sgl
 
 	struct MouseEventArgs
 	{
-		FPoint Position;
+		float X;
+		float Y;
 	};
 
 	struct MouseButtonEventArgs
@@ -42,7 +42,8 @@ namespace Sgl
 
 	struct MouseWheelEventArgs
 	{
-		FPoint Position;
+		float X;
+		float Y;
 		float ScrolledHorizontally;
 		float ScrolledVertically;
 		MouseWheelDirection Direction;

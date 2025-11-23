@@ -15,19 +15,18 @@ namespace Sgl
 	class Delegate<TReturn(TArgs...)>
 	{
 	private:
-		template<typename TReturn, typename... TArgs>
 		struct ICallable
 		{
 		public:
 			virtual ~ICallable() = default;
 
-			virtual std::unique_ptr<ICallable<TReturn, TArgs...>> Copy() const = 0;
+			virtual std::unique_ptr<ICallable> Copy() const = 0;
 			virtual const std::type_info& Type() const = 0;
 			virtual TReturn operator()(TArgs... args) const = 0;
 		};
 
 		template<typename TCallable>
-		struct Callable : public ICallable<TReturn, TArgs...>
+		struct Callable : public ICallable
 		{
 		private:
 			TCallable _callable;
@@ -36,23 +35,23 @@ namespace Sgl
 				_callable(std::move(callable))
 			{}
 
-			std::unique_ptr<ICallable<TReturn, TArgs...>> Copy() const override
+			std::unique_ptr<ICallable> Copy() const override
 			{
-				return std::make_unique<Callable>(*this);
+				return std::make_unique<Callable>(_callable);
 			}
 
-			const std::type_info& Type() const
+			const std::type_info& Type() const override
 			{
 				return typeid(TCallable);
 			}
 
 			TReturn operator()(TArgs... args) const override
 			{
-				return std::invoke(_callable, args...);
+				return std::invoke(_callable, std::forward<TArgs>(args)...);
 			}
 		};
 
-		std::unique_ptr<ICallable<TReturn, TArgs...>> _callable;
+		std::unique_ptr<ICallable> _callable;
 	public:
 		/// <summary>
 		/// Default constructor. Creates an empty delegate with no target.
@@ -63,14 +62,15 @@ namespace Sgl
 		/// Null pointer constructor. Creates an empty delegate.
 		/// </summary>
 		/// <param name="ptr"> - nullptr value.</param>
-		Delegate(std::nullptr_t) noexcept {}
+		Delegate(std::nullptr_t) noexcept:
+			_callable(nullptr)
+		{}
 
 		/// <summary>
 		/// Constructs a delegate with the specified callable object.
 		/// </summary>
 		/// <param name="func"> - The callable object to wrap.</param>
-		template<typename TFunc>
-			requires !std::same_as<std::decay_t<TFunc>, Delegate>
+		template<typename TFunc> requires !std::same_as<std::decay_t<TFunc>, Delegate>
 		Delegate(TFunc&& func):
 			_callable(std::make_unique<Callable<std::decay_t<TFunc>>>(std::forward<TFunc>(func)))
 		{}
@@ -114,7 +114,7 @@ namespace Sgl
 		/// <returns>A reference to the type_info object representing the target callable's type, or typeid(nullptr) if empty.</returns>
 		const std::type_info& TargetType() const noexcept
 		{
-			return HasTarget() ? _callable->Type() : typeid(nullptr);
+			return _callable ? _callable->Type() : typeid(nullptr);
 		}
 
 		/// <summary>
@@ -125,7 +125,7 @@ namespace Sgl
 		/// <exception cref="std::bad_function_call">Thrown if the delegate is empty.</exception>
 		TReturn operator()(TArgs... args) const
 		{
-			return (*_callable)(args...);
+			return (*_callable)(std::forward<TArgs>(args)...);
 		}
 
 		/// <summary>
@@ -142,8 +142,7 @@ namespace Sgl
 		/// Assignment operator for callable objects.
 		/// </summary>
 		/// <param name="func"> - The callable object to assign.</param>
-		template<typename TFunc>
-			requires !std::same_as<std::decay_t<TFunc>, Delegate>
+		template<typename TFunc> requires !std::same_as<std::decay_t<TFunc>, Delegate>
 		Delegate& operator=(TFunc&& func)
 		{
 			_callable = std::make_unique<Callable<std::decay_t<TFunc>>>(std::forward<TFunc>(func));
@@ -189,9 +188,6 @@ namespace Sgl
 			return left.TargetType() == right.TargetType();
 		}
 	};
-
-	template<typename TCallable>
-	Delegate(TCallable&&) -> Delegate<std::invoke_result_t<TCallable>()>;
 
 	/// <summary>
 	/// Represents a delegate that encapsulates a method that takes any number of arguments and does not return a value.

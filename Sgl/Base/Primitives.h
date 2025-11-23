@@ -9,5 +9,5 @@ namespace Sgl
 	using FPoint = SDL_FPoint;
 	using Point = SDL_Point;
 	using FRect = SDL_FRect;
-	using Rect = SDL_Rect;
+	using Rect = SDL_Rect;	
 }

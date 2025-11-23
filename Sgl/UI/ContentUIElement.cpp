@@ -1,6 +1,6 @@
 #include "ContentUIElement.h"
 #include <algorithm>
-#include "../Base/Math.h"
+#include "../Layout/LayoutHelper.h"
 
 namespace Sgl
 {
@@ -117,7 +117,7 @@ namespace Sgl
 		if(_contentPresenter)
 		{
 			bool wasMouseOver = _contentPresenter->_isMouseOver;
-			bool isMouseOver = SDL_PointInRectFloat(&e.Position, &_contentPresenter->_bounds);
+			bool isMouseOver = LayoutHelper::IsPointInRect(e.X, e.Y, _contentPresenter->_bounds);
 
 			if(isMouseOver)
 			{
