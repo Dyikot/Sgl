@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../UIElement.h"
-#include "../../Base/Media/Font.h"
+#include "../Base/Media/Font.h"
+#include "../UIElement/UIElement.h"
 
 namespace Sgl::UIElements
 {

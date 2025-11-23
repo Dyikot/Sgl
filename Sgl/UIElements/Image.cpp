@@ -1,5 +1,4 @@
 #include "Image.h"
-#include "../../Window.h"
 
 namespace Sgl::UIElements
 {

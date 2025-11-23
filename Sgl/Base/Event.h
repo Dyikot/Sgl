@@ -104,32 +104,7 @@ namespace Sgl
 			operator()(sender, e);
 		}
 
-		/// <summary>
-		/// Copy assignment operator. Copies all handlers from another event.
-		/// </summary>
-		/// <param name="other"> - The event to copy from.</param>
-		Event& operator=(const Event& other)
-		{
-			if(this != &other)
-			{
-				_eventHandlers = other._eventHandlers;
-			}
-
-			return *this;
-		}
-
-		/// <summary>
-		/// Move assignment operator. Transfers ownership of handlers from another event.
-		/// </summary>
-		/// <param name="other"> - The event to move from.</param>
-		Event& operator=(Event&& other) noexcept
-		{
-			if(this != &other)
-			{
-				_eventHandlers = std::move(other._eventHandlers);
-			}
-
-			return *this;
-		}
+		Event& operator=(const Event&) = delete;
+		Event& operator=(Event&&) = delete;
 	};
 }

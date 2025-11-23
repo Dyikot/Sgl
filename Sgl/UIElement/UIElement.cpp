@@ -111,14 +111,14 @@ namespace Sgl
 		_isMouseOver = false;
 	}
 
-	void UIElement::OnAttached()
+	void UIElement::OnAttachedToElementsTree()
 	{
-		Attached(*this);
+		AttachedToElementsTree(*this);
 	}
 
-	void UIElement::OnDetached()
+	void UIElement::OnDetachedFromElementsTree()
 	{
-		Detached(*this);
+		DetachedFromElementsTree(*this);
 	}
 
 	Ref<UIElement> UIElementDataTemplate::Build(const Ref<IData>& data) const

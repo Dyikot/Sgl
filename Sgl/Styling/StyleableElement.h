@@ -12,12 +12,11 @@ namespace Sgl
 	{
 	public:
 		StyleMap Styles;
-	protected:
-		StyleableElement* _parent = nullptr;
 	private:
 		bool _isStyleValid = false;
 		std::vector<std::string> _classList;
 		std::vector<IStyle*> _styles;
+		StyleableElement* _styleableParent = nullptr;
 	public:
 		StyleableElement() = default;
 		StyleableElement(const StyleableElement& other);
@@ -28,8 +27,10 @@ namespace Sgl
 		void SetClasses(std::vector<std::string> classList);
 		const std::vector<std::string>& GetClasses() const;
 
+		virtual void SetParent(StyleableElement* parent);
+		StyleableElement* GetStyleableParent() const { return _styleableParent; }
+
 		bool IsStyleValid() const { return _isStyleValid; }
-		StyleableElement* GetParent() const { return _parent; }
 
 		virtual void ApplyStyle();
 		void InvalidateStyle();

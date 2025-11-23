@@ -30,8 +30,8 @@ namespace Sgl
 	{
 		if(_contentPresenter)
 		{
-			_contentPresenter->OnDetached();
-			_contentPresenter->_parent = nullptr;
+			_contentPresenter->OnDetachedFromElementsTree();
+			_contentPresenter->SetParent(nullptr);
 		}
 	}
 
@@ -172,15 +172,15 @@ namespace Sgl
 		{
 			if(_contentPresenter)
 			{
-				_contentPresenter->_parent = nullptr;
+				_contentPresenter->SetParent(nullptr);
 				_contentPresenter->SetVisualRoot(nullptr);
-				_contentPresenter->OnDetached();
+				_contentPresenter->OnDetachedFromElementsTree();
 			}
 
 			_contentPresenter = _contentTemplate->Build(_content);
-			_contentPresenter->_parent = this;
+			_contentPresenter->SetParent(this);
 			_contentPresenter->SetVisualRoot(GetVisualRoot());
-			_contentPresenter->OnAttached();
+			_contentPresenter->OnAttachedToElementsTree();
 
 			return true;
 		}

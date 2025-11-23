@@ -30,8 +30,8 @@ namespace Sgl
 		Event<MouseButtonEventHandler> MouseUp;
 		Event<MouseButtonEventHandler> MouseDown;
 		Event<MouseWheelEventHandler> MouseWheel;
-		Event<UIElementEventHandler> Attached;
-		Event<UIElementEventHandler> Detached;
+		Event<UIElementEventHandler> AttachedToElementsTree;
+		Event<UIElementEventHandler> DetachedFromElementsTree;
 	private:		
 		Any _tag;
 		std::string _name;
@@ -156,8 +156,8 @@ namespace Sgl
 		virtual void OnMouseWheelChanged(MouseWheelEventArgs& e);
 		virtual void OnMouseEnter(MouseEventArgs& e);
 		virtual void OnMouseLeave(MouseEventArgs& e);
-		virtual void OnAttached();
-		virtual void OnDetached();
+		virtual void OnAttachedToElementsTree();
+		virtual void OnDetachedFromElementsTree();
 	public:
 		static inline ObservableProperty TagProperty { &SetTag, &GetTag };
 		static inline ObservableProperty ToolTipProperty { &SetToolTip, &GetToolTip };

@@ -1,5 +1,4 @@
 #include "TextBlock.h"
-#include "../../Window.h"
 #include <algorithm>
 #include <SDL3_ttf/SDL_ttf.h>
 #include <iostream>

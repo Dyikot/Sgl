@@ -1,6 +1,6 @@
 #pragma once
 
-#include "UIElements/TextBlock.h"
+#include "UIElement.h"
 
 namespace Sgl
 {

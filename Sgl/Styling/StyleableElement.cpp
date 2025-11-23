@@ -7,7 +7,7 @@ namespace Sgl
 	StyleableElement::StyleableElement(const StyleableElement& other):
 		AttachableObject(other),
 		_classList(other._classList),
-		_parent(other._parent),
+		_styleableParent(other._styleableParent),
 		_isStyleValid(other._isStyleValid),
 		_styles(other._styles)
 	{}
@@ -16,7 +16,7 @@ namespace Sgl
 		AttachableObject(std::move(other)),
 		Styles(std::move(other.Styles)),
 		_classList(std::move(other._classList)),
-		_parent(std::exchange(other._parent, nullptr)),
+		_styleableParent(std::exchange(other._styleableParent, nullptr)),
 		_isStyleValid(other._isStyleValid),
 		_styles(std::move(other._styles))
 	{}
@@ -47,6 +47,11 @@ namespace Sgl
 		return _classList;
 	}
 
+	void StyleableElement::SetParent(StyleableElement* parent)
+	{
+		_styleableParent = parent;
+	}
+
 	void StyleableElement::ApplyStyle()
 	{
 		_isStyleValid = true;
@@ -64,9 +69,9 @@ namespace Sgl
 		{
 			_isStyleValid = false;
 
-			if(_parent)
+			if(_styleableParent)
 			{
-				_parent->InvalidateStyle();				
+				_styleableParent->InvalidateStyle();				
 			}			
 		}
 	}
@@ -77,11 +82,11 @@ namespace Sgl
 
 		GetStylesFrom(Styles);
 		
-		auto parent = _parent;
+		auto parent = _styleableParent;
 		while(parent != nullptr)
 		{
 			GetStylesFrom(parent->Styles);
-			parent = parent->GetParent();
+			parent = parent->GetStyleableParent();
 		}
 
 		GetStylesFrom(App->Styles);

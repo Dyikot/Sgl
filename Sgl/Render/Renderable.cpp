@@ -35,6 +35,22 @@ namespace Sgl
 		_visualRoot = value;
 	}
 
+	void Renderable::SetParent(StyleableElement* parent)
+	{
+		StyleableElement::SetParent(parent);
+
+		if(parent == nullptr)
+		{
+			_visualParent = nullptr;
+			return;
+		}
+
+		if(auto visualParent = dynamic_cast<Renderable*>(parent))
+		{
+			_visualParent = visualParent;
+		}
+	}
+
 	void Renderable::Render(RenderContext context)
 	{
 		_isRenderValid = true;
@@ -46,9 +62,9 @@ namespace Sgl
 		{
 			_isRenderValid = false;
 
-			if(_parent)
+			if(_visualParent)
 			{
-				static_cast<Renderable*>(_parent)->InvalidateRender();
+				_visualParent->InvalidateRender();
 			}
 		}
 	}

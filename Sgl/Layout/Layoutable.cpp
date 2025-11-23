@@ -99,6 +99,22 @@ namespace Sgl
 		InvalidateArrange();
 	}
 
+	void Layoutable::SetParent(StyleableElement* parent)
+	{
+		Renderable::SetParent(parent);
+
+		if(parent == nullptr)
+		{
+			_layotableParent = nullptr;
+			return;
+		}
+
+		if(auto layoutableParent = dynamic_cast<Layoutable*>(parent))
+		{
+			_layotableParent = layoutableParent;
+		}
+	}
+
 	void Layoutable::Arrange(FRect rect)
 	{
 		if(!_isMeasureValid)
@@ -237,9 +253,9 @@ namespace Sgl
 		{
 			_isArrangeValid = false;
 
-			if(_parent)
+			if(_layotableParent)
 			{
-				static_cast<Layoutable*>(_parent)->InvalidateArrange();
+				_layotableParent->InvalidateArrange();
 			}
 		}
 	}
@@ -253,9 +269,9 @@ namespace Sgl
 			_isMeasureValid = false;
 			_isArrangeValid = false;			
 
-			if(_parent)
+			if(_layotableParent)
 			{
-				static_cast<Layoutable*>(_parent)->InvalidateArrange();
+				_layotableParent->InvalidateMeasure();
 			}
 		}
 	}

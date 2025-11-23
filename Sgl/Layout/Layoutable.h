@@ -22,6 +22,7 @@ namespace Sgl
 		bool _isVisible = true;
 		VerticalAlignment _verticalAlignment = VerticalAlignment::Top;
 		HorizontalAlignment _horizontalAlignment = HorizontalAlignment::Left;
+		Layoutable* _layotableParent = nullptr;
 
 		bool _isArrangeValid = false;
 		bool _isMeasureValid = false;
@@ -60,6 +61,9 @@ namespace Sgl
 
 		void SetHorizontalAlignment(HorizontalAlignment value);
 		HorizontalAlignment GetHorizontalAlignment() const { return _horizontalAlignment; }
+
+		void SetParent(StyleableElement* parent) override;
+		Layoutable* GetLayoutableParent() const { return _layotableParent; }
 
 		FSize GetDesiredSize() const { return _desiredSize; }
 		FRect GetBounds() const { return _bounds; }

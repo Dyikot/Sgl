@@ -45,9 +45,10 @@ namespace Sgl
     {
         if(_content)
         {
-            _content->_parent = nullptr;
+            _content->SetParent(nullptr);
             _content->SetVisualRoot(nullptr);
-            _content->OnDetached();
+            _content->OnDetachedFromElementsTree();
+            _content = nullptr;
         }
 
         Close();
@@ -294,18 +295,18 @@ namespace Sgl
     {
         if(_content)
         {
-            _content->_parent = nullptr;
+            _content->SetParent(nullptr);
             _content->SetVisualRoot(nullptr);
-            _content->OnDetached();
+            _content->OnDetachedFromElementsTree();
         }
 
         SetProperty(ContentProperty, _content, std::move(value));
 
         if(_content)
         {
-            _content->_parent = this;
+            _content->SetParent(this);
             _content->SetVisualRoot(this);
-            _content->OnAttached();
+            _content->OnAttachedToElementsTree();
         }
     }
 
@@ -404,10 +405,10 @@ namespace Sgl
 
     void Window::OnWindowSizeChanged(WindowSizeChangedEventArgs& e)
     {
-        /*if(_content)
+        if(_content)
         {
             _content->InvalidateMeasure();
-        }*/
+        }
 
         SizeChanged(*this, e);
     }

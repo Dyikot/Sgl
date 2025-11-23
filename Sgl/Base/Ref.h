@@ -204,6 +204,8 @@ namespace Sgl
             if(_memoryBlock && _memoryBlock->References.fetch_sub(1) == 1)
             {
                 delete _memoryBlock;
+                _memoryBlock = nullptr;
+                _data = nullptr;
             }
         }
 
