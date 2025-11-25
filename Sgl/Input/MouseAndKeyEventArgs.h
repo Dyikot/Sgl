@@ -1,7 +1,7 @@
 #pragma once
 
-#include <string>
-#include <SDL3/SDL_keyboard.h>
+#include "KeyCodes.h"
+#include "KeyModifiers.h"
 
 namespace Sgl
 {	
@@ -23,8 +23,8 @@ namespace Sgl
 	struct KeyEventArgs
 	{
 		ButtonState State;
-		SDL_Keycode Key;
-		SDL_Keymod Modifier;
+		KeyCode Key;
+		KeyModifier Modifier;
 	};
 
 	struct MouseEventArgs
@@ -44,8 +44,8 @@ namespace Sgl
 	{
 		float X;
 		float Y;
-		float ScrolledHorizontally;
-		float ScrolledVertically;
+		float ScrolledByX;
+		float ScrolledByY;
 		MouseWheelDirection Direction;
 	};
 }

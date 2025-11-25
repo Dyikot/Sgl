@@ -51,7 +51,8 @@ namespace Sgl
     void Application::SetThemeMode(ThemeMode value)
     {
         _themeMode = value;
-        OnThemeModeChanged(value);
+        ThemeModeChangedEventArgs args(value);
+        OnThemeModeChanged(args);
     }
 
     ThemeMode Application::GetThemeMode() const
@@ -176,12 +177,12 @@ namespace Sgl
 		Stopped(*this);
 	}
 
-    void Application::OnThemeModeChanged(ThemeMode theme)
+    void Application::OnThemeModeChanged(ThemeModeChangedEventArgs theme)
     {
         ThemeModeChanged(*this, theme);
     }
 
-    void Application::OnSystemThemeChanged(SystemTheme theme)
+    void Application::OnSystemThemeChanged(SystemModeChangedEventArgs theme)
     {
         SystemThemeChanged(*this, theme);
     }
@@ -226,7 +227,8 @@ namespace Sgl
                 case SDL_EVENT_SYSTEM_THEME_CHANGED:
                 {
                     _systemTheme = QuerySystemTheme();
-                    OnSystemThemeChanged(_systemTheme);
+                    SystemModeChangedEventArgs args(_systemTheme);
+                    OnSystemThemeChanged(args);
                     break;
                 };
 
@@ -352,7 +354,7 @@ namespace Sgl
                     {
                         .State = ButtonState::Pressed,
                         .Key = e.key.key,
-                        .Modifier = e.key.mod
+                        .Modifier = e.key.mod & ~SDL_KMOD_NUM
                     };
                     _focusedWindow->OnKeyDown(args);
                     break;
@@ -364,7 +366,7 @@ namespace Sgl
                     {
                         .State = ButtonState::Released,
                         .Key = e.key.key,
-                        .Modifier = e.key.mod
+                        .Modifier = e.key.mod & ~SDL_KMOD_NUM
                     };
                     _focusedWindow->OnKeyUp(args);
                     break;
@@ -431,8 +433,8 @@ namespace Sgl
                     {
                         .X = e.wheel.mouse_x,
                         .Y = e.wheel.mouse_y,
-                        .ScrolledHorizontally = e.wheel.x,
-                        .ScrolledVertically = e.wheel.y,
+                        .ScrolledByX = e.wheel.x,
+                        .ScrolledByY = e.wheel.y,
                         .Direction = MouseWheelDirection(e.wheel.direction)
                     };
                     _focusedWindow->OnMouseWheelChanged(args);

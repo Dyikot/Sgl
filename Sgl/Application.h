@@ -16,12 +16,22 @@ namespace Sgl
 		Light = 1, Dark
 	};
 
+	struct ThemeModeChangedEventArgs
+	{
+		ThemeMode Theme;
+	};
+
+	struct SystemModeChangedEventArgs
+	{
+		SystemTheme Theme;
+	};
+
 	class Application
 	{
 	private:
 		using ApplicationEventHandler = EventHandler<Application>;
-		using ThemeModeChangedEventHanlder = EventHandler<Application, ThemeMode>;
-		using SystemThemeChangedEventHanlder = EventHandler<Application, SystemTheme>;
+		using ThemeModeChangedEventHanlder = EventHandler<Application, ThemeModeChangedEventArgs>;
+		using SystemThemeChangedEventHanlder = EventHandler<Application, SystemModeChangedEventArgs>;
 	public:
 		struct Context
 		{
@@ -77,8 +87,8 @@ namespace Sgl
 	protected:
 		virtual void OnRun();
 		virtual void OnStop();
-		virtual void OnThemeModeChanged(ThemeMode theme);
-		virtual void OnSystemThemeChanged(SystemTheme theme);
+		virtual void OnThemeModeChanged(ThemeModeChangedEventArgs theme);
+		virtual void OnSystemThemeChanged(SystemModeChangedEventArgs theme);
 	private:
 		SystemTheme QuerySystemTheme() const;
 		void Delay();

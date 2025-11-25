@@ -68,44 +68,44 @@ namespace Sgl
 		}
 	}
 
-	void UIElement::OnKeyUp(KeyEventArgs& e)
+	void UIElement::OnKeyUp(KeyEventArgs e)
 	{
 		KeyUp(*this, e);
 	}
 
-	void UIElement::OnKeyDown(KeyEventArgs& e)
+	void UIElement::OnKeyDown(KeyEventArgs e)
 	{
 		KeyDown(*this, e);
 	}
 
-	void UIElement::OnMouseMove(MouseEventArgs& e)
+	void UIElement::OnMouseMove(MouseEventArgs e)
 	{
 		MouseMove(*this, e);
 	}
 
-	void UIElement::OnMouseDown(MouseButtonEventArgs& e)
+	void UIElement::OnMouseDown(MouseButtonEventArgs e)
 	{
 		MouseDown(*this, e);
 	}
 
-	void UIElement::OnMouseUp(MouseButtonEventArgs& e)
+	void UIElement::OnMouseUp(MouseButtonEventArgs e)
 	{
 		MouseUp(*this, e);
 	}
 
-	void UIElement::OnMouseWheelChanged(MouseWheelEventArgs& e)
+	void UIElement::OnMouseWheelChanged(MouseWheelEventArgs e)
 	{
 		MouseWheel(*this, e);
 	}
 
-	void UIElement::OnMouseEnter(MouseEventArgs& e)
+	void UIElement::OnMouseEnter(MouseEventArgs e)
 	{
 		_isMouseOver = true;
 		Cursor::Set(GetCursor());
 		MouseEnter(*this, e);
 	}
 
-	void UIElement::OnMouseLeave(MouseEventArgs& e)
+	void UIElement::OnMouseLeave(MouseEventArgs e)
 	{
 		MouseLeave(*this, e);
 		_isMouseOver = false;

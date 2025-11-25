@@ -13,7 +13,7 @@ namespace Sgl
 	{
 		Static, Streaming, Target
 	};
-
+	
 	class Texture;
 
 	class TextureLockContext

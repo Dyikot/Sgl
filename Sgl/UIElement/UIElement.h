@@ -148,14 +148,14 @@ namespace Sgl
 	protected:
 		void RenderBackground(RenderContext context);
 		void OnCursorChanged(const Cursor& cursor) override;
-		virtual void OnKeyUp(KeyEventArgs& e);
-		virtual void OnKeyDown(KeyEventArgs& e);
-		virtual void OnMouseMove(MouseEventArgs& e);
-		virtual void OnMouseDown(MouseButtonEventArgs& e);
-		virtual void OnMouseUp(MouseButtonEventArgs& e);
-		virtual void OnMouseWheelChanged(MouseWheelEventArgs& e);
-		virtual void OnMouseEnter(MouseEventArgs& e);
-		virtual void OnMouseLeave(MouseEventArgs& e);
+		virtual void OnKeyUp(KeyEventArgs e);
+		virtual void OnKeyDown(KeyEventArgs e);
+		virtual void OnMouseMove(MouseEventArgs e);
+		virtual void OnMouseDown(MouseButtonEventArgs e);
+		virtual void OnMouseUp(MouseButtonEventArgs e);
+		virtual void OnMouseWheelChanged(MouseWheelEventArgs e);
+		virtual void OnMouseEnter(MouseEventArgs e);
+		virtual void OnMouseLeave(MouseEventArgs e);
 		virtual void OnAttachedToElementsTree();
 		virtual void OnDetachedFromElementsTree();
 	public:

@@ -43,10 +43,10 @@ namespace Sgl
 		void ApplyStyle() override;
 	protected:
 		void OnCursorChanged(const Cursor& cursor) override;
-		void OnMouseMove(MouseEventArgs& e) override;
-		void OnMouseDown(MouseButtonEventArgs& e) override;
-		void OnMouseUp(MouseButtonEventArgs& e) override;
-		void OnMouseLeave(MouseEventArgs& e) override;
+		void OnMouseMove(MouseEventArgs e) override;
+		void OnMouseDown(MouseButtonEventArgs e) override;
+		void OnMouseUp(MouseButtonEventArgs e) override;
+		void OnMouseLeave(MouseEventArgs e) override;
 
 		FSize MeasureContent(FSize avaliableSize) override;
 		void ArrangeContent(FRect rect) override;

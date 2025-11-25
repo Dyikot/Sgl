@@ -27,16 +27,6 @@ namespace Sgl
 		SDL_SetRenderTarget(_renderer, nullptr);
 	}
 
-	void RenderContext::SetBlendMode(SDL_BlendMode mode)
-	{
-		SDL_SetRenderDrawBlendMode(_renderer, mode);
-	}
-
-	Texture RenderContext::LoadTexture(std::string_view path)
-	{
-		return Texture(_renderer, path);
-	}
-
 	void RenderContext::DrawBackground(Color color)
 	{
 		SetColor(color);

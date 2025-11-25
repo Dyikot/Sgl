@@ -286,15 +286,15 @@ namespace Sgl
 		virtual void Process(TimeSpan elapsed);
 	protected:
 		void OnCursorChanged(const Cursor& cursor) override;
-		virtual void OnWindowStateChanged(WindowStateChangedEventArgs& e);
-		virtual void OnPositionChanged(WindowPositionChangedEventArgs& e);
-		virtual void OnWindowSizeChanged(WindowSizeChangedEventArgs& e);
-		virtual void OnKeyUp(KeyEventArgs& e) {}
-		virtual void OnKeyDown(KeyEventArgs& e) {}
-		virtual void OnMouseMove(MouseEventArgs& e);
-		virtual void OnMouseDown(MouseButtonEventArgs& e);
-		virtual void OnMouseUp(MouseButtonEventArgs& e);
-		virtual void OnMouseWheelChanged(MouseWheelEventArgs& e) {}
+		virtual void OnWindowStateChanged(WindowStateChangedEventArgs e);
+		virtual void OnPositionChanged(WindowPositionChangedEventArgs e);
+		virtual void OnWindowSizeChanged(WindowSizeChangedEventArgs e);
+		virtual void OnKeyUp(KeyEventArgs e) {}
+		virtual void OnKeyDown(KeyEventArgs e) {}
+		virtual void OnMouseMove(MouseEventArgs e);
+		virtual void OnMouseDown(MouseButtonEventArgs e);
+		virtual void OnMouseUp(MouseButtonEventArgs e);
+		virtual void OnMouseWheelChanged(MouseWheelEventArgs e) {}
 		virtual void OnTextInput(TextInputEventArgs& e) {}
 		virtual void OnTextEditing(TextEditingEventArgs& e) {}
 		virtual void OnMouseEnter() {}

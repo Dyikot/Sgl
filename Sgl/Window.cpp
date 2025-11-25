@@ -393,17 +393,17 @@ namespace Sgl
         }
     }
 
-    void Window::OnWindowStateChanged(WindowStateChangedEventArgs& e)
+    void Window::OnWindowStateChanged(WindowStateChangedEventArgs e)
     {
         WindowStateChanged(*this, e);
     }
 
-    void Window::OnPositionChanged(WindowPositionChangedEventArgs& e)
+    void Window::OnPositionChanged(WindowPositionChangedEventArgs e)
     {
         PositionChanged(*this, e);
     }
 
-    void Window::OnWindowSizeChanged(WindowSizeChangedEventArgs& e)
+    void Window::OnWindowSizeChanged(WindowSizeChangedEventArgs e)
     {
         if(_content)
         {
@@ -413,7 +413,7 @@ namespace Sgl
         SizeChanged(*this, e);
     }
 
-    void Window::OnMouseMove(MouseEventArgs& e)
+    void Window::OnMouseMove(MouseEventArgs e)
     {
         if(_content && _content->IsVisible())
         {
@@ -438,7 +438,7 @@ namespace Sgl
         }
     }
 
-    void Window::OnMouseDown(MouseButtonEventArgs& e)
+    void Window::OnMouseDown(MouseButtonEventArgs e)
     {
         if(_content && _content->IsMouseOver() && _content->IsVisible())
         {
@@ -446,7 +446,7 @@ namespace Sgl
         }
     }
 
-    void Window::OnMouseUp(MouseButtonEventArgs& e)
+    void Window::OnMouseUp(MouseButtonEventArgs e)
     {
         if(_content && _content->IsMouseOver() && _content->IsVisible())
         {

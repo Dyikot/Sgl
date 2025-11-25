@@ -110,7 +110,7 @@ namespace Sgl
 		}
 	}
 
-	void ContentUIElement::OnMouseMove(MouseEventArgs& e)
+	void ContentUIElement::OnMouseMove(MouseEventArgs e)
 	{
 		UIElement::OnMouseMove(e);
 
@@ -136,7 +136,7 @@ namespace Sgl
 		}
 	}
 
-	void ContentUIElement::OnMouseDown(MouseButtonEventArgs& e)
+	void ContentUIElement::OnMouseDown(MouseButtonEventArgs e)
 	{
 		UIElement::OnMouseDown(e);
 
@@ -146,7 +146,7 @@ namespace Sgl
 		}
 	}
 
-	void ContentUIElement::OnMouseUp(MouseButtonEventArgs& e)
+	void ContentUIElement::OnMouseUp(MouseButtonEventArgs e)
 	{
 		UIElement::OnMouseUp(e);
 
@@ -156,7 +156,7 @@ namespace Sgl
 		}
 	}
 
-	void ContentUIElement::OnMouseLeave(MouseEventArgs& e)
+	void ContentUIElement::OnMouseLeave(MouseEventArgs e)
 	{
 		UIElement::OnMouseLeave(e);
 
