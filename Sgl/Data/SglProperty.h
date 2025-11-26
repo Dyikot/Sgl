@@ -2,15 +2,17 @@
 
 namespace Sgl
 {
+	using PropertyId = size_t;
+
 	class SglProperty
 	{
 	public:
-		const size_t Id;
+		const PropertyId Id;
 	public:
 		SglProperty();
 		SglProperty(const SglProperty&) = default;
 		SglProperty(SglProperty&&) = default;
 	private:
-		static size_t GenerateUniquePropertyId();
+		static PropertyId GenerateUniquePropertyId();
 	};
 }

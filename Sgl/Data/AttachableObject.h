@@ -11,7 +11,7 @@ namespace Sgl
 	class AttachableObject : public ObservableObject
 	{
 	private:
-		std::unordered_map<size_t, Any> _attachedProperties;
+		std::unordered_map<PropertyId, Any> _attachedProperties;
 	public:
 		AttachableObject() = default;
 		AttachableObject(const AttachableObject&) = default;

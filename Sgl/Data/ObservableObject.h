@@ -9,7 +9,7 @@ namespace Sgl
 	class ObservableObject
 	{
 	private:
-		std::unordered_map<size_t, Action<const void*>> _observers;
+		std::unordered_map<PropertyId, Action<const void*>> _observers;
 	public:
 		ObservableObject() = default;
 		ObservableObject(const ObservableObject&) = default;

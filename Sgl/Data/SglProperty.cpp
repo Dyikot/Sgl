@@ -6,9 +6,9 @@ namespace Sgl
 		Id(GenerateUniquePropertyId())
 	{}
 
-	size_t SglProperty::GenerateUniquePropertyId()
+	PropertyId SglProperty::GenerateUniquePropertyId()
 	{
-		static size_t counter = 0;
-		return counter++;
+		static PropertyId lastId = 0;
+		return lastId++;
 	}
 }
