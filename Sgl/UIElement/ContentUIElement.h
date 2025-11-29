@@ -7,9 +7,9 @@ namespace Sgl
 	class ContentUIElement : public UIElement
 	{
 	private:
-		Ref<IData> _content;
+		Ref<ObservableObject> _content;
 		Ref<IDataTemplate> _contentTemplate = New<UIElementDataTemplate>();
-		Ref<UIElement> _contentPresenter;
+		Ref<UIElement> _presenter;
 		Thickness _padding;
 		VerticalAlignment _verticalContentAlignment = VerticalAlignment::Top;
 		HorizontalAlignment _horizontalContentAlignment = HorizontalAlignment::Left;
@@ -20,10 +20,10 @@ namespace Sgl
 		ContentUIElement(ContentUIElement&& other) noexcept;
 		~ContentUIElement();
 		
-		const Ref<UIElement>& GetContentPresenter() const { return _contentPresenter; }
+		const Ref<UIElement>& GetContentPresenter() const { return _presenter; }
 
-		void SetContent(Ref<IData> content);
-		Ref<IData> GetContent() const { return _content; }
+		void SetContent(Ref<ObservableObject> content);
+		Ref<ObservableObject> GetContent() const { return _content; }
 
 		void SetContentTemplate(Ref<IDataTemplate> value);
 		Ref<IDataTemplate> GetContentTemplate() const { return _contentTemplate; }
@@ -38,21 +38,23 @@ namespace Sgl
 		HorizontalAlignment GetHorizontalContentAlignment() const { return _horizontalContentAlignment; }
 
 		void SetVisualRoot(IVisualRoot* value) override;
-
 		void Render(RenderContext context) override;
 		void ApplyStyle() override;
 	protected:
+		virtual void OnContentPresenterCreated(UIElement& presenter);
+		virtual void OnContentPresenterDestroying(UIElement& presenter);
 		void OnCursorChanged(const Cursor& cursor) override;
-		void OnMouseMove(MouseEventArgs e) override;
+		void OnMouseMove(MouseMoveEventArgs e) override;
 		void OnMouseDown(MouseButtonEventArgs e) override;
 		void OnMouseUp(MouseButtonEventArgs e) override;
-		void OnMouseLeave(MouseEventArgs e) override;
-
+		void OnMouseLeave(MouseMoveEventArgs e) override;
+		
 		FSize MeasureContent(FSize avaliableSize) override;
 		void ArrangeContent(FRect rect) override;
-	private:
-		bool TryCreatePresenter();
+	protected:
 		void InvalidateContentPresenter();
+	private:
+		bool UpdatePresenter();
 	public:
 		static inline ObservableProperty ContentProperty { &SetContent, &GetContent };
 		static inline ObservableProperty ContentTemplateProperty { &SetContentTemplate, &GetContentTemplate };

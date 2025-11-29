@@ -3,6 +3,7 @@
 #include <string_view>
 #include <array>
 #include <span>
+
 #include "../Base/Delegate.h"
 #include "../Base/Primitives.h"
 #include "../Base/Media/Color.h"

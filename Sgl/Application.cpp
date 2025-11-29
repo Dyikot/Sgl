@@ -146,7 +146,7 @@ namespace Sgl
 
             for(auto window : _activeWindows)
             {
-			    window->ProcessCore();
+			    window->Process();
             }
 
             for(auto window : _activeWindows)
@@ -352,7 +352,6 @@ namespace Sgl
                 {
                     KeyEventArgs args =
                     {
-                        .State = ButtonState::Pressed,
                         .Key = e.key.key,
                         .Modifier = e.key.mod & ~SDL_KMOD_NUM
                     };
@@ -364,7 +363,6 @@ namespace Sgl
                 {
                     KeyEventArgs args =
                     {
-                        .State = ButtonState::Released,
                         .Key = e.key.key,
                         .Modifier = e.key.mod & ~SDL_KMOD_NUM
                     };
@@ -394,7 +392,7 @@ namespace Sgl
                 case SDL_EVENT_MOUSE_MOTION:
                 {
                     auto window = GetWindowById(e.window.windowID);
-                    MouseEventArgs args
+                    MouseMoveEventArgs args
                     {
                         .X = e.button.x,
                         .Y = e.button.y
@@ -408,7 +406,6 @@ namespace Sgl
                     MouseButtonEventArgs args =
                     {
                         .Button = MouseButton(e.button.button),
-                        .State = ButtonState::Pressed,
                         .ClicksNumber = e.button.clicks
                     };
                     _focusedWindow->OnMouseDown(args);
@@ -420,7 +417,6 @@ namespace Sgl
                     MouseButtonEventArgs args =
                     {
                         .Button = MouseButton(e.button.button),
-                        .State = ButtonState::Released,
                         .ClicksNumber = e.button.clicks
                     };
                     _focusedWindow->OnMouseUp(args);

@@ -3,6 +3,7 @@
 #include <span>
 #include <optional>
 #include <SDL3/SDL_render.h>
+
 #include "../Base/Primitives.h"
 #include "../Base/Media/Font.h"
 #include "../Base/Size.h"

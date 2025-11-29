@@ -20,14 +20,18 @@ namespace Sgl
 
 	void Renderable::SetCursor(const Cursor& value)
 	{
-		SetProperty(CursorProperty, _cursor, value);
-		OnCursorChanged(value);
+		if(SetProperty(CursorProperty, _cursor, value))
+		{
+			OnCursorChanged(value);
+		}
 	}
 
 	void Renderable::SetBackground(const Brush& value)
 	{
-		SetProperty(BackgroundProperty, _background, value);
-		InvalidateRender();
+		if(SetProperty(BackgroundProperty, _background, value))
+		{
+			InvalidateRender();
+		}
 	}
 
 	void Renderable::SetVisualRoot(IVisualRoot* value)
@@ -48,6 +52,11 @@ namespace Sgl
 		if(auto visualParent = dynamic_cast<Renderable*>(parent))
 		{
 			_visualParent = visualParent;
+
+			if(auto visualRoot = visualParent->GetVisualRoot())
+			{
+				SetVisualRoot(visualRoot);
+			}
 		}
 	}
 

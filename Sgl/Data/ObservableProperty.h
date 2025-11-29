@@ -11,19 +11,29 @@ namespace Sgl
 	public:
 		using Owner = TOwner;
 		using Value = TValue;
-		using PropertySetter = void(TOwner::*)(TValue);
-		using PropertyGetter = TValue(TOwner::*)() const;
-
-		const PropertySetter Setter;
-		const PropertyGetter Getter;
+		using PropertySetter = void(Owner::*)(Value);
+		using PropertyGetter = TValue(Owner::*)() const;
+	private:
+		PropertySetter _setter;
+		PropertyGetter _getter;
 	public:
 		ObservableProperty(PropertySetter setter, PropertyGetter getter):
-			Setter(setter), 
-			Getter(getter)
+			_setter(setter), 
+			_getter(getter)
 		{}
 		ObservableProperty(const ObservableProperty&) = default;
 		ObservableProperty(ObservableProperty&&) = default;
 		~ObservableProperty() = default;
+
+		void Set(Owner& owner, Value value)
+		{
+			(owner.*_setter)(value);
+		}
+
+		Value Get(Owner& owner) const
+		{
+			return (owner.*_getter)();
+		}
 	};
 
 	template<typename TOwner, typename TValue>

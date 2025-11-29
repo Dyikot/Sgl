@@ -1,6 +1,7 @@
 #include "UIElement.h"
-#include "../Render/BackgroundRenderer.h"
+
 #include "../Window.h"
+#include "../Render/BackgroundRenderer.h"
 
 namespace Sgl
 {
@@ -32,9 +33,7 @@ namespace Sgl
 
 	void UIElement::SetToolTip(Ref<UIElement> value)
 	{
-		SetProperty(ToolTipProperty, _toolTip, value);
-
-		if(_isMouseOver)
+		if(SetProperty(ToolTipProperty, _toolTip, value) && _isMouseOver)
 		{
 			InvalidateRender();
 		}
@@ -78,7 +77,7 @@ namespace Sgl
 		KeyDown(*this, e);
 	}
 
-	void UIElement::OnMouseMove(MouseEventArgs e)
+	void UIElement::OnMouseMove(MouseMoveEventArgs e)
 	{
 		MouseMove(*this, e);
 	}
@@ -98,35 +97,40 @@ namespace Sgl
 		MouseWheel(*this, e);
 	}
 
-	void UIElement::OnMouseEnter(MouseEventArgs e)
+	void UIElement::OnMouseEnter(MouseMoveEventArgs e)
 	{
 		_isMouseOver = true;
 		Cursor::Set(GetCursor());
 		MouseEnter(*this, e);
 	}
 
-	void UIElement::OnMouseLeave(MouseEventArgs e)
+	void UIElement::OnMouseLeave(MouseMoveEventArgs e)
 	{
 		MouseLeave(*this, e);
 		_isMouseOver = false;
 	}
 
-	void UIElement::OnAttachedToElementsTree()
+	void UIElement::OnAttachedToElementsTree(StyleableElement& parent)
 	{
+		SetParent(&parent);
+		//InvalidateStyle();
+		InvalidateMeasure();
 		AttachedToElementsTree(*this);
 	}
 
 	void UIElement::OnDetachedFromElementsTree()
 	{
+		InvalidateMeasure();
+		SetParent(nullptr);
 		DetachedFromElementsTree(*this);
 	}
 
-	Ref<UIElement> UIElementDataTemplate::Build(const Ref<IData>& data) const
+	Ref<UIElement> UIElementDataTemplate::Build(const Ref<ObservableObject>& data)
 	{
 		return data.As<UIElement>();
 	}
 
-	bool UIElementDataTemplate::Match(const Ref<IData>& data) const
+	bool UIElementDataTemplate::Match(const Ref<ObservableObject>& data) const
 	{
 		return data.Is<UIElement>();
 	}

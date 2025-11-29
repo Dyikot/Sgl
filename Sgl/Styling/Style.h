@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <vector>
+
 #include "../Base/Delegate.h"
 #include "../Data/ObservableProperty.h"
 
@@ -40,7 +41,7 @@ namespace Sgl
         {
             _setters.emplace_back([&property, value](T& target)
             {
-                (target.*property.Setter)(value);
+                property.Set(target, value);
             });
 
             return *this;

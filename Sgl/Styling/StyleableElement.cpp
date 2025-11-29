@@ -1,5 +1,7 @@
 #include "StyleableElement.h"
+
 #include <sstream>
+
 #include "../Application.h"
 
 namespace Sgl
@@ -54,13 +56,14 @@ namespace Sgl
 
 	void StyleableElement::ApplyStyle()
 	{
-		_isStyleValid = true;
 		UpdateStyles();
 
 		for(int i = _styles.size() - 1; i >= 0; i--)
 		{
 			_styles[i]->Apply(*this);
 		}
+
+		_isStyleValid = true;
 	}
 
 	void StyleableElement::InvalidateStyle()

@@ -45,77 +45,97 @@ namespace Sgl::UIElements
 
 	void TextBlock::SetText(const std::string& value)
 	{
-		SetProperty(TextProperty, _text, value);
-		InvalidateTextTexture();
-		InvalidateMeasure();
+		if(SetProperty(TextProperty, _text, value))
+		{
+			InvalidateTextTexture();
+			InvalidateMeasure();
+		}
 	}	
 
 	void TextBlock::SetFontSize(float value)
 	{
-		SetProperty(FontSizeProperty, _fontSize, value);
-		InvalidateFont(FontSizeBit);
-		InvalidateTextTexture();
-		InvalidateMeasure();
+		if(SetProperty(FontSizeProperty, _fontSize, value))
+		{
+			InvalidateFont(FontSizeBit);
+			InvalidateTextTexture();
+			InvalidateMeasure();
+		}		
 	}
 
 	void TextBlock::SetFontOutline(int value)
 	{
-		SetProperty(FontOutlineProperty, _outline, value);
-		InvalidateFont(FontOutlineBit);
-		InvalidateTextTexture();
-		InvalidateMeasure();
+		if(SetProperty(FontOutlineProperty, _outline, value))
+		{
+			InvalidateFont(FontOutlineBit);
+			InvalidateTextTexture();
+			InvalidateMeasure();
+		}		
 	}
 
 	void TextBlock::SetFontFamily(const FontFamily& value)
 	{
-		SetProperty(FontFamilyProperty, _fontFamily, value);
-		InvalidateFont(FontFamilyBit);
-		InvalidateTextTexture();
-		InvalidateMeasure();
+		if(SetProperty(FontFamilyProperty, _fontFamily, value))
+		{
+			InvalidateFont(FontFamilyBit);
+			InvalidateTextTexture();
+			InvalidateMeasure();
+		}		
 	}
 
 	void TextBlock::SetFlowDirection(FlowDirection value)
 	{
-		SetProperty(FlowDirectionProperty, _flowDirection, value);
-		InvalidateFont(FlowDirectionBit);
-		InvalidateTextTexture();
-		InvalidateMeasure();
+		if(SetProperty(FlowDirectionProperty, _flowDirection, value))
+		{
+			InvalidateFont(FlowDirectionBit);
+			InvalidateTextTexture();
+			InvalidateMeasure();
+		}		
 	}
 
 	void TextBlock::SetFontStyle(FontStyle value)
 	{
-		SetProperty(FontStyleProperty, _fontStyle, value);
-		InvalidateFont(FontStyleBit);
-		InvalidateTextTexture();
-		InvalidateRender();
+		if(SetProperty(FontStyleProperty, _fontStyle, value))
+		{
+			InvalidateFont(FontStyleBit);
+			InvalidateTextTexture();
+			InvalidateRender();
+		}		
 	}
 
 	void TextBlock::SetForeground(Color value)
 	{
-		SetProperty(ForegroundProperty, _foreground, value);
-		InvalidateTextTexture();
-		InvalidateRender();
+		if(SetProperty(ForegroundProperty, _foreground, value))
+		{
+			InvalidateTextTexture();
+			InvalidateRender();
+		}		
 	}
 
 	void TextBlock::SetTextWrapping(TextWrapping value)
 	{
-		SetProperty(TextWrappingProperty, _textWrapping, value);
-		InvalidateTextTexture();
-		InvalidateMeasure();
+		if(SetProperty(TextWrappingProperty, _textWrapping, value))
+		{
+			InvalidateTextTexture();
+			InvalidateMeasure();
+		}		
 	}
 
 	void TextBlock::SetTextAlignment(TextAlignment value)
 	{
-		SetProperty(TextAlignmentProperty, _textAlignment, value);
-		InvalidateFont(TextAlignmentBit);
-		InvalidateTextTexture();
-		InvalidateMeasure();
+		if(SetProperty(TextAlignmentProperty, _textAlignment, value))
+		{
+			InvalidateFont(TextAlignmentBit);
+			InvalidateTextTexture();
+			InvalidateMeasure();
+		}		
 	}
 
 	void TextBlock::SetPadding(Thickness value)
 	{
-		SetProperty(PaddingProperty, _padding, value);
-		InvalidateMeasure();
+		if(SetProperty(PaddingProperty, _padding, value))
+		{
+			InvalidateMeasure();
+		}
 	}
 
 	void TextBlock::Render(RenderContext context)

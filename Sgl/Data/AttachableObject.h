@@ -35,8 +35,7 @@ namespace Sgl
 			return attachProperty.DefaultValue;
 		}
 
-		template<typename T>
-		void ClearAttachProperty(AttachedProperty<T>& attachProperty)
+		void ClearAttachProperty(SglProperty& attachProperty)
 		{
 			_attachedProperties.erase(attachProperty.Id);
 		}

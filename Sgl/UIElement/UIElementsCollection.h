@@ -1,8 +1,9 @@
 #pragma once
 
+#include <cassert>
+
 #include "UIElement.h"
 #include "../Base/Collections/Collection.h"
-#include <cassert>
 
 namespace Sgl
 {
@@ -10,72 +11,19 @@ namespace Sgl
 	{
 	private:
 		using base = Collection<Ref<UIElement>>;
-		Layoutable& _owner;
+		UIElement& _owner;
 	public:
-		UIElementsCollection(Layoutable& layout):
-			base(),
-			_owner(layout)
-		{}
-
-		UIElementsCollection(const UIElementsCollection& other) :
-			base(other),
-			_owner(other._owner)
-		{}
-
-		UIElementsCollection(UIElementsCollection&& other) noexcept :
-			base(std::move(other)),
-			_owner(other._owner)
-		{}
-
-		~UIElementsCollection()
-		{
-			ClearItems();
-		}
+		UIElementsCollection(UIElement& owner);
+		UIElementsCollection(const UIElementsCollection& other);
+		UIElementsCollection(UIElementsCollection&& other) noexcept;
+		~UIElementsCollection();
 	protected:
-		void ClearItems() override
-		{
-			auto& items = Items();
-			for(auto& item : items)
-			{
-				item->SetParent(nullptr);
-				item->SetVisualRoot(_owner.GetVisualRoot());
-				item->OnDetachedFromElementsTree();
-			}
-
-			_owner.InvalidateMeasure();
-		}
-
-		void InsertItem(size_t index, const Ref<UIElement>& item) override
-		{
-			assert(item != nullptr);
-			
-			item->SetParent(&_owner);
-			item->SetVisualRoot(_owner.GetVisualRoot());
-			item->OnAttachedToElementsTree();
-			base::InsertItem(index, item);
-			_owner.InvalidateMeasure();
-		}
-
-		void SetItem(size_t index, const Ref<UIElement>& item) override
-		{
-			assert(item != nullptr);
-
-			item->SetParent(&_owner);
-			item->SetVisualRoot(_owner.GetVisualRoot());
-			item->OnAttachedToElementsTree();
-			base::SetItem(index, item);
-			_owner.InvalidateMeasure();
-		}
-
-		void RemoveItem(size_t index) override
-		{
-			auto& item = ElementAt(index);
-			item->SetParent(nullptr);
-			item->SetVisualRoot(_owner.GetVisualRoot());
-			item->OnDetachedFromElementsTree();
-
-			base::RemoveItem(index);
-			_owner.InvalidateMeasure();
-		}
+		void ClearItems() override;
+		void InsertItem(size_t index, const Ref<UIElement>& item) override;
+		void SetItem(size_t index, const Ref<UIElement>& item) override;
+		void RemoveItem(size_t index) override;
+	private:
+		void OnChildAdded(UIElement& child);
+		void OnChildRemoving(UIElement& child);
 	};
 }

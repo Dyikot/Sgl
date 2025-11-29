@@ -16,14 +16,18 @@ namespace Sgl
 
 	void StackPanel::SetSpacing(float value)
 	{
-		SetProperty(SpacingProperty, _spacing, value);
-		InvalidateMeasure();
+		if(SetProperty(SpacingProperty, _spacing, value))
+		{
+			InvalidateMeasure();
+		}
 	}
 
 	void StackPanel::SetOrientation(Orientation value)
 	{
-		SetProperty(OrientationProperty, _orientation, value);
-		InvalidateMeasure();
+		if(SetProperty(OrientationProperty, _orientation, value))
+		{
+			InvalidateMeasure();
+		}
 	}
 
 	FSize StackPanel::MeasureContent(FSize avaliableSize)

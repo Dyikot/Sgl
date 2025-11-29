@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+
 #include "StyleMap.h"
 #include "../Data/ObservableObject.h"
 #include "../Data/AttachableObject.h"
@@ -30,10 +31,9 @@ namespace Sgl
 		virtual void SetParent(StyleableElement* parent);
 		StyleableElement* GetStyleableParent() const { return _styleableParent; }
 
-		bool IsStyleValid() const { return _isStyleValid; }
-
-		virtual void ApplyStyle();
+		bool NeedsStyling() const { return !_isStyleValid; }
 		void InvalidateStyle();
+		virtual void ApplyStyle();
 	private:
 		void UpdateStyles();
 		void GetStylesFrom(const StyleMap& styles);

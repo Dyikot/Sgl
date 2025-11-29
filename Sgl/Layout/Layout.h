@@ -67,7 +67,7 @@ namespace Sgl
 		/// <summary>
 		/// Vertical orientation.
 		/// </summary>
-		Vertical = 2
+		Vertical
 	};
 
 	/// <summary>

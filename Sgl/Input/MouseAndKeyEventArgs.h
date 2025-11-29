@@ -5,11 +5,6 @@
 
 namespace Sgl
 {	
-	enum class ButtonState
-	{
-		Released, Pressed
-	};	
-
 	enum class MouseButton
 	{
 		Left = 1, Middle, Right
@@ -22,12 +17,11 @@ namespace Sgl
 
 	struct KeyEventArgs
 	{
-		ButtonState State;
 		KeyCode Key;
 		KeyModifier Modifier;
 	};
 
-	struct MouseEventArgs
+	struct MouseMoveEventArgs
 	{
 		float X;
 		float Y;
@@ -36,7 +30,6 @@ namespace Sgl
 	struct MouseButtonEventArgs
 	{
 		MouseButton Button;
-		ButtonState State;
 		int ClicksNumber;
 	};
 

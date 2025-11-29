@@ -2,6 +2,7 @@
 
 #include <string_view>
 #include <SDL3/SDL_surface.h>
+
 #include "../Base/Size.h"
 #include "../Base/Media/Color.h"
 

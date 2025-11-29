@@ -1,6 +1,7 @@
 #pragma once
 
 #include <optional>
+
 #include "Render/Surface.h"
 #include "Base/Event.h"
 #include "Base/Time/Stopwatch.h"
@@ -78,7 +79,6 @@ namespace Sgl
 		Window* _owner = nullptr;
 		Surface _icon;
 		std::string _iconSource;
-		Stopwatch _stopwatch;
 	public:
 		Window();
 		Window(const Window&) = delete;
@@ -283,7 +283,7 @@ namespace Sgl
 		bool IsModal() const;
 
 		void Render(RenderContext context) override;
-		virtual void Process(TimeSpan elapsed);
+		virtual void Process();
 	protected:
 		void OnCursorChanged(const Cursor& cursor) override;
 		virtual void OnWindowStateChanged(WindowStateChangedEventArgs e);
@@ -291,7 +291,7 @@ namespace Sgl
 		virtual void OnWindowSizeChanged(WindowSizeChangedEventArgs e);
 		virtual void OnKeyUp(KeyEventArgs e) {}
 		virtual void OnKeyDown(KeyEventArgs e) {}
-		virtual void OnMouseMove(MouseEventArgs e);
+		virtual void OnMouseMove(MouseMoveEventArgs e);
 		virtual void OnMouseDown(MouseButtonEventArgs e);
 		virtual void OnMouseUp(MouseButtonEventArgs e);
 		virtual void OnMouseWheelChanged(MouseWheelEventArgs e) {}
@@ -307,8 +307,6 @@ namespace Sgl
 		virtual void OnClosed() {}
 	private:
 		void RenderCore();
-		void ProcessCore();
-		void UpdateStyleAndLayout();
 
 		friend class Application;
 	public:

@@ -7,7 +7,7 @@ namespace Sgl
 	ContentUIElement::ContentUIElement(const ContentUIElement& other):
 		UIElement(other),
 		_content(other._content),
-		_contentPresenter(other._contentPresenter),
+		_presenter(other._presenter),
 		_contentTemplate(other._contentTemplate),
 		_padding(other._padding),
 		_horizontalContentAlignment(other._horizontalContentAlignment),
@@ -22,66 +22,78 @@ namespace Sgl
 		_padding(std::move(other._padding)),
 		_horizontalContentAlignment(std::move(other._horizontalContentAlignment)),
 		_verticalContentAlignment(std::move(other._verticalContentAlignment)),
-		_contentPresenter(std::move(other._contentPresenter)),
+		_presenter(std::move(other._presenter)),
 		_isContentPresenterValid(other._isContentPresenterValid)
 	{}
 
 	ContentUIElement::~ContentUIElement()
 	{
-		if(_contentPresenter)
+		if(_presenter)
 		{
-			_contentPresenter->OnDetachedFromElementsTree();
-			_contentPresenter->SetParent(nullptr);
+			OnContentPresenterDestroying(_presenter.GetValue());
 		}
 	}
 
-	void ContentUIElement::SetContent(Ref<IData> content)
+	void ContentUIElement::SetContent(Ref<ObservableObject> content)
 	{
-		SetProperty(ContentProperty, _content, content);
-		InvalidateMeasure();
-		InvalidateContentPresenter();
+		if(SetProperty(ContentProperty, _content, content))
+		{
+			if(!content.Is<UIElement>())
+			{
+				SetDataContext(content);
+			}			
+			
+			InvalidateContentPresenter();
+		}
 	}
 
 	void ContentUIElement::SetContentTemplate(Ref<IDataTemplate> value)
 	{
-		SetProperty(ContentTemplateProperty, _contentTemplate, value);
-		InvalidateMeasure();
-		InvalidateContentPresenter();
+		if(SetProperty(ContentTemplateProperty, _contentTemplate, value))
+		{
+			InvalidateContentPresenter();
+		}
 	}
 
 	void ContentUIElement::SetPadding(Thickness value)
 	{
-		SetProperty(PaddingProperty, _padding, value);
-		InvalidateMeasure();
+		if(SetProperty(PaddingProperty, _padding, value))
+		{
+			InvalidateMeasure();
+		}
 	}
 
 	void ContentUIElement::SetVerticalContentAlignment(VerticalAlignment value)
 	{
-		SetProperty(VerticalContentAlignmentProperty, _verticalContentAlignment, value);
-		InvalidateArrange();
+		if(SetProperty(VerticalContentAlignmentProperty, _verticalContentAlignment, value))
+		{
+			InvalidateArrange();
+		}
 	}
 
 	void ContentUIElement::SetHorizontalContentAlignment(HorizontalAlignment value)
 	{
-		SetProperty(HorizontalContentAlignmentProperty, _horizontalContentAlignment, value);
-		InvalidateArrange();
+		if(SetProperty(HorizontalContentAlignmentProperty, _horizontalContentAlignment, value))
+		{
+			InvalidateArrange();
+		}
 	}
 		
 	void ContentUIElement::SetVisualRoot(IVisualRoot* value)
 	{
 		Renderable::SetVisualRoot(value);
 
-		if(_contentPresenter)
+		if(_presenter)
 		{
-			_contentPresenter->SetVisualRoot(value);
+			_presenter->SetVisualRoot(value);
 		}
 	}
 
 	void ContentUIElement::Render(RenderContext context)
 	{
-		if(_contentPresenter && _contentPresenter->IsVisible())
+		if(_presenter && _presenter->IsVisible())
 		{
-			_contentPresenter->Render(context);
+			_presenter->Render(context);
 		}
 
 		UIElement::Render(context);
@@ -91,46 +103,56 @@ namespace Sgl
 	{
 		StyleableElement::ApplyStyle();
 
-		if(!_isContentPresenterValid && TryCreatePresenter())
+		if(!_isContentPresenterValid)
 		{
-			_isContentPresenterValid = true;
+			UpdatePresenter();
 		}
 
-		if(_contentPresenter && _contentPresenter->IsVisible())
+		if(_presenter && _presenter->NeedsStyling())
 		{
-			_contentPresenter->ApplyStyle();
+			_presenter->ApplyStyle();
 		}
+	}
+
+	void ContentUIElement::OnContentPresenterCreated(UIElement& presenter)
+	{
+		presenter.OnAttachedToElementsTree(*this);		
+	}
+
+	void ContentUIElement::OnContentPresenterDestroying(UIElement& presenter)
+	{
+		presenter.OnDetachedFromElementsTree();
 	}
 
 	void ContentUIElement::OnCursorChanged(const Cursor& cursor)
 	{
-		if(IsMouseOver() && !(_contentPresenter && _contentPresenter->IsMouseOver()))
+		if(IsMouseOver() && !(_presenter && _presenter->IsMouseOver()))
 		{
 			Cursor::Set(cursor);
 		}
 	}
 
-	void ContentUIElement::OnMouseMove(MouseEventArgs e)
+	void ContentUIElement::OnMouseMove(MouseMoveEventArgs e)
 	{
 		UIElement::OnMouseMove(e);
 
-		if(_contentPresenter)
+		if(_presenter)
 		{
-			bool wasMouseOver = _contentPresenter->_isMouseOver;
-			bool isMouseOver = LayoutHelper::IsPointInRect(e.X, e.Y, _contentPresenter->_bounds);
+			bool wasMouseOver = _presenter->_isMouseOver;
+			bool isMouseOver = LayoutHelper::IsPointInRect(e.X, e.Y, _presenter->_bounds);
 
 			if(isMouseOver)
 			{
 				if(!wasMouseOver)
 				{
-					_contentPresenter->OnMouseEnter(e);
+					_presenter->OnMouseEnter(e);
 				}
 
-				_contentPresenter->OnMouseMove(e);
+				_presenter->OnMouseMove(e);
 			}
 			else if(wasMouseOver)
 			{
-				_contentPresenter->OnMouseLeave(e);
+				_presenter->OnMouseLeave(e);
 				Cursor::Set(GetCursor());
 			}
 		}
@@ -140,9 +162,9 @@ namespace Sgl
 	{
 		UIElement::OnMouseDown(e);
 
-		if(_contentPresenter && _contentPresenter->IsMouseOver() && _contentPresenter->IsVisible())
+		if(_presenter && _presenter->IsMouseOver() && _presenter->IsVisible())
 		{
-			_contentPresenter->OnMouseDown(e);
+			_presenter->OnMouseDown(e);
 		}
 	}
 
@@ -150,37 +172,38 @@ namespace Sgl
 	{
 		UIElement::OnMouseUp(e);
 
-		if(_contentPresenter && _contentPresenter->IsMouseOver() && _contentPresenter->IsVisible())
+		if(_presenter && _presenter->IsMouseOver() && _presenter->IsVisible())
 		{
-			_contentPresenter->OnMouseUp(e);
+			_presenter->OnMouseUp(e);
 		}
 	}
 
-	void ContentUIElement::OnMouseLeave(MouseEventArgs e)
+	void ContentUIElement::OnMouseLeave(MouseMoveEventArgs e)
 	{
 		UIElement::OnMouseLeave(e);
 
-		if(_contentPresenter && _contentPresenter->IsVisible())
+		if(_presenter && _presenter->IsVisible())
 		{
-			_contentPresenter->OnMouseLeave(e);
+			_presenter->OnMouseLeave(e);
 		}
 	}
 
-	bool ContentUIElement::TryCreatePresenter()
+	bool ContentUIElement::UpdatePresenter()
 	{
 		if(_contentTemplate != nullptr && _contentTemplate->Match(_content))
 		{
-			if(_contentPresenter)
+			if(_presenter)
 			{
-				_contentPresenter->SetParent(nullptr);
-				_contentPresenter->SetVisualRoot(nullptr);
-				_contentPresenter->OnDetachedFromElementsTree();
+				OnContentPresenterDestroying(_presenter.GetValue());
 			}
 
-			_contentPresenter = _contentTemplate->Build(_content);
-			_contentPresenter->SetParent(this);
-			_contentPresenter->SetVisualRoot(GetVisualRoot());
-			_contentPresenter->OnAttachedToElementsTree();
+			_presenter = _contentTemplate->Build(_content);
+			_isContentPresenterValid = true;
+
+			if(_presenter)
+			{
+				OnContentPresenterCreated(_presenter.GetValue());
+			}
 
 			return true;
 		}
@@ -190,17 +213,19 @@ namespace Sgl
 
 	void ContentUIElement::InvalidateContentPresenter()
 	{
+		InvalidateStyle();
+		InvalidateMeasure();
 		_isContentPresenterValid = false;
 	}
 
 	FSize ContentUIElement::MeasureContent(FSize avaliableSize)
 	{
-		if(!_isContentPresenterValid && TryCreatePresenter())
+		if(!_isContentPresenterValid && UpdatePresenter())
 		{			
 			_isContentPresenterValid = true;
 		}
 
-		if(_contentPresenter)
+		if(_presenter)
 		{
 			FSize contentAvaliableSize =
 			{
@@ -212,8 +237,8 @@ namespace Sgl
 					GetMaxHeight())
 			};
 
-			 _contentPresenter->Measure(contentAvaliableSize);
-			 auto [width, height] = _contentPresenter->GetDesiredSize();
+			 _presenter->Measure(contentAvaliableSize);
+			 auto [width, height] = _presenter->GetDesiredSize();
 
 			 return FSize 
 			 {
@@ -227,7 +252,7 @@ namespace Sgl
 
 	void ContentUIElement::ArrangeContent(FRect rect)
 	{
-		if(_contentPresenter)
+		if(_presenter)
 		{
 			FRect finalRect =
 			{
@@ -249,15 +274,15 @@ namespace Sgl
 
 			if(_verticalContentAlignment != VerticalAlignment::Top)
 			{
-				_contentPresenter->SetVerticalAlignment(_verticalContentAlignment);
+				_presenter->SetVerticalAlignment(_verticalContentAlignment);
 			}
 
 			if(_horizontalContentAlignment != HorizontalAlignment::Left)
 			{
-				_contentPresenter->SetHorizontalAlignment(_horizontalContentAlignment);
+				_presenter->SetHorizontalAlignment(_horizontalContentAlignment);
 			}
 
-			_contentPresenter->Arrange(finalRect);
+			_presenter->Arrange(finalRect);
 		}
 	}
 }

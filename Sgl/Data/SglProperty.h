@@ -6,13 +6,13 @@ namespace Sgl
 
 	class SglProperty
 	{
+	private:
+		static inline PropertyId _nextId = 0;
 	public:
-		const PropertyId Id;
+		const PropertyId Id = _nextId++;
 	public:
-		SglProperty();
+		SglProperty() = default;
 		SglProperty(const SglProperty&) = default;
 		SglProperty(SglProperty&&) = default;
-	private:
-		static PropertyId GenerateUniquePropertyId();
 	};
 }

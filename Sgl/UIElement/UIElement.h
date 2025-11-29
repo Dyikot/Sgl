@@ -1,32 +1,31 @@
 #pragma once
 
 #include <type_traits>
+
 #include "../Base/Any.h"
 #include "../Base/Event.h"
-#include "../Data/IData.h"
+#include "../Data/ObservableObject.h"
 #include "../Data/IDataTemplate.h"
-#include"../Data/BindingMode.h"
+#include "../Data/BindingMode.h"
 #include "../Input/MouseAndKeyEventArgs.h"
 #include "../Layout/Layoutable.h"
 
 namespace Sgl
 {
-	class Window;
-
-	class UIElement : public Layoutable, public IData
+	class UIElement : public Layoutable
 	{
 	private:
 		using UIElementEventHandler = EventHandler<UIElement>;
 		using KeyEventHandler = EventHandler<UIElement, KeyEventArgs>;
-		using MouseEventHandler = EventHandler<UIElement, MouseEventArgs>;
+		using MouseMoveEventHandler = EventHandler<UIElement, MouseMoveEventArgs>;
 		using MouseButtonEventHandler = EventHandler<UIElement, MouseButtonEventArgs>;
 		using MouseWheelEventHandler = EventHandler<UIElement, MouseWheelEventArgs>;
 	public:
 		Event<KeyEventHandler> KeyUp;
 		Event<KeyEventHandler> KeyDown;
-		Event<MouseEventHandler> MouseMove;
-		Event<MouseEventHandler> MouseEnter;
-		Event<MouseEventHandler> MouseLeave;
+		Event<MouseMoveEventHandler> MouseMove;
+		Event<MouseMoveEventHandler> MouseEnter;
+		Event<MouseMoveEventHandler> MouseLeave;
 		Event<MouseButtonEventHandler> MouseUp;
 		Event<MouseButtonEventHandler> MouseDown;
 		Event<MouseWheelEventHandler> MouseWheel;
@@ -61,40 +60,67 @@ namespace Sgl
 
 		void Render(RenderContext context) override;
 
-		template<typename TObservable, typename TObserver, typename TMember>
-		void Bind(ObservableProperty<TObserver, TMember>& targetProperty,
-				  ObservableProperty<TObservable, TMember>& sourceProperty,				  
-				  BindingMode mode = BindingMode::OneWay)
+		template<typename TTarget, typename TTargetValue,
+				 typename TSource, typename TSourceValue,
+				 typename TConverter = std::identity>
+		void Bind(ObservableProperty<TTarget, TTargetValue>& targetProperty,
+				  ObservableProperty<TSource, TSourceValue>& sourceProperty,
+				  BindingMode mode = BindingMode::OneWay,
+				  TConverter converter = {})
 		{
 			if(_dataContext)
 			{
-				auto& source = _dataContext.GetValueAs<TObservable>();
-				auto& target = static_cast<TObserver&>(*this);
+				auto& target = static_cast<TTarget&>(*this);
+				auto& source = _dataContext.GetValueAs<TSource>();
 
 				switch(mode)
 				{
 					case BindingMode::OneWay:
 					{
-						(target.*targetProperty.Setter)((source.*sourceProperty.Getter)());
-						source.SetObserver(sourceProperty, target, targetProperty);
+						targetProperty.Set(target, converter(sourceProperty.Get(source)));
+						source.SetObserver(sourceProperty, target, targetProperty, converter);
 						break;
 					}
 
 					case BindingMode::OneWayToSource:
 					{
-						(source.*sourceProperty.Setter)((target.*targetProperty.Getter)());
-						SetObserver(targetProperty, source, sourceProperty);
+						sourceProperty.Set(source, converter(targetProperty.Get(target)));
+						SetObserver(targetProperty, source, sourceProperty, converter);
 						break;
 					}
 
 					case BindingMode::TwoWay:
 					{
-						(target.*targetProperty.Setter)((source.*sourceProperty.Getter)());
-						source.SetObserver(sourceProperty, target, targetProperty);
-						SetObserver(targetProperty, source, sourceProperty);
+						targetProperty.Set(target, converter(sourceProperty.Get(source)));
+						sourceProperty.Set(source, converter(targetProperty.Get(target)));
+						SetObserver(targetProperty, source, sourceProperty, converter);
 						break;
 					}
-				}				
+
+					case BindingMode::OneTime:
+					{
+						targetProperty.Set(target, converter(sourceProperty.Get(source)));
+						break;
+					}
+				}
+			}
+			else
+			{
+				throw std::exception("Data context is null");
+			}
+		}
+		
+		template<typename TTarget, typename TSource,
+				 typename TValue, typename TConverter = std::identity>
+		void Bind(ObservableProperty<TTarget, TValue>& targetProperty,
+				  TValue TSource::* sourceField,
+				  TConverter converter = {})
+		{
+			if(_dataContext)
+			{
+				auto& target = static_cast<TTarget&>(*this);
+				auto& source = _dataContext.GetValueAs<TSource>();
+				targetProperty.Set(target, converter(source.*sourceField));
 			}
 			else
 			{
@@ -102,43 +128,17 @@ namespace Sgl
 			}
 		}
 
-		template<typename TObserver, typename TObserverMember,
-				 typename TObservable, typename TObservableMember,
-				 typename TConverter>
-		void Bind(ObservableProperty<TObserver, TObserverMember>& targetProperty,
-				  ObservableProperty<TObservable, TObservableMember>& sourceProperty,
-				  TConverter converter,
-				  BindingMode mode = BindingMode::OneWay)
+		template<typename TTarget, typename TSource, 
+				 typename TValue, typename TConverter = std::identity>
+		void Bind(ObservableProperty<TTarget, TValue>& targetProperty,
+				  TValue (TSource::* sourceMethod)(),
+				  TConverter converter = {})
 		{
 			if(_dataContext)
 			{
-				auto& source = _dataContext.GetValueAs<TObservable>();
-				auto& target = static_cast<TObserver&>(*this);
-
-				switch(mode)
-				{
-					case BindingMode::OneWay:
-					{
-						(target.*targetProperty.Setter)(converter((source.*sourceProperty.Getter)()));
-						source.SetObserver(sourceProperty, target, targetProperty, converter);
-						break;
-					}
-
-					case BindingMode::OneWayToSource:
-					{
-						(source.*sourceProperty.Setter)(converter((target.*targetProperty.Getter)()));
-						SetObserver(targetProperty, source, sourceProperty, converter);
-						break;
-					}
-
-					case BindingMode::TwoWay:
-					{
-						(target.*targetProperty.Setter)(converter((source.*sourceProperty.Getter)()));
-						source.SetObserver(sourceProperty, target, targetProperty, converter);
-						SetObserver(targetProperty, source, sourceProperty, converter);
-						break;
-					}
-				}
+				auto& target = static_cast<TTarget&>(*this);
+				auto& source = _dataContext.GetValueAs<TSource>();
+				targetProperty.Set(target, converter((source.*sourceMethod)()));
 			}
 			else
 			{
@@ -150,13 +150,13 @@ namespace Sgl
 		void OnCursorChanged(const Cursor& cursor) override;
 		virtual void OnKeyUp(KeyEventArgs e);
 		virtual void OnKeyDown(KeyEventArgs e);
-		virtual void OnMouseMove(MouseEventArgs e);
+		virtual void OnMouseMove(MouseMoveEventArgs e);
 		virtual void OnMouseDown(MouseButtonEventArgs e);
 		virtual void OnMouseUp(MouseButtonEventArgs e);
 		virtual void OnMouseWheelChanged(MouseWheelEventArgs e);
-		virtual void OnMouseEnter(MouseEventArgs e);
-		virtual void OnMouseLeave(MouseEventArgs e);
-		virtual void OnAttachedToElementsTree();
+		virtual void OnMouseEnter(MouseMoveEventArgs e);
+		virtual void OnMouseLeave(MouseMoveEventArgs e);
+		virtual void OnAttachedToElementsTree(StyleableElement& parent);
 		virtual void OnDetachedFromElementsTree();
 	public:
 		static inline ObservableProperty TagProperty { &SetTag, &GetTag };
@@ -172,7 +172,7 @@ namespace Sgl
 	class UIElementDataTemplate : public IDataTemplate
 	{
 	public:
-		Ref<UIElement> Build(const Ref<IData>& data) const override;
-		bool Match(const Ref<IData>& data) const override;
+		Ref<UIElement> Build(const Ref<ObservableObject>& data) override;
+		bool Match(const Ref<ObservableObject>& data) const override;
 	};
 }

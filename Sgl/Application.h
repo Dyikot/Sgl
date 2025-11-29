@@ -1,6 +1,7 @@
 #pragma once
 
 #include <ranges>
+
 #include "Window.h"
 #include "Base/Localization/StringLocalizerBase.h"
 

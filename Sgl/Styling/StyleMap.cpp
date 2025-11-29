@@ -2,10 +2,6 @@
 
 namespace Sgl
 {
-	StyleMap::StyleMap(StyleMap&& other) noexcept:
-		_items(std::move(other._items))
-	{}
-
 	IStyle* StyleMap::TryGet(std::string_view key) const
 	{
 		if(auto it = _items.find(key); it != _items.end())

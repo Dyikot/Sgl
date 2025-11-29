@@ -41,7 +41,10 @@ namespace Sgl
 
         for(auto& child : Children)
         {
-            child->ApplyStyle();
+            if(child->NeedsStyling())
+            {
+                child->ApplyStyle();
+            }
         }
     }
 
@@ -61,7 +64,7 @@ namespace Sgl
         }
     }
 
-    void Panel::OnMouseMove(MouseEventArgs e)
+    void Panel::OnMouseMove(MouseMoveEventArgs e)
     {
         UIElement::OnMouseMove(e);
 
@@ -121,7 +124,7 @@ namespace Sgl
         }
     }
 
-    void Panel::OnMouseLeave(MouseEventArgs e)
+    void Panel::OnMouseLeave(MouseMoveEventArgs e)
     {
         UIElement::OnMouseLeave(e);
 

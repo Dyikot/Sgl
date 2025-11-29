@@ -11,7 +11,7 @@ namespace Sgl
 	/// <param name="duration"> - sleep time duration</param>
 	inline void SleepFor(TimeSpan duration)
 	{
-		constexpr TimeSpan _20ms = TimeSpan::FromMilliseconds(20);
+		static constexpr TimeSpan _20ms = TimeSpan::FromMilliseconds(20);
 
 		if(duration >= _20ms)
 		{

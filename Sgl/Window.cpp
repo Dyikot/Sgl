@@ -45,8 +45,6 @@ namespace Sgl
     {
         if(_content)
         {
-            _content->SetParent(nullptr);
-            _content->SetVisualRoot(nullptr);
             _content->OnDetachedFromElementsTree();
             _content = nullptr;
         }
@@ -295,8 +293,6 @@ namespace Sgl
     {
         if(_content)
         {
-            _content->SetParent(nullptr);
-            _content->SetVisualRoot(nullptr);
             _content->OnDetachedFromElementsTree();
         }
 
@@ -304,9 +300,7 @@ namespace Sgl
 
         if(_content)
         {
-            _content->SetParent(this);
-            _content->SetVisualRoot(this);
-            _content->OnAttachedToElementsTree();
+            _content->OnAttachedToElementsTree(*this);
         }
     }
 
@@ -375,9 +369,32 @@ namespace Sgl
         Renderable::Render(context);
     }
 
-    void Window::Process(TimeSpan elapsed)
+    void Window::Process()
     {
-        UpdateStyleAndLayout();
+        if(!NeedsStyling())
+        {
+            ApplyStyle();
+        }
+
+        if(_content)
+        {
+            if(_content->NeedsStyling())
+            {
+                _content->ApplyStyle();
+            }
+
+            if(_content->NeedsMeasure())
+            {
+                auto [width, height] = GetSize();
+                _content->Measure(FSize(width, height));
+            }
+
+            if(_content->NeedsArrange())
+            {
+                auto [width, height] = GetSize();
+                _content->Arrange(FRect(0, 0, width, height));
+            }
+        }
     }
 
     void Window::OnCursorChanged(const Cursor& cursor)
@@ -413,7 +430,7 @@ namespace Sgl
         SizeChanged(*this, e);
     }
 
-    void Window::OnMouseMove(MouseEventArgs e)
+    void Window::OnMouseMove(MouseMoveEventArgs e)
     {
         if(_content && _content->IsVisible())
         {
@@ -482,46 +499,12 @@ namespace Sgl
 
     void Window::RenderCore()
     {
-        if(IsVisible() || IsRenderableWhenMinimized)
+        if(NeedsRendering())
         {
-            if(NeedsRendering())
+            if(IsVisible() || IsRenderableWhenMinimized)
             {
                 Render(_renderContext);
                 SDL_RenderPresent(_renderer);
-            }
-        }
-    }
-
-    void Window::ProcessCore()
-    {
-        Process(_stopwatch.Elapsed());
-        _stopwatch.Restart();
-    }
-
-    void Window::UpdateStyleAndLayout()
-    {
-        if(!IsStyleValid())
-        {
-            ApplyStyle();
-        }
-
-        if(_content)
-        {
-            if(!_content->IsStyleValid())
-            {
-                _content->ApplyStyle();
-            }
-
-            if(!_content->IsMeasureValid())
-            {
-                auto [width, height] = GetSize();
-                _content->Measure(FSize(width, height));
-            }
-
-            if(!_content->IsArrangeValid())
-            {
-                auto [width, height] = GetSize();
-                _content->Arrange(FRect(0, 0, width, height));
             }
         }
     }

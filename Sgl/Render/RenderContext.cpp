@@ -1,6 +1,8 @@
 #include "RenderContext.h"
+
 #include <SDL3_ttf/SDL_ttf.h>
 #include <SDL3_image/SDL_image.h>
+
 #include "../Base/Math.h"
 #include "../Base/Media/Font.h"
 

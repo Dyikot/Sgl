@@ -67,8 +67,8 @@ namespace Sgl
 
 		FSize GetDesiredSize() const { return _desiredSize; }
 		FRect GetBounds() const { return _bounds; }
-		bool IsArrangeValid() const { return _isArrangeValid; }
-		bool IsMeasureValid() const { return _isMeasureValid; }
+		bool NeedsArrange() const { return !_isArrangeValid; }
+		bool NeedsMeasure() const { return !_isMeasureValid; }
 
 		void Arrange(FRect rect);
 		void Measure(FSize avaliableSize);

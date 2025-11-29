@@ -22,15 +22,19 @@ namespace Sgl::UIElements
 
 	void Image::SetSource(const std::string & value)
 	{
-		SetProperty(SourceProperty, _source, value);
-		InvalidateImageTexture();
-		InvalidateArrange();
+		if(SetProperty(SourceProperty, _source, value))
+		{
+			InvalidateImageTexture();
+			InvalidateArrange();
+		}
 	}
 
 	void Image::SetStretch(Stretch value)
 	{
-		SetProperty(StretchProperty, _stretch, value);
-		InvalidateArrange();
+		if(SetProperty(StretchProperty, _stretch, value))
+		{
+			InvalidateArrange();
+		}
 	}
 
 	void Image::Render(RenderContext context)

@@ -1,4 +1,5 @@
 #include "Layoutable.h"
+
 #include <algorithm>
 
 namespace Sgl
@@ -41,62 +42,82 @@ namespace Sgl
 
 	void Layoutable::SetWidth(float value)
 	{
-		SetProperty(WidthProperty, _width, value);
-		InvalidateMeasure();
+		if(SetProperty(WidthProperty, _width, value))
+		{
+			InvalidateMeasure();
+		}
 	}
 
 	void Layoutable::SetHeight(float value)
 	{
-		SetProperty(HeightProperty, _height, value);
-		InvalidateMeasure();
+		if(SetProperty(HeightProperty, _height, value))
+		{
+			InvalidateMeasure();
+		}
 	}
 
 	void Layoutable::SetMinWidth(float value)
 	{
-		SetProperty(MinWidthProperty, _minWidth, value);
-		InvalidateMeasure();
+		if(SetProperty(MinWidthProperty, _minWidth, value))
+		{
+			InvalidateMeasure();
+		}
 	}
 
 	void Layoutable::SetMinHeight(float value)
 	{
-		SetProperty(MinHeightProperty, _minHeight, value);
-		InvalidateMeasure();
+		if(SetProperty(MinHeightProperty, _minHeight, value))
+		{
+			InvalidateMeasure();
+		}
 	}
 
 	void Layoutable::SetMaxWidth(float value)
 	{
-		SetProperty(MaxWidthProperty, _maxWidth, value);
-		InvalidateMeasure();
+		if(SetProperty(MaxWidthProperty, _maxWidth, value))
+		{
+			InvalidateMeasure();
+		}
 	}
 
 	void Layoutable::SetMaxHeight(float value)
 	{
-		SetProperty(MaxHeightProperty, _maxHeight, value);
-		InvalidateMeasure();
+		if(SetProperty(MaxHeightProperty, _maxHeight, value))
+		{
+			InvalidateMeasure();
+		}
 	}
 
 	void Layoutable::SetMargin(Thickness value)
 	{
-		SetProperty(MarginProperty, _margin, value);
-		InvalidateMeasure();
+		if(SetProperty(MarginProperty, _margin, value))
+		{
+			InvalidateMeasure();
+		}
 	}
 
 	void Layoutable::SetIsVisible(bool value)
 	{
-		SetProperty(IsVisibleProperty, _isVisible, value);
-		InvalidateMeasure();
+		if(SetProperty(IsVisibleProperty, _isVisible, value))
+		{
+			InvalidateMeasure();
+		}
 	}
 
 	void Layoutable::SetVerticalAlignment(VerticalAlignment value)
 	{
-		SetProperty(VerticalAlignmentProperty, _verticalAlignment, value);
-		InvalidateArrange();
+		if(SetProperty(VerticalAlignmentProperty, _verticalAlignment, value))
+		{
+			InvalidateArrange();
+		}
 	}
 
 	void Layoutable::SetHorizontalAlignment(HorizontalAlignment value)
 	{
-		SetProperty(HorizontalAlignmentProperty, _horizontalAlignment, value);
-		InvalidateArrange();
+		if(SetProperty(HorizontalAlignmentProperty, _horizontalAlignment, value))
+		{
+			InvalidateArrange();
+		}
 	}
 
 	void Layoutable::SetParent(StyleableElement* parent)

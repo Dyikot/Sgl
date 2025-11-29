@@ -5,7 +5,7 @@
 
 namespace Sgl
 {
-    class IData;
+    class ObservableObject;
     class UIElement;
 
     class IDataTemplate
@@ -13,7 +13,7 @@ namespace Sgl
     public:
         virtual ~IDataTemplate() = default;
 
-        virtual Ref<UIElement> Build(const Ref<IData>& data) const = 0;
-        virtual bool Match(const Ref<IData>& data) const = 0;
+        virtual Ref<UIElement> Build(const Ref<ObservableObject>& data) = 0;
+        virtual bool Match(const Ref<ObservableObject>& data) const = 0;
     };
 }

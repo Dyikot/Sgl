@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <memory>
 #include <string>
+
 #include "Style.h"
 
 namespace Sgl
@@ -14,7 +15,7 @@ namespace Sgl
     public:
         StyleMap() = default;
         StyleMap(const StyleMap&) = delete;
-        StyleMap(StyleMap&& other) noexcept;
+        StyleMap(StyleMap&&) noexcept = default;
         ~StyleMap() = default;
 
         auto begin() { return _items.begin(); }

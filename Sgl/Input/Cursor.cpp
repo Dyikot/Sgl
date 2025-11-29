@@ -1,7 +1,8 @@
 #include "Cursor.h"
+
+#include <stdexcept>
 #include <SDL3/SDL_log.h>
 #include <SDL3_image/SDL_image.h>
-#include <stdexcept>
 
 namespace Sgl
 {

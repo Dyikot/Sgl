@@ -4,6 +4,6 @@ namespace Sgl
 {
 	enum class BindingMode
 	{
-		OneWay, OneWayToSource, TwoWay
+		OneWay, OneWayToSource, TwoWay, OneTime
 	};
 }
