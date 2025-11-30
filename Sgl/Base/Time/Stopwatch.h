@@ -27,35 +27,35 @@ namespace Sgl
 		/// <summary>
 		/// Starts the stopwatch if it is not already running.
 		/// </summary>
-		void Start();
+		void Start() noexcept;
 
 		/// <summary>
 		/// Resets, and restarts the stopwatch.
 		/// </summary>
-		void Restart();
+		void Restart() noexcept;
 
 		/// <summary>
 		/// Stops the stopwatch and resets the elapsed time to zero.
 		/// </summary>
-		void Reset();
+		void Reset() noexcept;
 
 		/// <summary>
 		/// Pause the stopwatch.
 		/// </summary>
-		void Pause();
+		void Pause() noexcept;
 
 		/// <summary>
 		/// Gets a value indicating whether the stopwatch is currently running.
 		/// </summary>
 		/// <returns>True if the stopwatch is running; otherwise, false.</returns>
-		bool IsRunning() const;
+		bool IsRunning() const noexcept;
 
 		/// <summary>
 		/// Gets the total elapsed time measured by the stopwatch.
 		/// </summary>
 		/// <returns>The TimeSpan representing the total elapsed time.</returns>
-		TimeSpan Elapsed();
+		TimeSpan Elapsed() const noexcept;
 	private:
-		TimeSpan GetElapsedTime();
+		TimeSpan GetElapsedTime() const noexcept;
 	};
 }

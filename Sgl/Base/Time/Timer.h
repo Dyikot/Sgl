@@ -23,22 +23,20 @@ namespace Sgl
 		/// Occurs when the timer reaches its specified duration.
 		/// </summary>
 		Event<TimeElapsedHandler> Elapsed;
+		bool AutoRestart = false;
 	private:
-		bool _isPaused = true;
-		bool _isElapsed = false;
 		Stopwatch _stopwatch;
-		std::thread _thread;
-		std::condition_variable _conditionVariable;
+		std::jthread _thread;
 	public:
 		/// <summary>
 		/// Initializes a new instance of the Timer class with the specified duration.
 		/// </summary>
 		/// <param name="timespan"> - The time span representing the timer duration.</param>
 		explicit Timer(TimeSpan timespan) noexcept;
+		explicit Timer(size_t milliseconds) noexcept;
 
 		Timer(const Timer&) = delete;
-		Timer(Timer&&) = delete;
-		~Timer();
+		Timer(Timer&&) = default;
 
 		/// <summary>
 		/// Starts the timer.
@@ -53,7 +51,7 @@ namespace Sgl
 		/// <summary>
 		/// Pauses the timer if it is running.
 		/// </summary>
-		void Pause();
+		void Pause() noexcept;
 
 		/// <summary>
 		/// Resets the timer to its initial state.
@@ -71,7 +69,5 @@ namespace Sgl
 		/// </summary>
 		/// <returns>True if the timer has elapsed; otherwise, false.</returns>
 		bool IsElapsed() const noexcept;
-	private:
-		void Wait();
 	};
 }

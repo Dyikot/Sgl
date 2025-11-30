@@ -9,24 +9,42 @@ namespace Sgl
 		Duration(timespan)
 	{}
 
-	Timer::~Timer()
-	{
-		Pause();
-	}
+	Timer::Timer(size_t milliseconds) noexcept:
+		Duration(TimeSpan::FromMilliseconds(milliseconds))
+	{}
 
 	void Timer::Start() noexcept
 	{
-		if(_isElapsed)
-		{
-			Reset();
-		}
-		else if(!_isPaused)
+		if(_stopwatch.IsRunning())
 		{
 			return;
 		}
 
-		_isPaused = false;
-		_thread = std::thread(&Timer::Wait, this);
+		_thread = std::jthread([this](std::stop_token stopToken)
+		{
+			std::mutex mutex;
+			std::unique_lock<std::mutex> lock(mutex);
+			std::condition_variable_any cv;
+			nanoseconds waitDuration((Duration - _stopwatch.Elapsed()).ToNanoseconds());
+
+			while(!stopToken.stop_requested())
+			{
+				_stopwatch.Start();
+				cv.wait_for(lock, stopToken, waitDuration, [this] { return IsPaused(); });
+				_stopwatch.Pause();
+
+				if(IsElapsed())
+				{
+					Elapsed(*this);
+					_stopwatch.Reset();
+
+					if(!AutoRestart)
+					{
+						break;
+					}
+				}
+			}			
+		});
 	}
 
 	void Timer::Restart() noexcept
@@ -35,49 +53,33 @@ namespace Sgl
 		Start();
 	}
 
-	void Timer::Pause()
+	void Timer::Pause() noexcept
 	{
-		_isPaused = true;
-		_conditionVariable.notify_one();
-
 		if(_thread.joinable())
 		{
-			_thread.join();
+			_thread.request_stop();
 		}
+
+		_stopwatch.Pause();
 	}
 
 	void Timer::Reset() noexcept
 	{
-		Pause();
-		_isElapsed = false;
+		if(_thread.joinable())
+		{
+			_thread.request_stop();
+		}
+
 		_stopwatch.Reset();
 	}
 
 	bool Timer::IsPaused() const noexcept
 	{
-		return _isPaused;
+		return !_stopwatch.IsRunning();
 	}
 
 	bool Timer::IsElapsed() const noexcept
 	{
-		return _isElapsed;
-	}
-
-	void Timer::Wait()
-	{
-		std::mutex mutex;
-		std::unique_lock<std::mutex> lock(mutex);
-		nanoseconds waitDuration((Duration - _stopwatch.Elapsed()).ToNanoseconds());
-
-		_stopwatch.Start();
-		_conditionVariable.wait_for(lock, waitDuration, [this] { return IsPaused(); });
-		_stopwatch.Pause();
-
-		_isElapsed = !_isPaused;
-
-		if(_isElapsed)
-		{
-			Elapsed(*this);
-		}
+		return _stopwatch.Elapsed() >= Duration;
 	}
 }

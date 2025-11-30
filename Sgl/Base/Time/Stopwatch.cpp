@@ -9,7 +9,7 @@ namespace Sgl
 		return s;
 	}
 
-	void Stopwatch::Start()
+	void Stopwatch::Start() noexcept
 	{
 		if(!_isRunning)
 		{
@@ -18,21 +18,21 @@ namespace Sgl
 		}
 	}
 
-	void Stopwatch::Restart()
+	void Stopwatch::Restart() noexcept
 	{
 		_start = Clock::now();
 		_elapsed = TimeSpan::Zero;
 		_isRunning = true;
 	}
 
-	void Stopwatch::Reset()
+	void Stopwatch::Reset() noexcept
 	{
 		_start = Clock::now();
 		_elapsed = TimeSpan::Zero;
 		_isRunning = false;
 	}
 
-	void Stopwatch::Pause()
+	void Stopwatch::Pause() noexcept
 	{
 		if(_isRunning)
 		{
@@ -41,12 +41,12 @@ namespace Sgl
 		}
 	}
 
-	bool Stopwatch::IsRunning() const
+	bool Stopwatch::IsRunning() const noexcept
 	{
 		return _isRunning;
 	}
 
-	TimeSpan Stopwatch::Elapsed()
+	TimeSpan Stopwatch::Elapsed() const noexcept
 	{
 		if(_isRunning)
 		{
@@ -56,7 +56,7 @@ namespace Sgl
 		return _elapsed;
 	}
 
-	TimeSpan Stopwatch::GetElapsedTime()
+	TimeSpan Stopwatch::GetElapsedTime() const noexcept
 	{
 		auto elapsed = Clock::now() - _start;
 		return TimeSpan(elapsed.count());
