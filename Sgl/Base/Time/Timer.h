@@ -34,7 +34,7 @@ namespace Sgl
 		/// Initializes a new instance of the Timer class with the specified duration.
 		/// </summary>
 		/// <param name="timespan"> - The time span representing the timer duration.</param>
-		Timer(TimeSpan timespan) noexcept;
+		explicit Timer(TimeSpan timespan) noexcept;
 
 		Timer(const Timer&) = delete;
 		Timer(Timer&&) = delete;

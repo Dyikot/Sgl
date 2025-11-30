@@ -39,7 +39,11 @@ namespace Sgl
 	{
 		_isPaused = true;
 		_conditionVariable.notify_one();
-		_thread.join();
+
+		if(_thread.joinable())
+		{
+			_thread.join();
+		}
 	}
 
 	void Timer::Reset() noexcept
@@ -62,14 +66,13 @@ namespace Sgl
 	void Timer::Wait()
 	{
 		std::mutex mutex;
-
-		_stopwatch.Start();
+		std::unique_lock<std::mutex> lock(mutex);
 		nanoseconds waitDuration((Duration - _stopwatch.Elapsed()).ToNanoseconds());
 
-		std::unique_lock<std::mutex> lock(mutex);
+		_stopwatch.Start();
 		_conditionVariable.wait_for(lock, waitDuration, [this] { return IsPaused(); });
-
 		_stopwatch.Pause();
+
 		_isElapsed = !_isPaused;
 
 		if(_isElapsed)

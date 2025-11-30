@@ -143,6 +143,7 @@ namespace Sgl
 		while(_isRunning)
 		{
 			HandleEvents();
+            ProcessAsyncOperations();
 
             for(auto window : _activeWindows)
             {
@@ -442,6 +443,11 @@ namespace Sgl
             }
 		}
 	}
+
+    void Application::ProcessAsyncOperations()
+    {
+        _asyncTimeManager.Process();
+    }
 
     void Application::AddWindow(Window* window)
     {
