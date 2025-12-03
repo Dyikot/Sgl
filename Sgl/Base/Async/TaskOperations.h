@@ -1,6 +1,8 @@
 #pragma once
 
-#include "AsyncTimeManager.h"
+#include "Task.h"
+#include "FuncAwaitable.h"
+#include "AsyncTimeExecuter.h"
 
 namespace Sgl
 {
@@ -9,5 +11,12 @@ namespace Sgl
 	public:
 		static TimeAwaitable Delay(TimeSpan duration);
 		static TimeAwaitable Delay(size_t milliseconds);
+
+		template<std::invocable TFunc>
+		static auto Run(TFunc&& func)
+		{
+			using T = std::invoke_result_t<TFunc>;
+			return FuncAwaitable<T>(std::move(func));
+		}
 	};
 }

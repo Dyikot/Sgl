@@ -446,7 +446,7 @@ namespace Sgl
 
     void Application::ProcessAsyncOperations()
     {
-        _asyncTimeManager.Process();
+        TimeExecuter.Process();
     }
 
     void Application::AddWindow(Window* window)

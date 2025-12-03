@@ -22,7 +22,7 @@ namespace Sgl
 
 			virtual std::unique_ptr<ICallable> Copy() const = 0;
 			virtual const std::type_info& Type() const = 0;
-			virtual TReturn operator()(TArgs... args) const = 0;
+			virtual TReturn operator()(TArgs... args) = 0;
 		};
 
 		template<typename TCallable>
@@ -45,7 +45,7 @@ namespace Sgl
 				return typeid(TCallable);
 			}
 
-			TReturn operator()(TArgs... args) const override
+			TReturn operator()(TArgs... args) override
 			{
 				return std::invoke(_callable, std::forward<TArgs>(args)...);
 			}

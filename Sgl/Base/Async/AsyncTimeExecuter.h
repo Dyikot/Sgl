@@ -2,12 +2,12 @@
 
 #include <chrono>
 #include <queue>
+#include <coroutine>
 #include "../Time/TimeSpan.h"
-#include "Task.h"
 
 namespace Sgl
 {
-	class AsyncTimeManager
+	class AsyncTimeExecuter
 	{
     private:
         struct Pending
@@ -30,7 +30,10 @@ namespace Sgl
         PendingQueue _queue;
     public:
         void Add(TimeSpan duration, std::coroutine_handle<> handle);
+    private:
         void Process();
+
+        friend class Application;
 	};
 
     struct TimeAwaitable

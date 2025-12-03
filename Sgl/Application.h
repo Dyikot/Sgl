@@ -4,7 +4,7 @@
 
 #include "Window.h"
 #include "Base/Localization/StringLocalizerBase.h"
-#include "Base/Async/AsyncTimeManager.h"
+#include "Base/Async/AsyncTimeExecuter.h"
 
 namespace Sgl
 {
@@ -48,6 +48,7 @@ namespace Sgl
 		Event<SystemThemeChangedEventHanlder> SystemThemeChanged;
 
 		StyleMap Styles;
+		AsyncTimeExecuter TimeExecuter;
 	private:
 		static inline Application* _current;
 
@@ -62,7 +63,6 @@ namespace Sgl
 		std::unordered_map<int, Window*> _windows;
 		std::unique_ptr<Window> _mainWindow;
 		std::unique_ptr<StringLocalizerBase> _localizer;
-		AsyncTimeManager _asyncTimeManager;
 	public:
 		Application() noexcept;
 		Application(const Application&) = delete;
@@ -104,7 +104,6 @@ namespace Sgl
 		Window* GetWindowById(int id);
 
 		friend class Window;
-		friend struct TimeAwaitable;
 	};	
 
 	inline Application::Context App;

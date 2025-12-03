@@ -1,18 +1,18 @@
-#include "AsyncTimeManager.h"
+#include "AsyncTimeExecuter.h"
 #include "../../Application.h"
 
 using namespace std::chrono;
 
 namespace Sgl
 {
-	void AsyncTimeManager::Add(TimeSpan duration, std::coroutine_handle<> handle)
+	void AsyncTimeExecuter::Add(TimeSpan duration, std::coroutine_handle<> handle)
 	{
 		auto durationNs = nanoseconds(duration.ToNanoseconds());
 		auto wakeTime = high_resolution_clock::now() + durationNs;
 		_queue.push(Pending(wakeTime, handle));
 	}
 
-	void AsyncTimeManager::Process()
+	void AsyncTimeExecuter::Process()
 	{
 		auto now = high_resolution_clock::now();
 
@@ -49,6 +49,6 @@ namespace Sgl
 
 	void TimeAwaitable::await_suspend(std::coroutine_handle<> handle)
 	{
-		App->_asyncTimeManager.Add(_duration, handle);
+		App->TimeExecuter.Add(_duration, handle);
 	}
 }
