@@ -29,9 +29,9 @@ namespace Sgl
 
         PendingQueue _queue;
     public:
-        void Add(TimeSpan duration, std::coroutine_handle<> handle);
+        void Shedule(TimeSpan duration, std::coroutine_handle<> handle);
     private:
-        void Process();
+        void Run();
 
         friend class Application;
 	};

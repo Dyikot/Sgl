@@ -8,6 +8,7 @@
 #include "Base/Time/Delay.h"
 #include "Base/Localization/CSVParser.h"
 #include "Base/Localization/StringLocalizer.h"
+#include "Base/Threading/Dispatcher.h"
 
 namespace Sgl
 {
@@ -142,18 +143,23 @@ namespace Sgl
 
 		while(_isRunning)
 		{
-			HandleEvents();
-            ProcessAsyncOperations();
+			HandleInput();            
+            UIThread.Run(DispatcherPriority::Input);
+            TimeExecuter.Run();
 
             for(auto window : _activeWindows)
             {
 			    window->Process();
             }
 
+            UIThread.Run(DispatcherPriority::Process);
+
             for(auto window : _activeWindows)
             {
 			    window->RenderCore();
             }
+
+            UIThread.Run(DispatcherPriority::Render);
 
             Delay();
 		}
@@ -212,7 +218,7 @@ namespace Sgl
         }
     }
 
-    void Application::HandleEvents()
+    void Application::HandleInput()
 	{
         SDL_Event e;
 		while(SDL_PollEvent(&e))
@@ -441,13 +447,8 @@ namespace Sgl
                 default:
                     break;
             }
-		}
+		}        
 	}
-
-    void Application::ProcessAsyncOperations()
-    {
-        TimeExecuter.Process();
-    }
 
     void Application::AddWindow(Window* window)
     {

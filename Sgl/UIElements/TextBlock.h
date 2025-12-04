@@ -69,7 +69,7 @@ namespace Sgl::UIElements
 		void SetPadding(Thickness value);
 		Thickness GetPadding() const { return _padding; }
 
-		void Render(RenderContext context) override;
+		void Render(RenderContext context) final;
 	protected:
 		void InvalidateTextTexture() { _isTextTextureValid = false; }
 		FSize MeasureContent(FSize avaliableSize) override;

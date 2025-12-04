@@ -37,7 +37,7 @@ namespace Sgl::UIElements
 
 		bool IsPressed() const noexcept { return _isPressed; }
 
-		void Render(RenderContext context) override;
+		void Render(RenderContext context) final;
 		void ApplyStyle() override;
 	protected:
 		virtual void OnClick();

@@ -5,14 +5,14 @@ using namespace std::chrono;
 
 namespace Sgl
 {
-	void AsyncTimeExecuter::Add(TimeSpan duration, std::coroutine_handle<> handle)
+	void AsyncTimeExecuter::Shedule(TimeSpan duration, std::coroutine_handle<> handle)
 	{
 		auto durationNs = nanoseconds(duration.ToNanoseconds());
 		auto wakeTime = high_resolution_clock::now() + durationNs;
 		_queue.push(Pending(wakeTime, handle));
 	}
 
-	void AsyncTimeExecuter::Process()
+	void AsyncTimeExecuter::Run()
 	{
 		auto now = high_resolution_clock::now();
 
@@ -49,6 +49,6 @@ namespace Sgl
 
 	void TimeAwaitable::await_suspend(std::coroutine_handle<> handle)
 	{
-		App->TimeExecuter.Add(_duration, handle);
+		App->TimeExecuter.Shedule(_duration, handle);
 	}
 }

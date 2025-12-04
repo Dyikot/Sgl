@@ -1,13 +1,13 @@
-#include "TaskOperations.h"
+#include "AsyncTasks.h"
 
 namespace Sgl
 {
-    TimeAwaitable TaskOperations::Delay(TimeSpan duration)
+    TimeAwaitable AsyncTasks::Delay(TimeSpan duration)
     {
         return TimeAwaitable(duration);
     }
 
-    TimeAwaitable TaskOperations::Delay(size_t milliseconds)
+    TimeAwaitable AsyncTasks::Delay(size_t milliseconds)
     {
         return TimeAwaitable(TimeSpan::FromMilliseconds(milliseconds));
     }

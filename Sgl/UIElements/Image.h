@@ -52,7 +52,7 @@ namespace Sgl::UIElements
 		void SetStretch(Stretch value);
 		Stretch GetStretch() const { return _stretch; }
 
-		void Render(RenderContext context) override;
+		void Render(RenderContext context) final;
 	protected:
 		void ArrangeCore(FRect rect) override;
 		void InvalidateImageTexture() { _isImageTextureValid = false; }

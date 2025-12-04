@@ -4,7 +4,7 @@
 
 #include "Window.h"
 #include "Base/Localization/StringLocalizerBase.h"
-#include "Base/Async/AsyncTimeExecuter.h"
+#include "Base/Threading/AsyncTimeExecuter.h"
 
 namespace Sgl
 {
@@ -39,7 +39,6 @@ namespace Sgl
 		{
 			Application* Current() { return Application::_current; }
 			Application* operator->() { return Application::_current; }
-			const Application* operator->() const { return Application::_current; }
 		};
 
 		Event<ApplicationEventHandler> Started;
@@ -95,8 +94,7 @@ namespace Sgl
 	private:
 		SystemTheme QuerySystemTheme() const;
 		void Delay();
-		void HandleEvents();
-		void ProcessAsyncOperations();
+		void HandleInput();
 		void AddWindow(Window* window);
 		void AddActiveWindow(Window* window);
 		void RemoveWindow(Window* window);

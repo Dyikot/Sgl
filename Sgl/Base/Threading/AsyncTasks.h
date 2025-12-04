@@ -6,7 +6,7 @@
 
 namespace Sgl
 {
-	class TaskOperations
+	class AsyncTasks
 	{
 	public:
 		static TimeAwaitable Delay(TimeSpan duration);
