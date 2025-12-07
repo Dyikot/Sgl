@@ -28,9 +28,7 @@ namespace Sgl
 		Event<MouseMoveEventHandler> MouseLeave;
 		Event<MouseButtonEventHandler> MouseUp;
 		Event<MouseButtonEventHandler> MouseDown;
-		Event<MouseWheelEventHandler> MouseWheel;
-		Event<UIElementEventHandler> AttachedToElementsTree;
-		Event<UIElementEventHandler> DetachedFromElementsTree;
+		Event<MouseWheelEventHandler> MouseWheel;		
 	private:		
 		Any _tag;
 		std::string _name;
@@ -38,6 +36,7 @@ namespace Sgl
 		Ref<ObservableObject> _dataContext;
 
 		bool _isMouseOver = false;
+		bool _hasUpdates = false;
 	public:
 		UIElement() = default;
 		UIElement(const UIElement& other);
@@ -57,6 +56,7 @@ namespace Sgl
 		Ref<ObservableObject> GetDataContext() const { return _dataContext; }
 
 		bool IsMouseOver() const { return _isMouseOver; }
+		bool HasUpdates() const { return _hasUpdates; }
 
 		void Render(RenderContext context) override;
 
@@ -148,6 +148,7 @@ namespace Sgl
 	protected:
 		void RenderBackground(RenderContext context);
 		void OnCursorChanged(const Cursor& cursor) override;
+		virtual void OnUpdate();
 		virtual void OnKeyUp(KeyEventArgs e);
 		virtual void OnKeyDown(KeyEventArgs e);
 		virtual void OnMouseMove(MouseMoveEventArgs e);
@@ -156,8 +157,9 @@ namespace Sgl
 		virtual void OnMouseWheelChanged(MouseWheelEventArgs e);
 		virtual void OnMouseEnter(MouseMoveEventArgs e);
 		virtual void OnMouseLeave(MouseMoveEventArgs e);
-		virtual void OnAttachedToElementsTree(StyleableElement& parent);
-		virtual void OnDetachedFromElementsTree();
+		void OnAttachedToLogicalTree(IStyleHost& parent) override;
+		void OnDetachedFromLogicalTree() override;
+		void RequestUpdate();
 	public:
 		static inline ObservableProperty TagProperty { &SetTag, &GetTag };
 		static inline ObservableProperty ToolTipProperty { &SetToolTip, &GetToolTip };
@@ -167,7 +169,7 @@ namespace Sgl
 		friend class Window;
 		friend class ContentUIElement;
 		friend class UIElementsCollection;
-	};	
+	};
 
 	class UIElementDataTemplate : public IDataTemplate
 	{

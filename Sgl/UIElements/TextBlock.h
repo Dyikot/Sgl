@@ -34,7 +34,7 @@ namespace Sgl::UIElements
 		bool _isTextTextureValid = false;
 		std::bitset<6> _fontValidationBits = 1;
 	public:
-		TextBlock() = default;
+		TextBlock();
 		TextBlock(const TextBlock& other);
 		TextBlock(TextBlock&& other) noexcept;
 		~TextBlock() = default;
@@ -71,13 +71,14 @@ namespace Sgl::UIElements
 
 		void Render(RenderContext context) final;
 	protected:
-		void InvalidateTextTexture() { _isTextTextureValid = false; }
+		void InvalidateTextTexture();
 		FSize MeasureContent(FSize avaliableSize) override;
 		void ArrangeContent(FRect rect) override;
+		void OnUpdate() override;
 	private:
-		void InvalidateFont(size_t bit) { _fontValidationBits.set(bit); }
+		void InvalidateFont(size_t bit);
 		void UpdateFont();
-		void UpdateTextTexture(float maxLineWidth);
+		void CreateTextTexture();
 	public:
 		static inline ObservableProperty TextProperty { &SetText, &GetText };
 		static inline ObservableProperty FontSizeProperty { &SetFontSize, &GetFontSize };

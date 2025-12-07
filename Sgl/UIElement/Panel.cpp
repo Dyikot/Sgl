@@ -41,10 +41,7 @@ namespace Sgl
 
         for(auto& child : Children)
         {
-            if(child->NeedsStyling())
-            {
-                child->ApplyStyle();
-            }
+            child->ApplyStyle();
         }
     }
 

@@ -1,8 +1,8 @@
 #pragma once
 
 #include <queue>
-#include "../Delegate.h"
 #include <unordered_map>
+#include "../Delegate.h"
 
 namespace Sgl
 {
@@ -24,6 +24,7 @@ namespace Sgl
 		void Run(DispatcherPriority priority);
 
 		friend class Application;
+		friend class Window;
 	};
 
 	inline Dispatcher UIThread;

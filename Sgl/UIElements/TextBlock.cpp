@@ -5,6 +5,11 @@
 
 namespace Sgl::UIElements
 {
+	TextBlock::TextBlock()
+	{
+		RequestUpdate();
+	}
+
 	TextBlock::TextBlock(const TextBlock& other):
 		UIElement(other),
 		_text(other._text),
@@ -99,7 +104,7 @@ namespace Sgl::UIElements
 			InvalidateFont(FontStyleBit);
 			InvalidateTextTexture();
 			InvalidateRender();
-		}		
+		}
 	}
 
 	void TextBlock::SetForeground(Color value)
@@ -141,60 +146,84 @@ namespace Sgl::UIElements
 	void TextBlock::Render(RenderContext context)
 	{
 		RenderBackground(context);
-		UpdateTextTexture(_textTextureBounds.w);
+
+		if(!_isTextTextureValid)
+		{
+			CreateTextTexture();
+		}
 
 		if(_textTexture)
 		{
+			const auto& bounds = GetBounds();
+			context.SetClip(Rect(bounds.x, bounds.y, bounds.w, bounds.h));
 			context.DrawTexture(_textTexture, _textTextureBounds);
+			context.ResetClip();
 		}
 
 		UIElement::Render(context);
 	}
 
+	void TextBlock::InvalidateTextTexture()
+	{
+		_isTextTextureValid = false;
+	}
+
 	FSize TextBlock::MeasureContent(FSize avaliableSize)
 	{
-		UpdateTextTexture(GetWidth());
-
-		if(_textTexture)
+		if(_text == "")
 		{
-			auto [width, height] = _textTexture.GetSize();
-
-			return FSize
-			{
-				.Width = static_cast<float>(width) + _padding.Left + _padding.Right,
-				.Height = static_cast<float>(height) + _padding.Top + _padding.Bottom
-			};
+			return FSize();
 		}
 
-		return FSize();
+		int width = 0;
+		int height = 0;		
+
+		switch(_textWrapping)
+		{
+			case Sgl::TextWrapping::NoWrap:
+			{
+				TTF_GetStringSize(_fontImpl, _text.data(), _text.length(), &width, &height);
+				break;
+			}
+
+			case Sgl::TextWrapping::Wrap:
+			{
+				int wrapWidth = avaliableSize.Width;
+				TTF_GetStringSizeWrapped(_fontImpl, _text.data(), _text.length(),
+										 wrapWidth, &width, &height);
+				break;
+			}
+		}
+
+		_textTextureBounds = FRect(0, 0, width, height);
+
+		return FSize
+		{
+			.Width = static_cast<float>(width) + _padding.Left + _padding.Right,
+			.Height = static_cast<float>(height) + _padding.Top + _padding.Bottom
+		};
 	}
 
 	void TextBlock::ArrangeContent(FRect rect)
 	{
-		if(_textTexture)
+		_textTextureBounds.x = rect.x + _padding.Left;
+		_textTextureBounds.y = rect.y + _padding.Top;
+	}
+
+	void TextBlock::OnUpdate()
+	{
+		UIElement::OnUpdate();
+
+		if(_fontValidationBits.any())
 		{
-			Size textureSize = _textTexture.GetSize();
-			float width = std::fmin(rect.w - _padding.Left - _padding.Right, textureSize.Width);
-			float height = std::fmin(rect.h - _padding.Top - _padding.Bottom, textureSize.Height);
-
-			if(width < 0)
-			{
-				width = 0;
-			}
-
-			if(height < 0)
-			{
-				height = 0;
-			}
-
-			_textTextureBounds =
-			{
-				.x = rect.x + _padding.Left,
-				.y = rect.y + _padding.Top,
-				.w = width,
-				.h = height
-			};
+			UpdateFont();			
 		}
+	}
+
+	void TextBlock::InvalidateFont(size_t bit)
+	{
+		RequestUpdate();
+		_fontValidationBits.set(bit);
 	}
 
 	void TextBlock::UpdateFont()
@@ -227,38 +256,36 @@ namespace Sgl::UIElements
 		{
 			_fontImpl.SetTextAligment(_textAlignment);
 		}
+
+		_fontValidationBits = 0;
 	}
 
-	void TextBlock::UpdateTextTexture(float maxLineWidth)
+	void TextBlock::CreateTextTexture()
 	{
-		if(_fontValidationBits.any())
+		if(_text != "")
 		{
-			UpdateFont();
-			_fontValidationBits = 0;
-		}
-
-		if(!_isTextTextureValid)
-		{
-			if(_text != "")
+			auto renderer = GetVisualRoot()->GetRenderer();
+			switch(_textWrapping)
 			{
-				auto renderer = GetVisualRoot()->GetRenderer();
-				switch(_textWrapping)
+				case TextWrapping::NoWrap:
 				{
-					case Sgl::TextWrapping::NoWrap:
-						_textTexture = Texture(renderer, FontQuality::Blended, _fontImpl, _text, _foreground);
-						break;
-						
-					case Sgl::TextWrapping::Wrap:
-						_textTexture = Texture(renderer, FontQuality::Blended, _fontImpl, _text, maxLineWidth, _foreground);
-						break;
+					_textTexture = Texture(renderer, FontQuality::Blended, _fontImpl, _text, _foreground);
+					break;
+				}
+
+				case TextWrapping::Wrap:
+				{
+					int wrapWidth = _textTextureBounds.w;
+					_textTexture = Texture(renderer, FontQuality::Blended, _fontImpl, _text, wrapWidth, _foreground);
+					break;
 				}
 			}
-			else
-			{
-				_textTexture = nullptr;
-			}
-
-			_isTextTextureValid = true;
 		}
+		else
+		{
+			_textTexture = nullptr;
+		}
+
+		_isTextTextureValid = true;
 	}
 }

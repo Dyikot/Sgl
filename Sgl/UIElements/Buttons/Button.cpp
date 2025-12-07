@@ -42,17 +42,6 @@ namespace Sgl::UIElements
 		ContentUIElement::Render(context);
 	}
 
-	void Button::ApplyStyle()
-	{
-		ContentUIElement::ApplyStyle();
-
-		auto presenter = GetContentPresenter().Get();
-		if(presenter && presenter->GetCursor() == Cursors::Arrow)
-		{
-			presenter->SetCursor(GetCursor());
-		}
-	}
-
 	void Button::OnClick()
 	{
 		Click(*this);
@@ -60,6 +49,19 @@ namespace Sgl::UIElements
 		if(_command.HasTarget())
 		{
 			_command(_commandParameter);
+		}
+	}
+
+	void Button::OnUpdate()
+	{
+		ContentUIElement::OnUpdate();
+
+		if(const auto& presenter = GetContentPresenter())
+		{
+			if(presenter->GetCursor() == Cursors::Arrow)
+			{
+				presenter->SetCursor(GetCursor());
+			}
 		}
 	}
 

@@ -7,8 +7,7 @@ namespace Sgl::UIElements
 		_sourceBounds(other._sourceBounds),
 		_source(other._source),
 		_stretch(other._stretch),
-		_sourceTexture(nullptr),
-		_isImageTextureValid(other._isImageTextureValid)
+		_sourceTexture(nullptr)
 	{}
 
 	Image::Image(Image&& other) noexcept:
@@ -16,8 +15,7 @@ namespace Sgl::UIElements
 		_sourceBounds(other._sourceBounds),
 		_source(std::move(other._source)),
 		_stretch(other._stretch),
-		_sourceTexture(std::move(other._sourceTexture)),
-		_isImageTextureValid(other._isImageTextureValid)
+		_sourceTexture(std::move(other._sourceTexture))
 	{}
 
 	void Image::SetSource(const std::string & value)
@@ -85,14 +83,20 @@ namespace Sgl::UIElements
 		UIElement::Render(context);
 	}
 
-	void Image::ArrangeCore(FRect rect)
+	void Image::OnUpdate()
 	{
-		UIElement::ArrangeCore(rect);
+		UIElement::OnUpdate();
 
 		if(!_isImageTextureValid)
 		{
-			UpdateImageTexture();
+			_sourceTexture = Texture(GetVisualRoot()->GetRenderer(), _source);
+			_isImageTextureValid = true;
 		}
+	}
+
+	void Image::ArrangeCore(FRect rect)
+	{
+		UIElement::ArrangeCore(rect);		
 		
 		if(!_sourceTexture)
 		{
@@ -178,9 +182,9 @@ namespace Sgl::UIElements
 		}	
 	}
 
-	void Image::UpdateImageTexture()
+	void Image::InvalidateImageTexture()
 	{
-		_sourceTexture = Texture(GetVisualRoot()->GetRenderer(), _source);
-		_isImageTextureValid = true;
+		RequestUpdate();
+		_isImageTextureValid = false;
 	}
 }

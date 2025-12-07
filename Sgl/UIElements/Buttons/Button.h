@@ -38,9 +38,9 @@ namespace Sgl::UIElements
 		bool IsPressed() const noexcept { return _isPressed; }
 
 		void Render(RenderContext context) final;
-		void ApplyStyle() override;
 	protected:
 		virtual void OnClick();
+		void OnUpdate() override;
 		void OnMouseDown(MouseButtonEventArgs e) override;
 		void OnMouseUp(MouseButtonEventArgs e) override;
 	public:

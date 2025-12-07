@@ -14,9 +14,6 @@ namespace Sgl
         IVisualRoot* _visualRoot = nullptr;
         Cursor _cursor = Cursors::Arrow;
         Brush _background = Colors::Transparent;
-        Renderable* _visualParent = nullptr;
-
-        bool _isRenderValid = false;
     public:
         Renderable() = default;
         Renderable(const Renderable& other);
@@ -32,13 +29,10 @@ namespace Sgl
         virtual void SetVisualRoot(IVisualRoot* value);
         IVisualRoot* GetVisualRoot() const { return _visualRoot; }
         
-        void SetParent(StyleableElement* parent) override;
-        Renderable* GetVisualParent() const { return _visualParent; }
+        void SetParent(IStyleHost* parent) override;
 
-        bool NeedsRendering() const { return !_isRenderValid; }
-
-        virtual void Render(RenderContext context);
-        void InvalidateRender();
+        virtual void Render(RenderContext context) {}
+        virtual void InvalidateRender();
     protected:
         virtual void OnCursorChanged(const Cursor& cursor) {}
     public:

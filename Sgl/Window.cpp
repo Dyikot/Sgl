@@ -1,6 +1,5 @@
 #include "Window.h"
 #include <SDL3/SDL_log.h>
-#include "Base/Time/Delay.h"
 #include "Application.h"
 #include "Render/BackgroundRenderer.h"
 #include "Layout/LayoutHelper.h"
@@ -45,7 +44,7 @@ namespace Sgl
     {
         if(_content)
         {
-            _content->OnDetachedFromElementsTree();
+            _content->OnDetachedFromLogicalTree();
             _content = nullptr;
         }
 
@@ -293,21 +292,26 @@ namespace Sgl
     {
         if(_content)
         {
-            _content->OnDetachedFromElementsTree();
+            _content->OnDetachedFromLogicalTree();
         }
 
         SetProperty(ContentProperty, _content, std::move(value));
 
         if(_content)
         {
-            _content->OnAttachedToElementsTree(*this);
+            _content->OnAttachedToLogicalTree(*this);
         }
     }
 
     Ref<UIElement> Window::GetContent() const 
     {
         return _content; 
-    }    
+    }
+
+    void Window::InvalidateRender()
+    {
+        _isRenderValid = false;
+    }
 
     void Window::Show()
     {
@@ -364,24 +368,26 @@ namespace Sgl
         if(_content && _content->IsVisible())
         {
             _content->Render(context);
-        }
+        }        
 
-        Renderable::Render(context);
+        _isRenderValid = true;
+    }
+
+    void Window::ApplyStyle()
+    {
+        StyleableElement::ApplyStyle();
+
+        if(_content)
+        {
+            _content->ApplyStyle();
+        }
     }
 
     void Window::Process()
     {
-        if(!NeedsStyling())
-        {
-            ApplyStyle();
-        }
-
         if(_content)
         {
-            if(_content->NeedsStyling())
-            {
-                _content->ApplyStyle();
-            }
+            ProcessElementsUpdates();
 
             if(_content->NeedsMeasure())
             {
@@ -395,7 +401,7 @@ namespace Sgl
                 _content->Arrange(FRect(0, 0, width, height));
             }
         }
-    }
+    }    
 
     void Window::OnCursorChanged(const Cursor& cursor)
     {
@@ -507,5 +513,25 @@ namespace Sgl
                 SDL_RenderPresent(_renderer);
             }
         }
+    }
+
+    void Window::RequestUpdate(UIElement& element)
+    {
+        _pendingElementUpdates.push_back(&element);
+    }
+
+    void Window::CancelUpdateRequest(UIElement& element)
+    {
+        std::erase(_pendingElementUpdates, &element);
+    }
+
+    void Window::ProcessElementsUpdates()
+    {
+        for(auto element : _pendingElementUpdates)
+        {
+            element->OnUpdate();
+        }
+
+        _pendingElementUpdates.clear();
     }
 }

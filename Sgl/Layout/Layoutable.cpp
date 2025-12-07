@@ -120,7 +120,7 @@ namespace Sgl
 		}
 	}
 
-	void Layoutable::SetParent(StyleableElement* parent)
+	void Layoutable::SetParent(IStyleHost* parent)
 	{
 		Renderable::SetParent(parent);
 

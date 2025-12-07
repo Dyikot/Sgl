@@ -10,5 +10,7 @@ namespace Sgl
         virtual ~IVisualRoot() = default;
 
         virtual SDL_Renderer* GetRenderer() const noexcept = 0;
+        virtual void InvalidateRender() = 0;
+        virtual bool NeedsRendering() const = 0;
     };
 }

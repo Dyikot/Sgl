@@ -48,11 +48,11 @@ namespace Sgl
 		void OnMouseDown(MouseButtonEventArgs e) override;
 		void OnMouseUp(MouseButtonEventArgs e) override;
 		void OnMouseLeave(MouseMoveEventArgs e) override;
+		void OnUpdate() override;
+		void InvalidateContentPresenter();
 		
 		FSize MeasureContent(FSize avaliableSize) override;
 		void ArrangeContent(FRect rect) override;
-	protected:
-		void InvalidateContentPresenter();
 	private:
 		bool UpdatePresenter();
 	public:

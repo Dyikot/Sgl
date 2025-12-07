@@ -62,7 +62,7 @@ namespace Sgl
 		void SetHorizontalAlignment(HorizontalAlignment value);
 		HorizontalAlignment GetHorizontalAlignment() const { return _horizontalAlignment; }
 
-		void SetParent(StyleableElement* parent) override;
+		void SetParent(IStyleHost* parent) override;
 		Layoutable* GetLayoutableParent() const { return _layotableParent; }
 
 		FSize GetDesiredSize() const { return _desiredSize; }

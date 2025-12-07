@@ -1,7 +1,6 @@
 #pragma once
 
 #include <optional>
-
 #include "Render/Surface.h"
 #include "Base/Event.h"
 #include "Base/Time/Stopwatch.h"
@@ -73,9 +72,11 @@ namespace Sgl
 		SDL_Renderer* _renderer;
 		RenderContext _renderContext;
 		Ref<UIElement> _content;
+		std::list<UIElement*> _pendingElementUpdates;
 		int _id = 0;
 		bool _isClosing = false;
-		bool _isModal = false;
+		bool _isModal = false;	
+		bool _isRenderValid = false;
 		Window* _owner = nullptr;
 		Surface _icon;
 		std::string _iconSource;
@@ -244,6 +245,9 @@ namespace Sgl
 		void SetContent(Ref<UIElement> value);
 		Ref<UIElement> GetContent() const;		
 
+		void InvalidateRender() final;
+		bool NeedsRendering() const final { return !_isRenderValid; }
+
 		/// <summary>
 		/// Shows the window
 		/// </summary>
@@ -282,7 +286,8 @@ namespace Sgl
 		/// <returns></returns>
 		bool IsModal() const;
 
-		void Render(RenderContext context) override;
+		void Render(RenderContext context) final;
+		void ApplyStyle() override;		
 		virtual void Process();
 	protected:
 		void OnCursorChanged(const Cursor& cursor) override;
@@ -307,7 +312,11 @@ namespace Sgl
 		virtual void OnClosed() {}
 	private:
 		void RenderCore();
+		void RequestUpdate(UIElement& element);
+		void CancelUpdateRequest(UIElement& element);
+		void ProcessElementsUpdates();
 
+		friend class UIElement;
 		friend class Application;
 	public:
 		static inline ObservableProperty ContentProperty { &SetContent, &GetContent };

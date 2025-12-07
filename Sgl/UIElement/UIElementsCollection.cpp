@@ -23,11 +23,12 @@ namespace Sgl
 
 	void UIElementsCollection::ClearItems()
 	{
-		auto& items = Items();
-		for(auto& item : items)
+		for(auto& item : _items)
 		{
 			OnChildRemoving(item.GetValue());
 		}
+
+		base::ClearItems();
 	}
 
 	void UIElementsCollection::InsertItem(size_t index, const Ref<UIElement>& item)
@@ -48,7 +49,7 @@ namespace Sgl
 
 	void UIElementsCollection::RemoveItem(size_t index)
 	{
-		auto& item = ElementAt(index);
+		auto& item = GetElementAt(index);
 		OnChildRemoving(item.GetValue());
 
 		base::RemoveItem(index);
@@ -56,13 +57,13 @@ namespace Sgl
 
 	void UIElementsCollection::OnChildAdded(UIElement& child)
 	{
-		child.OnAttachedToElementsTree(_owner);
+		child.OnAttachedToLogicalTree(_owner);
 	}
 
 	void UIElementsCollection::OnChildRemoving(UIElement& child)
 	{
 		child.SetParent(nullptr);
-		child.OnDetachedFromElementsTree();
+		child.OnDetachedFromLogicalTree();
 	}
 }
 

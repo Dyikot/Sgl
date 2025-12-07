@@ -1,7 +1,6 @@
 #include "Dispatcher.h"
 #include <stdexcept>
 
-
 namespace Sgl
 {
 	void Dispatcher::Post(Task task)

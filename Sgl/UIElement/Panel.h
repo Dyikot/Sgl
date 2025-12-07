@@ -18,7 +18,7 @@ namespace Sgl
 		Panel(Panel&& other) noexcept;
 		~Panel() = default;
 
-		void Render(RenderContext context) override;
+		void Render(RenderContext context) final;
 		void ApplyStyle() override;
 	protected:
 		void OnCursorChanged(const Cursor& cursor) override;

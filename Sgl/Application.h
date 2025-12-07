@@ -28,7 +28,7 @@ namespace Sgl
 		SystemTheme Theme;
 	};
 
-	class Application
+	class Application : public IStyleHost
 	{
 	private:
 		using ApplicationEventHandler = EventHandler<Application>;
@@ -52,7 +52,6 @@ namespace Sgl
 		static inline Application* _current;
 
 		bool _isRunning = false;
-		TimeSpan _delayDuration = TimeSpan::FromMicroseconds(16666);
 		Stopwatch _stopwatch;
 		ThemeMode _themeMode;
 		SystemTheme _systemTheme;
@@ -66,7 +65,7 @@ namespace Sgl
 		Application() noexcept;
 		Application(const Application&) = delete;
 		Application(Application&&) = delete;
-		virtual ~Application();
+		~Application();
 
 		void SetThemeMode(ThemeMode value);
 		ThemeMode GetThemeMode() const;
@@ -74,6 +73,9 @@ namespace Sgl
 
 		void SetCulture(const std::string& value);
 		const std::string& GetCulture() const { return _culture; }
+
+		StyleMap& GetStyles() final { return Styles; }
+		IStyleHost* GetStylingParent() final { return nullptr; }
 
 		void SetLocalizer(std::string csvFile, char delimeter = ',');
 		void SetLocalizer(std::unique_ptr<StringLocalizerBase> localizer);

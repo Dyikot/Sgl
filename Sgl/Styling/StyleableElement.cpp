@@ -1,7 +1,6 @@
 #include "StyleableElement.h"
 
 #include <sstream>
-
 #include "../Application.h"
 
 namespace Sgl
@@ -9,8 +8,8 @@ namespace Sgl
 	StyleableElement::StyleableElement(const StyleableElement& other):
 		AttachableObject(other),
 		_classList(other._classList),
-		_styleableParent(other._styleableParent),
-		_isStyleValid(other._isStyleValid),
+		_stylingParent(other._stylingParent),
+		_isStyleApplied(other._isStyleApplied),
 		_styles(other._styles)
 	{}
 
@@ -18,8 +17,8 @@ namespace Sgl
 		AttachableObject(std::move(other)),
 		Styles(std::move(other.Styles)),
 		_classList(std::move(other._classList)),
-		_styleableParent(std::exchange(other._styleableParent, nullptr)),
-		_isStyleValid(other._isStyleValid),
+		_stylingParent(other._stylingParent),
+		_isStyleApplied(other._isStyleApplied),
 		_styles(std::move(other._styles))
 	{}
 
@@ -35,13 +34,13 @@ namespace Sgl
 			_classList.push_back(std::move(buffer));
 		}
 
-		InvalidateStyle();
+		OnStyleClassesChanged();
 	}
 
 	void StyleableElement::SetClasses(std::vector<std::string> classList)
 	{
 		_classList = std::move(classList);
-		InvalidateStyle();
+		OnStyleClassesChanged();
 	}
 
 	const std::vector<std::string>& StyleableElement::GetClasses() const
@@ -49,51 +48,56 @@ namespace Sgl
 		return _classList;
 	}
 
-	void StyleableElement::SetParent(StyleableElement* parent)
+	void StyleableElement::SetParent(IStyleHost* parent)
 	{
-		_styleableParent = parent;
+		_stylingParent = parent;
 	}
 
 	void StyleableElement::ApplyStyle()
 	{
-		UpdateStyles();
-
 		for(int i = _styles.size() - 1; i >= 0; i--)
 		{
 			_styles[i]->Apply(*this);
 		}
 
-		_isStyleValid = true;
+		_isStyleApplied = true;
 	}
 
-	void StyleableElement::InvalidateStyle()
+	void StyleableElement::OnAttachedToLogicalTree(IStyleHost& parent)
 	{
-		if(_isStyleValid)
-		{
-			_isStyleValid = false;
-
-			if(_styleableParent)
-			{
-				_styleableParent->InvalidateStyle();				
-			}			
-		}
+		SetParent(&parent);
+		UpdateStyle();
+		ApplyStyle();
+		AttachedToElementsTree(*this);
 	}
 
-	void StyleableElement::UpdateStyles()
+	void StyleableElement::OnDetachedFromLogicalTree()
+	{
+		SetParent(nullptr);
+		DetachedFromElementsTree(*this);
+	}
+
+	void StyleableElement::UpdateStyle()
 	{
 		_styles.clear();
 
 		GetStylesFrom(Styles);
-		
-		auto parent = _styleableParent;
-		while(parent != nullptr)
-		{
-			GetStylesFrom(parent->Styles);
-			parent = parent->GetStyleableParent();
-		}
 
-		GetStylesFrom(App->Styles);
+		if(auto parent = _stylingParent)
+		{
+			while(parent != nullptr)
+			{
+				GetStylesFrom(parent->GetStyles());
+				parent = parent->GetStylingParent();
+			}
+		}
 	}
+
+	void StyleableElement::OnStyleClassesChanged()
+	{
+		UpdateStyle();
+		ApplyStyle();
+	}	
 
 	void StyleableElement::GetStylesFrom(const StyleMap& styles)
 	{
@@ -104,7 +108,7 @@ namespace Sgl
 
 		for(auto& className : _classList)
 		{
-			if(auto style = styles.TryGet(className); style != nullptr)	
+			if(auto style = styles.TryGet(className))	
 			{
 				_styles.push_back(style);
 			}

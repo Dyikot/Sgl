@@ -29,6 +29,16 @@ namespace Sgl
 		SDL_SetRenderTarget(_renderer, nullptr);
 	}
 
+	void RenderContext::SetClip(Rect clip)
+	{
+		SDL_SetRenderClipRect(_renderer, &clip);
+	}
+
+	void RenderContext::ResetClip()
+	{
+		SDL_SetRenderClipRect(_renderer, nullptr);
+	}
+
 	void RenderContext::DrawBackground(Color color)
 	{
 		SetColor(color);

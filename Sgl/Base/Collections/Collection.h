@@ -9,7 +9,7 @@ namespace Sgl
 	template<std::equality_comparable T>
 	class Collection
 	{
-	private:
+	protected:
 		std::vector<T> _items;
 	public:
 		Collection() = default;
@@ -91,7 +91,7 @@ namespace Sgl
 			SetItem(index, item);
 		}
 
-		const T& ElementAt(size_t index) const
+		const T& GetElementAt(size_t index) const
 		{
 			return _items[index];
 		}
@@ -122,16 +122,6 @@ namespace Sgl
 		virtual void RemoveItem(size_t index)
 		{
 			_items.erase(_items.begin() + index);
-		}
-
-		std::vector<T>& Items()
-		{
-			return _items;
-		}
-
-		const std::vector<T>& Items() const
-		{
-			return _items;
 		}
 	};
 }

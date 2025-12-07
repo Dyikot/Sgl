@@ -103,12 +103,7 @@ namespace Sgl
 	{
 		StyleableElement::ApplyStyle();
 
-		if(!_isContentPresenterValid)
-		{
-			UpdatePresenter();
-		}
-
-		if(_presenter && _presenter->NeedsStyling())
+		if(_presenter)
 		{
 			_presenter->ApplyStyle();
 		}
@@ -116,12 +111,12 @@ namespace Sgl
 
 	void ContentUIElement::OnContentPresenterCreated(UIElement& presenter)
 	{
-		presenter.OnAttachedToElementsTree(*this);		
+		presenter.OnAttachedToLogicalTree(*this);		
 	}
 
 	void ContentUIElement::OnContentPresenterDestroying(UIElement& presenter)
 	{
-		presenter.OnDetachedFromElementsTree();
+		presenter.OnDetachedFromLogicalTree();
 	}
 
 	void ContentUIElement::OnCursorChanged(const Cursor& cursor)
@@ -188,43 +183,26 @@ namespace Sgl
 		}
 	}
 
-	bool ContentUIElement::UpdatePresenter()
+	void ContentUIElement::OnUpdate()
 	{
-		if(_contentTemplate != nullptr && _contentTemplate->Match(_content))
+		UIElement::OnUpdate();
+
+		if(!_isContentPresenterValid)
 		{
-			if(_presenter)
-			{
-				OnContentPresenterDestroying(_presenter.GetValue());
-			}
-
-			_presenter = _contentTemplate->Build(_content);
-			_isContentPresenterValid = true;
-
-			if(_presenter)
-			{
-				OnContentPresenterCreated(_presenter.GetValue());
-			}
-
-			return true;
+			UpdatePresenter();
 		}
-
-		return false;
 	}
 
 	void ContentUIElement::InvalidateContentPresenter()
 	{
-		InvalidateStyle();
+		RequestUpdate();
 		InvalidateMeasure();
+
 		_isContentPresenterValid = false;
-	}
+	}	
 
 	FSize ContentUIElement::MeasureContent(FSize avaliableSize)
 	{
-		if(!_isContentPresenterValid && UpdatePresenter())
-		{			
-			_isContentPresenterValid = true;
-		}
-
 		if(_presenter)
 		{
 			FSize contentAvaliableSize =
@@ -284,5 +262,28 @@ namespace Sgl
 
 			_presenter->Arrange(finalRect);
 		}
+	}
+
+	bool ContentUIElement::UpdatePresenter()
+	{
+		if(_contentTemplate && _contentTemplate->Match(_content))
+		{
+			if(_presenter)
+			{
+				OnContentPresenterDestroying(_presenter.GetValue());
+			}
+
+			_presenter = _contentTemplate->Build(_content);
+			_isContentPresenterValid = true;
+
+			if(_presenter)
+			{
+				OnContentPresenterCreated(_presenter.GetValue());
+			}
+
+			return true;
+		}
+
+		return false;
 	}
 }

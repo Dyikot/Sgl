@@ -1,14 +1,15 @@
 #include "Application.h"
 
+#include <cassert>
 #include <SDL3/SDL_log.h>
 #include <SDL3/SDL_init.h>
 #include <SDL3_ttf/SDL_ttf.h>
 
 #include "Base/Time/Timer.h"
-#include "Base/Time/Delay.h"
 #include "Base/Localization/CSVParser.h"
 #include "Base/Localization/StringLocalizer.h"
 #include "Base/Threading/Dispatcher.h"
+#include <iostream>
 
 namespace Sgl
 {
@@ -27,19 +28,6 @@ namespace Sgl
         }
 
         _systemTheme = QuerySystemTheme();
-        auto displayMode = SDL_GetCurrentDisplayMode(SDL_GetPrimaryDisplay());
-
-        if(displayMode == nullptr)
-        {
-            SDL_Log("Unable to get display mode: %s", SDL_GetError());
-        }
-        else
-        {            
-            if(displayMode->refresh_rate != 0.f)
-            {
-                _delayDuration = TimeSpan(1.f / displayMode->refresh_rate * 1e9f);
-            }
-        }
 	}
 
 	Application::~Application()
@@ -157,7 +145,7 @@ namespace Sgl
             for(auto window : _activeWindows)
             {
 			    window->RenderCore();
-            }
+            }            
 
             UIThread.Run(DispatcherPriority::Render);
 
@@ -207,14 +195,16 @@ namespace Sgl
         return SystemTheme(theme);
     }
 
+    static constexpr TimeSpan MaxDelay = TimeSpan(1e9 / 60.0);
+    
     void Application::Delay()
     {
         auto elapsed = _stopwatch.Elapsed();
-        _stopwatch.Restart();
+        _stopwatch.Restart();       
 
-        if(elapsed < _delayDuration)
+        if(elapsed < MaxDelay)
         {
-            SleepFor(_delayDuration - elapsed);
+            SDL_DelayNS((MaxDelay - elapsed).ToNanoseconds());
         }
     }
 
@@ -452,21 +442,27 @@ namespace Sgl
 
     void Application::AddWindow(Window* window)
     {
+        assert(window != nullptr);
+
         _windows[window->_id] = window;
+        window->SetParent(this);
     }
 
     void Application::AddActiveWindow(Window* window)
     {
         if(std::ranges::find(_activeWindows, window) == _activeWindows.end())
         {
-            _activeWindows.push_back(window);
+            _activeWindows.push_back(window);            
         }
     }
 
     void Application::RemoveWindow(Window* window)
     {
+        assert(window != nullptr);
+
         RemoveActiveWindow(window);
         _windows.erase(window->_id);
+        window->SetParent(nullptr);
     }
 
     void Application::RemoveActiveWindow(Window* window)

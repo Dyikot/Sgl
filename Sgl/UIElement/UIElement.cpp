@@ -1,7 +1,7 @@
 #include "UIElement.h"
 
-#include "../Window.h"
 #include "../Render/BackgroundRenderer.h"
+#include "../Window.h"
 
 namespace Sgl
 {
@@ -67,6 +67,11 @@ namespace Sgl
 		}
 	}
 
+	void UIElement::OnUpdate()
+	{
+		_hasUpdates = false;
+	}
+
 	void UIElement::OnKeyUp(KeyEventArgs e)
 	{
 		KeyUp(*this, e);
@@ -110,19 +115,41 @@ namespace Sgl
 		_isMouseOver = false;
 	}
 
-	void UIElement::OnAttachedToElementsTree(StyleableElement& parent)
+	void UIElement::OnAttachedToLogicalTree(IStyleHost& parent)
 	{
-		SetParent(&parent);
-		//InvalidateStyle();
+		Layoutable::OnAttachedToLogicalTree(parent);
 		InvalidateMeasure();
-		AttachedToElementsTree(*this);
+
+		if(_hasUpdates)
+		{
+			auto window = static_cast<Window*>(GetVisualRoot());
+			window->RequestUpdate(*this);
+		}
 	}
 
-	void UIElement::OnDetachedFromElementsTree()
+	void UIElement::OnDetachedFromLogicalTree()
 	{
 		InvalidateMeasure();
-		SetParent(nullptr);
-		DetachedFromElementsTree(*this);
+		Layoutable::OnDetachedFromLogicalTree();
+		
+		if(_hasUpdates)
+		{
+			auto window = static_cast<Window*>(GetVisualRoot());
+			window->CancelUpdateRequest(*this);
+		}
+	}
+
+	void UIElement::RequestUpdate()
+	{
+		if(!_hasUpdates)
+		{
+			_hasUpdates = true;
+
+			if(auto window = static_cast<Window*>(GetVisualRoot()))
+			{
+				window->RequestUpdate(*this);
+			}
+		}		
 	}
 
 	Ref<UIElement> UIElementDataTemplate::Build(const Ref<ObservableObject>& data)

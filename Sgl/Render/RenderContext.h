@@ -26,6 +26,9 @@ namespace Sgl
 		void SetTarget(const Texture& texture);
 		void SetTargetWindow();
 
+		void SetClip(Rect clip);
+		void ResetClip();
+
 		void DrawBackground(Color color);
 
 		void DrawPoint(FPoint point, Color color);

@@ -2,22 +2,27 @@
 
 #include <vector>
 
-#include "StyleMap.h"
+#include "IStyleHost.h"
 #include "../Data/ObservableObject.h"
 #include "../Data/AttachableObject.h"
 #include "../Base/Ref.h"
+#include "../Base/Event.h"
 
 namespace Sgl
 {
-	class StyleableElement : public AttachableObject
+	class StyleableElement : public AttachableObject, public IStyleHost
 	{
+	private:
+		using StyleableElementEventHandler = EventHandler<StyleableElement>;
 	public:
 		StyleMap Styles;
+		Event<StyleableElementEventHandler> AttachedToElementsTree;
+		Event<StyleableElementEventHandler> DetachedFromElementsTree;
 	private:
-		bool _isStyleValid = false;
+		bool _isStyleApplied = false;
 		std::vector<std::string> _classList;
 		std::vector<IStyle*> _styles;
-		StyleableElement* _styleableParent = nullptr;
+		IStyleHost* _stylingParent = nullptr;
 	public:
 		StyleableElement() = default;
 		StyleableElement(const StyleableElement& other);
@@ -28,14 +33,19 @@ namespace Sgl
 		void SetClasses(std::vector<std::string> classList);
 		const std::vector<std::string>& GetClasses() const;
 
-		virtual void SetParent(StyleableElement* parent);
-		StyleableElement* GetStyleableParent() const { return _styleableParent; }
+		virtual void SetParent(IStyleHost* parent);
+		StyleMap& GetStyles() final { return Styles; }
+		IStyleHost* GetStylingParent() final { return _stylingParent; }
 
-		bool NeedsStyling() const { return !_isStyleValid; }
-		void InvalidateStyle();
+		bool IsStyleApplied() const { return _isStyleApplied; }
+		bool IsAttachedToLogicalTree() const { return _stylingParent != nullptr; }
 		virtual void ApplyStyle();
+	protected:
+		virtual void OnAttachedToLogicalTree(IStyleHost& parent);
+		virtual void OnDetachedFromLogicalTree();
 	private:
-		void UpdateStyles();
+		void UpdateStyle();
+		void OnStyleClassesChanged();
 		void GetStylesFrom(const StyleMap& styles);
 	};
 }

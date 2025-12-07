@@ -6,16 +6,14 @@ namespace Sgl
 		StyleableElement(other),
 		_visualRoot(other._visualRoot),
 		_cursor(other._cursor),
-		_background(other._background),
-		_isRenderValid(other._isRenderValid)
+		_background(other._background)
 	{}
 
 	Renderable::Renderable(Renderable&& other) noexcept:
 		StyleableElement(std::move(other)),
 		_visualRoot(std::exchange(other._visualRoot, nullptr)),
 		_cursor(other._cursor),
-		_background(std::move(other._background)),
-		_isRenderValid(other._isRenderValid)
+		_background(std::move(other._background))
 	{}
 
 	void Renderable::SetCursor(const Cursor& value)
@@ -39,42 +37,29 @@ namespace Sgl
 		_visualRoot = value;
 	}
 
-	void Renderable::SetParent(StyleableElement* parent)
+	void Renderable::SetParent(IStyleHost* parent)
 	{
 		StyleableElement::SetParent(parent);
 
 		if(parent == nullptr)
 		{
-			_visualParent = nullptr;
 			return;
 		}
 
-		if(auto visualParent = dynamic_cast<Renderable*>(parent))
+		if(auto renderable = dynamic_cast<Renderable*>(parent))
 		{
-			_visualParent = visualParent;
-
-			if(auto visualRoot = visualParent->GetVisualRoot())
+			if(auto visualRoot = renderable->GetVisualRoot())
 			{
 				SetVisualRoot(visualRoot);
 			}
 		}
 	}
 
-	void Renderable::Render(RenderContext context)
-	{
-		_isRenderValid = true;
-	}
-
 	void Renderable::InvalidateRender()
 	{
-		if(_isRenderValid)
+		if(_visualRoot)
 		{
-			_isRenderValid = false;
-
-			if(_visualParent)
-			{
-				_visualParent->InvalidateRender();
-			}
+			_visualRoot->InvalidateRender();
 		}
 	}
 }

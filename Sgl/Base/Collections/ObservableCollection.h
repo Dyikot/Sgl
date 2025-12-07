@@ -6,32 +6,31 @@
 
 namespace Sgl
 {
-	enum class NotifyCollectionChangedAction
+	enum class ObservableCollectionChangedAction
 	{
 		Add, Remove, Move, Replace, Reset
 	};
 
-	struct NotifyCollectionChangedEventArgs : EventArgs
+	struct ObservableCollectionChangedEventArgs
 	{
-		NotifyCollectionChangedAction Action;
-		size_t StartIndex;
-		size_t EndIndex;
+		ObservableCollectionChangedAction Action;
+		size_t FromIndex;
+		size_t ToIndex;
 	};
 	
 	template<typename T>
 	class ObservableCollection : public Collection<T>
 	{
 	public:
-		using NofityCollectionChangedEventHandler = EventHandler<ObservableCollection<T>, NotifyCollectionChangedEventArgs>;
+		using CollectionChangedEventHandler = EventHandler<ObservableCollection<T>, ObservableCollectionChangedEventArgs>;
 
-		Event<NofityCollectionChangedEventHandler> CollectionChanged;
+		Event<CollectionChangedEventHandler> CollectionChanged;
 	private:
 		using base = Collection<T>;
 	public:
 		ObservableCollection() = default;
 		ObservableCollection(const ObservableCollection&) = default;
 		ObservableCollection(ObservableCollection&&) noexcept = default;
-		virtual ~ObservableCollection() = default;
 
 		ObservableCollection(std::initializer_list<T> init):
 			base(init)
@@ -49,11 +48,11 @@ namespace Sgl
 		void ClearItems() override
 		{
 			base::ClearItems();
-			NotifyCollectionChangedEventArgs args =
+			ObservableCollectionChangedEventArgs args =
 			{
-				.Action = NotifyCollectionChangedAction::Reset,
-				.StartIndex = 0,
-				.EndIndex = 0
+				.Action = ObservableCollectionChangedAction::Reset,
+				.FromIndex = 0,
+				.ToIndex = 0
 			};
 			OnCollectionChanged(args);
 		}
@@ -61,11 +60,11 @@ namespace Sgl
 		void InsertItem(size_t index, const T& item) override
 		{
 			base::InsertItem(index, item);
-			NotifyCollectionChangedEventArgs args =
+			ObservableCollectionChangedEventArgs args =
 			{
-				.Action = NotifyCollectionChangedAction::Add,
-				.StartIndex = index,
-				.EndIndex = index
+				.Action = ObservableCollectionChangedAction::Add,
+				.FromIndex = index,
+				.ToIndex = index
 			};
 			OnCollectionChanged(args);
 		}
@@ -73,43 +72,43 @@ namespace Sgl
 		void SetItem(size_t index, const T& item) override
 		{
 			base::SetItem(index, item);
-			NotifyCollectionChangedEventArgs args
+			ObservableCollectionChangedEventArgs args
 			{
-				.Action = NotifyCollectionChangedAction::Replace,
-				.StartIndex = index,
-				.EndIndex = index
+				.Action = ObservableCollectionChangedAction::Replace,
+				.FromIndex = index,
+				.ToIndex = index
 			};
 			OnCollectionChanged(args);
 		}
 
 		void RemoveItem(size_t index) override
 		{
-			base::RemoveItem(index);
-			NotifyCollectionChangedEventArgs args
+			ObservableCollectionChangedEventArgs args
 			{
-				.Action = NotifyCollectionChangedAction::Remove,
-				.StartIndex = index,
-				.EndIndex = index
+				.Action = ObservableCollectionChangedAction::Remove,
+				.FromIndex = index,
+				.ToIndex = index
 			};
 			OnCollectionChanged(args);
+			base::RemoveItem(index);
 		}
 
 		virtual void MoveItem(size_t fromIndex, size_t toIndex)
 		{
-			auto& items = base::Items();
+			auto& items = base::_items;
 			std::swap(items[fromIndex], items[toIndex]);
-			NotifyCollectionChangedEventArgs args =
+			ObservableCollectionChangedEventArgs args =
 			{
-				.Action = NotifyCollectionChangedAction::Move,
-				.StartIndex = fromIndex,
-				.EndIndex = toIndex
+				.Action = ObservableCollectionChangedAction::Move,
+				.FromIndex = fromIndex,
+				.ToIndex = toIndex
 			};
 			OnCollectionChanged(args);
 		}
 
-		virtual void OnCollectionChanged(NotifyCollectionChangedEventArgs& e)
+		virtual void OnCollectionChanged(ObservableCollectionChangedEventArgs& e)
 		{
-			CollectionChanged.TryInvoke(*this, e);
+			CollectionChanged(*this, e);
 		}
 	};
 }
