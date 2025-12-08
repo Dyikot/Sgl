@@ -1,8 +1,8 @@
 #pragma once
 
+#include "Time.h"
 #include "Task.h"
 #include "FuncAwaitable.h"
-#include "AsyncTimeExecuter.h"
 
 namespace Sgl
 {
@@ -10,12 +10,13 @@ namespace Sgl
 	{
 	public:
 		static TimeAwaitable Delay(TimeSpan duration);
+		static TimeAwaitable Delay(TimeSpan duration, std::stop_token stopToken);
 		static TimeAwaitable Delay(size_t milliseconds);
+		static TimeAwaitable Delay(size_t milliseconds, std::stop_token stopToken);
 
-		template<std::invocable TFunc>
-		static auto Run(TFunc&& func)
+		template<std::invocable TFunc, typename T = std::invoke_result_t<TFunc>>
+		static FuncAwaitable<T> Run(TFunc&& func)
 		{
-			using T = std::invoke_result_t<TFunc>;
 			return FuncAwaitable<T>(std::move(func));
 		}
 	};

@@ -9,11 +9,12 @@
 #include "Base/Localization/CSVParser.h"
 #include "Base/Localization/StringLocalizer.h"
 #include "Base/Threading/Dispatcher.h"
-#include <iostream>
+#include "Base/Threading/Time.h"
 
 namespace Sgl
 {
-	Application::Application() noexcept
+	Application::Application() noexcept:
+        _timeSheduler(TimeSheduler::Current())
 	{
 		_current = this;
 
@@ -131,23 +132,23 @@ namespace Sgl
 
 		while(_isRunning)
 		{
-			HandleInput();            
             UIThread.Run(DispatcherPriority::Input);
-            TimeExecuter.Run();
+            _timeSheduler.Run();
+			HandleInput();            
+
+            UIThread.Run(DispatcherPriority::Process);
 
             for(auto window : _activeWindows)
             {
 			    window->Process();
             }
 
-            UIThread.Run(DispatcherPriority::Process);
+            UIThread.Run(DispatcherPriority::Render);
 
             for(auto window : _activeWindows)
             {
 			    window->RenderCore();
-            }            
-
-            UIThread.Run(DispatcherPriority::Render);
+            }  
 
             Delay();
 		}

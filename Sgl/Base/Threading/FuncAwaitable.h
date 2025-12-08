@@ -1,6 +1,6 @@
 #pragma once
 
-#include <optional>
+#include <atomic>
 #include <coroutine>
 #include "ThreadPool.h"
 
@@ -10,48 +10,72 @@ namespace Sgl
 	class FuncAwaitable
 	{
 	private:
-		Func<T> _func;
-		std::optional<T> _result;
+		T _result {};
+		std::atomic<bool> _isReady = false;
+		std::coroutine_handle<> _handle;
 	public:
-		explicit FuncAwaitable(Func<T>&& func):
-			_func(std::move(func))
-		{}
-
-		bool await_ready() { return false; }
-
-		void await_suspend(std::coroutine_handle<> handle)
+		explicit FuncAwaitable(Func<T> func)
 		{
-			auto& threadPool = ThreadPool::Instance();
-			threadPool.QueueTask([handle, this]
+			ThreadPool::Current().QueueTask([this, func = std::move(func)]
 			{
-				_result = _func();
-				handle.resume();
+				_result = func();				
+				_isReady.store(true, std::memory_order_release);
+
+				if(_handle)
+				{
+					_handle.resume();
+				}
 			});
 		}
 
-		T await_resume() { return std::move(_result.value()); }
+		bool await_ready() { return _isReady.load(std::memory_order_acquire); }
+
+		void await_suspend(std::coroutine_handle<> handle)
+		{
+			_handle = handle;
+
+			if(_isReady.load(std::memory_order_acquire))
+			{
+				_handle.resume();
+				_handle = nullptr;
+			}
+		}
+
+		T await_resume() { return std::move(_result); }
 	};
 
 	template<>
 	class FuncAwaitable<void>
 	{
 	private:
-		Action<> _action;
+		std::atomic<bool> _isReady = false;
+		std::coroutine_handle<> _handle;
 	public:
-		explicit FuncAwaitable(Action<> action):
-			_action(std::move(action))
-		{}
+		explicit FuncAwaitable(Action<> action)
+		{
+			ThreadPool::Current().QueueTask([this, action = std::move(action)]
+			{
+				action();
+				_isReady.store(true, std::memory_order_release);
 
-		bool await_ready() { return false; }
+				if(_handle)
+				{
+					_handle.resume();
+				}
+			});
+		}
+
+		bool await_ready() { return _isReady.load(std::memory_order_acquire); }
 
 		void await_suspend(std::coroutine_handle<> handle)
 		{
-			auto& threadPool = ThreadPool::Instance();
-			threadPool.QueueTask([handle, this]
+			_handle = handle;
+
+			if(_isReady.load(std::memory_order_acquire) && handle)
 			{
-				_action();
-				handle.resume();
-			});
+				_handle.resume();
+				_handle = nullptr;
+			}
 		}
 
 		void await_resume() {}

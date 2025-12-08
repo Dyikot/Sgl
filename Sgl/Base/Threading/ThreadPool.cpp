@@ -2,7 +2,7 @@
 
 namespace Sgl
 {
-    ThreadPool& ThreadPool::Instance()
+    ThreadPool& ThreadPool::Current()
     {
         //static ThreadPool threadPool(std::thread::hardware_concurrency());
         static ThreadPool threadPool(2);

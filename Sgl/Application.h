@@ -4,7 +4,6 @@
 
 #include "Window.h"
 #include "Base/Localization/StringLocalizerBase.h"
-#include "Base/Threading/AsyncTimeExecuter.h"
 
 namespace Sgl
 {
@@ -28,6 +27,8 @@ namespace Sgl
 		SystemTheme Theme;
 	};
 
+	class TimeSheduler;
+
 	class Application : public IStyleHost
 	{
 	private:
@@ -47,7 +48,6 @@ namespace Sgl
 		Event<SystemThemeChangedEventHanlder> SystemThemeChanged;
 
 		StyleMap Styles;
-		AsyncTimeExecuter TimeExecuter;
 	private:
 		static inline Application* _current;
 
@@ -56,6 +56,7 @@ namespace Sgl
 		ThemeMode _themeMode;
 		SystemTheme _systemTheme;
 		std::string _culture = "en";
+		TimeSheduler& _timeSheduler;
 		Window* _focusedWindow = nullptr;
 		std::vector<Window*> _activeWindows;
 		std::unordered_map<int, Window*> _windows;

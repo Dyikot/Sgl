@@ -14,12 +14,10 @@ namespace Sgl
 	class Dispatcher
 	{
 	private:		
-		using Task = Action<>;
-
-		std::unordered_map<DispatcherPriority, std::queue<Task>> _queues;
+		std::unordered_map<DispatcherPriority, std::queue<Action<>>> _queues;
 	public:
-		void Post(Task task);
-		void Post(DispatcherPriority priority, Task task);
+		void Post(Action<> task);
+		void Post(DispatcherPriority priority, Action<> task);
 	private:
 		void Run(DispatcherPriority priority);
 

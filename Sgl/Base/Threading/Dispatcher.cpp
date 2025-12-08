@@ -3,12 +3,12 @@
 
 namespace Sgl
 {
-	void Dispatcher::Post(Task task)
+	void Dispatcher::Post(Action<> task)
 	{
 		Post(DispatcherPriority::Process, std::move(task));
 	}
 
-	void Dispatcher::Post(DispatcherPriority priority, Task task)
+	void Dispatcher::Post(DispatcherPriority priority, Action<> task)
 	{
 		switch(priority)
 		{

@@ -19,7 +19,7 @@ namespace Sgl
 		std::mutex _mutex;
 		std::counting_semaphore<> _semaphore { 0 };
 	public:
-		static ThreadPool& Instance();
+		static ThreadPool& Current();
 
 		int GetThreadCount() const noexcept;
 		int GetPendingTaskCount() const noexcept;
