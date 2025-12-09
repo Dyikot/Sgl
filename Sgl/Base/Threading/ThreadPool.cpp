@@ -22,7 +22,7 @@ namespace Sgl
     void ThreadPool::QueueTask(Task task)
     {
         {
-            std::lock_guard<std::mutex> lock(_mutex);
+            std::lock_guard lock(_mutex);
             _tasks.emplace(std::move(task));
         }
 
@@ -50,7 +50,7 @@ namespace Sgl
                     }
 
                     {
-                        std::lock_guard<std::mutex> lock(_mutex);
+                        std::lock_guard lock(_mutex);
 
                         if(_tasks.empty())
                         {

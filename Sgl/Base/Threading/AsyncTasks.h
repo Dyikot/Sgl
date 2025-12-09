@@ -1,8 +1,10 @@
 #pragma once
 
+#include <string>
+
 #include "Time.h"
 #include "Task.h"
-#include "FuncAwaitable.h"
+#include "TaskAwaitable.h"
 
 namespace Sgl
 {
@@ -15,9 +17,12 @@ namespace Sgl
 		static TimeAwaitable Delay(size_t milliseconds, std::stop_token stopToken);
 
 		template<std::invocable TFunc, typename T = std::invoke_result_t<TFunc>>
-		static FuncAwaitable<T> Run(TFunc&& func)
+		static TaskAwaitable<T> New(TFunc&& func, bool saveContext = false)
 		{
-			return FuncAwaitable<T>(std::move(func));
+			return TaskAwaitable<T>(std::move(func), saveContext);
 		}
+
+		static TaskAwaitable<std::string> ReadText(std::string path, bool saveContext = false);
+		static TaskAwaitable<void> WriteText(std::string path, std::string text);
 	};
 }

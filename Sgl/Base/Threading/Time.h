@@ -48,7 +48,7 @@ namespace Sgl
         void Shedule(TimeSpan duration, std::stop_token stopToken, std::coroutine_handle<> handle);
     private:
         TimeSheduler() = default;
-        void Run();
+        void Process();
 
         friend class Application;
 	};

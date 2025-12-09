@@ -4,6 +4,7 @@
 #include <coroutine>
 #include <execution>
 #include <type_traits>
+#include <SDL3/SDL_log.h>
 
 namespace Sgl
 {
@@ -146,7 +147,17 @@ namespace Sgl
 			AsyncVoid get_return_object() { return {}; }
 			std::suspend_never initial_suspend() noexcept { return {}; }
 			std::suspend_never final_suspend() noexcept { return {}; }
-			void unhandled_exception() {}
+			void unhandled_exception() 
+			{ 
+				try
+				{
+					std::rethrow_exception(std::current_exception());				
+				}
+				catch(const std::exception& e)
+				{
+					SDL_Log("%s", e.what());
+				}
+			}
 			void return_void() noexcept {}
 		};
 	};

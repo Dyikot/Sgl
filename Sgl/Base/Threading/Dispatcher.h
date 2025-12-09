@@ -1,28 +1,25 @@
 #pragma once
 
-#include <queue>
-#include <unordered_map>
+#include <vector>
+#include <mutex>
+#include <coroutine>
 #include "../Delegate.h"
 
 namespace Sgl
 {
-	enum class DispatcherPriority
-	{
-		Input, Process, Render
-	};
-
 	class Dispatcher
 	{
 	private:		
-		std::unordered_map<DispatcherPriority, std::queue<Action<>>> _queues;
+		std::mutex _mutex;
+		std::vector<Action<>> _tasks;
+		std::vector<std::coroutine_handle<>> _handles;
 	public:
 		void Post(Action<> task);
-		void Post(DispatcherPriority priority, Action<> task);
+		void AddHandle(std::coroutine_handle<> hanlde);
 	private:
-		void Run(DispatcherPriority priority);
+		void ProcessTasks();
 
 		friend class Application;
-		friend class Window;
 	};
 
 	inline Dispatcher UIThread;

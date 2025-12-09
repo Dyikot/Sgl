@@ -20,19 +20,19 @@ namespace Sgl
 		auto durationNs = nanoseconds(duration.ToNanoseconds());
 		auto wakeTime = high_resolution_clock::now() + durationNs;
 
-		std::lock_guard<std::mutex> _lock(_mutex);
-
 		if(stopToken.stop_possible())
 		{
+			std::lock_guard _lock(_mutex);
 			_stopablePendings.push_back(StopablePending(wakeTime, stopToken, handle));
 		}
 		else
 		{
+			std::lock_guard _lock(_mutex);
 			_pendings.push(Pending(wakeTime, handle));
 		}
 	}
 
-	void TimeSheduler::Run()
+	void TimeSheduler::Process()
 	{
 		std::vector<std::coroutine_handle<>> handlesToResume;
 
@@ -42,15 +42,11 @@ namespace Sgl
 
 			while(!_pendings.empty())
 			{
-				auto& pending = _pendings.top();
+				auto& [wakeTime, handle] = _pendings.top();
 
-				if(pending.WakeTime <= now)
+				if(wakeTime <= now)
 				{
-					if(auto handle = pending.Handle)
-					{
-						handlesToResume.push_back(handle);
-					}
-
+					handlesToResume.push_back(handle);
 					_pendings.pop();
 				}
 				else
@@ -61,15 +57,11 @@ namespace Sgl
 
 			for(auto it = _stopablePendings.begin(); it != _stopablePendings.end();)
 			{
-				auto& pending = *it;
+				auto& [wakeTime, stopToken, handle] = *it;
 
-				if(pending.WakeTime <= now || pending.StopToken.stop_requested())
+				if(wakeTime <= now || stopToken.stop_requested())
 				{
-					if(auto handle = pending.Handle)
-					{
-						handlesToResume.push_back(handle);
-					}
-
+					handlesToResume.push_back(handle);
 					it = _stopablePendings.erase(it);
 				}
 				else
@@ -81,7 +73,10 @@ namespace Sgl
 		
 		for(auto handle : handlesToResume)
 		{
-			handle.resume();
+			if(handle)
+			{
+				handle.resume();
+			}
 		}
 	}
 

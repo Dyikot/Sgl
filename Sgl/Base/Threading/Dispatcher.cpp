@@ -1,37 +1,41 @@
 #include "Dispatcher.h"
-#include <stdexcept>
 
 namespace Sgl
 {
 	void Dispatcher::Post(Action<> task)
 	{
-		Post(DispatcherPriority::Process, std::move(task));
+		std::lock_guard lock(_mutex);
+		_tasks.push_back(std::move(task));
 	}
 
-	void Dispatcher::Post(DispatcherPriority priority, Action<> task)
+	void Dispatcher::AddHandle(std::coroutine_handle<> hanlde)
 	{
-		switch(priority)
-		{
-			case Sgl::DispatcherPriority::Input:
-			case Sgl::DispatcherPriority::Process:
-			case Sgl::DispatcherPriority::Render:
-				_queues[priority].push(std::move(task));
-				break;
+		std::lock_guard lock(_mutex);
+		_handles.push_back(hanlde);
+	}
 
-			default:
-				throw std::invalid_argument("Selected priority does not exist");
+	void Dispatcher::ProcessTasks()
+	{
+		std::vector<Action<>> tasks;
+		std::vector<std::coroutine_handle<>> handles;
+
+		{
+			std::lock_guard lock(_mutex);
+			tasks.swap(_tasks);
+			handles.swap(_handles);
 		}
-	}
 
-	void Dispatcher::Run(DispatcherPriority priority)
-	{
-		auto& queue = _queues[priority];
-
-		while(!queue.empty())
+		for(auto& task : tasks)
 		{
-			auto& task = queue.front();
 			task();
-			queue.pop();
+		}
+
+		for(auto handle : handles)
+		{
+			if(handle)
+			{
+				handle.resume();
+			}
 		}
 	}
 }

@@ -132,18 +132,14 @@ namespace Sgl
 
 		while(_isRunning)
 		{
-            UIThread.Run(DispatcherPriority::Input);
-            _timeSheduler.Run();
-			HandleInput();            
-
-            UIThread.Run(DispatcherPriority::Process);
+			HandleInput();
+            _timeSheduler.Process();
+            UIThread.ProcessTasks();
 
             for(auto window : _activeWindows)
             {
 			    window->Process();
             }
-
-            UIThread.Run(DispatcherPriority::Render);
 
             for(auto window : _activeWindows)
             {
