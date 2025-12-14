@@ -1,4 +1,6 @@
 #include "StringLocalizer.h"
+#include "../Tools/CSVParser.h"
+#include "../Logger.h"
 
 namespace Sgl
 {
@@ -13,11 +15,26 @@ namespace Sgl
 			throw std::length_error("Storage is empty");
 		}
 
-		int index = 0;
-		for(size_t i = 0; i < _records.size(); i += _headersCount)
+		CreateRecordIndex();
+	}
+
+	StringLocalizer::StringLocalizer(std::string csvFilePath, char delimeter)
+	{
+		CSVParser csvParser(std::move(csvFilePath), delimeter);
+
+		if(csvParser.ParseTo(_headers, _records))
 		{
-			_recordIndex.emplace(_records[i], index++);
+			Logger::LogError("Unable to parse cvs file");
 		}
+
+		_headersCount = _headers.size();
+
+		if(_headers.size() < 2 || _records.size() < 2)
+		{
+			throw std::length_error("Storage is empty");
+		}
+
+		CreateRecordIndex();
 	}
 
 	const std::string& StringLocalizer::operator()(const std::string& name) const
@@ -43,6 +60,15 @@ namespace Sgl
 	const std::string& StringLocalizer::GetCulture() const
 	{
 		return _headers[_cultureIndex];
+	}
+
+	void StringLocalizer::CreateRecordIndex()
+	{
+		int index = 0;
+		for(size_t i = 0; i < _records.size(); i += _headersCount)
+		{
+			_recordIndex.emplace(_records[i], index++);
+		}
 	}
 
 	size_t StringLocalizer::GetRecordIndex(const std::string& record) const

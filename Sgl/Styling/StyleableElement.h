@@ -19,10 +19,10 @@ namespace Sgl
 		Event<StyleableElementEventHandler> AttachedToElementsTree;
 		Event<StyleableElementEventHandler> DetachedFromElementsTree;
 	private:
-		bool _isStyleApplied = false;
 		std::vector<std::string> _classList;
 		std::vector<IStyle*> _styles;
 		IStyleHost* _stylingParent = nullptr;
+		IStyleRoot* _stylingRoot = nullptr;
 	public:
 		StyleableElement() = default;
 		StyleableElement(const StyleableElement& other);
@@ -37,14 +37,14 @@ namespace Sgl
 		StyleMap& GetStyles() final { return Styles; }
 		IStyleHost* GetStylingParent() final { return _stylingParent; }
 
-		bool IsStyleApplied() const { return _isStyleApplied; }
-		bool IsAttachedToLogicalTree() const { return _stylingParent != nullptr; }
+		bool IsAttachedToLogicalTree() const { return _stylingRoot != nullptr; }
+
 		virtual void ApplyStyle();
 	protected:
-		virtual void OnAttachedToLogicalTree(IStyleHost& parent);
+		virtual void OnAttachedToLogicalTree();
 		virtual void OnDetachedFromLogicalTree();
 	private:
-		void UpdateStyle();
+		bool UpdateStyle();
 		void OnStyleClassesChanged();
 		void GetStylesFrom(const StyleMap& styles);
 	};

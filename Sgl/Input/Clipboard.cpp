@@ -1,6 +1,6 @@
 #include "Clipboard.h"
-#include <SDL3/SDL_log.h>
 #include <SDL3/SDL_clipboard.h>
+#include "../Base/Logger.h"
 
 namespace Sgl
 {
@@ -8,7 +8,7 @@ namespace Sgl
 	{
 		if(!SDL_SetClipboardText(text.data()))
 		{
-			SDL_Log("Unable to set a text to clipboard: %s", SDL_GetError());
+			Logger::LogWarning("Unable to set a text to clipboard: {}", SDL_GetError());
 		}
 	}
 
@@ -24,7 +24,7 @@ namespace Sgl
 	{
 		if(!SDL_ClearClipboardData())
 		{
-			SDL_Log("Unable to clear clipboard: %s", SDL_GetError());
+			Logger::LogWarning("Unable to clear clipboard: {}", SDL_GetError());
 		}
 	}
 

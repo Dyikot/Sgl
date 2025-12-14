@@ -12,4 +12,9 @@ namespace Sgl
         virtual StyleMap& GetStyles() = 0;
         virtual IStyleHost* GetStylingParent() = 0;
     };
+
+    class IStyleRoot : public IStyleHost
+    {
+
+    };
 }

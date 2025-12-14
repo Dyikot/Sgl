@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../Base/Ref.h"
-#include "../Base/Delegate.h"
 
 namespace Sgl
 {

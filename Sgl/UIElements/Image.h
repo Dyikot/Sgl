@@ -54,9 +54,10 @@ namespace Sgl::UIElements
 
 		void Render(RenderContext context) final;
 	protected:
-		void OnUpdate() override;
 		void ArrangeCore(FRect rect) override;
-		void InvalidateImageTexture();
+		void InvalidateImageTexture() { _isImageTextureValid = false; }
+	private:
+		void UpdateTexture();
 	public:
 		static inline ObservableProperty SourceProperty { &SetSource, &GetSource };
 		static inline ObservableProperty StretchProperty { &SetStretch, &GetStretch };

@@ -18,9 +18,13 @@ namespace Sgl
 		Panel(Panel&& other) noexcept;
 		~Panel() = default;
 
+		void SetVisualRoot(IVisualRoot* value) override;
+
 		void Render(RenderContext context) final;
 		void ApplyStyle() override;
 	protected:
+		void OnAttachedToLogicalTree() override;
+		void OnDetachedFromLogicalTree() override;
 		void OnCursorChanged(const Cursor& cursor) override;
 		void OnMouseMove(MouseMoveEventArgs e) override;
 		void OnMouseDown(MouseButtonEventArgs e) override;

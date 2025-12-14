@@ -33,11 +33,11 @@ namespace Sgl
 		bool leftHasValue = left.HasValue();
 		bool rightHasValue = right.HasValue();
 
-		if(leftHasValue && rightHasValue)
+		if(!leftHasValue || !rightHasValue)
 		{
-			return *left._data == *right._data;
+			return !leftHasValue && !rightHasValue;
 		}
 
-		return !leftHasValue && !rightHasValue;
+		return *left._data == *right._data;
 	}
 }

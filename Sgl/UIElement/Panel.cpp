@@ -10,8 +10,8 @@ namespace Sgl
 
     Panel::Panel(const Panel& other):
         UIElement(other),
-        Children(other.Children),
-        _currentChild(other._currentChild)
+        Children(*this),
+        _currentChild()
     {}
 
     Panel::Panel(Panel&& other) noexcept:
@@ -19,6 +19,16 @@ namespace Sgl
         Children(std::move(Children)),
         _currentChild(std::exchange(other._currentChild, nullptr))
     {}
+
+    void Panel::SetVisualRoot(IVisualRoot* value)
+    {
+        UIElement::SetVisualRoot(value);
+
+        for(auto& child : Children)
+        {
+            child->SetVisualRoot(value);
+        }
+    }
 
     void Panel::Render(RenderContext context)
     {
@@ -45,6 +55,26 @@ namespace Sgl
         }
     }
 
+    void Panel::OnAttachedToLogicalTree()
+    {
+        UIElement::OnAttachedToLogicalTree();
+
+        for(auto& child : Children)
+        {
+            child->OnAttachedToLogicalTree();
+        }
+    }
+
+    void Panel::OnDetachedFromLogicalTree()
+    {
+        UIElement::OnDetachedFromLogicalTree();
+
+        for(auto& child : Children)
+        {
+            child->OnDetachedFromLogicalTree();
+        }
+    }
+
     void Panel::OnCursorChanged(const Cursor& cursor)
     {
         if(IsMouseOver())
@@ -65,47 +95,48 @@ namespace Sgl
     {
         UIElement::OnMouseMove(e);
 
-        bool isCurrentVisible = _currentChild && _currentChild->IsVisible();
-        bool isMouseOverCurrent = LayoutHelper::IsPointInRect(e.X, e.Y, _currentChild->GetBounds());
+        auto& current = _currentChild;
 
-        if(isCurrentVisible && isMouseOverCurrent)
-        {
-            _currentChild->OnMouseMove(e);
-            return;
+        if(current)
+        {   
+            if(current->IsVisible() && LayoutHelper::IsPointInRect(e.X, e.Y, current->GetBounds()))
+            {
+                current->OnMouseMove(e);
+                return;
+            }
+            else
+            {
+                current->OnMouseLeave(e);
+                current = nullptr;
+            }
         }
 
         for(auto& child : Children)
         {
-            bool isMouseOver = LayoutHelper::IsPointInRect(e.X, e.Y, _currentChild->GetBounds());
-
-            if(isMouseOver && child->IsVisible())
+            if(!child->IsVisible())
             {
-                if(_currentChild && _currentChild->IsVisible())
-                {
-                    _currentChild->OnMouseLeave(e);
-                }
+                continue;
+            }
 
-                _currentChild = child;
+            if(LayoutHelper::IsPointInRect(e.X, e.Y, child->GetBounds()))
+            {
                 Cursor::Set(child->GetCursor());
+
+                current = child;
                 child->OnMouseEnter(e);
                 child->OnMouseMove(e);
-
                 return;
             }
-        }
+        }        
 
-        if(_currentChild && _currentChild->IsVisible())
-        {
-            _currentChild->OnMouseLeave(e);
-            _currentChild = nullptr;
-        }    
+        Cursor::Set(GetCursor());
     }
 
     void Panel::OnMouseDown(MouseButtonEventArgs e)
     {
         UIElement::OnMouseDown(e);
 
-        if(_currentChild && _currentChild->IsMouseOver() && _currentChild->IsVisible())
+        if(_currentChild && _currentChild->IsVisible() && _currentChild->IsMouseOver())
         {
             _currentChild->OnMouseDown(e);
         }
@@ -115,7 +146,7 @@ namespace Sgl
     {
         UIElement::OnMouseUp(e);
 
-        if(_currentChild && _currentChild->IsMouseOver() && _currentChild->IsVisible())
+        if(_currentChild && _currentChild->IsVisible() && _currentChild->IsMouseOver())
         {
             _currentChild->OnMouseUp(e);
         }

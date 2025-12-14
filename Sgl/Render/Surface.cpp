@@ -1,8 +1,9 @@
 #include "Surface.h"
 
-#include <SDL3/SDL_log.h>
 #include <SDL3/SDL_surface.h>
 #include <SDL3_image/SDL_image.h>
+
+#include "../Base/Logger.h"
 
 namespace Sgl
 {
@@ -15,7 +16,7 @@ namespace Sgl
 	{
 		if(_surface == nullptr)
 		{
-			SDL_Log("Unable to load a surface: %s", SDL_GetError());
+			Logger::LogError("Unable to load a surface: {}", SDL_GetError());
 		}
 	}
 
@@ -28,7 +29,7 @@ namespace Sgl
 	{
 		if(_surface == nullptr)
 		{
-			SDL_Log("Unable to create a surface: %s", SDL_GetError());
+			Logger::LogError("Unable to create a surface: {}", SDL_GetError());
 		}
 	}
 
@@ -38,7 +39,7 @@ namespace Sgl
 	{
 		if(_surface == nullptr)
 		{
-			SDL_Log("Unable to create a surface: %s", SDL_GetError());
+			Logger::LogError("Unable to create a surface: {}", SDL_GetError());
 		}
 	}
 
@@ -47,7 +48,7 @@ namespace Sgl
 	{
 		if(_surface == nullptr)
 		{
-			SDL_Log("Unable to copy a surface: %s", SDL_GetError());
+			Logger::LogError("Unable to copy a surface: {}", SDL_GetError());
 		}
 	}
 
@@ -120,7 +121,7 @@ namespace Sgl
 
 		if(_surface == nullptr)
 		{
-			SDL_Log("Unable to load a surface: %s", SDL_GetError());
+			Logger::LogError("Unable to load a surface: {}", SDL_GetError());
 		}
 
 		return *this;

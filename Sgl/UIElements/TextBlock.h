@@ -74,7 +74,6 @@ namespace Sgl::UIElements
 		void InvalidateTextTexture();
 		FSize MeasureContent(FSize avaliableSize) override;
 		void ArrangeContent(FRect rect) override;
-		void OnUpdate() override;
 	private:
 		void InvalidateFont(size_t bit);
 		void UpdateFont();

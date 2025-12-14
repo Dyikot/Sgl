@@ -67,11 +67,6 @@ namespace Sgl
 		}
 	}
 
-	void UIElement::OnUpdate()
-	{
-		_hasUpdates = false;
-	}
-
 	void UIElement::OnKeyUp(KeyEventArgs e)
 	{
 		KeyUp(*this, e);
@@ -97,7 +92,7 @@ namespace Sgl
 		MouseUp(*this, e);
 	}
 
-	void UIElement::OnMouseWheelChanged(MouseWheelEventArgs e)
+	void UIElement::OnMouseWheelChanged(MouseWheelEventArgs& e)
 	{
 		MouseWheel(*this, e);
 	}
@@ -115,41 +110,16 @@ namespace Sgl
 		_isMouseOver = false;
 	}
 
-	void UIElement::OnAttachedToLogicalTree(IStyleHost& parent)
+	void UIElement::OnAttachedToLogicalTree()
 	{
-		Layoutable::OnAttachedToLogicalTree(parent);
+		Layoutable::OnAttachedToLogicalTree();
 		InvalidateMeasure();
-
-		if(_hasUpdates)
-		{
-			auto window = static_cast<Window*>(GetVisualRoot());
-			window->RequestUpdate(*this);
-		}
 	}
 
 	void UIElement::OnDetachedFromLogicalTree()
 	{
-		InvalidateMeasure();
 		Layoutable::OnDetachedFromLogicalTree();
-		
-		if(_hasUpdates)
-		{
-			auto window = static_cast<Window*>(GetVisualRoot());
-			window->CancelUpdateRequest(*this);
-		}
-	}
-
-	void UIElement::RequestUpdate()
-	{
-		if(!_hasUpdates)
-		{
-			_hasUpdates = true;
-
-			if(auto window = static_cast<Window*>(GetVisualRoot()))
-			{
-				window->RequestUpdate(*this);
-			}
-		}		
+		InvalidateMeasure();
 	}
 
 	Ref<UIElement> UIElementDataTemplate::Build(const Ref<ObservableObject>& data)

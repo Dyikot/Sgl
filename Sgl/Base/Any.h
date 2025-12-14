@@ -64,8 +64,18 @@ namespace Sgl
 
 			bool operator==(const IStorage& other) const override
 			{
-				const auto& otherStorage = static_cast<const Storage<T>&>(other);
-				return Type() == otherStorage.Type() && Value == otherStorage.Get<T>();
+				if(Type() != other.Type())
+				{
+					return false;
+				}
+
+				if constexpr(std::equality_comparable<T>)
+				{
+					const auto& otherStorage = static_cast<const Storage<T>&>(other);
+					return Value == otherStorage.Value;
+				}
+
+				return false;
 			}
 		};
 

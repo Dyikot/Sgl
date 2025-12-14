@@ -6,6 +6,7 @@
 #include "Base/Time/Stopwatch.h"
 #include "Input/TextEventArgs.h"
 #include "UIElement/UIElement.h"
+#include "Base/Logger.h"
 
 namespace Sgl
 {
@@ -36,6 +37,11 @@ namespace Sgl
 		int Height;
 	};
 
+	struct CancelEventArgs
+	{
+		bool Cancel;
+	};
+
 	/// <summary>
 	/// The Window class provides a high-level interface for creating and managing window,
 	/// handling events, and rendering graphics. It encapsulates SDL_Window and SDL_Renderer
@@ -44,9 +50,11 @@ namespace Sgl
 	class Window : public Renderable, public IVisualRoot
 	{
 	private:
+		using WindowEventHandler = EventHandler<Window>;
 		using WindowStateEventHandler = EventHandler<Window, WindowStateChangedEventArgs>;
 		using WindowPositionChangedEventHandler = EventHandler<Window, WindowPositionChangedEventArgs>;
 		using WindowSizeChangedEventHandler = EventHandler<Window, WindowSizeChangedEventArgs>;
+		using CancelEventHandler = EventHandler<Window, CancelEventArgs>;
 	public:
 		/// <summary>
 		/// Event triggered when the window's state changes (minimized, maximized, restored)
@@ -63,21 +71,25 @@ namespace Sgl
 		/// </summary>
 		Event<WindowSizeChangedEventHandler> SizeChanged;
 
+		Event<CancelEventHandler> Closing;
+		Event<WindowEventHandler> Closed;
+
 		/// <summary>
 		/// Determines if the window should be rendered when minimized
 		/// </summary>
 		bool IsRenderableWhenMinimized = false;
 	private:
-		SDL_Window* _window;
+		SDL_Window* _sdlWindow;
 		SDL_Renderer* _renderer;
 		RenderContext _renderContext;
+		SDL_WindowID _id = 0;
 		Ref<UIElement> _content;
-		std::list<UIElement*> _pendingElementUpdates;
-		int _id = 0;
+		bool _isModal = false;
 		bool _isClosing = false;
-		bool _isModal = false;	
+		bool _isActivated = false;
 		bool _isRenderValid = false;
 		Window* _owner = nullptr;
+		std::vector<Window*> _ownedWindows;
 		Surface _icon;
 		std::string _iconSource;
 	public:
@@ -96,13 +108,13 @@ namespace Sgl
 		/// Gets the underlying SDL renderer handle
 		/// </summary>
 		/// <returns>Pointer to the SDL_Renderer</returns>
-		SDL_Renderer* GetRenderer() const noexcept override;
+		SDL_Renderer* GetRenderer() const override;
 
 		/// <summary>
 		/// Gets window id
 		/// </summary>
 		/// <returns>Window unique id</returns>
-		int GetId() const noexcept;
+		SDL_WindowID GetId() const noexcept;
 
 		/// <summary>
 		/// Sets the window width
@@ -275,22 +287,24 @@ namespace Sgl
 		void Activate();
 
 		/// <summary>
+		/// Checks if the window has a focus
+		/// </summary>
+		/// <returns>True if has focus, false otherwise</returns>
+		bool IsActivated() const { return _isActivated; }
+
+		/// <summary>
 		/// Checks if the window is visible
 		/// </summary>
 		/// <returns>- true if visible, false otherwise</returns>
 		bool IsVisible() const;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		bool IsModal() const;
 
 		void Render(RenderContext context) final;
 		void ApplyStyle() override;		
 		virtual void Process();
 	protected:
 		void OnCursorChanged(const Cursor& cursor) override;
+		void OnAttachedToLogicalTree() override;
+		void OnDetachedFromLogicalTree() override;
 		virtual void OnWindowStateChanged(WindowStateChangedEventArgs e);
 		virtual void OnPositionChanged(WindowPositionChangedEventArgs e);
 		virtual void OnWindowSizeChanged(WindowSizeChangedEventArgs e);
@@ -306,15 +320,10 @@ namespace Sgl
 		virtual void OnMouseLeave() {}
 		virtual void OnActivated();
 		virtual void OnDeactivated();
-		virtual void OnShow() {}
-		virtual void OnHide() {}
-		virtual void OnClosing() {}
-		virtual void OnClosed() {}
+		virtual void OnClosing(CancelEventArgs& e);
+		virtual void OnClosed();
 	private:
 		void RenderCore();
-		void RequestUpdate(UIElement& element);
-		void CancelUpdateRequest(UIElement& element);
-		void ProcessElementsUpdates();
 
 		friend class UIElement;
 		friend class Application;

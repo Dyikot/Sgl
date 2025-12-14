@@ -15,29 +15,30 @@ namespace Sgl
 	class Delegate<TReturn(TArgs...)>
 	{
 	private:
-		struct ICallable
+		struct Concept
 		{
 		public:
-			virtual ~ICallable() = default;
+			virtual ~Concept() = default;
 
-			virtual std::unique_ptr<ICallable> Copy() const = 0;
+			virtual std::unique_ptr<Concept> Copy() const = 0;
 			virtual const std::type_info& Type() const = 0;
+			virtual bool Equals(const Concept& other) const = 0;
 			virtual TReturn operator()(TArgs... args) = 0;
 		};
 
 		template<typename TCallable>
-		struct Callable : public ICallable
+		struct Model : public Concept
 		{
-		private:
-			TCallable _callable;
 		public:
-			Callable(TCallable callable):
-				_callable(std::move(callable))
+			TCallable Callable;
+		public:
+			Model(TCallable callable):
+				Callable(std::move(callable))
 			{}
 
-			std::unique_ptr<ICallable> Copy() const override
+			std::unique_ptr<Concept> Copy() const override
 			{
-				return std::make_unique<Callable>(_callable);
+				return std::make_unique<Model>(Callable);
 			}
 
 			const std::type_info& Type() const override
@@ -45,13 +46,29 @@ namespace Sgl
 				return typeid(TCallable);
 			}
 
+			bool Equals(const Concept& other) const override
+			{
+				if(Type() != other.Type())
+				{
+					return false;
+				}
+
+				if constexpr(std::equality_comparable<TCallable>)
+				{
+					const auto& otherModel = static_cast<const Model<TCallable>&>(other);
+					return Callable == otherModel.Callable;
+				}
+
+				return false;
+			}
+
 			TReturn operator()(TArgs... args) override
 			{
-				return std::invoke(_callable, std::forward<TArgs>(args)...);
+				return std::invoke(Callable, std::forward<TArgs>(args)...);
 			}
 		};
 
-		std::unique_ptr<ICallable> _callable;
+		std::unique_ptr<Concept> _concept;
 	public:
 		/// <summary>
 		/// Default constructor. Creates an empty delegate with no target.
@@ -62,9 +79,7 @@ namespace Sgl
 		/// Null pointer constructor. Creates an empty delegate.
 		/// </summary>
 		/// <param name="ptr"> - nullptr value.</param>
-		Delegate(std::nullptr_t) noexcept:
-			_callable(nullptr)
-		{}
+		Delegate(std::nullptr_t) noexcept {}
 
 		/// <summary>
 		/// Constructs a delegate with the specified callable object.
@@ -72,7 +87,7 @@ namespace Sgl
 		/// <param name="func"> - The callable object to wrap.</param>
 		template<typename TFunc> requires !std::same_as<std::decay_t<TFunc>, Delegate>
 		Delegate(TFunc&& func):
-			_callable(std::make_unique<Callable<std::decay_t<TFunc>>>(std::forward<TFunc>(func)))
+			_concept(std::make_unique<Model<std::decay_t<TFunc>>>(std::forward<TFunc>(func)))
 		{}
 
 		/// <summary>
@@ -80,7 +95,7 @@ namespace Sgl
 		/// </summary>
 		/// <param name="other"> - The delegate to copy from.</param>
 		Delegate(const Delegate& other):
-			_callable(other.HasTarget() ? other._callable->Copy() : nullptr)
+			_concept(other.HasTarget() ? other._concept->Copy() : nullptr)
 		{}
 
 		/// <summary>
@@ -88,7 +103,7 @@ namespace Sgl
 		/// </summary>
 		/// <param name="other"> - The delegate to move from.</param>
 		Delegate(Delegate&& other) noexcept:
-			_callable(std::exchange(other._callable, nullptr))
+			_concept(std::exchange(other._concept, nullptr))
 		{}
 
 		/// <summary>
@@ -96,7 +111,7 @@ namespace Sgl
 		/// </summary>
 		void Reset() noexcept
 		{		
-			_callable.reset();
+			_concept.reset();
 		}
 
 		/// <summary>
@@ -105,7 +120,7 @@ namespace Sgl
 		/// <returns>True if the delegate has a target; otherwise, false.</returns>
 		bool HasTarget() const noexcept
 		{		
-			return _callable != nullptr;
+			return _concept != nullptr;
 		}
 
 		/// <summary>
@@ -114,7 +129,7 @@ namespace Sgl
 		/// <returns>A reference to the type_info object representing the target callable's type, or typeid(nullptr) if empty.</returns>
 		const std::type_info& TargetType() const noexcept
 		{
-			return _callable ? _callable->Type() : typeid(nullptr);
+			return _concept ? _concept->Type() : typeid(nullptr);
 		}
 
 		/// <summary>
@@ -125,7 +140,7 @@ namespace Sgl
 		/// <exception cref="std::bad_function_call">Thrown if the delegate is empty.</exception>
 		TReturn operator()(TArgs... args) const
 		{
-			return (*_callable)(std::forward<TArgs>(args)...);
+			return (*_concept)(std::forward<TArgs>(args)...);
 		}
 
 		/// <summary>
@@ -134,7 +149,7 @@ namespace Sgl
 		/// <param name="ptr"> - nullptr value.</param>
 		Delegate& operator=(nullptr_t) noexcept
 		{
-			_callable = nullptr;
+			_concept = nullptr;
 			return *this;
 		}
 
@@ -145,7 +160,7 @@ namespace Sgl
 		template<typename TFunc> requires !std::same_as<std::decay_t<TFunc>, Delegate>
 		Delegate& operator=(TFunc&& func)
 		{
-			_callable = std::make_unique<Callable<std::decay_t<TFunc>>>(std::forward<TFunc>(func));
+			_concept = std::make_unique<Model<std::decay_t<TFunc>>>(std::forward<TFunc>(func));
 			return *this;
 		}
 
@@ -155,11 +170,7 @@ namespace Sgl
 		/// <param name="other"> - The delegate to copy from.</param>
 		Delegate& operator=(const Delegate& other)
 		{
-			if(this != &other)
-			{
-				_callable = other.HasTarget() ? other._callable->Copy() : nullptr;
-			}
-
+			_concept = other.HasTarget() ? other._concept->Copy() : nullptr;
 			return *this;
 		}
 
@@ -169,11 +180,7 @@ namespace Sgl
 		/// <param name="other"> - The delegate to move from.</param>
 		Delegate& operator=(Delegate&& other) noexcept
 		{
-			if(this != &other)
-			{
-				_callable = std::exchange(other._callable, nullptr);
-			}
-
+			_concept = std::exchange(other._concept, nullptr);
 			return *this;
 		}
 
@@ -185,7 +192,15 @@ namespace Sgl
 		/// <returns>True if both delegates have targets of the same type; otherwise, false.</returns>
 		friend bool operator==(const Delegate& left, const Delegate& right) noexcept
 		{
-			return left.TargetType() == right.TargetType();
+			bool isLeftNull = left._concept == nullptr;
+			bool isRightNull = right._concept == nullptr;
+
+			if(isLeftNull || isRightNull)
+			{
+				return isLeftNull && isRightNull;
+			}
+
+			return left._concept->Equals(*right._concept);
 		}
 	};
 

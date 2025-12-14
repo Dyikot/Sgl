@@ -41,7 +41,7 @@ To install, you need to do the following steps:
 	int main(int argc, char* argv[])
 	{
 		Sgl::Application app;
-		app.SetMainWindow(std::make_unique<Sgl::Window>());
+		app.MainWindow = New<Sgl::Window>();
 		app.Run();
 
 		return 0;

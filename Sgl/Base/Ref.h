@@ -119,6 +119,12 @@ namespace Sgl
             return static_cast<TValue&>(*_data);
         }
 
+        void swap(Ref& other)
+        {
+            std::swap(_data, other._data);
+            std::swap(_memoryBlock, other._memoryBlock);
+        }
+
         T* operator->() const
         {
             return _data;
@@ -133,16 +139,17 @@ namespace Sgl
         Ref& operator=(std::nullptr_t)
         {
             TryDeleteMemoryBlock();
+
+            _data = nullptr;
+            _memoryBlock = nullptr;
+
             return *this;
         }
 
         Ref& operator=(const Ref& other) noexcept
         {
-            if(this != &other)
-            {
-                TryDeleteMemoryBlock();
-                CopyConstructFrom(other);
-            }            
+            TryDeleteMemoryBlock();
+            CopyConstructFrom(other);
 
             return *this;
         }
@@ -151,22 +158,16 @@ namespace Sgl
             std::derived_from<TDerived, T> || std::same_as<T, void>
         Ref& operator=(const Ref<TDerived>& other) noexcept
         {
-            if(this != &other)
-            {
-                TryDeleteMemoryBlock();
-                CopyConstructFrom(other);
-            }
+            TryDeleteMemoryBlock();
+            CopyConstructFrom(other);
 
             return *this;
         }
 
         Ref& operator=(Ref&& other) noexcept
         {
-            if(this != &other)
-            {
-                TryDeleteMemoryBlock();
-                MoveConstructFrom(std::move(other));
-            }
+            TryDeleteMemoryBlock();
+            MoveConstructFrom(std::move(other));
 
             return *this;
         }
@@ -175,11 +176,8 @@ namespace Sgl
             std::derived_from<TDerived, T> || std::same_as<T, void>
         Ref& operator=(Ref<TDerived>&& other) noexcept
         {
-            if(this != &other)
-            {
-                TryDeleteMemoryBlock();
-                MoveConstructFrom(std::move(other));
-            }
+            TryDeleteMemoryBlock();
+            MoveConstructFrom(std::move(other));
 
             return *this;
         }

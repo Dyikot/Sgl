@@ -9,7 +9,7 @@ namespace Sgl
 		AttachableObject(other),
 		_classList(other._classList),
 		_stylingParent(other._stylingParent),
-		_isStyleApplied(other._isStyleApplied),
+		_stylingRoot(other._stylingRoot),
 		_styles(other._styles)
 	{}
 
@@ -17,8 +17,8 @@ namespace Sgl
 		AttachableObject(std::move(other)),
 		Styles(std::move(other.Styles)),
 		_classList(std::move(other._classList)),
-		_stylingParent(other._stylingParent),
-		_isStyleApplied(other._isStyleApplied),
+		_stylingParent(std::exchange(other._stylingParent, nullptr)),
+		_stylingRoot(std::exchange(other._stylingRoot, nullptr)),
 		_styles(std::move(other._styles))
 	{}
 
@@ -50,7 +50,19 @@ namespace Sgl
 
 	void StyleableElement::SetParent(IStyleHost* parent)
 	{
+		if(parent == nullptr)
+		{
+			_stylingParent = nullptr;
+			_stylingRoot = nullptr;
+			return;
+		}
+
 		_stylingParent = parent;
+
+		if(auto root = dynamic_cast<IStyleRoot*>(parent))
+		{
+			_stylingRoot = nullptr;
+		}
 	}
 
 	void StyleableElement::ApplyStyle()
@@ -59,25 +71,24 @@ namespace Sgl
 		{
 			_styles[i]->Apply(*this);
 		}
-
-		_isStyleApplied = true;
 	}
 
-	void StyleableElement::OnAttachedToLogicalTree(IStyleHost& parent)
+	void StyleableElement::OnAttachedToLogicalTree()
 	{
-		SetParent(&parent);
-		UpdateStyle();
-		ApplyStyle();
+		if(UpdateStyle())
+		{
+			ApplyStyle();
+		}
+
 		AttachedToElementsTree(*this);
 	}
 
 	void StyleableElement::OnDetachedFromLogicalTree()
 	{
-		SetParent(nullptr);
 		DetachedFromElementsTree(*this);
 	}
 
-	void StyleableElement::UpdateStyle()
+	bool StyleableElement::UpdateStyle()
 	{
 		_styles.clear();
 
@@ -91,12 +102,16 @@ namespace Sgl
 				parent = parent->GetStylingParent();
 			}
 		}
+
+		return _styles.size() > 0;
 	}
 
 	void StyleableElement::OnStyleClassesChanged()
 	{
-		UpdateStyle();
-		ApplyStyle();
+		if(UpdateStyle())
+		{
+			ApplyStyle();
+		}
 	}	
 
 	void StyleableElement::GetStylesFrom(const StyleMap& styles)

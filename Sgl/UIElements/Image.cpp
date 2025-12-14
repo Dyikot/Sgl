@@ -81,23 +81,17 @@ namespace Sgl::UIElements
 		}
 
 		UIElement::Render(context);
-	}
-
-	void Image::OnUpdate()
-	{
-		UIElement::OnUpdate();
-
-		if(!_isImageTextureValid)
-		{
-			_sourceTexture = Texture(GetVisualRoot()->GetRenderer(), _source);
-			_isImageTextureValid = true;
-		}
-	}
+	}	
 
 	void Image::ArrangeCore(FRect rect)
 	{
 		UIElement::ArrangeCore(rect);		
 		
+		if(!_isImageTextureValid)
+		{
+			UpdateTexture();
+		}
+
 		if(!_sourceTexture)
 		{
 			return;
@@ -182,9 +176,9 @@ namespace Sgl::UIElements
 		}	
 	}
 
-	void Image::InvalidateImageTexture()
+	void Image::UpdateTexture()
 	{
-		RequestUpdate();
-		_isImageTextureValid = false;
+		_sourceTexture = Texture(GetVisualRoot()->GetRenderer(), _source);
+		_isImageTextureValid = true;
 	}
 }

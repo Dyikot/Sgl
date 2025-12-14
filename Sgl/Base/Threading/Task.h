@@ -4,7 +4,8 @@
 #include <coroutine>
 #include <execution>
 #include <type_traits>
-#include <SDL3/SDL_log.h>
+
+#include "../Logger.h"
 
 namespace Sgl
 {
@@ -155,7 +156,7 @@ namespace Sgl
 				}
 				catch(const std::exception& e)
 				{
-					SDL_Log("%s", e.what());
+					Logger::LogError("{}", e.what());
 				}
 			}
 			void return_void() noexcept {}

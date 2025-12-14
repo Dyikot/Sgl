@@ -7,34 +7,39 @@
 
 namespace Sgl
 {
+	enum class ShutdownMode
+	{
+		OnMainWindowClose, OnLastWindowClose, OnExplicitShutdown
+	};
+
 	enum class ThemeMode
 	{
-		System, Light, Dark
+		Light, Dark
 	};
 
-	enum class SystemTheme
+	enum class ThemeVariant
 	{
-		Light = 1, Dark
+		Light, Dark, System
 	};
 
-	struct ThemeModeChangedEventArgs
+	struct ThemeVariantChangedEventArgs
 	{
-		ThemeMode Theme;
-	};
-
-	struct SystemModeChangedEventArgs
-	{
-		SystemTheme Theme;
+		ThemeVariant Theme;
 	};
 
 	class TimeSheduler;
 
-	class Application : public IStyleHost
+	class Application : public IStyleRoot
 	{
 	private:
+		struct WindowWithId
+		{
+			SDL_WindowID Id;
+			Window* Window;
+		};
+
 		using ApplicationEventHandler = EventHandler<Application>;
-		using ThemeModeChangedEventHanlder = EventHandler<Application, ThemeModeChangedEventArgs>;
-		using SystemThemeChangedEventHanlder = EventHandler<Application, SystemModeChangedEventArgs>;
+		using ThemeVariantChangedEventHanlder = EventHandler<Application, ThemeVariantChangedEventArgs>;
 	public:
 		struct Context
 		{
@@ -44,65 +49,63 @@ namespace Sgl
 
 		Event<ApplicationEventHandler> Started;
 		Event<ApplicationEventHandler> Stopped;
-		Event<ThemeModeChangedEventHanlder> ThemeModeChanged;
-		Event<SystemThemeChangedEventHanlder> SystemThemeChanged;
+		Event<ThemeVariantChangedEventHanlder> ThemeVariantChanged;
 
 		StyleMap Styles;
+		Ref<Window> MainWindow;
+		ShutdownMode ShutdownMode;
 	private:
 		static inline Application* _current;
 
 		bool _isRunning = false;
 		Stopwatch _stopwatch;
 		ThemeMode _themeMode;
-		SystemTheme _systemTheme;
+		ThemeVariant _themeVariant;
 		std::string _culture = "en";
 		TimeSheduler& _timeSheduler;
+		Ref<StringLocalizerBase> _localizer;
+
 		Window* _focusedWindow = nullptr;
+		std::vector<Window*> _windows;
 		std::vector<Window*> _activeWindows;
-		std::unordered_map<int, Window*> _windows;
-		std::unique_ptr<Window> _mainWindow;
-		std::unique_ptr<StringLocalizerBase> _localizer;
+		std::vector<WindowWithId> _windowsWithId;
 	public:
 		Application() noexcept;
 		Application(const Application&) = delete;
 		Application(Application&&) = delete;
 		~Application();
 
-		void SetThemeMode(ThemeMode value);
-		ThemeMode GetThemeMode() const;
-		SystemTheme GetSystemTheme() const;
+		void SetThemeVariant(ThemeVariant value);
+		ThemeVariant GetThemeVariant() const { return _themeVariant; }
+
+		ThemeMode GetThemeMode() const noexcept { return _themeMode; }
 
 		void SetCulture(const std::string& value);
 		const std::string& GetCulture() const { return _culture; }
 
+		void SetLocalizer(const Ref<StringLocalizerBase>& localizer);
+		const Ref<StringLocalizerBase>& GetLocalizer() const { return _localizer; }
+
 		StyleMap& GetStyles() final { return Styles; }
-		IStyleHost* GetStylingParent() final { return nullptr; }
-
-		void SetLocalizer(std::string csvFile, char delimeter = ',');
-		void SetLocalizer(std::unique_ptr<StringLocalizerBase> localizer);
-		const StringLocalizerBase& GetLocalizer() const;
-
-		void SetMainWindow(std::unique_ptr<Window> value);
-		Window* GetMainWindow() const;
-
-		const std::vector<Window*> GetWindows() const noexcept;
+		IStyleHost* GetStylingParent() final { return nullptr; }		
+		const std::vector<Window*> GetWindows() const noexcept { return _activeWindows; }
 
 		void Run();
 		void Shutdown();
 	protected:
-		virtual void OnRun();
-		virtual void OnStop();
-		virtual void OnThemeModeChanged(ThemeModeChangedEventArgs theme);
-		virtual void OnSystemThemeChanged(SystemModeChangedEventArgs theme);
+		virtual void OnStarted();
+		virtual void OnStopped();
+		virtual void OnThemeModeChanged(ThemeVariantChangedEventArgs e);
 	private:
-		SystemTheme QuerySystemTheme() const;
+		ThemeMode GetSystemThemeMode() const;
 		void Delay();
-		void HandleInput();
-		void AddWindow(Window* window);
-		void AddActiveWindow(Window* window);
-		void RemoveWindow(Window* window);
-		void RemoveActiveWindow(Window* window);
-		Window* GetWindowById(int id);
+		void HandleEvents();
+		void PushSDLUserEvent(unsigned int type);
+		void AddWindow(Window& window);
+		void RemoveWindow(Window& window);
+		void AttachWindow(Window& window);
+		void DetachWindow(Window& window);
+		Window* GetWindowById(SDL_WindowID windowId);
 
 		friend class Window;
 	};	

@@ -1,8 +1,11 @@
 #include "Window.h"
-#include <SDL3/SDL_log.h>
+
 #include "Application.h"
 #include "Render/BackgroundRenderer.h"
 #include "Layout/LayoutHelper.h"
+#include "Base/Exceptions.h"
+#include "Base/Logger.h"
+#include "Input/UserEvents.h"
 
 namespace Sgl
 {
@@ -12,28 +15,26 @@ namespace Sgl
     static constexpr auto DefaultPosition = Point(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
     
     Window::Window():
-        _window(SDL_CreateWindow(DefaultTitle, DefaultWidth, DefaultHeight, SDL_WINDOW_HIDDEN)),
-        _renderer(SDL_CreateRenderer(_window, nullptr)),
+        _sdlWindow(SDL_CreateWindow(DefaultTitle, DefaultWidth, DefaultHeight, SDL_WINDOW_HIDDEN)),
+        _renderer(SDL_CreateRenderer(_sdlWindow, nullptr)),
         _renderContext(_renderer)
     {
-        if(_window == nullptr)
+        if(_sdlWindow == nullptr)
         {
-            SDL_Log("Unable to create a window: %s", SDL_GetError());
+            throw Exception("Unable to create a window: {}", SDL_GetError());
         }
-        else
-        {
-            if(App.Current() == nullptr)
-            {
-                throw std::runtime_error("Cannot create a window without an application class");
-            }
 
-            _id = SDL_GetWindowID(_window);
-            App->AddWindow(this);
+        if(App.Current() == nullptr)
+        {
+            throw Exception("Cannot create a window without an application");
         }
+
+        _id = SDL_GetWindowID(_sdlWindow);
+        App->AddWindow(*this);
 
         if(_renderer == nullptr)
         {
-            SDL_Log("Unable to create a renderer: %s", SDL_GetError());
+            throw Exception("Unable to create a renderer: {}", SDL_GetError());
         }
 
         SetVisualRoot(this);
@@ -49,105 +50,111 @@ namespace Sgl
         }
 
         Close();
-        App->RemoveWindow(this);
+
+        if(App.Current() == nullptr)
+        {
+            throw Exception("Appication does not exist");
+        }
+
+        App->RemoveWindow(*this);
         SDL_DestroyRenderer(_renderer);
-        SDL_DestroyWindow(_window);
+        SDL_DestroyWindow(_sdlWindow);
     }
 
     SDL_Window* Window::GetSDLWindow() const noexcept
     {
-        return _window;
+        return _sdlWindow;
     }
 
-    SDL_Renderer* Window::GetRenderer() const noexcept
+    SDL_Renderer* Window::GetRenderer() const
     {
         return _renderer;
     }
 
-    int Window::GetId() const noexcept
+    SDL_WindowID Window::GetId() const noexcept
     {
         return _id;
     }
 
     void Window::SetWidth(size_t value) noexcept
     {
-        SDL_SetWindowSize(_window, value, GetHeight());
+        SDL_SetWindowSize(_sdlWindow, value, GetHeight());
     }
 
     size_t Window::GetWidth() const noexcept
     {
         int width = 0;
-        SDL_GetWindowSize(_window, &width, nullptr);
+        SDL_GetWindowSize(_sdlWindow, &width, nullptr);
         return width;
     }
 
     void Window::SetHeight(size_t value) noexcept
     {
-        SDL_SetWindowSize(_window, GetWidth(), value);
+        SDL_SetWindowSize(_sdlWindow, GetWidth(), value);
     }
 
     size_t Window::GetHeight() const noexcept
     {
         int height = 0;
-        SDL_GetWindowSize(_window, nullptr, &height);
+        SDL_GetWindowSize(_sdlWindow, nullptr, &height);
         return height;
     }
 
     void Window::SetSize(Size size) noexcept
     {
-        SDL_SetWindowSize(_window, size.Width, size.Height);
+        SDL_SetWindowSize(_sdlWindow, size.Width, size.Height);
     }
 
     Size Window::GetSize() const noexcept
     {
         int width = 0, height = 0;
-        SDL_GetWindowSize(_window, &width, &height);
+        SDL_GetWindowSize(_sdlWindow, &width, &height);
         return Size(width, height);
     }
 
     void Window::SetMaxSize(Size size) noexcept
     {
-        SDL_SetWindowMaximumSize(_window, size.Width, size.Height);
+        SDL_SetWindowMaximumSize(_sdlWindow, size.Width, size.Height);
     }
 
     Size Window::GetMaxSize() const noexcept
     {
         int width = 0, height = 0;
-        SDL_GetWindowMaximumSize(_window, &width, &height);
+        SDL_GetWindowMaximumSize(_sdlWindow, &width, &height);
         return Size(width, height);
     }
 
     void Window::SetMinSize(Size size) noexcept
     {        
-        SDL_SetWindowMinimumSize(_window, size.Width, size.Height);
+        SDL_SetWindowMinimumSize(_sdlWindow, size.Width, size.Height);
     }
 
     Size Window::GetMinSize() const noexcept
     {
         int width = 0, height = 0;
-        SDL_GetWindowMinimumSize(_window, &width, &height);
+        SDL_GetWindowMinimumSize(_sdlWindow, &width, &height);
         return Size(width, height);
     }
 
     void Window::SetTitle(std::string_view value) noexcept
     {
-        SDL_SetWindowTitle(_window, value.data());
+        SDL_SetWindowTitle(_sdlWindow, value.data());
     }
 
     std::string_view Window::GetTitle() const noexcept
     {
-        return std::string_view(SDL_GetWindowTitle(_window));
+        return SDL_GetWindowTitle(_sdlWindow);
     }
 
     void Window::SetPosition(Point value) noexcept
     {
-        SDL_SetWindowPosition(_window, value.x, value.y);
+        SDL_SetWindowPosition(_sdlWindow, value.x, value.y);
     }
 
     Point Window::GetPosition() const noexcept
     {
         Point position = {};
-        SDL_GetWindowPosition(_window, &position.x, &position.y);
+        SDL_GetWindowPosition(_sdlWindow, &position.x, &position.y);
         return position;
     }
 
@@ -156,27 +163,24 @@ namespace Sgl
         switch(displayMode)
         {
             case WindowDisplayMode::Window: 
-                SDL_SetWindowFullscreen(_window, false);
-                SDL_SetWindowBordered(_window, true);
+                SDL_SetWindowFullscreen(_sdlWindow, false);
+                SDL_SetWindowBordered(_sdlWindow, true);
                 break;
 
             case WindowDisplayMode::BorderlessWindow:
-                SDL_SetWindowFullscreen(_window, false);
-                SDL_SetWindowBordered(_window, false);
+                SDL_SetWindowFullscreen(_sdlWindow, false);
+                SDL_SetWindowBordered(_sdlWindow, false);
                 break;
 
             case WindowDisplayMode::Fullscreen:
-                SDL_SetWindowFullscreen(_window, true);
+                SDL_SetWindowFullscreen(_sdlWindow, true);
                 break;
-
-            default:
-                throw std::invalid_argument("Selected display mode does not exist!");
         }
     }
 
     WindowDisplayMode Window::GetDisplayMode() const noexcept
     {
-        auto flags = SDL_GetWindowFlags(_window);
+        auto flags = SDL_GetWindowFlags(_sdlWindow);
         auto state = SDL_WindowFlags(flags & (SDL_WINDOW_FULLSCREEN | SDL_WINDOW_BORDERLESS));
 
         switch(state)
@@ -197,25 +201,22 @@ namespace Sgl
         switch(state)
         {
             case Sgl::WindowState::Normal:
-                SDL_RestoreWindow(_window);
+                SDL_RestoreWindow(_sdlWindow);
                 break;
 
             case Sgl::WindowState::Minimized:
-                SDL_MinimizeWindow(_window);
+                SDL_MinimizeWindow(_sdlWindow);
                 break;
 
             case Sgl::WindowState::Maximized:
-                SDL_MaximizeWindow(_window);
-                break;
-
-            default:
+                SDL_MaximizeWindow(_sdlWindow);
                 break;
         }
     }
 
     WindowState Window::GetWindowState() const noexcept
     {
-        auto flags = SDL_GetWindowFlags(_window);
+        auto flags = SDL_GetWindowFlags(_sdlWindow);
         auto state = SDL_WindowFlags(flags & (SDL_WINDOW_MINIMIZED | SDL_WINDOW_MAXIMIZED));
 
         switch(state)
@@ -235,9 +236,9 @@ namespace Sgl
     {
         _icon = Surface(iconSource);
 
-        if(!SDL_SetWindowIcon(_window, _icon.GetSDLSurface()))
+        if(!SDL_SetWindowIcon(_sdlWindow, _icon.GetSDLSurface()))
         {
-            SDL_Log("Unable to set a window icon: %s", SDL_GetError());
+            Logger::LogWarning("Unable to set a window icon: {}", SDL_GetError());
         }
     }
 
@@ -248,22 +249,22 @@ namespace Sgl
 
     void Window::SetResizable(bool value) noexcept
     {
-        SDL_SetWindowResizable(_window, value);
+        SDL_SetWindowResizable(_sdlWindow, value);
     }
 
     bool Window::IsResizable() const
     {
-        return SDL_GetWindowFlags(_window) & SDL_WINDOW_RESIZABLE;
+        return SDL_GetWindowFlags(_sdlWindow) & SDL_WINDOW_RESIZABLE;
     }
 
     void Window::SetAlwayOnTop(bool value)
     {
-        SDL_SetWindowAlwaysOnTop(_window, value);
+        SDL_SetWindowAlwaysOnTop(_sdlWindow, value);
     }
 
     bool Window::IsAlwayOnTop() const
     {
-        return SDL_GetWindowFlags(_window) & SDL_WINDOW_ALWAYS_ON_TOP;
+        return SDL_GetWindowFlags(_sdlWindow) & SDL_WINDOW_ALWAYS_ON_TOP;
     }
 
     void Window::SetOwner(Window* owner)
@@ -272,14 +273,14 @@ namespace Sgl
 
         if(owner != nullptr)
         {
-            if(!SDL_SetWindowParent(_window, owner->_window))
+            if(!SDL_SetWindowParent(_sdlWindow, owner->_sdlWindow))
             {
-                SDL_Log("Unable to set a parent window: %s", SDL_GetError());
+                Logger::LogWarning("Unable to set a parent window: {}", SDL_GetError());
             }
         }
         else
         {
-            SDL_SetWindowParent(_window, nullptr);
+            SDL_SetWindowParent(_sdlWindow, nullptr);
         }
     }
 
@@ -292,14 +293,24 @@ namespace Sgl
     {
         if(_content)
         {
-            _content->OnDetachedFromLogicalTree();
+            if(IsAttachedToLogicalTree())
+            {
+                _content->OnDetachedFromLogicalTree();
+            }
+
+            _content->SetParent(nullptr);
         }
 
         SetProperty(ContentProperty, _content, std::move(value));
 
         if(_content)
         {
-            _content->OnAttachedToLogicalTree(*this);
+            _content->SetParent(this);
+
+            if(IsAttachedToLogicalTree())
+            {
+                _content->OnAttachedToLogicalTree();
+            }
         }
     }
 
@@ -315,19 +326,29 @@ namespace Sgl
 
     void Window::Show()
     {
-        App->AddActiveWindow(this);
-        SDL_ShowWindow(_window);
+        if(IsVisible())
+        {
+            return;
+        }
+
+        App->AttachWindow(*this);
+        SDL_ShowWindow(_sdlWindow);
     }
 
     void Window::ShowModal(Window& owner)
     {
+        if(IsVisible())
+        {
+            return;
+        }
+
         _isModal = true;
 
         SetOwner(&owner);
 
-        if(!SDL_SetWindowModal(_window, true))
+        if(!SDL_SetWindowModal(_sdlWindow, true))
         {
-            SDL_Log("Unable to set a modal window: %s", SDL_GetError());
+            Logger::LogWarning("Unable to set a modal window: {}", SDL_GetError());
         }
 
         SetPosition(DefaultPosition);
@@ -336,29 +357,28 @@ namespace Sgl
 
     void Window::Hide()
     {
-        _isClosing = false;
-        SDL_HideWindow(_window);
+        SDL_HideWindow(_sdlWindow);
     }
 
     void Window::Close()
     {
-        _isClosing = true;
-        SDL_HideWindow(_window);
+        SDL_Event e;
+        e.window =
+        {
+            .type = SDL_EVENT_WINDOW_CLOSE_REQUESTED,
+            .windowID = _id
+        };
+        SDL_PushEvent(&e);
     }
 
     void Window::Activate()
     {
-        SDL_RaiseWindow(_window);
+        SDL_RaiseWindow(_sdlWindow);
     }
 
     bool Window::IsVisible() const
     {
-        return !(SDL_GetWindowFlags(_window) & (SDL_WINDOW_HIDDEN | SDL_WINDOW_MINIMIZED));
-    }
-
-    bool Window::IsModal() const
-    {
-        return _isModal;
+        return !(SDL_GetWindowFlags(_sdlWindow) & SDL_WINDOW_HIDDEN);
     }
 
     void Window::Render(RenderContext context)
@@ -387,8 +407,6 @@ namespace Sgl
     {
         if(_content)
         {
-            ProcessElementsUpdates();
-
             if(_content->NeedsMeasure())
             {
                 auto [width, height] = GetSize();
@@ -413,6 +431,26 @@ namespace Sgl
         if(!(_content && _content->IsMouseOver()))
         {
             Cursor::Set(cursor);
+        }
+    }
+
+    void Window::OnAttachedToLogicalTree()
+    {
+        StyleableElement::OnAttachedToLogicalTree();
+
+        if(_content)
+        {
+            _content->OnAttachedToLogicalTree();
+        }
+    }
+
+    void Window::OnDetachedFromLogicalTree()
+    {
+        StyleableElement::OnDetachedFromLogicalTree();
+
+        if(_content)
+        {
+            _content->OnDetachedFromLogicalTree();
         }
     }
 
@@ -479,6 +517,8 @@ namespace Sgl
 
     void Window::OnActivated()
     {
+        _isActivated = true;
+
         if(_content && _content->IsMouseOver())
         {
             Cursor::Set(_content->GetCursor());
@@ -491,47 +531,40 @@ namespace Sgl
 
     void Window::OnDeactivated()
     {
-        if(_isClosing)
-        {
-            App->RemoveActiveWindow(this);
+        _isActivated = false;
+    }
 
-            if(_isModal)
-            {
-                SDL_SetWindowModal(_window, false);
-                SetOwner(nullptr);
-            }
+    void Window::OnClosing(CancelEventArgs& e)
+    {   
+        Closing(*this, e);
+
+        if(e.Cancel)
+        {
+            return;
         }
+
+        _isClosing = true;
+        App->DetachWindow(*this);
+
+        if(_isModal)
+        {
+            SDL_SetWindowModal(_sdlWindow, false);
+            SetOwner(nullptr);
+        }        
+    }
+
+    void Window::OnClosed()
+    {
+        _isClosing = false;
+        Closed(*this);
     }
 
     void Window::RenderCore()
     {
-        if(NeedsRendering())
+        if(NeedsRendering() && !IsRenderableWhenMinimized)
         {
-            if(IsVisible() || IsRenderableWhenMinimized)
-            {
-                Render(_renderContext);
-                SDL_RenderPresent(_renderer);
-            }
+            Render(_renderContext);
+            SDL_RenderPresent(_renderer);
         }
-    }
-
-    void Window::RequestUpdate(UIElement& element)
-    {
-        _pendingElementUpdates.push_back(&element);
-    }
-
-    void Window::CancelUpdateRequest(UIElement& element)
-    {
-        std::erase(_pendingElementUpdates, &element);
-    }
-
-    void Window::ProcessElementsUpdates()
-    {
-        for(auto element : _pendingElementUpdates)
-        {
-            element->OnUpdate();
-        }
-
-        _pendingElementUpdates.clear();
     }
 }

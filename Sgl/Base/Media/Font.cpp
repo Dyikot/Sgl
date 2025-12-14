@@ -1,9 +1,11 @@
 #include "Font.h"
-#include <SDL3/SDL_log.h>
+
 #include <SDL3_ttf/SDL_ttf.h>
 #include <SDL3/SDL_platform.h>
 #include <unordered_map>
 #include <filesystem>
+
+#include "../Logger.h"
 
 namespace Sgl
 {
@@ -65,7 +67,7 @@ namespace Sgl
 	{
 		if(_font == nullptr)
 		{
-			SDL_Log("Unable to create a font: %s", SDL_GetError());
+			Logger::LogError("Unable to create a font: {}", SDL_GetError());
 		}
 	}
 

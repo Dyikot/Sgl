@@ -6,7 +6,7 @@
 namespace Sgl
 {
 	/// <summary>
-	/// Default class for all event arguments
+	/// Empty event args
 	/// </summary>
 	struct EventArgs {};
 
@@ -14,7 +14,32 @@ namespace Sgl
 	/// Represents a delegate for handling events with a sender and event arguments.
 	/// </summary>
 	template<typename TSender, typename TEventArgs = EventArgs>
-	using EventHandler = Delegate<void(TSender&, TEventArgs&)>;
+	using EventHandler = Delegate<void(TSender&, TEventArgs)>;
+
+	template<typename TSource, typename TSender, typename TEventArgs>
+	class MethodEventHandler
+	{
+	private:
+		using Method = void(TSource::*)(TSender&, TEventArgs);
+
+		Method _method;
+		TSource* _source;
+	public:
+		MethodEventHandler(Method method, TSource* source):
+			_method(method),
+			_source(source)
+		{}
+
+		void operator()(TSender& sender, TEventArgs e) const
+		{
+			(_source->*_method)(sender, e);
+		}
+
+		friend bool operator==(const MethodEventHandler& left, const MethodEventHandler& right)
+		{
+			return left._method == right._method;
+		}
+	};
 
 	template<typename T>
 	class Event;
@@ -34,7 +59,6 @@ namespace Sgl
 		/// Default constructor. Creates an empty event with no handlers.
 		/// </summary>
 		Event() = default;
-
 		Event(const Event&) = delete;
 		Event(Event&&) = delete;
 
@@ -80,13 +104,13 @@ namespace Sgl
 		{
 			std::erase(_eventHandlers, handler);
 		}
-
+	private:
 		/// <summary>
 		/// Invokes all registered event handlers with the specified sender and event arguments.
 		/// </summary>
 		/// <param name="sender"> - The sender object that is raising the event.</param>
 		/// <param name="e"> - The event arguments containing data about the event.</param>
-		void operator()(TSender& sender, TEventArgs& e) const
+		void operator()(TSender& sender, TEventArgs e) const
 		{
 			for(const EventHandler& eventHandler : _eventHandlers)
 			{
@@ -98,13 +122,14 @@ namespace Sgl
 		/// Invokes event with default-constructed event arguments.
 		/// </summary>
 		/// <param name="sender">The sender object raising the event</param>
-		void operator()(TSender& sender) const
+		void operator()(TSender& sender) const requires std::default_initializable<TEventArgs>
 		{
-			TEventArgs e {};
-			operator()(sender, e);
+			operator()(sender, TEventArgs());
 		}
 
 		Event& operator=(const Event&) = delete;
 		Event& operator=(Event&&) = delete;
+
+		friend TSender;
 	};
 }

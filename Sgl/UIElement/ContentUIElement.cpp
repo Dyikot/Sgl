@@ -7,7 +7,7 @@ namespace Sgl
 	ContentUIElement::ContentUIElement(const ContentUIElement& other):
 		UIElement(other),
 		_content(other._content),
-		_presenter(other._presenter),
+		_contentPresenter(other._contentPresenter),
 		_contentTemplate(other._contentTemplate),
 		_padding(other._padding),
 		_horizontalContentAlignment(other._horizontalContentAlignment),
@@ -22,15 +22,15 @@ namespace Sgl
 		_padding(std::move(other._padding)),
 		_horizontalContentAlignment(std::move(other._horizontalContentAlignment)),
 		_verticalContentAlignment(std::move(other._verticalContentAlignment)),
-		_presenter(std::move(other._presenter)),
+		_contentPresenter(std::move(other._contentPresenter)),
 		_isContentPresenterValid(other._isContentPresenterValid)
 	{}
 
 	ContentUIElement::~ContentUIElement()
 	{
-		if(_presenter)
+		if(_contentPresenter)
 		{
-			OnContentPresenterDestroying(_presenter.GetValue());
+			OnContentPresenterDestroying(_contentPresenter.GetValue());
 		}
 	}
 
@@ -83,17 +83,17 @@ namespace Sgl
 	{
 		Renderable::SetVisualRoot(value);
 
-		if(_presenter)
+		if(_contentPresenter)
 		{
-			_presenter->SetVisualRoot(value);
+			_contentPresenter->SetVisualRoot(value);
 		}
 	}
 
 	void ContentUIElement::Render(RenderContext context)
 	{
-		if(_presenter && _presenter->IsVisible())
+		if(_contentPresenter && _contentPresenter->IsVisible())
 		{
-			_presenter->Render(context);
+			_contentPresenter->Render(context);
 		}
 
 		UIElement::Render(context);
@@ -103,25 +103,55 @@ namespace Sgl
 	{
 		StyleableElement::ApplyStyle();
 
-		if(_presenter)
+		if(_contentPresenter)
 		{
-			_presenter->ApplyStyle();
+			_contentPresenter->ApplyStyle();
 		}
 	}
 
 	void ContentUIElement::OnContentPresenterCreated(UIElement& presenter)
 	{
-		presenter.OnAttachedToLogicalTree(*this);		
+		presenter.SetParent(this);
+
+		if(IsAttachedToLogicalTree())
+		{
+			presenter.OnAttachedToLogicalTree();		
+		}
 	}
 
 	void ContentUIElement::OnContentPresenterDestroying(UIElement& presenter)
 	{
-		presenter.OnDetachedFromLogicalTree();
+		if(IsAttachedToLogicalTree())
+		{
+			presenter.OnDetachedFromLogicalTree();
+		}
+
+		SetParent(nullptr);
+	}
+
+	void ContentUIElement::OnAttachedToLogicalTree()
+	{
+		UIElement::OnAttachedToLogicalTree();
+
+		if(_contentPresenter)
+		{
+			_contentPresenter->OnAttachedToLogicalTree();
+		}
+	}
+
+	void ContentUIElement::OnDetachedFromLogicalTree()
+	{
+		UIElement::OnDetachedFromLogicalTree();
+
+		if(_contentPresenter)
+		{
+			_contentPresenter->OnDetachedFromLogicalTree();
+		}
 	}
 
 	void ContentUIElement::OnCursorChanged(const Cursor& cursor)
 	{
-		if(IsMouseOver() && !(_presenter && _presenter->IsMouseOver()))
+		if(IsMouseOver() && !(_contentPresenter && _contentPresenter->IsMouseOver()))
 		{
 			Cursor::Set(cursor);
 		}
@@ -131,23 +161,23 @@ namespace Sgl
 	{
 		UIElement::OnMouseMove(e);
 
-		if(_presenter)
+		if(_contentPresenter)
 		{
-			bool wasMouseOver = _presenter->_isMouseOver;
-			bool isMouseOver = LayoutHelper::IsPointInRect(e.X, e.Y, _presenter->_bounds);
+			bool wasMouseOver = _contentPresenter->_isMouseOver;
+			bool isMouseOver = LayoutHelper::IsPointInRect(e.X, e.Y, _contentPresenter->_bounds);
 
 			if(isMouseOver)
 			{
 				if(!wasMouseOver)
 				{
-					_presenter->OnMouseEnter(e);
+					_contentPresenter->OnMouseEnter(e);
 				}
 
-				_presenter->OnMouseMove(e);
+				_contentPresenter->OnMouseMove(e);
 			}
 			else if(wasMouseOver)
 			{
-				_presenter->OnMouseLeave(e);
+				_contentPresenter->OnMouseLeave(e);
 				Cursor::Set(GetCursor());
 			}
 		}
@@ -157,9 +187,9 @@ namespace Sgl
 	{
 		UIElement::OnMouseDown(e);
 
-		if(_presenter && _presenter->IsMouseOver() && _presenter->IsVisible())
+		if(_contentPresenter && _contentPresenter->IsVisible() && _contentPresenter->IsMouseOver())
 		{
-			_presenter->OnMouseDown(e);
+			_contentPresenter->OnMouseDown(e);
 		}
 	}
 
@@ -167,9 +197,9 @@ namespace Sgl
 	{
 		UIElement::OnMouseUp(e);
 
-		if(_presenter && _presenter->IsMouseOver() && _presenter->IsVisible())
+		if(_contentPresenter && _contentPresenter->IsVisible() && _contentPresenter->IsMouseOver())
 		{
-			_presenter->OnMouseUp(e);
+			_contentPresenter->OnMouseUp(e);
 		}
 	}
 
@@ -177,25 +207,14 @@ namespace Sgl
 	{
 		UIElement::OnMouseLeave(e);
 
-		if(_presenter && _presenter->IsVisible())
+		if(_contentPresenter && _contentPresenter->IsVisible())
 		{
-			_presenter->OnMouseLeave(e);
-		}
-	}
-
-	void ContentUIElement::OnUpdate()
-	{
-		UIElement::OnUpdate();
-
-		if(!_isContentPresenterValid)
-		{
-			UpdatePresenter();
+			_contentPresenter->OnMouseLeave(e);
 		}
 	}
 
 	void ContentUIElement::InvalidateContentPresenter()
 	{
-		RequestUpdate();
 		InvalidateMeasure();
 
 		_isContentPresenterValid = false;
@@ -203,7 +222,12 @@ namespace Sgl
 
 	FSize ContentUIElement::MeasureContent(FSize avaliableSize)
 	{
-		if(_presenter)
+		if(!_isContentPresenterValid)
+		{
+			UpdatePresenter();
+		}
+
+		if(_contentPresenter)
 		{
 			FSize contentAvaliableSize =
 			{
@@ -215,8 +239,8 @@ namespace Sgl
 					GetMaxHeight())
 			};
 
-			 _presenter->Measure(contentAvaliableSize);
-			 auto [width, height] = _presenter->GetDesiredSize();
+			 _contentPresenter->Measure(contentAvaliableSize);
+			 auto [width, height] = _contentPresenter->GetDesiredSize();
 
 			 return FSize 
 			 {
@@ -230,7 +254,7 @@ namespace Sgl
 
 	void ContentUIElement::ArrangeContent(FRect rect)
 	{
-		if(_presenter)
+		if(_contentPresenter)
 		{
 			FRect finalRect =
 			{
@@ -252,15 +276,15 @@ namespace Sgl
 
 			if(_verticalContentAlignment != VerticalAlignment::Top)
 			{
-				_presenter->SetVerticalAlignment(_verticalContentAlignment);
+				_contentPresenter->SetVerticalAlignment(_verticalContentAlignment);
 			}
 
 			if(_horizontalContentAlignment != HorizontalAlignment::Left)
 			{
-				_presenter->SetHorizontalAlignment(_horizontalContentAlignment);
+				_contentPresenter->SetHorizontalAlignment(_horizontalContentAlignment);
 			}
 
-			_presenter->Arrange(finalRect);
+			_contentPresenter->Arrange(finalRect);
 		}
 	}
 
@@ -268,17 +292,17 @@ namespace Sgl
 	{
 		if(_contentTemplate && _contentTemplate->Match(_content))
 		{
-			if(_presenter)
+			if(_contentPresenter)
 			{
-				OnContentPresenterDestroying(_presenter.GetValue());
+				OnContentPresenterDestroying(_contentPresenter.GetValue());
 			}
 
-			_presenter = _contentTemplate->Build(_content);
+			_contentPresenter = _contentTemplate->Build(_content);
 			_isContentPresenterValid = true;
 
-			if(_presenter)
+			if(_contentPresenter)
 			{
-				OnContentPresenterCreated(_presenter.GetValue());
+				OnContentPresenterCreated(_contentPresenter.GetValue());
 			}
 
 			return true;

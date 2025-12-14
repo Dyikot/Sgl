@@ -37,8 +37,8 @@ namespace Sgl
 	{
 		float X;
 		float Y;
-		float ScrolledByX;
-		float ScrolledByY;
+		int ScrolledByX;
+		int ScrolledByY;
 		MouseWheelDirection Direction;
 	};
 }

@@ -22,7 +22,7 @@ namespace Sgl
 	class ObservableCollection : public Collection<T>
 	{
 	public:
-		using CollectionChangedEventHandler = EventHandler<ObservableCollection<T>, ObservableCollectionChangedEventArgs>;
+		using CollectionChangedEventHandler = EventHandler<ObservableCollection<T>, ObservableCollectionChangedEventArgs&>;
 
 		Event<CollectionChangedEventHandler> CollectionChanged;
 	private:

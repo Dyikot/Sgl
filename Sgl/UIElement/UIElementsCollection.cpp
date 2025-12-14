@@ -6,11 +6,6 @@ namespace Sgl
 		_owner(owner)
 	{}
 
-	UIElementsCollection::UIElementsCollection(const UIElementsCollection& other):
-		base(other),
-		_owner(other._owner)
-	{}
-
 	UIElementsCollection::UIElementsCollection(UIElementsCollection && other) noexcept:
 		base(std::move(other)),
 		_owner(other._owner)
@@ -57,13 +52,22 @@ namespace Sgl
 
 	void UIElementsCollection::OnChildAdded(UIElement& child)
 	{
-		child.OnAttachedToLogicalTree(_owner);
+		child.SetParent(&_owner);
+
+		if(child.IsAttachedToLogicalTree())
+		{
+			child.OnAttachedToLogicalTree();
+		}
 	}
 
 	void UIElementsCollection::OnChildRemoving(UIElement& child)
 	{
+		if(child.IsAttachedToLogicalTree())
+		{
+			child.OnDetachedFromLogicalTree();
+		}
+
 		child.SetParent(nullptr);
-		child.OnDetachedFromLogicalTree();
 	}
 }
 

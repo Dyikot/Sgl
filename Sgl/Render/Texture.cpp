@@ -1,8 +1,9 @@
 #include "Texture.h"
 
-#include <SDL3/SDL_log.h>
 #include <SDL3_ttf/SDL_ttf.h>
 #include <SDL3_image/SDL_image.h>
+
+#include "../Base/Logger.h"
 
 namespace Sgl
 {
@@ -15,7 +16,7 @@ namespace Sgl
 	{
 		if(_texture == nullptr)
 		{
-			SDL_Log("Unable to create a texture: %s", SDL_GetError());
+			Logger::LogError("Unable to create a texture: {}", SDL_GetError());
 		}
 	}
 
@@ -30,7 +31,7 @@ namespace Sgl
 	{
 		if(_texture == nullptr)
 		{
-			SDL_Log("Unable to create a texture: %s", SDL_GetError());
+			Logger::LogError("Unable to create a texture: {}", SDL_GetError());
 		}
 	}
 
@@ -60,7 +61,7 @@ namespace Sgl
 
 		if(_texture == nullptr)
 		{
-			SDL_Log("Unable to create a texture: %s", SDL_GetError());
+			Logger::LogError("Unable to create a texture: {}", SDL_GetError());
 		}
 	}
 
@@ -90,7 +91,7 @@ namespace Sgl
 
 		if(_texture == nullptr)
 		{
-			SDL_Log("Unable to create a texture: %s", SDL_GetError());
+			Logger::LogError("Unable to create a texture: {}", SDL_GetError());
 		}
 	}
 
@@ -151,7 +152,7 @@ namespace Sgl
 
 		if(id == 0)
 		{
-			SDL_Log("Unable to get a texture property: %s", SDL_GetError());
+			Logger::LogError("Unable to get a texture property: {}", SDL_GetError());
 		}
 
 		return TextureAccess(SDL_GetNumberProperty(id, SDL_PROP_TEXTURE_ACCESS_NUMBER, 0));
@@ -188,7 +189,7 @@ namespace Sgl
 
 		if(SDL_LockTexture(_texture.GetSDLTexture(), lockRect, &_pixels, &_pitch) < 0)
 		{
-			SDL_Log("Unable to lock a texture: %s", SDL_GetError());
+			Logger::LogError("Unable to lock a texture: {}", SDL_GetError());
 		}
 	}
 

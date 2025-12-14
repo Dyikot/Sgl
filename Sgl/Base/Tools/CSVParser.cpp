@@ -1,6 +1,9 @@
 #include "CSVParser.h"
+
 #include <fstream>
 #include <format>
+
+#include "../Logger.h"
 
 namespace Sgl
 {
@@ -41,15 +44,16 @@ namespace Sgl
 		return records;
 	}
 
-	CSVParser::CSVParser(std::string_view filePath, char delimeter)
-		: FilePath(filePath), Delimeter(delimeter)
+	CSVParser::CSVParser(std::string path, char delimeter):
+		FilePath(std::move(path)),
+		Delimeter(delimeter)
 	{}
 
 	bool CSVParser::ParseTo(std::vector<std::string>& headers, std::vector<std::string>& records)
 	{
 		bool success = false;
 
-		if(std::ifstream stream(FilePath.data()); stream.is_open())
+		if(auto stream = std::ifstream(FilePath))
 		{
 			std::string line;
 
@@ -68,8 +72,7 @@ namespace Sgl
 		}
 		else
 		{
-			auto message = std::format("Cannot open file: {}", FilePath);
-			throw std::runtime_error(message);
+			Logger::LogWarning("Unbale to open the file: {}", FilePath);
 		}
 
 		return success;

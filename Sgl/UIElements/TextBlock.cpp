@@ -7,7 +7,7 @@ namespace Sgl::UIElements
 {
 	TextBlock::TextBlock()
 	{
-		RequestUpdate();
+		
 	}
 
 	TextBlock::TextBlock(const TextBlock& other):
@@ -175,6 +175,11 @@ namespace Sgl::UIElements
 			return FSize();
 		}
 
+		if(_fontValidationBits.any())
+		{
+			UpdateFont();
+		}
+
 		int width = 0;
 		int height = 0;		
 
@@ -210,19 +215,8 @@ namespace Sgl::UIElements
 		_textTextureBounds.y = rect.y + _padding.Top;
 	}
 
-	void TextBlock::OnUpdate()
-	{
-		UIElement::OnUpdate();
-
-		if(_fontValidationBits.any())
-		{
-			UpdateFont();			
-		}
-	}
-
 	void TextBlock::InvalidateFont(size_t bit)
 	{
-		RequestUpdate();
 		_fontValidationBits.set(bit);
 	}
 

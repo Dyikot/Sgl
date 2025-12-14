@@ -14,7 +14,7 @@ namespace Sgl
 		UIElement& _owner;
 	public:
 		UIElementsCollection(UIElement& owner);
-		UIElementsCollection(const UIElementsCollection& other);
+		UIElementsCollection(const UIElementsCollection&) = delete;
 		UIElementsCollection(UIElementsCollection&& other) noexcept;
 		~UIElementsCollection();
 	protected:

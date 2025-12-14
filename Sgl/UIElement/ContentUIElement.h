@@ -9,7 +9,7 @@ namespace Sgl
 	private:
 		Ref<ObservableObject> _content;
 		Ref<IDataTemplate> _contentTemplate = New<UIElementDataTemplate>();
-		Ref<UIElement> _presenter;
+		Ref<UIElement> _contentPresenter;
 		Thickness _padding;
 		VerticalAlignment _verticalContentAlignment = VerticalAlignment::Top;
 		HorizontalAlignment _horizontalContentAlignment = HorizontalAlignment::Left;
@@ -20,7 +20,7 @@ namespace Sgl
 		ContentUIElement(ContentUIElement&& other) noexcept;
 		~ContentUIElement();
 		
-		const Ref<UIElement>& GetContentPresenter() const { return _presenter; }
+		const Ref<UIElement>& GetContentPresenter() const { return _contentPresenter; }
 
 		void SetContent(Ref<ObservableObject> content);
 		Ref<ObservableObject> GetContent() const { return _content; }
@@ -38,17 +38,19 @@ namespace Sgl
 		HorizontalAlignment GetHorizontalContentAlignment() const { return _horizontalContentAlignment; }
 
 		void SetVisualRoot(IVisualRoot* value) override;
+
 		void Render(RenderContext context) override;
 		void ApplyStyle() override;
 	protected:
 		virtual void OnContentPresenterCreated(UIElement& presenter);
 		virtual void OnContentPresenterDestroying(UIElement& presenter);
+		void OnAttachedToLogicalTree() override;
+		void OnDetachedFromLogicalTree() override;
 		void OnCursorChanged(const Cursor& cursor) override;
 		void OnMouseMove(MouseMoveEventArgs e) override;
 		void OnMouseDown(MouseButtonEventArgs e) override;
 		void OnMouseUp(MouseButtonEventArgs e) override;
 		void OnMouseLeave(MouseMoveEventArgs e) override;
-		void OnUpdate() override;
 		void InvalidateContentPresenter();
 		
 		FSize MeasureContent(FSize avaliableSize) override;

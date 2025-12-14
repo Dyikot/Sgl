@@ -9,7 +9,7 @@ namespace Sgl
 	/// <summary>
 	/// Represents a timer that raises an event after a specified duration.
 	/// </summary>
-	class Timer
+	class Timer final
 	{
 	public:
 		using TimeElapsedHandler = EventHandler<Timer>;

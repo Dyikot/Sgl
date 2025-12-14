@@ -1,8 +1,8 @@
 #include "Cursor.h"
 
 #include <stdexcept>
-#include <SDL3/SDL_log.h>
 #include <SDL3_image/SDL_image.h>
+#include "../Base/Logger.h"
 
 namespace Sgl
 {
@@ -88,7 +88,7 @@ namespace Sgl
     {
         if(_cursor == nullptr)
         {
-            SDL_Log("Unable to create a cursor: %s", SDL_GetError());
+            Logger::LogError("Unable to create a cursor: {}", SDL_GetError());
         }
     }
 
@@ -117,7 +117,7 @@ namespace Sgl
     {
         if(SDL_ShowCursor())
         {
-            SDL_Log("Unable to show a cursor: %s", SDL_GetError());
+            Logger::LogWarning("Unable to show a cursor: {}", SDL_GetError());
         }
     }
 
@@ -125,7 +125,7 @@ namespace Sgl
     {
         if(SDL_HideCursor())
         {
-            SDL_Log("Unable to hide a cursor: %s", SDL_GetError());
+            Logger::LogWarning("Unable to hide a cursor: {}", SDL_GetError());
         }
     }
 
