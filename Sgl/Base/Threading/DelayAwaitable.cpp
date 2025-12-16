@@ -3,8 +3,17 @@
 
 namespace Sgl
 {
-	DelayAwaitable::DelayAwaitable(TimeSpan duration):
-		_duration(duration)
+	DelayAwaitable::DelayAwaitable(size_t millisecondsDelay):
+		_duration(TimeSpan::FromMilliseconds(millisecondsDelay))
+	{}
+
+	DelayAwaitable::DelayAwaitable(TimeSpan delay):
+		_duration(delay)
+	{}
+
+	DelayAwaitable::DelayAwaitable(size_t millisecondsDelay, std::stop_token stopToken):
+		_duration(TimeSpan::FromMilliseconds(millisecondsDelay)),
+		_stopToken(stopToken)
 	{}
 
 	DelayAwaitable::DelayAwaitable(TimeSpan duration, std::stop_token stopToken):

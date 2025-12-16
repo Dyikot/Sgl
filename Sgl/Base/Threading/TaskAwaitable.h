@@ -17,7 +17,7 @@ namespace Sgl
 		std::optional<T> _result {};
 		std::exception_ptr _exeption;
 	public:
-		TaskAwaitable(Func<T> func, bool saveContext):
+		explicit TaskAwaitable(Func<T> func, bool saveContext = false):
 			_func(std::move(func)),
 			_saveContext(saveContext)
 		{}
@@ -26,7 +26,7 @@ namespace Sgl
 
 		void await_suspend(std::coroutine_handle<> handle)
 		{
-			ThreadPool::Current().QueueTask([this, handle]
+			ThreadPool::QueueTask([this, handle]
 			{
 				try
 				{
@@ -67,7 +67,7 @@ namespace Sgl
 		bool _saveContext;
 		std::exception_ptr _exeption;
 	public:
-		TaskAwaitable(Action<> action, bool saveContext):
+		explicit TaskAwaitable(Action<> action, bool saveContext = false):
 			_action(std::move(action)),
 			_saveContext(saveContext)
 		{}
@@ -106,4 +106,10 @@ namespace Sgl
 			}
 		}
 	};
+
+	template<typename TFunc>
+	TaskAwaitable(TFunc&&) -> TaskAwaitable<std::invoke_result_t<TFunc>>;
+
+	template<typename TFunc>
+	TaskAwaitable(TFunc&&, bool) -> TaskAwaitable<std::invoke_result_t<TFunc>>;
 }
