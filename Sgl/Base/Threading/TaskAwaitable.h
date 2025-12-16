@@ -76,7 +76,7 @@ namespace Sgl
 
 		void await_suspend(std::coroutine_handle<> handle)
 		{
-			ThreadPool::Current().QueueTask([this, handle]
+			ThreadPool::QueueTask([this, handle]
 			{
 				try
 				{

@@ -24,6 +24,11 @@ namespace Sgl
             throw Exception("Unable to create a window: {}", SDL_GetError());
         }
 
+        if(_renderer == nullptr)
+        {
+            throw Exception("Unable to create a renderer: {}", SDL_GetError());
+        }
+
         if(App.Current() == nullptr)
         {
             throw Exception("Cannot create a window without an application");
@@ -31,12 +36,6 @@ namespace Sgl
 
         _id = SDL_GetWindowID(_sdlWindow);
         App->AddWindow(*this);
-
-        if(_renderer == nullptr)
-        {
-            throw Exception("Unable to create a renderer: {}", SDL_GetError());
-        }
-
         SetVisualRoot(this);
         SetBackground(Colors::White);
     }
@@ -269,13 +268,27 @@ namespace Sgl
 
     void Window::SetOwner(Window* owner)
     {
+        if(_owner == owner)
+        {
+            return;
+        }
+
+        if(_owner)
+        {
+            std::erase(_owner->_ownedWindows, this);
+        }
+
         _owner = owner;
 
         if(owner != nullptr)
         {
-            if(!SDL_SetWindowParent(_sdlWindow, owner->_sdlWindow))
+            if(SDL_SetWindowParent(_sdlWindow, owner->_sdlWindow))
             {
-                Logger::LogWarning("Unable to set a parent window: {}", SDL_GetError());
+                owner->_ownedWindows.push_back(this);
+            }
+            else
+            {
+                Logger::LogWarning("Unable to set an owner for a window: {}", SDL_GetError());
             }
         }
         else
@@ -287,6 +300,11 @@ namespace Sgl
     Window* Window::GetOwner() const
     {
         return _owner;
+    }
+
+    const std::list<Window*>& Window::GetOwnedWindows() const
+    {
+        return _ownedWindows;
     }
 
     void Window::SetContent(Ref<UIElement> value)
@@ -335,11 +353,11 @@ namespace Sgl
         SDL_ShowWindow(_sdlWindow);
     }
 
-    void Window::ShowModal(Window& owner)
+    ModalWindowAwaitable Window::ShowModal(Window& owner)
     {
         if(IsVisible())
         {
-            return;
+            return ModalWindowAwaitable(*this);
         }
 
         _isModal = true;
@@ -353,6 +371,8 @@ namespace Sgl
 
         SetPosition(DefaultPosition);
         Show();
+
+        return ModalWindowAwaitable(*this);
     }
 
     void Window::Hide()
@@ -534,6 +554,11 @@ namespace Sgl
         _isActivated = false;
     }
 
+    void Window::OnShown()
+    {
+        _isClosed = false;
+    }
+
     void Window::OnClosing(CancelEventArgs& e)
     {   
         Closing(*this, e);
@@ -544,18 +569,21 @@ namespace Sgl
         }
 
         _isClosing = true;
-        App->DetachWindow(*this);
-
-        if(_isModal)
-        {
-            SDL_SetWindowModal(_sdlWindow, false);
-            SetOwner(nullptr);
-        }        
+        App->DetachWindow(*this);              
     }
 
     void Window::OnClosed()
     {
         _isClosing = false;
+        _isClosed = true;
+
+        if(_isModal)
+        {
+            SDL_SetWindowModal(_sdlWindow, false);
+            SetOwner(nullptr);
+            _isModal = false;
+        }
+
         Closed(*this);
     }
 
@@ -566,5 +594,5 @@ namespace Sgl
             Render(_renderContext);
             SDL_RenderPresent(_renderer);
         }
-    }
+    }    
 }

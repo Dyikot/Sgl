@@ -17,7 +17,7 @@ namespace Sgl
 		void Post(Action<> task);
 		void AddHandle(std::coroutine_handle<> hanlde);
 	private:
-		void ProcessTasks();
+		void Process();
 
 		friend class Application;
 	};

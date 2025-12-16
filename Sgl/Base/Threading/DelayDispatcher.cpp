@@ -1,21 +1,15 @@
-#include "Time.h"
+#include "DelayDispatcher.h"
 
 using namespace std::chrono;
 
 namespace Sgl
 {
-	TimeSheduler& TimeSheduler::Current()
+	void DelayDispatcher::Add(TimeSpan duration, std::coroutine_handle<> handle)
 	{
-		static TimeSheduler sheduler;
-		return sheduler;
+		Add(duration, std::stop_token(), handle);
 	}
 
-	void TimeSheduler::Shedule(TimeSpan duration, std::coroutine_handle<> handle)
-	{
-		Shedule(duration, std::stop_token(), handle);
-	}
-
-	void TimeSheduler::Shedule(TimeSpan duration, std::stop_token stopToken, std::coroutine_handle<> handle)
+	void DelayDispatcher::Add(TimeSpan duration, std::stop_token stopToken, std::coroutine_handle<> handle)
 	{
 		auto durationNs = nanoseconds(duration.ToNanoseconds());
 		auto wakeTime = high_resolution_clock::now() + durationNs;
@@ -32,7 +26,7 @@ namespace Sgl
 		}
 	}
 
-	void TimeSheduler::Process()
+	void DelayDispatcher::Process()
 	{
 		std::vector<std::coroutine_handle<>> handlesToResume;
 
@@ -78,26 +72,5 @@ namespace Sgl
 				handle.resume();
 			}
 		}
-	}
-
-	TimeAwaitable::TimeAwaitable(TimeSpan duration):
-		_duration(duration)
-	{}
-
-	TimeAwaitable::TimeAwaitable(TimeSpan duration, std::stop_token stopToken):
-		_duration(duration),
-		_stopToken(stopToken)
-	{}
-
-	static constexpr TimeSpan ReadyDuration = TimeSpan(1e9 / 60.0);
-
-	bool TimeAwaitable::await_ready()
-	{
-		return _duration < ReadyDuration;
-	}
-
-	void TimeAwaitable::await_suspend(std::coroutine_handle<> handle)
-	{
-		TimeSheduler::Current().Shedule(_duration, _stopToken, handle);
-	}
+	}	
 }

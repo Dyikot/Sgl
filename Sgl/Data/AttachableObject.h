@@ -1,7 +1,6 @@
 #pragma once
 
 #include <unordered_map>
-#include <stdexcept>
 #include "../Base/Any.h"
 #include "AttachProperty.h"
 #include "ObservableObject.h"

@@ -1,12 +1,13 @@
 #pragma once
 
 #include <optional>
-#include "Render/Surface.h"
+#include <coroutine>
 #include "Base/Event.h"
-#include "Base/Time/Stopwatch.h"
+#include "Base/Logger.h"
+#include "Base/Threading/ModalWindowAwaitable.h"
+#include "Render/Surface.h"
 #include "Input/TextEventArgs.h"
 #include "UIElement/UIElement.h"
-#include "Base/Logger.h"
 
 namespace Sgl
 {
@@ -42,6 +43,11 @@ namespace Sgl
 		bool Cancel;
 	};
 
+	enum class DialogResult
+	{
+		None, Accept, Cancel
+	};	
+
 	/// <summary>
 	/// The Window class provides a high-level interface for creating and managing window,
 	/// handling events, and rendering graphics. It encapsulates SDL_Window and SDL_Renderer
@@ -54,7 +60,7 @@ namespace Sgl
 		using WindowStateEventHandler = EventHandler<Window, WindowStateChangedEventArgs>;
 		using WindowPositionChangedEventHandler = EventHandler<Window, WindowPositionChangedEventArgs>;
 		using WindowSizeChangedEventHandler = EventHandler<Window, WindowSizeChangedEventArgs>;
-		using CancelEventHandler = EventHandler<Window, CancelEventArgs>;
+		using CancelEventHandler = EventHandler<Window, CancelEventArgs&>;
 	public:
 		/// <summary>
 		/// Event triggered when the window's state changes (minimized, maximized, restored)
@@ -78,6 +84,7 @@ namespace Sgl
 		/// Determines if the window should be rendered when minimized
 		/// </summary>
 		bool IsRenderableWhenMinimized = false;
+		DialogResult DialogResult = DialogResult::None;
 	private:
 		SDL_Window* _sdlWindow;
 		SDL_Renderer* _renderer;
@@ -86,10 +93,11 @@ namespace Sgl
 		Ref<UIElement> _content;
 		bool _isModal = false;
 		bool _isClosing = false;
+		bool _isClosed = true;
 		bool _isActivated = false;
 		bool _isRenderValid = false;
 		Window* _owner = nullptr;
-		std::vector<Window*> _ownedWindows;
+		std::list<Window*> _ownedWindows;
 		Surface _icon;
 		std::string _iconSource;
 	public:
@@ -254,6 +262,8 @@ namespace Sgl
 		void SetOwner(Window* owner);
 		Window* GetOwner() const;
 
+		const std::list<Window*>& GetOwnedWindows() const;
+
 		void SetContent(Ref<UIElement> value);
 		Ref<UIElement> GetContent() const;		
 
@@ -266,10 +276,11 @@ namespace Sgl
 		void Show();
 
 		/// <summary>
-		/// Set the window as modal and show it
+		/// Shows window as modal
 		/// </summary>
 		/// <param name="owner"> - the window that will own this window</param>
-		void ShowModal(Window& owner);
+		/// <returns>WindowModalAwaitable - object that can be co_awaited</returns>
+		ModalWindowAwaitable ShowModal(Window& owner);
 
 		/// <summary>
 		/// Hides the window
@@ -298,6 +309,8 @@ namespace Sgl
 		/// <returns>- true if visible, false otherwise</returns>
 		bool IsVisible() const;
 
+		bool IsClosed() const { return _isClosed; }
+
 		void Render(RenderContext context) final;
 		void ApplyStyle() override;		
 		virtual void Process();
@@ -320,6 +333,7 @@ namespace Sgl
 		virtual void OnMouseLeave() {}
 		virtual void OnActivated();
 		virtual void OnDeactivated();
+		virtual void OnShown();
 		virtual void OnClosing(CancelEventArgs& e);
 		virtual void OnClosed();
 	private:

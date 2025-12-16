@@ -1,6 +1,7 @@
 #include "StringLocalizer.h"
 #include "../Tools/CSVParser.h"
 #include "../Logger.h"
+#include "../Exceptions.h"
 
 namespace Sgl
 {
@@ -12,7 +13,7 @@ namespace Sgl
 	{
 		if(_headers.size() < 2 || _records.size() < 2)
 		{
-			throw std::length_error("Storage is empty");
+			throw Exception("Storage is empty");
 		}
 
 		CreateRecordIndex();
@@ -31,7 +32,7 @@ namespace Sgl
 
 		if(_headers.size() < 2 || _records.size() < 2)
 		{
-			throw std::length_error("Storage is empty");
+			throw Exception("Storage is empty");
 		}
 
 		CreateRecordIndex();
@@ -54,7 +55,7 @@ namespace Sgl
 			}
 		}
 
-		throw std::out_of_range("The current culture does not exist in the storage");
+		throw Exception("The current culture does not exist in the storage");
 	}
 
 	const std::string& StringLocalizer::GetCulture() const
@@ -78,8 +79,7 @@ namespace Sgl
 			return it->second;
 		}
 
-		auto message = std::format("The record '{}' does not exist", record);
-		throw std::out_of_range(message);
+		throw Exception("The record '{}' does not exist", record);
 	}
 }
 

@@ -14,7 +14,7 @@ namespace Sgl
 		_handles.push_back(hanlde);
 	}
 
-	void Dispatcher::ProcessTasks()
+	void Dispatcher::Process()
 	{
 		std::vector<Action<>> tasks;
 		std::vector<std::coroutine_handle<>> handles;

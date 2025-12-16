@@ -41,11 +41,7 @@ namespace Sgl
 			std::ranges::sort(_items, _comparer);
 		}
 
-		~SortedVector() = default;
-
-		auto begin() { return _items.begin(); }
 		auto begin() const { return _items.begin(); }
-		auto end() { return _items.end(); }
 		auto end() const { return _items.end(); }
 
 		void Add(const T& item)

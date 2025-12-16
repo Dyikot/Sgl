@@ -27,17 +27,9 @@ namespace Sgl
 		ThemeVariant Theme;
 	};
 
-	class TimeSheduler;
-
 	class Application : public IStyleRoot
 	{
 	private:
-		struct WindowWithId
-		{
-			SDL_WindowID Id;
-			Window* Window;
-		};
-
 		using ApplicationEventHandler = EventHandler<Application>;
 		using ThemeVariantChangedEventHanlder = EventHandler<Application, ThemeVariantChangedEventArgs>;
 	public:
@@ -58,17 +50,14 @@ namespace Sgl
 		static inline Application* _current;
 
 		bool _isRunning = false;
-		Stopwatch _stopwatch;
 		ThemeMode _themeMode;
 		ThemeVariant _themeVariant;
 		std::string _culture = "en";
-		TimeSheduler& _timeSheduler;
 		Ref<StringLocalizerBase> _localizer;
 
 		Window* _focusedWindow = nullptr;
 		std::vector<Window*> _windows;
 		std::vector<Window*> _activeWindows;
-		std::vector<WindowWithId> _windowsWithId;
 	public:
 		Application() noexcept;
 		Application(const Application&) = delete;
@@ -87,7 +76,7 @@ namespace Sgl
 		const Ref<StringLocalizerBase>& GetLocalizer() const { return _localizer; }
 
 		StyleMap& GetStyles() final { return Styles; }
-		IStyleHost* GetStylingParent() final { return nullptr; }		
+		IStyleHost* GetStylingParent() final { return nullptr; }
 		const std::vector<Window*> GetWindows() const noexcept { return _activeWindows; }
 
 		void Run();
@@ -99,13 +88,12 @@ namespace Sgl
 	private:
 		ThemeMode GetSystemThemeMode() const;
 		void Delay();
-		void HandleEvents();
+		void HandleInputEvents();
 		void PushSDLUserEvent(unsigned int type);
 		void AddWindow(Window& window);
 		void RemoveWindow(Window& window);
 		void AttachWindow(Window& window);
 		void DetachWindow(Window& window);
-		Window* GetWindowById(SDL_WindowID windowId);
 
 		friend class Window;
 	};	

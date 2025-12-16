@@ -1,31 +1,31 @@
-#include "AsyncTasks.h"
+#include "Tasks.h"
 
+#include <sstream>
 #include <fstream>
-#include <stdexcept>
 
 namespace Sgl
 {
-    TimeAwaitable AsyncTasks::Delay(TimeSpan duration)
+    DelayAwaitable Tasks::Delay(TimeSpan duration)
     {
-        return TimeAwaitable(duration);
+        return DelayAwaitable(duration);
     }
 
-    TimeAwaitable AsyncTasks::Delay(TimeSpan duration, std::stop_token stopToken)
+    DelayAwaitable Tasks::Delay(TimeSpan duration, std::stop_token stopToken)
     {
-        return TimeAwaitable(duration, stopToken);
+        return DelayAwaitable(duration, stopToken);
     }
 
-    TimeAwaitable AsyncTasks::Delay(size_t milliseconds)
+    DelayAwaitable Tasks::Delay(size_t milliseconds)
     {
-        return TimeAwaitable(TimeSpan::FromMilliseconds(milliseconds));
+        return DelayAwaitable(TimeSpan::FromMilliseconds(milliseconds));
     }
 
-    TimeAwaitable AsyncTasks::Delay(size_t milliseconds, std::stop_token stopToken)
+    DelayAwaitable Tasks::Delay(size_t milliseconds, std::stop_token stopToken)
     {
-        return TimeAwaitable(TimeSpan::FromMilliseconds(milliseconds), stopToken);
+        return DelayAwaitable(TimeSpan::FromMilliseconds(milliseconds), stopToken);
     }
 
-    TaskAwaitable<std::string> AsyncTasks::ReadText(std::string path, bool saveContext)
+    TaskAwaitable<std::string> Tasks::ReadTextAsync(std::string path, bool saveContext)
     {
         return TaskAwaitable<std::string>([path = std::move(path)]
         {
@@ -42,7 +42,7 @@ namespace Sgl
         }, saveContext);
     }
 
-    TaskAwaitable<void> AsyncTasks::WriteText(std::string path, std::string text)
+    TaskAwaitable<void> Tasks::WriteTextAsync(std::string path, std::string text)
     {
         return TaskAwaitable<void>([path = std::move(path), text = std::move(text)]
         {

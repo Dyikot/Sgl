@@ -11,7 +11,7 @@
 
 namespace Sgl
 {
-	class TimeSheduler
+	class DelayDispatcher
 	{
     private:
         struct Pending
@@ -42,27 +42,13 @@ namespace Sgl
         PendingQueue _pendings;
         std::list<StopablePending> _stopablePendings;
     public:
-        static TimeSheduler& Current();
-
-        void Shedule(TimeSpan duration, std::coroutine_handle<> handle);
-        void Shedule(TimeSpan duration, std::stop_token stopToken, std::coroutine_handle<> handle);
+        void Add(TimeSpan duration, std::coroutine_handle<> handle);
+        void Add(TimeSpan duration, std::stop_token stopToken, std::coroutine_handle<> handle);
     private:
-        TimeSheduler() = default;
         void Process();
 
         friend class Application;
 	};
 
-    struct TimeAwaitable
-    {
-    private:
-        TimeSpan _duration;
-        std::stop_token _stopToken;        
-    public:
-        explicit TimeAwaitable(TimeSpan duration);
-        TimeAwaitable(TimeSpan duration, std::stop_token stopToken);
-        bool await_ready();
-        void await_suspend(std::coroutine_handle<> handle);
-        void await_resume() {}
-    };
+    inline DelayDispatcher DefaultDelayDispatcher;    
 }
