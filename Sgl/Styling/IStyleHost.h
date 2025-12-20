@@ -1,6 +1,6 @@
 #pragma once
 
-#include "StyleMap.h"
+#include "StyleCollection.h"
 
 namespace Sgl
 {
@@ -9,12 +9,8 @@ namespace Sgl
     public:
         virtual ~IStyleHost() = default;
 
-        virtual StyleMap& GetStyles() = 0;
+        virtual StyleCollection& GetStyles() = 0;
         virtual IStyleHost* GetStylingParent() = 0;
-    };
-
-    class IStyleRoot : public IStyleHost
-    {
-
+        virtual IStyleHost* GetStylingRoot() = 0;
     };
 }

@@ -2,7 +2,7 @@
 
 #include <format>
 #include <iostream>
-#include "Time/Stopwatch.h"
+#include "../Time/Stopwatch.h"
 
 namespace Sgl
 {
@@ -19,17 +19,19 @@ namespace Sgl
 			_loopsNumber(DefaultLoopsNumber)
 		{}
 
-		Benchmark(const Benchmark&) = delete;
-		Benchmark(Benchmark&&) = delete;
-
 		Benchmark& Loops(size_t value)
 		{
+			if(value == 0)
+			{
+				value = 1;
+			}
+
 			_loopsNumber = value;
 			return *this;
 		}
 
 		template<std::invocable TAction> 
-		void Run(TAction action)
+		void Run(TAction action) const
 		{
 			Stopwatch stopwatch = Stopwatch::StartNew();
 

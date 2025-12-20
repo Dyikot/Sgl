@@ -30,6 +30,16 @@ namespace Sgl
         }
     }
 
+    void Panel::SetStylingRoot(IStyleHost* value)
+    {
+        UIElement::SetStylingRoot(value);
+
+        for(auto& child : Children)
+        {
+            child->SetStylingRoot(value);
+        }
+    }
+
     void Panel::Render(RenderContext context)
     {
         RenderBackground(context);

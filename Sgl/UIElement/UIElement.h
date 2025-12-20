@@ -30,8 +30,7 @@ namespace Sgl
 		Event<MouseButtonEventHandler> MouseDown;
 		Event<MouseWheelEventHandler> MouseWheel;		
 	private:		
-		Any _tag;
-		std::string _name;
+		Any _tag;		
 		Ref<UIElement> _toolTip;
 		Ref<ObservableObject> _dataContext;
 
@@ -43,10 +42,7 @@ namespace Sgl
 		virtual ~UIElement() = default;
 		
 		void SetTag(const Any& value);
-		const Any& GetTag() const { return _tag; }
-
-		void SetName(const std::string& value);
-		const std::string& GetName() const { return _name; }
+		const Any& GetTag() const { return _tag; }		
 
 		void SetToolTip(Ref<UIElement> value);
 		Ref<UIElement> GetToolTip() const { return _toolTip; }

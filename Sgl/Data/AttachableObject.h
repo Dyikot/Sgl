@@ -1,6 +1,6 @@
 #pragma once
 
-#include <unordered_map>
+#include <vector>
 #include "../Base/Any.h"
 #include "AttachProperty.h"
 #include "ObservableObject.h"
@@ -10,9 +10,9 @@ namespace Sgl
 	class AttachableObject : public ObservableObject
 	{
 	private:
-		std::unordered_map<PropertyId, Any> _attachedProperties;
+		std::vector<Any> _attachedProperties;
 	public:
-		AttachableObject() = default;
+		AttachableObject(): _attachedProperties(AttachedPropertyBase::_nextId) {}
 		AttachableObject(const AttachableObject&) = default;
 		AttachableObject(AttachableObject&&) = default;
 		~AttachableObject() = default;
@@ -20,23 +20,30 @@ namespace Sgl
 		template<typename T>
 		void SetAttachProperty(AttachedProperty<T>& attachProperty, const T& value)
 		{
-			_attachedProperties[attachProperty.Id] = Any::New<T>(value);
+			if(auto& property = _attachedProperties[attachProperty.Id]; property.HasValue())
+			{
+				property.As<T>() = value;
+			}
+			else
+			{
+				_attachedProperties[attachProperty.Id] = Any::New<T>(value);
+			}
 		}
 
 		template<typename T>
 		const T& GetAttachProperty(AttachedProperty<T>& attachProperty) const
 		{
-			if(auto it = _attachedProperties.find(attachProperty.Id); it != _attachedProperties.end())	
+			if(auto& property = _attachedProperties[attachProperty.Id]; property.HasValue())
 			{
-				return it->second.As<T>();
+				return property.As<T>();
 			}
 
 			return attachProperty.DefaultValue;
 		}
 
-		void ClearAttachProperty(SglProperty& attachProperty)
+		void ClearAttachProperty(AttachedPropertyBase& attachProperty)
 		{
-			_attachedProperties.erase(attachProperty.Id);
+			_attachedProperties[attachProperty.Id] = nullptr;
 		}
 	};
 }

@@ -18,7 +18,8 @@ namespace Sgl
 		Panel(Panel&& other) noexcept;
 		~Panel() = default;
 
-		void SetVisualRoot(IVisualRoot* value) override;
+		void SetVisualRoot(IVisualRoot* value) final;
+		void SetStylingRoot(IStyleHost* value) final;
 
 		void Render(RenderContext context) final;
 		void ApplyStyle() override;

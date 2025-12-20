@@ -1,6 +1,6 @@
 #pragma once
 
-#include <unordered_map>
+#include <vector>
 #include "ObservableProperty.h"
 #include "../Base/Delegate.h"
 
@@ -9,9 +9,11 @@ namespace Sgl
 	class ObservableObject
 	{
 	private:
-		std::unordered_map<PropertyId, Action<const void*>> _observers;
+		using Observer = Action<const void*>;
+
+		std::vector<Observer> _observers;
 	public:
-		ObservableObject() = default;
+		ObservableObject(): _observers(ObservablePropertyBase::_nextId) {}
 		ObservableObject(const ObservableObject&) = default;
 		ObservableObject(ObservableObject&&) = default;
 		virtual ~ObservableObject() = default;
@@ -47,10 +49,9 @@ namespace Sgl
 			};
 		}
 
-
-		void RemoveObserver(SglProperty& property)
+		void RemoveObserver(ObservablePropertyBase& property)
 		{
-			_observers.erase(property.Id);
+			_observers[property.Id] = nullptr;
 		}
 
 		void RemoveAllObservers()
@@ -66,9 +67,9 @@ namespace Sgl
 			{
 				field = value;
 				
-				if(auto it = _observers.find(property.Id); it != _observers.end())
+				if(auto& observer = _observers[property.Id])
 				{
-					it->second(&value);
+					observer(&value);
 				}
 
 				return true;

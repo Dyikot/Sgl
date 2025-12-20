@@ -401,6 +401,16 @@ namespace Sgl
         return !(SDL_GetWindowFlags(_sdlWindow) & SDL_WINDOW_HIDDEN);
     }
 
+    void Window::SetStylingRoot(IStyleHost* value)
+    {
+        StyleableElement::SetStylingRoot(value);
+
+        if(_content)
+        {
+            _content->SetStylingRoot(value);
+        }
+    }
+
     void Window::Render(RenderContext context)
     {
         std::visit(WindowBackgroundRenderer(context), GetBackground());

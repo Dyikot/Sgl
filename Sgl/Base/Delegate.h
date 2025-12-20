@@ -184,6 +184,11 @@ namespace Sgl
 			return *this;
 		}
 
+		explicit operator bool() const noexcept
+		{
+			return _concept != nullptr;
+		}
+
 		/// <summary>
 		/// Equality operator. Compares two delegates based on their target types.
 		/// </summary>

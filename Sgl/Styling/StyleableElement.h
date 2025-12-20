@@ -15,14 +15,14 @@ namespace Sgl
 	private:
 		using StyleableElementEventHandler = EventHandler<StyleableElement>;
 	public:
-		StyleMap Styles;
+		StyleCollection Styles;
 		Event<StyleableElementEventHandler> AttachedToElementsTree;
 		Event<StyleableElementEventHandler> DetachedFromElementsTree;
 	private:
 		std::vector<std::string> _classList;
-		std::vector<IStyle*> _styles;
+		std::vector<const Style*> _styles;
 		IStyleHost* _stylingParent = nullptr;
-		IStyleRoot* _stylingRoot = nullptr;
+		IStyleHost* _stylingRoot = nullptr;
 	public:
 		StyleableElement() = default;
 		StyleableElement(const StyleableElement& other);
@@ -34,7 +34,11 @@ namespace Sgl
 		const std::vector<std::string>& GetClasses() const;
 
 		virtual void SetParent(IStyleHost* parent);
-		StyleMap& GetStyles() final { return Styles; }
+		StyleCollection& GetStyles() final { return Styles; }
+
+		virtual void SetStylingRoot(IStyleHost* value);
+		IStyleHost* GetStylingRoot() final { return _stylingRoot; }
+
 		IStyleHost* GetStylingParent() final { return _stylingParent; }
 
 		bool IsAttachedToLogicalTree() const { return _stylingRoot != nullptr; }
@@ -46,6 +50,6 @@ namespace Sgl
 	private:
 		bool UpdateStyle();
 		void OnStyleClassesChanged();
-		void GetStylesFrom(const StyleMap& styles);
+		void GetStylesFrom(const StyleCollection& styles);
 	};
 }

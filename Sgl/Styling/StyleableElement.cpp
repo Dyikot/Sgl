@@ -53,16 +53,21 @@ namespace Sgl
 		if(parent == nullptr)
 		{
 			_stylingParent = nullptr;
-			_stylingRoot = nullptr;
+			SetStylingRoot(nullptr);
 			return;
 		}
 
 		_stylingParent = parent;
 
-		if(auto root = dynamic_cast<IStyleRoot*>(parent))
+		if(auto stylingRoot = parent->GetStylingRoot())
 		{
-			_stylingRoot = nullptr;
+			SetStylingRoot(stylingRoot);
 		}
+	}
+
+	void StyleableElement::SetStylingRoot(IStyleHost* value)
+	{
+		_stylingRoot = value;
 	}
 
 	void StyleableElement::ApplyStyle()
@@ -114,18 +119,18 @@ namespace Sgl
 		}
 	}	
 
-	void StyleableElement::GetStylesFrom(const StyleMap& styles)
+	void StyleableElement::GetStylesFrom(const StyleCollection& styles)
 	{
 		if(styles.IsEmpty())
 		{
 			return;
 		}
 
-		for(auto& className : _classList)
+		for(auto& style : styles)
 		{
-			if(auto style = styles.TryGet(className))	
+			if(style.Selector.Match(*this))
 			{
-				_styles.push_back(style);
+				_styles.push_back(&style);
 			}
 		}
 	}

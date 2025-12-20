@@ -9,7 +9,6 @@ namespace Sgl
 		Layoutable(other),
 		_isMouseOver(other._isMouseOver),
 		_tag(other._tag),
-		_name(other._name),
 		_toolTip(other._toolTip)
 	{}
 
@@ -17,19 +16,13 @@ namespace Sgl
 		Layoutable(std::move(other)),
 		_isMouseOver(other._isMouseOver),
 		_tag(std::move(other._tag)),
-		_name(std::move(other._name)),
 		_toolTip(std::move(other._toolTip))
 	{}
 
 	void UIElement::SetTag(const Any& value)
 	{
 		SetProperty(TagProperty, _tag, value);
-	}
-
-	void UIElement::SetName(const std::string& value)
-	{
-		_name = value;
-	}
+	}	
 
 	void UIElement::SetToolTip(Ref<UIElement> value)
 	{

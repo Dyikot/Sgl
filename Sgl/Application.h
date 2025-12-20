@@ -27,7 +27,7 @@ namespace Sgl
 		ThemeVariant Theme;
 	};
 
-	class Application : public IStyleRoot
+	class Application : public IStyleHost
 	{
 	private:
 		using ApplicationEventHandler = EventHandler<Application>;
@@ -43,7 +43,7 @@ namespace Sgl
 		Event<ApplicationEventHandler> Stopped;
 		Event<ThemeVariantChangedEventHanlder> ThemeVariantChanged;
 
-		StyleMap Styles;
+		StyleCollection Styles;
 		Ref<Window> MainWindow;
 		ShutdownMode ShutdownMode;
 	private:
@@ -75,8 +75,10 @@ namespace Sgl
 		void SetLocalizer(const Ref<StringLocalizerBase>& localizer);
 		const Ref<StringLocalizerBase>& GetLocalizer() const { return _localizer; }
 
-		StyleMap& GetStyles() final { return Styles; }
+		StyleCollection& GetStyles() final { return Styles; }
 		IStyleHost* GetStylingParent() final { return nullptr; }
+		IStyleHost* GetStylingRoot() final { return this; }
+
 		const std::vector<Window*> GetWindows() const noexcept { return _activeWindows; }
 
 		void Run();
@@ -87,7 +89,6 @@ namespace Sgl
 		virtual void OnThemeModeChanged(ThemeVariantChangedEventArgs e);
 	private:
 		ThemeMode GetSystemThemeMode() const;
-		void Delay();
 		void HandleInputEvents();
 		void PushSDLUserEvent(unsigned int type);
 		void AddWindow(Window& window);

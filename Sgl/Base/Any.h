@@ -118,7 +118,11 @@ namespace Sgl
 		}
 
 		bool Is(const std::type_info& typeInfo);
-		bool HasValue() const noexcept { return _data.get() != nullptr; }
+
+		bool HasValue() const noexcept 
+		{ 
+			return _data != nullptr; 
+		}
 
 		template<typename T>
 		Any& operator=(T&& value)

@@ -1,12 +1,27 @@
 #pragma once
 
-#include <concepts>
-#include "SglProperty.h"
+#include <stdint.h>
 
 namespace Sgl
 {
+	class ObservableObject;
+
+	class ObservablePropertyBase
+	{
+	private:
+		static inline uint32_t _nextId = 0;
+	public:
+		const uint32_t Id = _nextId++;
+	public:
+		ObservablePropertyBase() = default;
+		ObservablePropertyBase(const ObservablePropertyBase&) = delete;
+		ObservablePropertyBase(ObservablePropertyBase&&) = delete;
+
+		friend class ObservableObject;
+	};
+
 	template<typename TOwner, typename TValue>
-	class ObservableProperty : public SglProperty
+	class ObservableProperty : public ObservablePropertyBase
 	{
 	public:
 		using Owner = TOwner;
@@ -21,9 +36,8 @@ namespace Sgl
 			_setter(setter), 
 			_getter(getter)
 		{}
-		ObservableProperty(const ObservableProperty&) = default;
-		ObservableProperty(ObservableProperty&&) = default;
-		~ObservableProperty() = default;
+		ObservableProperty(const ObservableProperty&) = delete;
+		ObservableProperty(ObservableProperty&&) = delete;
 
 		void Set(Owner& owner, Value value)
 		{

@@ -3,55 +3,38 @@
 #include <memory>
 #include <vector>
 
-#include "../Base/Delegate.h"
 #include "../Data/ObservableProperty.h"
+#include "../Base/Delegate.h"
+#include "Selector.h"
+#include "Setter.h"
 
 namespace Sgl
 {
-    class StyleableElement;
-
-    class IStyle
+    class Style
     {
     public:
-        virtual ~IStyle() = default;
-
-        virtual void Apply(StyleableElement& target) = 0;
-    };
-
-    template<std::derived_from<StyleableElement> T>
-    class Style : public IStyle
-    {
-    private:
-        std::vector<Action<T&>> _setters;
+        Selector Selector;
+    private:        
+        std::vector<std::unique_ptr<ISetter>> _setters;
     public:
         Style() = default;
-        Style(const Style&) = default;
-        Style(Style&&) = default;
-        ~Style() = default;
-
-        auto begin() { return _setters.begin(); }
-        auto end() { return _setters.end(); }
-
-        auto begin() const { return _setters.begin(); }
-        auto end() const { return _setters.end(); }
+        Style(Sgl::Selector selector):
+            Selector(std::move(selector))
+        {}
 
         template<typename TOwner, typename TValue>
-        Style<T>& With(ObservableProperty<TOwner, TValue>& property, 
-                       ObservableProperty<TOwner, TValue>::Value value)
+        Style& Set(ObservableProperty<TOwner, TValue>& property,
+                   ObservableProperty<TOwner, TValue>::Value value)
         {
-            _setters.emplace_back([&property, value](T& target)
-            {
-                property.Set(target, value);
-            });
-
+            _setters.emplace_back(new Setter(property, value));
             return *this;
-        }
+        }  
 
-        void Apply(StyleableElement& target) override
+        void Apply(StyleableElement& target) const
         {
-            for(const auto& setter : _setters)
+            for(auto& setter : _setters)
             {
-                setter(static_cast<T&>(target));
+                setter->Apply(target);
             }
         }
     };    

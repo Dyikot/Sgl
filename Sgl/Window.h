@@ -311,6 +311,8 @@ namespace Sgl
 
 		bool IsClosed() const { return _isClosed; }
 
+		void SetStylingRoot(IStyleHost* value) final;
+
 		void Render(RenderContext context) final;
 		void ApplyStyle() override;		
 		virtual void Process();
