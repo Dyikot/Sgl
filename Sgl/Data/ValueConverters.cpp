@@ -2,62 +2,42 @@
 
 namespace Sgl::Converters
 {
-    std::string IntToStringConverter::operator()(int value) const
+    std::string Int32ToStringConverter::operator()(int value) const
     {
         return std::to_string(value);
     }
 
-    int IntToStringConverter::operator()(const std::string& value) const
+    int Int32ToStringConverter::operator()(const std::string& value) const
     {
         return std::stoi(value);
     }
 
-    std::string LongToStringConverter::operator()(long value) const
+    std::string Int64ToStringConverter::operator()(int64_t value) const
     {
         return std::to_string(value);
     }
 
-    long LongToStringConverter::operator()(const std::string& value) const
-    {
-        return std::stol(value);
-    }
-
-    std::string LongLongToStringConverter::operator()(long long value) const
-    {
-        return std::to_string(value);
-    }
-
-    long long LongLongToStringConverter::operator()(const std::string& value) const
+    int64_t Int64ToStringConverter::operator()(const std::string& value) const
     {
         return std::stoll(value);
     }
 
-    std::string UnsignedLongLongToStringConverter::operator()(unsigned long long value) const
+    std::string UInt64ToStringConverter::operator()(uint64_t value) const
     {
         return std::to_string(value);
     }
 
-    unsigned long long UnsignedLongLongToStringConverter::operator()(const std::string& value) const
+    uint64_t UInt64ToStringConverter::operator()(const std::string& value) const
     {
         return std::stoull(value);
     }
 
-    std::string UnsignedIntToStringConverter::operator()(unsigned int value) const
+    std::string UInt32ToStringConverter::operator()(uint32_t value) const
     {
         return std::to_string(value);
     }
 
-    unsigned int UnsignedIntToStringConverter::operator()(const std::string& value) const
-    {
-        return std::stoul(value);
-    }
-
-    std::string UnsignedLongToStringConverter::operator()(unsigned long value) const
-    {
-        return std::to_string(value);
-    }
-
-    unsigned long UnsignedLongToStringConverter::operator()(const std::string& value) const
+    uint32_t UInt32ToStringConverter::operator()(const std::string& value) const
     {
         return std::stoul(value);
     }

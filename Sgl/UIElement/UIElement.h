@@ -160,7 +160,6 @@ namespace Sgl
 		friend class Panel;
 		friend class Window;
 		friend class ContentUIElement;
-		friend class UIElementsCollection;
 	};
 
 	class UIElementDataTemplate : public IDataTemplate

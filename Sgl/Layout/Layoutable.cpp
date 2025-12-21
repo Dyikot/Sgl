@@ -144,19 +144,20 @@ namespace Sgl
 			Measure(FSize(rect.w, rect.h));
 		}
 
+		_isArrangeValid = true;
+
 		if(IsVisible())
 		{
-			_isArrangeValid = true;
 			ArrangeCore(rect);
 		}
 	}
 
 	void Layoutable::Measure(FSize avaliableSize)
 	{
-		if(!_isMeasureValid && IsVisible())
+		if(!_isMeasureValid)
 		{
 			_isMeasureValid = true;
-			_desiredSize = MeasureCore(avaliableSize);
+			_desiredSize = IsVisible() ? MeasureCore(avaliableSize) : FSize();
 		}
 	}
 

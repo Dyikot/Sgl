@@ -39,10 +39,17 @@ namespace Sgl
 			return size;
 		}
 
+		size_t visibleChildren = Children.Count();
+
 		if(_orientation == Orientation::Vertical)
 		{
 			for(auto& child : Children)
 			{
+				if(!child->IsVisible())
+				{
+					visibleChildren--;
+				}
+
 				child->Measure(avaliableSize);
 				auto [width, height] = child->GetDesiredSize();
 
@@ -50,12 +57,20 @@ namespace Sgl
 				size.Height += height;
 			}
 
-			size.Height += _spacing * (Children.Count() - 1);
+			if(visibleChildren > 1)
+			{
+				size.Height += _spacing * (visibleChildren - 1);	
+			}
 		}
 		else
 		{
 			for(auto& child : Children)
 			{
+				if(!child->IsVisible())
+				{
+					visibleChildren--;
+				}
+
 				child->Measure(avaliableSize);
 				auto [width, height] = child->GetDesiredSize();
 
@@ -63,7 +78,10 @@ namespace Sgl
 				size.Height = std::max(size.Height, height);
 			}
 
-			size.Width += _spacing * (Children.Count() - 1);
+			if(visibleChildren > 1)
+			{
+				size.Width += _spacing * (visibleChildren - 1);
+			}
 		}
 
 		return size;
@@ -71,6 +89,9 @@ namespace Sgl
 
 	void StackPanel::ArrangeContent(FRect rect)
 	{
+		size_t visibleChildren = Children.Count();
+		float spacing = _spacing;
+
 		if(_orientation == Orientation::Vertical)
 		{
 			float totalHeight = 0;
@@ -78,6 +99,7 @@ namespace Sgl
 			for(auto& child : Children)
 			{
 				auto [_, height] = child->GetDesiredSize();
+				spacing = child->IsVisible() ? _spacing : 0.f;
 
 				FRect childRect = rect;
 				childRect.y += totalHeight;
@@ -85,7 +107,7 @@ namespace Sgl
 
 				child->Arrange(childRect);
 
-				totalHeight += height + _spacing;
+				totalHeight += height + spacing;				
 			}
 		}
 		else
@@ -95,6 +117,7 @@ namespace Sgl
 			for(auto& child : Children)
 			{
 				auto [width, _] = child->GetDesiredSize();
+				spacing = child->IsVisible() ? _spacing : 0.f;
 
 				FRect childRect = rect;
 				childRect.x += totalWidth;
@@ -102,7 +125,7 @@ namespace Sgl
 
 				child->Arrange(childRect);
 
-				totalWidth += width + _spacing;
+				totalWidth += width + spacing;
 			}
 		}		
 	}

@@ -506,24 +506,24 @@ namespace Sgl
 
     void Window::OnMouseMove(MouseMoveEventArgs e)
     {
-        if(_content && _content->IsVisible())
+        if(_content)
         {
-            auto& content = _content.GetValue();
-            bool wasMouseOver = content._isMouseOver;
-            bool isMouseOver = LayoutHelper::IsPointInRect(e.X, e.Y, content._bounds);
+            bool visible = _content->IsVisible();
+            bool wasMouseOver = _content->_isMouseOver;
+            bool isMouseOver = visible && LayoutHelper::IsPointInRect(e.X, e.Y, _content->_bounds);
 
             if(isMouseOver)
             {
                 if(!wasMouseOver)
                 {
-                    content.OnMouseEnter(e);
+                    _content->OnMouseEnter(e);
                 }
 
-                content.OnMouseMove(e);
+                _content->OnMouseMove(e);
             }
             else if(wasMouseOver)
             {
-                content.OnMouseLeave(e);
+                _content->OnMouseLeave(e);
                 Cursor::Set(GetCursor());
             }
         }

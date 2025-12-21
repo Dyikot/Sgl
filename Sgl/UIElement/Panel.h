@@ -24,6 +24,8 @@ namespace Sgl
 		void Render(RenderContext context) final;
 		void ApplyStyle() override;
 	protected:
+		void OnChildAdded(UIElement& child);
+		void OnChildRemoving(UIElement& child);
 		void OnAttachedToLogicalTree() override;
 		void OnDetachedFromLogicalTree() override;
 		void OnCursorChanged(const Cursor& cursor) override;
@@ -31,5 +33,7 @@ namespace Sgl
 		void OnMouseDown(MouseButtonEventArgs e) override;
 		void OnMouseUp(MouseButtonEventArgs e) override;
 		void OnMouseLeave(MouseMoveEventArgs e) override;
-	};
+
+		friend class UIElementsCollection;
+	};	
 }

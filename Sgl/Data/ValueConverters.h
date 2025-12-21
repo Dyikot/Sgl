@@ -5,40 +5,28 @@
 
 namespace Sgl::Converters
 {
-	struct IntToStringConverter
+	struct Int32ToStringConverter
 	{
 		std::string operator()(int value) const;
 		int operator()(const std::string& value) const;
 	};
 
-	struct LongToStringConverter
+	struct UInt32ToStringConverter
 	{
-		std::string operator()(long value) const;
-		long operator()(const std::string& value) const;
+		std::string operator()(uint32_t value) const;
+		uint32_t operator()(const std::string& value) const;
 	};
 
-	struct LongLongToStringConverter
+	struct Int64ToStringConverter
 	{
-		std::string operator()(long long value) const;
-		long long operator()(const std::string& value) const;
+		std::string operator()(int64_t value) const;
+		int64_t operator()(const std::string& value) const;
 	};
 
-	struct UnsignedIntToStringConverter
+	struct UInt64ToStringConverter
 	{
-		std::string operator()(unsigned int value) const;
-		unsigned int operator()(const std::string& value) const;
-	};
-
-	struct UnsignedLongToStringConverter
-	{
-		std::string operator()(unsigned long value) const;
-		unsigned long operator()(const std::string& value) const;
-	};
-
-	struct UnsignedLongLongToStringConverter
-	{
-		std::string operator()(unsigned long long value) const;
-		unsigned long long operator()(const std::string& value) const;
+		std::string operator()(uint64_t value) const;
+		uint64_t operator()(const std::string& value) const;
 	};
 
 	struct FloatToStringConverter

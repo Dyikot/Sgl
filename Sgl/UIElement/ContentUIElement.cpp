@@ -173,8 +173,9 @@ namespace Sgl
 
 		if(_contentPresenter)
 		{
+			bool visible = _contentPresenter->IsVisible();
 			bool wasMouseOver = _contentPresenter->_isMouseOver;
-			bool isMouseOver = LayoutHelper::IsPointInRect(e.X, e.Y, _contentPresenter->_bounds);
+			bool isMouseOver = visible && LayoutHelper::IsPointInRect(e.X, e.Y, _contentPresenter->_bounds);
 
 			if(isMouseOver)
 			{
@@ -239,12 +240,16 @@ namespace Sgl
 
 		if(_contentPresenter)
 		{
+			bool visible = _contentPresenter->IsVisible();
+			int horizontalPadding = visible ? _padding.Left + _padding.Right : 0;
+			int verticalPadding = visible ? _padding.Top + _padding.Bottom : 0;
+
 			FSize contentAvaliableSize =
 			{
-				.Width = std::clamp<float>(avaliableSize.Width - _padding.Left - _padding.Right,
+				.Width = std::clamp<float>(avaliableSize.Width - verticalPadding,
 					GetMinWidth(),
 					GetMaxWidth()),
-				.Height = std::clamp<float>(avaliableSize.Height - _padding.Top - _padding.Bottom,
+				.Height = std::clamp<float>(avaliableSize.Height - horizontalPadding,
 					GetMinHeight(),
 					GetMaxHeight())
 			};
@@ -254,8 +259,8 @@ namespace Sgl
 
 			 return FSize 
 			 {
-				 .Width = width + _padding.Left + _padding.Right,
-				 .Height = height + _padding.Top + _padding.Bottom
+				 .Width = width + horizontalPadding,
+				 .Height = height + verticalPadding
 			 };
 		}
 

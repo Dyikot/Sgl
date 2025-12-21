@@ -65,6 +65,26 @@ namespace Sgl
         }
     }
 
+    void Panel::OnChildAdded(UIElement& child)
+    {
+        child.SetParent(this);
+        
+        if(child.IsAttachedToLogicalTree())
+        {
+            child.OnAttachedToLogicalTree();
+        }
+    }
+
+    void Panel::OnChildRemoving(UIElement& child)
+    {
+        if(child.IsAttachedToLogicalTree())
+        {
+            child.OnDetachedFromLogicalTree();
+        }
+
+        child.SetParent(nullptr);
+    }    
+
     void Panel::OnAttachedToLogicalTree()
     {
         UIElement::OnAttachedToLogicalTree();

@@ -1,12 +1,13 @@
 #include "UIElementsCollection.h"
+#include "Panel.h"
 
 namespace Sgl
 {
-	Sgl::UIElementsCollection::UIElementsCollection(UIElement& owner):
+	UIElementsCollection::UIElementsCollection(Panel& owner):
 		_owner(owner)
 	{}
 
-	UIElementsCollection::UIElementsCollection(UIElementsCollection && other) noexcept:
+	UIElementsCollection::UIElementsCollection(UIElementsCollection&& other) noexcept:
 		base(std::move(other)),
 		_owner(other._owner)
 	{}
@@ -20,7 +21,7 @@ namespace Sgl
 	{
 		for(auto& item : _items)
 		{
-			OnChildRemoving(item.GetValue());
+			_owner.OnChildRemoving(item.GetValue());
 		}
 
 		base::ClearItems();
@@ -30,7 +31,7 @@ namespace Sgl
 	{
 		assert(item != nullptr);
 
-		OnChildAdded(item.GetValue());
+		_owner.OnChildAdded(item.GetValue());
 		base::InsertItem(index, item);
 	}
 
@@ -38,36 +39,16 @@ namespace Sgl
 	{
 		assert(item != nullptr);
 
-		OnChildAdded(item.GetValue());
+		_owner.OnChildAdded(item.GetValue());
 		base::SetItem(index, item);
 	}
 
 	void UIElementsCollection::RemoveItem(size_t index)
 	{
 		auto& item = GetElementAt(index);
-		OnChildRemoving(item.GetValue());
+		_owner.OnChildRemoving(item.GetValue());
 
 		base::RemoveItem(index);
-	}
-
-	void UIElementsCollection::OnChildAdded(UIElement& child)
-	{
-		child.SetParent(&_owner);
-
-		if(child.IsAttachedToLogicalTree())
-		{
-			child.OnAttachedToLogicalTree();
-		}
-	}
-
-	void UIElementsCollection::OnChildRemoving(UIElement& child)
-	{
-		if(child.IsAttachedToLogicalTree())
-		{
-			child.OnDetachedFromLogicalTree();
-		}
-
-		child.SetParent(nullptr);
-	}
+	}	
 }
 
