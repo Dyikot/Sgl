@@ -18,7 +18,7 @@ namespace Sgl
 		explicit Surface(std::string_view path);
 		explicit Surface(SDL_Surface* sdlSurface);
 		Surface(Size size, SDL_PixelFormat format);
-		Surface(Size size, SDL_PixelFormat format, void* pixels, size_t pitch);
+		Surface(Size size, SDL_PixelFormat format, void* pixels, int pitch);
 		Surface(const Surface& other);
 		Surface(Surface&& other) noexcept;
 		~Surface();
@@ -36,6 +36,7 @@ namespace Sgl
 		void Unlock();
 		void Flip(SDL_FlipMode flipMode);
 
+		Surface& operator=(std::nullptr_t);
 		Surface& operator=(const Surface& other);
 		Surface& operator=(Surface&& other) noexcept;
 		friend bool operator==(const Surface&, const Surface&) = default;

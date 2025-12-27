@@ -101,7 +101,7 @@ namespace Sgl
     {}
 
     Cursor::Cursor(Cursor&& other) noexcept:
-        _cursor(std::exchange(other._cursor, nullptr))
+        _cursor(std::move(other._cursor))
     {}
 
     void Cursor::Set(const Cursor& cursor)

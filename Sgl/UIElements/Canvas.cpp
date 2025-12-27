@@ -2,46 +2,6 @@
 
 namespace Sgl::UIElements
 {
-	void Canvas::SetLeft(UIElement& element, int value)
-	{
-		element.SetAttachProperty(LeftProperty, value);
-	}
-
-	int Canvas::GetLeft(const UIElement& element)
-	{
-		return element.GetAttachProperty(LeftProperty);
-	}
-
-	void Canvas::SetTop(UIElement& element, int value)
-	{
-		element.SetAttachProperty(TopProperty, value);
-	}
-
-	int Canvas::GetTop(const UIElement& element)
-	{
-		return element.GetAttachProperty(TopProperty);
-	}
-
-	void Canvas::SetRight(UIElement& element, int value)
-	{
-		element.SetAttachProperty(RightProperty, value);
-	}
-
-	int Canvas::GetRight(const UIElement& element)
-	{
-		return element.GetAttachProperty(RightProperty);
-	}
-
-	void Canvas::SetBottom(UIElement& element, int value)
-	{
-		element.SetAttachProperty(BottomProperty, value);
-	}
-
-	int Canvas::GetBottom(const UIElement& element)
-	{
-		return element.GetAttachProperty(BottomProperty);
-	}
-
 	FSize Canvas::MeasureContent(FSize avaliableSize)
 	{
 		for(auto& child : Children)

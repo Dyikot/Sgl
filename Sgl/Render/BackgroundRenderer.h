@@ -1,7 +1,7 @@
 #pragma once
 
 #include "RenderContext.h"
-#include "../Base/Media/ImageBrush.h"
+#include "TextureSource.h"
 
 namespace Sgl
 {
@@ -13,7 +13,7 @@ namespace Sgl
 		explicit WindowBackgroundRenderer(RenderContext _context);
 
 		void operator()(Color color);
-		void operator()(const ImageBrush& imageBrush);
+		void operator()(const TextureSource& textureSource);
 	};
 
 	class UIElementBackgroundRenderer
@@ -25,6 +25,6 @@ namespace Sgl
 		UIElementBackgroundRenderer(RenderContext _context, FRect rect);
 
 		void operator()(Color color);
-		void operator()(const ImageBrush& imageBrush);
+		void operator()(const TextureSource& textureSource);
 	};
 }

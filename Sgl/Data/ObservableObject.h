@@ -1,81 +1,63 @@
 #pragma once
 
 #include <vector>
-#include "ObservableProperty.h"
-#include "../Base/Delegate.h"
+#include <concepts>
+#include "INotityPropertyChanged.h"
 
 namespace Sgl
 {
-	class ObservableObject
+	class ObservableObject : public INotityPropertyChanged
 	{
 	private:
-		using Observer = Action<const void*>;
+		struct Observer
+		{
+			std::reference_wrapper<SglPropertyBase> Property;
+			PropertyChangedEventHandler Handler;
+
+			bool operator==(const Observer&) const = default;
+		};
 
 		std::vector<Observer> _observers;
 	public:
-		ObservableObject(): _observers(ObservablePropertyBase::_nextId) {}
+		ObservableObject() = default;
 		ObservableObject(const ObservableObject&) = default;
 		ObservableObject(ObservableObject&&) = default;
-		virtual ~ObservableObject() = default;
 
-		template<typename TObservable, typename TObserver, typename TValue>
-		void SetObserver(ObservableProperty<TObservable, TValue>& observableProperty,
-						 ObservableObject& observer,
-						 ObservableProperty<TObserver, TValue>& observerProperty)
-		{
-			_observers[observableProperty.Id] = 
-				[&observerProperty, obs = &static_cast<TObserver&>(observer)]
-				(const void* value)
-			{
-				const auto& val = *static_cast<const std::decay_t<TValue>*>(value);
-				observerProperty.Set(*obs, val);
-			};
-		}
-
-		template<typename TObservable, typename TObservableValue,
-				 typename TObserver, typename TObserverValue,
-				 typename TConverter>
-		void SetObserver(ObservableProperty<TObservable, TObservableValue>& observableProperty,
-						 ObservableObject& observer,
-						 ObservableProperty<TObserver, TObserverValue>& observerProperty,
-						 TConverter converter)
-		{
-			_observers[observableProperty.Id] =
-				[&observerProperty, obs = &static_cast<TObserver&>(observer), converter]
-				(const void* value)
-			{
-				const auto& val = *static_cast<const std::decay_t<TObservableValue>*>(value);
-				observerProperty.Set(*obs, converter(val));
-			};
-		}
-
-		void RemoveObserver(ObservablePropertyBase& property)
-		{
-			_observers[property.Id] = nullptr;
-		}
-
-		void RemoveAllObservers()
-		{
-			_observers.clear();
-		}
+		void AddPropertyChangedEventHandler(SglPropertyBase& property, PropertyChangedEventHandler handler) override;
+		void RemovePropertyChangedEventHandler(SglPropertyBase& property, PropertyChangedEventHandler handler) override;
 	protected:
-		template<typename TOwner, typename TMember, typename TField>
-		bool SetProperty(ObservableProperty<TOwner, TMember>& property, TField& field,
-						 ObservableProperty<TOwner, TMember>::Value value)
-		{
-			if(field != value)
-			{
-				field = value;
-				
-				if(auto& observer = _observers[property.Id])
-				{
-					observer(&value);
-				}
+		virtual void NotifyPropertyChanged(SglPropertyBase& property);
 
-				return true;
+		template<typename TOwner, typename TValue, typename TField>
+		bool SetProperty(SglProperty<TOwner, TValue>& property, TField& field,
+						 SglProperty<TOwner, TValue>::Value value)
+		{
+			if(field == value)
+			{
+				return false;
 			}
 
-			return false;
+			field = value;
+			NotifyPropertyChanged(property);
+
+			return true;
+		}
+
+		template<typename TOwner, typename TValue>
+		bool SetProperty(SglProperty<TOwner, TValue>& property,
+						 SglProperty<TOwner, TValue>::Value oldValue,
+						 SglProperty<TOwner, TValue>::Value newValue,
+						 Action<TValue>& changed)
+		{
+			if(oldValue == newValue)
+			{
+				return false;
+			}
+
+			changed(newValue);
+			NotifyPropertyChanged(property);
+
+			return true;
 		}
 	};
 }

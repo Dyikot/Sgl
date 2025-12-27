@@ -4,18 +4,19 @@
 
 namespace Sgl
 {
+	class AttachableObject;
+
 	class AttachedPropertyBase
 	{
-	private:
-		static inline uint32_t _nextId = 0;
-	public:
-		const uint32_t Id = _nextId++;
 	public:
 		AttachedPropertyBase() = default;
-		AttachedPropertyBase(const ObservablePropertyBase&) = delete;
-		AttachedPropertyBase(ObservablePropertyBase&&) = delete;
+		AttachedPropertyBase(const AttachedPropertyBase&) = delete;
+		AttachedPropertyBase(AttachedPropertyBase&&) = delete;
 
-		friend class AttachableObject;
+		friend bool operator==(const AttachedPropertyBase& left, const AttachedPropertyBase& right)
+		{
+			return &left == &right;
+		}
 	};
 
 	template<typename T>

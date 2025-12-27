@@ -79,15 +79,15 @@ namespace Sgl::UIElements
 		void UpdateFont();
 		void CreateTextTexture();
 	public:
-		static inline ObservableProperty TextProperty { &SetText, &GetText };
-		static inline ObservableProperty FontSizeProperty { &SetFontSize, &GetFontSize };
-		static inline ObservableProperty FontOutlineProperty { &SetFontOutline, &GetFontOutline };
-		static inline ObservableProperty FontFamilyProperty { &SetFontFamily, &GetFontFamily };
-		static inline ObservableProperty FlowDirectionProperty { &SetFlowDirection, &GetFlowDirection };
-		static inline ObservableProperty FontStyleProperty { &SetFontStyle, &GetFontStyle };
-		static inline ObservableProperty ForegroundProperty { &SetForeground, &GetForeground };
-		static inline ObservableProperty TextWrappingProperty { &SetTextWrapping, &GetTextWrapping };
-		static inline ObservableProperty TextAlignmentProperty { &SetTextAlignment, &GetTextAlignment };
-		static inline ObservableProperty PaddingProperty { &SetPadding, &GetPadding };
+		static inline SglProperty TextProperty { &SetText, &GetText };
+		static inline SglProperty FontSizeProperty { &SetFontSize, &GetFontSize };
+		static inline SglProperty FontOutlineProperty { &SetFontOutline, &GetFontOutline };
+		static inline SglProperty FontFamilyProperty { &SetFontFamily, &GetFontFamily };
+		static inline SglProperty FlowDirectionProperty { &SetFlowDirection, &GetFlowDirection };
+		static inline SglProperty FontStyleProperty { &SetFontStyle, &GetFontStyle };
+		static inline SglProperty ForegroundProperty { &SetForeground, &GetForeground };
+		static inline SglProperty TextWrappingProperty { &SetTextWrapping, &GetTextWrapping };
+		static inline SglProperty TextAlignmentProperty { &SetTextAlignment, &GetTextAlignment };
+		static inline SglProperty PaddingProperty { &SetPadding, &GetPadding };
 	};
 }

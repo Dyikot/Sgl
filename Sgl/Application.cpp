@@ -8,7 +8,7 @@
 #include "Base/Threading/DelayDispatcher.h"
 #include "Base/Exceptions.h"
 #include "Base/Logger.h"
-#include "Input/UserEvents.h"
+#include "Input/SDLEvents.h"
 
 namespace Sgl
 {

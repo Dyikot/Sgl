@@ -3,7 +3,6 @@
 #include <vector>
 
 #include "IStyleHost.h"
-#include "../Data/ObservableObject.h"
 #include "../Data/AttachableObject.h"
 #include "../Base/Ref.h"
 #include "../Base/Event.h"

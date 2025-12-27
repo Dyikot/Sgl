@@ -12,34 +12,37 @@ namespace Sgl
 	class SortedVector
 	{
 	protected:
-		TComparer _comparer;
 		std::vector<T> _items;
+		TComparer _comparer;
 	public:
 		SortedVector() = default;
 
-		SortedVector(const SortedVector& other):
-			_comparer(other._comparer),
-			_items(other._items)
-		{}
+		explicit SortedVector(size_t capacity)
+		{
+			_items.reserve(capacity);
+		}
 
-		SortedVector(SortedVector&& other) noexcept:
-			_comparer(std::move(other._comparer)),
-			_items(std::move(other._items))
-		{}
-
-		SortedVector(std::initializer_list<T> init):
-			_items(init)
+		SortedVector(std::initializer_list<T> init): _items(init)
 		{
 			std::ranges::sort(_items, _comparer);
 		}
 
 		template<std::ranges::range TRange>
 			requires std::same_as<std::ranges::range_value_t<TRange>, T>
-		SortedVector(TRange&& range):
-			_items(std::ranges::begin(range), std::ranges::end(range))
+		SortedVector(TRange&& range): _items(std::ranges::begin(range), std::ranges::end(range))
 		{
 			std::ranges::sort(_items, _comparer);
 		}
+
+		SortedVector(const SortedVector& other):
+			_items(other._items),
+			_comparer(other._comparer)
+		{}
+
+		SortedVector(SortedVector&& other) noexcept:
+			_items(std::move(other._items)),
+			_comparer(std::move(other._comparer))
+		{}		
 
 		auto begin() const { return _items.begin(); }
 		auto end() const { return _items.end(); }
@@ -97,6 +100,18 @@ namespace Sgl
 			return _items.at(index);
 		}
 
+		void SetElementAt(size_t index, const T& value)
+		{
+			_items[index] = value;
+			std::ranges::sort(_items, _comparer);
+		}
+
+		void SetElementAt(size_t index, T&& value)
+		{
+			_items[index] = std::forward<T>(value);
+			std::ranges::sort(_items, _comparer);
+		}
+
 		auto LowerBound(const T& item) const
 		{
 			return std::ranges::lower_bound(_items, item, _comparer);
@@ -127,6 +142,11 @@ namespace Sgl
 			{
 				_items.erase(it);
 			}
+		}
+
+		void RemoveAt(size_t index)
+		{
+			_items.erase(_items.begin() + index);
 		}
 
 		SortedVector& operator=(std::initializer_list<T> items)

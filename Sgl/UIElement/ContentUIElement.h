@@ -7,7 +7,7 @@ namespace Sgl
 	class ContentUIElement : public UIElement
 	{
 	private:
-		Ref<ObservableObject> _content;
+		Ref<INotityPropertyChanged> _content;
 		Ref<IDataTemplate> _contentTemplate = New<UIElementDataTemplate>();
 		Ref<UIElement> _contentPresenter;
 		Thickness _padding;
@@ -22,8 +22,8 @@ namespace Sgl
 		
 		const Ref<UIElement>& GetContentPresenter() const { return _contentPresenter; }
 
-		void SetContent(Ref<ObservableObject> content);
-		Ref<ObservableObject> GetContent() const { return _content; }
+		void SetContent(Ref<INotityPropertyChanged> content);
+		Ref<INotityPropertyChanged> GetContent() const { return _content; }
 
 		void SetContentTemplate(Ref<IDataTemplate> value);
 		Ref<IDataTemplate> GetContentTemplate() const { return _contentTemplate; }
@@ -59,10 +59,10 @@ namespace Sgl
 	private:
 		bool UpdatePresenter();
 	public:
-		static inline ObservableProperty ContentProperty { &SetContent, &GetContent };
-		static inline ObservableProperty ContentTemplateProperty { &SetContentTemplate, &GetContentTemplate };
-		static inline ObservableProperty PaddingProperty { &SetPadding, &GetPadding };
-		static inline ObservableProperty VerticalContentAlignmentProperty { &SetVerticalContentAlignment, &GetVerticalContentAlignment };
-		static inline ObservableProperty HorizontalContentAlignmentProperty { &SetHorizontalContentAlignment, &GetHorizontalContentAlignment };
+		static inline SglProperty ContentProperty { &SetContent, &GetContent };
+		static inline SglProperty ContentTemplateProperty { &SetContentTemplate, &GetContentTemplate };
+		static inline SglProperty PaddingProperty { &SetPadding, &GetPadding };
+		static inline SglProperty VerticalContentAlignmentProperty { &SetVerticalContentAlignment, &GetVerticalContentAlignment };
+		static inline SglProperty HorizontalContentAlignmentProperty { &SetHorizontalContentAlignment, &GetHorizontalContentAlignment };
 	};
 }

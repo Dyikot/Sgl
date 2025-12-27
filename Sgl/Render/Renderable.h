@@ -2,7 +2,7 @@
 
 #include "../Styling/StyleableElement.h"
 #include "../Input/Cursor.h"
-#include "../Base/Media/ImageBrush.h"
+#include "TextureSource.h"
 #include "IVisualRoot.h"
 #include "RenderContext.h"
 
@@ -36,7 +36,7 @@ namespace Sgl
     protected:
         virtual void OnCursorChanged(const Cursor& cursor) {}
     public:
-        static inline ObservableProperty CursorProperty { &SetCursor, &GetCursor };
-        static inline ObservableProperty BackgroundProperty { &SetBackground, &GetBackground };
+        static inline SglProperty CursorProperty { &SetCursor, &GetCursor };
+        static inline SglProperty BackgroundProperty { &SetBackground, &GetBackground };
     };
 }

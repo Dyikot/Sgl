@@ -34,7 +34,7 @@ namespace Sgl
 	}
 
 	Surface::Surface(Size size, SDL_PixelFormat format,
-					 void* pixels, size_t pitch):
+					 void* pixels, int pitch):
 		_surface(SDL_CreateSurfaceFrom(size.Width, size.Height, format, pixels, pitch))
 	{
 		if(_surface == nullptr)
@@ -108,6 +108,18 @@ namespace Sgl
 	void Surface::Flip(SDL_FlipMode flipMode)
 	{
 		SDL_FlipSurface(_surface, flipMode);
+	}
+
+	Surface& Surface::operator=(std::nullptr_t)
+	{
+		if(_surface != nullptr)
+		{
+			SDL_DestroySurface(_surface);
+		}
+
+		_surface = nullptr;
+
+		return *this;
 	}
 
 	Surface& Surface::operator=(const Surface& other)

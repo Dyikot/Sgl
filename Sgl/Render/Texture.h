@@ -1,7 +1,6 @@
 #pragma once
 
 #include <span>
-#include <optional>
 #include <SDL3/SDL_render.h>
 
 #include "../Base/Primitives.h"
@@ -25,7 +24,7 @@ namespace Sgl
 		int _pitch;
 		int _height;
 	public:
-		TextureLockContext(Texture& texture, std::optional<Rect> rect);
+		TextureLockContext(Texture& texture, const Rect* rect);
 		~TextureLockContext();
 
 		bool HasLock() const noexcept;
@@ -54,7 +53,7 @@ namespace Sgl
 	public:
 		Texture() = default;
 		Texture(std::nullptr_t);
-		Texture(SDL_Renderer* renderer, std::string_view path);
+		Texture(SDL_Renderer* renderer, std::string_view filePath);
 		Texture(SDL_Renderer* renderer,
 				Size size, 
 				TextureAccess access = TextureAccess::Static,
@@ -90,7 +89,7 @@ namespace Sgl
 		SDL_PixelFormat GetFormat() const;
 		SDL_Texture* GetSDLTexture() const noexcept;
 
-		TextureLockContext Lock(std::optional<Rect> rect = std::nullopt);
+		TextureLockContext Lock(const Rect* rect = nullptr);
 		
 		Texture& operator=(const Texture&) = delete;
 		Texture& operator=(Texture&& other) noexcept;

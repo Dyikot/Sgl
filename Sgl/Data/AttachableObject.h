@@ -1,49 +1,54 @@
 #pragma once
 
-#include <vector>
+#include <unordered_map>
 #include "../Base/Any.h"
-#include "AttachProperty.h"
-#include "ObservableObject.h"
+#include "BindableObject.h"
+#include "AttachedProperty.h"
 
 namespace Sgl
 {
-	class AttachableObject : public ObservableObject
+	class AttachableObject : public BindableObject
 	{
 	private:
-		std::vector<Any> _attachedProperties;
+		std::unordered_map<AttachedPropertyBase*, Any> _attachedValues;
 	public:
-		AttachableObject(): _attachedProperties(AttachedPropertyBase::_nextId) {}
-		AttachableObject(const AttachableObject&) = default;
-		AttachableObject(AttachableObject&&) = default;
-		~AttachableObject() = default;
+		AttachableObject() = default;
+		AttachableObject(const AttachableObject& other): 
+			_attachedValues(other._attachedValues)
+		{}
+		AttachableObject(AttachableObject&& other) noexcept: 
+			_attachedValues(std::move(other._attachedValues)) 
+		{}
 
 		template<typename T>
-		void SetAttachProperty(AttachedProperty<T>& attachProperty, const T& value)
+		void SetAttachedValue(AttachedProperty<T>& property, const T& value)
 		{
-			if(auto& property = _attachedProperties[attachProperty.Id]; property.HasValue())
+			Any& attachedValue = _attachedValues[&property];
+
+			if(attachedValue.HasValue())
 			{
-				property.As<T>() = value;
+				attachedValue.As<T>() = value;
 			}
 			else
 			{
-				_attachedProperties[attachProperty.Id] = Any::New<T>(value);
+				attachedValue = Any::New<T>(value);
 			}
 		}
 
 		template<typename T>
-		const T& GetAttachProperty(AttachedProperty<T>& attachProperty) const
+		const T& GetAttachedValue(AttachedProperty<T>& property) const
 		{
-			if(auto& property = _attachedProperties[attachProperty.Id]; property.HasValue())
+			if(auto it = _attachedValues.find(&property); it != _attachedValues.end())	
 			{
-				return property.As<T>();
+				return it->second.As<T>();
 			}
 
-			return attachProperty.DefaultValue;
+			return property.DefaultValue;
 		}
 
-		void ClearAttachProperty(AttachedPropertyBase& attachProperty)
+		void ClearAttachedValue(AttachedPropertyBase& property)
 		{
-			_attachedProperties[attachProperty.Id] = nullptr;
+			_attachedValues.erase(&property);
 		}
 	};
 }

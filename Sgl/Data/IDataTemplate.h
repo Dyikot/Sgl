@@ -4,15 +4,15 @@
 
 namespace Sgl
 {
-    class ObservableObject;
     class UIElement;
+    class INotityPropertyChanged;
 
     class IDataTemplate
     {
     public:
         virtual ~IDataTemplate() = default;
 
-        virtual Ref<UIElement> Build(const Ref<ObservableObject>& data) = 0;
-        virtual bool Match(const Ref<ObservableObject>& data) const = 0;
+        virtual Ref<UIElement> Build(const Ref<INotityPropertyChanged>& data) = 0;
+        virtual bool Match(const Ref<INotityPropertyChanged>& data) const = 0;
     };
 }

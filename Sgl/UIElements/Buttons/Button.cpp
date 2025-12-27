@@ -26,9 +26,9 @@ namespace Sgl::UIElements
 		SetProperty(ClickModeProperty, _clickMode, value);
 	}
 
-	void Button::SetCommand(Command value)
+	void Button::SetCommand(const Command& value)
 	{
-		SetProperty(CommandProperty, _command, std::move(value));
+		SetProperty(CommandProperty, _command, value);
 	}
 
 	void Button::SetCommandParameter(const Any& value)
@@ -67,7 +67,7 @@ namespace Sgl::UIElements
 
 	void Button::OnMouseDown(MouseButtonEventArgs e)
 	{
-		UIElement::OnMouseDown(e);
+		ContentUIElement::OnMouseDown(e);
 
 		if(e.Button == MouseButton::Left)
 		{
@@ -82,7 +82,7 @@ namespace Sgl::UIElements
 
 	void Button::OnMouseUp(MouseButtonEventArgs e)
 	{
-		UIElement::OnMouseUp(e);
+		ContentUIElement::OnMouseUp(e);
 
 		if(e.Button == MouseButton::Left)
 		{

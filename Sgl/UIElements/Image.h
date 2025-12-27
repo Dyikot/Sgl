@@ -59,7 +59,7 @@ namespace Sgl::UIElements
 	private:
 		void UpdateTexture();
 	public:
-		static inline ObservableProperty SourceProperty { &SetSource, &GetSource };
-		static inline ObservableProperty StretchProperty { &SetStretch, &GetStretch };
+		static inline SglProperty SourceProperty { &SetSource, &GetSource };
+		static inline SglProperty StretchProperty { &SetStretch, &GetStretch };
 	};
 }

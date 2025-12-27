@@ -34,7 +34,7 @@ namespace Sgl
 		}
 	}
 
-	void ContentUIElement::SetContent(Ref<ObservableObject> content)
+	void ContentUIElement::SetContent(Ref<INotityPropertyChanged> content)
 	{
 		if(SetProperty(ContentProperty, _content, content))
 		{

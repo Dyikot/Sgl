@@ -99,7 +99,6 @@ namespace Sgl
 		Window* _owner = nullptr;
 		std::list<Window*> _ownedWindows;
 		Surface _icon;
-		std::string _iconSource;
 	public:
 		Window();
 		Window(const Window&) = delete;
@@ -235,14 +234,14 @@ namespace Sgl
 		/// <summary>
 		/// Sets the window icon
 		/// </summary>
-		/// <param name="iconSource">- path to an icon</param>
-		void SetIcon(const std::string& iconSource);
+		/// <param name="icon">- an icon surface</param>
+		void SetIcon(const Surface& icon);
 
 		/// <summary>
 		/// Gets the current window icon
 		/// </summary>
 		/// <returns>Path to the icon</returns>
-		const std::string& GetIcon() const;
+		const Surface& GetIcon() const;
 
 		/// <summary>
 		/// Sets whether the window is resizable
@@ -344,6 +343,6 @@ namespace Sgl
 		friend class UIElement;
 		friend class Application;
 	public:
-		static inline ObservableProperty ContentProperty { &SetContent, &GetContent };
+		static inline SglProperty ContentProperty { &SetContent, &GetContent };
 	};
 }

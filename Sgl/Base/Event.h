@@ -52,6 +52,8 @@ namespace Sgl
 	{
 	public:
 		using EventHandler = EventHandler<TSender, TEventArgs>;
+		using Sender = TSender;
+		using EventArgs = TEventArgs;
 	private:
 		std::vector<EventHandler> _eventHandlers;
 	public:
@@ -132,4 +134,13 @@ namespace Sgl
 
 		friend TSender;
 	};
+
+	template<typename T>
+	struct is_event : std::false_type {};
+
+	template<typename T>
+	struct is_event<Event<T>>: std::true_type {};
+
+	template<typename T>
+	concept CEvent = is_event<T>::value;
 }

@@ -3,7 +3,7 @@
 #include <memory>
 #include <vector>
 
-#include "../Data/ObservableProperty.h"
+#include "../Data/SglProperty.h"
 #include "../Base/Delegate.h"
 #include "Selector.h"
 #include "Setter.h"
@@ -23,8 +23,8 @@ namespace Sgl
         {}
 
         template<typename TOwner, typename TValue>
-        Style& Set(ObservableProperty<TOwner, TValue>& property,
-                   ObservableProperty<TOwner, TValue>::Value value)
+        Style& Set(SglProperty<TOwner, TValue>& property,
+                   SglProperty<TOwner, TValue>::Value value)
         {
             _setters.emplace_back(new Setter(property, value));
             return *this;

@@ -1,7 +1,6 @@
 #pragma once
 
-#include <memory>
-#include <tuple>
+#include <variant>
 #include "Delegate.h"
 
 namespace Sgl
@@ -10,71 +9,41 @@ namespace Sgl
 	class Lazy final
 	{
 	private:
-		using DataFactory = Func<std::unique_ptr<T>>;
-
-		mutable std::unique_ptr<T> _data;
-		mutable DataFactory _dataFactory;
+		mutable std::variant<Func<T>, T> _value;
 	public:
 		Lazy() requires std::default_initializable<T>:
-			_dataFactory([] { return std::make_unique<T>(); })
+			_value([] { return T(); })
 		{}
 
-		explicit Lazy(DataFactory dataFactory):
-			_dataFactory(std::move(dataFactory))
+		explicit Lazy(Func<T> dataFactory):
+			_value(std::move(dataFactory))
 		{}
 
 		Lazy(const Lazy&) = default;
 		Lazy(Lazy&&) noexcept = default;
 
-		T& GetValue()
-		{
-			EnsureCreated();
-			return *_data;
-		}
+		T& GetValue() { return GetDataValue(); }
+		const T& GetValue() const { return GetDataValue(); }
 
-		const T& GetValue() const
-		{
-			EnsureCreated();
-			return *_data;
-		}
-
-		bool IsValueCreated() const 
-		{ 
-			return _data.operator bool();
-		}
+		bool IsValueCreated() const noexcept { return _value.index() == 1; }
 
 		Lazy& operator=(const Lazy&) = default;
 		Lazy& operator=(Lazy&&) noexcept = default;
 
-		T& operator*() 
-		{ 
-			return GetValue();
-		}
+		T& operator*() { return GetValue(); }
+		const T& operator*() const { return GetValue(); }
 
-		const T& operator*() const 
-		{ 
-			return GetValue(); 
-		}
-
-		T* operator->() 
-		{  
-			EnsureCreated();
-			return _data.Get();
-		}
-
-		const T* operator->() const 
-		{ 
-			EnsureCreated();
-			return _data.Get();
-		}
+		T* operator->() {  return &GetDataValue(); }
+		const T* operator->() const { return &GetDataValue(); }
 	private:
-		void EnsureCreated() const
+		T& GetDataValue() const
 		{
-			if(!_data)
+			if(_value.index() == 0)
 			{
-				_data = _dataFactory();
-				_dataFactory = nullptr;
+				_value = std::get<Func<T>>(_value)();
 			}
+
+			return std::get<T>(_value);
 		}
 	};
 }

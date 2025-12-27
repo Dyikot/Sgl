@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Data/ObservableProperty.h"
+#include "../Data/SglProperty.h"
 
 namespace Sgl
 {
@@ -18,17 +18,17 @@ namespace Sgl
     class Setter : public ISetter
     {
     private:
-        ObservableProperty<TOwner, TValue>& _property;
+        SglProperty<TOwner, TValue>& _property;
         TValue _value;
     public:
-        Setter(ObservableProperty<TOwner, TValue>& property, TValue value):
+        Setter(SglProperty<TOwner, TValue>& property, TValue value):
             _property(property),
             _value(value)
         {}
 
         void Apply(StyleableElement& target) const final
         {
-            _property.Set(static_cast<TOwner&>(target), _value);
+            _property.InvokeSetter(static_cast<TOwner&>(target), _value);
         }
     };
 }

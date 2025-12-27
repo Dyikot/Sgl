@@ -5,7 +5,7 @@
 #include "Layout/LayoutHelper.h"
 #include "Base/Exceptions.h"
 #include "Base/Logger.h"
-#include "Input/UserEvents.h"
+#include "Input/SDLEvents.h"
 
 namespace Sgl
 {
@@ -231,9 +231,9 @@ namespace Sgl
         }
     }
 
-    void Window::SetIcon(const std::string& iconSource)
+    void Window::SetIcon(const Surface& icon)
     {
-        _icon = Surface(iconSource);
+        _icon = icon;
 
         if(!SDL_SetWindowIcon(_sdlWindow, _icon.GetSDLSurface()))
         {
@@ -241,9 +241,9 @@ namespace Sgl
         }
     }
 
-    const std::string& Window::GetIcon() const
+    const Surface& Window::GetIcon() const
     {
-        return _iconSource;
+        return _icon;
     }
 
     void Window::SetResizable(bool value) noexcept

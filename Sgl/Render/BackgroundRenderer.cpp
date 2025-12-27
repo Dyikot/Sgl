@@ -11,9 +11,9 @@ namespace Sgl
 		_context.DrawBackground(color);
 	}
 
-	void WindowBackgroundRenderer::operator()(const ImageBrush& imageBrush)
+	void WindowBackgroundRenderer::operator()(const TextureSource& textureSource)
 	{
-		const auto& texture = imageBrush.GetTexture(_context.GetRenderer());
+		const auto& texture = textureSource.CreateTexture(_context).GetValue();
 		_context.DrawTexture(texture);		
 	}
 
@@ -30,9 +30,9 @@ namespace Sgl
 		}
 	}
 
-	void UIElementBackgroundRenderer::operator()(const ImageBrush& imageBrush)
+	void UIElementBackgroundRenderer::operator()(const TextureSource& textureSource)
 	{
-		const auto& texture = imageBrush.GetTexture(_context.GetRenderer());
+		const auto& texture = textureSource.CreateTexture(_context).GetValue();
 		_context.DrawTexture(texture, _rect);
 	}
 }

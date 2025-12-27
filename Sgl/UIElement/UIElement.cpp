@@ -24,17 +24,12 @@ namespace Sgl
 		SetProperty(TagProperty, _tag, value);
 	}	
 
-	void UIElement::SetToolTip(Ref<UIElement> value)
+	void UIElement::SetToolTip(const Ref<UIElement>& value)
 	{
 		if(SetProperty(ToolTipProperty, _toolTip, value) && _isMouseOver)
 		{
 			InvalidateRender();
 		}
-	}
-
-	void UIElement::SetDataContext(Ref<ObservableObject> value)
-	{
-		SetProperty(DataContextProperty, _dataContext, value);
 	}
 
 	void UIElement::Render(RenderContext context)
@@ -115,12 +110,12 @@ namespace Sgl
 		InvalidateMeasure();
 	}
 
-	Ref<UIElement> UIElementDataTemplate::Build(const Ref<ObservableObject>& data)
+	Ref<UIElement> UIElementDataTemplate::Build(const Ref<INotityPropertyChanged>& data)
 	{
 		return data.As<UIElement>();
 	}
 
-	bool UIElementDataTemplate::Match(const Ref<ObservableObject>& data) const
+	bool UIElementDataTemplate::Match(const Ref<INotityPropertyChanged>& data) const
 	{
 		return data.Is<UIElement>();
 	}

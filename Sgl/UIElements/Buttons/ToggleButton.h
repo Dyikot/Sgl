@@ -23,6 +23,6 @@ namespace Sgl::UIElements
 		virtual void OnCheckChanged();
 		void OnClick() override;
 	public:
-		static inline ObservableProperty IsCheckedProperty { &SetIsChecked, &IsChecked };
+		static inline SglProperty IsCheckedProperty { &SetIsChecked, &IsChecked };
 	};
 }

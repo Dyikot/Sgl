@@ -11,8 +11,8 @@ namespace Sgl
 		_texture(nullptr)
 	{}
 
-	Texture::Texture(SDL_Renderer* renderer, std::string_view path):
-		_texture(IMG_LoadTexture(renderer, path.data()))
+	Texture::Texture(SDL_Renderer* renderer, std::string_view filePath):
+		_texture(IMG_LoadTexture(renderer, filePath.data()))
 	{
 		if(_texture == nullptr)
 		{
@@ -168,7 +168,7 @@ namespace Sgl
 		return _texture;
 	}
 
-	TextureLockContext Texture::Lock(std::optional<Rect> rect)
+	TextureLockContext Texture::Lock(const Rect* rect)
 	{
 		return TextureLockContext(*this, rect);
 	}
@@ -179,15 +179,14 @@ namespace Sgl
 		return *this;
 	}
 
-	TextureLockContext::TextureLockContext(Texture& texture, std::optional<Rect> rect):
+	TextureLockContext::TextureLockContext(Texture& texture, const Rect* rect):
 		_texture(texture),
 		_pixels(),
 		_pitch()
 	{
-		const Rect* lockRect = rect.has_value() ? &rect.value() : nullptr;
-		_height = lockRect ? lockRect->h : texture.GetSize().Height;
+		_height = rect ? rect->h : texture.GetSize().Height;
 
-		if(SDL_LockTexture(_texture.GetSDLTexture(), lockRect, &_pixels, &_pitch) < 0)
+		if(SDL_LockTexture(_texture.GetSDLTexture(), rect, &_pixels, &_pitch) < 0)
 		{
 			Logger::LogError("Unable to lock a texture: {}", SDL_GetError());
 		}

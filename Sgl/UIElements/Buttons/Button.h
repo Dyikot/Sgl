@@ -1,7 +1,11 @@
 #pragma once
 
 #include "../../UIElement/ContentUIElement.h"
-#include "../../Data/Command.h"
+
+namespace Sgl
+{
+	using Command = Action<const Any&>;
+}
 
 namespace Sgl::UIElements
 {
@@ -29,8 +33,8 @@ namespace Sgl::UIElements
 		void SetClickMode(ClickMode value);
 		ClickMode GetClickMode() const { return _clickMode; }
 
-		void SetCommand(Command value);
-		Command GetCommand() const { return _command; }
+		void SetCommand(const Command& value);
+		const Command& GetCommand() const { return _command; }
 
 		void SetCommandParameter(const Any& value);
 		const Any& GetCommandParameter() const { return _commandParameter; }
@@ -44,8 +48,8 @@ namespace Sgl::UIElements
 		void OnMouseDown(MouseButtonEventArgs e) override;
 		void OnMouseUp(MouseButtonEventArgs e) override;
 	public:
-		static inline ObservableProperty ClickModeProperty { &SetClickMode, &GetClickMode };
-		static inline ObservableProperty CommandProperty { &SetCommand, &GetCommand };
-		static inline ObservableProperty CommandParameterProperty { &SetCommandParameter, &GetCommandParameter };
+		static inline SglProperty ClickModeProperty { &SetClickMode, &GetClickMode };
+		static inline SglProperty CommandProperty { &SetCommand, &GetCommand };
+		static inline SglProperty CommandParameterProperty { &SetCommandParameter, &GetCommandParameter };
 	};
 }

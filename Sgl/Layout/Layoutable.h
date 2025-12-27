@@ -80,15 +80,15 @@ namespace Sgl
 		virtual FSize MeasureContent(FSize avaliableSize) { return FSize(); }
 		virtual void ArrangeContent(FRect rect) { }
 	public:
-		static inline ObservableProperty WidthProperty { &SetWidth, &GetWidth };
-		static inline ObservableProperty HeightProperty { &SetHeight, &GetHeight };
-		static inline ObservableProperty MinWidthProperty { &SetMinWidth, &GetMinWidth };
-		static inline ObservableProperty MinHeightProperty { &SetMinHeight, &GetMinHeight };
-		static inline ObservableProperty MaxWidthProperty { &SetMaxWidth, &GetMaxWidth };
-		static inline ObservableProperty MaxHeightProperty { &SetMaxHeight, &GetMaxHeight };
-		static inline ObservableProperty MarginProperty { &SetMargin, &GetMargin };
-		static inline ObservableProperty IsVisibleProperty { &SetIsVisible, &IsVisible };
-		static inline ObservableProperty VerticalAlignmentProperty { &SetVerticalAlignment, &GetVerticalAlignment };
-		static inline ObservableProperty HorizontalAlignmentProperty { &SetHorizontalAlignment, &GetHorizontalAlignment };
+		static inline SglProperty WidthProperty { &SetWidth, &GetWidth };
+		static inline SglProperty HeightProperty { &SetHeight, &GetHeight };
+		static inline SglProperty MinWidthProperty { &SetMinWidth, &GetMinWidth };
+		static inline SglProperty MinHeightProperty { &SetMinHeight, &GetMinHeight };
+		static inline SglProperty MaxWidthProperty { &SetMaxWidth, &GetMaxWidth };
+		static inline SglProperty MaxHeightProperty { &SetMaxHeight, &GetMaxHeight };
+		static inline SglProperty MarginProperty { &SetMargin, &GetMargin };
+		static inline SglProperty IsVisibleProperty { &SetIsVisible, &IsVisible };
+		static inline SglProperty VerticalAlignmentProperty { &SetVerticalAlignment, &GetVerticalAlignment };
+		static inline SglProperty HorizontalAlignmentProperty { &SetHorizontalAlignment, &GetHorizontalAlignment };
 	};
 }

@@ -22,7 +22,7 @@ namespace Sgl::UIElements
 
 		void Render(RenderContext context) final;
 	public:
-		static inline ObservableProperty BorderWidthProperty { &SetBorderWidth, &GetBorderWidth };
-		static inline ObservableProperty BorderColorProperty { &SetBorderColor, &GetBorderColor };
+		static inline SglProperty BorderWidthProperty { &SetBorderWidth, &GetBorderWidth };
+		static inline SglProperty BorderColorProperty { &SetBorderColor, &GetBorderColor };
 	};
 }

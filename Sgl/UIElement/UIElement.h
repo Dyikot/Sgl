@@ -6,7 +6,6 @@
 #include "../Base/Event.h"
 #include "../Data/ObservableObject.h"
 #include "../Data/IDataTemplate.h"
-#include "../Data/BindingMode.h"
 #include "../Input/MouseAndKeyEventArgs.h"
 #include "../Layout/Layoutable.h"
 
@@ -31,8 +30,7 @@ namespace Sgl
 		Event<MouseWheelEventHandler> MouseWheel;		
 	private:		
 		Any _tag;		
-		Ref<UIElement> _toolTip;
-		Ref<ObservableObject> _dataContext;
+		Ref<UIElement> _toolTip;		
 
 		bool _isMouseOver = false;
 	public:
@@ -44,101 +42,12 @@ namespace Sgl
 		void SetTag(const Any& value);
 		const Any& GetTag() const { return _tag; }		
 
-		void SetToolTip(Ref<UIElement> value);
-		Ref<UIElement> GetToolTip() const { return _toolTip; }
-
-		void SetDataContext(Ref<ObservableObject> value);
-		Ref<ObservableObject> GetDataContext() const { return _dataContext; }
+		void SetToolTip(const Ref<UIElement>& value);
+		const Ref<UIElement>& GetToolTip() const { return _toolTip; }		
 
 		bool IsMouseOver() const { return _isMouseOver; }
 
-		void Render(RenderContext context) override;
-
-		template<typename TTarget, typename TTargetValue,
-				 typename TSource, typename TSourceValue,
-				 typename TConverter = std::identity>
-		void Bind(ObservableProperty<TTarget, TTargetValue>& targetProperty,
-				  ObservableProperty<TSource, TSourceValue>& sourceProperty,
-				  BindingMode mode = BindingMode::OneWay,
-				  TConverter converter = {})
-		{
-			if(_dataContext)
-			{
-				auto& target = static_cast<TTarget&>(*this);
-				auto& source = _dataContext.GetValueAs<TSource>();
-
-				switch(mode)
-				{
-					case BindingMode::OneWay:
-					{
-						targetProperty.Set(target, converter(sourceProperty.Get(source)));
-						source.SetObserver(sourceProperty, target, targetProperty, converter);
-						break;
-					}
-
-					case BindingMode::OneWayToSource:
-					{
-						sourceProperty.Set(source, converter(targetProperty.Get(target)));
-						SetObserver(targetProperty, source, sourceProperty, converter);
-						break;
-					}
-
-					case BindingMode::TwoWay:
-					{
-						targetProperty.Set(target, converter(sourceProperty.Get(source)));
-						sourceProperty.Set(source, converter(targetProperty.Get(target)));
-						SetObserver(targetProperty, source, sourceProperty, converter);
-						break;
-					}
-
-					case BindingMode::OneTime:
-					{
-						targetProperty.Set(target, converter(sourceProperty.Get(source)));
-						break;
-					}
-				}
-			}
-			else
-			{
-				throw std::exception("Data context is null");
-			}
-		}
-		
-		template<typename TTarget, typename TSource,
-				 typename TValue, typename TConverter = std::identity>
-		void Bind(ObservableProperty<TTarget, TValue>& targetProperty,
-				  TValue TSource::* sourceField,
-				  TConverter converter = {})
-		{
-			if(_dataContext)
-			{
-				auto& target = static_cast<TTarget&>(*this);
-				auto& source = _dataContext.GetValueAs<TSource>();
-				targetProperty.Set(target, converter(source.*sourceField));
-			}
-			else
-			{
-				throw std::exception("Data context is null");
-			}
-		}
-
-		template<typename TTarget, typename TSource, 
-				 typename TValue, typename TConverter = std::identity>
-		void Bind(ObservableProperty<TTarget, TValue>& targetProperty,
-				  TValue (TSource::* sourceMethod)(),
-				  TConverter converter = {})
-		{
-			if(_dataContext)
-			{
-				auto& target = static_cast<TTarget&>(*this);
-				auto& source = _dataContext.GetValueAs<TSource>();
-				targetProperty.Set(target, converter((source.*sourceMethod)()));
-			}
-			else
-			{
-				throw std::exception("Data context is null");
-			}
-		}
+		void Render(RenderContext context) override;		
 	protected:
 		void RenderBackground(RenderContext context);
 		void OnCursorChanged(const Cursor& cursor) override;
@@ -153,9 +62,8 @@ namespace Sgl
 		void OnAttachedToLogicalTree() override;
 		void OnDetachedFromLogicalTree() override;
 	public:
-		static inline ObservableProperty TagProperty { &SetTag, &GetTag };
-		static inline ObservableProperty ToolTipProperty { &SetToolTip, &GetToolTip };
-		static inline ObservableProperty DataContextProperty { &SetDataContext, &GetDataContext };
+		static inline SglProperty TagProperty { &SetTag, &GetTag };
+		static inline SglProperty ToolTipProperty { &SetToolTip, &GetToolTip };
 
 		friend class Panel;
 		friend class Window;
@@ -165,7 +73,7 @@ namespace Sgl
 	class UIElementDataTemplate : public IDataTemplate
 	{
 	public:
-		Ref<UIElement> Build(const Ref<ObservableObject>& data) override;
-		bool Match(const Ref<ObservableObject>& data) const override;
+		Ref<UIElement> Build(const Ref<INotityPropertyChanged>& data) override;
+		bool Match(const Ref<INotityPropertyChanged>& data) const override;
 	};
 }

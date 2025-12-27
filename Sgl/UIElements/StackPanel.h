@@ -24,7 +24,7 @@ namespace Sgl
 		FSize MeasureContent(FSize avaliableSize) override;
 		void ArrangeContent(FRect rect) override;
 	public:
-		static inline ObservableProperty SpacingProperty { &SetSpacing, &GetSpacing };
-		static inline ObservableProperty OrientationProperty { &SetOrientation, &GetOrientation };
+		static inline SglProperty SpacingProperty { &SetSpacing, &GetSpacing };
+		static inline SglProperty OrientationProperty { &SetOrientation, &GetOrientation };
 	};
 }
