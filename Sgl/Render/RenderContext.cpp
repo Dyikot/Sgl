@@ -15,8 +15,8 @@ namespace Sgl
 	static const std::vector<float> SinRange = Math::SinRange(VerticesNumber);
 	static const std::vector<float> CosRange = Math::CosRange(VerticesNumber);
 
-	RenderContext::RenderContext(SDL_Renderer* renderer):
-		_renderer(renderer)
+	RenderContext::RenderContext(SDL_Renderer* _renderer):
+		_renderer(_renderer)
 	{}
 
 	void RenderContext::SetTarget(const Texture& texture)
@@ -97,9 +97,9 @@ namespace Sgl
 	{
 		std::vector<FPoint> points(VerticesNumber);
 
-		float radiusX = 0.5f * rect.w;
-		float radiusY = 0.5f * rect.h;
-		FPoint center(rect.x + radiusX, rect.y + radiusY);
+		const float radiusX = 0.5f * rect.w;
+		const float radiusY = 0.5f * rect.h;
+		const FPoint center(rect.x + radiusX, rect.y + radiusY);
 
 		for(size_t i = 0; i < VerticesNumber; i++)
 		{
@@ -112,128 +112,139 @@ namespace Sgl
 
 	void RenderContext::DrawEllipseSmooth(FRect rect, Color color)
 	{
-		if(rect.w <= 0 || rect.h <= 0)
+		if(rect.w <= 0.0f || rect.h <= 0.0f)
 		{
 			return;
 		}
 
-		int a = rect.w * 0.5;
-		int b = rect.h * 0.5;
-		int cx = rect.x + a;
-		int cy = rect.y + b;
+		const float a = rect.w * 0.5f;
+		const float b = rect.h * 0.5f;
+		const float cx = rect.x + a;
+		const float cy = rect.y + b;
 
-		if(a == 0 || b == 0)
-		{
-			SetColor(color);
-			SDL_RenderLine(_renderer, cx, cy - b, cx, cy + b);
-			return;
-		}
+		const float a2 = a * a;
+		const float b2 = b * b;
+		const float inv_a2 = 1.0f / a2;
+		const float inv_b2 = 1.0f / b2;
+		const uint8_t red = color.Red;
+		const uint8_t green = color.Green;
+		const uint8_t blue = color.Blue;
+		const float alpha = (float)color.Alpha;
 
-		long a2 = (long)a * a;
-		long b2 = (long)b * b;
+		// Precompute constant factors for midpoint algorithm
+		const float sigma_y_step1 = 4.0f * a2;
+		const float sigma_x_step1 = 4.0f * b2;
+		const float sigma_x_step2 = 4.0f * b2;
+		const float sigma_y_step2 = 4.0f * a2;
 
-		// First octant (0 to 45 degrees)
-		long x = 0;
-		long y = b;
-		long sigma = 2 * b2 + a2 * (1 - 2 * b);
+		// First octant (0 to 45 degrees) - restructured for ILP
+		float x = 0.0f;
+		float y = b;
+		float sigma = 2.0f * b2 + a2 * (1.0f - 2.0f * b);
 
 		while(b2 * x <= a2 * y)
 		{
-			// Calculate exact curve position
-			float exact_y = (float)b * sqrtf(1.0f - (float)(x * x) / (float)a2);
+			// Geometry
+			float t = 1.0f - (x * x) * inv_a2;
+			t = t < 0.0f ? 0.0f : t;  // Branchless clamp
+			const float exact_y = b * sqrtf(t);
+			const float cx_plus_x = cx + x;
+			const float cx_minus_x = cx - x;
+			const float screen_y_top = cy - exact_y;
+			const float screen_y_bottom = cy + exact_y;
 
-			// TOP BOUNDARY (screen coordinates)
-			float screen_y_top = cy - exact_y;
-			int y_int_top = (int)floorf(screen_y_top);
-			float f_top = screen_y_top - y_int_top;
-			Uint8 alpha1_top = (Uint8)(color.Alpha * (1.0f - f_top));
-			Uint8 alpha2_top = (Uint8)(color.Alpha * f_top);
+			// Alpha values
+			const int y_top_floor = (int)floorf(screen_y_top);
+			const int y_bottom_floor = (int)floorf(screen_y_bottom);
+			const float f_top = screen_y_top - (float)y_top_floor;
+			const float f_bottom = screen_y_bottom - (float)y_bottom_floor;
+			const uint8_t alpha1_top = (uint8_t)(alpha * (1.0f - f_top));
+			const uint8_t alpha2_top = (uint8_t)(alpha * f_top);
+			const uint8_t alpha1_bottom = (uint8_t)(alpha * (1.0f - f_bottom));
+			const uint8_t alpha2_bottom = (uint8_t)(alpha * f_bottom);
 
-			// Draw top boundary (right and left)
-			SDL_SetRenderDrawColor(_renderer, color.Red, color.Green, color.Blue, alpha1_top);
-			SDL_RenderPoint(_renderer, cx + x, y_int_top);
-			SDL_RenderPoint(_renderer, cx - x, y_int_top);
+			// Batch draw operations with minimal state changes
+			FPoint points[4];
+			points[0] = { cx_plus_x, (float)y_top_floor };
+			points[1] = { cx_minus_x, (float)y_top_floor };
+			points[2] = { cx_plus_x, (float)y_bottom_floor };
+			points[3] = { cx_minus_x, (float)y_bottom_floor };
 
-			SDL_SetRenderDrawColor(_renderer, color.Red, color.Green, color.Blue, alpha2_top);
-			SDL_RenderPoint(_renderer, cx + x, y_int_top + 1);
-			SDL_RenderPoint(_renderer, cx - x, y_int_top + 1);
+			SDL_SetRenderDrawColor(_renderer, red, green, blue, alpha1_top);
+			SDL_RenderPoints(_renderer, points, 2);
+			SDL_SetRenderDrawColor(_renderer, red, green, blue, alpha1_bottom);
+			SDL_RenderPoints(_renderer, &points[2], 2);
 
-			// BOTTOM BOUNDARY (screen coordinates)
-			float screen_y_bottom = cy + exact_y;
-			int y_int_bottom = (int)floorf(screen_y_bottom);
-			float f_bottom = screen_y_bottom - y_int_bottom;
-			Uint8 alpha1_bottom = (Uint8)(color.Alpha * (1.0f - f_bottom));
-			Uint8 alpha2_bottom = (Uint8)(color.Alpha * f_bottom);
+			points[0].y = (float)(y_top_floor + 1);
+			points[1].y = (float)(y_top_floor + 1);
+			points[2].y = (float)(y_bottom_floor + 1);
+			points[3].y = (float)(y_bottom_floor + 1);
 
-			// Draw bottom boundary (right and left)
-			SDL_SetRenderDrawColor(_renderer, color.Red, color.Green, color.Blue, alpha1_bottom);
-			SDL_RenderPoint(_renderer, cx + x, y_int_bottom);
-			SDL_RenderPoint(_renderer, cx - x, y_int_bottom);
+			SDL_SetRenderDrawColor(_renderer, red, green, blue, alpha2_top);
+			SDL_RenderPoints(_renderer, points, 2);
+			SDL_SetRenderDrawColor(_renderer, red, green, blue, alpha2_bottom);
+			SDL_RenderPoints(_renderer, &points[2], 2);
 
-			SDL_SetRenderDrawColor(_renderer, color.Red, color.Green, color.Blue, alpha2_bottom);
-			SDL_RenderPoint(_renderer, cx + x, y_int_bottom + 1);
-			SDL_RenderPoint(_renderer, cx - x, y_int_bottom + 1);
-
-			// Midpoint update (unchanged from original)
-			if(sigma >= 0)
-			{
-				sigma += 4 * a2 * (1 - y);
-				y--;
-			}
-			sigma += 4 * b2 * (x + 1);
-			x++;
+			// Midpoint update with independent components
+			const float update_y = (sigma >= 0.0f) ? 1.0f : 0.0f;
+			sigma += sigma_x_step1 * (x + 1.0f) + update_y * (sigma_y_step1 * (1.0f - y));
+			y -= update_y;
+			x += 1.0f;
 		}
 
-		// Second octant (45 to 90 degrees)
+		// Second octant (45 to 90 degrees) - same ILP principles
 		x = a;
-		y = 0;
-		sigma = 2 * a2 + b2 * (1 - 2 * a);
+		y = 0.0f;
+		sigma = 2.0f * a2 + b2 * (1.0f - 2.0f * a);
 
 		while(a2 * y <= b2 * x)
 		{
-			// Calculate exact curve position
-			float exact_x = (float)a * sqrtf(1.0f - (float)(y * y) / (float)b2);
+			// Geometry
+			float t = 1.0f - (y * y) * inv_b2;
+			t = t < 0.0f ? 0.0f : t;  // Branchless clamp
+			const float exact_x = a * sqrtf(t);
+			const float cy_plus_y = cy + y;
+			const float cy_minus_y = cy - y;
+			const float screen_x_right = cx + exact_x;
+			const float screen_x_left = cx - exact_x;
 
-			// RIGHT BOUNDARY (screen coordinates)
-			float screen_x_right = cx + exact_x;
-			int x_int_right = (int)floorf(screen_x_right);
-			float f_right = screen_x_right - x_int_right;
-			Uint8 alpha1_right = (Uint8)(color.Alpha * (1.0f - f_right));
-			Uint8 alpha2_right = (Uint8)(color.Alpha * f_right);
+			// Alpha values
+			const int x_right_floor = (int)floorf(screen_x_right);
+			const int x_left_floor = (int)floorf(screen_x_left);
+			const float f_right = screen_x_right - (float)x_right_floor;
+			const float f_left = screen_x_left - (float)x_left_floor;
+			const uint8_t alpha1_right = (uint8_t)(alpha * (1.0f - f_right));
+			const uint8_t alpha2_right = (uint8_t)(alpha * f_right);
+			const uint8_t alpha1_left = (uint8_t)(alpha * (1.0f - f_left));
+			const uint8_t alpha2_left = (uint8_t)(alpha * f_left);
 
-			// Draw right boundary (top and bottom)
-			SDL_SetRenderDrawColor(_renderer, color.Red, color.Green, color.Blue, alpha1_right);
-			SDL_RenderPoint(_renderer, x_int_right, cy - y);
-			SDL_RenderPoint(_renderer, x_int_right, cy + y);
+			// Batch draw operations
+			SDL_FPoint points[4];
+			points[0] = { (float)x_right_floor, cy_minus_y };
+			points[1] = { (float)x_right_floor, cy_plus_y };
+			points[2] = { (float)x_left_floor, cy_minus_y };
+			points[3] = { (float)x_left_floor, cy_plus_y };
 
-			SDL_SetRenderDrawColor(_renderer, color.Red, color.Green, color.Blue, alpha2_right);
-			SDL_RenderPoint(_renderer, x_int_right + 1, cy - y);
-			SDL_RenderPoint(_renderer, x_int_right + 1, cy + y);
+			SDL_SetRenderDrawColor(_renderer, red, green, blue, alpha1_right);
+			SDL_RenderPoints(_renderer, points, 2);
+			SDL_SetRenderDrawColor(_renderer, red, green, blue, alpha1_left);
+			SDL_RenderPoints(_renderer, &points[2], 2);
 
-			// LEFT BOUNDARY (screen coordinates)
-			float screen_x_left = cx - exact_x;
-			int x_int_left = (int)floorf(screen_x_left);
-			float f_left = screen_x_left - x_int_left;
-			Uint8 alpha1_left = (Uint8)(color.Alpha * (1.0f - f_left));
-			Uint8 alpha2_left = (Uint8)(color.Alpha * f_left);
+			points[0].x = (float)(x_right_floor + 1);
+			points[1].x = (float)(x_right_floor + 1);
+			points[2].x = (float)(x_left_floor + 1);
+			points[3].x = (float)(x_left_floor + 1);
 
-			// Draw left boundary (top and bottom)
-			SDL_SetRenderDrawColor(_renderer, color.Red, color.Green, color.Blue, alpha1_left);
-			SDL_RenderPoint(_renderer, x_int_left, cy - y);
-			SDL_RenderPoint(_renderer, x_int_left, cy + y);
+			SDL_SetRenderDrawColor(_renderer, red, green, blue, alpha2_right);
+			SDL_RenderPoints(_renderer, points, 2);
+			SDL_SetRenderDrawColor(_renderer, red, green, blue, alpha2_left);
+			SDL_RenderPoints(_renderer, &points[2], 2);
 
-			SDL_SetRenderDrawColor(_renderer, color.Red, color.Green, color.Blue, alpha2_left);
-			SDL_RenderPoint(_renderer, x_int_left + 1, cy - y);
-			SDL_RenderPoint(_renderer, x_int_left + 1, cy + y);
-
-			// Midpoint update (unchanged from original)
-			if(sigma >= 0)
-			{
-				sigma += 4 * b2 * (1 - x);
-				x--;
-			}
-			sigma += 4 * a2 * (y + 1);
-			y++;
+			// Midpoint update with independent components
+			const float update_x = (sigma >= 0.0f) ? 1.0f : 0.0f;
+			sigma += sigma_y_step2 * (y + 1.0f) + update_x * (sigma_x_step2 * (1.0f - x));
+			x -= update_x;
+			y += 1.0f;
 		}
 	}
 

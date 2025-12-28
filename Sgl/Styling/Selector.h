@@ -25,7 +25,7 @@ namespace Sgl
 		template<typename T>
 		Selector& OfType()
 		{
-			_typeComparer = CompareTypeId<T>;
+			_typeComparer = CompareTypeById<T>;
 			_flags |= TypeFlag;
 			return *this;
 		}
@@ -54,7 +54,7 @@ namespace Sgl
 		}
 
 		template<typename T>
-		static bool CompareTypeId(StyleableElement& target)
+		static bool CompareTypeById(StyleableElement& target)
 		{
 			return typeid(T) == typeid(target);
 		}

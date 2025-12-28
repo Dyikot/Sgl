@@ -34,6 +34,11 @@ namespace Sgl
             throw Exception("Cannot create a window without an application");
         }
 
+        if(!SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_BLEND))
+        {
+            Logger::LogWarning("Enable to set blend mode: {}", SDL_GetError());
+        }
+
         _id = SDL_GetWindowID(_sdlWindow);
         App->AddWindow(*this);
         SetVisualRoot(this);
@@ -496,6 +501,8 @@ namespace Sgl
 
     void Window::OnWindowSizeChanged(WindowSizeChangedEventArgs e)
     {
+        InvalidateRender();
+
         if(_content)
         {
             _content->InvalidateMeasure();

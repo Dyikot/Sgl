@@ -312,7 +312,7 @@ namespace Sgl
 
 		void SetStylingRoot(IStyleHost* value) final;
 
-		void Render(RenderContext context) final;
+		void Render(RenderContext context) override;
 		void ApplyStyle() override;		
 		virtual void Process();
 	protected:

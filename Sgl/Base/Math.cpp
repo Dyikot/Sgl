@@ -4,14 +4,21 @@ namespace Sgl
 {
 	std::vector<float> Math::SinRange(size_t count) noexcept
 	{
-		const float step = 2.f * std::numbers::pi / static_cast<float>(count - 1);
+		if(count == 0)
+		{
+			return {};
+		}
+		else if(count == 1)
+		{
+			return { 0.f };
+		}
+
+		const float step = 2.f * std::numbers::pi_v<float> / static_cast<float>(count - 1);
 		std::vector<float> result(count);
 
-		float angle = 0.f;
 		for(size_t i = 0; i < count; i++)
 		{
-			result[i] = sinf(angle);
-			angle += step;
+			result[i] = sinf(i * step);
 		}
 
 		return result;
@@ -19,14 +26,21 @@ namespace Sgl
 
 	std::vector<float> Math::CosRange(size_t count) noexcept
 	{
-		const float step = 2.f * std::numbers::pi / static_cast<float>(count - 1);
+		if(count == 0)
+		{
+			return {};
+		}
+		else if(count == 1)
+		{
+			return { 1.f };
+		}
+
+		const float step = 2.f * std::numbers::pi_v<float> / static_cast<float>(count - 1);
 		std::vector<float> result(count);
 
-		float angle = 0.f;
 		for(size_t i = 0; i < count; i++)
 		{
-			result[i] = cosf(angle);
-			angle += step;
+			result[i] = cosf(i * step);
 		}
 
 		return result;

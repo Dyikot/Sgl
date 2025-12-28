@@ -113,8 +113,7 @@ namespace Sgl
 		template<typename T>
 		bool Is() const
 		{
-			const auto& type = HasValue() ? _data->Type() : typeid(nullptr);
-			return type == typeid(T);
+			return Is(typeid(T));
 		}
 
 		bool Is(const std::type_info& typeInfo);
