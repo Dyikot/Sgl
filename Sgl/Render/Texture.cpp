@@ -4,6 +4,7 @@
 #include <SDL3_image/SDL_image.h>
 
 #include "../Base/Logger.h"
+#include "Surface.h"
 
 namespace Sgl
 {
@@ -95,12 +96,18 @@ namespace Sgl
 		}
 	}
 
+	Texture::Texture(const Texture& other)
+	{
+		CopyFrom(other);
+	}
+
+	Texture::Texture(Texture&& other) noexcept:
+		_texture(std::exchange(other._texture, nullptr))
+	{}
+
 	Texture::~Texture()
 	{
-		if(_texture != nullptr)
-		{
-			SDL_DestroyTexture(_texture);
-		}
+		Destroy();
 	}
 
 	void Texture::SetColor(Color value)
@@ -141,9 +148,14 @@ namespace Sgl
 		return scaleMode;
 	}
 
-	Size Texture::GetSize() const
+	size_t Texture::GetWidth() const
 	{
-		return Size(_texture->w, _texture->h);
+		return static_cast<size_t>(_texture->w);
+	}
+
+	size_t Texture::GetHeight() const
+	{
+		return static_cast<size_t>(_texture->h);
 	}
 
 	TextureAccess Texture::GetAccess() const
@@ -173,10 +185,43 @@ namespace Sgl
 		return TextureLockContext(*this, rect);
 	}
 
+	Texture& Texture::operator=(std::nullptr_t)
+	{
+		Destroy();
+		return *this;
+	}
+
+	Texture& Texture::operator=(const Texture& other)
+	{
+		Destroy();
+		CopyFrom(other);
+		return *this;
+	}
+
 	Texture& Texture::operator=(Texture&& other) noexcept
 	{
-		_texture = std::exchange(other._texture, _texture);
+		Destroy();
+		_texture = std::exchange(other._texture, nullptr);
 		return *this;
+	}
+
+	void Texture::CopyFrom(const Texture& other)
+	{
+		_texture = other._texture;
+
+		if(_texture != nullptr)
+		{
+			_texture->refcount++;
+		}
+	}	
+
+	void Texture::Destroy()
+	{
+		if(_texture != nullptr)
+		{
+			SDL_DestroyTexture(_texture);
+			_texture = nullptr;
+		}
 	}
 
 	TextureLockContext::TextureLockContext(Texture& texture, const Rect* rect):
@@ -184,7 +229,7 @@ namespace Sgl
 		_pixels(),
 		_pitch()
 	{
-		_height = rect ? rect->h : texture.GetSize().Height;
+		_height = rect ? rect->h : texture.GetHeight();
 
 		if(SDL_LockTexture(_texture.GetSDLTexture(), rect, &_pixels, &_pitch) < 0)
 		{

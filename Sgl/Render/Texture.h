@@ -71,8 +71,8 @@ namespace Sgl
 				int wrapWidth,
 				Color foreground, 
 				Color background = Colors::Transparent);
-		Texture(const Texture&) = delete;
-		Texture(Texture&&) noexcept = default;
+		Texture(const Texture& other);
+		Texture(Texture&& other) noexcept;
 		~Texture();
 
 		void SetColor(Color value);
@@ -84,16 +84,22 @@ namespace Sgl
 		void SetScaleMode(SDL_ScaleMode value);
 		SDL_ScaleMode GetScaleMode() const;
 
-		Size GetSize() const;
+		size_t GetWidth() const;
+		size_t GetHeight() const;
 		TextureAccess GetAccess() const;
 		SDL_PixelFormat GetFormat() const;
 		SDL_Texture* GetSDLTexture() const noexcept;
 
 		TextureLockContext Lock(const Rect* rect = nullptr);
 		
-		Texture& operator=(const Texture&) = delete;
+		Texture& operator=(std::nullptr_t);
+		Texture& operator=(const Texture& other);
 		Texture& operator=(Texture&& other) noexcept;
 		friend bool operator==(const Texture&, const Texture&) = default;
-		explicit operator bool() { return _texture != nullptr; }
+		bool operator==(std::nullptr_t) const noexcept { return _texture == nullptr; }
+		explicit operator bool() const noexcept { return _texture != nullptr; }
+	private:
+		void CopyFrom(const Texture& other);
+		void Destroy();
 	};
 }

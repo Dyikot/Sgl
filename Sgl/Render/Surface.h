@@ -29,17 +29,23 @@ namespace Sgl
 		void SetBlendMode(SDL_BlendMode value);
 		SDL_BlendMode GetBlendMode() const;
 
-		Size GetSize() const;
+		size_t GetWidth() const;
+		size_t GetHeight() const;
 		SDL_Surface* GetSDLSurface() const noexcept { return _surface; }
 
 		void Lock();
 		void Unlock();
 		void Flip(SDL_FlipMode flipMode);
+		Surface Clone() const;
 
 		Surface& operator=(std::nullptr_t);
 		Surface& operator=(const Surface& other);
 		Surface& operator=(Surface&& other) noexcept;
 		friend bool operator==(const Surface&, const Surface&) = default;
-		explicit operator bool() { return _surface != nullptr; }
+		bool operator==(std::nullptr_t) const noexcept { return _surface == nullptr; }
+		explicit operator bool() const noexcept { return _surface != nullptr; }
+	private:
+		void CopyFrom(const Surface& other);
+		void Destroy();
 	};
 }

@@ -24,7 +24,7 @@ namespace Sgl
 		SDL_SetRenderTarget(_renderer, texture.GetSDLTexture());
 	}
 
-	void RenderContext::SetTargetWindow()
+	void RenderContext::ResetTarget()
 	{
 		SDL_SetRenderTarget(_renderer, nullptr);
 	}
@@ -39,7 +39,7 @@ namespace Sgl
 		SDL_SetRenderClipRect(_renderer, nullptr);
 	}
 
-	void RenderContext::DrawBackground(Color color)
+	void RenderContext::FillBackground(Color color)
 	{
 		SetColor(color);
 		SDL_RenderClear(_renderer);
@@ -398,8 +398,7 @@ namespace Sgl
 	{
 		FontImpl font(fontFamily, size);
 		Texture texture(_renderer, FontQuality::Blended, font, text, color);
-		auto [width, height] = texture.GetSize();
-		FRect rect(position.x, position.y, width, height);
+		FRect rect(position.x, position.y, texture.GetWidth(), texture.GetHeight());
 		DrawTexture(texture, rect);
 	}
 }

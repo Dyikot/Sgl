@@ -1,10 +1,33 @@
 #include "UIElement.h"
 
-#include "../Render/BackgroundRenderer.h"
 #include "../Window.h"
 
 namespace Sgl
 {
+	class UIElementBackgroundRenderer
+	{
+	private:
+		RenderContext _context;
+		FRect _rect;
+	public:
+		UIElementBackgroundRenderer(RenderContext context, FRect rect):
+			_context(context), _rect(rect) 
+		{}
+
+		void operator()(Color color)
+		{
+			if(!color.IsTransparent())
+			{
+				_context.DrawRectangleFill(_rect, color);
+			}
+		}
+
+		void operator()(const Texture& texture)
+		{
+			_context.DrawTexture(texture, _rect);
+		}
+	};
+
 	UIElement::UIElement(const UIElement& other):
 		Layoutable(other),
 		_isMouseOver(other._isMouseOver),

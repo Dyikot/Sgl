@@ -12,13 +12,13 @@ namespace Sgl
 	class FontFamily
 	{	
 	private:
-		struct DefaultFontFamilty {};
+		struct DefaultFontFamilyTag {};
 	public:
-		static constexpr DefaultFontFamilty Default;
+		static constexpr DefaultFontFamilyTag Default;
 	private:
 		std::string _source;
 	public:
-		FontFamily(DefaultFontFamilty);
+		FontFamily(DefaultFontFamilyTag);
 		explicit FontFamily(const std::string& name);
 		FontFamily(const std::string& path, const std::string& name);
 		FontFamily(const FontFamily& other);

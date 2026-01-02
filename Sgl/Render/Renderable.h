@@ -2,7 +2,7 @@
 
 #include "../Styling/StyleableElement.h"
 #include "../Input/Cursor.h"
-#include "TextureSource.h"
+#include "../Base/Media/Brush.h"
 #include "IVisualRoot.h"
 #include "RenderContext.h"
 

@@ -9,24 +9,35 @@ namespace Sgl
 	class Cursor final
 	{
 	private:
-		std::shared_ptr<SDL_Cursor> _cursor;
+		struct CursorImpl
+		{
+			SDL_Cursor* SdlCursor = nullptr;
+			int References = 0;
+		};
+
+		CursorImpl* _cursor = nullptr;
 	public:		
 		Cursor(SDL_SystemCursor systemCursor) noexcept;
 		explicit Cursor(std::string_view path);
+		explicit Cursor(SDL_Cursor* sdlCursor);
 		Cursor(const Cursor& other);
 		Cursor(Cursor&& other) noexcept;
-		~Cursor() = default;
+		~Cursor();
 
 		static void Set(const Cursor& cursor);
 		static void Show();
 		static void Hide();
 		static bool IsVisible();
 
-		SDL_Cursor* GetSDLCursor() const noexcept { return _cursor.get(); }
-
-		Cursor& operator=(const Cursor&) = default;
-		Cursor& operator=(Cursor&&) noexcept = default;
+		Cursor& operator=(std::nullptr_t);
+		Cursor& operator=(const Cursor& other);
+		Cursor& operator=(Cursor&& other) noexcept;
 		friend bool operator==(const Cursor&, const Cursor&) = default;
+		bool operator==(std::nullptr_t) const noexcept { return _cursor == nullptr; }
+		explicit operator bool() const noexcept { return _cursor != nullptr; }
+	private:
+		void CopyFrom(const Cursor& other);
+		void Destroy();
 	};
 
 	class Cursors

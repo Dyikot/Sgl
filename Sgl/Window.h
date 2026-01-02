@@ -6,6 +6,7 @@
 #include "Base/Logger.h"
 #include "Base/Threading/ModalWindowAwaitable.h"
 #include "Render/Surface.h"
+#include "Render/TextureLoader.h"
 #include "Input/TextEventArgs.h"
 #include "UIElement/UIElement.h"
 
@@ -85,6 +86,7 @@ namespace Sgl
 		/// </summary>
 		bool IsRenderableWhenMinimized = false;
 		DialogResult DialogResult = DialogResult::None;
+		TextureLoader ImageLoader;
 	private:
 		SDL_Window* _sdlWindow;
 		SDL_Renderer* _renderer;

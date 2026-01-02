@@ -9,13 +9,13 @@ namespace Sgl
 	class TimeSpan
 	{
 	private:
-		struct TimeSpanZero {};
-		struct TimeSpanMax {};
-		struct TimeSpanMin {};
+		struct ZeroTag {};
+		struct MaxTag {};
+		struct MinTag {};
 	public:
-		constexpr static TimeSpanZero Zero;
-		constexpr static TimeSpanMax MaxValue;
-		constexpr static TimeSpanMin MinValue;
+		constexpr static ZeroTag Zero;
+		constexpr static MaxTag MaxValue;
+		constexpr static MinTag MinValue;
 	private:
 		static constexpr double NanosecondsPerMicrosecond = 1e3;
 		static constexpr double NanosecondsPerMillisecond = 1e6;
@@ -40,15 +40,15 @@ namespace Sgl
 
 		long long _nanoseconds;
 	public:
-		constexpr TimeSpan(TimeSpanZero):
+		constexpr TimeSpan(ZeroTag):
 			_nanoseconds()
 		{}
 
-		constexpr TimeSpan(TimeSpanMax):
+		constexpr TimeSpan(MaxTag):
 			_nanoseconds(std::numeric_limits<long long>::max())
 		{}
 
-		constexpr TimeSpan(TimeSpanMin):
+		constexpr TimeSpan(MinTag):
 			_nanoseconds(std::numeric_limits<long long>::min())
 		{}
 

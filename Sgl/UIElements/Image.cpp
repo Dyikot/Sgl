@@ -97,7 +97,8 @@ namespace Sgl::UIElements
 			return;
 		}
 
-		auto source = _sourceTexture.GetSize();
+		auto sourceWidth = _sourceTexture.GetWidth();
+		auto sourceHeight = _sourceTexture.GetHeight();
 		float width = _bounds.w;
 		float height = _bounds.h;
 
@@ -105,14 +106,14 @@ namespace Sgl::UIElements
 		{
 			case Stretch::None:
 			{
-				if(source.Width < width)
+				if(sourceWidth < width)
 				{
-					width = source.Width;
+					width = sourceWidth;
 				}
 
-				if(source.Height < height)
+				if(sourceHeight < height)
 				{
-					height = source.Height;
+					height = sourceHeight;
 				}
 
 				break;
@@ -127,11 +128,11 @@ namespace Sgl::UIElements
 			{
 				if(height > width)
 				{
-					height = source.Height * width / source.Width;
+					height = sourceHeight * width / sourceWidth;
 				}
 				else
 				{
-					width = source.Width * height / source.Height;
+					width = sourceWidth * height / sourceHeight;
 				}
 
 				break;
@@ -141,12 +142,12 @@ namespace Sgl::UIElements
 			{
 				if(height > width)
 				{
-					height = source.Height;
+					height = sourceHeight;
 					width = _bounds.w * height / _bounds.h;
 				}
 				else
 				{
-					width = source.Width;
+					width = sourceWidth;
 					height = _bounds.h * width / _bounds.w;
 				}
 
@@ -158,8 +159,8 @@ namespace Sgl::UIElements
 		{
 			_sourceBounds =
 			{
-				.x = (source.Width - width) / 2.f,
-				.y = (source.Height - height) / 2.f,
+				.x = (sourceWidth - width) / 2.f,
+				.y = (sourceHeight - height) / 2.f,
 				.w = width,
 				.h = height
 			};

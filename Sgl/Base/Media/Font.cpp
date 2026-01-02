@@ -25,7 +25,7 @@ namespace Sgl
 		return basePath.string();
 	}
 
-	FontFamily::FontFamily(DefaultFontFamilty):
+	FontFamily::FontFamily(DefaultFontFamilyTag):
 		FontFamily(FamiliesPath, DefaultFamily)
 	{}
 

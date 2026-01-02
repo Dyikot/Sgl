@@ -1,7 +1,6 @@
 #include "Window.h"
 
 #include "Application.h"
-#include "Render/BackgroundRenderer.h"
 #include "Layout/LayoutHelper.h"
 #include "Base/Exceptions.h"
 #include "Base/Logger.h"
@@ -14,10 +13,29 @@ namespace Sgl
     static constexpr auto DefaultHeight = 720;
     static constexpr auto DefaultPosition = Point(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
     
+    class WindowBackgroundRenderer
+    {
+    private:
+        RenderContext _context;
+    public:
+        explicit WindowBackgroundRenderer(RenderContext context): _context(context) {}
+
+        void operator()(Color color)
+        {
+            _context.FillBackground(color);
+        }
+
+        void operator()(const Texture& texture)
+        {
+            _context.DrawTexture(texture);
+        }
+    };
+
     Window::Window():
         _sdlWindow(SDL_CreateWindow(DefaultTitle, DefaultWidth, DefaultHeight, SDL_WINDOW_HIDDEN)),
         _renderer(SDL_CreateRenderer(_sdlWindow, nullptr)),
-        _renderContext(_renderer)
+        _renderContext(_renderer),
+        ImageLoader(_renderer)
     {
         if(_sdlWindow == nullptr)
         {

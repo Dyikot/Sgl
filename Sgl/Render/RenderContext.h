@@ -24,12 +24,12 @@ namespace Sgl
 		SDL_Renderer* GetRenderer() const noexcept { return _renderer; }
 
 		void SetTarget(const Texture& texture);
-		void SetTargetWindow();
+		void ResetTarget();
 
 		void SetClip(Rect clip);
 		void ResetClip();
 
-		void DrawBackground(Color color);
+		void FillBackground(Color color);
 
 		void DrawPoint(FPoint point, Color color);
 		void DrawPoints(std::span<const FPoint> points, Color color);

@@ -43,13 +43,9 @@ namespace Sgl
 		}
 	}
 
-	Surface::Surface(const Surface& other):
-		_surface(SDL_DuplicateSurface(other._surface))
+	Surface::Surface(const Surface& other)
 	{
-		if(_surface == nullptr)
-		{
-			Logger::LogError("Unable to copy a surface: {}", SDL_GetError());
-		}
+		CopyFrom(other);
 	}
 
 	Surface::Surface(Surface&& other) noexcept:
@@ -58,10 +54,7 @@ namespace Sgl
 
 	Surface::~Surface()
 	{
-		if(_surface != nullptr)
-		{
-			SDL_DestroySurface(_surface);
-		}
+		Destroy();
 	}
 
 	void Surface::SetColor(Color value)
@@ -78,9 +71,14 @@ namespace Sgl
 		return color;
 	}
 
-	Size Surface::GetSize() const
+	size_t Surface::GetWidth() const
 	{
-		return Size(_surface->w, _surface->h);
+		return static_cast<size_t>(_surface->w);
+	}
+
+	size_t Surface::GetHeight() const
+	{
+		return static_cast<size_t>(_surface->h);
 	}
 
 	void Surface::SetBlendMode(SDL_BlendMode value)
@@ -110,38 +108,54 @@ namespace Sgl
 		SDL_FlipSurface(_surface, flipMode);
 	}
 
-	Surface& Surface::operator=(std::nullptr_t)
+	Surface Surface::Clone() const
 	{
-		if(_surface != nullptr)
+		auto surface = SDL_DuplicateSurface(_surface);
+
+		if(surface == nullptr)
 		{
-			SDL_DestroySurface(_surface);
+			Logger::LogError("Unable to clone a surface: {}", SDL_GetError());
 		}
 
-		_surface = nullptr;
+		return Surface(surface);
+	}
 
+	Surface& Surface::operator=(std::nullptr_t)
+	{
+		Destroy();
 		return *this;
 	}
 
 	Surface& Surface::operator=(const Surface& other)
 	{
-		if(_surface != nullptr)
-		{
-			SDL_DestroySurface(_surface);
-		}
-
-		_surface = SDL_DuplicateSurface(other._surface);
-
-		if(_surface == nullptr)
-		{
-			Logger::LogError("Unable to load a surface: {}", SDL_GetError());
-		}
-
+		Destroy();
+		CopyFrom(other);
 		return *this;
 	}
 
 	Surface& Surface::operator=(Surface&& other) noexcept
 	{
-		_surface = std::exchange(other._surface, _surface);
+		Destroy();
+		_surface = std::exchange(other._surface, nullptr);
 		return *this;
+	}
+
+	void Surface::CopyFrom(const Surface& other)
+	{
+		_surface = other._surface;
+
+		if(_surface != nullptr)
+		{
+			_surface->refcount++;
+		}
+	}
+
+	void Surface::Destroy()
+	{
+		if(_surface != nullptr)
+		{
+			SDL_DestroySurface(_surface);
+			_surface = nullptr;
+		}
 	}
 }

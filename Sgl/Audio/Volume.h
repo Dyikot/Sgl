@@ -8,27 +8,27 @@ namespace Sgl
 	class Volume
 	{
 	private:
-		struct VolumeMin {};
-		struct VolumeMax {};
+		struct MinTag {};
+		struct MaxTag {};
 
 		static constexpr double MaxValue = 1;
 		static constexpr double MinValue = 0;
 
 		double _value;
 	public:
-		static constexpr VolumeMax Max;
-		static constexpr VolumeMin Min;
+		static constexpr MaxTag Max;
+		static constexpr MinTag Min;
 	public:
-		constexpr Volume(VolumeMax) noexcept:
+		constexpr Volume(MaxTag) noexcept:
 			_value(MaxValue)
 		{}
 
-		constexpr Volume(VolumeMin) noexcept:
+		constexpr Volume(MinTag) noexcept:
 			_value(MinValue)
 		{}
 
 		constexpr explicit Volume(double value):
-			_value(Adjust(std::abs(value)))
+			_value(Adjust(value))
 		{}		
 
 		friend constexpr Volume operator+(Volume left, Volume right)
@@ -85,7 +85,7 @@ namespace Sgl
 	private:
 		static constexpr double Adjust(double value)
 		{
-			return std::min(value, MaxValue);
+			return std::min(std::abs(value), MaxValue);
 		}
 	};
 }

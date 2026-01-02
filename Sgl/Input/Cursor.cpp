@@ -3,79 +3,72 @@
 #include <stdexcept>
 #include <SDL3_image/SDL_image.h>
 #include "../Base/Logger.h"
+#include "../Render/Surface.h"
 
 namespace Sgl
 {
-    struct CursorDeleter
-    {
-        void operator()(SDL_Cursor* cursor) const
-        {
-            SDL_DestroyCursor(cursor);
-        }
-    };
-
-    static std::shared_ptr<SDL_Cursor> GetSystemCursor(SDL_SystemCursor cursor)
+    static const Cursor& GetSystemCursor(SDL_SystemCursor cursor)
     {
         switch(cursor)
         {
             case Cursors::Arrow:
             {
-                static std::shared_ptr<SDL_Cursor> arrow(SDL_CreateSystemCursor(cursor), CursorDeleter());
+                static Cursor arrow(SDL_CreateSystemCursor(cursor));
                 return arrow;
             }
             case Cursors::IBeam:
             {
-                static std::shared_ptr<SDL_Cursor> ibeam(SDL_CreateSystemCursor(cursor), CursorDeleter());
+                static Cursor ibeam(SDL_CreateSystemCursor(cursor));
                 return ibeam;
             }
             case Cursors::Wait:
             {
-                static std::shared_ptr<SDL_Cursor> wait(SDL_CreateSystemCursor(cursor), CursorDeleter());
+                static Cursor wait(SDL_CreateSystemCursor(cursor));
                 return wait;
             }
             case Cursors::Crosshair:
             {
-                static std::shared_ptr<SDL_Cursor> crossHair(SDL_CreateSystemCursor(cursor), CursorDeleter());
+                static Cursor crossHair(SDL_CreateSystemCursor(cursor));
                 return crossHair;
             }
             case Cursors::Progress:
             {
-                static std::shared_ptr<SDL_Cursor> progress(SDL_CreateSystemCursor(cursor), CursorDeleter());
+                static Cursor progress(SDL_CreateSystemCursor(cursor));
                 return progress;
             }
             case Cursors::ResizeNWSE:
             {
-                static std::shared_ptr<SDL_Cursor> nwse(SDL_CreateSystemCursor(cursor), CursorDeleter());
+                static Cursor nwse(SDL_CreateSystemCursor(cursor));
                 return nwse;
             }
             case Cursors::ResizeNESW:
             {
-                static std::shared_ptr<SDL_Cursor> nesw(SDL_CreateSystemCursor(cursor), CursorDeleter());
+                static Cursor nesw(SDL_CreateSystemCursor(cursor));
                 return nesw;
             }
             case Cursors::ResizeEW:
             {
-                static std::shared_ptr<SDL_Cursor> ew(SDL_CreateSystemCursor(cursor), CursorDeleter());
+                static Cursor ew(SDL_CreateSystemCursor(cursor));
                 return ew;
             }
             case Cursors::ResizeNS:
             {
-                static std::shared_ptr<SDL_Cursor> ns(SDL_CreateSystemCursor(cursor), CursorDeleter());
+                static Cursor ns(SDL_CreateSystemCursor(cursor));
                 return ns;
             }
             case Cursors::Move:
             {
-                static std::shared_ptr<SDL_Cursor> move(SDL_CreateSystemCursor(cursor), CursorDeleter());
+                static Cursor move(SDL_CreateSystemCursor(cursor));
                 return move;
             }
             case Cursors::NotAllowed:
             {
-                static std::shared_ptr<SDL_Cursor> nowAllowed(SDL_CreateSystemCursor(cursor), CursorDeleter());
+                static Cursor nowAllowed(SDL_CreateSystemCursor(cursor));
                 return nowAllowed;
             }
             case Cursors::Pointer:
             {
-                static std::shared_ptr<SDL_Cursor> pointer(SDL_CreateSystemCursor(cursor), CursorDeleter());
+                static Cursor pointer(SDL_CreateSystemCursor(cursor));
                 return pointer;
             }
             default:
@@ -83,31 +76,43 @@ namespace Sgl
         }
     }
 
-    Cursor::Cursor(std::string_view path):
-        _cursor(SDL_CreateColorCursor(IMG_Load(path.data()), 0, 0), CursorDeleter())
+    Cursor::Cursor(std::string_view path)
     {
+        Surface surface(path);
+        _cursor = new CursorImpl(SDL_CreateColorCursor(surface.GetSDLSurface(), 0, 0), 1);
+
         if(_cursor == nullptr)
         {
             Logger::LogError("Unable to create a cursor: {}", SDL_GetError());
         }
     }
 
-    Cursor::Cursor(SDL_SystemCursor systemCursor) noexcept:
-        _cursor(GetSystemCursor(systemCursor))
+    Cursor::Cursor(SDL_Cursor* sdlCursor):
+        _cursor(new CursorImpl(sdlCursor, 1))
     {}
 
-    Cursor::Cursor(const Cursor& other):
-        _cursor(other._cursor)
+    Cursor::Cursor(SDL_SystemCursor systemCursor) noexcept:
+        Cursor(GetSystemCursor(systemCursor))
     {}
+
+    Cursor::Cursor(const Cursor& other)
+    {
+        CopyFrom(other);
+    }
 
     Cursor::Cursor(Cursor&& other) noexcept:
-        _cursor(std::move(other._cursor))
+        _cursor(std::exchange(other._cursor, nullptr))
     {}
+
+    Cursor::~Cursor()
+    {
+        Destroy();
+    }
 
     void Cursor::Set(const Cursor& cursor)
     {
-        auto sdlCursor = cursor.GetSDLCursor();
-        if(sdlCursor && sdlCursor != SDL_GetCursor())
+        auto sdlCursor = cursor._cursor->SdlCursor;
+        if(sdlCursor != nullptr && sdlCursor != SDL_GetCursor())
         {
             SDL_SetCursor(sdlCursor);
         }
@@ -132,5 +137,49 @@ namespace Sgl
     bool Cursor::IsVisible()
     {
         return SDL_CursorVisible();
+    }
+
+    Cursor& Cursor::operator=(std::nullptr_t)
+    {
+        Destroy();
+        return *this;
+    }
+
+    Cursor& Cursor::operator=(const Cursor& other)
+    {
+        Destroy();
+        CopyFrom(other);
+        return *this;
+    }
+
+    Cursor& Cursor::operator=(Cursor&& other) noexcept
+    {
+        Destroy();
+        _cursor = std::exchange(other._cursor, nullptr);
+        return *this;
+    }
+
+    void Cursor::CopyFrom(const Cursor& other)
+    {
+        _cursor = other._cursor;
+
+        if(_cursor != nullptr)
+        {
+            _cursor->References++;
+        }
+    }
+
+    void Cursor::Destroy()
+    {
+        if(_cursor != nullptr && --(_cursor->References) == 0)
+        {
+            if(auto sdlCursor = _cursor->SdlCursor)
+            {
+                SDL_DestroyCursor(sdlCursor);
+            }
+            
+            delete _cursor;
+            _cursor = nullptr;
+        }
     }
 }
