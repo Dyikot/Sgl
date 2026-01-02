@@ -68,6 +68,16 @@ namespace Sgl
 			return Alpha == 0x00;
 		}
 
+		constexpr uint32_t ToRgba() const noexcept
+		{
+			return (Red << 24) | (Green << 16) | (Blue << 8) | Alpha;
+		}
+
+		constexpr uint32_t ToArgb() const noexcept
+		{
+			return (Alpha << 24) | (Red << 16) | (Green << 8) | Blue;
+		}
+
 		/// <summary>
 		/// Compares this color with another color for equality (RGB components only)
 		/// </summary>

@@ -49,8 +49,10 @@ namespace Sgl
 	}
 
 	Surface::Surface(Surface&& other) noexcept:
-		_surface(std::exchange(other._surface, nullptr))
-	{}
+		_surface(other._surface)
+	{
+		other._surface = nullptr;
+	}
 
 	Surface::~Surface()
 	{
@@ -136,7 +138,8 @@ namespace Sgl
 	Surface& Surface::operator=(Surface&& other) noexcept
 	{
 		Destroy();
-		_surface = std::exchange(other._surface, nullptr);
+		_surface = other._surface;
+		other._surface = nullptr;
 		return *this;
 	}
 

@@ -14,38 +14,6 @@ namespace Sgl
 		Static, Streaming, Target
 	};
 	
-	class Texture;
-
-	class TextureLockContext
-	{
-	private:
-		Texture& _texture;
-		void* _pixels;
-		int _pitch;
-		int _height;
-	public:
-		TextureLockContext(Texture& texture, const Rect* rect);
-		~TextureLockContext();
-
-		bool HasLock() const noexcept;
-		void* GetPixels() const noexcept;
-		int GetPitch() const noexcept;
-
-		template<typename T = uint32_t>
-		std::span<T> GetPixelsAs()
-		{
-			if(_pixels == nullptr)
-			{
-				return {};
-			}
-
-			return std::span<T>(
-				static_cast<T*>(_pixels),
-				static_cast<size_t>(_pitch / sizeof(T) * _height)
-			);
-		}
-	};
-
 	class Texture final
 	{
 	private:
@@ -90,8 +58,6 @@ namespace Sgl
 		SDL_PixelFormat GetFormat() const;
 		SDL_Texture* GetSDLTexture() const noexcept;
 
-		TextureLockContext Lock(const Rect* rect = nullptr);
-		
 		Texture& operator=(std::nullptr_t);
 		Texture& operator=(const Texture& other);
 		Texture& operator=(Texture&& other) noexcept;
@@ -101,5 +67,30 @@ namespace Sgl
 	private:
 		void CopyFrom(const Texture& other);
 		void Destroy();
+	};
+
+	class TextureLock
+	{
+	private:
+		Texture& _texture;
+	public:
+		void* Pixels = nullptr;
+		int Pitch = 0;
+	public:
+		TextureLock(Texture& texture, const Rect* rect = nullptr);
+		~TextureLock();
+	};
+
+	class TextureLoader
+	{
+	private:
+		SDL_Renderer*& _renderer;
+	public:
+		explicit TextureLoader(SDL_Renderer*& renderer): _renderer(renderer) {}
+
+		Texture Load(std::string_view filePath)
+		{
+			return Texture(_renderer, filePath);
+		}
 	};
 }

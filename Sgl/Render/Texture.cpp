@@ -102,8 +102,10 @@ namespace Sgl
 	}
 
 	Texture::Texture(Texture&& other) noexcept:
-		_texture(std::exchange(other._texture, nullptr))
-	{}
+		_texture(other._texture)
+	{
+		other._texture = nullptr;
+	}
 
 	Texture::~Texture()
 	{
@@ -180,11 +182,6 @@ namespace Sgl
 		return _texture;
 	}
 
-	TextureLockContext Texture::Lock(const Rect* rect)
-	{
-		return TextureLockContext(*this, rect);
-	}
-
 	Texture& Texture::operator=(std::nullptr_t)
 	{
 		Destroy();
@@ -201,7 +198,8 @@ namespace Sgl
 	Texture& Texture::operator=(Texture&& other) noexcept
 	{
 		Destroy();
-		_texture = std::exchange(other._texture, nullptr);
+		_texture = other._texture;
+		other._texture = nullptr;
 		return *this;
 	}
 
@@ -224,39 +222,17 @@ namespace Sgl
 		}
 	}
 
-	TextureLockContext::TextureLockContext(Texture& texture, const Rect* rect):
-		_texture(texture),
-		_pixels(),
-		_pitch()
+	TextureLock::TextureLock(Texture& texture, const Rect* rect):
+		_texture(texture)
 	{
-		_height = rect ? rect->h : texture.GetHeight();
-
-		if(SDL_LockTexture(_texture.GetSDLTexture(), rect, &_pixels, &_pitch) < 0)
+		if(!SDL_LockTexture(_texture.GetSDLTexture(), rect, &Pixels, &Pitch))
 		{
 			Logger::LogError("Unable to lock a texture: {}", SDL_GetError());
 		}
 	}
 
-	TextureLockContext::~TextureLockContext()
+	TextureLock::~TextureLock()
 	{
-		if(_pixels)
-		{
-			SDL_UnlockTexture(_texture.GetSDLTexture());
-		}
-	}
-
-	bool TextureLockContext::HasLock() const noexcept
-	{
-		return _pixels != nullptr;
-	}
-
-	void* TextureLockContext::GetPixels() const noexcept
-	{
-		return _pixels;
-	}
-
-	int TextureLockContext::GetPitch() const noexcept
-	{
-		return _pitch;
+		SDL_UnlockTexture(_texture.GetSDLTexture());
 	}
 }

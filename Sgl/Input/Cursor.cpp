@@ -101,8 +101,10 @@ namespace Sgl
     }
 
     Cursor::Cursor(Cursor&& other) noexcept:
-        _cursor(std::exchange(other._cursor, nullptr))
-    {}
+        _cursor(other._cursor)
+    {
+        other._cursor = nullptr;
+    }
 
     Cursor::~Cursor()
     {
@@ -155,7 +157,8 @@ namespace Sgl
     Cursor& Cursor::operator=(Cursor&& other) noexcept
     {
         Destroy();
-        _cursor = std::exchange(other._cursor, nullptr);
+        _cursor = other._cursor;
+        other._cursor = nullptr;
         return *this;
     }
 
