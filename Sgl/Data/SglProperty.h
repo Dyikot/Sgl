@@ -1,11 +1,10 @@
 #pragma once
 
 #include <stdint.h>
+#include <concepts>
 
 namespace Sgl
 {
-	class INotityPropertyChanged;
-
 	class SglPropertyBase
 	{
 	public:

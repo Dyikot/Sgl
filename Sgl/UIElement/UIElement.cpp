@@ -133,12 +133,12 @@ namespace Sgl
 		InvalidateMeasure();
 	}
 
-	Ref<UIElement> UIElementDataTemplate::Build(const Ref<INotityPropertyChanged>& data)
+	Ref<UIElement> UIElementDataTemplate::Build(const Ref<INotifyPropertyChanged>& data)
 	{
 		return data.As<UIElement>();
 	}
 
-	bool UIElementDataTemplate::Match(const Ref<INotityPropertyChanged>& data) const
+	bool UIElementDataTemplate::Match(const Ref<INotifyPropertyChanged>& data) const
 	{
 		return data.Is<UIElement>();
 	}

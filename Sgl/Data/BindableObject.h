@@ -7,7 +7,7 @@
 
 namespace Sgl
 {
-	class BindableObject : public INotityPropertyChanged
+	class BindableObject : public INotifyPropertyChanged
 	{
 	private:
 		struct Observer
@@ -15,18 +15,21 @@ namespace Sgl
 			std::reference_wrapper<SglPropertyBase> Property;
 			PropertyChangedEventHandler Handler;
 
-			bool operator==(const Observer&) const = default;
+			bool operator==(const Observer& other) const
+			{
+				return Handler == other.Handler;
+			}
 		};		
 
-		Ref<INotityPropertyChanged> _dataContext;
+		Ref<INotifyPropertyChanged> _dataContext;
 		std::vector<Observer> _observers;
 	public:
 		BindableObject() = default;
 		BindableObject(const BindableObject& other);
 		BindableObject(BindableObject&& other) noexcept;
 
-		void SetDataContext(const Ref<INotityPropertyChanged>& value);
-		const Ref<INotityPropertyChanged>& GetDataContext() const { return _dataContext; }
+		void SetDataContext(const Ref<INotifyPropertyChanged>& value);
+		const Ref<INotifyPropertyChanged>& GetDataContext() const { return _dataContext; }
 
 		void AddPropertyChangedEventHandler(SglPropertyBase& property, PropertyChangedEventHandler handler) override;
 		void RemovePropertyChangedEventHandler(SglPropertyBase& property, PropertyChangedEventHandler handler) override;

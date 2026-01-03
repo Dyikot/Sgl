@@ -73,7 +73,7 @@ namespace Sgl
 	class UIElementDataTemplate : public IDataTemplate
 	{
 	public:
-		Ref<UIElement> Build(const Ref<INotityPropertyChanged>& data) override;
-		bool Match(const Ref<INotityPropertyChanged>& data) const override;
+		Ref<UIElement> Build(const Ref<INotifyPropertyChanged>& data) override;
+		bool Match(const Ref<INotifyPropertyChanged>& data) const override;
 	};
 }

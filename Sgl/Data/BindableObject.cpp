@@ -3,18 +3,18 @@
 namespace Sgl
 {
 	BindableObject::BindableObject(const BindableObject& other):
-		INotityPropertyChanged(other),
+		INotifyPropertyChanged(other),
 		_dataContext(other._dataContext),
 		_observers(other._observers)
 	{}
 
 	BindableObject::BindableObject(BindableObject&& other) noexcept:
-		INotityPropertyChanged(std::move(other)),
+		INotifyPropertyChanged(std::move(other)),
 		_dataContext(std::move(other._dataContext)),
 		_observers(std::move(other._observers))
 	{}
 
-	void BindableObject::SetDataContext(const Ref<INotityPropertyChanged>& value)
+	void BindableObject::SetDataContext(const Ref<INotifyPropertyChanged>& value)
 	{
 		SetProperty(DataContextProperty, _dataContext, value);
 	}

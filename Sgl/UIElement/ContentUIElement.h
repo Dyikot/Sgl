@@ -7,7 +7,7 @@ namespace Sgl
 	class ContentUIElement : public UIElement
 	{
 	private:
-		Ref<INotityPropertyChanged> _content;
+		Ref<INotifyPropertyChanged> _content;
 		Ref<IDataTemplate> _contentTemplate = New<UIElementDataTemplate>();
 		Ref<UIElement> _contentPresenter;
 		Thickness _padding;
@@ -22,8 +22,8 @@ namespace Sgl
 		
 		const Ref<UIElement>& GetContentPresenter() const { return _contentPresenter; }
 
-		void SetContent(Ref<INotityPropertyChanged> content);
-		Ref<INotityPropertyChanged> GetContent() const { return _content; }
+		void SetContent(Ref<INotifyPropertyChanged> content);
+		Ref<INotifyPropertyChanged> GetContent() const { return _content; }
 
 		void SetContentTemplate(Ref<IDataTemplate> value);
 		Ref<IDataTemplate> GetContentTemplate() const { return _contentTemplate; }

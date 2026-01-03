@@ -5,14 +5,14 @@
 namespace Sgl
 {
     class UIElement;
-    class INotityPropertyChanged;
+    class INotifyPropertyChanged;
 
     class IDataTemplate
     {
     public:
         virtual ~IDataTemplate() = default;
 
-        virtual Ref<UIElement> Build(const Ref<INotityPropertyChanged>& data) = 0;
-        virtual bool Match(const Ref<INotityPropertyChanged>& data) const = 0;
+        virtual Ref<UIElement> Build(const Ref<INotifyPropertyChanged>& data) = 0;
+        virtual bool Match(const Ref<INotifyPropertyChanged>& data) const = 0;
     };
 }

@@ -6,7 +6,7 @@
 
 namespace Sgl
 {
-	class ObservableObject : public INotityPropertyChanged
+	class ObservableObject : public INotifyPropertyChanged
 	{
 	private:
 		struct Observer
@@ -14,7 +14,10 @@ namespace Sgl
 			std::reference_wrapper<SglPropertyBase> Property;
 			PropertyChangedEventHandler Handler;
 
-			bool operator==(const Observer&) const = default;
+			bool operator==(const Observer& other) const
+			{
+				return Handler == other.Handler;
+			}
 		};
 
 		std::vector<Observer> _observers;

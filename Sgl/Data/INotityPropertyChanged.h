@@ -5,14 +5,14 @@
 
 namespace Sgl
 {
-	class INotityPropertyChanged;
+	class INotifyPropertyChanged;
 
-	using PropertyChangedEventHandler = EventHandler<INotityPropertyChanged, SglPropertyBase&>;
+	using PropertyChangedEventHandler = EventHandler<INotifyPropertyChanged, SglPropertyBase&>;
 
-	class INotityPropertyChanged
+	class INotifyPropertyChanged
 	{
 	public:
-		virtual ~INotityPropertyChanged() = default;
+		virtual ~INotifyPropertyChanged() = default;
 
         virtual void AddPropertyChangedEventHandler(SglPropertyBase& property, PropertyChangedEventHandler handler) = 0;
         virtual void RemovePropertyChangedEventHandler(SglPropertyBase& property, PropertyChangedEventHandler handler) = 0;
