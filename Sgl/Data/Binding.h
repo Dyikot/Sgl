@@ -12,28 +12,8 @@ namespace Sgl
 	class Binding
 	{
 	private:
-		template<typename TTarget, typename TSource, typename TValue>
-		struct PropertyChangedHandler
-		{
-			SglProperty<TTarget, TValue>& TargetProperty;
-			TTarget& Target;
-			SglProperty<TSource, TValue>& SourceProperty;
-
-			void operator()(INotifyPropertyChanged& sender, SglPropertyBase& property)
-			{
-				auto& source = static_cast<TSource&>(sender);
-				TargetProperty.InvokeSetter(Target, SourceProperty.InvokeGetter(source));
-			}
-
-			bool operator==(const PropertyChangedHandler& other) const
-			{
-				return TargetProperty == other.TargetProperty &&
-					   SourceProperty == other.SourceProperty;
-			}
-		};
-
 		template<typename TTarget, typename TSource, typename TValue, typename TSender, typename TEventArgs>
-		struct EventRaisedHandler
+		struct BindingHandler
 		{
 			SglProperty<TTarget, TValue>& TargetProperty;
 			TTarget& Target;
@@ -45,7 +25,7 @@ namespace Sgl
 				TargetProperty.InvokeSetter(Target, SourceProperty.InvokeGetter(source));
 			}
 
-			bool operator==(const EventRaisedHandler& other) const
+			bool operator==(const BindingHandler& other) const
 			{
 				return TargetProperty == other.TargetProperty &&
 					   SourceProperty == other.SourceProperty;
@@ -60,7 +40,7 @@ namespace Sgl
 		{
 			source.AddPropertyChangedEventHandler(
 				sourceProperty, 
-				PropertyChangedHandler(targetProperty, target, sourceProperty)
+				BindingHandler<TTarget, TSource, TValue, INotifyPropertyChanged, SglPropertyBase&>(targetProperty, target, sourceProperty)
 			);
 		}
 
@@ -75,7 +55,7 @@ namespace Sgl
 			using TEventArgs = TEvent::EventArgs;
 			static_assert(std::derived_from<TSource, TSender>);
 
-			std::invoke(event, source) += EventRaisedHandler<TTarget, TSource, TValue, TSender, TEventArgs>(targetProperty, target, sourceProperty);
+			std::invoke(event, source) += BindingHandler<TTarget, TSource, TValue, TSender, TEventArgs>(targetProperty, target, sourceProperty);
 		}
 
 		template<typename TTarget, CBindable TSource, typename TValue>
@@ -86,7 +66,7 @@ namespace Sgl
 		{
 			source.RemovePropertyChangedEventHandler(
 				sourceProperty,
-				PropertyChangedHandler(targetProperty, target, sourceProperty)
+				BindingHandler<TTarget, TSource, TValue, INotifyPropertyChanged, SglPropertyBase&>(targetProperty, target, sourceProperty)
 			);
 		}
 
@@ -101,7 +81,7 @@ namespace Sgl
 			using TEventArgs = TEvent::EventArgs;
 			static_assert(std::derived_from<TSource, TSender>);
 
-			std::invoke(event, source) -= EventRaisedHandler<TTarget, TSource, TValue, TSender, TEventArgs>(targetProperty, target, sourceProperty);
+			std::invoke(event, source) -= BindingHandler<TTarget, TSource, TValue, TSender, TEventArgs>(targetProperty, target, sourceProperty);
 		}
 	};
 }
