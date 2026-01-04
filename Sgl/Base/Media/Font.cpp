@@ -19,14 +19,21 @@ namespace Sgl
 
 	static constexpr auto DefaultFamily = "segoeui.ttf";
 
-	static std::string GetFullPath(const std::string& path, const std::string& name)
+	struct FontFamily::FontFamilyImpl
 	{
-		auto basePath = std::filesystem::path(path) / name;		
-		return basePath.string();
+		std::string Source;
+		int References;
+	};
+
+	static inline const FontFamily DefaultFontFamily { FamiliesPath, DefaultFamily };
+
+	static inline std::string GetFullPath(const std::string& path, const std::string& name)
+	{
+		return (std::filesystem::path(path) / name).string();
 	}
 
-	FontFamily::FontFamily(DefaultFontFamilyTag):
-		FontFamily(FamiliesPath, DefaultFamily)
+	FontFamily::FontFamily(DefaultTag):
+		FontFamily(DefaultFontFamily)
 	{}
 
 	FontFamily::FontFamily(const std::string& name):
@@ -34,32 +41,61 @@ namespace Sgl
 	{}
 
 	FontFamily::FontFamily(const std::string& path, const std::string& name):
-		_source(GetFullPath(path, name))
+		_impl(new FontFamilyImpl(GetFullPath(path, name), 1))
 	{}
 
-	FontFamily::FontFamily(const FontFamily& other):
-		_source(other._source)
-	{}
+	FontFamily::FontFamily(const FontFamily& other)
+	{
+		CopyFrom(other);
+	}
 
 	FontFamily::FontFamily(FontFamily&& other) noexcept:
-		_source(std::move(other._source))
-	{}
+		_impl(other._impl)
+	{
+		other._impl = nullptr;
+	}
+
+	FontFamily::~FontFamily()
+	{
+		Release();
+	}
 
 	const std::string& FontFamily::GetSource() const
 	{
-		return _source;
+		return _impl->Source;
 	}
 
 	FontFamily& FontFamily::operator=(const FontFamily& other)
 	{
-		_source = other._source;
+		Release();
+		CopyFrom(other);
 		return *this;
 	}
 
 	FontFamily& FontFamily::operator=(FontFamily&& other) noexcept
 	{
-		_source = std::move(other._source);
+		_impl = other._impl;
+		other._impl = nullptr;
 		return *this;
+	}
+
+	void FontFamily::CopyFrom(const FontFamily& other)
+	{
+		_impl = other._impl;
+
+		if(_impl)
+		{
+			_impl->References++;
+		}
+	}
+
+	void FontFamily::Release()
+	{
+		if(_impl && --(_impl->References) == 0)
+		{
+			delete _impl;
+			_impl = nullptr;
+		}
 	}
 
 	FontImpl::FontImpl(const FontFamily& fontFamily, float size):

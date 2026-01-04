@@ -6,19 +6,19 @@ namespace Sgl::UIElements
 		UIElement(other),
 		_sourceBounds(other._sourceBounds),
 		_source(other._source),
-		_stretch(other._stretch),
-		_sourceTexture(nullptr)
+		_sourceTexture(nullptr),
+		_stretch(other._stretch)
 	{}
 
 	Image::Image(Image&& other) noexcept:
 		UIElement(std::move(other)),
 		_sourceBounds(other._sourceBounds),
 		_source(std::move(other._source)),
-		_stretch(other._stretch),
-		_sourceTexture(std::move(other._sourceTexture))
+		_sourceTexture(std::move(other._sourceTexture)),
+		_stretch(other._stretch)
 	{}
 
-	void Image::SetSource(const std::string & value)
+	void Image::SetSource(const std::string& value)
 	{
 		if(SetProperty(SourceProperty, _source, value))
 		{

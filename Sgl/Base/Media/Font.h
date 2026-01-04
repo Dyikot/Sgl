@@ -9,26 +9,31 @@ struct TTF_Font;
 
 namespace Sgl
 {
-	class FontFamily
+	class FontFamily final
 	{	
 	private:
-		struct DefaultFontFamilyTag {};
+		struct FontFamilyImpl;
+		struct DefaultTag {};
 	public:
-		static constexpr DefaultFontFamilyTag Default;
+		static constexpr DefaultTag Default;
 	private:
-		std::string _source;
+		FontFamilyImpl* _impl = nullptr;
 	public:
-		FontFamily(DefaultFontFamilyTag);
+		FontFamily(DefaultTag);
 		explicit FontFamily(const std::string& name);
 		FontFamily(const std::string& path, const std::string& name);
 		FontFamily(const FontFamily& other);
 		FontFamily(FontFamily&& other) noexcept;
+		~FontFamily();
 
 		const std::string& GetSource() const;
 
 		FontFamily& operator=(const FontFamily& other);
 		FontFamily& operator=(FontFamily&& other) noexcept;
 		friend bool operator==(const FontFamily&, const FontFamily&) = default;
+	private:
+		void CopyFrom(const FontFamily& other);
+		void Release();
 	};
 
 	enum class FontStyles
@@ -88,7 +93,7 @@ namespace Sgl
 		Blended, Solid, Shaded, LCD
 	};
 
-	class FontImpl
+	class FontImpl final
 	{
 	private:
 		TTF_Font* _font = nullptr;

@@ -7,6 +7,11 @@
 
 namespace Sgl
 {
+	enum class BindingMode
+	{
+		OneWay, OneWayToSource, TwoWay
+	};
+
 	class BindableObject : public INotifyPropertyChanged
 	{
 	private:
@@ -35,129 +40,155 @@ namespace Sgl
 		void RemovePropertyChangedEventHandler(SglPropertyBase& property, PropertyChangedEventHandler handler) override;
 
 		template<typename TTarget, typename TSource, typename TValue>
-		void BindSet(SglProperty<TTarget, TValue>& targetProperty,
-					 SglProperty<TSource, TValue>& sourceProperty)
-		{
-			if(!_dataContext)
-			{
-				throw Exception("Unable to preform a binding. Data context is null.");
-			}
-
-			auto& source = _dataContext.GetValueAs<TSource>();
-			BindSet(targetProperty, sourceProperty, source);
-		}
-
-		template<typename TTarget, typename TSource, typename TValue>
-		void BindSet(SglProperty<TTarget, TValue>& targetProperty,
-					 SglProperty<TSource, TValue>& sourceProperty,
-					 SglProperty<TSource, TValue>::Owner& source)
-		{
-			auto& target = static_cast<TTarget&>(*this);
-			targetProperty.InvokeSetter(target, sourceProperty.InvokeGetter(source));
-			Binding::Bind(targetProperty, target, sourceProperty, source);
-		}
-
-		template<typename TTarget, typename TSource, typename TValue>
-		void BindGet(SglProperty<TSource, TValue>& sourceProperty,
-					 SglProperty<TTarget, TValue>& targetProperty)
-		{
-			if(!_dataContext)
-			{
-				throw Exception("Unable to preform a binding. Data context is null.");
-			}
-
-			auto& target = _dataContext.GetValueAs<TTarget&>();
-			BindGet(sourceProperty, targetProperty, target);
-		}
-
-		template<typename TTarget, typename TSource, typename TValue>
-		void BindGet(SglProperty<TSource, TValue>& sourceProperty,
-					 SglProperty<TTarget, TValue>& targetProperty,
-					 SglProperty<TTarget, TValue>::Owner& target)
-		{
-			auto& source = static_cast<TSource&>(*this);
-			targetProperty.InvokeSetter(target, sourceProperty.InvokeGetter(source));
-			Binding::Bind(targetProperty, target, sourceProperty, source);
-		}
-
-		template<typename TTarget, typename TSource, typename TValue, CEvent TEvent>
-		void BindGet(SglProperty<TSource, TValue>& sourceProperty,
-					 SglProperty<TTarget, TValue>& targetProperty,
-					 TEvent SglProperty<TSource, TValue>::Owner::* event)
-		{
-			if(!_dataContext)
-			{
-				throw Exception("Unable to preform a binding. Data context is null.");
-			}
-
-			auto& target = _dataContext.GetValueAs<TTarget&>();
-			BindGet(sourceProperty, targetProperty, target, event);
-		}		
-
-		template<typename TTarget, typename TSource, typename TValue, CEvent TEvent>
-		void BindGet(SglProperty<TSource, TValue>& sourceProperty,
-					 SglProperty<TTarget, TValue>& targetProperty,					 
-					 SglProperty<TTarget, TValue>::Owner& target,
-					 TEvent SglProperty<TSource, TValue>::Owner::* event)
-		{
-			auto& source = static_cast<TSource&>(*this);
-			targetProperty.InvokeSetter(target, sourceProperty.InvokeGetter(sourceProperty));
-			Binding::Bind(targetProperty, target, sourceProperty, source, event);
-		}		
-
-		template<typename TTarget, typename TSource, typename TValue>
-		void Bind(SglProperty<TTarget, TValue>& targetProperty,
-				  SglProperty<TSource, TValue>& sourceProperty)
-		{
-			if(!_dataContext)
-			{
-				throw Exception("Unable to preform a binding. Data context is null.");
-			}
-
-			auto& source = _dataContext.GetValueAs<TSource>();
-			Bind(targetProperty, sourceProperty, source);
-		}
-
-		template<typename TTarget, typename TSource, typename TValue>
 		void Bind(SglProperty<TTarget, TValue>& targetProperty,
 				  SglProperty<TSource, TValue>& sourceProperty,
-				  SglProperty<TSource, TValue>::Owner& source)
+				  BindingMode mode = BindingMode::OneWay)
 		{
 			if(!_dataContext)
 			{
-				throw Exception("Unable to preform a binding. Data context is null.");
+				throw Exception("Unable to set a binding. Data context is null.");
 			}
 
 			auto& target = static_cast<TTarget&>(*this);
-			targetProperty.InvokeSetter(target, sourceProperty.InvokeGetter(source));
-			Binding::Bind(targetProperty, target, sourceProperty, source);
-			Binding::Bind(sourceProperty, source, targetProperty, target);
+			auto& source = _dataContext.GetValueAs<TSource>();
+
+			switch(mode)
+			{
+				case BindingMode::OneWay:
+				{
+					targetProperty.InvokeSetter(target, sourceProperty.InvokeGetter(source));
+					Binding::Bind(targetProperty, target, sourceProperty, source);
+					break;
+				}
+
+				case BindingMode::OneWayToSource:
+				{
+					sourceProperty.InvokeSetter(source, targetProperty.InvokeGetter(target));
+					Binding::Bind(sourceProperty, source, targetProperty, target);
+					break;
+				}
+
+				case BindingMode::TwoWay:
+				{
+					targetProperty.InvokeSetter(target, sourceProperty.InvokeGetter(source));
+					Binding::Bind(targetProperty, target, sourceProperty, source);
+					Binding::Bind(sourceProperty, source, targetProperty, target);
+					break;
+				}
+			}			
 		}
 
 		template<typename TTarget, typename TSource, typename TValue, CEvent TEvent>
 		void Bind(SglProperty<TTarget, TValue>& targetProperty,
 				  SglProperty<TSource, TValue>& sourceProperty,
-				  TEvent SglProperty<TTarget, TValue>::Owner::* event)
+				  TEvent SglProperty<TTarget, TValue>::Owner::* event,
+				  BindingMode mode = BindingMode::OneWayToSource)
 		{
 			if(!_dataContext)
 			{
-				throw Exception("Unable to preform a binding. Data context is null.");
+				throw Exception("Unable to set a binding. Data context is null.");
 			}
 
+			auto& target = static_cast<TTarget&>(*this);
 			auto& source = _dataContext.GetValueAs<TSource>();
-			Bind(targetProperty, sourceProperty, source, event);
+
+			switch(mode)
+			{
+				case BindingMode::OneWay:
+				{
+					targetProperty.InvokeSetter(target, sourceProperty.InvokeGetter(source));
+					Binding::Bind(targetProperty, target, sourceProperty, source);
+					break;
+				}
+
+				case BindingMode::OneWayToSource:
+				{
+					sourceProperty.InvokeSetter(source, targetProperty.InvokeGetter(target));
+					Binding::Bind(sourceProperty, source, targetProperty, target, event);
+					break;
+				}
+
+				case BindingMode::TwoWay:
+				{
+					targetProperty.InvokeSetter(target, sourceProperty.InvokeGetter(source));
+					Binding::Bind(targetProperty, target, sourceProperty, source);
+					Binding::Bind(sourceProperty, source, targetProperty, target, event);
+					break;
+				}
+			}
+		}
+
+		template<typename TTarget, typename TSource, typename TValue>
+		void Unbind(SglProperty<TTarget, TValue>& targetProperty,
+					SglProperty<TSource, TValue>& sourceProperty,
+					BindingMode mode = BindingMode::OneWay)
+		{
+			if(!_dataContext)
+			{
+				throw Exception("Unable to remove a binding. Data context is null.");
+			}
+
+			auto& target = static_cast<TTarget&>(*this);
+			auto& source = _dataContext.GetValueAs<TSource>();
+
+			switch(mode)
+			{
+				case BindingMode::OneWay:
+				{
+					Binding::Unbind(targetProperty, target, sourceProperty, source);
+					break;
+				}
+
+				case BindingMode::OneWayToSource:
+				{
+					Binding::Unbind(sourceProperty, source, targetProperty, target);
+					break;
+				}
+
+				case BindingMode::TwoWay:
+				{
+					Binding::Unbind(targetProperty, target, sourceProperty, source);
+					Binding::Unbind(sourceProperty, source, targetProperty, target);
+					break;
+				}
+			}
 		}
 
 		template<typename TTarget, typename TSource, typename TValue, CEvent TEvent>
-		void Bind(SglProperty<TTarget, TValue>& targetProperty,
-				  SglProperty<TSource, TValue>& sourceProperty,
-				  SglProperty<TSource, TValue>::Owner& source,
-				  TEvent SglProperty<TTarget, TValue>::Owner::* event)
+		void Unbind(SglProperty<TTarget, TValue>& targetProperty,
+					SglProperty<TSource, TValue>& sourceProperty,
+					TEvent SglProperty<TTarget, TValue>::Owner::* event,
+					BindingMode mode = BindingMode::OneWayToSource)
 		{
+			if(!_dataContext)
+			{
+				throw Exception("Unable to set a binding. Data context is null.");
+			}
+
 			auto& target = static_cast<TTarget&>(*this);
-			targetProperty.InvokeSetter(target, sourceProperty.InvokeGetter(source));
-			Binding::Bind(targetProperty, target, sourceProperty, source);
-			Binding::Bind(sourceProperty, source, targetProperty, target, event);
+			auto& source = _dataContext.GetValueAs<TSource>();
+
+			switch(mode)
+			{
+				case BindingMode::OneWay:
+				{
+					Binding::Unbind(targetProperty, target, sourceProperty, source);
+					break;
+				}
+
+				case BindingMode::OneWayToSource:
+				{
+					Binding::Unbind(sourceProperty, source, targetProperty, target, event);
+					break;
+				}
+
+				case BindingMode::TwoWay:
+				{
+					Binding::Unbind(targetProperty, target, sourceProperty, source);
+					Binding::Unbind(sourceProperty, source, targetProperty, target, event);
+					break;
+				}
+			}
 		}
 	protected:
 		virtual void NotifyPropertyChanged(SglPropertyBase& property);

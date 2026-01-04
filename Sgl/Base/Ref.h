@@ -125,24 +125,16 @@ namespace Sgl
             std::swap(_memoryBlock, other._memoryBlock);
         }
 
-        T* operator->() const
+        T* operator->() const noexcept
         {
             return _data;
-        }
-
-        template<typename TValue = T> requires !std::is_void_v<TValue>
-        TValue& operator*() const
-        {
-            return *_data;
         }
 
         Ref& operator=(std::nullptr_t)
         {
             TryDeleteMemoryBlock();
-
             _data = nullptr;
             _memoryBlock = nullptr;
-
             return *this;
         }
 
@@ -150,7 +142,6 @@ namespace Sgl
         {
             TryDeleteMemoryBlock();
             CopyConstructFrom(other);
-
             return *this;
         }
 
@@ -160,7 +151,6 @@ namespace Sgl
         {
             TryDeleteMemoryBlock();
             CopyConstructFrom(other);
-
             return *this;
         }
 
@@ -168,7 +158,6 @@ namespace Sgl
         {
             TryDeleteMemoryBlock();
             MoveConstructFrom(std::move(other));
-
             return *this;
         }
 
@@ -178,7 +167,6 @@ namespace Sgl
         {
             TryDeleteMemoryBlock();
             MoveConstructFrom(std::move(other));
-
             return *this;
         }
 
@@ -187,7 +175,7 @@ namespace Sgl
             return _memoryBlock != nullptr;
         }
 
-        friend bool operator==(const Ref& left, const Ref& right)
+        friend bool operator==(const Ref& left, const Ref& right) noexcept
         {
             return left._data == right._data;
         }

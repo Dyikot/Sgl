@@ -12,7 +12,7 @@ namespace Sgl
 	class Timer final
 	{
 	public:
-		using TimeElapsedHandler = EventHandler<Timer>;
+		using TimeElapsedEventHandler = EventHandler<Timer>;
 
 		/// <summary>
 		/// Gets the duration for which the timer is set.
@@ -22,7 +22,7 @@ namespace Sgl
 		/// <summary>
 		/// Occurs when the timer reaches its specified duration.
 		/// </summary>
-		Event<TimeElapsedHandler> Elapsed;
+		Event<TimeElapsedEventHandler> Elapsed;
 		bool AutoRestart = false;
 	private:
 		Stopwatch _stopwatch;

@@ -7,6 +7,12 @@
 
 namespace Sgl
 {
+    struct Cursor::CursorImpl
+    {
+        SDL_Cursor* SdlCursor = nullptr;
+        int References = 0;
+    };
+
     static const Cursor& GetSystemCursor(SDL_SystemCursor cursor)
     {
         switch(cursor)

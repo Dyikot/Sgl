@@ -10,7 +10,7 @@ namespace Sgl
 		_data(std::move(other._data))
 	{}
 
-	bool Any::Is(const std::type_info& typeInfo)
+	bool Any::Is(const std::type_info& typeInfo) const
 	{
 		const auto& type = HasValue() ? _data->Type() : typeid(nullptr);
 		return typeInfo == type;

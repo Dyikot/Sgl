@@ -38,8 +38,8 @@ namespace Sgl::UIElements
 	private:
 		std::string _source;
 		FRect _sourceBounds {};
-		Stretch _stretch = Stretch::Uniform;
 		Texture _sourceTexture;
+		Stretch _stretch = Stretch::Uniform;
 		bool _isImageTextureValid = false;
 	public:
 		Image() = default;

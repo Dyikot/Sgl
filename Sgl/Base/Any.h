@@ -116,7 +116,7 @@ namespace Sgl
 			return Is(typeid(T));
 		}
 
-		bool Is(const std::type_info& typeInfo);
+		bool Is(const std::type_info& typeInfo) const;
 
 		bool HasValue() const noexcept 
 		{ 

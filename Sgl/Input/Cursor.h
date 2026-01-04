@@ -9,12 +9,7 @@ namespace Sgl
 	class Cursor final
 	{
 	private:
-		struct CursorImpl
-		{
-			SDL_Cursor* SdlCursor = nullptr;
-			int References = 0;
-		};
-
+		struct CursorImpl;
 		CursorImpl* _cursor = nullptr;
 	public:		
 		Cursor(SDL_SystemCursor systemCursor) noexcept;
