@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Data/SglProperty.h"
+#include "../Data/StyleableProperty.h"
 
 namespace Sgl
 {
@@ -18,17 +18,17 @@ namespace Sgl
     class Setter : public ISetter
     {
     private:
-        SglProperty<TOwner, TValue>& _property;
+        StyleableProperty<TOwner, TValue>& _property;
         TValue _value;
     public:
-        Setter(SglProperty<TOwner, TValue>& property, TValue value):
+        Setter(StyleableProperty<TOwner, TValue>& property, TValue value):
             _property(property),
             _value(value)
         {}
 
         void Apply(StyleableElement& target) const final
         {
-            _property.InvokeSetter(static_cast<TOwner&>(target), _value);
+            _property.InvokeSetter(static_cast<TOwner&>(target), _value, ValueSource::Style);
         }
     };
 }

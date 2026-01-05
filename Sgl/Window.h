@@ -100,6 +100,8 @@ namespace Sgl
 		Window* _owner = nullptr;
 		std::list<Window*> _ownedWindows;
 		Surface _icon;
+
+		ValueSource _contentSource {};
 	public:
 		Window();
 		Window(const Window&) = delete;
@@ -264,8 +266,9 @@ namespace Sgl
 
 		const std::list<Window*>& GetOwnedWindows() const;
 
-		void SetContent(Ref<UIElement> value);
-		Ref<UIElement> GetContent() const;		
+		void SetContent(const Ref<UIElement>& value);
+		void SetContent(const Ref<UIElement>& value, ValueSource source);
+		const Ref<UIElement>& GetContent() const { return _content; }
 
 		void InvalidateRender() final;
 		bool NeedsRendering() const final { return !_isRenderValid; }
@@ -344,6 +347,6 @@ namespace Sgl
 		friend class UIElement;
 		friend class Application;
 	public:
-		static inline SglProperty ContentProperty { &SetContent, &GetContent };
+		static inline StyleableProperty ContentProperty { &SetContent, &GetContent };
 	};
 }

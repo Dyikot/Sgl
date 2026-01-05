@@ -16,21 +16,26 @@ namespace Sgl
 
 	void BindableObject::SetDataContext(const Ref<INotifyPropertyChanged>& value)
 	{
-		SetProperty(DataContextProperty, _dataContext, value);
+		SetDataContext(value, ValueSource::Local);
 	}
 
-	void BindableObject::AddPropertyChangedEventHandler(SglPropertyBase& property, PropertyChangedEventHandler handler)
+	void BindableObject::SetDataContext(const Ref<INotifyPropertyChanged>& value, ValueSource source)
+	{
+		SetProperty(DataContextProperty, _dataContext, value, _dataContextSource, source);
+	}
+
+	void BindableObject::AddPropertyChangedEventHandler(AbstractPropertyBase& property, PropertyChangedEventHandler handler)
 	{
 		_observers.emplace_back(property, std::move(handler));
 	}
 
-	void BindableObject::RemovePropertyChangedEventHandler(SglPropertyBase& property, PropertyChangedEventHandler handler)
+	void BindableObject::RemovePropertyChangedEventHandler(AbstractPropertyBase& property, PropertyChangedEventHandler handler)
 	{		
 		Observer propertyObserver(property, std::move(handler));
 		std::erase(_observers, propertyObserver);
 	}	
 
-	void BindableObject::NotifyPropertyChanged(SglPropertyBase& property)
+	void BindableObject::NotifyPropertyChanged(AbstractPropertyBase& property)
 	{
 		for(auto& observer : _observers)
 		{

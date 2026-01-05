@@ -20,9 +20,14 @@ namespace Sgl::UIElements
 		using ButtonEventHandler = EventHandler<Button>;
 
 		bool _isPressed = false;
+
 		ClickMode _clickMode = ClickMode::Release;
 		Command _command;
 		Any _commandParameter;
+
+		ValueSource _clickModeSource {};
+		ValueSource _commandSource {};
+		ValueSource _commandParameterSource {};
 	public:
 		Event<ButtonEventHandler> Click;
 	public:
@@ -31,25 +36,27 @@ namespace Sgl::UIElements
 		Button(Button&& other) noexcept;
 
 		void SetClickMode(ClickMode value);
+		void SetClickMode(ClickMode value, ValueSource source);
 		ClickMode GetClickMode() const { return _clickMode; }
 
 		void SetCommand(const Command& value);
+		void SetCommand(const Command& value, ValueSource sorce);
 		const Command& GetCommand() const { return _command; }
 
 		void SetCommandParameter(const Any& value);
+		void SetCommandParameter(const Any& value, ValueSource source);
 		const Any& GetCommandParameter() const { return _commandParameter; }
 
 		bool IsPressed() const noexcept { return _isPressed; }
 
 		void Render(RenderContext context) final;
-		void ApplyStyle() override;
 	protected:
 		virtual void OnClick();
 		void OnMouseDown(MouseButtonEventArgs e) override;
 		void OnMouseUp(MouseButtonEventArgs e) override;
 	public:
-		static inline SglProperty ClickModeProperty { &SetClickMode, &GetClickMode };
-		static inline SglProperty CommandProperty { &SetCommand, &GetCommand };
-		static inline SglProperty CommandParameterProperty { &SetCommandParameter, &GetCommandParameter };
+		static inline StyleableProperty ClickModeProperty { &SetClickMode, &GetClickMode };
+		static inline StyleableProperty CommandProperty { &SetCommand, &GetCommand };
+		static inline StyleableProperty CommandParameterProperty { &SetCommandParameter, &GetCommandParameter };
 	};
 }

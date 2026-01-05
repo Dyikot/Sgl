@@ -18,41 +18,45 @@ namespace Sgl::UIElements
 	Button::Button(Button&& other) noexcept:
 		ContentUIElement(std::move(other)),
 		_isPressed(other._isPressed),
-		_clickMode(other._clickMode)
+		_clickMode(other._clickMode),
+		_command(std::move(other._command)),
+		_commandParameter(std::move(other._commandParameter))
 	{}
 
 	void Button::SetClickMode(ClickMode value)
 	{
-		SetProperty(ClickModeProperty, _clickMode, value);
+		SetClickMode(value, ValueSource::Local);
+	}
+
+	void Button::SetClickMode(ClickMode value, ValueSource source)
+	{
+		SetProperty(ClickModeProperty, _clickMode, value, _clickModeSource, source);
 	}
 
 	void Button::SetCommand(const Command& value)
 	{
-		SetProperty(CommandProperty, _command, value);
+		SetCommand(value, ValueSource::Local);
+	}
+
+	void Button::SetCommand(const Command& value, ValueSource sorce)
+	{
+		SetProperty(CommandProperty, _command, value, _commandSource, sorce);
 	}
 
 	void Button::SetCommandParameter(const Any& value)
 	{
-		SetProperty(CommandParameterProperty, _commandParameter, value);
+		SetCommandParameter(value, ValueSource::Local);
+	}
+
+	void Button::SetCommandParameter(const Any& value, ValueSource source)
+	{
+		SetProperty(CommandParameterProperty, _commandParameter, value, _commandParameterSource, source);
 	}
 
 	void Button::Render(RenderContext context)
 	{
 		RenderBackground(context);
 		ContentUIElement::Render(context);
-	}
-
-	void Button::ApplyStyle()
-	{
-		ContentUIElement::ApplyStyle();
-
-		if(const auto& presenter = GetContentPresenter())
-		{
-			if(presenter->GetCursor() == Cursors::Arrow)
-			{
-				presenter->SetCursor(GetCursor());
-			}
-		}
 	}
 
 	void Button::OnClick()

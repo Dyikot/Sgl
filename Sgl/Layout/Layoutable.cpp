@@ -43,7 +43,12 @@ namespace Sgl
 
 	void Layoutable::SetWidth(float value)
 	{
-		if(SetProperty(WidthProperty, _width, value))
+		SetWidth(value, ValueSource::Local);
+	}
+
+	void Layoutable::SetWidth(float value, ValueSource source)
+	{
+		if(SetProperty(WidthProperty, _width, value, _widthSource, source))
 		{
 			InvalidateMeasure();
 		}
@@ -51,7 +56,12 @@ namespace Sgl
 
 	void Layoutable::SetHeight(float value)
 	{
-		if(SetProperty(HeightProperty, _height, value))
+		SetHeight(value, ValueSource::Local);
+	}
+
+	void Layoutable::SetHeight(float value, ValueSource source)
+	{
+		if(SetProperty(HeightProperty, _height, value, _heightSource, source))
 		{
 			InvalidateMeasure();
 		}
@@ -59,7 +69,12 @@ namespace Sgl
 
 	void Layoutable::SetMinWidth(float value)
 	{
-		if(SetProperty(MinWidthProperty, _minWidth, value))
+		SetMinWidth(value, ValueSource::Local);
+	}
+
+	void Layoutable::SetMinWidth(float value, ValueSource source)
+	{
+		if(SetProperty(MinWidthProperty, _minWidth, value, _minWidthSource, source))
 		{
 			InvalidateMeasure();
 		}
@@ -67,7 +82,12 @@ namespace Sgl
 
 	void Layoutable::SetMinHeight(float value)
 	{
-		if(SetProperty(MinHeightProperty, _minHeight, value))
+		SetMinHeight(value, ValueSource::Local);
+	}
+
+	void Layoutable::SetMinHeight(float value, ValueSource source)
+	{
+		if(SetProperty(MinHeightProperty, _minHeight, value, _minHeightSource, source))
 		{
 			InvalidateMeasure();
 		}
@@ -75,7 +95,12 @@ namespace Sgl
 
 	void Layoutable::SetMaxWidth(float value)
 	{
-		if(SetProperty(MaxWidthProperty, _maxWidth, value))
+		SetMaxWidth(value, ValueSource::Local);
+	}
+
+	void Layoutable::SetMaxWidth(float value, ValueSource source)
+	{
+		if(SetProperty(MaxWidthProperty, _maxWidth, value, _maxWidthSource, source))
 		{
 			InvalidateMeasure();
 		}
@@ -83,7 +108,12 @@ namespace Sgl
 
 	void Layoutable::SetMaxHeight(float value)
 	{
-		if(SetProperty(MaxHeightProperty, _maxHeight, value))
+		SetMaxHeight(value, ValueSource::Local);
+	}
+
+	void Layoutable::SetMaxHeight(float value, ValueSource source)
+	{
+		if(SetProperty(MaxHeightProperty, _maxHeight, value, _maxHeightSource, source))
 		{
 			InvalidateMeasure();
 		}
@@ -91,7 +121,12 @@ namespace Sgl
 
 	void Layoutable::SetMargin(Thickness value)
 	{
-		if(SetProperty(MarginProperty, _margin, value))
+		SetMargin(value, ValueSource::Local);
+	}
+
+	void Layoutable::SetMargin(Thickness value, ValueSource source)
+	{
+		if(SetProperty(MarginProperty, _margin, value, _marginSource, source))
 		{
 			InvalidateMeasure();
 		}
@@ -99,7 +134,12 @@ namespace Sgl
 
 	void Layoutable::SetIsVisible(bool value)
 	{
-		if(SetProperty(IsVisibleProperty, _isVisible, value))
+		SetIsVisible(value, ValueSource::Local);
+	}
+
+	void Layoutable::SetIsVisible(bool value, ValueSource source)
+	{
+		if(SetProperty(IsVisibleProperty, _isVisible, value, _isVisibleSource, source))
 		{
 			InvalidateMeasure();
 		}
@@ -107,7 +147,12 @@ namespace Sgl
 
 	void Layoutable::SetVerticalAlignment(VerticalAlignment value)
 	{
-		if(SetProperty(VerticalAlignmentProperty, _verticalAlignment, value))
+		SetVerticalAlignment(value, ValueSource::Local);
+	}
+
+	void Layoutable::SetVerticalAlignment(VerticalAlignment value, ValueSource source)
+	{
+		if(SetProperty(VerticalAlignmentProperty, _verticalAlignment, value, _verticalAlignmentSource, source))
 		{
 			InvalidateArrange();
 		}
@@ -115,7 +160,12 @@ namespace Sgl
 
 	void Layoutable::SetHorizontalAlignment(HorizontalAlignment value)
 	{
-		if(SetProperty(HorizontalAlignmentProperty, _horizontalAlignment, value))
+		SetHorizontalAlignment(value, ValueSource::Local);
+	}
+
+	void Layoutable::SetHorizontalAlignment(HorizontalAlignment value, ValueSource source)
+	{
+		if(SetProperty(HorizontalAlignmentProperty, _horizontalAlignment, value, _horizontalAlignmentSource, source))
 		{
 			InvalidateArrange();
 		}

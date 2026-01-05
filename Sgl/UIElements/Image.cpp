@@ -20,7 +20,12 @@ namespace Sgl::UIElements
 
 	void Image::SetSource(const std::string& value)
 	{
-		if(SetProperty(SourceProperty, _source, value))
+		SetSource(value, ValueSource::Local);
+	}
+
+	void Image::SetSource(const std::string& value, ValueSource source)
+	{
+		if(SetProperty(SourceProperty, _source, value, _sourceSource, source))
 		{
 			InvalidateImageTexture();
 			InvalidateArrange();
@@ -29,7 +34,12 @@ namespace Sgl::UIElements
 
 	void Image::SetStretch(Stretch value)
 	{
-		if(SetProperty(StretchProperty, _stretch, value))
+		SetStretch(value, ValueSource::Local);
+	}
+
+	void Image::SetStretch(Stretch value, ValueSource source)
+	{
+		if(SetProperty(StretchProperty, _stretch, value, _stretchSource, source))
 		{
 			InvalidateArrange();
 		}

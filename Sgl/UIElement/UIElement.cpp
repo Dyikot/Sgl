@@ -32,24 +32,34 @@ namespace Sgl
 		Layoutable(other),
 		_isMouseOver(other._isMouseOver),
 		_tag(other._tag),
-		_toolTip(other._toolTip)
+		_tooltip(other._tooltip)
 	{}
 
 	UIElement::UIElement(UIElement&& other) noexcept:
 		Layoutable(std::move(other)),
 		_isMouseOver(other._isMouseOver),
 		_tag(std::move(other._tag)),
-		_toolTip(std::move(other._toolTip))
+		_tooltip(std::move(other._tooltip))
 	{}
 
 	void UIElement::SetTag(const Any& value)
 	{
-		SetProperty(TagProperty, _tag, value);
-	}	
+		SetTag(value, ValueSource::Local);
+	}
+
+	void UIElement::SetTag(const Any& value, ValueSource source)
+	{
+		SetProperty(TagProperty, _tag, value, _tagSource, source);
+	}
 
 	void UIElement::SetToolTip(const Ref<UIElement>& value)
 	{
-		if(SetProperty(ToolTipProperty, _toolTip, value) && _isMouseOver)
+		SetToolTip(value, ValueSource::Local);
+	}
+
+	void UIElement::SetToolTip(const Ref<UIElement>& value, ValueSource source)
+	{
+		if(SetProperty(ToolTipProperty, _tooltip, value, _tooltipSource, source) && _isMouseOver)
 		{
 			InvalidateRender();
 		}
@@ -57,9 +67,9 @@ namespace Sgl
 
 	void UIElement::Render(RenderContext context)
 	{		
-		if(_toolTip && _toolTip->IsVisible())
+		if(_tooltip && _tooltip->IsVisible())
 		{
-			_toolTip->Render(context);
+			_tooltip->Render(context);
 		}
 
 		Renderable::Render(context);

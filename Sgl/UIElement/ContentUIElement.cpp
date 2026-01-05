@@ -34,22 +34,32 @@ namespace Sgl
 		}
 	}
 
-	void ContentUIElement::SetContent(Ref<INotifyPropertyChanged> content)
+	void ContentUIElement::SetContent(const Ref<INotifyPropertyChanged>& value)
 	{
-		if(SetProperty(ContentProperty, _content, content))
+		SetContent(value, ValueSource::Local);
+	}
+
+	void ContentUIElement::SetContent(const Ref<INotifyPropertyChanged>& value, ValueSource source)
+	{
+		if(SetProperty(ContentProperty, _content, value, _contentSource, source))
 		{
-			if(!content.Is<UIElement>())
+			if(!value.Is<UIElement>())
 			{
-				SetDataContext(content);
-			}			
-			
+				SetDataContext(value);
+			}
+
 			InvalidateContentPresenter();
 		}
 	}
 
-	void ContentUIElement::SetContentTemplate(Ref<IDataTemplate> value)
+	void ContentUIElement::SetContentTemplate(const Ref<IDataTemplate>& value)
 	{
-		if(SetProperty(ContentTemplateProperty, _contentTemplate, value))
+		SetContentTemplate(value, ValueSource::Local);
+	}
+
+	void ContentUIElement::SetContentTemplate(const Ref<IDataTemplate>& value, ValueSource source)
+	{
+		if(SetProperty(ContentTemplateProperty, _contentTemplate, value, _contentTemplateSource, source))
 		{
 			InvalidateContentPresenter();
 		}
@@ -57,7 +67,12 @@ namespace Sgl
 
 	void ContentUIElement::SetPadding(Thickness value)
 	{
-		if(SetProperty(PaddingProperty, _padding, value))
+		SetPadding(value, ValueSource::Local);
+	}
+
+	void ContentUIElement::SetPadding(Thickness value, ValueSource source)
+	{
+		if(SetProperty(PaddingProperty, _padding, value, _paddingSource, source))
 		{
 			InvalidateMeasure();
 		}
@@ -65,7 +80,12 @@ namespace Sgl
 
 	void ContentUIElement::SetVerticalContentAlignment(VerticalAlignment value)
 	{
-		if(SetProperty(VerticalContentAlignmentProperty, _verticalContentAlignment, value))
+		SetVerticalContentAlignment(value, ValueSource::Local);
+	}
+
+	void ContentUIElement::SetVerticalContentAlignment(VerticalAlignment value, ValueSource source)
+	{
+		if(SetProperty(VerticalContentAlignmentProperty, _verticalContentAlignment, value, _verticalContentAlignmentSource, source))
 		{
 			InvalidateArrange();
 		}
@@ -73,7 +93,12 @@ namespace Sgl
 
 	void ContentUIElement::SetHorizontalContentAlignment(HorizontalAlignment value)
 	{
-		if(SetProperty(HorizontalContentAlignmentProperty, _horizontalContentAlignment, value))
+		SetHorizontalContentAlignment(value, ValueSource::Local);
+	}
+
+	void ContentUIElement::SetHorizontalContentAlignment(HorizontalAlignment value, ValueSource source)
+	{
+		if(SetProperty(HorizontalContentAlignmentProperty, _horizontalContentAlignment, value, _horizontalContentAlignmentSource, source))
 		{
 			InvalidateArrange();
 		}

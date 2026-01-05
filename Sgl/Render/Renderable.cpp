@@ -18,7 +18,12 @@ namespace Sgl
 
 	void Renderable::SetCursor(const Cursor& value)
 	{
-		if(SetProperty(CursorProperty, _cursor, value))
+		SetCursor(value, ValueSource::Local);
+	}
+
+	void Renderable::SetCursor(const Cursor& value, ValueSource source)
+	{
+		if(SetProperty(CursorProperty, _cursor, value, _cursorSource, source))
 		{
 			OnCursorChanged(value);
 		}
@@ -26,7 +31,12 @@ namespace Sgl
 
 	void Renderable::SetBackground(const Brush& value)
 	{
-		if(SetProperty(BackgroundProperty, _background, value))
+		SetBackground(value, ValueSource::Local);
+	}
+
+	void Renderable::SetBackground(const Brush& value, ValueSource source)
+	{
+		if(SetProperty(BackgroundProperty, _background, value, _backgroundSource, source))
 		{
 			InvalidateRender();
 		}

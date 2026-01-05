@@ -4,6 +4,7 @@
 #include "../Base/Exceptions.h"
 #include "../Base/Ref.h"
 #include "Binding.h"
+#include "StyleableProperty.h"
 
 namespace Sgl
 {
@@ -17,7 +18,7 @@ namespace Sgl
 	private:
 		struct Observer
 		{
-			std::reference_wrapper<SglPropertyBase> Property;
+			std::reference_wrapper<AbstractPropertyBase> Property;
 			PropertyChangedEventHandler Handler;
 
 			bool operator==(const Observer& other) const
@@ -28,20 +29,23 @@ namespace Sgl
 
 		Ref<INotifyPropertyChanged> _dataContext;
 		std::vector<Observer> _observers;
+
+		ValueSource _dataContextSource {};
 	public:
 		BindableObject() = default;
 		BindableObject(const BindableObject& other);
 		BindableObject(BindableObject&& other) noexcept;
 
 		void SetDataContext(const Ref<INotifyPropertyChanged>& value);
+		void SetDataContext(const Ref<INotifyPropertyChanged>& value, ValueSource source);
 		const Ref<INotifyPropertyChanged>& GetDataContext() const { return _dataContext; }
 
-		void AddPropertyChangedEventHandler(SglPropertyBase& property, PropertyChangedEventHandler handler) override;
-		void RemovePropertyChangedEventHandler(SglPropertyBase& property, PropertyChangedEventHandler handler) override;
+		void AddPropertyChangedEventHandler(AbstractPropertyBase& property, PropertyChangedEventHandler handler) override;
+		void RemovePropertyChangedEventHandler(AbstractPropertyBase& property, PropertyChangedEventHandler handler) override;
 
 		template<typename TTarget, typename TSource, typename TValue>
-		void Bind(SglProperty<TTarget, TValue>& targetProperty,
-				  SglProperty<TSource, TValue>& sourceProperty,
+		void Bind(AbstractProperty<TTarget, TValue>& targetProperty,
+				  AbstractProperty<TSource, TValue>& sourceProperty,
 				  BindingMode mode = BindingMode::OneWay)
 		{
 			if(!_dataContext)
@@ -79,9 +83,9 @@ namespace Sgl
 		}
 
 		template<typename TTarget, typename TSource, typename TValue, CEvent TEvent>
-		void Bind(SglProperty<TTarget, TValue>& targetProperty,
-				  SglProperty<TSource, TValue>& sourceProperty,
-				  TEvent SglProperty<TTarget, TValue>::Owner::* event,
+		void Bind(AbstractProperty<TTarget, TValue>& targetProperty,
+				  AbstractProperty<TSource, TValue>& sourceProperty,
+				  TEvent AbstractProperty<TTarget, TValue>::Owner::* event,
 				  BindingMode mode = BindingMode::OneWayToSource)
 		{
 			if(!_dataContext)
@@ -119,8 +123,8 @@ namespace Sgl
 		}
 
 		template<typename TTarget, typename TSource, typename TValue>
-		void Unbind(SglProperty<TTarget, TValue>& targetProperty,
-					SglProperty<TSource, TValue>& sourceProperty,
+		void Unbind(AbstractProperty<TTarget, TValue>& targetProperty,
+					AbstractProperty<TSource, TValue>& sourceProperty,
 					BindingMode mode = BindingMode::OneWay)
 		{
 			if(!_dataContext)
@@ -155,9 +159,9 @@ namespace Sgl
 		}
 
 		template<typename TTarget, typename TSource, typename TValue, CEvent TEvent>
-		void Unbind(SglProperty<TTarget, TValue>& targetProperty,
-					SglProperty<TSource, TValue>& sourceProperty,
-					TEvent SglProperty<TTarget, TValue>::Owner::* event,
+		void Unbind(AbstractProperty<TTarget, TValue>& targetProperty,
+					AbstractProperty<TSource, TValue>& sourceProperty,
+					TEvent AbstractProperty<TTarget, TValue>::Owner::* event,
 					BindingMode mode = BindingMode::OneWayToSource)
 		{
 			if(!_dataContext)
@@ -191,23 +195,25 @@ namespace Sgl
 			}
 		}
 	protected:
-		virtual void NotifyPropertyChanged(SglPropertyBase& property);
+		virtual void NotifyPropertyChanged(AbstractPropertyBase& property);
 
 		template<typename TOwner, typename TValue, typename TField>
-		bool SetProperty(SglProperty<TOwner, TValue>& property, TField& field,
-						 SglProperty<TOwner, TValue>::Value value)
+		bool SetProperty(StyleableProperty<TOwner, TValue>& property, TField& field,
+						 StyleableProperty<TOwner, TValue>::Value value,
+						 ValueSource& currentSource, ValueSource newSource)
 		{
-			if(field == value)
+			if(currentSource > newSource || field == value)
 			{
 				return false;
 			}
 
 			field = value;
+			currentSource = newSource;
 			NotifyPropertyChanged(property);
 
 			return true;
 		}
 	public:
-		static inline SglProperty DataContextProperty { &SetDataContext, &GetDataContext };
+		static inline StyleableProperty DataContextProperty { &SetDataContext, &GetDataContext };
 	};
 }

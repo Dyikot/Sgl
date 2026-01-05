@@ -3,6 +3,7 @@
 #include <vector>
 #include <concepts>
 #include "INotityPropertyChanged.h"
+#include "DirectProperty.h"
 
 namespace Sgl
 {
@@ -11,7 +12,7 @@ namespace Sgl
 	private:
 		struct Observer
 		{
-			std::reference_wrapper<SglPropertyBase> Property;
+			std::reference_wrapper<AbstractPropertyBase> Property;
 			PropertyChangedEventHandler Handler;
 
 			bool operator==(const Observer& other) const
@@ -26,14 +27,14 @@ namespace Sgl
 		ObservableObject(const ObservableObject&) = default;
 		ObservableObject(ObservableObject&&) = default;
 
-		void AddPropertyChangedEventHandler(SglPropertyBase& property, PropertyChangedEventHandler handler) override;
-		void RemovePropertyChangedEventHandler(SglPropertyBase& property, PropertyChangedEventHandler handler) override;
+		void AddPropertyChangedEventHandler(AbstractPropertyBase& property, PropertyChangedEventHandler handler) override;
+		void RemovePropertyChangedEventHandler(AbstractPropertyBase& property, PropertyChangedEventHandler handler) override;
 	protected:
-		virtual void NotifyPropertyChanged(SglPropertyBase& property);
+		virtual void NotifyPropertyChanged(AbstractPropertyBase& property);
 
 		template<typename TOwner, typename TValue, typename TField>
-		bool SetProperty(SglProperty<TOwner, TValue>& property, TField& field,
-						 SglProperty<TOwner, TValue>::Value value)
+		bool SetProperty(DirectProperty<TOwner, TValue>& property, TField& field,
+						 DirectProperty<TOwner, TValue>::Value value)
 		{
 			if(field == value)
 			{
@@ -47,9 +48,9 @@ namespace Sgl
 		}
 
 		template<typename TOwner, typename TValue>
-		bool SetProperty(SglProperty<TOwner, TValue>& property,
-						 SglProperty<TOwner, TValue>::Value oldValue,
-						 SglProperty<TOwner, TValue>::Value newValue,
+		bool SetProperty(DirectProperty<TOwner, TValue>& property,
+						 DirectProperty<TOwner, TValue>::Value oldValue,
+						 DirectProperty<TOwner, TValue>::Value newValue,
 						 Action<TValue>& changed)
 		{
 			if(oldValue == newValue)

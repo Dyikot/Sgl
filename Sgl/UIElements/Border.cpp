@@ -16,7 +16,12 @@ namespace Sgl::UIElements
 
 	void Border::SetBorderWidth(size_t value)
 	{
-		if(SetProperty(BorderWidthProperty, _borderWidth, value))
+		SetBorderWidth(value, ValueSource::Local);
+	}
+
+	void Border::SetBorderWidth(size_t value, ValueSource source)
+	{
+		if(SetProperty(BorderWidthProperty, _borderWidth, value, _borderWidthSource, source))
 		{
 			InvalidateMeasure();
 		}
@@ -24,7 +29,12 @@ namespace Sgl::UIElements
 
 	void Border::SetBorderColor(Color value)
 	{
-		if(SetProperty(BorderColorProperty, _borderColor, value))
+		SetBorderColor(value, ValueSource::Local);
+	}
+
+	void Border::SetBorderColor(Color value, ValueSource source)
+	{
+		if(SetProperty(BorderColorProperty, _borderColor, value, _borderColorSource, source))
 		{
 			InvalidateRender();
 		}

@@ -26,6 +26,17 @@ namespace Sgl
 
 		bool _isArrangeValid = false;
 		bool _isMeasureValid = false;
+
+		ValueSource _widthSource {};
+		ValueSource _heightSource {};
+		ValueSource _minWidthSource {};
+		ValueSource _minHeightSource {};
+		ValueSource _maxWidthSource {};
+		ValueSource _maxHeightSource {};
+		ValueSource _marginSource {};
+		ValueSource _isVisibleSource {};
+		ValueSource _verticalAlignmentSource {};
+		ValueSource _horizontalAlignmentSource {};
 	public:
 		Layoutable() = default;
 		Layoutable(const Layoutable& other);
@@ -33,33 +44,43 @@ namespace Sgl
 		virtual ~Layoutable() = default;
 
 		void SetWidth(float value);
+		void SetWidth(float value, ValueSource source);
 		float GetWidth() const { return _width; }
 
 		void SetHeight(float value);
+		void SetHeight(float value, ValueSource source);
 		float GetHeight() const { return _height; }
 
 		void SetMinWidth(float value);
+		void SetMinWidth(float value, ValueSource source);
 		float GetMinWidth() const { return _minWidth; }
 
 		void SetMinHeight(float value);
+		void SetMinHeight(float value, ValueSource source);
 		float GetMinHeight() const { return _minHeight; }
 
 		void SetMaxWidth(float value);
+		void SetMaxWidth(float value, ValueSource source);
 		float GetMaxWidth() const { return _maxWidth; }
 
 		void SetMaxHeight(float value);
+		void SetMaxHeight(float value, ValueSource source);
 		float GetMaxHeight() const { return _maxHeight; }		
 
 		void SetMargin(Thickness value);
+		void SetMargin(Thickness value, ValueSource source);
 		Thickness GetMargin() const { return _margin; }
 
 		void SetIsVisible(bool value);
+		void SetIsVisible(bool value, ValueSource source);
 		bool IsVisible() const { return _isVisible; }
 
 		void SetVerticalAlignment(VerticalAlignment value);
+		void SetVerticalAlignment(VerticalAlignment value, ValueSource source);
 		VerticalAlignment GetVerticalAlignment() const { return _verticalAlignment; }
 
 		void SetHorizontalAlignment(HorizontalAlignment value);
+		void SetHorizontalAlignment(HorizontalAlignment value, ValueSource source);
 		HorizontalAlignment GetHorizontalAlignment() const { return _horizontalAlignment; }
 
 		void SetParent(IStyleHost* parent) override;
@@ -80,15 +101,15 @@ namespace Sgl
 		virtual FSize MeasureContent(FSize avaliableSize) { return FSize(); }
 		virtual void ArrangeContent(FRect rect) { }
 	public:
-		static inline SglProperty WidthProperty { &SetWidth, &GetWidth };
-		static inline SglProperty HeightProperty { &SetHeight, &GetHeight };
-		static inline SglProperty MinWidthProperty { &SetMinWidth, &GetMinWidth };
-		static inline SglProperty MinHeightProperty { &SetMinHeight, &GetMinHeight };
-		static inline SglProperty MaxWidthProperty { &SetMaxWidth, &GetMaxWidth };
-		static inline SglProperty MaxHeightProperty { &SetMaxHeight, &GetMaxHeight };
-		static inline SglProperty MarginProperty { &SetMargin, &GetMargin };
-		static inline SglProperty IsVisibleProperty { &SetIsVisible, &IsVisible };
-		static inline SglProperty VerticalAlignmentProperty { &SetVerticalAlignment, &GetVerticalAlignment };
-		static inline SglProperty HorizontalAlignmentProperty { &SetHorizontalAlignment, &GetHorizontalAlignment };
+		static inline StyleableProperty WidthProperty { &SetWidth, &GetWidth };
+		static inline StyleableProperty HeightProperty { &SetHeight, &GetHeight };
+		static inline StyleableProperty MinWidthProperty { &SetMinWidth, &GetMinWidth };
+		static inline StyleableProperty MinHeightProperty { &SetMinHeight, &GetMinHeight };
+		static inline StyleableProperty MaxWidthProperty { &SetMaxWidth, &GetMaxWidth };
+		static inline StyleableProperty MaxHeightProperty { &SetMaxHeight, &GetMaxHeight };
+		static inline StyleableProperty MarginProperty { &SetMargin, &GetMargin };
+		static inline StyleableProperty IsVisibleProperty { &SetIsVisible, &IsVisible };
+		static inline StyleableProperty VerticalAlignmentProperty { &SetVerticalAlignment, &GetVerticalAlignment };
+		static inline StyleableProperty HorizontalAlignmentProperty { &SetHorizontalAlignment, &GetHorizontalAlignment };
 	};
 }

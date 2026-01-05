@@ -10,12 +10,12 @@ namespace Sgl::UIElements
 	public:
 		static constexpr float DefaultFontSize = 14;
 	private:
-		static constexpr size_t FontFamilyBit		= 0;
-		static constexpr size_t FontSizeBit			= 1;
-		static constexpr size_t FontStyleBit		= 2;
-		static constexpr size_t FontOutlineBit		= 3;
-		static constexpr size_t FlowDirectionBit	= 4;
-		static constexpr size_t TextAlignmentBit	= 5;
+		static constexpr size_t FontFamilyFlag		= 0;
+		static constexpr size_t FontSizeFlag		= 1;
+		static constexpr size_t FontStyleFlag		= 2;
+		static constexpr size_t FontOutlineFlag		= 3;
+		static constexpr size_t FlowDirectionFlag	= 4;
+		static constexpr size_t TextAlignmentFlag	= 5;
 
 		std::string _text;
 		float _fontSize = DefaultFontSize;
@@ -28,11 +28,22 @@ namespace Sgl::UIElements
 		TextAlignment _textAlignment = TextAlignment::Left;
 		Thickness _padding;
 
+		ValueSource _textSource {};
+		ValueSource _fontSizeSource {};
+		ValueSource _outlineSource {};
+		ValueSource _fontFamilySource {};
+		ValueSource _flowDirectionSource {};
+		ValueSource _fontStyleSource {};
+		ValueSource _foregroundSource {};
+		ValueSource _textWrappingSource {};
+		ValueSource _textAlignmentSource {};
+		ValueSource _paddingSource {};
+
 		FRect _textTextureBounds {};
 		FontImpl _fontImpl;
 		Texture _textTexture;
 		bool _isTextTextureValid = false;
-		std::bitset<6> _fontValidationBits = 1;
+		std::bitset<6> _fontFlags = 1;
 	public:
 		TextBlock();
 		TextBlock(const TextBlock& other);
@@ -40,33 +51,43 @@ namespace Sgl::UIElements
 		~TextBlock() = default;
 
 		void SetText(const std::string& value);
+		void SetText(const std::string& value, ValueSource source);
 		const std::string& GetText() const { return _text; }
 
-		void SetFontSize(float value); 
+		void SetFontSize(float value);
+		void SetFontSize(float value, ValueSource source);
 		float GetFontSize() const { return _fontSize; }
 
 		void SetFontOutline(int value);
+		void SetFontOutline(int value, ValueSource source);
 		int GetFontOutline() const { return _outline; }
 
 		void SetFontFamily(const FontFamily& value);
+		void SetFontFamily(const FontFamily& value, ValueSource source);
 		const FontFamily& GetFontFamily() const { return _fontFamily; }
 
 		void SetFlowDirection(FlowDirection value);
+		void SetFlowDirection(FlowDirection value, ValueSource source);
 		FlowDirection GetFlowDirection() const { return _flowDirection; }
 
 		void SetFontStyle(FontStyle value);
+		void SetFontStyle(FontStyle value, ValueSource source);
 		FontStyle GetFontStyle() const { return _fontStyle; }
 
 		void SetForeground(Color value);
+		void SetForeground(Color value, ValueSource source);
 		Color GetForeground() const { return _foreground; }
 
-		void SetTextWrapping(TextWrapping value); 
+		void SetTextWrapping(TextWrapping value);
+		void SetTextWrapping(TextWrapping value, ValueSource source);
 		TextWrapping GetTextWrapping() const { return _textWrapping; }
 
 		void SetTextAlignment(TextAlignment value);
+		void SetTextAlignment(TextAlignment value, ValueSource source);
 		TextAlignment GetTextAlignment() const { return _textAlignment; }
 
 		void SetPadding(Thickness value);
+		void SetPadding(Thickness value, ValueSource source);
 		Thickness GetPadding() const { return _padding; }
 
 		void Render(RenderContext context) final;
@@ -75,19 +96,19 @@ namespace Sgl::UIElements
 		FSize MeasureContent(FSize avaliableSize) override;
 		void ArrangeContent(FRect rect) override;
 	private:
-		void InvalidateFont(size_t bit);
+		void InvalidateFont(size_t flag);
 		void UpdateFont();
 		void CreateTextTexture();
 	public:
-		static inline SglProperty TextProperty { &SetText, &GetText };
-		static inline SglProperty FontSizeProperty { &SetFontSize, &GetFontSize };
-		static inline SglProperty FontOutlineProperty { &SetFontOutline, &GetFontOutline };
-		static inline SglProperty FontFamilyProperty { &SetFontFamily, &GetFontFamily };
-		static inline SglProperty FlowDirectionProperty { &SetFlowDirection, &GetFlowDirection };
-		static inline SglProperty FontStyleProperty { &SetFontStyle, &GetFontStyle };
-		static inline SglProperty ForegroundProperty { &SetForeground, &GetForeground };
-		static inline SglProperty TextWrappingProperty { &SetTextWrapping, &GetTextWrapping };
-		static inline SglProperty TextAlignmentProperty { &SetTextAlignment, &GetTextAlignment };
-		static inline SglProperty PaddingProperty { &SetPadding, &GetPadding };
+		static inline StyleableProperty TextProperty { &SetText, &GetText };
+		static inline StyleableProperty FontSizeProperty { &SetFontSize, &GetFontSize };
+		static inline StyleableProperty FontOutlineProperty { &SetFontOutline, &GetFontOutline };
+		static inline StyleableProperty FontFamilyProperty { &SetFontFamily, &GetFontFamily };
+		static inline StyleableProperty FlowDirectionProperty { &SetFlowDirection, &GetFlowDirection };
+		static inline StyleableProperty FontStyleProperty { &SetFontStyle, &GetFontStyle };
+		static inline StyleableProperty ForegroundProperty { &SetForeground, &GetForeground };
+		static inline StyleableProperty TextWrappingProperty { &SetTextWrapping, &GetTextWrapping };
+		static inline StyleableProperty TextAlignmentProperty { &SetTextAlignment, &GetTextAlignment };
+		static inline StyleableProperty PaddingProperty { &SetPadding, &GetPadding };
 	};
 }

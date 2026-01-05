@@ -30,9 +30,12 @@ namespace Sgl
 		Event<MouseWheelEventHandler> MouseWheel;		
 	private:		
 		Any _tag;		
-		Ref<UIElement> _toolTip;		
+		Ref<UIElement> _tooltip;		
 
 		bool _isMouseOver = false;
+
+		ValueSource _tagSource {};
+		ValueSource _tooltipSource {};
 	public:
 		UIElement() = default;
 		UIElement(const UIElement& other);
@@ -40,10 +43,12 @@ namespace Sgl
 		virtual ~UIElement() = default;
 		
 		void SetTag(const Any& value);
+		void SetTag(const Any& value, ValueSource source);
 		const Any& GetTag() const { return _tag; }		
 
 		void SetToolTip(const Ref<UIElement>& value);
-		const Ref<UIElement>& GetToolTip() const { return _toolTip; }		
+		void SetToolTip(const Ref<UIElement>& value, ValueSource source);
+		const Ref<UIElement>& GetToolTip() const { return _tooltip; }		
 
 		bool IsMouseOver() const { return _isMouseOver; }
 
@@ -62,8 +67,8 @@ namespace Sgl
 		void OnAttachedToLogicalTree() override;
 		void OnDetachedFromLogicalTree() override;
 	public:
-		static inline SglProperty TagProperty { &SetTag, &GetTag };
-		static inline SglProperty ToolTipProperty { &SetToolTip, &GetToolTip };
+		static inline StyleableProperty TagProperty { &SetTag, &GetTag };
+		static inline StyleableProperty ToolTipProperty { &SetToolTip, &GetToolTip };
 
 		friend class Panel;
 		friend class Window;

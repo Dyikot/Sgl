@@ -2,7 +2,7 @@
 
 #include "../UIElement/UIElement.h"
 
-namespace Sgl
+namespace Sgl::UIElements
 {
 	/// <summary>
 	/// Describes how content is resized to fill its allocated space.
@@ -29,27 +29,30 @@ namespace Sgl
 		/// </summary>
 		UniformToFill
 	};
-}
 
-namespace Sgl::UIElements
-{
 	class Image : public UIElement
 	{
 	private:
 		std::string _source;
+		Stretch _stretch = Stretch::Uniform;
+
 		FRect _sourceBounds {};
 		Texture _sourceTexture;
-		Stretch _stretch = Stretch::Uniform;
 		bool _isImageTextureValid = false;
+
+		ValueSource _sourceSource {};
+		ValueSource _stretchSource {};
 	public:
 		Image() = default;
 		Image(const Image& other);
 		Image(Image&& other) noexcept;
 
 		void SetSource(const std::string& value);
+		void SetSource(const std::string& value, ValueSource source);
 		const std::string& GetSource() const { return _source; }
 
 		void SetStretch(Stretch value);
+		void SetStretch(Stretch value, ValueSource source);
 		Stretch GetStretch() const { return _stretch; }
 
 		void Render(RenderContext context) final;
@@ -59,7 +62,7 @@ namespace Sgl::UIElements
 	private:
 		void UpdateTexture();
 	public:
-		static inline SglProperty SourceProperty { &SetSource, &GetSource };
-		static inline SglProperty StretchProperty { &SetStretch, &GetStretch };
+		static inline StyleableProperty SourceProperty { &SetSource, &GetSource };
+		static inline StyleableProperty StretchProperty { &SetStretch, &GetStretch };
 	};
 }

@@ -23,8 +23,6 @@ namespace Sgl
 	class AttachedProperty : public AttachedPropertyBase
 	{
 	public:
-		using Value = T;
-
 		const T DefaultValue = {};
 	public:
 		AttachedProperty() requires std::default_initializable<T> = default;

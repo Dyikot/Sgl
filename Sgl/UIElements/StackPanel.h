@@ -9,6 +9,9 @@ namespace Sgl
 	private:
 		float _spacing = 0;
 		Orientation _orientation = Orientation::Vertical;
+
+		ValueSource _spacingSource {};
+		ValueSource _orientationSource {};
 	public:
 		StackPanel() = default;
 		StackPanel(const StackPanel& other);
@@ -16,15 +19,17 @@ namespace Sgl
 		~StackPanel() = default;
 
 		void SetSpacing(float value);
+		void SetSpacing(float value, ValueSource source);
 		float GetSpacing() const { return _spacing; }
 
 		void SetOrientation(Orientation value);
+		void SetOrientation(Orientation value, ValueSource source);
 		Orientation GetOrientation() const { return _orientation; }
 	protected:
 		FSize MeasureContent(FSize avaliableSize) override;
 		void ArrangeContent(FRect rect) override;
 	public:
-		static inline SglProperty SpacingProperty { &SetSpacing, &GetSpacing };
-		static inline SglProperty OrientationProperty { &SetOrientation, &GetOrientation };
+		static inline StyleableProperty SpacingProperty { &SetSpacing, &GetSpacing };
+		static inline StyleableProperty OrientationProperty { &SetOrientation, &GetOrientation };
 	};
 }

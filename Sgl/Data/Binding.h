@@ -1,8 +1,8 @@
 #pragma once
 
 #include <concepts>
-#include "INotityPropertyChanged.h"
 #include "../Base/Ref.h"
+#include "INotityPropertyChanged.h"
 
 namespace Sgl
 {
@@ -15,9 +15,9 @@ namespace Sgl
 		template<typename TTarget, typename TSource, typename TValue, typename TSender, typename TEventArgs>
 		struct BindingHandler
 		{
-			SglProperty<TTarget, TValue>& TargetProperty;
+			AbstractProperty<TTarget, TValue>& TargetProperty;
 			TTarget& Target;
-			SglProperty<TSource, TValue>& SourceProperty;
+			AbstractProperty<TSource, TValue>& SourceProperty;
 
 			void operator()(TSender& sender, TEventArgs e)
 			{
@@ -33,23 +33,23 @@ namespace Sgl
 		};
 	public:
 		template<typename TTarget, CBindable TSource, typename TValue>
-		static void Bind(SglProperty<TTarget, TValue>& targetProperty, 
-						 SglProperty<TTarget, TValue>::Owner& target,
-						 SglProperty<TSource, TValue>& sourceProperty,
-						 SglProperty<TSource, TValue>::Owner& source)
+		static void Bind(AbstractProperty<TTarget, TValue>& targetProperty, 
+						 AbstractProperty<TTarget, TValue>::Owner& target,
+						 AbstractProperty<TSource, TValue>& sourceProperty,
+						 AbstractProperty<TSource, TValue>::Owner& source)
 		{
 			source.AddPropertyChangedEventHandler(
 				sourceProperty, 
-				BindingHandler<TTarget, TSource, TValue, INotifyPropertyChanged, SglPropertyBase&>(targetProperty, target, sourceProperty)
+				BindingHandler<TTarget, TSource, TValue, INotifyPropertyChanged, AbstractPropertyBase&>(targetProperty, target, sourceProperty)
 			);
 		}
 
 		template<typename TTarget, typename TSource, typename TValue, CEvent TEvent>
-		static void Bind(SglProperty<TTarget, TValue>& targetProperty,
-						 SglProperty<TTarget, TValue>::Owner& target,
-						 SglProperty<TSource, TValue>& sourceProperty,
-						 SglProperty<TSource, TValue>::Owner& source,
-						 TEvent SglProperty<TSource, TValue>::Owner::* event)
+		static void Bind(AbstractProperty<TTarget, TValue>& targetProperty,
+						 AbstractProperty<TTarget, TValue>::Owner& target,
+						 AbstractProperty<TSource, TValue>& sourceProperty,
+						 AbstractProperty<TSource, TValue>::Owner& source,
+						 TEvent AbstractProperty<TSource, TValue>::Owner::* event)
 		{
 			using TSender = TEvent::Sender;
 			using TEventArgs = TEvent::EventArgs;
@@ -59,23 +59,23 @@ namespace Sgl
 		}
 
 		template<typename TTarget, CBindable TSource, typename TValue>
-		static void Unbind(SglProperty<TTarget, TValue>& targetProperty,
-						   SglProperty<TTarget, TValue>::Owner& target,
-						   SglProperty<TSource, TValue>& sourceProperty,
-						   SglProperty<TSource, TValue>::Owner& source)
+		static void Unbind(AbstractProperty<TTarget, TValue>& targetProperty,
+						   AbstractProperty<TTarget, TValue>::Owner& target,
+						   AbstractProperty<TSource, TValue>& sourceProperty,
+						   AbstractProperty<TSource, TValue>::Owner& source)
 		{
 			source.RemovePropertyChangedEventHandler(
 				sourceProperty,
-				BindingHandler<TTarget, TSource, TValue, INotifyPropertyChanged, SglPropertyBase&>(targetProperty, target, sourceProperty)
+				BindingHandler<TTarget, TSource, TValue, INotifyPropertyChanged, AbstractPropertyBase&>(targetProperty, target, sourceProperty)
 			);
 		}
 
 		template<typename TTarget, typename TSource, typename TValue, CEvent TEvent>
-		static void Unbind(SglProperty<TTarget, TValue>& targetProperty,
-						   SglProperty<TTarget, TValue>::Owner& target,
-						   SglProperty<TSource, TValue>& sourceProperty,
-						   SglProperty<TSource, TValue>::Owner& source,
-						   TEvent SglProperty<TSource, TValue>::Owner::* event)
+		static void Unbind(AbstractProperty<TTarget, TValue>& targetProperty,
+						   AbstractProperty<TTarget, TValue>::Owner& target,
+						   AbstractProperty<TSource, TValue>& sourceProperty,
+						   AbstractProperty<TSource, TValue>::Owner& source,
+						   TEvent AbstractProperty<TSource, TValue>::Owner::* event)
 		{
 			using TSender = TEvent::Sender;
 			using TEventArgs = TEvent::EventArgs;

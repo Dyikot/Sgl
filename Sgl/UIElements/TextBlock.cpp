@@ -26,7 +26,7 @@ namespace Sgl::UIElements
 		_fontImpl(),
 		_textTexture(),
 		_isTextTextureValid(),
-		_fontValidationBits(FontFamilyBit)
+		_fontFlags(FontFamilyFlag)
 	{}
 
 	TextBlock::TextBlock(TextBlock&& other) noexcept:
@@ -45,63 +45,93 @@ namespace Sgl::UIElements
 		_fontImpl(std::move(other._fontImpl)),
 		_textTexture(std::move(other._textTexture)),
 		_isTextTextureValid(other._isTextTextureValid),
-		_fontValidationBits(other._fontValidationBits)
+		_fontFlags(other._fontFlags)
 	{}
 
 	void TextBlock::SetText(const std::string& value)
 	{
-		if(SetProperty(TextProperty, _text, value))
+		SetText(value, ValueSource::Local);
+	}
+
+	void TextBlock::SetText(const std::string& value, ValueSource source)
+	{
+		if(SetProperty(TextProperty, _text, value, _textSource, source))
 		{
 			InvalidateTextTexture();
 			InvalidateMeasure();
 		}
-	}	
+	}
 
 	void TextBlock::SetFontSize(float value)
 	{
-		if(SetProperty(FontSizeProperty, _fontSize, value))
+		SetFontSize(value, ValueSource::Local);
+	}
+
+	void TextBlock::SetFontSize(float value, ValueSource source)
+	{
+		if(SetProperty(FontSizeProperty, _fontSize, value, _fontSizeSource, source))
 		{
-			InvalidateFont(FontSizeBit);
+			InvalidateFont(FontSizeFlag);
 			InvalidateTextTexture();
 			InvalidateMeasure();
-		}		
+		}
 	}
 
 	void TextBlock::SetFontOutline(int value)
 	{
-		if(SetProperty(FontOutlineProperty, _outline, value))
+		SetFontOutline(value, ValueSource::Local);
+	}
+
+	void TextBlock::SetFontOutline(int value, ValueSource source)
+	{
+		if(SetProperty(FontOutlineProperty, _outline, value, _outlineSource, source))
 		{
-			InvalidateFont(FontOutlineBit);
+			InvalidateFont(FontOutlineFlag);
 			InvalidateTextTexture();
 			InvalidateMeasure();
-		}		
+		}
 	}
 
 	void TextBlock::SetFontFamily(const FontFamily& value)
 	{
-		if(SetProperty(FontFamilyProperty, _fontFamily, value))
+		SetFontFamily(value, ValueSource::Local);
+	}
+
+	void TextBlock::SetFontFamily(const FontFamily& value, ValueSource source)
+	{
+		if(SetProperty(FontFamilyProperty, _fontFamily, value, _fontFamilySource, source))
 		{
-			InvalidateFont(FontFamilyBit);
+			InvalidateFont(FontFamilyFlag);
 			InvalidateTextTexture();
 			InvalidateMeasure();
-		}		
+		}
 	}
 
 	void TextBlock::SetFlowDirection(FlowDirection value)
 	{
-		if(SetProperty(FlowDirectionProperty, _flowDirection, value))
+		SetFlowDirection(value, ValueSource::Local);
+	}
+
+	void TextBlock::SetFlowDirection(FlowDirection value, ValueSource source)
+	{
+		if(SetProperty(FlowDirectionProperty, _flowDirection, value, _flowDirectionSource, source))
 		{
-			InvalidateFont(FlowDirectionBit);
+			InvalidateFont(FlowDirectionFlag);
 			InvalidateTextTexture();
 			InvalidateMeasure();
-		}		
+		}
 	}
 
 	void TextBlock::SetFontStyle(FontStyle value)
 	{
-		if(SetProperty(FontStyleProperty, _fontStyle, value))
+		SetFontStyle(value, ValueSource::Local);
+	}
+
+	void TextBlock::SetFontStyle(FontStyle value, ValueSource source)
+	{
+		if(SetProperty(FontStyleProperty, _fontStyle, value, _fontStyleSource, source))
 		{
-			InvalidateFont(FontStyleBit);
+			InvalidateFont(FontStyleFlag);
 			InvalidateTextTexture();
 			InvalidateRender();
 		}
@@ -109,35 +139,55 @@ namespace Sgl::UIElements
 
 	void TextBlock::SetForeground(Color value)
 	{
-		if(SetProperty(ForegroundProperty, _foreground, value))
+		SetForeground(value, ValueSource::Local);
+	}
+
+	void TextBlock::SetForeground(Color value, ValueSource source)
+	{
+		if(SetProperty(ForegroundProperty, _foreground, value, _foregroundSource, source))
 		{
 			InvalidateTextTexture();
 			InvalidateRender();
-		}		
+		}
 	}
 
 	void TextBlock::SetTextWrapping(TextWrapping value)
 	{
-		if(SetProperty(TextWrappingProperty, _textWrapping, value))
+		SetTextWrapping(value, ValueSource::Local);
+	}
+
+	void TextBlock::SetTextWrapping(TextWrapping value, ValueSource source)
+	{
+		if(SetProperty(TextWrappingProperty, _textWrapping, value, _textWrappingSource, source))
 		{
 			InvalidateTextTexture();
 			InvalidateMeasure();
-		}		
+		}
 	}
 
 	void TextBlock::SetTextAlignment(TextAlignment value)
 	{
-		if(SetProperty(TextAlignmentProperty, _textAlignment, value))
+		SetTextAlignment(value, ValueSource::Local);
+	}
+
+	void TextBlock::SetTextAlignment(TextAlignment value, ValueSource source)
+	{
+		if(SetProperty(TextAlignmentProperty, _textAlignment, value, _textAlignmentSource, source))
 		{
-			InvalidateFont(TextAlignmentBit);
+			InvalidateFont(TextAlignmentFlag);
 			InvalidateTextTexture();
 			InvalidateMeasure();
-		}		
+		}
 	}
 
 	void TextBlock::SetPadding(Thickness value)
 	{
-		if(SetProperty(PaddingProperty, _padding, value))
+		SetPadding(value, ValueSource::Local);
+	}
+
+	void TextBlock::SetPadding(Thickness value, ValueSource source)
+	{
+		if(SetProperty(PaddingProperty, _padding, value, _paddingSource, source))
 		{
 			InvalidateMeasure();
 		}
@@ -175,7 +225,7 @@ namespace Sgl::UIElements
 			return FSize();
 		}
 
-		if(_fontValidationBits.any())
+		if(_fontFlags.any())
 		{
 			UpdateFont();
 		}
@@ -215,43 +265,43 @@ namespace Sgl::UIElements
 		_textTextureBounds.y = rect.y + _padding.Top;
 	}
 
-	void TextBlock::InvalidateFont(size_t bit)
+	void TextBlock::InvalidateFont(size_t flag)
 	{
-		_fontValidationBits.set(bit);
+		_fontFlags.set(flag);
 	}
 
 	void TextBlock::UpdateFont()
 	{
-		if(_fontValidationBits[FontFamilyBit])
+		if(_fontFlags[FontFamilyFlag])
 		{
 			_fontImpl = FontImpl(_fontFamily, _fontSize);
 		}
-		else if(_fontValidationBits[FontSizeBit])
+		else if(_fontFlags[FontSizeFlag])
 		{
 			_fontImpl.SetSize(_fontSize);
 		}
 
-		if(_fontValidationBits[FontStyleBit])
+		if(_fontFlags[FontStyleFlag])
 		{
 			_fontImpl.SetStyle(_fontStyle);
 		}
 
-		if(_fontValidationBits[FontOutlineBit])
+		if(_fontFlags[FontOutlineFlag])
 		{
 			_fontImpl.SetOutline(_outline);
 		}
 
-		if(_fontValidationBits[FlowDirectionBit])
+		if(_fontFlags[FlowDirectionFlag])
 		{
 			_fontImpl.SetFlowDirection(_flowDirection);
 		}
 
-		if(_fontValidationBits[TextAlignmentBit])
+		if(_fontFlags[TextAlignmentFlag])
 		{
 			_fontImpl.SetTextAligment(_textAlignment);
 		}
 
-		_fontValidationBits = 0;
+		_fontFlags = 0;
 	}
 
 	void TextBlock::CreateTextTexture()

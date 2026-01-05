@@ -14,6 +14,9 @@ namespace Sgl
         IVisualRoot* _visualRoot = nullptr;
         Cursor _cursor = Cursors::Arrow;
         Brush _background = Colors::Transparent;
+
+        ValueSource _cursorSource {};
+        ValueSource _backgroundSource {};
     public:
         Renderable() = default;
         Renderable(const Renderable& other);
@@ -21,9 +24,11 @@ namespace Sgl
         virtual ~Renderable() = default;
 
         void SetCursor(const Cursor& value);
+        void SetCursor(const Cursor& value, ValueSource source);
         const Cursor& GetCursor() const { return _cursor; }
 
         void SetBackground(const Brush& value);
+        void SetBackground(const Brush& value, ValueSource source);
         const Brush& GetBackground() const { return _background; }
 
         virtual void SetVisualRoot(IVisualRoot* value);
@@ -36,7 +41,7 @@ namespace Sgl
     protected:
         virtual void OnCursorChanged(const Cursor& cursor) {}
     public:
-        static inline SglProperty CursorProperty { &SetCursor, &GetCursor };
-        static inline SglProperty BackgroundProperty { &SetBackground, &GetBackground };
+        static inline StyleableProperty CursorProperty { &SetCursor, &GetCursor };
+        static inline StyleableProperty BackgroundProperty { &SetBackground, &GetBackground };
     };
 }

@@ -330,7 +330,12 @@ namespace Sgl
         return _ownedWindows;
     }
 
-    void Window::SetContent(Ref<UIElement> value)
+    void Window::SetContent(const Ref<UIElement>& value)
+    {
+        SetContent(value, ValueSource::Local);
+    }
+
+    void Window::SetContent(const Ref<UIElement>& value, ValueSource source)
     {
         if(_content)
         {
@@ -342,7 +347,10 @@ namespace Sgl
             _content->SetParent(nullptr);
         }
 
-        SetProperty(ContentProperty, _content, std::move(value));
+        if(SetProperty(ContentProperty, _content, value, _contentSource, source))
+        {
+            InvalidateRender();
+        }
 
         if(_content)
         {
@@ -353,11 +361,6 @@ namespace Sgl
                 _content->OnAttachedToLogicalTree();
             }
         }
-    }
-
-    Ref<UIElement> Window::GetContent() const 
-    {
-        return _content; 
     }
 
     void Window::InvalidateRender()

@@ -16,7 +16,12 @@ namespace Sgl
 
 	void StackPanel::SetSpacing(float value)
 	{
-		if(SetProperty(SpacingProperty, _spacing, value))
+		SetSpacing(value, ValueSource::Local);
+	}
+
+	void StackPanel::SetSpacing(float value, ValueSource source)
+	{
+		if(SetProperty(SpacingProperty, _spacing, value, _spacingSource, source))
 		{
 			InvalidateMeasure();
 		}
@@ -24,7 +29,12 @@ namespace Sgl
 
 	void StackPanel::SetOrientation(Orientation value)
 	{
-		if(SetProperty(OrientationProperty, _orientation, value))
+		SetOrientation(value, ValueSource::Local);
+	}
+
+	void StackPanel::SetOrientation(Orientation value, ValueSource source)
+	{
+		if(SetProperty(OrientationProperty, _orientation, value, _orientationSource, source))
 		{
 			InvalidateMeasure();
 		}

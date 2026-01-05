@@ -14,6 +14,12 @@ namespace Sgl
 		VerticalAlignment _verticalContentAlignment = VerticalAlignment::Top;
 		HorizontalAlignment _horizontalContentAlignment = HorizontalAlignment::Left;
 		bool _isContentPresenterValid = false;
+
+		ValueSource _contentSource {};
+		ValueSource _contentTemplateSource {};
+		ValueSource _paddingSource {};
+		ValueSource _verticalContentAlignmentSource {};
+		ValueSource _horizontalContentAlignmentSource {};
 	public:
 		ContentUIElement() = default;
 		ContentUIElement(const ContentUIElement& other);
@@ -22,19 +28,24 @@ namespace Sgl
 		
 		const Ref<UIElement>& GetContentPresenter() const { return _contentPresenter; }
 
-		void SetContent(Ref<INotifyPropertyChanged> content);
-		Ref<INotifyPropertyChanged> GetContent() const { return _content; }
+		void SetContent(const Ref<INotifyPropertyChanged>& value);
+		void SetContent(const Ref<INotifyPropertyChanged>& value, ValueSource source);
+		const Ref<INotifyPropertyChanged>& GetContent() const { return _content; }
 
-		void SetContentTemplate(Ref<IDataTemplate> value);
-		Ref<IDataTemplate> GetContentTemplate() const { return _contentTemplate; }
+		void SetContentTemplate(const Ref<IDataTemplate>& value);
+		void SetContentTemplate(const Ref<IDataTemplate>& value, ValueSource source);
+		const Ref<IDataTemplate>& GetContentTemplate() const { return _contentTemplate; }
 
 		void SetPadding(Thickness value);
+		void SetPadding(Thickness value, ValueSource source);
 		Thickness GetPadding() const { return _padding; }
 
 		void SetVerticalContentAlignment(VerticalAlignment value);
+		void SetVerticalContentAlignment(VerticalAlignment value, ValueSource source);
 		VerticalAlignment GetVerticalContentAlignment() const { return _verticalContentAlignment; }
 
 		void SetHorizontalContentAlignment(HorizontalAlignment value);
+		void SetHorizontalContentAlignment(HorizontalAlignment value, ValueSource source);
 		HorizontalAlignment GetHorizontalContentAlignment() const { return _horizontalContentAlignment; }
 
 		void SetVisualRoot(IVisualRoot* value) final;
@@ -59,10 +70,10 @@ namespace Sgl
 	private:
 		bool UpdatePresenter();
 	public:
-		static inline SglProperty ContentProperty { &SetContent, &GetContent };
-		static inline SglProperty ContentTemplateProperty { &SetContentTemplate, &GetContentTemplate };
-		static inline SglProperty PaddingProperty { &SetPadding, &GetPadding };
-		static inline SglProperty VerticalContentAlignmentProperty { &SetVerticalContentAlignment, &GetVerticalContentAlignment };
-		static inline SglProperty HorizontalContentAlignmentProperty { &SetHorizontalContentAlignment, &GetHorizontalContentAlignment };
+		static inline StyleableProperty ContentProperty { &SetContent, &GetContent };
+		static inline StyleableProperty ContentTemplateProperty { &SetContentTemplate, &GetContentTemplate };
+		static inline StyleableProperty PaddingProperty { &SetPadding, &GetPadding };
+		static inline StyleableProperty VerticalContentAlignmentProperty { &SetVerticalContentAlignment, &GetVerticalContentAlignment };
+		static inline StyleableProperty HorizontalContentAlignmentProperty { &SetHorizontalContentAlignment, &GetHorizontalContentAlignment };
 	};
 }
