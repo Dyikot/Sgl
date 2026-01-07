@@ -34,11 +34,6 @@ namespace Sgl
 		}
 	}
 
-	void ContentUIElement::SetContent(const Ref<INotifyPropertyChanged>& value)
-	{
-		SetContent(value, ValueSource::Local);
-	}
-
 	void ContentUIElement::SetContent(const Ref<INotifyPropertyChanged>& value, ValueSource source)
 	{
 		if(SetProperty(ContentProperty, _content, value, _contentSource, source))
@@ -52,22 +47,12 @@ namespace Sgl
 		}
 	}
 
-	void ContentUIElement::SetContentTemplate(const Ref<IDataTemplate>& value)
-	{
-		SetContentTemplate(value, ValueSource::Local);
-	}
-
 	void ContentUIElement::SetContentTemplate(const Ref<IDataTemplate>& value, ValueSource source)
 	{
 		if(SetProperty(ContentTemplateProperty, _contentTemplate, value, _contentTemplateSource, source))
 		{
 			InvalidateContentPresenter();
 		}
-	}
-
-	void ContentUIElement::SetPadding(Thickness value)
-	{
-		SetPadding(value, ValueSource::Local);
 	}
 
 	void ContentUIElement::SetPadding(Thickness value, ValueSource source)
@@ -78,22 +63,12 @@ namespace Sgl
 		}
 	}
 
-	void ContentUIElement::SetVerticalContentAlignment(VerticalAlignment value)
-	{
-		SetVerticalContentAlignment(value, ValueSource::Local);
-	}
-
 	void ContentUIElement::SetVerticalContentAlignment(VerticalAlignment value, ValueSource source)
 	{
 		if(SetProperty(VerticalContentAlignmentProperty, _verticalContentAlignment, value, _verticalContentAlignmentSource, source))
 		{
 			InvalidateArrange();
 		}
-	}
-
-	void ContentUIElement::SetHorizontalContentAlignment(HorizontalAlignment value)
-	{
-		SetHorizontalContentAlignment(value, ValueSource::Local);
 	}
 
 	void ContentUIElement::SetHorizontalContentAlignment(HorizontalAlignment value, ValueSource source)
@@ -252,7 +227,6 @@ namespace Sgl
 	void ContentUIElement::InvalidateContentPresenter()
 	{
 		InvalidateMeasure();
-
 		_isContentPresenterValid = false;
 	}	
 
@@ -265,9 +239,11 @@ namespace Sgl
 
 		if(_contentPresenter)
 		{
-			bool visible = _contentPresenter->IsVisible();
-			int horizontalPadding = visible ? _padding.Left + _padding.Right : 0;
-			int verticalPadding = visible ? _padding.Top + _padding.Bottom : 0;
+			auto& contentPresenter = _contentPresenter.GetValue();
+			bool visible = contentPresenter.IsVisible();
+			auto padding = GetLayoutPadding();
+			int horizontalPadding = visible ? padding.Left + padding.Right : 0;
+			int verticalPadding = visible ? padding.Top + padding.Bottom : 0;
 
 			FSize contentAvaliableSize =
 			{
@@ -279,8 +255,8 @@ namespace Sgl
 					GetMaxHeight())
 			};
 
-			 _contentPresenter->Measure(contentAvaliableSize);
-			 auto [width, height] = _contentPresenter->GetDesiredSize();
+			contentPresenter.Measure(contentAvaliableSize);
+			auto [width, height] = contentPresenter.GetDesiredSize();
 
 			 return FSize 
 			 {
@@ -296,12 +272,13 @@ namespace Sgl
 	{
 		if(_contentPresenter)
 		{
+			auto padding = GetLayoutPadding();
 			FRect finalRect =
 			{
-				.x = rect.x + _padding.Left,
-				.y = rect.y + _padding.Top,
-				.w = rect.w - _padding.Left - _padding.Right,
-				.h = rect.h - _padding.Top - _padding.Bottom
+				.x = rect.x + padding.Left,
+				.y = rect.y + padding.Top,
+				.w = rect.w - padding.Left - padding.Right,
+				.h = rect.h - padding.Top - padding.Bottom
 			};
 
 			if(finalRect.w < 0)

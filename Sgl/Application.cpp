@@ -30,6 +30,8 @@ namespace Sgl
             Logger::LogError("Unable to initialize TTF: {}", SDL_GetError());
         }
 
+        SDL_SetHint(SDL_HINT_RENDER_LINE_METHOD, "2");
+
         SDL_RegisterEvents(UserEventsNumber);
         SetThemeVariant(ThemeVariant::System);
 	}

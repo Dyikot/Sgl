@@ -23,12 +23,10 @@ namespace Sgl
         Renderable(Renderable&& other) noexcept;
         virtual ~Renderable() = default;
 
-        void SetCursor(const Cursor& value);
-        void SetCursor(const Cursor& value, ValueSource source);
+        void SetCursor(const Cursor& value, ValueSource source = ValueSource::Local);
         const Cursor& GetCursor() const { return _cursor; }
 
-        void SetBackground(const Brush& value);
-        void SetBackground(const Brush& value, ValueSource source);
+        void SetBackground(const Brush& value, ValueSource source = ValueSource::Local);
         const Brush& GetBackground() const { return _background; }
 
         virtual void SetVisualRoot(IVisualRoot* value);

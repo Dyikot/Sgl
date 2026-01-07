@@ -48,11 +48,6 @@ namespace Sgl::UIElements
 		_fontFlags(other._fontFlags)
 	{}
 
-	void TextBlock::SetText(const std::string& value)
-	{
-		SetText(value, ValueSource::Local);
-	}
-
 	void TextBlock::SetText(const std::string& value, ValueSource source)
 	{
 		if(SetProperty(TextProperty, _text, value, _textSource, source))
@@ -60,11 +55,6 @@ namespace Sgl::UIElements
 			InvalidateTextTexture();
 			InvalidateMeasure();
 		}
-	}
-
-	void TextBlock::SetFontSize(float value)
-	{
-		SetFontSize(value, ValueSource::Local);
 	}
 
 	void TextBlock::SetFontSize(float value, ValueSource source)
@@ -77,11 +67,6 @@ namespace Sgl::UIElements
 		}
 	}
 
-	void TextBlock::SetFontOutline(int value)
-	{
-		SetFontOutline(value, ValueSource::Local);
-	}
-
 	void TextBlock::SetFontOutline(int value, ValueSource source)
 	{
 		if(SetProperty(FontOutlineProperty, _outline, value, _outlineSource, source))
@@ -90,11 +75,6 @@ namespace Sgl::UIElements
 			InvalidateTextTexture();
 			InvalidateMeasure();
 		}
-	}
-
-	void TextBlock::SetFontFamily(const FontFamily& value)
-	{
-		SetFontFamily(value, ValueSource::Local);
 	}
 
 	void TextBlock::SetFontFamily(const FontFamily& value, ValueSource source)
@@ -107,11 +87,6 @@ namespace Sgl::UIElements
 		}
 	}
 
-	void TextBlock::SetFlowDirection(FlowDirection value)
-	{
-		SetFlowDirection(value, ValueSource::Local);
-	}
-
 	void TextBlock::SetFlowDirection(FlowDirection value, ValueSource source)
 	{
 		if(SetProperty(FlowDirectionProperty, _flowDirection, value, _flowDirectionSource, source))
@@ -120,11 +95,6 @@ namespace Sgl::UIElements
 			InvalidateTextTexture();
 			InvalidateMeasure();
 		}
-	}
-
-	void TextBlock::SetFontStyle(FontStyle value)
-	{
-		SetFontStyle(value, ValueSource::Local);
 	}
 
 	void TextBlock::SetFontStyle(FontStyle value, ValueSource source)
@@ -137,11 +107,6 @@ namespace Sgl::UIElements
 		}
 	}
 
-	void TextBlock::SetForeground(Color value)
-	{
-		SetForeground(value, ValueSource::Local);
-	}
-
 	void TextBlock::SetForeground(Color value, ValueSource source)
 	{
 		if(SetProperty(ForegroundProperty, _foreground, value, _foregroundSource, source))
@@ -149,11 +114,6 @@ namespace Sgl::UIElements
 			InvalidateTextTexture();
 			InvalidateRender();
 		}
-	}
-
-	void TextBlock::SetTextWrapping(TextWrapping value)
-	{
-		SetTextWrapping(value, ValueSource::Local);
 	}
 
 	void TextBlock::SetTextWrapping(TextWrapping value, ValueSource source)
@@ -165,11 +125,6 @@ namespace Sgl::UIElements
 		}
 	}
 
-	void TextBlock::SetTextAlignment(TextAlignment value)
-	{
-		SetTextAlignment(value, ValueSource::Local);
-	}
-
 	void TextBlock::SetTextAlignment(TextAlignment value, ValueSource source)
 	{
 		if(SetProperty(TextAlignmentProperty, _textAlignment, value, _textAlignmentSource, source))
@@ -178,11 +133,6 @@ namespace Sgl::UIElements
 			InvalidateTextTexture();
 			InvalidateMeasure();
 		}
-	}
-
-	void TextBlock::SetPadding(Thickness value)
-	{
-		SetPadding(value, ValueSource::Local);
 	}
 
 	void TextBlock::SetPadding(Thickness value, ValueSource source)

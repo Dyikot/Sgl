@@ -14,11 +14,6 @@ namespace Sgl
 		_observers(std::move(other._observers))
 	{}
 
-	void BindableObject::SetDataContext(const Ref<INotifyPropertyChanged>& value)
-	{
-		SetDataContext(value, ValueSource::Local);
-	}
-
 	void BindableObject::SetDataContext(const Ref<INotifyPropertyChanged>& value, ValueSource source)
 	{
 		SetProperty(DataContextProperty, _dataContext, value, _dataContextSource, source);

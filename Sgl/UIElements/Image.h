@@ -47,12 +47,10 @@ namespace Sgl::UIElements
 		Image(const Image& other);
 		Image(Image&& other) noexcept;
 
-		void SetSource(const std::string& value);
-		void SetSource(const std::string& value, ValueSource source);
+		void SetSource(const std::string& value, ValueSource source = ValueSource::Local);
 		const std::string& GetSource() const { return _source; }
 
-		void SetStretch(Stretch value);
-		void SetStretch(Stretch value, ValueSource source);
+		void SetStretch(Stretch value, ValueSource source = ValueSource::Local);
 		Stretch GetStretch() const { return _stretch; }
 
 		void Render(RenderContext context) final;

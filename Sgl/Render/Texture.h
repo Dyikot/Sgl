@@ -52,8 +52,8 @@ namespace Sgl
 		void SetScaleMode(SDL_ScaleMode value);
 		SDL_ScaleMode GetScaleMode() const;
 
-		size_t GetWidth() const;
-		size_t GetHeight() const;
+		uint32_t GetWidth() const;
+		uint32_t GetHeight() const;
 		TextureAccess GetAccess() const;
 		SDL_PixelFormat GetFormat() const;
 		SDL_Texture* GetSDLTexture() const noexcept;

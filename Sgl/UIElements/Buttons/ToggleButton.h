@@ -19,8 +19,7 @@ namespace Sgl::UIElements
 		ToggleButton(const ToggleButton& other);
 		ToggleButton(ToggleButton&& other) noexcept;
 
-		void SetIsChecked(bool value);
-		void SetIsChecked(bool value, ValueSource source);
+		void SetIsChecked(bool value, ValueSource source = ValueSource::Local);
 		bool IsChecked() const { return _isChecked; }
 	protected:
 		virtual void OnCheckChanged();

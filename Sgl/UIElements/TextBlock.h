@@ -50,44 +50,34 @@ namespace Sgl::UIElements
 		TextBlock(TextBlock&& other) noexcept;
 		~TextBlock() = default;
 
-		void SetText(const std::string& value);
-		void SetText(const std::string& value, ValueSource source);
+		void SetText(const std::string& value, ValueSource source = ValueSource::Local);
 		const std::string& GetText() const { return _text; }
 
-		void SetFontSize(float value);
-		void SetFontSize(float value, ValueSource source);
+		void SetFontSize(float value, ValueSource source = ValueSource::Local);
 		float GetFontSize() const { return _fontSize; }
 
-		void SetFontOutline(int value);
-		void SetFontOutline(int value, ValueSource source);
+		void SetFontOutline(int value, ValueSource source = ValueSource::Local);
 		int GetFontOutline() const { return _outline; }
 
-		void SetFontFamily(const FontFamily& value);
-		void SetFontFamily(const FontFamily& value, ValueSource source);
+		void SetFontFamily(const FontFamily& value, ValueSource source = ValueSource::Local);
 		const FontFamily& GetFontFamily() const { return _fontFamily; }
 
-		void SetFlowDirection(FlowDirection value);
-		void SetFlowDirection(FlowDirection value, ValueSource source);
+		void SetFlowDirection(FlowDirection value, ValueSource source = ValueSource::Local);
 		FlowDirection GetFlowDirection() const { return _flowDirection; }
 
-		void SetFontStyle(FontStyle value);
-		void SetFontStyle(FontStyle value, ValueSource source);
+		void SetFontStyle(FontStyle value, ValueSource source = ValueSource::Local);
 		FontStyle GetFontStyle() const { return _fontStyle; }
 
-		void SetForeground(Color value);
-		void SetForeground(Color value, ValueSource source);
+		void SetForeground(Color value, ValueSource source = ValueSource::Local);
 		Color GetForeground() const { return _foreground; }
 
-		void SetTextWrapping(TextWrapping value);
-		void SetTextWrapping(TextWrapping value, ValueSource source);
+		void SetTextWrapping(TextWrapping value, ValueSource source = ValueSource::Local);
 		TextWrapping GetTextWrapping() const { return _textWrapping; }
 
-		void SetTextAlignment(TextAlignment value);
-		void SetTextAlignment(TextAlignment value, ValueSource source);
+		void SetTextAlignment(TextAlignment value, ValueSource source = ValueSource::Local);
 		TextAlignment GetTextAlignment() const { return _textAlignment; }
 
-		void SetPadding(Thickness value);
-		void SetPadding(Thickness value, ValueSource source);
+		void SetPadding(Thickness value, ValueSource source = ValueSource::Local);
 		Thickness GetPadding() const { return _padding; }
 
 		void Render(RenderContext context) final;

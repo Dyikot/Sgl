@@ -43,44 +43,34 @@ namespace Sgl
 		Layoutable(Layoutable&& other) noexcept;
 		virtual ~Layoutable() = default;
 
-		void SetWidth(float value);
-		void SetWidth(float value, ValueSource source);
+		void SetWidth(float value, ValueSource source = ValueSource::Local);
 		float GetWidth() const { return _width; }
 
-		void SetHeight(float value);
-		void SetHeight(float value, ValueSource source);
+		void SetHeight(float value, ValueSource source = ValueSource::Local);
 		float GetHeight() const { return _height; }
 
-		void SetMinWidth(float value);
-		void SetMinWidth(float value, ValueSource source);
+		void SetMinWidth(float value, ValueSource source = ValueSource::Local);
 		float GetMinWidth() const { return _minWidth; }
 
-		void SetMinHeight(float value);
-		void SetMinHeight(float value, ValueSource source);
+		void SetMinHeight(float value, ValueSource source = ValueSource::Local);
 		float GetMinHeight() const { return _minHeight; }
 
-		void SetMaxWidth(float value);
-		void SetMaxWidth(float value, ValueSource source);
+		void SetMaxWidth(float value, ValueSource source = ValueSource::Local);
 		float GetMaxWidth() const { return _maxWidth; }
 
-		void SetMaxHeight(float value);
-		void SetMaxHeight(float value, ValueSource source);
+		void SetMaxHeight(float value, ValueSource source = ValueSource::Local);
 		float GetMaxHeight() const { return _maxHeight; }		
 
-		void SetMargin(Thickness value);
-		void SetMargin(Thickness value, ValueSource source);
+		void SetMargin(Thickness value, ValueSource source = ValueSource::Local);
 		Thickness GetMargin() const { return _margin; }
 
-		void SetIsVisible(bool value);
-		void SetIsVisible(bool value, ValueSource source);
+		void SetIsVisible(bool value, ValueSource source = ValueSource::Local);
 		bool IsVisible() const { return _isVisible; }
 
-		void SetVerticalAlignment(VerticalAlignment value);
-		void SetVerticalAlignment(VerticalAlignment value, ValueSource source);
+		void SetVerticalAlignment(VerticalAlignment value, ValueSource source = ValueSource::Local);
 		VerticalAlignment GetVerticalAlignment() const { return _verticalAlignment; }
 
-		void SetHorizontalAlignment(HorizontalAlignment value);
-		void SetHorizontalAlignment(HorizontalAlignment value, ValueSource source);
+		void SetHorizontalAlignment(HorizontalAlignment value, ValueSource source = ValueSource::Local);
 		HorizontalAlignment GetHorizontalAlignment() const { return _horizontalAlignment; }
 
 		void SetParent(IStyleHost* parent) override;

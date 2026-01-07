@@ -98,24 +98,24 @@ namespace Sgl
         return _id;
     }
 
-    void Window::SetWidth(size_t value) noexcept
+    void Window::SetWidth(uint32_t value) noexcept
     {
         SDL_SetWindowSize(_sdlWindow, value, GetHeight());
     }
 
-    size_t Window::GetWidth() const noexcept
+    uint32_t Window::GetWidth() const noexcept
     {
         int width = 0;
         SDL_GetWindowSize(_sdlWindow, &width, nullptr);
         return width;
     }
 
-    void Window::SetHeight(size_t value) noexcept
+    void Window::SetHeight(uint32_t value) noexcept
     {
         SDL_SetWindowSize(_sdlWindow, GetWidth(), value);
     }
 
-    size_t Window::GetHeight() const noexcept
+    uint32_t Window::GetHeight() const noexcept
     {
         int height = 0;
         SDL_GetWindowSize(_sdlWindow, nullptr, &height);
@@ -175,7 +175,7 @@ namespace Sgl
 
     Point Window::GetPosition() const noexcept
     {
-        Point position = {};
+        Point position {};
         SDL_GetWindowPosition(_sdlWindow, &position.x, &position.y);
         return position;
     }
@@ -330,13 +330,13 @@ namespace Sgl
         return _ownedWindows;
     }
 
-    void Window::SetContent(const Ref<UIElement>& value)
-    {
-        SetContent(value, ValueSource::Local);
-    }
-
     void Window::SetContent(const Ref<UIElement>& value, ValueSource source)
     {
+        if(_contentSource > source)
+        {
+            return;
+        }
+
         if(_content)
         {
             if(IsAttachedToLogicalTree())

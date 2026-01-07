@@ -150,14 +150,14 @@ namespace Sgl
 		return scaleMode;
 	}
 
-	size_t Texture::GetWidth() const
+	uint32_t Texture::GetWidth() const
 	{
-		return static_cast<size_t>(_texture->w);
+		return static_cast<uint32_t>(_texture->w);
 	}
 
-	size_t Texture::GetHeight() const
+	uint32_t Texture::GetHeight() const
 	{
-		return static_cast<size_t>(_texture->h);
+		return static_cast<uint32_t>(_texture->h);
 	}
 
 	TextureAccess Texture::GetAccess() const

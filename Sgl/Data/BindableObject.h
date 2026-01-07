@@ -36,8 +36,7 @@ namespace Sgl
 		BindableObject(const BindableObject& other);
 		BindableObject(BindableObject&& other) noexcept;
 
-		void SetDataContext(const Ref<INotifyPropertyChanged>& value);
-		void SetDataContext(const Ref<INotifyPropertyChanged>& value, ValueSource source);
+		void SetDataContext(const Ref<INotifyPropertyChanged>& value, ValueSource source = ValueSource::Local);
 		const Ref<INotifyPropertyChanged>& GetDataContext() const { return _dataContext; }
 
 		void AddPropertyChangedEventHandler(AbstractPropertyBase& property, PropertyChangedEventHandler handler) override;

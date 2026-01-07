@@ -16,22 +16,12 @@ namespace Sgl
 		_background(std::move(other._background))
 	{}
 
-	void Renderable::SetCursor(const Cursor& value)
-	{
-		SetCursor(value, ValueSource::Local);
-	}
-
 	void Renderable::SetCursor(const Cursor& value, ValueSource source)
 	{
 		if(SetProperty(CursorProperty, _cursor, value, _cursorSource, source))
 		{
 			OnCursorChanged(value);
 		}
-	}
-
-	void Renderable::SetBackground(const Brush& value)
-	{
-		SetBackground(value, ValueSource::Local);
 	}
 
 	void Renderable::SetBackground(const Brush& value, ValueSource source)

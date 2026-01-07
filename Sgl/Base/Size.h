@@ -4,8 +4,8 @@ namespace Sgl
 {
 	struct Size
 	{
-		size_t Width;
-		size_t Height;
+		uint32_t Width;
+		uint32_t Height;
 	};
 
 	struct FSize

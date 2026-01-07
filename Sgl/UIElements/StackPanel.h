@@ -18,12 +18,10 @@ namespace Sgl
 		StackPanel(StackPanel&& other) noexcept;
 		~StackPanel() = default;
 
-		void SetSpacing(float value);
-		void SetSpacing(float value, ValueSource source);
+		void SetSpacing(float value, ValueSource source = ValueSource::Local);
 		float GetSpacing() const { return _spacing; }
 
-		void SetOrientation(Orientation value);
-		void SetOrientation(Orientation value, ValueSource source);
+		void SetOrientation(Orientation value, ValueSource source = ValueSource::Local);
 		Orientation GetOrientation() const { return _orientation; }
 	protected:
 		FSize MeasureContent(FSize avaliableSize) override;

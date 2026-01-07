@@ -130,6 +130,26 @@ namespace Sgl
 		/// <param name="left">- the first Thickness to compare</param>
 		/// <param name="right">- the second Thickness to compare</param>
 		/// <returns>True if all thickness values are equal, false otherwise</returns>
-		friend constexpr bool operator==(const Thickness&, const Thickness&) = default;
+		friend constexpr bool operator==(const Thickness&, const Thickness&) noexcept = default;
+
+		friend constexpr Thickness operator+(const Thickness& left, const Thickness& right) noexcept
+		{
+			return Thickness(
+				left.Left + right.Left,
+				left.Top + right.Top,
+				left.Right + right.Right,
+				left.Bottom + right.Bottom
+			);
+		}
+
+		friend constexpr Thickness operator-(const Thickness& left, const Thickness& right) noexcept
+		{
+			return Thickness(
+				left.Left - right.Left,
+				left.Top - right.Top,
+				left.Right - right.Right,
+				left.Bottom - right.Bottom
+			);
+		}
 	};
 }

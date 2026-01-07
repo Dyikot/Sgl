@@ -7,7 +7,6 @@
 #include "../Base/Delegate.h"
 #include "../Base/Primitives.h"
 #include "../Base/Media/Color.h"
-#include "../Layout/Layout.h"
 #include "Texture.h"
 
 namespace Sgl
@@ -55,19 +54,11 @@ namespace Sgl
 		void DrawTexture(const Texture& texture, FRect target);
 		void DrawTexture(const Texture& texture, FRect target, FRect clip);
 
-		void DrawTextureRotated(const Texture& texture, double angle, FPoint center);
-		void DrawTextureRotated(const Texture& texture, double angle, FPoint center, FRect target);
-		void DrawTextureRotated(const Texture& texture, double angle, FPoint center, FRect target, FRect clip);
-		
-		void DrawTextureFlipped(const Texture& texture, Orientation flip);
-		void DrawTextureFlipped(const Texture& texture, Orientation flip, FRect target);
-		void DrawTextureFlipped(const Texture& texture, Orientation flip, FRect target, FRect clip);
+		void DrawTextureTransformed(const Texture& texture, double angle, const FPoint* center, SDL_FlipMode flip);
+		void DrawTextureTransformed(const Texture& texture, double angle, const FPoint* center, SDL_FlipMode flip, FRect target);
+		void DrawTextureTransformed(const Texture& texture, double angle, const FPoint* center, SDL_FlipMode flip, FRect target, FRect clip);
 
-		void DrawTextureTransformed(const Texture& texture, double angle, FPoint center, Orientation flip);
-		void DrawTextureTransformed(const Texture& texture, double angle, FPoint center, Orientation flip, FRect target);
-		void DrawTextureTransformed(const Texture& texture, double angle, FPoint center, Orientation flip, FRect target, FRect clip);
-
-		void DrawText(FPoint position, std::string_view text, size_t size, Color color, const FontFamily& fontFamily = FontFamily::Default);
+		void DrawText(FPoint position, std::string_view text, float size, Color color, const FontFamily& fontFamily = FontFamily::Default);
 	private:
 		void SetColor(Color color) const noexcept
 		{

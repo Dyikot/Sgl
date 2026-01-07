@@ -18,11 +18,6 @@ namespace Sgl::UIElements
 		_stretch(other._stretch)
 	{}
 
-	void Image::SetSource(const std::string& value)
-	{
-		SetSource(value, ValueSource::Local);
-	}
-
 	void Image::SetSource(const std::string& value, ValueSource source)
 	{
 		if(SetProperty(SourceProperty, _source, value, _sourceSource, source))
@@ -30,11 +25,6 @@ namespace Sgl::UIElements
 			InvalidateImageTexture();
 			InvalidateArrange();
 		}
-	}
-
-	void Image::SetStretch(Stretch value)
-	{
-		SetStretch(value, ValueSource::Local);
 	}
 
 	void Image::SetStretch(Stretch value, ValueSource source)

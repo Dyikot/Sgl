@@ -23,29 +23,14 @@ namespace Sgl::UIElements
 		_commandParameter(std::move(other._commandParameter))
 	{}
 
-	void Button::SetClickMode(ClickMode value)
-	{
-		SetClickMode(value, ValueSource::Local);
-	}
-
 	void Button::SetClickMode(ClickMode value, ValueSource source)
 	{
 		SetProperty(ClickModeProperty, _clickMode, value, _clickModeSource, source);
 	}
 
-	void Button::SetCommand(const Command& value)
-	{
-		SetCommand(value, ValueSource::Local);
-	}
-
 	void Button::SetCommand(const Command& value, ValueSource sorce)
 	{
 		SetProperty(CommandProperty, _command, value, _commandSource, sorce);
-	}
-
-	void Button::SetCommandParameter(const Any& value)
-	{
-		SetCommandParameter(value, ValueSource::Local);
 	}
 
 	void Button::SetCommandParameter(const Any& value, ValueSource source)

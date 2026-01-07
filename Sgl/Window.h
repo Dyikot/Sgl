@@ -130,25 +130,25 @@ namespace Sgl
 		/// Sets the window width
 		/// </summary>
 		/// <param name="value">- the new width in pixels</param>
-		void SetWidth(size_t value) noexcept;
+		void SetWidth(uint32_t value) noexcept;
 
 		/// <summary>
 		/// Gets the window width
 		/// </summary>
 		/// <returns>The current width in pixels</returns>
-		size_t GetWidth() const noexcept;
+		uint32_t GetWidth() const noexcept;
 
 		/// <summary>
 		/// Sets the window height
 		/// </summary>
 		/// <param name="value">- the new height in pixels</param>
-		void SetHeight(size_t value) noexcept;
+		void SetHeight(uint32_t value) noexcept;
 
 		/// <summary>
 		/// Gets the window height
 		/// </summary>
 		/// <returns>The current height in pixels</returns>
-		size_t GetHeight() const noexcept;
+		uint32_t GetHeight() const noexcept;
 
 		/// <summary>
 		/// Set the width width and height
@@ -266,8 +266,7 @@ namespace Sgl
 
 		const std::list<Window*>& GetOwnedWindows() const;
 
-		void SetContent(const Ref<UIElement>& value);
-		void SetContent(const Ref<UIElement>& value, ValueSource source);
+		void SetContent(const Ref<UIElement>& value, ValueSource source = ValueSource::Local);
 		const Ref<UIElement>& GetContent() const { return _content; }
 
 		void InvalidateRender() final;

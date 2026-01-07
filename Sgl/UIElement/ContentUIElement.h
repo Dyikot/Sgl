@@ -28,24 +28,19 @@ namespace Sgl
 		
 		const Ref<UIElement>& GetContentPresenter() const { return _contentPresenter; }
 
-		void SetContent(const Ref<INotifyPropertyChanged>& value);
-		void SetContent(const Ref<INotifyPropertyChanged>& value, ValueSource source);
+		void SetContent(const Ref<INotifyPropertyChanged>& value, ValueSource source = ValueSource::Local);
 		const Ref<INotifyPropertyChanged>& GetContent() const { return _content; }
 
-		void SetContentTemplate(const Ref<IDataTemplate>& value);
-		void SetContentTemplate(const Ref<IDataTemplate>& value, ValueSource source);
+		void SetContentTemplate(const Ref<IDataTemplate>& value, ValueSource source = ValueSource::Local);
 		const Ref<IDataTemplate>& GetContentTemplate() const { return _contentTemplate; }
 
-		void SetPadding(Thickness value);
-		void SetPadding(Thickness value, ValueSource source);
+		void SetPadding(Thickness value, ValueSource source = ValueSource::Local);
 		Thickness GetPadding() const { return _padding; }
 
-		void SetVerticalContentAlignment(VerticalAlignment value);
-		void SetVerticalContentAlignment(VerticalAlignment value, ValueSource source);
+		void SetVerticalContentAlignment(VerticalAlignment value, ValueSource source = ValueSource::Local);
 		VerticalAlignment GetVerticalContentAlignment() const { return _verticalContentAlignment; }
 
-		void SetHorizontalContentAlignment(HorizontalAlignment value);
-		void SetHorizontalContentAlignment(HorizontalAlignment value, ValueSource source);
+		void SetHorizontalContentAlignment(HorizontalAlignment value, ValueSource source = ValueSource::Local);
 		HorizontalAlignment GetHorizontalContentAlignment() const { return _horizontalContentAlignment; }
 
 		void SetVisualRoot(IVisualRoot* value) final;
@@ -67,6 +62,7 @@ namespace Sgl
 		
 		FSize MeasureContent(FSize avaliableSize) override;
 		void ArrangeContent(FRect rect) override;
+		virtual Thickness GetLayoutPadding() const { return _padding; }
 	private:
 		bool UpdatePresenter();
 	public:

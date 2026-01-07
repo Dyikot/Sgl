@@ -2,6 +2,6 @@
 
 namespace Sgl
 {
-	inline constexpr unsigned int UserEventsNumber = 1;
-	inline constexpr unsigned int SDL_EVENT_SHUTDOWN = 0x8000;
+	inline constexpr uint32_t UserEventsNumber = 1;
+	inline constexpr uint32_t SDL_EVENT_SHUTDOWN = 0x8000;
 }

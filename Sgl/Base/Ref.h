@@ -78,7 +78,7 @@ namespace Sgl
 
         ~Ref()
         {
-            TryDeleteMemoryBlock();            
+            Release();            
         }
 
         template<typename T, typename... TArgs>
@@ -132,7 +132,7 @@ namespace Sgl
 
         Ref& operator=(std::nullptr_t)
         {
-            TryDeleteMemoryBlock();
+            Release();
             _data = nullptr;
             _memoryBlock = nullptr;
             return *this;
@@ -140,7 +140,7 @@ namespace Sgl
 
         Ref& operator=(const Ref& other) noexcept
         {
-            TryDeleteMemoryBlock();
+            Release();
             CopyConstructFrom(other);
             return *this;
         }
@@ -149,14 +149,14 @@ namespace Sgl
             std::derived_from<TDerived, T> || std::same_as<T, void>
         Ref& operator=(const Ref<TDerived>& other) noexcept
         {
-            TryDeleteMemoryBlock();
+            Release();
             CopyConstructFrom(other);
             return *this;
         }
 
         Ref& operator=(Ref&& other) noexcept
         {
-            TryDeleteMemoryBlock();
+            Release();
             MoveConstructFrom(std::move(other));
             return *this;
         }
@@ -165,7 +165,7 @@ namespace Sgl
             std::derived_from<TDerived, T> || std::same_as<T, void>
         Ref& operator=(Ref<TDerived>&& other) noexcept
         {
-            TryDeleteMemoryBlock();
+            Release();
             MoveConstructFrom(std::move(other));
             return *this;
         }
@@ -185,7 +185,7 @@ namespace Sgl
             _data(&memoryBlock->Value)
         {}
 
-        void TryDeleteMemoryBlock()
+        void Release()
         {
             if(_memoryBlock && _memoryBlock->References.fetch_sub(1) == 1)
             {

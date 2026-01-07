@@ -12,11 +12,6 @@ namespace Sgl::UIElements
 		_isChecked(other._isChecked)
 	{}
 
-	void ToggleButton::SetIsChecked(bool value)
-	{
-		SetIsChecked(value, ValueSource::Local);
-	}
-
 	void ToggleButton::SetIsChecked(bool value, ValueSource source)
 	{
 		if(SetProperty(IsCheckedProperty, _isChecked, value, _isCheckedSource, source))

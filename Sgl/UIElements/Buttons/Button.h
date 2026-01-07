@@ -35,16 +35,13 @@ namespace Sgl::UIElements
 		Button(const Button& other);
 		Button(Button&& other) noexcept;
 
-		void SetClickMode(ClickMode value);
-		void SetClickMode(ClickMode value, ValueSource source);
+		void SetClickMode(ClickMode value, ValueSource source = ValueSource::Local);
 		ClickMode GetClickMode() const { return _clickMode; }
 
-		void SetCommand(const Command& value);
-		void SetCommand(const Command& value, ValueSource sorce);
+		void SetCommand(const Command& value, ValueSource sorce = ValueSource::Local);
 		const Command& GetCommand() const { return _command; }
 
-		void SetCommandParameter(const Any& value);
-		void SetCommandParameter(const Any& value, ValueSource source);
+		void SetCommandParameter(const Any& value, ValueSource source = ValueSource::Local);
 		const Any& GetCommandParameter() const { return _commandParameter; }
 
 		bool IsPressed() const noexcept { return _isPressed; }

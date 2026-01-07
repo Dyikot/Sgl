@@ -42,12 +42,10 @@ namespace Sgl
 		UIElement(UIElement&& other) noexcept;
 		virtual ~UIElement() = default;
 		
-		void SetTag(const Any& value);
-		void SetTag(const Any& value, ValueSource source);
+		void SetTag(const Any& value, ValueSource source = ValueSource::Local);
 		const Any& GetTag() const { return _tag; }		
 
-		void SetToolTip(const Ref<UIElement>& value);
-		void SetToolTip(const Ref<UIElement>& value, ValueSource source);
+		void SetToolTip(const Ref<UIElement>& value, ValueSource source = ValueSource::Local);
 		const Ref<UIElement>& GetToolTip() const { return _tooltip; }		
 
 		bool IsMouseOver() const { return _isMouseOver; }

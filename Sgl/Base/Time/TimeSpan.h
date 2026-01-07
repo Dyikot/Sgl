@@ -31,28 +31,28 @@ namespace Sgl
 		static constexpr double ToHoursCoefficient = 1 / NanosecondsPerHour;
 		static constexpr double ToDaysCoefficient = 1 / NanosecondsPerDay;
 
-		static constexpr long long ThresholdMicroseconds = 10 * NanosecondsPerMicrosecond;
-		static constexpr long long ThresholdMilliseconds = 10 * NanosecondsPerMillisecond;
-		static constexpr long long ThresholdSeconds = 10 * NanosecondsPerSecond;
-		static constexpr long long ThresholdMinutes = 10 * NanosecondsPerMinute;
-		static constexpr long long ThresholdHours = 10 * NanosecondsPerHour;
-		static constexpr long long ThresholdDays = 10 * NanosecondsPerDay;
+		static constexpr int64_t ThresholdMicroseconds = 10 * NanosecondsPerMicrosecond;
+		static constexpr int64_t ThresholdMilliseconds = 10 * NanosecondsPerMillisecond;
+		static constexpr int64_t ThresholdSeconds = 10 * NanosecondsPerSecond;
+		static constexpr int64_t ThresholdMinutes = 10 * NanosecondsPerMinute;
+		static constexpr int64_t ThresholdHours = 10 * NanosecondsPerHour;
+		static constexpr int64_t ThresholdDays = 10 * NanosecondsPerDay;
 
-		long long _nanoseconds;
+		int64_t _nanoseconds;
 	public:
 		constexpr TimeSpan(ZeroTag):
 			_nanoseconds()
 		{}
 
 		constexpr TimeSpan(MaxTag):
-			_nanoseconds(std::numeric_limits<long long>::max())
+			_nanoseconds(std::numeric_limits<int64_t>::max())
 		{}
 
 		constexpr TimeSpan(MinTag):
-			_nanoseconds(std::numeric_limits<long long>::min())
+			_nanoseconds(std::numeric_limits<int64_t>::min())
 		{}
 
-		constexpr explicit TimeSpan(long long nanoseconds) noexcept:
+		constexpr explicit TimeSpan(int64_t nanoseconds) noexcept:
 			_nanoseconds(nanoseconds)
 		{}
 
@@ -60,37 +60,37 @@ namespace Sgl
 			_nanoseconds(timespan._nanoseconds)
 		{}
 
-		static constexpr TimeSpan FromMicroseconds(long long value) noexcept
+		static constexpr TimeSpan FromMicroseconds(int64_t value) noexcept
 		{
-			return TimeSpan(value * static_cast<long long>(NanosecondsPerMicrosecond));
+			return TimeSpan(value * static_cast<int64_t>(NanosecondsPerMicrosecond));
 		}
 
-		static constexpr TimeSpan FromMilliseconds(long long value) noexcept
+		static constexpr TimeSpan FromMilliseconds(int64_t value) noexcept
 		{
-			return TimeSpan(value * static_cast<long long>(NanosecondsPerMillisecond));
+			return TimeSpan(value * static_cast<int64_t>(NanosecondsPerMillisecond));
 		}
 
-		static constexpr TimeSpan FromSeconds(long long value) noexcept
+		static constexpr TimeSpan FromSeconds(int64_t value) noexcept
 		{
-			return TimeSpan(value * static_cast<long long>(NanosecondsPerSecond));
+			return TimeSpan(value * static_cast<int64_t>(NanosecondsPerSecond));
 		}
 
-		static constexpr TimeSpan FromMinutes(long long value) noexcept
+		static constexpr TimeSpan FromMinutes(int64_t value) noexcept
 		{
-			return TimeSpan(value * static_cast<long long>(NanosecondsPerMinute));
+			return TimeSpan(value * static_cast<int64_t>(NanosecondsPerMinute));
 		}
 
-		static constexpr TimeSpan FromHours(long long value) noexcept
+		static constexpr TimeSpan FromHours(int64_t value) noexcept
 		{
-			return TimeSpan(value * static_cast<long long>(NanosecondsPerHour));
+			return TimeSpan(value * static_cast<int64_t>(NanosecondsPerHour));
 		}
 
-		static constexpr TimeSpan FromDays(long long value) noexcept
+		static constexpr TimeSpan FromDays(int64_t value) noexcept
 		{
-			return TimeSpan(value * static_cast<long long>(NanosecondsPerDay));
+			return TimeSpan(value * static_cast<int64_t>(NanosecondsPerDay));
 		}
 
-		constexpr long long ToNanoseconds() const noexcept
+		constexpr int64_t ToNanoseconds() const noexcept
 		{
 			return _nanoseconds;
 		}

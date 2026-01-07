@@ -29,8 +29,8 @@ namespace Sgl
 		void SetBlendMode(SDL_BlendMode value);
 		SDL_BlendMode GetBlendMode() const;
 
-		size_t GetWidth() const;
-		size_t GetHeight() const;
+		uint32_t GetWidth() const;
+		uint32_t GetHeight() const;
 		SDL_Surface* GetSDLSurface() const noexcept { return _surface; }
 
 		void Lock();

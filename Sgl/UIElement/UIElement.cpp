@@ -42,19 +42,9 @@ namespace Sgl
 		_tooltip(std::move(other._tooltip))
 	{}
 
-	void UIElement::SetTag(const Any& value)
-	{
-		SetTag(value, ValueSource::Local);
-	}
-
 	void UIElement::SetTag(const Any& value, ValueSource source)
 	{
 		SetProperty(TagProperty, _tag, value, _tagSource, source);
-	}
-
-	void UIElement::SetToolTip(const Ref<UIElement>& value)
-	{
-		SetToolTip(value, ValueSource::Local);
 	}
 
 	void UIElement::SetToolTip(const Ref<UIElement>& value, ValueSource source)

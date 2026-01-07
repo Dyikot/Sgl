@@ -248,7 +248,7 @@ namespace Sgl
 		}
 	}
 
-	static std::vector<Vertex> ComputeEllipseVertices(FRect rect, Color color, bool hasTexture)
+	static std::vector<Vertex> ComputeFillEllipseVertices(FRect rect, Color color, bool hasTexture)
 	{
 		std::vector<Vertex> vertices(EllipseVerticesNumber);
 
@@ -294,7 +294,7 @@ namespace Sgl
 
 	void RenderContext::DrawEllipseFill(FRect rect, Color color)
 	{
-		auto vertices = ComputeEllipseVertices(rect, color, false);
+		auto vertices = ComputeFillEllipseVertices(rect, color, false);
 		auto order = Math::TriangulateEllipse(EllipseVerticesNumber - 1);
 
 		DrawGeometry(vertices, order);
@@ -303,7 +303,7 @@ namespace Sgl
 	void RenderContext::DrawEllipseFill(FRect rect, const Texture& texture)
 	{
 		auto color = texture.GetColor();
-		auto vertices = ComputeEllipseVertices(rect, color, true);
+		auto vertices = ComputeFillEllipseVertices(rect, color, true);
 		auto order = Math::TriangulateEllipse(EllipseVerticesNumber - 1);
 
 		DrawGeometry(vertices, texture, order);
@@ -340,61 +340,31 @@ namespace Sgl
 		SDL_RenderTexture(_renderer, texture.GetSDLTexture(), &clip, &target);
 	}
 
-	void RenderContext::DrawTextureRotated(const Texture& texture, double angle, FPoint center)
+	void RenderContext::DrawTextureTransformed(const Texture& texture, double angle, 
+											   const FPoint* center, SDL_FlipMode flip)
 	{
 		SDL_RenderTextureRotated(_renderer, texture.GetSDLTexture(), nullptr, nullptr,
-			angle, &center, SDL_FLIP_NONE);
+								 angle, center, flip);
 	}
 
-	void RenderContext::DrawTextureRotated(const Texture& texture, double angle, FPoint center, FRect target)
-	{
-		SDL_RenderTextureRotated(_renderer, texture.GetSDLTexture(), nullptr, &target,
-			angle, &center, SDL_FLIP_NONE);
-	}
-
-	void RenderContext::DrawTextureRotated(const Texture& texture, double angle, FPoint center, FRect target, FRect clip)
-	{
-		SDL_RenderTextureRotated(_renderer, texture.GetSDLTexture(), &clip, &target,
-			angle, &center, SDL_FLIP_NONE);
-	}
-
-	void RenderContext::DrawTextureFlipped(const Texture& texture, Orientation flip)
-	{
-		SDL_RenderTextureRotated(_renderer, texture.GetSDLTexture(), nullptr, nullptr,
-			0, nullptr, SDL_FlipMode(flip));
-	}
-
-	void RenderContext::DrawTextureFlipped(const Texture& texture, Orientation flip, FRect target)
-	{
-		SDL_RenderTextureRotated(_renderer, texture.GetSDLTexture(), nullptr, &target,
-			0, nullptr, SDL_FlipMode(flip));
-	}
-
-	void RenderContext::DrawTextureFlipped(const Texture& texture, Orientation flip, FRect target, FRect clip)
-	{
-		SDL_RenderTextureRotated(_renderer, texture.GetSDLTexture(), &clip, &target,
-			0, nullptr, SDL_FlipMode(flip));
-	}
-
-	void RenderContext::DrawTextureTransformed(const Texture& texture, double angle, FPoint center, Orientation flip)
-	{
-		SDL_RenderTextureRotated(_renderer, texture.GetSDLTexture(), nullptr, nullptr,
-			angle, &center, SDL_FlipMode(flip));
-	}
-
-	void RenderContext::DrawTextureTransformed(const Texture& texture, double angle, FPoint center, Orientation flip, FRect target)
+	void RenderContext::DrawTextureTransformed(const Texture& texture, double angle, 
+											   const FPoint* center, SDL_FlipMode flip, 
+											   FRect target)
 	{
 		SDL_RenderTextureRotated(_renderer, texture.GetSDLTexture(), nullptr,
-			&target, angle, &center, SDL_FlipMode(flip));
+								 &target, angle, center, flip);
 	}
 
-	void RenderContext::DrawTextureTransformed(const Texture& texture, double angle, FPoint center, Orientation flip, FRect target, FRect clip)
+	void RenderContext::DrawTextureTransformed(const Texture& texture, double angle, 
+											   const FPoint* center, SDL_FlipMode flip, 
+											   FRect target, FRect clip)
 	{
 		SDL_RenderTextureRotated(_renderer, texture.GetSDLTexture(), &clip,
-			&target, angle, &center, static_cast<SDL_FlipMode>(flip));
+								 &target, angle, center, flip);
 	}
 
-	void RenderContext::DrawText(FPoint position, std::string_view text, size_t size, Color color, const FontFamily& fontFamily)
+	void RenderContext::DrawText(FPoint position, std::string_view text, float size, 
+								 Color color, const FontFamily& fontFamily)
 	{
 		FontImpl font(fontFamily, size);
 		Texture texture(_renderer, FontQuality::Blended, font, text, color);

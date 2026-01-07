@@ -41,22 +41,12 @@ namespace Sgl
 		_isMeasureValid(other._isMeasureValid)
 	{}
 
-	void Layoutable::SetWidth(float value)
-	{
-		SetWidth(value, ValueSource::Local);
-	}
-
 	void Layoutable::SetWidth(float value, ValueSource source)
 	{
 		if(SetProperty(WidthProperty, _width, value, _widthSource, source))
 		{
 			InvalidateMeasure();
 		}
-	}
-
-	void Layoutable::SetHeight(float value)
-	{
-		SetHeight(value, ValueSource::Local);
 	}
 
 	void Layoutable::SetHeight(float value, ValueSource source)
@@ -67,22 +57,12 @@ namespace Sgl
 		}
 	}
 
-	void Layoutable::SetMinWidth(float value)
-	{
-		SetMinWidth(value, ValueSource::Local);
-	}
-
 	void Layoutable::SetMinWidth(float value, ValueSource source)
 	{
 		if(SetProperty(MinWidthProperty, _minWidth, value, _minWidthSource, source))
 		{
 			InvalidateMeasure();
 		}
-	}
-
-	void Layoutable::SetMinHeight(float value)
-	{
-		SetMinHeight(value, ValueSource::Local);
 	}
 
 	void Layoutable::SetMinHeight(float value, ValueSource source)
@@ -93,22 +73,12 @@ namespace Sgl
 		}
 	}
 
-	void Layoutable::SetMaxWidth(float value)
-	{
-		SetMaxWidth(value, ValueSource::Local);
-	}
-
 	void Layoutable::SetMaxWidth(float value, ValueSource source)
 	{
 		if(SetProperty(MaxWidthProperty, _maxWidth, value, _maxWidthSource, source))
 		{
 			InvalidateMeasure();
 		}
-	}
-
-	void Layoutable::SetMaxHeight(float value)
-	{
-		SetMaxHeight(value, ValueSource::Local);
 	}
 
 	void Layoutable::SetMaxHeight(float value, ValueSource source)
@@ -119,22 +89,12 @@ namespace Sgl
 		}
 	}
 
-	void Layoutable::SetMargin(Thickness value)
-	{
-		SetMargin(value, ValueSource::Local);
-	}
-
 	void Layoutable::SetMargin(Thickness value, ValueSource source)
 	{
 		if(SetProperty(MarginProperty, _margin, value, _marginSource, source))
 		{
 			InvalidateMeasure();
 		}
-	}
-
-	void Layoutable::SetIsVisible(bool value)
-	{
-		SetIsVisible(value, ValueSource::Local);
 	}
 
 	void Layoutable::SetIsVisible(bool value, ValueSource source)
@@ -145,22 +105,12 @@ namespace Sgl
 		}
 	}
 
-	void Layoutable::SetVerticalAlignment(VerticalAlignment value)
-	{
-		SetVerticalAlignment(value, ValueSource::Local);
-	}
-
 	void Layoutable::SetVerticalAlignment(VerticalAlignment value, ValueSource source)
 	{
 		if(SetProperty(VerticalAlignmentProperty, _verticalAlignment, value, _verticalAlignmentSource, source))
 		{
 			InvalidateArrange();
 		}
-	}
-
-	void Layoutable::SetHorizontalAlignment(HorizontalAlignment value)
-	{
-		SetHorizontalAlignment(value, ValueSource::Local);
 	}
 
 	void Layoutable::SetHorizontalAlignment(HorizontalAlignment value, ValueSource source)

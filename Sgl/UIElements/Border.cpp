@@ -14,22 +14,12 @@ namespace Sgl::UIElements
 		_borderColor(other._borderColor)
 	{}
 
-	void Border::SetBorderWidth(size_t value)
-	{
-		SetBorderWidth(value, ValueSource::Local);
-	}
-
-	void Border::SetBorderWidth(size_t value, ValueSource source)
+	void Border::SetBorderWidth(uint32_t value, ValueSource source)
 	{
 		if(SetProperty(BorderWidthProperty, _borderWidth, value, _borderWidthSource, source))
 		{
 			InvalidateMeasure();
 		}
-	}
-
-	void Border::SetBorderColor(Color value)
-	{
-		SetBorderColor(value, ValueSource::Local);
 	}
 
 	void Border::SetBorderColor(Color value, ValueSource source)
@@ -44,12 +34,34 @@ namespace Sgl::UIElements
 	{
 		RenderBackground(context);
 
-		if(!_borderColor.IsTransparent() && _borderWidth > 0)
-		{
-			context.DrawRectange(_bounds, _borderColor);
+		if(!_borderColor.IsTransparent())
+		{			
+			if(_borderWidth == 1u)
+			{
+				context.DrawRectange(_bounds, _borderColor);
+			}
+			else if(_borderWidth > 1u)
+			{
+				float width = _borderWidth;
+				auto [x, y, w, h] = _bounds;
+				FRect sides[] =
+				{
+					{ x, y, w, width },										// top
+					{ x, y + h - width, w, width },							// bottom
+					{ x, y + width, width, h - 2 * width },					// left
+					{ x + w - width, y + width, width, h - 2 * width },		// right
+				};
+
+				context.DrawRectanglesFill(sides, _borderColor);
+			}
 		}
 
 		ContentUIElement::Render(context);
+	}
+
+	Thickness Border::GetLayoutPadding() const
+	{
+		return ContentUIElement::GetLayoutPadding() + Thickness(_borderWidth);
 	}
 }
 

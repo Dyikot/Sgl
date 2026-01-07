@@ -14,22 +14,12 @@ namespace Sgl
 		_orientation(other._orientation)
 	{}
 
-	void StackPanel::SetSpacing(float value)
-	{
-		SetSpacing(value, ValueSource::Local);
-	}
-
 	void StackPanel::SetSpacing(float value, ValueSource source)
 	{
 		if(SetProperty(SpacingProperty, _spacing, value, _spacingSource, source))
 		{
 			InvalidateMeasure();
 		}
-	}
-
-	void StackPanel::SetOrientation(Orientation value)
-	{
-		SetOrientation(value, ValueSource::Local);
 	}
 
 	void StackPanel::SetOrientation(Orientation value, ValueSource source)

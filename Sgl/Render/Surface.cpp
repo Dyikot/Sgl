@@ -73,14 +73,14 @@ namespace Sgl
 		return color;
 	}
 
-	size_t Surface::GetWidth() const
+	uint32_t Surface::GetWidth() const
 	{
-		return static_cast<size_t>(_surface->w);
+		return static_cast<uint32_t>(_surface->w);
 	}
 
-	size_t Surface::GetHeight() const
+	uint32_t Surface::GetHeight() const
 	{
-		return static_cast<size_t>(_surface->h);
+		return static_cast<uint32_t>(_surface->h);
 	}
 
 	void Surface::SetBlendMode(SDL_BlendMode value)
