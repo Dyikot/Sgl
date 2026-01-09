@@ -21,6 +21,15 @@ namespace Sgl
 		}
 	}
 
+	Texture::Texture(SDL_Renderer* renderer, const Surface& surface):
+		_texture(SDL_CreateTextureFromSurface(renderer, surface.GetSDLSurface()))
+	{
+		if(_texture == nullptr)
+		{
+			Logger::LogError("Unable to create a texture: {}", SDL_GetError());
+		}
+	}
+
 	Texture::Texture(SDL_Renderer* renderer, Size size, 
 					 TextureAccess access, 
 					 SDL_PixelFormat format):

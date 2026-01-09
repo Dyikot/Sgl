@@ -49,9 +49,12 @@ namespace Sgl
 
 	void UIElement::SetToolTip(const Ref<UIElement>& value, ValueSource source)
 	{
-		if(SetProperty(ToolTipProperty, _tooltip, value, _tooltipSource, source) && _isMouseOver)
+		if(SetProperty(ToolTipProperty, _tooltip, value, _tooltipSource, source))
 		{
-			InvalidateRender();
+			if(_isMouseOver)
+			{
+				InvalidateRender();
+			}
 		}
 	}
 
@@ -76,6 +79,12 @@ namespace Sgl
 		{
 			Cursor::Set(cursor);
 		}
+	}
+
+	void UIElement::InheritProperties(StyleableElement& parent)
+	{
+		SetDataContext(parent.GetDataContext(), ValueSource::Inheritance);
+		SetCursor(static_cast<Renderable&>(parent).GetCursor(), ValueSource::Inheritance);
 	}
 
 	void UIElement::OnKeyUp(KeyEventArgs e)
@@ -124,13 +133,10 @@ namespace Sgl
 	void UIElement::OnAttachedToLogicalTree()
 	{
 		Layoutable::OnAttachedToLogicalTree();
-		InvalidateMeasure();
-	}
 
-	void UIElement::OnDetachedFromLogicalTree()
-	{
-		Layoutable::OnDetachedFromLogicalTree();
-		InvalidateMeasure();
+		auto& parent = static_cast<StyleableElement&>(*GetStylingParent());
+		InheritProperties(parent);
+		ApplyBindings();
 	}
 
 	Ref<UIElement> UIElementDataTemplate::Build(const Ref<INotifyPropertyChanged>& data)

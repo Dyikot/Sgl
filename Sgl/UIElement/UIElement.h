@@ -11,6 +11,8 @@
 
 namespace Sgl
 {
+	class Window;
+
 	class UIElement : public Layoutable
 	{
 	private:
@@ -43,7 +45,7 @@ namespace Sgl
 		virtual ~UIElement() = default;
 		
 		void SetTag(const Any& value, ValueSource source = ValueSource::Local);
-		const Any& GetTag() const { return _tag; }		
+		const Any& GetTag() const { return _tag; }
 
 		void SetToolTip(const Ref<UIElement>& value, ValueSource source = ValueSource::Local);
 		const Ref<UIElement>& GetToolTip() const { return _tooltip; }		
@@ -54,6 +56,7 @@ namespace Sgl
 	protected:
 		void RenderBackground(RenderContext context);
 		void OnCursorChanged(const Cursor& cursor) override;
+		virtual void InheritProperties(StyleableElement& parent);
 		virtual void OnKeyUp(KeyEventArgs e);
 		virtual void OnKeyDown(KeyEventArgs e);
 		virtual void OnMouseMove(MouseMoveEventArgs e);
@@ -63,7 +66,6 @@ namespace Sgl
 		virtual void OnMouseEnter(MouseMoveEventArgs e);
 		virtual void OnMouseLeave(MouseMoveEventArgs e);
 		void OnAttachedToLogicalTree() override;
-		void OnDetachedFromLogicalTree() override;
 	public:
 		static inline StyleableProperty TagProperty { &SetTag, &GetTag };
 		static inline StyleableProperty ToolTipProperty { &SetToolTip, &GetToolTip };

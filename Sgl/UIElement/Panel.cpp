@@ -107,17 +107,19 @@ namespace Sgl
 
     void Panel::OnCursorChanged(const Cursor& cursor)
     {
-        if(IsMouseOver())
-        {
-            for(auto& child : Children)
-            {
-                if(child->IsMouseOver())
-                {
-                    return;
-                }
-            }
+        UIElement::OnCursorChanged(cursor);
 
-            Cursor::Set(cursor);
+        for(auto& child : Children)
+        {
+            child->SetCursor(cursor, ValueSource::Inheritance);
+        }
+    }
+
+    void Panel::OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext)
+    {
+        for(auto& child : Children)
+        {
+            child->SetDataContext(dataContext, ValueSource::Inheritance);
         }
     }
 

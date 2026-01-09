@@ -298,4 +298,16 @@ namespace Sgl
 			}
 		}
 	}
+
+	void Layoutable::OnAttachedToLogicalTree()
+	{
+		StyleableElement::OnAttachedToLogicalTree();
+		InvalidateMeasure();
+	}
+
+	void Layoutable::OnDetachedFromLogicalTree()
+	{
+		StyleableElement::OnDetachedFromLogicalTree();
+		InvalidateMeasure();
+	}
 }

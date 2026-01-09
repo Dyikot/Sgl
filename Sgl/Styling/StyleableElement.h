@@ -3,13 +3,13 @@
 #include <vector>
 
 #include "IStyleHost.h"
-#include "../Data/AttachableObject.h"
+#include "../Data/BindableObject.h"
 #include "../Base/Ref.h"
 #include "../Base/Event.h"
 
 namespace Sgl
 {
-	class StyleableElement : public AttachableObject, public IStyleHost
+	class StyleableElement : public BindableObject, public IStyleHost
 	{
 	private:
 		using StyleableElementEventHandler = EventHandler<StyleableElement>;

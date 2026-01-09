@@ -1,6 +1,6 @@
 #include "Clipboard.h"
-#include <SDL3/SDL_clipboard.h>
 #include "../Base/Logger.h"
+#include <SDL3/SDL_clipboard.h>
 
 namespace Sgl
 {

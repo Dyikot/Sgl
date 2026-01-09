@@ -2,20 +2,20 @@
 
 namespace Sgl
 {
-	void ObservableObject::AddPropertyChangedEventHandler(AbstractPropertyBase& property, PropertyChangedEventHandler handler)
+	void ObservableObject::AddPropertyChangedEventHandler(PropertyBase& property, PropertyChangedEventHandler handler)
 	{
-		_observers.emplace_back(property, std::move(handler));
+		_propertiesObservers.emplace_back(property, std::move(handler));
 	}
 
-	void ObservableObject::RemovePropertyChangedEventHandler(AbstractPropertyBase& property, PropertyChangedEventHandler handler)
+	void ObservableObject::RemovePropertyChangedEventHandler(PropertyBase& property, PropertyChangedEventHandler handler)
 	{
 		Observer propertyObserver(property, std::move(handler));
-		std::erase(_observers, propertyObserver);
+		std::erase(_propertiesObservers, propertyObserver);
 	}
 
-	void ObservableObject::NotifyPropertyChanged(AbstractPropertyBase& property)
+	void ObservableObject::NotifyPropertyChanged(PropertyBase& property)
 	{
-		for(auto& observer : _observers)
+		for(auto& observer : _propertiesObservers)
 		{
 			if(observer.Property == property)
 			{

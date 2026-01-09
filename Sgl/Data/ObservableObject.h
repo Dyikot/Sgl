@@ -12,7 +12,7 @@ namespace Sgl
 	private:
 		struct Observer
 		{
-			std::reference_wrapper<AbstractPropertyBase> Property;
+			std::reference_wrapper<PropertyBase> Property;
 			PropertyChangedEventHandler Handler;
 
 			bool operator==(const Observer& other) const
@@ -21,16 +21,16 @@ namespace Sgl
 			}
 		};
 
-		std::vector<Observer> _observers;
+		std::vector<Observer> _propertiesObservers;
 	public:
 		ObservableObject() = default;
 		ObservableObject(const ObservableObject&) = default;
 		ObservableObject(ObservableObject&&) = default;
 
-		void AddPropertyChangedEventHandler(AbstractPropertyBase& property, PropertyChangedEventHandler handler) override;
-		void RemovePropertyChangedEventHandler(AbstractPropertyBase& property, PropertyChangedEventHandler handler) override;
+		void AddPropertyChangedEventHandler(PropertyBase& property, PropertyChangedEventHandler handler) override;
+		void RemovePropertyChangedEventHandler(PropertyBase& property, PropertyChangedEventHandler handler) override;
 	protected:
-		virtual void NotifyPropertyChanged(AbstractPropertyBase& property);
+		virtual void NotifyPropertyChanged(PropertyBase& property);
 
 		template<typename TOwner, typename TValue, typename TField>
 		bool SetProperty(DirectProperty<TOwner, TValue>& property, TField& field,

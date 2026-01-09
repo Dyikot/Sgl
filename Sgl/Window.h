@@ -320,6 +320,7 @@ namespace Sgl
 		virtual void Process();
 	protected:
 		void OnCursorChanged(const Cursor& cursor) override;
+		void OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext) override;
 		void OnAttachedToLogicalTree() override;
 		void OnDetachedFromLogicalTree() override;
 		virtual void OnWindowStateChanged(WindowStateChangedEventArgs e);

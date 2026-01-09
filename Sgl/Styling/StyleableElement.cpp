@@ -6,7 +6,7 @@
 namespace Sgl
 {
 	StyleableElement::StyleableElement(const StyleableElement& other):
-		AttachableObject(other),
+		BindableObject(other),
 		_classList(other._classList),
 		_stylingParent(other._stylingParent),
 		_stylingRoot(other._stylingRoot),
@@ -14,7 +14,7 @@ namespace Sgl
 	{}
 
 	StyleableElement::StyleableElement(StyleableElement&& other) noexcept:
-		AttachableObject(std::move(other)),
+		BindableObject(std::move(other)),
 		Styles(std::move(other.Styles)),
 		_classList(std::move(other._classList)),
 		_stylingParent(std::exchange(other._stylingParent, nullptr)),

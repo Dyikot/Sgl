@@ -8,12 +8,12 @@ namespace Sgl
 {	
 	using Brush = std::variant<Color, Texture>;
 
-	constexpr bool operator==(const Brush& brush, Color color)
+	inline bool operator==(const Brush& brush, Color color)
 	{
 		return brush.index() == 0 && std::get<Color>(brush) == color;
 	}
 
-	constexpr bool operator==(const Brush& brush, const Texture& texture)
+	inline bool operator==(const Brush& brush, const Texture& texture)
 	{
 		return brush.index() == 1 && std::get<Texture>(brush) == texture;
 	}

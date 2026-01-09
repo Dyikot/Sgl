@@ -1,21 +1,22 @@
 ## About
 **Sgl** is a cross-platform UI framework developed on top of C++ 20 and SDL3.
-Development is still in early stages, but basic functionality has already been implemented. For example:
-- Window management
+The project is currently in development. The following has been implemented so far:
 - Layout system
-- Simple style system
-- Event system
-- Basic UIElements
+- Basic styling, ThemeMode
+- Basic UIElements: Border, Image, TextBlock, Button, StackPanel, Canvas
 - Data binding
 - Localization
-- Asynchronous operations
+- Threading: Timer, ThreadPool, async operations using c++ 20 coroutines
 
 ## Roadmap
-- Rework the style system, including theme styling
-- New layout elements
+- Resources
+- Pseudo classes
+- Focus manager
 - Animation
+- Drag & drop
 - Expanding UIElements base
-- Implementation of new SDL3 features
+- New renderer
+- Notifications
 - Documentation
 
 ## Dependencies

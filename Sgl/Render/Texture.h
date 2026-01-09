@@ -1,6 +1,5 @@
 #pragma once
 
-#include <span>
 #include <SDL3/SDL_render.h>
 
 #include "../Base/Primitives.h"
@@ -9,6 +8,8 @@
 
 namespace Sgl
 {
+	class Surface;
+
 	enum class TextureAccess
 	{
 		Static, Streaming, Target
@@ -22,6 +23,7 @@ namespace Sgl
 		Texture() = default;
 		Texture(std::nullptr_t);
 		Texture(SDL_Renderer* renderer, std::string_view filePath);
+		Texture(SDL_Renderer* renderer, const Surface& surface);
 		Texture(SDL_Renderer* renderer,
 				Size size, 
 				TextureAccess access = TextureAccess::Static,

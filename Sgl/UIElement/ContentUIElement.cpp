@@ -161,9 +161,19 @@ namespace Sgl
 
 	void ContentUIElement::OnCursorChanged(const Cursor& cursor)
 	{
-		if(IsMouseOver() && !(_contentPresenter && _contentPresenter->IsMouseOver()))
+		UIElement::OnCursorChanged(cursor);
+		
+		if(_contentPresenter)
 		{
-			Cursor::Set(cursor);
+			_contentPresenter->SetCursor(cursor, ValueSource::Inheritance);
+		}
+	}
+
+	void ContentUIElement::OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext)
+	{
+		if(_contentPresenter)
+		{
+			_contentPresenter->SetDataContext(dataContext, ValueSource::Inheritance);
 		}
 	}
 
@@ -232,10 +242,7 @@ namespace Sgl
 
 	FSize ContentUIElement::MeasureContent(FSize avaliableSize)
 	{
-		if(!_isContentPresenterValid)
-		{
-			UpdatePresenter();
-		}
+		UpdatePresenter();
 
 		if(_contentPresenter)
 		{
@@ -305,8 +312,13 @@ namespace Sgl
 		}
 	}
 
-	bool ContentUIElement::UpdatePresenter()
+	void ContentUIElement::UpdatePresenter()
 	{
+		if(_isContentPresenterValid)
+		{
+			return;
+		}
+
 		if(_contentTemplate && _contentTemplate->Match(_content))
 		{
 			if(_contentPresenter)
@@ -321,10 +333,6 @@ namespace Sgl
 			{
 				OnContentPresenterCreated(_contentPresenter.GetValue());
 			}
-
-			return true;
 		}
-
-		return false;
 	}
 }

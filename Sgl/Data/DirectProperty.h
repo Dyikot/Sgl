@@ -2,12 +2,12 @@
 
 #include <stdint.h>
 #include <concepts>
-#include "AbstractProperty.h"
+#include "Property.h"
 
 namespace Sgl
 {
 	template<typename TOwner, typename TValue>
-	class DirectProperty : public AbstractProperty<TOwner, TValue>
+	class DirectProperty : public Property<TOwner, TValue>
 	{
 	public:
 		using Owner = TOwner;

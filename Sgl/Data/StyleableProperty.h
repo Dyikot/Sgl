@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 #include <concepts>
-#include "AbstractProperty.h"
+#include "Property.h"
 
 namespace Sgl
 {
@@ -15,7 +15,7 @@ namespace Sgl
 	};
 
 	template<typename TOwner, typename TValue>
-	class StyleableProperty : public AbstractProperty<TOwner, TValue>
+	class StyleableProperty : public Property<TOwner, TValue>
 	{
 	public:
 		using Owner = TOwner;

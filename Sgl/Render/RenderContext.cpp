@@ -340,6 +340,28 @@ namespace Sgl
 		SDL_RenderTexture(_renderer, texture.GetSDLTexture(), &clip, &target);
 	}
 
+	void RenderContext::DrawTexture9Grid(const Texture& texture, float cornersWidth, float scale)
+	{
+		SDL_RenderTexture9Grid(_renderer, texture.GetSDLTexture(), nullptr, 
+							   cornersWidth, cornersWidth, cornersWidth, cornersWidth,
+							   scale, nullptr);
+	}
+
+	void RenderContext::DrawTexture9Grid(const Texture & texture, float cornersWidth, float scale,
+										 FRect target)
+	{
+		SDL_RenderTexture9Grid(_renderer, texture.GetSDLTexture(), nullptr,
+			cornersWidth, cornersWidth, cornersWidth, cornersWidth,
+			scale, &target);
+	}
+
+	void RenderContext::DrawTexture9Grid(const Texture & texture, float cornersWidth, float scale, FRect target, FRect clip)
+	{
+		SDL_RenderTexture9Grid(_renderer, texture.GetSDLTexture(), &clip,
+			cornersWidth, cornersWidth, cornersWidth, cornersWidth,
+			scale, &target);
+	}
+
 	void RenderContext::DrawTextureTransformed(const Texture& texture, double angle, 
 											   const FPoint* center, SDL_FlipMode flip)
 	{

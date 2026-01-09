@@ -23,7 +23,7 @@ namespace Sgl
 			virtual std::unique_ptr<Concept> Copy() const = 0;
 			virtual const std::type_info& Type() const = 0;
 			virtual bool Equals(const Concept& other) const = 0;
-			virtual TReturn operator()(TArgs... args) = 0;
+			virtual TReturn operator()(TArgs&&... args) = 0;
 		};
 
 		template<typename TCallable>
@@ -62,7 +62,7 @@ namespace Sgl
 				return false;
 			}
 
-			TReturn operator()(TArgs... args) override
+			TReturn operator()(TArgs&&... args) override
 			{
 				return std::invoke(Callable, std::forward<TArgs>(args)...);
 			}

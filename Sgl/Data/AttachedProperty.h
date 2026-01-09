@@ -1,26 +1,12 @@
 #pragma once
 
 #include <concepts>
+#include "Property.h"
 
 namespace Sgl
 {
-	class AttachableObject;
-
-	class AttachedPropertyBase
-	{
-	public:
-		AttachedPropertyBase() = default;
-		AttachedPropertyBase(const AttachedPropertyBase&) = delete;
-		AttachedPropertyBase(AttachedPropertyBase&&) = delete;
-
-		friend bool operator==(const AttachedPropertyBase& left, const AttachedPropertyBase& right)
-		{
-			return &left == &right;
-		}
-	};
-
 	template<typename T>
-	class AttachedProperty : public AttachedPropertyBase
+	class AttachedProperty : public PropertyBase
 	{
 	public:
 		const T DefaultValue = {};

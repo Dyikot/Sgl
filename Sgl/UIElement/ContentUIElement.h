@@ -54,6 +54,7 @@ namespace Sgl
 		void OnAttachedToLogicalTree() override;
 		void OnDetachedFromLogicalTree() override;
 		void OnCursorChanged(const Cursor& cursor) override;
+		void OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext) override;
 		void OnMouseMove(MouseMoveEventArgs e) override;
 		void OnMouseDown(MouseButtonEventArgs e) override;
 		void OnMouseUp(MouseButtonEventArgs e) override;
@@ -64,7 +65,7 @@ namespace Sgl
 		void ArrangeContent(FRect rect) override;
 		virtual Thickness GetLayoutPadding() const { return _padding; }
 	private:
-		bool UpdatePresenter();
+		void UpdatePresenter();
 	public:
 		static inline StyleableProperty ContentProperty { &SetContent, &GetContent };
 		static inline StyleableProperty ContentTemplateProperty { &SetContentTemplate, &GetContentTemplate };

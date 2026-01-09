@@ -54,6 +54,10 @@ namespace Sgl
 		void DrawTexture(const Texture& texture, FRect target);
 		void DrawTexture(const Texture& texture, FRect target, FRect clip);
 
+		void DrawTexture9Grid(const Texture& texture, float cornersWidth, float scale);
+		void DrawTexture9Grid(const Texture& texture, float cornersWidth, float scale, FRect target);
+		void DrawTexture9Grid(const Texture& texture, float cornersWidth, float scale, FRect target, FRect clip);
+
 		void DrawTextureTransformed(const Texture& texture, double angle, const FPoint* center, SDL_FlipMode flip);
 		void DrawTextureTransformed(const Texture& texture, double angle, const FPoint* center, SDL_FlipMode flip, FRect target);
 		void DrawTextureTransformed(const Texture& texture, double angle, const FPoint* center, SDL_FlipMode flip, FRect target, FRect clip);

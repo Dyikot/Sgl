@@ -90,6 +90,8 @@ namespace Sgl
 	protected:
 		virtual FSize MeasureContent(FSize avaliableSize) { return FSize(); }
 		virtual void ArrangeContent(FRect rect) { }
+		void OnAttachedToLogicalTree() override;
+		void OnDetachedFromLogicalTree() override;
 	public:
 		static inline StyleableProperty WidthProperty { &SetWidth, &GetWidth };
 		static inline StyleableProperty HeightProperty { &SetHeight, &GetHeight };

@@ -479,20 +479,30 @@ namespace Sgl
 
     void Window::OnCursorChanged(const Cursor& cursor)
     {
-        if(!IsVisible())
+        if(_content)
         {
-            return;
+            _content->SetCursor(cursor, ValueSource::Inheritance);
+            auto& current = _content->IsMouseOver() ? _content->GetCursor() : GetCursor();
+            Cursor::Set(current);
         }
-
-        if(!(_content && _content->IsMouseOver()))
+        else
         {
-            Cursor::Set(cursor);
+            Cursor::Set(GetCursor());
+        }
+    }
+
+    void Window::OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext)
+    {
+        if(_content)
+        {
+            _content->OnDataContextChanged(dataContext);
         }
     }
 
     void Window::OnAttachedToLogicalTree()
     {
         StyleableElement::OnAttachedToLogicalTree();
+        ApplyBindings();
 
         if(_content)
         {
