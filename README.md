@@ -9,7 +9,6 @@ The project is currently in development. The following has been implemented so f
 - Threading: Timer, ThreadPool, async operations using c++ 20 coroutines
 
 ## Roadmap
-- Resources
 - Pseudo classes
 - Focus manager
 - Animation

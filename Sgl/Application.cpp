@@ -8,6 +8,7 @@
 #include "Base/Threading/DelayDispatcher.h"
 #include "Base/Exceptions.h"
 #include "Base/Logger.h"
+#include "Base/Time/Stopwatch.h"
 #include "Input/SDLEvents.h"
 
 namespace Sgl
@@ -45,9 +46,33 @@ namespace Sgl
 
     void Application::SetThemeVariant(ThemeVariant value)
     {
+        if(_themeVariant == value)
+        {
+            return;
+        }
+
         _themeVariant = value;
+
+        switch(value)
+        {
+            case ThemeVariant::Light:
+                _themeMode = ThemeMode::Light; 
+                break;
+
+            case ThemeVariant::Dark:
+                _themeMode = ThemeMode::Dark;
+                break;
+
+            case ThemeVariant::System:
+                _themeMode = GetSystemThemeMode();
+                break;
+
+            default:
+                throw Exception("ThemeVariant with index '{}' does not exist", static_cast<int>(value));
+        }
+
         ThemeVariantChangedEventArgs args(value);
-        OnThemeModeChanged(args);
+        OnThemeVariantChanged(args);
     }
 
     void Application::SetCulture(const std::string& value)
@@ -74,6 +99,22 @@ namespace Sgl
     {
         static const double msMultiplier = 1e3 / SDL_GetPerformanceFrequency();
         return count * msMultiplier;
+    }
+
+    static void LogFps()
+    {
+        static constexpr TimeSpan _1s = TimeSpan::FromSeconds(1);
+        static Stopwatch s = Stopwatch::StartNew();
+        static int _fps = 0;
+        _fps++;
+
+        if(s.Elapsed() > _1s)
+        {
+            Logger::LogInfo("FPS: {}", _fps);
+
+            _fps = 0;
+            s.Restart();
+        }
     }
 
     void Application::Run()
@@ -105,11 +146,14 @@ namespace Sgl
             }              
             
             double elapsedMs = ToMilliseconds(SDL_GetPerformanceCounter() - start);
+            double delayMs = MaxFrameTime - elapsedMs;
 
-            if(elapsedMs < MaxFrameTime)
-            {                
-                SDL_DelayNS((MaxFrameTime - elapsedMs) * 1e6);
+            if(delayMs > 0)
+            {            
+                SDL_DelayNS(delayMs * 1e6);
             }
+
+            //LogFps();
 		}
 		
 		OnStopped();
@@ -141,27 +185,11 @@ namespace Sgl
 		Stopped(*this);
 	}
 
-    void Application::OnThemeModeChanged(ThemeVariantChangedEventArgs e)
+    void Application::OnThemeVariantChanged(ThemeVariantChangedEventArgs e)
     {
-        switch(e.Theme)
+        for(auto& window : _activeWindows)
         {
-            case ThemeVariant::Light:
-            {
-                _themeMode = ThemeMode::Light;
-                break;
-            }
-
-            case ThemeVariant::Dark:
-            {
-                _themeMode = ThemeMode::Dark;
-                break;
-            }
-
-            case ThemeVariant::System:
-            {
-                _themeMode = GetSystemThemeMode();
-                break;
-            }
+            window->ApplyStyle();
         }
 
         ThemeVariantChanged(*this, e);

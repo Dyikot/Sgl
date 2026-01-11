@@ -60,7 +60,7 @@ namespace Sgl
         _id = SDL_GetWindowID(_sdlWindow);
         App->AddWindow(*this);
         SetVisualRoot(this);
-        SetBackground(Colors::White);
+        SetBackground(Colors::White, ValueSource::Default);
     }
 
     Window::~Window()

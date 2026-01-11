@@ -3,6 +3,7 @@
 #include <ranges>
 
 #include "Window.h"
+#include "Base/Media/ThemeVartiant.h"
 #include "Base/Localization/StringLocalizerBase.h"
 
 namespace Sgl
@@ -10,21 +11,6 @@ namespace Sgl
 	enum class ShutdownMode
 	{
 		OnMainWindowClose, OnLastWindowClose, OnExplicitShutdown
-	};
-
-	enum class ThemeMode
-	{
-		Light, Dark
-	};
-
-	enum class ThemeVariant
-	{
-		Light, Dark, System
-	};
-
-	struct ThemeVariantChangedEventArgs
-	{
-		ThemeVariant Theme;
 	};
 
 	class Application : public IStyleHost
@@ -86,7 +72,7 @@ namespace Sgl
 	protected:
 		virtual void OnStarted();
 		virtual void OnStopped();
-		virtual void OnThemeModeChanged(ThemeVariantChangedEventArgs e);
+		virtual void OnThemeVariantChanged(ThemeVariantChangedEventArgs e);
 	private:
 		ThemeMode GetSystemThemeMode() const;
 		void HandleInputEvents();

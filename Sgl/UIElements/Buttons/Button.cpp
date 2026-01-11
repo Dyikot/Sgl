@@ -4,9 +4,9 @@ namespace Sgl::UIElements
 {
 	Button::Button()
 	{
-		SetPadding(Thickness(10));
 		SetCursor(Cursors::Pointer);
-		SetBackground(Colors::LightGray);
+		SetPadding(Thickness(10), ValueSource::Default);
+		SetBackground(Colors::LightGray, ValueSource::Default);
 	}
 
 	Button::Button(const Button& other):
