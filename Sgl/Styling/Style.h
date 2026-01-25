@@ -38,7 +38,7 @@ namespace Sgl
 
         template<typename TOwner, typename TValue, typename TResourceValue = StyleableProperty<TOwner, TValue>::Value>
         Style& Set(StyleableProperty<TOwner, TValue>& property, 
-                   ThemeResource<TResourceValue> resource)
+                   const ThemeResource<TResourceValue>& resource)
         {
             _setters.emplace_back(new ThemeResourceSetter(property, resource));
             return *this;

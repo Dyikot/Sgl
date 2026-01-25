@@ -75,26 +75,6 @@ namespace Sgl
         OnThemeVariantChanged(args);
     }
 
-    void Application::SetCulture(const std::string& value)
-	{
-		_culture = value;
-
-		if(_localizer)
-		{
-			_localizer->SetCulture(_culture);
-		}
-	}
-
-	void Application::SetLocalizer(const Ref<StringLocalizerBase>& localizer)
-	{
-		_localizer = localizer;
-
-		if(_localizer)
-		{
-			_localizer->SetCulture(_culture);
-		}
-	}    
-
     static inline double ToMilliseconds(uint64_t count)
     {
         static const double msMultiplier = 1e3 / SDL_GetPerformanceFrequency();

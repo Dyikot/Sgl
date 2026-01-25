@@ -40,7 +40,7 @@ namespace Sgl
         using Value = std::decay_t<TValue>;
 
         StyleableProperty<TOwner, TValue>& _property;
-        ThemeResource<Value> _resource;
+        const ThemeResource<Value>& _resource;
     public:
         ThemeResourceSetter(StyleableProperty<TOwner, TValue>& property, 
                             const ThemeResource<Value>& resource):

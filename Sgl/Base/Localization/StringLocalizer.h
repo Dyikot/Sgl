@@ -1,31 +1,24 @@
 #pragma once
 
-#include <vector>
-#include <unordered_map>
-#include "StringLocalizerBase.h"
+#include <format>
+#include "LocalizationStorage.h"
 
-namespace Sgl
+namespace Sgl::Localization
 {
-    class StringLocalizer : public StringLocalizerBase
-    {
-    private:
-        std::vector<std::string> _headers;
-        std::vector<std::string> _records;
-        size_t _headersCount = 0;
-        size_t _cultureIndex = 0;
-        std::unordered_map<std::string, size_t> _recordIndex;
-    public:
-        StringLocalizer(std::vector<std::string> headers, std::vector<std::string> records);
-        StringLocalizer(std::string csvFilePath, char delimeter = ',');
-        StringLocalizer(const StringLocalizer&) = default;
-        StringLocalizer(StringLocalizer&&) = default;
+	class StringLocalizer
+	{
+	public:
+		const std::string& operator()(const std::string& key) const
+		{
+			return GetLocalizationStorage()->GetLocalizedString(key);
+		}
 
-        void SetCulture(const std::string& culture) override;
-        const std::string& GetCulture() const override;
+		template<typename... TArgs>
+		std::string operator()(const std::string& key, TArgs&&... args) const
+		{
+			return std::vformat(operator()(key), std::make_format_args(args...));
+		}
+	};
 
-        const std::string& operator()(const std::string& name) const override;
-    private:
-        void CreateRecordIndex();
-        size_t GetRecordIndex(const std::string& record) const;
-    };
+	static inline StringLocalizer Localizer;
 }

@@ -4,7 +4,6 @@
 
 #include "Window.h"
 #include "Base/Media/ThemeVartiant.h"
-#include "Base/Localization/StringLocalizerBase.h"
 
 namespace Sgl
 {
@@ -38,8 +37,6 @@ namespace Sgl
 		bool _isRunning = false;
 		ThemeMode _themeMode;
 		ThemeVariant _themeVariant;
-		std::string _culture = "en";
-		Ref<StringLocalizerBase> _localizer;
 
 		Window* _focusedWindow = nullptr;
 		std::vector<Window*> _windows;
@@ -54,12 +51,6 @@ namespace Sgl
 		ThemeVariant GetThemeVariant() const { return _themeVariant; }
 
 		ThemeMode GetThemeMode() const noexcept { return _themeMode; }
-
-		void SetCulture(const std::string& value);
-		const std::string& GetCulture() const { return _culture; }
-
-		void SetLocalizer(const Ref<StringLocalizerBase>& localizer);
-		const Ref<StringLocalizerBase>& GetLocalizer() const { return _localizer; }
 
 		StyleCollection& GetStyles() final { return Styles; }
 		IStyleHost* GetStylingParent() final { return nullptr; }
