@@ -21,25 +21,20 @@ namespace Sgl
 
 			if(current == '"')
 			{
-				inQuotes = !inQuotes;
+				if(i + 1 < line.length() && line[i + 1] == '"')
+				{
+					record.push_back('\"');
+					i++;
+				}
+				else
+				{
+					inQuotes = !inQuotes;
+				}
 			}
 			else if(current == delimeter && !inQuotes)
 			{
 				records.push_back(std::move(record));
 				record.clear();
-			}
-			else if(current == '\\' && (i + 1) < line.length())
-			{
-				switch(line[i + 1])
-				{
-					case 't': record.push_back('\t'); i++; break;
-					case 'n': record.push_back('\n'); i++; break;
-					case '"': record.push_back('"');  i++; break;
-					case '\\': record.push_back('\\'); i++; break;
-					default:
-						record.push_back(current);
-						break;
-				}
 			}
 			else
 			{
