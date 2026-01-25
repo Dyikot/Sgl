@@ -13,30 +13,37 @@ namespace Sgl
 		std::string record;
 		bool inQuotes = false;		
 
-		for(size_t i = 0; i < line.length(); )
+		record.reserve(line.size() / 4);
+
+		for(size_t i = 0; i < line.length(); i++)
 		{
-			if(line[i] == '"')
+			const char current = line[i];
+
+			if(current == '"')
 			{
-				if(inQuotes && i + 1 < line.length() && line[i + 1] == '"')
-				{
-					record += '"';
-					i += 2;
-				}
-				else
-				{
-					inQuotes = !inQuotes;
-					i++;
-				}
+				inQuotes = !inQuotes;
 			}
-			else if(line[i] == delimeter && !inQuotes)
+			else if(current == delimeter && !inQuotes)
 			{
-				records.push_back(record);
+				records.push_back(std::move(record));
 				record.clear();
-				i++;
+			}
+			else if(current == '\\' && (i + 1) < line.length())
+			{
+				switch(line[i + 1])
+				{
+					case 't': record.push_back('\t'); i++; break;
+					case 'n': record.push_back('\n'); i++; break;
+					case '"': record.push_back('"');  i++; break;
+					case '\\': record.push_back('\\'); i++; break;
+					default:
+						record.push_back(current);
+						break;
+				}
 			}
 			else
 			{
-				record += line[i++];
+				record.push_back(current);
 			}
 		}
 
@@ -78,4 +85,3 @@ namespace Sgl
 		return success;
 	}
 }
-
