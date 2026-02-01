@@ -6,12 +6,11 @@ namespace Sgl
 {
 	class Window;
 
+	/// <summary>
+	/// An awaitable object that allows a coroutine to suspend execution until a modal window is closed.
+	/// </summary>
 	class ModalWindowAwaitable
 	{
-	private:
-		bool _hasSuspended = false;
-		Window& _window;
-		std::coroutine_handle<> _handle;
 	public:
 		explicit ModalWindowAwaitable(Window& window);
 		~ModalWindowAwaitable();
@@ -19,5 +18,9 @@ namespace Sgl
 		bool await_ready();
 		void await_suspend(std::coroutine_handle<> handle);
 		void await_resume() {}
+	private:
+		Window& _window;
+		std::coroutine_handle<> _handle;
+		bool _hasSuspended = false;
 	};
 }

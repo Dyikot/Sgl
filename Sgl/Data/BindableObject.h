@@ -29,12 +29,12 @@ namespace Sgl
 	private:
 		class BindingContext
 		{
-		private:
-			BindingBase* _binding;
-			BindableObject* _bindgableObject;
 		public:
 			BindingContext(BindingBase* binding, BindableObject* bindableObject);
 			void Clear();
+		private:
+			BindingBase* _binding;
+			BindableObject* _bindgableObject;
 		};
 
 		struct Observer
@@ -47,13 +47,6 @@ namespace Sgl
 				return Handler == other.Handler;
 			}
 		};		
-
-		std::unordered_map<PropertyBase*, Any> _attachedValues;
-		std::vector<Observer> _propertiesObservers;
-		std::vector<std::unique_ptr<BindingBase>> _bindings;
-		Ref<INotifyPropertyChanged> _dataContext;
-
-		ValueSource _dataContextSource {};
 	public:
 		BindableObject() = default;
 		BindableObject(const BindableObject& other);
@@ -121,6 +114,8 @@ namespace Sgl
 		{
 			_attachedValues.erase(&property);
 		}
+
+		static inline StyleableProperty DataContextProperty { &SetDataContext, &GetDataContext };
 	protected:
 		virtual void NotifyPropertyChanged(PropertyBase& property);
 		virtual void OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext) {}
@@ -143,14 +138,17 @@ namespace Sgl
 
 			return true;
 		}
-	public:
-		static inline StyleableProperty DataContextProperty { &SetDataContext, &GetDataContext };
+	private:
+		std::unordered_map<PropertyBase*, Any> _attachedValues;
+		std::vector<Observer> _propertiesObservers;
+		std::vector<std::unique_ptr<BindingBase>> _bindings;
+		Ref<INotifyPropertyChanged> _dataContext;
+
+		ValueSource _dataContextSource {};
 	};
 
 	class BindingBase
 	{
-	protected:
-		bool _applied = false;
 	public:
 		virtual ~BindingBase() = default;
 
@@ -158,19 +156,17 @@ namespace Sgl
 
 		virtual void Apply(BindableObject& bindableObject) = 0;
 		virtual void Clear(BindableObject& bindableObject) = 0;
+	protected:
+		bool _applied = false;
 	};
 
 	template<typename TTarget, typename TSource, typename TValue>
 	class PropertyBinding : public BindingBase
 	{
-	private:
-		Property<TTarget, TValue>& _targetProperty;
-		Property<TSource, TValue>& _sourceProperty;
-		BindingMode _mode;
 	public:
 		PropertyBinding(Property<TTarget, TValue>& targetProperty,
-				Property<TSource, TValue>& sourceProperty,
-				BindingMode mode):
+						Property<TSource, TValue>& sourceProperty,
+						BindingMode mode):
 			_targetProperty(targetProperty),
 			_sourceProperty(sourceProperty),
 			_mode(mode)
@@ -252,6 +248,10 @@ namespace Sgl
 
 			_applied = false;
 		}
+	private:
+		Property<TTarget, TValue>& _targetProperty;
+		Property<TSource, TValue>& _sourceProperty;
+		BindingMode _mode;
 	};
 
 	template<typename TTarget, typename TSource, typename TValue, typename TEvent>
@@ -259,11 +259,6 @@ namespace Sgl
 	{
 	private:
 		using TOwner = Property<TTarget, TValue>::Owner;
-
-		Property<TTarget, TValue>& _targetProperty;
-		Property<TSource, TValue>& _sourceProperty;
-		TEvent TOwner::* _event;
-		BindingMode _mode;
 	public:
 		EventBinding(Property<TTarget, TValue>& targetProperty,
 					 Property<TSource, TValue>& sourceProperty,
@@ -351,5 +346,10 @@ namespace Sgl
 
 			_applied = false;
 		}
+	private:
+		Property<TTarget, TValue>& _targetProperty;
+		Property<TSource, TValue>& _sourceProperty;
+		TEvent TOwner::* _event;
+		BindingMode _mode;
 	};
 }

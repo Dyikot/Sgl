@@ -1,15 +1,16 @@
 #include "Timer.h"
 #include <iostream>
+#include <future>
 
 using namespace std::chrono;
 
 namespace Sgl
 {
-	Timer::Timer(TimeSpan timespan) noexcept:
-		Duration(timespan)
+	Timer::Timer(TimeSpan interval) noexcept:
+		Duration(interval)
 	{}
 
-	Timer::Timer(size_t milliseconds) noexcept:
+	Timer::Timer(int64_t milliseconds) noexcept:
 		Duration(TimeSpan::FromMilliseconds(milliseconds))
 	{}
 

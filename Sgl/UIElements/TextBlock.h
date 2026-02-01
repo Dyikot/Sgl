@@ -5,50 +5,14 @@
 
 namespace Sgl::UIElements
 {
+	inline constexpr float DefaultFontSize = 14;
+
 	class TextBlock : public UIElement
 	{
 	public:
-		static constexpr float DefaultFontSize = 14;
-	private:
-		static constexpr size_t FontFamilyFlag		= 0;
-		static constexpr size_t FontSizeFlag		= 1;
-		static constexpr size_t FontStyleFlag		= 2;
-		static constexpr size_t FontOutlineFlag		= 3;
-		static constexpr size_t FlowDirectionFlag	= 4;
-		static constexpr size_t TextAlignmentFlag	= 5;
-
-		std::string _text;
-		float _fontSize = DefaultFontSize;
-		int _outline = 0;
-		FontFamily _fontFamily = FontFamily::Default;
-		FlowDirection _flowDirection = FlowDirection::BottomToTop;
-		FontStyle _fontStyle;
-		Color _foreground = Colors::Black;
-		TextWrapping _textWrapping = TextWrapping::NoWrap;
-		TextAlignment _textAlignment = TextAlignment::Left;
-		Thickness _padding;
-
-		ValueSource _textSource {};
-		ValueSource _fontSizeSource {};
-		ValueSource _outlineSource {};
-		ValueSource _fontFamilySource {};
-		ValueSource _flowDirectionSource {};
-		ValueSource _fontStyleSource {};
-		ValueSource _foregroundSource {};
-		ValueSource _textWrappingSource {};
-		ValueSource _textAlignmentSource {};
-		ValueSource _paddingSource {};
-
-		FRect _textTextureBounds {};
-		FontImpl _fontImpl;
-		Texture _textTexture;
-		bool _isTextTextureValid = false;
-		std::bitset<6> _fontFlags = 1;
-	public:
 		TextBlock();
 		TextBlock(const TextBlock& other);
-		TextBlock(TextBlock&& other) noexcept;
-		~TextBlock() = default;
+		TextBlock(TextBlock&& other) noexcept;		
 
 		void SetText(const std::string& value, ValueSource source = ValueSource::Local);
 		const std::string& GetText() const { return _text; }
@@ -81,15 +45,7 @@ namespace Sgl::UIElements
 		Thickness GetPadding() const { return _padding; }
 
 		void Render(RenderContext context) final;
-	protected:
-		void InvalidateTextTexture();
-		FSize MeasureContent(FSize avaliableSize) override;
-		void ArrangeContent(FRect rect) override;
-	private:
-		void InvalidateFont(size_t flag);
-		void UpdateFont();
-		void CreateTextTexture();
-	public:
+
 		static inline StyleableProperty TextProperty { &SetText, &GetText };
 		static inline StyleableProperty FontSizeProperty { &SetFontSize, &GetFontSize };
 		static inline StyleableProperty FontOutlineProperty { &SetFontOutline, &GetFontOutline };
@@ -100,5 +56,48 @@ namespace Sgl::UIElements
 		static inline StyleableProperty TextWrappingProperty { &SetTextWrapping, &GetTextWrapping };
 		static inline StyleableProperty TextAlignmentProperty { &SetTextAlignment, &GetTextAlignment };
 		static inline StyleableProperty PaddingProperty { &SetPadding, &GetPadding };
+	protected:
+		void InvalidateTextTexture();
+		FSize MeasureContent(FSize avaliableSize) override;
+		void ArrangeContent(FRect rect) override;
+	private:
+		void InvalidateFont(size_t flag);
+		void UpdateFont();
+		void CreateTextTexture();
+	private:
+		static constexpr size_t FontFamilyFlag = 0;
+		static constexpr size_t FontSizeFlag = 1;
+		static constexpr size_t FontStyleFlag = 2;
+		static constexpr size_t FontOutlineFlag = 3;
+		static constexpr size_t FlowDirectionFlag = 4;
+		static constexpr size_t TextAlignmentFlag = 5;
+
+		std::string _text;
+		float _fontSize = DefaultFontSize;
+		int _outline = 0;
+		FontFamily _fontFamily = FontFamily::Default;
+		FlowDirection _flowDirection = FlowDirection::BottomToTop;
+		FontStyle _fontStyle;
+		Color _foreground = Colors::Black;
+		TextWrapping _textWrapping = TextWrapping::NoWrap;
+		TextAlignment _textAlignment = TextAlignment::Left;
+		Thickness _padding;
+
+		ValueSource _textSource {};
+		ValueSource _fontSizeSource {};
+		ValueSource _outlineSource {};
+		ValueSource _fontFamilySource {};
+		ValueSource _flowDirectionSource {};
+		ValueSource _fontStyleSource {};
+		ValueSource _foregroundSource {};
+		ValueSource _textWrappingSource {};
+		ValueSource _textAlignmentSource {};
+		ValueSource _paddingSource {};
+
+		FRect _textTextureBounds {};
+		FontImpl _fontImpl;
+		Texture _textTexture;
+		bool _isTextTextureValid = false;
+		std::bitset<6> _fontFlags = 1;
 	};
 }

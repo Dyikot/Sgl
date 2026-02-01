@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 #include <SDL3_image/SDL_image.h>
-#include "../Base/Logger.h"
+#include "../Base/Logging.h"
 #include "../Render/Surface.h"
 
 namespace Sgl
@@ -89,7 +89,7 @@ namespace Sgl
 
         if(_cursor == nullptr)
         {
-            Logger::LogError("Unable to create a cursor: {}", SDL_GetError());
+            Logging::LogError("Unable to create a cursor: {}", SDL_GetError());
         }
     }
 
@@ -130,7 +130,7 @@ namespace Sgl
     {
         if(SDL_ShowCursor())
         {
-            Logger::LogWarning("Unable to show a cursor: {}", SDL_GetError());
+            Logging::LogWarning("Unable to show a cursor: {}", SDL_GetError());
         }
     }
 
@@ -138,19 +138,13 @@ namespace Sgl
     {
         if(SDL_HideCursor())
         {
-            Logger::LogWarning("Unable to hide a cursor: {}", SDL_GetError());
+            Logging::LogWarning("Unable to hide a cursor: {}", SDL_GetError());
         }
     }
 
     bool Cursor::IsVisible()
     {
         return SDL_CursorVisible();
-    }
-
-    Cursor& Cursor::operator=(std::nullptr_t)
-    {
-        Destroy();
-        return *this;
     }
 
     Cursor& Cursor::operator=(const Cursor& other)

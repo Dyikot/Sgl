@@ -68,11 +68,21 @@ namespace Sgl
 			return Alpha == 0x00;
 		}
 
+		/// <summary>
+		/// Converts the color to a 32-bit unsigned integer in RGBA format,
+		/// where each component occupies one byte in big-endian order: 0xRRGGBBAA.
+		/// </summary>
+		/// <returns>A uint32_t value representing the color in RGBA layout.</returns>
 		constexpr uint32_t ToRgba() const noexcept
 		{
 			return (Red << 24) | (Green << 16) | (Blue << 8) | Alpha;
 		}
 
+		/// <summary>
+		/// Converts the color to a 32-bit unsigned integer in ARGB format,
+		/// where each component occupies one byte in big-endian order: 0xAARRGGBB.
+		/// Commonly used in graphics APIs such as DirectX and Windows GDI.
+		/// </summary>
 		constexpr uint32_t ToArgb() const noexcept
 		{
 			return (Alpha << 24) | (Red << 16) | (Green << 8) | Blue;
@@ -88,10 +98,6 @@ namespace Sgl
 			return Red == color.Red && Green == color.Green && Blue == color.Blue;
 		}
 
-		/// <summary>
-		/// Converts this Color to an SDL_Color structure
-		/// </summary>
-		/// <returns>SDL_Color representation of this color</returns>
 		constexpr operator SDL_Color() const
 		{
 			return SDL_Color(Red, Green, Blue, Alpha);

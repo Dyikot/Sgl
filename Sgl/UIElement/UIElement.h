@@ -22,6 +22,10 @@ namespace Sgl
 		using MouseButtonEventHandler = EventHandler<UIElement, MouseButtonEventArgs>;
 		using MouseWheelEventHandler = EventHandler<UIElement, MouseWheelEventArgs&>;
 	public:
+		UIElement() = default;
+		UIElement(const UIElement& other);
+		UIElement(UIElement&& other) noexcept;
+		
 		Event<KeyEventHandler> KeyUp;
 		Event<KeyEventHandler> KeyDown;
 		Event<MouseMoveEventHandler> MouseMove;
@@ -29,21 +33,8 @@ namespace Sgl
 		Event<MouseMoveEventHandler> MouseLeave;
 		Event<MouseButtonEventHandler> MouseUp;
 		Event<MouseButtonEventHandler> MouseDown;
-		Event<MouseWheelEventHandler> MouseWheel;		
-	private:		
-		Any _tag;		
-		Ref<UIElement> _tooltip;		
+		Event<MouseWheelEventHandler> MouseWheel;
 
-		bool _isMouseOver = false;
-
-		ValueSource _tagSource {};
-		ValueSource _tooltipSource {};
-	public:
-		UIElement() = default;
-		UIElement(const UIElement& other);
-		UIElement(UIElement&& other) noexcept;
-		virtual ~UIElement() = default;
-		
 		void SetTag(const Any& value, ValueSource source = ValueSource::Local);
 		const Any& GetTag() const { return _tag; }
 
@@ -52,7 +43,10 @@ namespace Sgl
 
 		bool IsMouseOver() const { return _isMouseOver; }
 
-		void Render(RenderContext context) override;		
+		void Render(RenderContext context) override;	
+
+		static inline StyleableProperty TagProperty { &SetTag, &GetTag };
+		static inline StyleableProperty ToolTipProperty { &SetToolTip, &GetToolTip };
 	protected:
 		void RenderBackground(RenderContext context);
 		void OnCursorChanged(const Cursor& cursor) override;
@@ -66,13 +60,16 @@ namespace Sgl
 		virtual void OnMouseEnter(MouseMoveEventArgs e);
 		virtual void OnMouseLeave(MouseMoveEventArgs e);
 		void OnAttachedToLogicalTree() override;
-	public:
-		static inline StyleableProperty TagProperty { &SetTag, &GetTag };
-		static inline StyleableProperty ToolTipProperty { &SetToolTip, &GetToolTip };
-
+	private:
 		friend class Panel;
 		friend class Window;
 		friend class ContentUIElement;
+
+		Any _tag;
+		Ref<UIElement> _tooltip;
+		bool _isMouseOver = false;
+		ValueSource _tagSource {};
+		ValueSource _tooltipSource {};		
 	};
 
 	class UIElementDataTemplate : public IDataTemplate

@@ -10,8 +10,6 @@ namespace Sgl
 {
     class StyleCollection
     {
-    private:
-        std::vector<Style> _items;
     public:
         StyleCollection() = default;
         StyleCollection(const StyleCollection&) = delete;
@@ -35,5 +33,7 @@ namespace Sgl
 
         StyleCollection& operator=(const StyleCollection&) = delete;
         StyleCollection& operator=(StyleCollection&&) noexcept = default;
+    private:
+        std::vector<Style> _items;
     };    
 }

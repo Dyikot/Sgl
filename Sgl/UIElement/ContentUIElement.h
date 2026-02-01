@@ -6,20 +6,6 @@ namespace Sgl
 {
 	class ContentUIElement : public UIElement
 	{
-	private:
-		Ref<INotifyPropertyChanged> _content;
-		Ref<IDataTemplate> _contentTemplate = New<UIElementDataTemplate>();
-		Ref<UIElement> _contentPresenter;
-		Thickness _padding;
-		VerticalAlignment _verticalContentAlignment = VerticalAlignment::Top;
-		HorizontalAlignment _horizontalContentAlignment = HorizontalAlignment::Left;
-		bool _isContentPresenterValid = false;
-
-		ValueSource _contentSource {};
-		ValueSource _contentTemplateSource {};
-		ValueSource _paddingSource {};
-		ValueSource _verticalContentAlignmentSource {};
-		ValueSource _horizontalContentAlignmentSource {};
 	public:
 		ContentUIElement() = default;
 		ContentUIElement(const ContentUIElement& other);
@@ -48,6 +34,12 @@ namespace Sgl
 
 		void Render(RenderContext context) override;
 		void ApplyStyle() override;
+
+		static inline StyleableProperty ContentProperty { &SetContent, &GetContent };
+		static inline StyleableProperty ContentTemplateProperty { &SetContentTemplate, &GetContentTemplate };
+		static inline StyleableProperty PaddingProperty { &SetPadding, &GetPadding };
+		static inline StyleableProperty VerticalContentAlignmentProperty { &SetVerticalContentAlignment, &GetVerticalContentAlignment };
+		static inline StyleableProperty HorizontalContentAlignmentProperty { &SetHorizontalContentAlignment, &GetHorizontalContentAlignment };
 	protected:
 		virtual void OnContentPresenterCreated(UIElement& presenter);
 		virtual void OnContentPresenterDestroying(UIElement& presenter);
@@ -66,11 +58,19 @@ namespace Sgl
 		virtual Thickness GetLayoutPadding() const { return _padding; }
 	private:
 		void UpdatePresenter();
-	public:
-		static inline StyleableProperty ContentProperty { &SetContent, &GetContent };
-		static inline StyleableProperty ContentTemplateProperty { &SetContentTemplate, &GetContentTemplate };
-		static inline StyleableProperty PaddingProperty { &SetPadding, &GetPadding };
-		static inline StyleableProperty VerticalContentAlignmentProperty { &SetVerticalContentAlignment, &GetVerticalContentAlignment };
-		static inline StyleableProperty HorizontalContentAlignmentProperty { &SetHorizontalContentAlignment, &GetHorizontalContentAlignment };
+	private:
+		Ref<INotifyPropertyChanged> _content;
+		Ref<IDataTemplate> _contentTemplate = New<UIElementDataTemplate>();
+		Ref<UIElement> _contentPresenter;
+		Thickness _padding;
+		VerticalAlignment _verticalContentAlignment = VerticalAlignment::Top;
+		HorizontalAlignment _horizontalContentAlignment = HorizontalAlignment::Left;
+		bool _isContentPresenterValid = false;
+
+		ValueSource _contentSource {};
+		ValueSource _contentTemplateSource {};
+		ValueSource _paddingSource {};
+		ValueSource _verticalContentAlignmentSource {};
+		ValueSource _horizontalContentAlignmentSource {};
 	};
 }

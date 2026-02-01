@@ -7,7 +7,7 @@
 #include "Base/Threading/Dispatcher.h"
 #include "Base/Threading/DelayDispatcher.h"
 #include "Base/Exceptions.h"
-#include "Base/Logger.h"
+#include "Base/Logging.h"
 #include "Base/Time/Stopwatch.h"
 #include "Input/SDLEvents.h"
 
@@ -23,12 +23,12 @@ namespace Sgl
 
         if(!SDL_Init(SDL_INIT_VIDEO))
         {
-            Logger::LogError("Unable to initialize SDL: {}", SDL_GetError());
+            Logging::LogError("Unable to initialize SDL: {}", SDL_GetError());
         }
 
         if(!TTF_Init())
         {
-            Logger::LogError("Unable to initialize TTF: {}", SDL_GetError());
+            Logging::LogError("Unable to initialize TTF: {}", SDL_GetError());
         }
 
         SDL_SetHint(SDL_HINT_RENDER_LINE_METHOD, "2");
@@ -90,7 +90,7 @@ namespace Sgl
 
         if(s.Elapsed() > _1s)
         {
-            Logger::LogInfo("FPS: {}", _fps);
+            Logging::LogInfo("FPS: {}", _fps);
 
             _fps = 0;
             s.Restart();
@@ -101,7 +101,7 @@ namespace Sgl
 	{		
 		if(_isRunning)
 		{
-            Logger::LogWarning("Application already running");
+            Logging::LogWarning("Application already running");
 			return;
 		}        
 

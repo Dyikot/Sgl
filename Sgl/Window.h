@@ -3,7 +3,7 @@
 #include <optional>
 #include <coroutine>
 #include "Base/Event.h"
-#include "Base/Logger.h"
+#include "Base/Logging.h"
 #include "Base/Threading/ModalWindowAwaitable.h"
 #include "Render/Surface.h"
 #include "Input/TextEventArgs.h"
@@ -11,42 +11,69 @@
 
 namespace Sgl
 {
+	/// <summary>
+	/// Specifies the display mode of a window.
+	/// </summary>
 	enum class WindowDisplayMode
 	{
-		Window, BorderlessWindow, Fullscreen
+		Window,           // Standard window with borders and title bar.
+		BorderlessWindow, // Window without borders, typically spanning the screen but not exclusive.
+		Fullscreen        // Exclusive fullscreen mode.
 	};
 
+	/// <summary>
+	/// Represents the current state of a window.
+	/// </summary>
 	enum class WindowState
 	{
-		Normal, Minimized, Maximized
+		Normal,     // The window is in its standard restored state.
+		Minimized,  // The window is minimized (e.g., to the taskbar).
+		Maximized   // The window is maximized to fill the screen (or work area).
 	};
 
+	/// <summary>
+	/// Event arguments provided when the window's state changes (e.g., minimized, maximized).
+	/// </summary>
 	struct WindowStateChangedEventArgs
 	{
 		WindowState State;
 	};
 
+	/// <summary>
+	/// Event arguments provided when the window's position changes on the screen.
+	/// </summary>
 	struct WindowPositionChangedEventArgs
 	{
 		int X;
 		int Y;
 	};
 
+	/// <summary>
+	/// Event arguments provided when the window's client size changes.
+	/// </summary>
 	struct WindowSizeChangedEventArgs
 	{
 		int Width;
 		int Height;
 	};
 
+	/// <summary>
+	/// Event arguments used to allow cancellation of an operation (e.g., closing a window).
+	/// </summary>
 	struct CancelEventArgs
 	{
 		bool Cancel;
 	};
 
+	/// <summary>
+	/// Represents the result of a dialog or modal interaction.
+	/// </summary>
 	enum class DialogResult
 	{
-		None, Accept, Cancel
-	};	
+		None,    // No result has been set (default or pending state).
+		Accept,  // The user accepted the dialog (e.g., clicked OK).
+		Cancel   // The user canceled the dialog (e.g., clicked Cancel).
+	};
 
 	/// <summary>
 	/// The Window class provides a high-level interface for creating and managing window,
@@ -62,6 +89,11 @@ namespace Sgl
 		using WindowSizeChangedEventHandler = EventHandler<Window, WindowSizeChangedEventArgs>;
 		using CancelEventHandler = EventHandler<Window, CancelEventArgs&>;
 	public:
+		Window();
+		Window(const Window&) = delete;
+		Window(Window&&) = delete;
+		~Window();
+
 		/// <summary>
 		/// Event triggered when the window's state changes (minimized, maximized, restored)
 		/// </summary>
@@ -77,36 +109,30 @@ namespace Sgl
 		/// </summary>
 		Event<WindowSizeChangedEventHandler> SizeChanged;
 
+		/// <summary>
+		/// Event triggered when the window is about to close.
+		/// </summary>
 		Event<CancelEventHandler> Closing;
+
+		/// <summary>
+		/// Event triggered after the window has been closed.
+		/// </summary>
 		Event<WindowEventHandler> Closed;
 
 		/// <summary>
 		/// Determines if the window should be rendered when minimized
 		/// </summary>
 		bool IsRenderableWhenMinimized = false;
-		DialogResult DialogResult = DialogResult::None;
-		TextureLoader ImageLoader;
-	private:
-		SDL_Window* _sdlWindow;
-		SDL_Renderer* _renderer;
-		RenderContext _renderContext;
-		SDL_WindowID _id = 0;
-		Ref<UIElement> _content;
-		bool _isModal = false;
-		bool _isClosing = false;
-		bool _isClosed = true;
-		bool _isActivated = false;
-		bool _isRenderValid = false;
-		Window* _owner = nullptr;
-		std::list<Window*> _ownedWindows;
-		Surface _icon;
 
-		ValueSource _contentSource {};
-	public:
-		Window();
-		Window(const Window&) = delete;
-		Window(Window&&) = delete;
-		~Window();
+		/// <summary>
+		/// The result returned by this dialog when it closes.
+		/// </summary>
+		DialogResult DialogResult = DialogResult::None;
+
+		/// <summary>
+		/// Provides a convenient way to load textures (e.g., icons, images) using the window's renderer.
+		/// </summary>
+		TextureLoader ImageLoader;
 
 		/// <summary>
 		/// Gets the underlying SDL window handle
@@ -258,18 +284,58 @@ namespace Sgl
 		/// <returns>True if resizable, false otherwise</returns>
 		bool IsResizable() const;
 
+		/// <summary>
+		/// Sets whether the window should always appear on top of other windows.
+		/// </summary>
+		/// <param name="value"> - true to make the window stay on top; false to restore normal z-order. Defaults to true.</param>
 		void SetAlwayOnTop(bool value = true);
+
+		/// <summary>
+		/// Checks whether the window is set to always stay on top.
+		/// </summary>
+		/// <returns>True if the window is always on top; otherwise, false.</returns>
 		bool IsAlwayOnTop() const;
 
+		/// <summary>
+		/// Sets the owner of this window. Owned windows are typically modal.
+		/// </summary>
+		/// <param name="owner"> - pointer to the owner window, or nullptr to remove ownership.</param>
 		void SetOwner(Window* owner);
+
+		/// <summary>
+		/// Gets the current owner of this window.
+		/// </summary>
+		/// <returns>Pointer to the owner window, or nullptr if no owner is set.</returns>
 		Window* GetOwner() const;
 
+		/// <summary>
+		/// Gets a list of windows that are owned by this window.
+		/// </summary>
+		/// <returns>A const reference to the list of owned windows.</returns>
 		const std::list<Window*>& GetOwnedWindows() const;
 
+		/// <summary>
+		/// Sets the root UI element displayed in the window's client area.
+		/// </summary>
+		/// <param name="value"> - the UI element to use as content.</param>
+		/// <param name="source"> - the source of the value. Defaults to ValueSource::Local.</param>
 		void SetContent(const Ref<UIElement>& value, ValueSource source = ValueSource::Local);
+
+		/// <summary>
+		/// Gets the root UI element currently displayed in the window.
+		/// </summary>
+		/// <returns>A reference to the current content element.</returns>
 		const Ref<UIElement>& GetContent() const { return _content; }
 
+		/// <summary>
+		/// Marks the window's visual content as invalid, requesting a re-render on the next frame.
+		/// </summary>
 		void InvalidateRender() final;
+
+		/// <summary>
+		/// Checks whether the window needs to be rendered due to pending changes.
+		/// </summary>
+		/// <returns>True if rendering is required; otherwise, false.</returns>
 		bool NeedsRendering() const final { return !_isRenderValid; }
 
 		/// <summary>
@@ -278,9 +344,9 @@ namespace Sgl
 		void Show();
 
 		/// <summary>
-		/// Shows window as modal
+		/// Shows this window as a modal dialog centered over the specified owner window.
 		/// </summary>
-		/// <param name="owner"> - the window that will own this window</param>
+		/// <param name="owner"> - the parent window that owns this modal dialog</param>
 		/// <returns>WindowModalAwaitable - object that can be co_awaited</returns>
 		ModalWindowAwaitable ShowModal(Window& owner);
 
@@ -311,13 +377,35 @@ namespace Sgl
 		/// <returns>- true if visible, false otherwise</returns>
 		bool IsVisible() const;
 
+		/// <summary>
+		/// Checks whether the window has been closed.
+		/// </summary>
+		/// <returns>True if the window is closed; otherwise, false.</returns>
 		bool IsClosed() const { return _isClosed; }
 
+		/// <summary>
+		/// Sets the styling root used to resolve styles and resources for this window.
+		/// </summary>
+		/// <param name="value"> - pointer to the style host.</param>
 		void SetStylingRoot(IStyleHost* value) final;
 
+		/// <summary>
+		/// Renders the window's content using the provided rendering context.
+		/// </summary>
+		/// <param name="context"> - the render context used to draw UI elements.</param>
 		void Render(RenderContext context) override;
-		void ApplyStyle() override;		
+
+		/// <summary>
+		/// Applies the current style rules to this window and its visual tree.
+		/// </summary>
+		void ApplyStyle() override;
+
+		/// <summary>
+		/// Processes window-specific logic.
+		/// </summary>
 		virtual void Process();
+
+		static inline StyleableProperty ContentProperty { &SetContent, &GetContent };
 	protected:
 		void OnCursorChanged(const Cursor& cursor) override;
 		void OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext) override;
@@ -343,10 +431,24 @@ namespace Sgl
 		virtual void OnClosed();
 	private:
 		void RenderCore();
-
+	private:
 		friend class UIElement;
 		friend class Application;
-	public:
-		static inline StyleableProperty ContentProperty { &SetContent, &GetContent };
+
+		SDL_Window* _sdlWindow;
+		SDL_Renderer* _renderer;
+		RenderContext _renderContext;
+		SDL_WindowID _id = 0;
+		Ref<UIElement> _content;
+		bool _isModal = false;
+		bool _isClosing = false;
+		bool _isClosed = true;
+		bool _isActivated = false;
+		bool _isRenderValid = false;
+		Window* _owner = nullptr;
+		std::list<Window*> _ownedWindows;
+		Surface _icon;
+
+		ValueSource _contentSource {};
 	};
 }

@@ -20,8 +20,6 @@ namespace Sgl
 				return Handler == other.Handler;
 			}
 		};
-
-		std::vector<Observer> _propertiesObservers;
 	public:
 		ObservableObject() = default;
 		ObservableObject(const ObservableObject&) = default;
@@ -63,5 +61,7 @@ namespace Sgl
 
 			return true;
 		}
+	private:
+		std::vector<Observer> _propertiesObservers;
 	};
 }

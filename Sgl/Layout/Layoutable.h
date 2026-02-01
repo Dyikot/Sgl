@@ -8,35 +8,6 @@ namespace Sgl
 {
 	class Layoutable : public Renderable
 	{
-	protected:
-		FRect _bounds = {};
-		FSize _desiredSize = {};
-	private:
-		float _width = 0;
-		float _height = 0;
-		float _minWidth = 0;
-		float _minHeight = 0;
-		float _maxWidth = std::numeric_limits<float>::max();
-		float _maxHeight = std::numeric_limits<float>::max();
-		Thickness _margin;
-		bool _isVisible = true;
-		VerticalAlignment _verticalAlignment = VerticalAlignment::Top;
-		HorizontalAlignment _horizontalAlignment = HorizontalAlignment::Left;
-		Layoutable* _layotableParent = nullptr;
-
-		bool _isArrangeValid = false;
-		bool _isMeasureValid = false;
-
-		ValueSource _widthSource {};
-		ValueSource _heightSource {};
-		ValueSource _minWidthSource {};
-		ValueSource _minHeightSource {};
-		ValueSource _maxWidthSource {};
-		ValueSource _maxHeightSource {};
-		ValueSource _marginSource {};
-		ValueSource _isVisibleSource {};
-		ValueSource _verticalAlignmentSource {};
-		ValueSource _horizontalAlignmentSource {};
 	public:
 		Layoutable() = default;
 		Layoutable(const Layoutable& other);
@@ -87,12 +58,7 @@ namespace Sgl
 		virtual FSize MeasureCore(FSize avaliableSize);
 		void InvalidateArrange();
 		void InvalidateMeasure();
-	protected:
-		virtual FSize MeasureContent(FSize avaliableSize) { return FSize(); }
-		virtual void ArrangeContent(FRect rect) { }
-		void OnAttachedToLogicalTree() override;
-		void OnDetachedFromLogicalTree() override;
-	public:
+
 		static inline StyleableProperty WidthProperty { &SetWidth, &GetWidth };
 		static inline StyleableProperty HeightProperty { &SetHeight, &GetHeight };
 		static inline StyleableProperty MinWidthProperty { &SetMinWidth, &GetMinWidth };
@@ -103,5 +69,39 @@ namespace Sgl
 		static inline StyleableProperty IsVisibleProperty { &SetIsVisible, &IsVisible };
 		static inline StyleableProperty VerticalAlignmentProperty { &SetVerticalAlignment, &GetVerticalAlignment };
 		static inline StyleableProperty HorizontalAlignmentProperty { &SetHorizontalAlignment, &GetHorizontalAlignment };
+	protected:
+		virtual FSize MeasureContent(FSize avaliableSize) { return FSize(); }
+		virtual void ArrangeContent(FRect rect) { }
+		void OnAttachedToLogicalTree() override;
+		void OnDetachedFromLogicalTree() override;
+	protected:
+		FRect _bounds = {};
+		FSize _desiredSize = {};
+	private:
+		float _width = 0;
+		float _height = 0;
+		float _minWidth = 0;
+		float _minHeight = 0;
+		float _maxWidth = std::numeric_limits<float>::max();
+		float _maxHeight = std::numeric_limits<float>::max();
+		Thickness _margin;
+		bool _isVisible = true;
+		VerticalAlignment _verticalAlignment = VerticalAlignment::Top;
+		HorizontalAlignment _horizontalAlignment = HorizontalAlignment::Left;
+		Layoutable* _layotableParent = nullptr;
+
+		bool _isArrangeValid = false;
+		bool _isMeasureValid = false;
+
+		ValueSource _widthSource {};
+		ValueSource _heightSource {};
+		ValueSource _minWidthSource {};
+		ValueSource _minHeightSource {};
+		ValueSource _maxWidthSource {};
+		ValueSource _maxHeightSource {};
+		ValueSource _marginSource {};
+		ValueSource _isVisibleSource {};
+		ValueSource _verticalAlignmentSource {};
+		ValueSource _horizontalAlignmentSource {};
 	};
 }

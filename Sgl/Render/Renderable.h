@@ -10,13 +10,6 @@ namespace Sgl
 {
     class Renderable : public StyleableElement
     {
-    private:
-        IVisualRoot* _visualRoot = nullptr;
-        Cursor _cursor = Cursors::Arrow;
-        Brush _background = Colors::Transparent;
-
-        ValueSource _cursorSource {};
-        ValueSource _backgroundSource {};
     public:
         Renderable() = default;
         Renderable(const Renderable& other);
@@ -36,10 +29,17 @@ namespace Sgl
 
         virtual void Render(RenderContext context) {}
         virtual void InvalidateRender();
-    protected:
-        virtual void OnCursorChanged(const Cursor& cursor) {}
-    public:
+
         static inline StyleableProperty CursorProperty { &SetCursor, &GetCursor };
         static inline StyleableProperty BackgroundProperty { &SetBackground, &GetBackground };
+    protected:
+        virtual void OnCursorChanged(const Cursor& cursor) {}
+    private:
+        IVisualRoot* _visualRoot = nullptr;
+        Cursor _cursor = Cursors::Arrow;
+        Brush _background = Colors::Transparent;
+
+        ValueSource _cursorSource {};
+        ValueSource _backgroundSource {};
     };
 }

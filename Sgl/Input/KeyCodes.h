@@ -2,8 +2,16 @@
 
 namespace Sgl
 {
+    /// <summary>
+    /// Represents a platform-agnostic key identifier.
+    /// </summary>
     using KeyCode = unsigned int;
 
+    /// <summary>
+    /// A collection of static constants representing common keyboard keys.
+    /// Each key is assigned a unique numeric value compatible with the underlying input system.
+    /// These constants enable portable key handling across different platforms.
+    /// </summary>
     class KeyCodes
     {
     public:

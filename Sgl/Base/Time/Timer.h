@@ -1,6 +1,6 @@
 #pragma once
 
-#include <future>
+#include <thread>
 #include "../Event.h"
 #include "Stopwatch.h"
 
@@ -13,6 +13,12 @@ namespace Sgl
 	{
 	public:
 		using TimeElapsedEventHandler = EventHandler<Timer>;
+	public:
+		explicit Timer(TimeSpan interval) noexcept;
+		explicit Timer(int64_t milliseconds) noexcept;
+
+		Timer(const Timer&) = delete;
+		Timer(Timer&&) = default;
 
 		/// <summary>
 		/// Gets the duration for which the timer is set.
@@ -23,20 +29,11 @@ namespace Sgl
 		/// Occurs when the timer reaches its specified duration.
 		/// </summary>
 		Event<TimeElapsedEventHandler> Elapsed;
-		bool AutoRestart = false;
-	private:
-		Stopwatch _stopwatch;
-		std::jthread _thread;
-	public:
-		/// <summary>
-		/// Initializes a new instance of the Timer class with the specified duration.
-		/// </summary>
-		/// <param name="timespan"> - The time span representing the timer duration.</param>
-		explicit Timer(TimeSpan timespan) noexcept;
-		explicit Timer(size_t milliseconds) noexcept;
 
-		Timer(const Timer&) = delete;
-		Timer(Timer&&) = default;
+		/// <summary>
+		/// Gets or sets a value indicating whether the timer should automatically restart its countdown after elapsing.
+		/// </summary>
+		bool AutoRestart = false;
 
 		/// <summary>
 		/// Starts the timer.
@@ -69,5 +66,8 @@ namespace Sgl
 		/// </summary>
 		/// <returns>True if the timer has elapsed; otherwise, false.</returns>
 		bool IsElapsed() const noexcept;
+	private:
+		Stopwatch _stopwatch;
+		std::jthread _thread;
 	};
 }

@@ -3,7 +3,7 @@
 #include <fstream>
 #include <format>
 
-#include "../Logger.h"
+#include "../Logging.h"
 
 namespace Sgl
 {
@@ -74,7 +74,7 @@ namespace Sgl
 		}
 		else
 		{
-			Logger::LogWarning("Unbale to open the file: {}", FilePath);
+			Logging::LogWarning("Unbale to open the file: {}", FilePath);
 		}
 
 		return success;

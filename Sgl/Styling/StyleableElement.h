@@ -14,19 +14,14 @@ namespace Sgl
 	private:
 		using StyleableElementEventHandler = EventHandler<StyleableElement>;
 	public:
-		StyleCollection Styles;
-		Event<StyleableElementEventHandler> AttachedToElementsTree;
-		Event<StyleableElementEventHandler> DetachedFromElementsTree;
-	private:
-		std::vector<std::string> _classList;
-		std::vector<const Style*> _styles;
-		IStyleHost* _stylingParent = nullptr;
-		IStyleHost* _stylingRoot = nullptr;
-	public:
 		StyleableElement() = default;
 		StyleableElement(const StyleableElement& other);
 		StyleableElement(StyleableElement&& other) noexcept;
 		virtual ~StyleableElement() = default;
+
+		StyleCollection Styles;
+		Event<StyleableElementEventHandler> AttachedToElementsTree;
+		Event<StyleableElementEventHandler> DetachedFromElementsTree;
 
 		void SetClasses(const std::string& classNames);
 		void SetClasses(std::vector<std::string> classList);
@@ -50,5 +45,10 @@ namespace Sgl
 		bool UpdateStyle();
 		void OnStyleClassesChanged();
 		void GetStylesFrom(const StyleCollection& styles);
+	private:
+		std::vector<std::string> _classList;
+		std::vector<const Style*> _styles;
+		IStyleHost* _stylingParent = nullptr;
+		IStyleHost* _stylingRoot = nullptr;
 	};
 }

@@ -10,13 +10,6 @@ namespace Sgl
 	{
 	private:
 		using TypeComparer = bool(*)(StyleableElement&);
-
-		static constexpr uint32_t TypeFlag  = 0x1;
-		static constexpr uint32_t ClassFlag = 0x2;
-
-		std::string _className;
-		TypeComparer _typeComparer = nullptr;
-		uint32_t _flags = 0;
 	public:
 		Selector() = default;
 		Selector(const Selector&) = default;
@@ -58,5 +51,12 @@ namespace Sgl
 		{
 			return typeid(T) == typeid(target);
 		}
+	private:
+		static constexpr uint32_t TypeFlag = 0x1;
+		static constexpr uint32_t ClassFlag = 0x2;
+
+		std::string _className;
+		TypeComparer _typeComparer = nullptr;
+		uint32_t _flags = 0;
 	};
 }

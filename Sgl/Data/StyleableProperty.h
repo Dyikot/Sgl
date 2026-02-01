@@ -22,10 +22,7 @@ namespace Sgl
 		using Value = TValue;
 		using Setter = void(Owner::*)(Value, ValueSource);
 		using Getter = TValue(Owner::*)() const;
-	private:
-		Setter _setter;
-		Getter _getter;
-	public:
+
 		StyleableProperty(Setter setter, Getter getter):
 			_setter(setter), 
 			_getter(getter)
@@ -47,6 +44,9 @@ namespace Sgl
 		{
 			return (owner.*_getter)();
 		}
+	private:
+		Setter _setter;
+		Getter _getter;
 	};
 
 	template<typename TOwner, typename TValue>

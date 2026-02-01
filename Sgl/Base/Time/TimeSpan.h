@@ -13,33 +13,6 @@ namespace Sgl
 		struct MaxTag {};
 		struct MinTag {};
 	public:
-		constexpr static ZeroTag Zero;
-		constexpr static MaxTag MaxValue;
-		constexpr static MinTag MinValue;
-	private:
-		static constexpr double NanosecondsPerMicrosecond = 1e3;
-		static constexpr double NanosecondsPerMillisecond = 1e6;
-		static constexpr double NanosecondsPerSecond = 1e9;
-		static constexpr double NanosecondsPerMinute = 6e10;
-		static constexpr double NanosecondsPerHour = 36e11;
-		static constexpr double NanosecondsPerDay = 864e11;
-
-		static constexpr double ToMicrosecondsCoefficient = 1 / NanosecondsPerMicrosecond;
-		static constexpr double ToMillisecondsCoefficient = 1 / NanosecondsPerMillisecond;
-		static constexpr double ToSecondsCoefficient = 1 / NanosecondsPerSecond;
-		static constexpr double ToMinutesCoefficient = 1 / NanosecondsPerMinute;
-		static constexpr double ToHoursCoefficient = 1 / NanosecondsPerHour;
-		static constexpr double ToDaysCoefficient = 1 / NanosecondsPerDay;
-
-		static constexpr int64_t ThresholdMicroseconds = 10 * NanosecondsPerMicrosecond;
-		static constexpr int64_t ThresholdMilliseconds = 10 * NanosecondsPerMillisecond;
-		static constexpr int64_t ThresholdSeconds = 10 * NanosecondsPerSecond;
-		static constexpr int64_t ThresholdMinutes = 10 * NanosecondsPerMinute;
-		static constexpr int64_t ThresholdHours = 10 * NanosecondsPerHour;
-		static constexpr int64_t ThresholdDays = 10 * NanosecondsPerDay;
-
-		int64_t _nanoseconds;
-	public:
 		constexpr TimeSpan(ZeroTag):
 			_nanoseconds()
 		{}
@@ -59,6 +32,21 @@ namespace Sgl
 		constexpr TimeSpan(const TimeSpan& timespan) noexcept:
 			_nanoseconds(timespan._nanoseconds)
 		{}
+
+		/// <summary>
+		/// Represents a zero time interval (0 nanoseconds).
+		/// </summary>
+		constexpr static ZeroTag Zero;
+
+		/// <summary>
+		/// Represents the maximum possible time interval.
+		/// </summary>
+		constexpr static MaxTag MaxValue;
+
+		/// <summary>
+		/// Represents the minimum possible time interval.
+		/// </summary>
+		constexpr static MinTag MinValue;
 
 		static constexpr TimeSpan FromMicroseconds(int64_t value) noexcept
 		{
@@ -209,5 +197,28 @@ namespace Sgl
 		}
 
 		friend constexpr auto operator<=>(TimeSpan, TimeSpan) noexcept = default;
+	private:
+		static constexpr double NanosecondsPerMicrosecond = 1e3;
+		static constexpr double NanosecondsPerMillisecond = 1e6;
+		static constexpr double NanosecondsPerSecond = 1e9;
+		static constexpr double NanosecondsPerMinute = 6e10;
+		static constexpr double NanosecondsPerHour = 36e11;
+		static constexpr double NanosecondsPerDay = 864e11;
+
+		static constexpr double ToMicrosecondsCoefficient = 1 / NanosecondsPerMicrosecond;
+		static constexpr double ToMillisecondsCoefficient = 1 / NanosecondsPerMillisecond;
+		static constexpr double ToSecondsCoefficient = 1 / NanosecondsPerSecond;
+		static constexpr double ToMinutesCoefficient = 1 / NanosecondsPerMinute;
+		static constexpr double ToHoursCoefficient = 1 / NanosecondsPerHour;
+		static constexpr double ToDaysCoefficient = 1 / NanosecondsPerDay;
+
+		static constexpr int64_t ThresholdMicroseconds = 10 * NanosecondsPerMicrosecond;
+		static constexpr int64_t ThresholdMilliseconds = 10 * NanosecondsPerMillisecond;
+		static constexpr int64_t ThresholdSeconds = 10 * NanosecondsPerSecond;
+		static constexpr int64_t ThresholdMinutes = 10 * NanosecondsPerMinute;
+		static constexpr int64_t ThresholdHours = 10 * NanosecondsPerHour;
+		static constexpr int64_t ThresholdDays = 10 * NanosecondsPerDay;
+
+		int64_t _nanoseconds;
 	};
 }

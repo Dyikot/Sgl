@@ -18,9 +18,6 @@ namespace Sgl
     template<typename TOwner, typename TValue>
     class Setter : public ISetter
     {
-    private:
-        StyleableProperty<TOwner, TValue>& _property;
-        TValue _value;
     public:
         Setter(StyleableProperty<TOwner, TValue>& property, TValue value):
             _property(property),
@@ -31,6 +28,9 @@ namespace Sgl
         {
             _property.InvokeSetter(static_cast<TOwner&>(target), _value, ValueSource::Style);
         }
+    private:
+        StyleableProperty<TOwner, TValue>& _property;
+        TValue _value;
     };
 
     template<typename TOwner, typename TValue>
@@ -38,9 +38,6 @@ namespace Sgl
     {
     private:
         using Value = std::decay_t<TValue>;
-
-        StyleableProperty<TOwner, TValue>& _property;
-        const ThemeResource<Value>& _resource;
     public:
         ThemeResourceSetter(StyleableProperty<TOwner, TValue>& property, 
                             const ThemeResource<Value>& resource):
@@ -56,5 +53,8 @@ namespace Sgl
 
             _property.InvokeSetter(static_cast<TOwner&>(target), value, ValueSource::Style);
         }
+    private:
+        StyleableProperty<TOwner, TValue>& _property;
+        const ThemeResource<Value>& _resource;
     };
 }

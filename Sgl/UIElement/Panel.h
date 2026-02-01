@@ -9,14 +9,11 @@ namespace Sgl
 	class Panel : public UIElement
 	{
 	public:
-		UIElementsCollection Children;
-	private:
-		Ref<UIElement> _currentChild;
-	public:
 		Panel();
 		Panel(const Panel& other);
 		Panel(Panel&& other) noexcept;
-		~Panel() = default;
+
+		UIElementsCollection Children;
 
 		void SetVisualRoot(IVisualRoot* value) final;
 		void SetStylingRoot(IStyleHost* value) final;
@@ -34,7 +31,9 @@ namespace Sgl
 		void OnMouseDown(MouseButtonEventArgs e) override;
 		void OnMouseUp(MouseButtonEventArgs e) override;
 		void OnMouseLeave(MouseMoveEventArgs e) override;
-
+	private:
 		friend class UIElementsCollection;
+
+		Ref<UIElement> _currentChild;
 	};	
 }

@@ -1,7 +1,7 @@
 #include "Layoutable.h"
 
 #include <algorithm>
-#include "../Base/Logger.h"
+#include "../Base/Logging.h"
 
 namespace Sgl
 {

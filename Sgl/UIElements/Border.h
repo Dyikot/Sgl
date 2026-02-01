@@ -6,12 +6,6 @@ namespace Sgl::UIElements
 {
 	class Border : public ContentUIElement
 	{
-	private:
-		uint32_t _borderWidth = 1;
-		Color _borderColor = Colors::Black;
-
-		ValueSource _borderWidthSource {};
-		ValueSource _borderColorSource {};
 	public:
 		Border() = default;
 		Border(const Border& other);
@@ -24,10 +18,16 @@ namespace Sgl::UIElements
 		Color GetBorderColor() const { return _borderColor; }
 
 		void Render(RenderContext context) final;
-	protected:
-		Thickness GetLayoutPadding() const override;
-	public:
+
 		static inline StyleableProperty BorderWidthProperty { &SetBorderWidth, &GetBorderWidth };
 		static inline StyleableProperty BorderColorProperty { &SetBorderColor, &GetBorderColor };
+	protected:
+		Thickness GetLayoutPadding() const override;
+	private:
+		uint32_t _borderWidth = 1;
+		Color _borderColor = Colors::Black;
+
+		ValueSource _borderWidthSource {};
+		ValueSource _borderColorSource {};
 	};
 }

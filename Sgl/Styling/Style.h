@@ -13,14 +13,14 @@ namespace Sgl
     class Style
     {
     public:
-        Selector Selector;
-    private:        
-        std::vector<std::unique_ptr<ISetter>> _setters;
-    public:
         Style() = default;
+        Style(const Style&) = delete;
+        Style(Style&&) noexcept = default;
         Style(Sgl::Selector selector):
             Selector(std::move(selector))
         {}
+
+        Selector Selector;
 
         Style& Set(std::unique_ptr<ISetter> setter)
         {
@@ -51,5 +51,7 @@ namespace Sgl
                 setter->Apply(target);
             }
         }
+    private:
+        std::vector<std::unique_ptr<ISetter>> _setters;
     };    
 }

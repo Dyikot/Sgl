@@ -8,21 +8,24 @@
 
 namespace Sgl
 {
+	/// <summary>
+	/// Represents an awaitable object that wraps a task of type T, enabling coroutine suspension and resumption.
+	/// Internally uses the ThreadPool to schedule and execute the asynchronous operation, allowing the coroutine
+	/// to yield control while awaiting completion.
+	/// </summary>
 	template<typename T>
 	class TaskAwaitable
 	{
-	private:
-		Func<T> _func;
-		bool _saveContext;
-		std::optional<T> _result {};
-		std::exception_ptr _exeption;
 	public:
 		explicit TaskAwaitable(Func<T> func, bool saveContext = false):
 			_func(std::move(func)),
 			_saveContext(saveContext)
 		{}
 
-		bool await_ready() { return false; }
+		bool await_ready() const noexcept
+		{
+			return false;
+		}
 
 		void await_suspend(std::coroutine_handle<> handle)
 		{
@@ -57,22 +60,31 @@ namespace Sgl
 
 			return std::move(_result).value();
 		}
+	private:
+		Func<T> _func;
+		bool _saveContext;
+		std::optional<T> _result {};
+		std::exception_ptr _exeption;
 	};
 
+	/// <summary>
+	/// Specialization of TaskAwaitable for void-returning tasks. Enables coroutine suspension and resumption 
+	/// for asynchronous operations that do not produce a result value. Internally uses the ThreadPool to 
+	/// schedule and execute the operation.
+	/// </summary>
 	template<>
 	class TaskAwaitable<void>
 	{
-	private:
-		Action<> _action;
-		bool _saveContext;
-		std::exception_ptr _exeption;
 	public:
 		explicit TaskAwaitable(Action<> action, bool saveContext = false):
 			_action(std::move(action)),
 			_saveContext(saveContext)
 		{}
 
-		bool await_ready() { return false; }
+		bool await_ready() const noexcept
+		{
+			return false;
+		}
 
 		void await_suspend(std::coroutine_handle<> handle)
 		{
@@ -105,6 +117,10 @@ namespace Sgl
 				std::rethrow_exception(_exeption);
 			}
 		}
+	private:
+		Action<> _action;
+		bool _saveContext;
+		std::exception_ptr _exeption;
 	};
 
 	template<typename TFunc>

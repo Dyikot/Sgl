@@ -1,8 +1,12 @@
 #include "Math.h"
 
-namespace Sgl
+#include <numbers>
+#include <numeric>
+#include <cmath>
+
+namespace Sgl::Math
 {
-	std::vector<float> Math::SinRange(size_t count) noexcept
+	std::vector<float> SinRange(size_t count) noexcept
 	{
 		if(count == 0)
 		{
@@ -24,7 +28,7 @@ namespace Sgl
 		return result;
 	}
 
-	std::vector<float> Math::CosRange(size_t count) noexcept
+	std::vector<float> CosRange(size_t count) noexcept
 	{
 		if(count == 0)
 		{
@@ -46,9 +50,9 @@ namespace Sgl
 		return result;
 	}
 
-	std::vector<int> Math::TriangulateEllipse(size_t count)
+	std::vector<int> TriangulateEllipse(size_t verticesNumber)
 	{
-		std::vector<int> order(count * 3);
+		std::vector<int> order(verticesNumber * 3);
 		constexpr int center = 0;
 		int step = center;
 

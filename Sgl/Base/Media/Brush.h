@@ -6,6 +6,9 @@
 
 namespace Sgl
 {	
+	/// <summary>
+	/// Represents a drawing brush that can be either a solid color or a texture.
+	/// </summary>
 	using Brush = std::variant<Color, Texture>;
 
 	inline bool operator==(const Brush& brush, Color color)

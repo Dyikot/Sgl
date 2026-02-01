@@ -1,19 +1,42 @@
 #pragma once
 
-#include <stdexcept>
 #include <format>
+#include <execution>
 
 namespace Sgl
 {
-	class Exception : public std::runtime_error
-	{
-	public:
-		Exception(const std::string& message): std::runtime_error(message) {}
-		Exception(const char* message) : std::runtime_error(message) {}
+    /// <summary>
+    /// An exception class that supports formatted error messages.
+    /// Provides a constructor that accepts a format string and arguments (using C++20 std::format),
+    /// enabling clear, context-rich error reporting.
+    /// </summary>
+    class Exception: public std::exception
+    {
+    public:
+        /// <summary>
+        /// Constructs an exception with a pre-formatted message.
+        /// </summary>
+        /// <param name="message"> - the error message.</param>
+        Exception(std::string_view message):
+            _message(message.data())
+        {}
 
-		template<typename... TArgs>
-		Exception(std::format_string<TArgs...> message, TArgs&&... args):
-			std::runtime_error(std::format(message, std::forward<TArgs>(args)...))
-		{}
-	};
+        /// <summary>
+        /// Constructs an exception by formatting a message using std::format.
+        /// </summary>
+        /// <param name="format"> - a format string (e.g., "File {} not found").</param>
+        /// <param name="args"> - arguments to substitute into the format string.</param>
+        template<typename... TArgs>
+        Exception(std::format_string<TArgs...> format, TArgs&&... args):
+            _message(std::format(format, std::forward<TArgs>(args)...))
+        {}
+
+        /// <summary>
+        /// Returns the formatted error message.
+        /// </summary>
+        /// <returns>A null-terminated C-style string containing the error message.</returns>
+        const char* what() const noexcept override { return _message.c_str(); }
+    private:
+        std::string _message;
+    };
 }

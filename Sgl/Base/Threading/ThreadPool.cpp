@@ -9,14 +9,9 @@ namespace Sgl
 {
     class ThreadPoolImpl
     {
-    private:
+    public:
         using Task = Action<>;
 
-        std::queue<Task> _tasks;
-        std::vector<std::jthread> _workers;
-        std::mutex _mutex;
-        std::counting_semaphore<> _semaphore { 0 };
-    public:
         ThreadPoolImpl(int maxWorkers)
         {
             _workers.reserve(maxWorkers);
@@ -83,15 +78,20 @@ namespace Sgl
         }
 
         friend class ThreadPool;
+    private:
+        std::queue<Task> _tasks;
+        std::vector<std::jthread> _workers;
+        std::mutex _mutex;
+        std::counting_semaphore<> _semaphore { 0 };
     };
 
     static size_t _maxThreads = 4;
 
     static ThreadPoolImpl& GetThreadPoolImpl()
     {
-        static ThreadPoolImpl threadPoolImpl(_maxThreads);
-        return threadPoolImpl;
-    }    
+        static ThreadPoolImpl threadPool(_maxThreads);
+        return threadPool;
+    }
 
     size_t ThreadPool::GetThreadCount() noexcept
     {

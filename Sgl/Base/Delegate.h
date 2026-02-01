@@ -30,11 +30,11 @@ namespace Sgl
 		struct Model : public Concept
 		{
 		public:
-			TCallable Callable;
-		public:
 			Model(TCallable callable):
 				Callable(std::move(callable))
 			{}
+
+			TCallable Callable;
 
 			std::unique_ptr<Concept> Copy() const override
 			{
@@ -67,8 +67,6 @@ namespace Sgl
 				return std::invoke(Callable, std::forward<TArgs>(args)...);
 			}
 		};
-
-		std::unique_ptr<Concept> _concept;
 	public:
 		/// <summary>
 		/// Default constructor. Creates an empty delegate with no target.
@@ -184,6 +182,10 @@ namespace Sgl
 			return *this;
 		}
 
+		/// <summary>
+		/// Checks whether the delegate has a target callable.
+		/// </summary>
+		/// <returns>True if the delegate has a target; otherwise, false.</returns>
 		explicit operator bool() const noexcept
 		{
 			return _concept != nullptr;
@@ -207,6 +209,8 @@ namespace Sgl
 
 			return left._concept->Equals(*right._concept);
 		}
+	private:
+		std::unique_ptr<Concept> _concept;
 	};
 
 	/// <summary>

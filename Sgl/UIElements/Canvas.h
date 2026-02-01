@@ -7,15 +7,14 @@ namespace Sgl::UIElements
 	class Canvas : public Panel
 	{
 	public:
+		Canvas() = default;
+		Canvas(const Canvas&) = default;
+		Canvas(Canvas&&) = default;
+
 		static inline AttachedProperty<int> LeftProperty;
 		static inline AttachedProperty<int> TopProperty;
 		static inline AttachedProperty<int> RightProperty;
 		static inline AttachedProperty<int> BottomProperty;
-	public:
-		Canvas() = default;
-		Canvas(const Canvas&) = default;
-		Canvas(Canvas&&) = default;
-		~Canvas() = default;
 	protected:
 		FSize MeasureContent(FSize avaliableSize) override;
 		void ArrangeContent(FRect rect) override;

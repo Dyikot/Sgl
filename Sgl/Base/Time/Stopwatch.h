@@ -10,13 +10,6 @@ namespace Sgl
 	/// </summary>
 	class Stopwatch
 	{
-	private:
-		using Clock = std::chrono::high_resolution_clock;
-		using TimePoint = std::chrono::steady_clock::time_point;
-
-		bool _isRunning = false;
-		TimeSpan _elapsed = TimeSpan::Zero;
-		TimePoint _start;
 	public:
 		/// <summary>
 		/// Initializes and starts a new stopwatch instance.
@@ -57,5 +50,12 @@ namespace Sgl
 		TimeSpan Elapsed() const noexcept;
 	private:
 		TimeSpan GetElapsedTime() const noexcept;
+		
+		using Clock = std::chrono::high_resolution_clock;
+		using TimePoint = std::chrono::steady_clock::time_point;
+
+		TimePoint _start;
+		TimeSpan _elapsed = TimeSpan::Zero;
+		bool _isRunning = false;
 	};
 }

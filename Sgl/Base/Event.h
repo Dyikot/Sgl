@@ -21,9 +21,6 @@ namespace Sgl
 	{
 	private:
 		using Method = void(TSource::*)(TSender&, TEventArgs);
-
-		Method _method;
-		TSource* _source;
 	public:
 		MethodEventHandler(Method method, TSource* source):
 			_method(method),
@@ -39,6 +36,9 @@ namespace Sgl
 		{
 			return left._method == right._method;
 		}
+	private:
+		Method _method;
+		TSource* _source;
 	};
 
 	template<typename T>
@@ -54,8 +54,6 @@ namespace Sgl
 		using EventHandler = EventHandler<TSender, TEventArgs>;
 		using Sender = TSender;
 		using EventArgs = TEventArgs;
-	private:
-		std::vector<EventHandler> _eventHandlers;
 	public:
 		/// <summary>
 		/// Default constructor. Creates an empty event with no handlers.
@@ -133,6 +131,8 @@ namespace Sgl
 		Event& operator=(Event&&) = delete;
 
 		friend TSender;
+	private:
+		std::vector<EventHandler> _eventHandlers;
 	};
 
 	template<typename T>

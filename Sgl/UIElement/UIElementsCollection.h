@@ -13,7 +13,6 @@ namespace Sgl
 	{
 	private:
 		using base = Collection<Ref<UIElement>>;
-		Panel& _owner;
 	public:
 		UIElementsCollection(Panel& owner);
 		UIElementsCollection(const UIElementsCollection&) = delete;
@@ -24,5 +23,7 @@ namespace Sgl
 		void InsertItem(size_t index, const Ref<UIElement>& item) override;
 		void SetItem(size_t index, const Ref<UIElement>& item) override;
 		void RemoveItem(size_t index) override;		
+	private:		
+		Panel& _owner;
 	};
 }

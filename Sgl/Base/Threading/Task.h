@@ -5,10 +5,14 @@
 #include <execution>
 #include <type_traits>
 
-#include "../Logger.h"
+#include "../Logging.h"
 
 namespace Sgl
 {
+	/// <summary>
+	/// Represents an awaitable asynchronous operation that eventually produces a result of type T.
+	/// Designed to be used with C++20 coroutines, where a function returning Task<T> can use co_await and co_return.
+	/// </summary>
 	template<typename T>
 	class [[nodiscard]] Task
 	{
@@ -86,8 +90,6 @@ namespace Sgl
 				Result = std::move(result);
 			}
 		};
-	private:
-		CoroutineHandle _handle;
 	public:
 		explicit Task(CoroutineHandle handle):
 			_handle(handle)
@@ -117,6 +119,8 @@ namespace Sgl
 			std::swap(_handle, other._handle);
 			return *this;
 		}
+	private:
+		CoroutineHandle _handle;
 	};
 
 	template<>
@@ -156,7 +160,7 @@ namespace Sgl
 				}
 				catch(const std::exception& e)
 				{
-					Logger::LogError("{}", e.what());
+					Logging::LogError("{}", e.what());
 				}
 			}
 			void return_void() noexcept {}

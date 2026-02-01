@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <filesystem>
 
-#include "../Logger.h"
+#include "../Logging.h"
 
 namespace Sgl
 {
@@ -103,7 +103,7 @@ namespace Sgl
 	{
 		if(_font == nullptr)
 		{
-			Logger::LogError("Unable to create a font: {}", SDL_GetError());
+			Logging::LogError("Unable to create a font: {}", SDL_GetError());
 		}
 	}
 

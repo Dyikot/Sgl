@@ -9,39 +9,14 @@ namespace Sgl::UIElements
 	/// </summary>
 	enum class Stretch
 	{
-		/// <summary>
-		/// The content preserves its original size.
-		/// </summary>
-		None,
-
-		/// <summary>
-		/// The content is resized to fill the destination dimensions. The aspect ratio is not preserved.
-		/// </summary>
-		Fill,
-
-		/// <summary>
-		/// The content is resized to fit in the destination dimensions while it preserves its native aspect ratio.
-		/// </summary>
-		Uniform,
-
-		/// <summary>
-		/// The content is resized to fill the destination dimensions while it preserves its native aspect ratio. If the aspect ratio of the destination rectangle differs from the source, the source content is clipped to fit in the destination dimensions.
-		/// </summary>
-		UniformToFill
+		None, // The content preserves its original size.
+		Fill, // The content is resized to fill the destination dimensions. The aspect ratio is not preserved.
+		Uniform, // The content is resized to fit in the destination dimensions while it preserves its native aspect ratio.
+		UniformToFill // The content is resized to fill the destination dimensions while it preserves its native aspect ratio. If the aspect ratio of the destination rectangle differs from the source, the source content is clipped to fit in the destination dimensions.
 	};
 
 	class Image : public UIElement
 	{
-	private:
-		std::string _source;
-		Stretch _stretch = Stretch::Uniform;
-
-		FRect _sourceBounds {};
-		Texture _sourceTexture;
-		bool _isImageTextureValid = false;
-
-		ValueSource _sourceSource {};
-		ValueSource _stretchSource {};
 	public:
 		Image() = default;
 		Image(const Image& other);
@@ -54,13 +29,23 @@ namespace Sgl::UIElements
 		Stretch GetStretch() const { return _stretch; }
 
 		void Render(RenderContext context) final;
+
+		static inline StyleableProperty SourceProperty { &SetSource, &GetSource };
+		static inline StyleableProperty StretchProperty { &SetStretch, &GetStretch };
 	protected:
 		void ArrangeCore(FRect rect) override;
 		void InvalidateImageTexture() { _isImageTextureValid = false; }
 	private:
 		void UpdateTexture();
-	public:
-		static inline StyleableProperty SourceProperty { &SetSource, &GetSource };
-		static inline StyleableProperty StretchProperty { &SetStretch, &GetStretch };
+	private:
+		std::string _source;
+		Stretch _stretch = Stretch::Uniform;
+
+		FRect _sourceBounds {};
+		Texture _sourceTexture;
+		bool _isImageTextureValid = false;
+
+		ValueSource _sourceSource {};
+		ValueSource _stretchSource {};
 	};
 }

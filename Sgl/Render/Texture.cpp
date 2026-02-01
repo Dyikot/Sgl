@@ -3,7 +3,7 @@
 #include <SDL3_ttf/SDL_ttf.h>
 #include <SDL3_image/SDL_image.h>
 
-#include "../Base/Logger.h"
+#include "../Base/Logging.h"
 #include "Surface.h"
 
 namespace Sgl
@@ -17,7 +17,7 @@ namespace Sgl
 	{
 		if(_texture == nullptr)
 		{
-			Logger::LogError("Unable to create a texture: {}", SDL_GetError());
+			Logging::LogError("Unable to create a texture: {}", SDL_GetError());
 		}
 	}
 
@@ -26,7 +26,7 @@ namespace Sgl
 	{
 		if(_texture == nullptr)
 		{
-			Logger::LogError("Unable to create a texture: {}", SDL_GetError());
+			Logging::LogError("Unable to create a texture: {}", SDL_GetError());
 		}
 	}
 
@@ -41,7 +41,7 @@ namespace Sgl
 	{
 		if(_texture == nullptr)
 		{
-			Logger::LogError("Unable to create a texture: {}", SDL_GetError());
+			Logging::LogError("Unable to create a texture: {}", SDL_GetError());
 		}
 	}
 
@@ -71,7 +71,7 @@ namespace Sgl
 
 		if(_texture == nullptr)
 		{
-			Logger::LogError("Unable to create a texture: {}", SDL_GetError());
+			Logging::LogError("Unable to create a texture: {}", SDL_GetError());
 		}
 	}
 
@@ -101,7 +101,7 @@ namespace Sgl
 
 		if(_texture == nullptr)
 		{
-			Logger::LogError("Unable to create a texture: {}", SDL_GetError());
+			Logging::LogError("Unable to create a texture: {}", SDL_GetError());
 		}
 	}
 
@@ -175,7 +175,7 @@ namespace Sgl
 
 		if(id == 0)
 		{
-			Logger::LogError("Unable to get a texture property: {}", SDL_GetError());
+			Logging::LogError("Unable to get a texture property: {}", SDL_GetError());
 		}
 
 		return TextureAccess(SDL_GetNumberProperty(id, SDL_PROP_TEXTURE_ACCESS_NUMBER, 0));
@@ -236,7 +236,7 @@ namespace Sgl
 	{
 		if(!SDL_LockTexture(_texture.GetSDLTexture(), rect, &Pixels, &Pitch))
 		{
-			Logger::LogError("Unable to lock a texture: {}", SDL_GetError());
+			Logging::LogError("Unable to lock a texture: {}", SDL_GetError());
 		}
 	}
 

@@ -3,7 +3,7 @@
 #include "Application.h"
 #include "Layout/LayoutHelper.h"
 #include "Base/Exceptions.h"
-#include "Base/Logger.h"
+#include "Base/Logging.h"
 #include "Input/SDLEvents.h"
 
 namespace Sgl
@@ -54,7 +54,7 @@ namespace Sgl
 
         if(!SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_BLEND))
         {
-            Logger::LogWarning("Enable to set blend mode: {}", SDL_GetError());
+            Logging::LogWarning("Enable to set blend mode: {}", SDL_GetError());
         }
 
         _id = SDL_GetWindowID(_sdlWindow);
@@ -260,7 +260,7 @@ namespace Sgl
 
         if(!SDL_SetWindowIcon(_sdlWindow, _icon.GetSDLSurface()))
         {
-            Logger::LogWarning("Unable to set a window icon: {}", SDL_GetError());
+            Logging::LogWarning("Unable to set a window icon: {}", SDL_GetError());
         }
     }
 
@@ -311,7 +311,7 @@ namespace Sgl
             }
             else
             {
-                Logger::LogWarning("Unable to set an owner for a window: {}", SDL_GetError());
+                Logging::LogWarning("Unable to set an owner for a window: {}", SDL_GetError());
             }
         }
         else
@@ -392,7 +392,7 @@ namespace Sgl
 
         if(!SDL_SetWindowModal(_sdlWindow, true))
         {
-            Logger::LogWarning("Unable to set a modal window: {}", SDL_GetError());
+            Logging::LogWarning("Unable to set a modal window: {}", SDL_GetError());
         }
 
         SetPosition(DefaultPosition);

@@ -4,7 +4,7 @@
 #include <unordered_map>
 
 #include "../Tools/CSVParser.h"
-#include "../Logger.h"
+#include "../Logging.h"
 #include "../Exceptions.h"
 
 namespace Sgl::Localization
@@ -24,7 +24,7 @@ namespace Sgl::Localization
 
             if(!csvParser.ParseTo(_headers, _records))
             {
-                Logger::LogError("Unable to parse cvs file");
+                Logging::LogError("Unable to parse cvs file");
             }
 
             _headersCount = _headers.size();
