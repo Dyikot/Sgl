@@ -11,26 +11,6 @@ namespace Sgl
 	{
 	public:
 		/// <summary>
-		/// Red component value (0-255)
-		/// </summary>
-		uint8_t Red;
-
-		/// <summary>
-		/// Green component value (0-255)
-		/// </summary>
-		uint8_t Green;
-
-		/// <summary>
-		/// Blue component value (0-255)
-		/// </summary>
-		uint8_t Blue;
-
-		/// <summary>
-		/// Alpha (transparency) component value (0-255, where 0 is fully transparent and 255 is fully opaque)
-		/// </summary>
-		uint8_t Alpha;
-	public:
-		/// <summary>
 		/// Initializes a new instance of the Color structure with individual RGBA values
 		/// </summary>
 		/// <param name="red">- red component value (0-255)</param>
@@ -58,6 +38,26 @@ namespace Sgl
 		constexpr explicit Color(uint32_t rgba):
 			Red(rgba >> 24), Green(rgba >> 16), Blue(rgba >> 8), Alpha(rgba)
 		{}
+
+		/// <summary>
+		/// Red component value (0-255)
+		/// </summary>
+		uint8_t Red;
+
+		/// <summary>
+		/// Green component value (0-255)
+		/// </summary>
+		uint8_t Green;
+
+		/// <summary>
+		/// Blue component value (0-255)
+		/// </summary>
+		uint8_t Blue;
+
+		/// <summary>
+		/// Alpha (transparency) component value (0-255, where 0 is fully transparent and 255 is fully opaque)
+		/// </summary>
+		uint8_t Alpha;
 
 		/// <summary>
 		/// Determines whether this color is fully transparent

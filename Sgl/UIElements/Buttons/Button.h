@@ -2,16 +2,13 @@
 
 #include "../../UIElement/ContentUIElement.h"
 
-namespace Sgl
+namespace Sgl::UIElements
 {
 	/// <summary>
 	/// Represents an action that can be bound to UI elements. For example to buttons.
 	/// </summary>
 	using Command = Action<const Any&>;
-}
 
-namespace Sgl::UIElements
-{
 	/// <summary>
 	/// Specifies when a click event is generated for interactive controls (e.g., buttons).
 	/// </summary>

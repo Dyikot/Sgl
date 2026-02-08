@@ -35,7 +35,7 @@ To install, you need to do the following steps:
 	```
 	
 6.  After that, two projects will be created: Sgl and App. Add the main file to the App project. Make sure that SDL3/SDL_main.h is included.
-	```
+	```cpp
 	#include <SDL3/SDL_main.h>
 	#include <Application.h>
 	

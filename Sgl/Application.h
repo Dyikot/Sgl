@@ -4,6 +4,8 @@
 
 #include "Window.h"
 #include "Base/Media/ThemeVartiant.h"
+#include "Base/Localization/StringLocalizer.h"
+#include "Base/Localization/LocalizationStorage.h"
 
 namespace Sgl
 {
@@ -123,6 +125,13 @@ namespace Sgl
 		const std::vector<Window*> GetWindows() const noexcept { return _activeWindows; }
 
 		/// <summary>
+		/// Creates LocalizationStorage from CSV file. Use StringLocalizer to get localized strings.
+		/// </summary>
+		/// <param name="csvFilePath"> - path to the CSV file containing localization data.</param>
+		/// <param name="delimeter"> - character used as delimiter in the CSV file (default is comma).</param>
+		void AddLocalization(std::string csvFilePath, char delimeter = ',');
+
+		/// <summary>
 		/// Starts the application's main event loop.
 		/// Blocks until the application is shut down.
 		/// </summary>
@@ -147,12 +156,14 @@ namespace Sgl
 		void DetachWindow(Window& window);
 	private:
 		friend class Window;
+		friend class StringLocalizer;
 
 		static inline Application* _current;
 
 		bool _isRunning = false;
 		ThemeMode _themeMode;
 		ThemeVariant _themeVariant;
+		std::unique_ptr<LocalizationStorage> _localizationStorage;
 
 		Window* _focusedWindow = nullptr;
 		std::vector<Window*> _windows;

@@ -97,6 +97,11 @@ namespace Sgl
         }
     }
 
+    void Application::AddLocalization(std::string csvFilePath, char delimeter)
+    {
+        _localizationStorage = std::make_unique<LocalizationStorage>(std::move(csvFilePath), delimeter);
+    }
+
     void Application::Run()
 	{		
 		if(_isRunning)
@@ -538,5 +543,15 @@ namespace Sgl
         std::erase(_activeWindows, &window);
         window.SetParent(nullptr);
         window.OnDetachedFromLogicalTree();
+    }
+
+    ThemeMode GetApplicationThemeMode()
+    {
+        return App->GetThemeMode();
+    }
+
+    const std::string& StringLocalizer::operator()(const std::string& key) const
+    {
+        return App->_localizationStorage->GetLocalizedString(key);
     }
 }
