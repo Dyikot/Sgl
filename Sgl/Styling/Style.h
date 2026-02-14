@@ -3,8 +3,9 @@
 #include <memory>
 #include <vector>
 
-#include "../Data/StyleableProperty.h"
 #include "../Base/Delegate.h"
+#include "../Base/Media/ThemeMode.h"
+#include "../Data/StyleableProperty.h"
 #include "Selector.h"
 #include "Setter.h"
 
@@ -36,12 +37,20 @@ namespace Sgl
             return *this;
         }
 
-        template<typename TOwner, typename TValue, typename TResourceValue = StyleableProperty<TOwner, TValue>::Value>
+        template<typename TOwner, typename TValue, typename TResources, typename TResource>
         Style& Set(StyleableProperty<TOwner, TValue>& property, 
-                   const ThemeResource<TResourceValue>& resource)
+                   TResources& resources,
+                   TResource TResources::* resource)
         {
-            _setters.emplace_back(new ThemeResourceSetter(property, resource));
+            _setters.emplace_back(new ResourceSetter(property, resources, resource));
             return *this;
+        }
+
+        template<typename TOwner, typename TValue, typename TResource>
+        Style& Set(StyleableProperty<TOwner, TValue>& property,
+                   TResource ThemeResources::* resource)
+        {
+            return Set(property, GetThemeResources(), resource);
         }
 
         void Apply(StyleableElement& target) const

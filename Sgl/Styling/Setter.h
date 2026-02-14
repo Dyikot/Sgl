@@ -1,12 +1,11 @@
 #pragma once
 
 #include "../Data/StyleableProperty.h"
-#include "../Base/Media/ThemeVartiant.h"
 
 namespace Sgl
 {
     class StyleableElement;
-
+    
     class ISetter
     {
     public:
@@ -33,28 +32,28 @@ namespace Sgl
         TValue _value;
     };
 
-    template<typename TOwner, typename TValue>
-    class ThemeResourceSetter : public ISetter
+    template<typename TOwner, typename TValue, typename TResources, typename TResource>
+        requires std::constructible_from<TValue, TResource>
+    class ResourceSetter : public ISetter
     {
-    private:
-        using Value = std::decay_t<TValue>;
     public:
-        ThemeResourceSetter(StyleableProperty<TOwner, TValue>& property, 
-                            const ThemeResource<Value>& resource):
+        ResourceSetter(StyleableProperty<TOwner, TValue>& property, 
+                       TResources& resources,
+                       TResource TResources::* resource):
             _property(property),
+            _resources(resources),
             _resource(resource)
         {}
 
         void Apply(StyleableElement& target) const final
         {
-            TValue value = GetApplicationThemeMode() == ThemeMode::Light
-                ? _resource.LightValue
-                : _resource.DarkValue;
-
-            _property.InvokeSetter(static_cast<TOwner&>(target), value, ValueSource::Style);
+            _property.InvokeSetter(static_cast<TOwner&>(target),
+                                   _resources.*_resource,
+                                   ValueSource::Style);
         }
     private:
         StyleableProperty<TOwner, TValue>& _property;
-        const ThemeResource<Value>& _resource;
+        TResources& _resources;
+        TResource TResources::* _resource;
     };
 }

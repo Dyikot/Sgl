@@ -71,8 +71,7 @@ namespace Sgl
                 throw Exception("ThemeVariant with index '{}' does not exist", static_cast<int>(value));
         }
 
-        ThemeVariantChangedEventArgs args(value);
-        OnThemeVariantChanged(args);
+        OnThemeVariantChanged();
     }
 
     static inline double ToMilliseconds(uint64_t count)
@@ -170,14 +169,14 @@ namespace Sgl
 		Stopped(*this);
 	}
 
-    void Application::OnThemeVariantChanged(ThemeVariantChangedEventArgs e)
+    void Application::OnThemeVariantChanged()
     {
+        ThemeVariantChanged(*this);
+
         for(auto& window : _activeWindows)
         {
             window->ApplyStyle();
         }
-
-        ThemeVariantChanged(*this, e);
     }
 
     ThemeMode Application::GetSystemThemeMode() const
@@ -543,11 +542,6 @@ namespace Sgl
         std::erase(_activeWindows, &window);
         window.SetParent(nullptr);
         window.OnDetachedFromLogicalTree();
-    }
-
-    ThemeMode GetApplicationThemeMode()
-    {
-        return App->GetThemeMode();
     }
 
     const std::string& StringLocalizer::operator()(const std::string& key) const

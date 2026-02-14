@@ -3,7 +3,7 @@
 #include <ranges>
 
 #include "Window.h"
-#include "Base/Media/ThemeVartiant.h"
+#include "Base/Media/ThemeMode.h"
 #include "Base/Localization/StringLocalizer.h"
 #include "Base/Localization/LocalizationStorage.h"
 
@@ -17,7 +17,7 @@ namespace Sgl
 		OnMainWindowClose,    // The application exits when the main window is closed.
 		OnLastWindowClose,    // The application exits when the last open window is closed.
 		OnExplicitShutdown    // The application only shuts down when explicitly requested (e.g., via Shutdown()).
-	};
+	};	
 
 	/// <summary>
 	/// Represents the main application instance, managing windows, styling, theme, and the event loop.
@@ -35,7 +35,7 @@ namespace Sgl
 		};
 	private:
 		using ApplicationEventHandler = EventHandler<Application>;
-		using ThemeVariantChangedEventHanlder = EventHandler<Application, ThemeVariantChangedEventArgs>;
+		using ThemeVariantChangedEventHanlder = EventHandler<Application>;
 	public:
 		/// <summary>
 		/// Constructs an application instance.
@@ -145,7 +145,7 @@ namespace Sgl
 	protected:
 		virtual void OnStarted();
 		virtual void OnStopped();
-		virtual void OnThemeVariantChanged(ThemeVariantChangedEventArgs e);
+		virtual void OnThemeVariantChanged();
 	private:
 		ThemeMode GetSystemThemeMode() const;
 		void HandleInputEvents();
@@ -163,7 +163,7 @@ namespace Sgl
 		bool _isRunning = false;
 		ThemeMode _themeMode;
 		ThemeVariant _themeVariant;
-		std::unique_ptr<LocalizationStorage> _localizationStorage;
+		std::unique_ptr<LocalizationStorage> _localizationStorage;		
 
 		Window* _focusedWindow = nullptr;
 		std::vector<Window*> _windows;
@@ -175,4 +175,4 @@ namespace Sgl
 	/// Provides convenient syntax like App->GetThemeVariant() or App.Current()->MainWindow.
 	/// </summary>
 	inline Application::Context App;
-} 
+}
