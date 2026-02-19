@@ -28,6 +28,8 @@ namespace Sgl
 		}
 	};
 
+	const PseudoClassId UIElement::HoverPseudoClass = PseudoClassesRegistry::Register("hover");
+
 	UIElement::UIElement(const UIElement& other):
 		Layoutable(other),
 		_isMouseOver(other._isMouseOver),
@@ -121,12 +123,14 @@ namespace Sgl
 	{
 		_isMouseOver = true;
 		Cursor::Set(GetCursor());
+		PseudoClasses.set(HoverPseudoClass);
 		MouseEnter(*this, e);
 	}
 
 	void UIElement::OnMouseLeave(MouseMoveEventArgs e)
 	{
 		MouseLeave(*this, e);
+		PseudoClasses.reset(HoverPseudoClass);
 		_isMouseOver = false;
 	}
 

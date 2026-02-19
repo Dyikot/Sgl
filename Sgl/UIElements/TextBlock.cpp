@@ -5,6 +5,13 @@
 
 namespace Sgl::UIElements
 {
+	static constexpr size_t FontFamilyFlag	  = 1 << 0;
+	static constexpr size_t FontSizeFlag	  = 1 << 1;
+	static constexpr size_t FontStyleFlag	  = 1 << 2;
+	static constexpr size_t FontOutlineFlag	  = 1 << 3;
+	static constexpr size_t FlowDirectionFlag = 1 << 4;
+	static constexpr size_t TextAlignmentFlag = 1 << 5;
+
 	TextBlock::TextBlock()
 	{
 		
@@ -175,7 +182,7 @@ namespace Sgl::UIElements
 			return FSize();
 		}
 
-		if(_fontFlags.any())
+		if(_fontFlags > 0)
 		{
 			UpdateFont();
 		}
@@ -217,36 +224,36 @@ namespace Sgl::UIElements
 
 	void TextBlock::InvalidateFont(size_t flag)
 	{
-		_fontFlags.set(flag);
+		_fontFlags &= flag;
 	}
 
 	void TextBlock::UpdateFont()
 	{
-		if(_fontFlags[FontFamilyFlag])
+		if(_fontFlags & FontFamilyFlag)
 		{
 			_fontImpl = FontImpl(_fontFamily, _fontSize);
 		}
-		else if(_fontFlags[FontSizeFlag])
+		else if(_fontFlags & FontSizeFlag)
 		{
 			_fontImpl.SetSize(_fontSize);
 		}
 
-		if(_fontFlags[FontStyleFlag])
+		if(_fontFlags & FontStyleFlag)
 		{
 			_fontImpl.SetStyle(_fontStyle);
 		}
 
-		if(_fontFlags[FontOutlineFlag])
+		if(_fontFlags & FontOutlineFlag)
 		{
 			_fontImpl.SetOutline(_outline);
 		}
 
-		if(_fontFlags[FlowDirectionFlag])
+		if(_fontFlags & FlowDirectionFlag)
 		{
 			_fontImpl.SetFlowDirection(_flowDirection);
 		}
 
-		if(_fontFlags[TextAlignmentFlag])
+		if(_fontFlags & TextAlignmentFlag)
 		{
 			_fontImpl.SetTextAligment(_textAlignment);
 		}

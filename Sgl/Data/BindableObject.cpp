@@ -26,13 +26,11 @@ namespace Sgl
 
 	BindableObject::BindableObject(const BindableObject& other):
 		INotifyPropertyChanged(other),
-		_attachedValues(other._attachedValues),
 		_dataContext(other._dataContext)
 	{}
 
 	BindableObject::BindableObject(BindableObject&& other) noexcept:
 		INotifyPropertyChanged(std::move(other)),
-		_attachedValues(std::move(other._attachedValues)),
 		_propertiesObservers(std::move(other._propertiesObservers)),
 		_bindings(std::move(other._bindings)),
 		_dataContext(std::move(other._dataContext))
@@ -41,6 +39,7 @@ namespace Sgl
 	BindableObject::~BindableObject()
 	{
 		ClearBindings();
+		Destroying(*this);
 	}
 
 	void BindableObject::SetDataContext(const Ref<INotifyPropertyChanged>& value, ValueSource source)

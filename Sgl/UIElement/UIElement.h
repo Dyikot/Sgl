@@ -26,6 +26,8 @@ namespace Sgl
 		UIElement(const UIElement& other);
 		UIElement(UIElement&& other) noexcept;
 		
+		static const PseudoClassId HoverPseudoClass;
+
 		Event<KeyEventHandler> KeyUp;
 		Event<KeyEventHandler> KeyDown;
 		Event<MouseMoveEventHandler> MouseMove;

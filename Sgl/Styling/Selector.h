@@ -1,6 +1,9 @@
 #pragma once
 
 #include <string>
+#include <vector>
+#include "PseudoClass.h"
+#include "../Base/Delegate.h"
 
 namespace Sgl
 {
@@ -13,7 +16,7 @@ namespace Sgl
 	public:
 		Selector() = default;
 		Selector(const Selector&) = default;
-		Selector(Selector&&) = default;
+		Selector(Selector&&) noexcept = default;
 
 		template<typename T>
 		Selector& OfType()
@@ -31,12 +34,11 @@ namespace Sgl
 			return *this;
 		}
 
-		Selector& Class(std::string className)
-		{
-			_className = std::move(className);
-			_flags |= ClassFlag;
-			return *this;
-		}
+		Selector& Name(std::string name);
+		Selector& Class(std::string className);
+		Selector& On(PseudoClassId pseudoClass);
+		Selector& On(std::string_view pseudoClassName);
+		Selector& Where(Func<bool, StyleableElement&> predicate);
 
 		bool Match(StyleableElement& target) const;
 	private:
@@ -52,11 +54,17 @@ namespace Sgl
 			return typeid(T) == typeid(target);
 		}
 	private:
-		static constexpr uint32_t TypeFlag = 0x1;
-		static constexpr uint32_t ClassFlag = 0x2;
+		static constexpr uint32_t TypeFlag           = 1 << 0;
+		static constexpr uint32_t NameFlag			 = 1 << 1;
+		static constexpr uint32_t ClassFlag	         = 1 << 2;
+		static constexpr uint32_t PseudoClassFlag    = 1 << 3;
+		static constexpr uint32_t PredicateFlag		 = 1 << 4;
 
-		std::string _className;
-		TypeComparer _typeComparer = nullptr;
 		uint32_t _flags = 0;
+		TypeComparer _typeComparer = nullptr;
+		std::string _name;
+		std::vector<std::string> _classes;
+		PseudoClassesSet _pseoduClasses;
+		Func<bool, StyleableElement&> _predicate;
 	};
 }

@@ -1,13 +1,12 @@
 #pragma once
 
 #include <vector>
-#include <unordered_map>
 #include "../Base/Ref.h"
 #include "../Base/Any.h"
 #include "../Base/Exceptions.h"
 #include "BindingOperations.h"
 #include "StyleableProperty.h"
-#include "AttachedProperty.h"
+#include "AttachPropertiesRegister.h"
 
 namespace Sgl
 {
@@ -27,6 +26,8 @@ namespace Sgl
 	class BindableObject : public INotifyPropertyChanged
 	{
 	private:
+		using DestoyingEventHandler = EventHandler<BindableObject>;
+
 		class BindingContext
 		{
 		public:
@@ -52,6 +53,8 @@ namespace Sgl
 		BindableObject(const BindableObject& other);
 		BindableObject(BindableObject&& other) noexcept;
 		~BindableObject();	
+
+		Event<DestoyingEventHandler> Destroying;
 
 		void SetDataContext(const Ref<INotifyPropertyChanged>& value, ValueSource source = ValueSource::Local);
 		const Ref<INotifyPropertyChanged>& GetDataContext() const { return _dataContext; }
@@ -84,35 +87,32 @@ namespace Sgl
 			return BindingContext(binding.get(), this);
 		}
 
-		template<typename T>
-		void SetAttachedValue(AttachedProperty<T>& property, const T& value)
+		template<typename... TArgs>
+		void UseAttachedProperties()
 		{
-			Any& attachedValue = _attachedValues[&property];
-
-			if(attachedValue.HasValue())
+			((Destroying += [](BindableObject& sender, EventArgs e)
 			{
-				attachedValue.As<T>() = value;
-			}
-			else
-			{
-				attachedValue = Any::New<T>(value);
-			}
+				using TProperties = TArgs::AttachedProperties;
+				auto& reg = AttachPropertiesRegister<TProperties>::Get();
+				reg.ClearAttachedProperty(&sender);
+			}), ...);
 		}
 
-		template<typename T>
-		const T& GetAttachedValue(AttachedProperty<T>& property) const
+		template<typename T, typename TValue, typename TSetValue>
+			requires std::constructible_from<TSetValue, TValue>
+		void SetAttachedValue(TValue T::* field, const TSetValue& value)
 		{
-			if(auto it = _attachedValues.find(&property); it != _attachedValues.end())
-			{
-				return it->second.As<T>();
-			}
-
-			return property.DefaultValue;
+			auto& reg = AttachPropertiesRegister<T>::Get();
+			auto& property = reg.GetAttachedProperty(this);
+			property.*field = value;
 		}
 
-		void ClearAttachedValue(PropertyBase& property)
+		template<typename T, typename TValue>
+		TValue GetAttachedValue(TValue T::* field) const
 		{
-			_attachedValues.erase(&property);
+			auto& reg = AttachPropertiesRegister<T>::Get();
+			auto& property = reg.GetAttachedProperty(this);
+			return property.*field;
 		}
 
 		static inline StyleableProperty DataContextProperty { &SetDataContext, &GetDataContext };
@@ -139,7 +139,6 @@ namespace Sgl
 			return true;
 		}
 	private:
-		std::unordered_map<PropertyBase*, Any> _attachedValues;
 		std::vector<Observer> _propertiesObservers;
 		std::vector<std::unique_ptr<BindingBase>> _bindings;
 		Ref<INotifyPropertyChanged> _dataContext;

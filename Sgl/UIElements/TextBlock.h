@@ -65,13 +65,6 @@ namespace Sgl::UIElements
 		void UpdateFont();
 		void CreateTextTexture();
 	private:
-		static constexpr size_t FontFamilyFlag = 0;
-		static constexpr size_t FontSizeFlag = 1;
-		static constexpr size_t FontStyleFlag = 2;
-		static constexpr size_t FontOutlineFlag = 3;
-		static constexpr size_t FlowDirectionFlag = 4;
-		static constexpr size_t TextAlignmentFlag = 5;
-
 		std::string _text;
 		float _fontSize = DefaultFontSize;
 		int _outline = 0;
@@ -98,6 +91,6 @@ namespace Sgl::UIElements
 		FontImpl _fontImpl;
 		Texture _textTexture;
 		bool _isTextTextureValid = false;
-		std::bitset<6> _fontFlags = 1;
+		uint32_t _fontFlags = 1;
 	};
 }

@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "IStyleHost.h"
+#include "PseudoClass.h"
 #include "../Data/BindableObject.h"
 #include "../Base/Ref.h"
 #include "../Base/Event.h"
@@ -19,7 +20,9 @@ namespace Sgl
 		StyleableElement(StyleableElement&& other) noexcept;
 		virtual ~StyleableElement() = default;
 
+		std::string Name;
 		StyleCollection Styles;
+		PseudoClassesSet PseudoClasses;
 		Event<StyleableElementEventHandler> AttachedToElementsTree;
 		Event<StyleableElementEventHandler> DetachedFromElementsTree;
 

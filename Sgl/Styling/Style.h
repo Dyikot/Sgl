@@ -33,7 +33,7 @@ namespace Sgl
         Style& Set(StyleableProperty<TOwner, TValue>& property,
                    StyleableProperty<TOwner, TValue>::Value value)
         {
-            _setters.emplace_back(new Setter(property, value));
+            _setters.emplace_back(new Setter<TOwner, TValue>(property, value));
             return *this;
         }
 
