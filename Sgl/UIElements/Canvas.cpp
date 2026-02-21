@@ -16,8 +16,8 @@ namespace Sgl::UIElements
 	{
 		for(auto& child : Children)
 		{
-			int left = GetLeft(child.GetValue());
-			int top = GetTop(child.GetValue());
+			int left = GetLeft(child);
+			int top = GetTop(child);
 
 			auto [width, height] = child->GetDesiredSize();
 
@@ -27,8 +27,8 @@ namespace Sgl::UIElements
 				.h = height
 			};
 
-			childRect.x = rect.x + (left != 0 ? left : rect.w - GetRight(child.GetValue()) - width);
-			childRect.y = rect.y + (top != 0 ? top : rect.h - GetBottom(child.GetValue()) - height);
+			childRect.x = rect.x + (left != 0 ? left : rect.w - GetRight(child) - width);
+			childRect.y = rect.y + (top != 0 ? top : rect.h - GetBottom(child) - height);
 			
 			child->Arrange(childRect);
 		}

@@ -19,44 +19,44 @@ namespace Sgl::UIElements
 		Canvas(const Canvas&) = default;
 		Canvas(Canvas&&) = default;
 
-		int GetLeft(UIElement& element)
+		int GetLeft(const Ref<UIElement>& element)
 		{
-			return element.GetAttachedValue(&AttachedProperties::Left);
+			return element->GetAttachedValue(&AttachedProperties::Left);
 		}
 
-		int GetTop(UIElement& element)
+		int GetTop(const Ref<UIElement>& element)
 		{
-			return element.GetAttachedValue(&AttachedProperties::Top);
+			return element->GetAttachedValue(&AttachedProperties::Top);
 		}
 
-		int GetRight(UIElement& element)
+		int GetRight(const Ref<UIElement>& element)
 		{
-			return element.GetAttachedValue(&AttachedProperties::Right);
+			return element->GetAttachedValue(&AttachedProperties::Right);
 		}
 
-		int GetBottom(UIElement& element)
+		int GetBottom(const Ref<UIElement>& element)
 		{
-			return element.GetAttachedValue(&AttachedProperties::Bottom);
+			return element->GetAttachedValue(&AttachedProperties::Bottom);
 		}
 
-		void SetLeft(UIElement& element, int value)
+		void SetLeft(const Ref<UIElement>& element, int value)
 		{
-			element.SetAttachedValue(&AttachedProperties::Left, value);
+			element->SetAttachedValue(&AttachedProperties::Left, value);
 		}
 
-		void SetTop(UIElement& element, int value)
+		void SetTop(const Ref<UIElement>& element, int value)
 		{
-			element.SetAttachedValue(&AttachedProperties::Top, value);
+			element->SetAttachedValue(&AttachedProperties::Top, value);
 		}
 
-		void SetRight(UIElement& element, int value)
+		void SetRight(const Ref<UIElement>& element, int value)
 		{
-			element.SetAttachedValue(&AttachedProperties::Right, value);
+			element->SetAttachedValue(&AttachedProperties::Right, value);
 		}
 
-		void SetBottom(UIElement& element, int value)
+		void SetBottom(const Ref<UIElement>& element, int value)
 		{
-			element.SetAttachedValue(&AttachedProperties::Bottom, value);
+			element->SetAttachedValue(&AttachedProperties::Bottom, value);
 		}
 	protected:
 		FSize MeasureContent(FSize avaliableSize) override;

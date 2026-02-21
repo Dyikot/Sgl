@@ -1,7 +1,6 @@
 #pragma once
 
 #include <stdint.h>
-#include <concepts>
 #include "Property.h"
 
 namespace Sgl
@@ -15,7 +14,7 @@ namespace Sgl
 	};
 
 	template<typename TOwner, typename TValue>
-	class StyleableProperty : public Property<TOwner, TValue>
+	class StyleableProperty : public PropertyBase
 	{
 	public:
 		using Owner = TOwner;
@@ -30,7 +29,7 @@ namespace Sgl
 		StyleableProperty(const StyleableProperty&) = delete;
 		StyleableProperty(StyleableProperty&&) = delete;
 
-		void InvokeSetter(Owner& owner, Value value) final
+		void InvokeSetter(Owner& owner, Value value)
 		{
 			(owner.*_setter)(value, ValueSource::Local);
 		}
@@ -40,7 +39,7 @@ namespace Sgl
 			(owner.*_setter)(value, source);
 		}
 
-		Value InvokeGetter(Owner& owner) const final
+		Value InvokeGetter(Owner& owner) const
 		{
 			return (owner.*_getter)();
 		}

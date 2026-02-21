@@ -1,13 +1,12 @@
 #pragma once
 
 #include <stdint.h>
-#include <concepts>
 #include "Property.h"
 
 namespace Sgl
 {
 	template<typename TOwner, typename TValue>
-	class DirectProperty : public Property<TOwner, TValue>
+	class DirectProperty : public PropertyBase
 	{
 	public:
 		using Owner = TOwner;
@@ -22,12 +21,12 @@ namespace Sgl
 		DirectProperty(const DirectProperty&) = delete;
 		DirectProperty(DirectProperty&&) = delete;
 
-		void InvokeSetter(Owner& owner, Value value) final
+		void InvokeSetter(Owner& owner, Value value)
 		{
 			(owner.*_setter)(value);
 		}
 
-		Value InvokeGetter(Owner& owner) const final
+		Value InvokeGetter(Owner& owner) const
 		{
 			return (owner.*_getter)();
 		}

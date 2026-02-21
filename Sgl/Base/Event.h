@@ -32,9 +32,9 @@ namespace Sgl
 			(_source->*_method)(sender, e);
 		}
 
-		friend bool operator==(const MethodEventHandler& left, const MethodEventHandler& right)
+		bool operator==(const MethodEventHandler& other) const noexcept
 		{
-			return left._method == right._method;
+			return _method == other._method;
 		}
 	private:
 		Method _method;
@@ -104,7 +104,7 @@ namespace Sgl
 		{
 			std::erase(_eventHandlers, handler);
 		}
-	private:
+
 		/// <summary>
 		/// Invokes all registered event handlers with the specified sender and event arguments.
 		/// </summary>
@@ -129,8 +129,6 @@ namespace Sgl
 
 		Event& operator=(const Event&) = delete;
 		Event& operator=(Event&&) = delete;
-
-		friend TSender;
 	private:
 		std::vector<EventHandler> _eventHandlers;
 	};

@@ -1,101 +1,54 @@
 #pragma once
 
 #include <vector>
-#include "../Base/Ref.h"
-#include "../Base/Any.h"
-#include "../Base/Exceptions.h"
-#include "BindingOperations.h"
+#include <concepts>
+#include "Converters.h"
 #include "StyleableProperty.h"
+#include "INotifyPropertyChanged.h"
 #include "AttachPropertiesRegister.h"
+#include "../Base/Ref.h"
+#include "../Base/Exceptions.h"
 
 namespace Sgl
 {
-	class BindingBase;
-
-	template<typename TTarget, typename TSource, typename TValue>
-	class PropertyBinding;
-
-	template<typename TTarget, typename TSource, typename TValue, typename TEvent>
-	class EventBinding;
-
 	enum class BindingMode
 	{
 		OneWay, OneWayToSource, TwoWay
-	};
+	};	
+
+	class BindingBase;
+
+	template<CProperty TTargetProperty, CProperty TSourceProperty>
+	class Binding;
 
 	class BindableObject : public INotifyPropertyChanged
 	{
 	private:
-		using DestoyingEventHandler = EventHandler<BindableObject>;
-
-		class BindingContext
-		{
-		public:
-			BindingContext(BindingBase* binding, BindableObject* bindableObject);
-			void Clear();
-		private:
-			BindingBase* _binding;
-			BindableObject* _bindgableObject;
-		};
-
-		struct Observer
-		{
-			std::reference_wrapper<PropertyBase> Property;
-			PropertyChangedEventHandler Handler;
-
-			bool operator==(const Observer& other) const
-			{
-				return Handler == other.Handler;
-			}
-		};		
+		using DestroyingEventHandler = EventHandler<BindableObject>;	
 	public:
 		BindableObject() = default;
 		BindableObject(const BindableObject& other);
 		BindableObject(BindableObject&& other) noexcept;
 		~BindableObject();	
 
-		Event<DestoyingEventHandler> Destroying;
+		Event<DestroyingEventHandler> Destroying;
 
 		void SetDataContext(const Ref<INotifyPropertyChanged>& value, ValueSource source = ValueSource::Local);
 		const Ref<INotifyPropertyChanged>& GetDataContext() const { return _dataContext; }
 
-		void AddPropertyChangedEventHandler(PropertyBase& property, PropertyChangedEventHandler handler) override;
-		void RemovePropertyChangedEventHandler(PropertyBase& property, PropertyChangedEventHandler handler) override;
-
-		template<typename TTarget, typename TSource, typename TValue>
-		BindingContext Bind(Property<TTarget, TValue>& targetProperty,
-						    Property<TSource, TValue>& sourceProperty,
-						    BindingMode mode = BindingMode::OneWay)
+		template<CProperty TTargetProperty, CProperty TSourceProperty>
+		void Bind(TTargetProperty& targetProperty,
+				  TSourceProperty& sourceProperty,
+				  BindingMode mode = BindingMode::OneWay)
 		{
-			const auto& binding = _bindings.emplace_back(
-				new PropertyBinding(targetProperty, sourceProperty, mode)
-			);
-
-			return BindingContext(binding.get(), this);
-		}
-
-		template<typename TTarget, typename TSource, typename TValue, CEvent TEvent>
-		BindingContext Bind(Property<TTarget, TValue>& targetProperty,
-							Property<TSource, TValue>& sourceProperty,
-							TEvent Property<TTarget, TValue>::Owner::* event,
-							BindingMode mode = BindingMode::OneWayToSource)
-		{
-			const auto& binding = _bindings.emplace_back(
-				new EventBinding(targetProperty, sourceProperty, event, mode)
-			);
-
-			return BindingContext(binding.get(), this);
+			_bindings.emplace_back(new Binding<TTargetProperty, TSourceProperty>(
+				targetProperty, sourceProperty, mode));
 		}
 
 		template<typename... TArgs>
 		void UseAttachedProperties()
 		{
-			((Destroying += [](BindableObject& sender, EventArgs e)
-			{
-				using TProperties = TArgs::AttachedProperties;
-				auto& reg = AttachPropertiesRegister<TProperties>::Get();
-				reg.ClearAttachedProperty(&sender);
-			}), ...);
+			((Destroying += &ClearAttachedProperty<TArgs>), ...);
 		}
 
 		template<typename T, typename TValue, typename TSetValue>
@@ -139,12 +92,19 @@ namespace Sgl
 			return true;
 		}
 	private:
-		std::vector<Observer> _propertiesObservers;
+		template<typename T>
+		static void ClearAttachedProperty(BindableObject& sender, EventArgs e)
+		{
+			using TProperties = T::AttachedProperties;
+			auto& reg = AttachPropertiesRegister<TProperties>::Get();
+			reg.ClearAttachedProperty(&sender);
+		}
+	private:
 		std::vector<std::unique_ptr<BindingBase>> _bindings;
 		Ref<INotifyPropertyChanged> _dataContext;
 
 		ValueSource _dataContextSource {};
-	};
+	};	
 
 	class BindingBase
 	{
@@ -159,113 +119,48 @@ namespace Sgl
 		bool _applied = false;
 	};
 
-	template<typename TTarget, typename TSource, typename TValue>
-	class PropertyBinding : public BindingBase
+	template<CProperty TTargetProperty, CProperty TSourceProperty>
+	struct PropertyChangedHandler
 	{
-	public:
-		PropertyBinding(Property<TTarget, TValue>& targetProperty,
-						Property<TSource, TValue>& sourceProperty,
-						BindingMode mode):
-			_targetProperty(targetProperty),
-			_sourceProperty(sourceProperty),
-			_mode(mode)
-		{}
+		using TTarget = TTargetProperty::Owner;
+		using TSource = TSourceProperty::Owner;
+		using TTargetValue = TTargetProperty::Value;
+		using TSourceValue = TSourceProperty::Value;
 
-		void Apply(BindableObject& bindableObject) final
+		TTargetProperty& TargetProperty;
+		TTarget* Target;
+		TSourceProperty& SourceProperty;
+		TSource* Source;
+
+		void operator()(INotifyPropertyChanged& sender, PropertyBase& e)
 		{
-			auto& dataContext = bindableObject.GetDataContext();
-
-			if(!dataContext)
+			if(e == TargetProperty)
 			{
-				throw Exception("Unable to set a binding. Data context is null.");
+				TargetProperty.InvokeSetter(*Target, SourceProperty.InvokeGetter(*Source));
 			}
-
-			auto& target = static_cast<TTarget&>(bindableObject);
-			auto& source = dataContext.GetValueAs<TSource>();
-
-			switch(_mode)
-			{
-				case BindingMode::OneWay:
-				{
-					_targetProperty.InvokeSetter(target, _sourceProperty.InvokeGetter(source));
-					BindingOperations::Bind(_targetProperty, target, _sourceProperty, source);
-					break;
-				}
-
-				case BindingMode::OneWayToSource:
-				{
-					_sourceProperty.InvokeSetter(source, _targetProperty.InvokeGetter(target));
-					BindingOperations::Bind(_sourceProperty, source, _targetProperty, target);
-					break;
-				}
-
-				case BindingMode::TwoWay:
-				{
-					_targetProperty.InvokeSetter(target, _sourceProperty.InvokeGetter(source));
-					BindingOperations::Bind(_targetProperty, target, _sourceProperty, source);
-					BindingOperations::Bind(_sourceProperty, source, _targetProperty, target);
-					break;
-				}
-			}
-
-			_applied = true;
 		}
 
-		void Clear(BindableObject& bindableObject) final
+		bool operator==(const PropertyChangedHandler& other) const
 		{
-			auto& dataContext = bindableObject.GetDataContext();
-
-			if(!dataContext)
-			{
-				throw Exception("Unable to set a binding. Data context is null.");
-			}
-
-			auto& target = static_cast<TTarget&>(bindableObject);
-			auto& source = dataContext.GetValueAs<TSource>();
-
-			switch(_mode)
-			{
-				case BindingMode::OneWay:
-				{
-					BindingOperations::Unbind(_targetProperty, target, _sourceProperty, source);
-					break;
-				}
-
-				case BindingMode::OneWayToSource:
-				{
-					BindingOperations::Unbind(_sourceProperty, source, _targetProperty, target);
-					break;
-				}
-
-				case BindingMode::TwoWay:
-				{
-					BindingOperations::Unbind(_targetProperty, target, _sourceProperty, source);
-					BindingOperations::Unbind(_sourceProperty, source, _targetProperty, target);
-					break;
-				}
-			}
-
-			_applied = false;
+			return TargetProperty == other.TargetProperty &&
+				   Target == other.Target &&
+				   SourceProperty == other.SourceProperty &&
+				   Source == other.Source;
 		}
-	private:
-		Property<TTarget, TValue>& _targetProperty;
-		Property<TSource, TValue>& _sourceProperty;
-		BindingMode _mode;
 	};
 
-	template<typename TTarget, typename TSource, typename TValue, typename TEvent>
-	class EventBinding : public BindingBase
+	template<CProperty TTargetProperty, CProperty TSourceProperty>
+	class Binding: public BindingBase
 	{
-	private:
-		using TOwner = Property<TTarget, TValue>::Owner;
 	public:
-		EventBinding(Property<TTarget, TValue>& targetProperty,
-					 Property<TSource, TValue>& sourceProperty,
-					 TEvent TOwner::* event,
-					 BindingMode mode):
+		using TTarget = TTargetProperty::Owner;
+		using TSource = TSourceProperty::Owner;
+		using TTargetValue = TTargetProperty::Value;
+		using TSourceValue = TSourceProperty::Value;
+	public:
+		Binding(TTargetProperty& targetProperty, TSourceProperty& sourceProperty, BindingMode mode):
 			_targetProperty(targetProperty),
 			_sourceProperty(sourceProperty),
-			_event(event),
 			_mode(mode)
 		{}
 
@@ -278,32 +173,23 @@ namespace Sgl
 				throw Exception("Unable to set a binding. Data context is null.");
 			}
 
-			auto& target = static_cast<TTarget&>(bindableObject);
-			auto& source = dataContext.GetValueAs<TSource>();
+			auto target = static_cast<TTarget*>(&bindableObject);
+			auto source = dataContext.GetAs<TSource>();
 
-			switch(_mode)
+			if(_mode == BindingMode::OneWay || _mode == BindingMode::TwoWay)
 			{
-				case BindingMode::OneWay:
-				{
-					_targetProperty.InvokeSetter(target, _sourceProperty.InvokeGetter(source));
-					BindingOperations::Bind(_targetProperty, target, _sourceProperty, source);
-					break;
-				}
+				_targetProperty.InvokeSetter(*target, _sourceProperty.InvokeGetter(*source));
+				source->PropertyChanged += PropertyChangedHandler(
+					_targetProperty, target, _sourceProperty, source
+				);
+			}
 
-				case BindingMode::OneWayToSource:
-				{
-					_sourceProperty.InvokeSetter(source, _targetProperty.InvokeGetter(target));
-					BindingOperations::Bind(_sourceProperty, source, _targetProperty, target, _event);
-					break;
-				}
-
-				case BindingMode::TwoWay:
-				{
-					_targetProperty.InvokeSetter(target, _sourceProperty.InvokeGetter(source));
-					BindingOperations::Bind(_targetProperty, target, _sourceProperty, source);
-					BindingOperations::Bind(_sourceProperty, source, _targetProperty, target, _event);
-					break;
-				}
+			if(_mode == BindingMode::OneWayToSource || _mode == BindingMode::TwoWay)
+			{
+				_sourceProperty.InvokeSetter(*source, _targetProperty.InvokeGetter(*target));
+				target->PropertyChanged += PropertyChangedHandler(
+					_sourceProperty, source, _targetProperty, target
+				);
 			}
 
 			_applied = true;
@@ -318,37 +204,28 @@ namespace Sgl
 				throw Exception("Unable to set a binding. Data context is null.");
 			}
 
-			auto& target = static_cast<TTarget&>(bindableObject);
-			auto& source = dataContext.GetValueAs<TSource>();
+			auto target = static_cast<TTarget*>(&bindableObject);
+			auto source = dataContext.GetAs<TSource>();
 
-			switch(_mode)
+			if(_mode == BindingMode::OneWay || _mode == BindingMode::TwoWay)
 			{
-				case BindingMode::OneWay:
-				{
-					BindingOperations::Unbind(_targetProperty, target, _sourceProperty, source);
-					break;
-				}
+				source->PropertyChanged -= PropertyChangedHandler(
+					_targetProperty, target, _sourceProperty, source
+				);
+			}
 
-				case BindingMode::OneWayToSource:
-				{
-					BindingOperations::Unbind(_sourceProperty, source, _targetProperty, target, _event);
-					break;
-				}
-
-				case BindingMode::TwoWay:
-				{
-					BindingOperations::Unbind(_targetProperty, target, _sourceProperty, source);
-					BindingOperations::Unbind(_sourceProperty, source, _targetProperty, target, _event);
-					break;
-				}
+			if(_mode == BindingMode::OneWayToSource || _mode == BindingMode::TwoWay)
+			{
+				target->PropertyChanged -= PropertyChangedHandler(
+					_sourceProperty, source, _targetProperty, target
+				);
 			}
 
 			_applied = false;
 		}
 	private:
-		Property<TTarget, TValue>& _targetProperty;
-		Property<TSource, TValue>& _sourceProperty;
-		TEvent TOwner::* _event;
+		TTargetProperty& _targetProperty;
+		TSourceProperty& _sourceProperty;
 		BindingMode _mode;
 	};
 }

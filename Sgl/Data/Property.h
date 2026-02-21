@@ -1,13 +1,12 @@
 #pragma once
 
+#include <concepts>
+
 namespace Sgl
 {
 	class PropertyBase
 	{
 	public:
-		PropertyBase() = default;
-		PropertyBase(const PropertyBase&) = delete;
-		PropertyBase(PropertyBase&&) = delete;
 		virtual ~PropertyBase() = default;
 
 		friend bool operator==(const PropertyBase& left, const PropertyBase& right)
@@ -16,14 +15,10 @@ namespace Sgl
 		}
 	};
 
-	template<typename TOwner, typename TValue>
-	class Property : public PropertyBase
+	template<typename T, typename TOwner = T::Owner, typename TValue = T::Value>
+	concept CProperty = requires(T property, TOwner& owner, TValue value)
 	{
-	public:
-		using Owner = TOwner;
-		using Value = TValue;
-
-		virtual void InvokeSetter(Owner& owner, Value value) = 0;
-		virtual Value InvokeGetter(Owner& owner) const = 0;
+		{ property.InvokeSetter(owner, value) } -> std::same_as<void>;
+		{ property.InvokeGetter(owner) } -> std::same_as<TValue>;
 	};
 }

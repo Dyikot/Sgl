@@ -2,33 +2,22 @@
 
 #include <vector>
 #include <concepts>
-#include "INotityPropertyChanged.h"
+#include "INotifyPropertyChanged.h"
 #include "DirectProperty.h"
 
 namespace Sgl
 {
 	class ObservableObject : public INotifyPropertyChanged
 	{
-	private:
-		struct Observer
-		{
-			std::reference_wrapper<PropertyBase> Property;
-			PropertyChangedEventHandler Handler;
-
-			bool operator==(const Observer& other) const
-			{
-				return Handler == other.Handler;
-			}
-		};
 	public:
 		ObservableObject() = default;
 		ObservableObject(const ObservableObject&) = default;
 		ObservableObject(ObservableObject&&) = default;
-
-		void AddPropertyChangedEventHandler(PropertyBase& property, PropertyChangedEventHandler handler) override;
-		void RemovePropertyChangedEventHandler(PropertyBase& property, PropertyChangedEventHandler handler) override;
 	protected:
-		virtual void NotifyPropertyChanged(PropertyBase& property);
+		virtual void NotifyPropertyChanged(PropertyBase& property)
+		{
+			PropertyChanged(*this, property);
+		}
 
 		template<typename TOwner, typename TValue, typename TField>
 		bool SetProperty(DirectProperty<TOwner, TValue>& property, TField& field,
@@ -61,7 +50,5 @@ namespace Sgl
 
 			return true;
 		}
-	private:
-		std::vector<Observer> _propertiesObservers;
 	};
 }
