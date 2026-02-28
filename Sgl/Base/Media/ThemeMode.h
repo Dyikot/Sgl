@@ -20,15 +20,4 @@ namespace Sgl
 		Dark,
 		System
 	};
-
-	/// <summary>
-	/// Application theme resources
-	/// </summary>
-	struct ThemeResources;
-
-	/// <summary>
-	/// Get application theme resources. Must be implemented by user.
-	/// </summary>
-	/// <returns>Reference to application theme resources</returns>
-	ThemeResources& GetThemeResources();
 }

@@ -13,8 +13,6 @@ namespace Sgl
 	/// </summary>
 	class Surface final
 	{
-	private:
-		SDL_Surface* _surface = nullptr;
 	public:
 		/// <summary>
 		/// Constructs an empty (null) surface.
@@ -178,5 +176,7 @@ namespace Sgl
 	private:
 		void CopyFrom(const Surface& other);
 		void Destroy();
+	private:
+		SDL_Surface* _surface = nullptr;
 	};
 }

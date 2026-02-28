@@ -124,8 +124,6 @@ namespace Sgl
 	{
 		using TTarget = TTargetProperty::Owner;
 		using TSource = TSourceProperty::Owner;
-		using TTargetValue = TTargetProperty::Value;
-		using TSourceValue = TSourceProperty::Value;
 
 		TTargetProperty& TargetProperty;
 		TTarget* Target;
@@ -155,8 +153,6 @@ namespace Sgl
 	public:
 		using TTarget = TTargetProperty::Owner;
 		using TSource = TSourceProperty::Owner;
-		using TTargetValue = TTargetProperty::Value;
-		using TSourceValue = TSourceProperty::Value;
 	public:
 		Binding(TTargetProperty& targetProperty, TSourceProperty& sourceProperty, BindingMode mode):
 			_targetProperty(targetProperty),

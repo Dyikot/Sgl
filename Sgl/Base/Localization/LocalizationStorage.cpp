@@ -3,14 +3,13 @@
 #include "../Logging.h"
 #include "../Exceptions.h"
 
-
 namespace Sgl
 {
-    static constexpr int NotFoundLanguage = -1;
+    static constexpr int NotFoundIndex = -1;
 
-	LocalizationStorage::LocalizationStorage(std::string csvFilePath, char delimeter)
+	LocalizationStorage::LocalizationStorage(std::string csvFilePath, char delimiter)
 	{
-        CSVParser csvParser(std::move(csvFilePath), delimeter);
+        CSVParser csvParser(std::move(csvFilePath), delimiter);
 
         if(!csvParser.ParseTo(_headers, _records))
         {
@@ -24,8 +23,13 @@ namespace Sgl
             throw Exception("Storage is empty");
         }
 
+        if(_records.size() % _headersCount != 0)
+        {
+            throw Exception("Malformed CSV: record count mismatch");
+        }
+
         CreateKeyIndex();
-        
+
         LanguageInfo::CurrentChanged += MethodEventHandler(&LocalizationStorage::OnLanguageChanged, this);
         SetLanguage(LanguageInfo::GetCurrent());
 	}
@@ -46,12 +50,12 @@ namespace Sgl
             }
         }
 
-        _languageIndex = NotFoundLanguage;
+        _languageIndex = NotFoundIndex;
     }
 
     const std::string& LocalizationStorage::GetLocalizedString(const std::string& key) const
     {
-        if(_languageIndex == NotFoundLanguage)
+        if(_languageIndex == NotFoundIndex)
         {
             return key;
         }

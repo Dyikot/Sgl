@@ -25,8 +25,6 @@ namespace Sgl
 	/// </summary>
 	class Texture final
 	{
-	private:
-		SDL_Texture* _texture = nullptr;
 	public:
 		/// <summary>
 		/// Constructs an empty (null) texture.
@@ -222,6 +220,8 @@ namespace Sgl
 	private:
 		void CopyFrom(const Texture& other);
 		void Destroy();
+	private:
+		SDL_Texture* _texture = nullptr;
 	};
 
 	/// <summary>

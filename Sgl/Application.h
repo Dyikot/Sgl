@@ -35,7 +35,7 @@ namespace Sgl
 		};
 	private:
 		using ApplicationEventHandler = EventHandler<Application>;
-		using ThemeVariantChangedEventHanlder = EventHandler<Application>;
+		using ThemeVariantChangedEventHanlder = EventHandler<Application, ThemeMode>;
 	public:
 		/// <summary>
 		/// Constructs an application instance.
@@ -128,8 +128,22 @@ namespace Sgl
 		/// Creates LocalizationStorage from CSV file. Use StringLocalizer to get localized strings.
 		/// </summary>
 		/// <param name="csvFilePath"> - path to the CSV file containing localization data.</param>
-		/// <param name="delimeter"> - character used as delimiter in the CSV file (default is comma).</param>
-		void AddLocalization(std::string csvFilePath, char delimeter = ',');
+		/// <param name="delimiter"> - character used as delimiter in the CSV file (default is comma).</param>
+		void AddLocalization(std::string csvFilePath, char delimiter = ',');
+
+		/// <summary>
+		/// Registers a callback that will be invoked when theme changed.
+		/// Use this to update theme resources.
+		/// </summary>
+		/// <param name="themeResourcesNotifier"> - callback action that receives the new ThemeMode when ThemeVariant updated.</param>
+		void AddThemeResourcesNotifier(Action<ThemeMode> themeResourcesNotifier);
+
+		/// <summary>
+		/// Unregisters a previously added theme resources change callback.
+		/// Call this to stop receiving notifications when the theme changes
+		/// </summary>
+		/// <param name="themeResourcesNotifier"> - callback action that receives the new ThemeMode when ThemeVariant updated.</param>
+		void RemoveThemeResourcesNotifier(Action<ThemeMode> themeResourcesNotifier);
 
 		/// <summary>
 		/// Starts the application's main event loop.
@@ -149,7 +163,7 @@ namespace Sgl
 	private:
 		ThemeMode GetSystemThemeMode() const;
 		void HandleInputEvents();
-		void PushSDLUserEvent(unsigned int type);
+		void PushSDLUserEvent(uint32_t type);
 		void AddWindow(Window& window);
 		void RemoveWindow(Window& window);
 		void AttachWindow(Window& window);
@@ -164,6 +178,7 @@ namespace Sgl
 		ThemeMode _themeMode;
 		ThemeVariant _themeVariant;
 		std::unique_ptr<LocalizationStorage> _localizationStorage;		
+		std::vector<Action<ThemeMode>> _themeResourcesNotifiers;
 
 		Window* _focusedWindow = nullptr;
 		std::vector<Window*> _windows;

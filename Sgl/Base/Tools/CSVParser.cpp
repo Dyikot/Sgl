@@ -46,9 +46,9 @@ namespace Sgl
 		return records;
 	}
 
-	CSVParser::CSVParser(std::string path, char delimeter):
+	CSVParser::CSVParser(std::string path, char delimiter):
 		FilePath(std::move(path)),
-		Delimeter(delimeter)
+		Delimiter(delimiter)
 	{}
 
 	bool CSVParser::ParseTo(std::vector<std::string>& headers, std::vector<std::string>& records)
@@ -61,12 +61,12 @@ namespace Sgl
 
 			if(std::getline(stream, line))
 			{
-				headers = ParseLine(line, Delimeter);
+				headers = ParseLine(line, Delimiter);
 			}
 
 			while(std::getline(stream, line))
 			{
-				auto rec = ParseLine(line, Delimeter);
+				auto rec = ParseLine(line, Delimiter);
 				records.insert(records.end(), rec.begin(), rec.end());
 			}
 
@@ -74,7 +74,7 @@ namespace Sgl
 		}
 		else
 		{
-			Logging::LogWarning("Unbale to open the file: {}", FilePath);
+			Logging::LogWarning("Unable to open the file: {}", FilePath);
 		}
 
 		return success;

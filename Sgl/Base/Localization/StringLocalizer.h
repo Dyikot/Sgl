@@ -38,5 +38,5 @@ namespace Sgl
 	///   auto message = Localizer("WelcomeMessage");
 	///   auto formatted = Localizer("HelloUser", userName);
 	/// </summary>
-	inline StringLocalizer Localizer;
+	inline constexpr StringLocalizer Localizer;
 }

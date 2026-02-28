@@ -11,7 +11,7 @@ namespace Sgl
     {
         virtual ~RefMemoryBlockBase() = default;
 
-        std::atomic<size_t> References = 1;
+        std::atomic<uint32_t> References = 1;
     };
 
     template<typename T>

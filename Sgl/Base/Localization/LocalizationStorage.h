@@ -18,8 +18,8 @@ namespace Sgl
         /// Constructs a LocalizationStorage object by loading data from the specified CSV file.
         /// </summary>
         /// <param name="csvFilePath"> - path to the CSV file containing localization data.</param>
-        /// <param name="delimeter"> - character used as delimiter in the CSV file (default is comma).</param>
-        LocalizationStorage(std::string csvFilePath, char delimeter = ',');
+        /// <param name="delimiter"> - character used as delimiter in the CSV file (default is comma).</param>
+        LocalizationStorage(std::string csvFilePath, char delimiter = ',');
         LocalizationStorage(const LocalizationStorage&) = delete;
         LocalizationStorage(LocalizationStorage&&) = default;
         ~LocalizationStorage();

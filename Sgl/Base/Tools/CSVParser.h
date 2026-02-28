@@ -17,7 +17,7 @@ namespace Sgl
         /// </summary>
         /// <param name="path"> - path to the CSV file to parse.</param>
         /// <param name="delimeter"> - character used to separate fields (e.g., ',' or ';').</param>
-        CSVParser(std::string path, char delimeter);
+        CSVParser(std::string path, char delimiter);
 
         CSVParser(const CSVParser&) = default;
         CSVParser(CSVParser&&) = default;
@@ -30,7 +30,7 @@ namespace Sgl
         /// <summary>
         /// The delimiter character used to separate fields in the CSV file.
         /// </summary>
-        char Delimeter;
+        char Delimiter;
 
         /// <summary>
         /// Parses the CSV file into two output vectors:

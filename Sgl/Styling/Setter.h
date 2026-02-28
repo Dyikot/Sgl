@@ -17,6 +17,8 @@ namespace Sgl
     template<typename TOwner, typename TValue>
     class Setter : public ISetter
     {
+    private:
+        using Value = std::remove_reference_t<TValue>;
     public:
         Setter(StyleableProperty<TOwner, TValue>& property, TValue value):
             _property(property),
@@ -29,7 +31,7 @@ namespace Sgl
         }
     private:
         StyleableProperty<TOwner, TValue>& _property;
-        TValue _value;
+        Value _value;
     };
 
     template<typename TOwner, typename TValue, typename TResources, typename TResource>

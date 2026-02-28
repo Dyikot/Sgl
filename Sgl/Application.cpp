@@ -96,9 +96,26 @@ namespace Sgl
         }
     }
 
-    void Application::AddLocalization(std::string csvFilePath, char delimeter)
+    void Application::AddLocalization(std::string csvFilePath, char delimiter)
     {
-        _localizationStorage = std::make_unique<LocalizationStorage>(std::move(csvFilePath), delimeter);
+        _localizationStorage = std::make_unique<LocalizationStorage>(std::move(csvFilePath), delimiter);
+    }
+
+    void Application::AddThemeResourcesNotifier(Action<ThemeMode> themeResourcesNotifier)
+    {
+        if(!themeResourcesNotifier)
+        {
+            throw Exception("ThemeResources notifier cannotbe empty");
+        }
+
+        themeResourcesNotifier(_themeMode);
+
+        _themeResourcesNotifiers.push_back(std::move(themeResourcesNotifier));
+    }
+
+    void Application::RemoveThemeResourcesNotifier(Action<ThemeMode> themeResourcesNotifier)
+    {
+        std::erase(_themeResourcesNotifiers, std::move(themeResourcesNotifier));
     }
 
     void Application::Run()
@@ -171,7 +188,12 @@ namespace Sgl
 
     void Application::OnThemeVariantChanged()
     {
-        ThemeVariantChanged(*this);
+        ThemeVariantChanged(*this, _themeMode);
+
+        for(auto& themeResourcesNotifier : _themeResourcesNotifiers)
+        {
+            themeResourcesNotifier(_themeMode);
+        }
 
         for(auto& window : _activeWindows)
         {
@@ -504,7 +526,7 @@ namespace Sgl
 		}
 	}
 
-    void Application::PushSDLUserEvent(unsigned int type)
+    void Application::PushSDLUserEvent(uint32_t type)
     {
         SDL_Event e;
         e.user = SDL_UserEvent { .type = type };

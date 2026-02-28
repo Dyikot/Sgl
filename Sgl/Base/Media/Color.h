@@ -40,6 +40,16 @@ namespace Sgl
 		{}
 
 		/// <summary>
+		/// Copy constructor
+		/// </summary>
+		constexpr Color(const Color&) = default;
+
+		/// <summary>
+		/// Move constructor
+		/// </summary>
+		constexpr Color(Color&&) noexcept = default;
+
+		/// <summary>
 		/// Red component value (0-255)
 		/// </summary>
 		uint8_t Red;
@@ -97,6 +107,16 @@ namespace Sgl
 		{
 			return Red == color.Red && Green == color.Green && Blue == color.Blue;
 		}
+
+		/// <summary>
+		/// Copy assignment operator
+		/// </summary>
+		constexpr Color& operator=(const Color&) = default;
+
+		/// <summary>
+		/// Move assignment operator
+		/// </summary>
+		constexpr Color& operator=(Color&&) noexcept = default;
 
 		constexpr operator SDL_Color() const
 		{

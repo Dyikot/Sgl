@@ -22,7 +22,14 @@ namespace Sgl
         template<typename... TArgs>
         static void Log(std::string_view format, TArgs&&... args)
         {
-            std::cout << std::vformat(format, std::make_format_args(args...));
+            if constexpr(sizeof...(TArgs) == 0)
+            {
+                std::cout << format;
+            }
+            else
+            {
+                std::cout << std::vformat(format, std::make_format_args(args...));
+            }
         }
 
         /// <summary>

@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "../Base/Delegate.h"
-#include "../Base/Media/ThemeMode.h"
 #include "../Data/StyleableProperty.h"
 #include "Selector.h"
 #include "Setter.h"
@@ -44,13 +43,6 @@ namespace Sgl
         {
             _setters.emplace_back(new ResourceSetter(property, resources, resource));
             return *this;
-        }
-
-        template<typename TOwner, typename TValue, typename TResource>
-        Style& Set(StyleableProperty<TOwner, TValue>& property,
-                   TResource ThemeResources::* resource)
-        {
-            return Set(property, GetThemeResources(), resource);
         }
 
         void Apply(StyleableElement& target) const

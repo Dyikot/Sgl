@@ -1,7 +1,7 @@
 #include "Font.h"
 
 #include <SDL3_ttf/SDL_ttf.h>
-#include <SDL3/SDL_platform.h>
+#include <SDL3/SDL_platform_defines.h>
 #include <unordered_map>
 #include <filesystem>
 

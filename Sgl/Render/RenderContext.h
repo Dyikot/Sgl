@@ -22,8 +22,6 @@ namespace Sgl
     /// </summary>
     class RenderContext
     {
-    private:
-        SDL_Renderer* _renderer;
     public:
         /// <summary>
         /// Constructs a RenderContext instance with the specified SDL renderer.
@@ -258,5 +256,7 @@ namespace Sgl
         {
             SDL_SetRenderDrawColor(_renderer, color.Red, color.Green, color.Blue, color.Alpha);
         }
+    private:
+        SDL_Renderer* _renderer;
     };
 }

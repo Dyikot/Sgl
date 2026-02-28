@@ -7,8 +7,6 @@ namespace Sgl
 	class PropertyBase
 	{
 	public:
-		virtual ~PropertyBase() = default;
-
 		friend bool operator==(const PropertyBase& left, const PropertyBase& right)
 		{
 			return &left == &right;
