@@ -1,25 +1,30 @@
 #pragma once
 
-#include <vector>
-#include <memory>
 #include <unordered_map>
 #include "LanguageInfo.h"
 
 namespace Sgl
 {
     /// <summary>
-    /// Manages localization data loaded from a CSV file, providing access to localized strings
-    /// based on keys and current language settings.
+    /// Manages localized strings and provides lookup functionality based on the current language.
+    /// Loads localization data through a provided loader delegate and handles language change events.
     /// </summary>
-    class LocalizationStorage
+    class LocalizationStorage final
     {
     public:
         /// <summary>
-        /// Constructs a LocalizationStorage object by loading data from the specified CSV file.
+        /// Delegate type for loading localized strings.
         /// </summary>
-        /// <param name="csvFilePath"> - path to the CSV file containing localization data.</param>
-        /// <param name="delimiter"> - character used as delimiter in the CSV file (default is comma).</param>
-        LocalizationStorage(std::string csvFilePath, char delimiter = ',');
+        /// <param name="locale"> - the locale identifier (e.g., "en-US", "ru-RU").</param>
+        /// <param name="languageInfo"> - reference to the current language information.</param>
+        /// <returns>A map of localization keys to their translated strings.</returns>
+        using LocalizationLoader = Func<std::unordered_map<std::string, std::string>, const LanguageInfo&>;
+    public:
+        /// <summary>
+        /// Constructs a LocalizationStorage instance with the specified loader.
+        /// </summary>
+        /// <param name="localizationLoader">Delegate used to load localized strings for a given locale.</param>
+        LocalizationStorage(LocalizationLoader localizationLoader);
         LocalizationStorage(const LocalizationStorage&) = delete;
         LocalizationStorage(LocalizationStorage&&) = default;
         ~LocalizationStorage();
@@ -32,13 +37,9 @@ namespace Sgl
         const std::string& GetLocalizedString(const std::string& key) const;
     private:
         void OnLanguageChanged(LanguageInfo& sender, EventArgs e);
-        void CreateKeyIndex();
-        void SetLanguage(const LanguageInfo& language);
+        void LoadLocalizationStrings(const LanguageInfo& languageInfo);
     private:
-        std::vector<std::string> _headers;
-        std::vector<std::string> _records;
-        uint32_t _headersCount = 0;
-        int _languageIndex = 0;
-        std::unordered_map<std::string, uint32_t> _keyIndex;
+        std::unordered_map<std::string, std::string> _localizedStrings;
+        LocalizationLoader _localizationLoader;
     };
 }

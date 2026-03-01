@@ -10,6 +10,7 @@
 #include "Base/Logging.h"
 #include "Base/Time/Stopwatch.h"
 #include "Input/SDLEvents.h"
+#include "Base/Tools/CSVReader.h"
 
 namespace Sgl
 {
@@ -96,9 +97,20 @@ namespace Sgl
         }
     }
 
-    void Application::AddLocalization(std::string csvFilePath, char delimiter)
+    void Application::AddLocalizationFromCSV(std::string csvFilePath, char delimiter)
     {
-        _localizationStorage = std::make_unique<LocalizationStorage>(std::move(csvFilePath), delimiter);
+        auto csvLanguageLoader = [csv = CSVReader(std::move(csvFilePath), delimiter)]
+            (const LanguageInfo& languageInfo)
+        {
+            return csv.GetLocalization(languageInfo.GetName());
+        };
+
+        AddLocalization(std::move(csvLanguageLoader));
+    }
+
+    void Application::AddLocalization(LocalizationStorage::LocalizationLoader localizationLoader)
+    {
+        _localizationStorage.emplace(std::move(localizationLoader));
     }
 
     void Application::AddThemeResourcesNotifier(Action<ThemeMode> themeResourcesNotifier)

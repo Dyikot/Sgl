@@ -125,11 +125,18 @@ namespace Sgl
 		const std::vector<Window*> GetWindows() const noexcept { return _activeWindows; }
 
 		/// <summary>
-		/// Creates LocalizationStorage from CSV file. Use StringLocalizer to get localized strings.
+		/// Initializes localization storage using the provided loader delegate.
+		/// The loader is invoked whenever the language changes to load the appropriate translations.
+		/// </summary>
+		/// <param name="localizationLoader"> - delegate that loads localization data for a specified locale and returns a map of localization keys to translated strings.</param>
+		void AddLocalization(LocalizationStorage::LocalizationLoader localizationLoader);
+
+		/// <summary>
+		/// Initializes localization storage from CSV file.
 		/// </summary>
 		/// <param name="csvFilePath"> - path to the CSV file containing localization data.</param>
 		/// <param name="delimiter"> - character used as delimiter in the CSV file (default is comma).</param>
-		void AddLocalization(std::string csvFilePath, char delimiter = ',');
+		void AddLocalizationFromCSV(std::string csvFilePath, char delimiter = ',');
 
 		/// <summary>
 		/// Registers a callback that will be invoked when theme changed.
@@ -177,7 +184,7 @@ namespace Sgl
 		bool _isRunning = false;
 		ThemeMode _themeMode;
 		ThemeVariant _themeVariant;
-		std::unique_ptr<LocalizationStorage> _localizationStorage;		
+		std::optional<LocalizationStorage> _localizationStorage;		
 		std::vector<Action<ThemeMode>> _themeResourcesNotifiers;
 
 		Window* _focusedWindow = nullptr;

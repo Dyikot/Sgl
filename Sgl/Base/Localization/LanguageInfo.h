@@ -58,3 +58,15 @@ namespace Sgl
 		std::string _name;
 	};
 }
+
+namespace std
+{
+	template<>
+	struct hash<Sgl::LanguageInfo>
+	{
+		size_t operator()(const Sgl::LanguageInfo& info) const noexcept
+		{
+			return hash<string>()(info.GetName());
+		}
+	};
+}
