@@ -578,7 +578,7 @@ namespace Sgl
         window.OnDetachedFromLogicalTree();
     }
 
-    const std::string& StringLocalizer::operator()(const std::string& key) const
+    std::string StringLocalizer::operator()(const std::string& key) const
     {
         return App->_localizationStorage->GetLocalizedString(key);
     }

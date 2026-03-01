@@ -16,7 +16,7 @@ namespace Sgl
 		/// </summary>
 		/// <param name="key"> - the localization key.</param>
 		/// <returns>A const reference to the localized string.</returns>
-		const std::string& operator()(const std::string& key) const;
+		std::string operator()(const std::string& key) const;
 
 		/// <summary>
 		/// Retrieves the localized string for the given key and formats it using the provided arguments.

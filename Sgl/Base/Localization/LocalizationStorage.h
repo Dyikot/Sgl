@@ -33,8 +33,8 @@ namespace Sgl
         /// Retrieves the localized string for the specified key.
         /// </summary>
         /// <param name="key"> - the localization key to look up.</param>
-        /// <returns>A const reference to the localized string.</returns>
-        const std::string& GetLocalizedString(const std::string& key) const;
+        /// <returns>A localized string.</returns>
+        std::string GetLocalizedString(const std::string& key) const;
     private:
         void OnLanguageChanged(LanguageInfo& sender, EventArgs e);
         void LoadLocalizationStrings(const LanguageInfo& languageInfo);

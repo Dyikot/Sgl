@@ -16,7 +16,7 @@ namespace Sgl
         LanguageInfo::CurrentChanged -= MethodEventHandler(&LocalizationStorage::OnLanguageChanged, this);
     }
 
-    const std::string& LocalizationStorage::GetLocalizedString(const std::string& key) const
+    std::string LocalizationStorage::GetLocalizedString(const std::string& key) const
     {
         if(auto it = _localizedStrings.find(key); it != _localizedStrings.end())
         {
