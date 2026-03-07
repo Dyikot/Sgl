@@ -23,9 +23,6 @@ namespace Sgl
 	template<CProperty TTargetProperty, CProperty TSourceProperty, typename TConverter>
 	class ConvertibleBinding;
 
-	template<CProperty TTargetProperty, typename TSource, typename TSourceValue>
-	class OneWayBinding;
-
 	class BindableObject : public INotifyPropertyChanged
 	{
 	private:
@@ -60,12 +57,7 @@ namespace Sgl
 				targetProperty, sourceProperty, converter, mode));
 		}
 
-		template<CProperty TTargetProperty, typename TSource, typename TSourceValue>
-		void Bind(TTargetProperty& targetProperty, TSourceValue (TSource::*sourceGetter)() const)
-		{
-			_bindings.emplace_back(new OneWayBinding<TTargetProperty, TSource, TSourceValue>(
-				targetProperty, sourceGetter));
-		}
+		void ClearBinding(PropertyBase& targetProperty);
 
 		template<typename... TArgs>
 		void UseAttachedProperties()
@@ -137,6 +129,7 @@ namespace Sgl
 
 		virtual void Apply(BindableObject& bindableObject) = 0;
 		virtual void Clear(BindableObject& bindableObject) = 0;
+		virtual PropertyBase& GetTarget() const = 0;
 	protected:
 		bool _applied = false;
 	};
@@ -150,13 +143,13 @@ namespace Sgl
 		TTargetProperty& TargetProperty;
 		TTarget* Target;
 		TSourceProperty& SourceProperty;
-		TSource* Source;
 
 		void operator()(INotifyPropertyChanged& sender, PropertyBase& e)
 		{
 			if(e == SourceProperty)
 			{
-				TargetProperty.InvokeSetter(*Target, SourceProperty.InvokeGetter(*Source));
+				auto& source = static_cast<TSource&>(sender);
+				TargetProperty.InvokeSetter(*Target, SourceProperty.InvokeGetter(source));
 			}
 		}
 
@@ -164,13 +157,12 @@ namespace Sgl
 		{
 			return TargetProperty == other.TargetProperty &&
 				   Target == other.Target &&
-				   SourceProperty == other.SourceProperty &&
-				   Source == other.Source;
+				   SourceProperty == other.SourceProperty;
 		}
 	};
 
 	template<CProperty TTargetProperty, CProperty TSourceProperty>
-	class Binding : public BindingBase
+	class Binding final : public BindingBase
 	{
 	public:
 		using TTarget = TTargetProperty::Owner;
@@ -182,7 +174,7 @@ namespace Sgl
 			_mode(mode)
 		{}
 
-		void Apply(BindableObject& bindableObject) final
+		void Apply(BindableObject& bindableObject) override
 		{
 			auto& dataContext = bindableObject.GetDataContext();
 
@@ -198,7 +190,7 @@ namespace Sgl
 			{
 				_targetProperty.InvokeSetter(*target, _sourceProperty.InvokeGetter(*source));
 				source->PropertyChanged += PropertyChangedHandler(
-					_targetProperty, target, _sourceProperty, source
+					_targetProperty, target, _sourceProperty
 				);
 			}
 
@@ -206,14 +198,14 @@ namespace Sgl
 			{
 				_sourceProperty.InvokeSetter(*source, _targetProperty.InvokeGetter(*target));
 				target->PropertyChanged += PropertyChangedHandler(
-					_sourceProperty, source, _targetProperty, target
+					_sourceProperty, source, _targetProperty
 				);
 			}
 
 			_applied = true;
 		}
 
-		void Clear(BindableObject& bindableObject) final
+		void Clear(BindableObject& bindableObject) override
 		{
 			auto& dataContext = bindableObject.GetDataContext();
 
@@ -228,18 +220,23 @@ namespace Sgl
 			if(_mode == BindingMode::OneWay || _mode == BindingMode::TwoWay)
 			{
 				source->PropertyChanged -= PropertyChangedHandler(
-					_targetProperty, target, _sourceProperty, source
+					_targetProperty, target, _sourceProperty
 				);
 			}
 
 			if(_mode == BindingMode::OneWayToSource || _mode == BindingMode::TwoWay)
 			{
 				target->PropertyChanged -= PropertyChangedHandler(
-					_sourceProperty, source, _targetProperty, target
+					_sourceProperty, source, _targetProperty
 				);
 			}
 
 			_applied = false;
+		}
+
+		PropertyBase& GetTarget() const override
+		{
+			return _targetProperty;
 		}
 	private:
 		TTargetProperty& _targetProperty;
@@ -258,14 +255,14 @@ namespace Sgl
 		TTargetProperty& TargetProperty;
 		TTarget* Target;
 		TSourceProperty& SourceProperty;
-		TSource* Source;
 		TConverter Converter;
 
 		void operator()(INotifyPropertyChanged& sender, PropertyBase& e)
 		{
 			if(e == SourceProperty)
 			{
-				auto sourceValue = SourceProperty.InvokeGetter(*Source);
+				auto& source = static_cast<TSource&>(sender);
+				auto sourceValue = SourceProperty.InvokeGetter(source);
 				TargetProperty.InvokeSetter(*Target, Converter(sourceValue));
 			}
 		}
@@ -273,14 +270,13 @@ namespace Sgl
 		bool operator==(const ConvertiblePropertyChangedHandler& other) const
 		{
 			return TargetProperty == other.TargetProperty &&
-				Target == other.Target &&
-				SourceProperty == other.SourceProperty &&
-				Source == other.Source;
+				   Target == other.Target &&
+				   SourceProperty == other.SourceProperty;
 		}
 	};
 
 	template<CProperty TTargetProperty, CProperty TSourceProperty, typename TConverter>
-	class ConvertibleBinding : public BindingBase
+	class ConvertibleBinding final : public BindingBase
 	{
 	public:
 		using TTarget = TTargetProperty::Owner;
@@ -296,7 +292,7 @@ namespace Sgl
 			_mode(mode)
 		{}
 
-		void Apply(BindableObject& bindableObject) final
+		void Apply(BindableObject& bindableObject) override
 		{
 			auto& dataContext = bindableObject.GetDataContext();
 
@@ -315,7 +311,7 @@ namespace Sgl
 
 				source->PropertyChanged += ConvertiblePropertyChangedHandler<
 					TTargetProperty, TSourceProperty, TConverter>(
-						_targetProperty, target, _sourceProperty, source, _converter
+						_targetProperty, target, _sourceProperty, _converter
 				);
 			}
 
@@ -326,14 +322,14 @@ namespace Sgl
 
 				target->PropertyChanged += ConvertiblePropertyChangedHandler<
 					TSourceProperty, TTargetProperty, TConverter>(
-						_sourceProperty, source, _targetProperty, target, _converter
+						_sourceProperty, source, _targetProperty, _converter
 				);
 			}
 
 			_applied = true;
 		}
 
-		void Clear(BindableObject& bindableObject) final
+		void Clear(BindableObject& bindableObject) override
 		{
 			auto& dataContext = bindableObject.GetDataContext();
 
@@ -349,7 +345,7 @@ namespace Sgl
 			{
 				source->PropertyChanged -= ConvertiblePropertyChangedHandler<
 					TTargetProperty, TSourceProperty, TConverter>(
-						_targetProperty, target, _sourceProperty, source, _converter
+						_targetProperty, target, _sourceProperty, _converter
 				);
 			}
 
@@ -357,11 +353,16 @@ namespace Sgl
 			{
 				target->PropertyChanged -= ConvertiblePropertyChangedHandler<
 					TSourceProperty, TTargetProperty, TConverter>(
-						_sourceProperty, source, _targetProperty, target, _converter
+						_sourceProperty, source, _targetProperty, _converter
 				);
 			}
 
 			_applied = false;
+		}
+
+		PropertyBase& GetTarget() const override
+		{
+			return _targetProperty;
 		}
 	private:
 		TTargetProperty& _targetProperty;

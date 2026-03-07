@@ -41,6 +41,20 @@ namespace Sgl
 		OnDataContextChanged(value);
 	}
 
+	void BindableObject::ClearBinding(PropertyBase& targetProperty)
+	{
+		auto it = std::ranges::find_if(_bindings, [&targetProperty](auto& binding)
+		{
+			return binding->GetTarget() == targetProperty;
+		});
+
+		if(it != _bindings.end())
+		{
+			(*it)->Clear(*this);
+			_bindings.erase(it);
+		}
+	}
+
 	void BindableObject::NotifyPropertyChanged(PropertyBase& property)
 	{
 		PropertyChanged(*this, property);
