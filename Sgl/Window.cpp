@@ -34,8 +34,7 @@ namespace Sgl
     Window::Window():
         _sdlWindow(SDL_CreateWindow(DefaultTitle, DefaultWidth, DefaultHeight, SDL_WINDOW_HIDDEN)),
         _renderer(SDL_CreateRenderer(_sdlWindow, nullptr)),
-        _renderContext(_renderer),
-        ImageLoader(_renderer)
+        _renderContext(_renderer)
     {
         if(_sdlWindow == nullptr)
         {

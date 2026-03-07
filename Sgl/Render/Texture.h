@@ -257,32 +257,4 @@ namespace Sgl
 		/// </summary>
 		~TextureLock();
 	};
-
-	/// <summary>
-	/// A helper class that loads textures using a shared SDL renderer.
-	/// Holds a reference to an external renderer and provides convenience methods for texture creation.
-	/// </summary>
-	class TextureLoader
-	{
-	public:
-		/// <summary>
-		/// Constructs a texture loader that uses the specified renderer.
-		/// </summary>
-		/// <param name="renderer"> - reference to the SDL renderer pointer used for all texture creation.</param>
-		explicit TextureLoader(SDL_Renderer*& renderer):
-			_renderer(renderer) 
-		{}
-
-		/// <summary>
-		/// Loads a texture from an image file using the associated renderer.
-		/// </summary>
-		/// <param name="filePath"> - path to the image file.</param>
-		/// <returns>A new Texture instance loaded from the file.</returns>
-		Texture Load(std::string_view filePath)
-		{
-			return Texture(_renderer, filePath);
-		}
-	private:
-		SDL_Renderer*& _renderer;
-	};
 }

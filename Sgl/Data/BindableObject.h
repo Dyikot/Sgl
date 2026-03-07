@@ -2,7 +2,6 @@
 
 #include <vector>
 #include <concepts>
-#include "Converters.h"
 #include "StyleableProperty.h"
 #include "INotifyPropertyChanged.h"
 #include "AttachPropertiesRegister.h"
@@ -20,6 +19,12 @@ namespace Sgl
 
 	template<CProperty TTargetProperty, CProperty TSourceProperty>
 	class Binding;
+
+	template<CProperty TTargetProperty, CProperty TSourceProperty, typename TConverter>
+	class ConvertibleBinding;
+
+	template<CProperty TTargetProperty, typename TSource, typename TSourceValue>
+	class OneWayBinding;
 
 	class BindableObject : public INotifyPropertyChanged
 	{
@@ -43,6 +48,23 @@ namespace Sgl
 		{
 			_bindings.emplace_back(new Binding<TTargetProperty, TSourceProperty>(
 				targetProperty, sourceProperty, mode));
+		}
+
+		template<CProperty TTargetProperty, CProperty TSourceProperty, typename TConverter>
+		void Bind(TTargetProperty& targetProperty,
+				  TSourceProperty& sourceProperty,
+				  TConverter converter,
+				  BindingMode mode = BindingMode::OneWay)
+		{
+			_bindings.emplace_back(new ConvertibleBinding<TTargetProperty, TSourceProperty, TConverter>(
+				targetProperty, sourceProperty, converter, mode));
+		}
+
+		template<CProperty TTargetProperty, typename TSource, typename TSourceValue>
+		void Bind(TTargetProperty& targetProperty, TSourceValue (TSource::*sourceGetter)() const)
+		{
+			_bindings.emplace_back(new OneWayBinding<TTargetProperty, TSource, TSourceValue>(
+				targetProperty, sourceGetter));
 		}
 
 		template<typename... TArgs>
@@ -132,7 +154,7 @@ namespace Sgl
 
 		void operator()(INotifyPropertyChanged& sender, PropertyBase& e)
 		{
-			if(e == TargetProperty)
+			if(e == SourceProperty)
 			{
 				TargetProperty.InvokeSetter(*Target, SourceProperty.InvokeGetter(*Source));
 			}
@@ -148,7 +170,7 @@ namespace Sgl
 	};
 
 	template<CProperty TTargetProperty, CProperty TSourceProperty>
-	class Binding: public BindingBase
+	class Binding : public BindingBase
 	{
 	public:
 		using TTarget = TTargetProperty::Owner;
@@ -222,6 +244,129 @@ namespace Sgl
 	private:
 		TTargetProperty& _targetProperty;
 		TSourceProperty& _sourceProperty;
+		BindingMode _mode;
+	};
+
+	template<CProperty TTargetProperty, CProperty TSourceProperty, typename TConverter>
+	struct ConvertiblePropertyChangedHandler
+	{
+		using TTarget = TTargetProperty::Owner;
+		using TSource = TSourceProperty::Owner;
+		using TTargetValue = TTargetProperty::Value;
+		using TSourceValue = TSourceProperty::Value;
+
+		TTargetProperty& TargetProperty;
+		TTarget* Target;
+		TSourceProperty& SourceProperty;
+		TSource* Source;
+		TConverter Converter;
+
+		void operator()(INotifyPropertyChanged& sender, PropertyBase& e)
+		{
+			if(e == SourceProperty)
+			{
+				auto sourceValue = SourceProperty.InvokeGetter(*Source);
+				TargetProperty.InvokeSetter(*Target, Converter(sourceValue));
+			}
+		}
+
+		bool operator==(const ConvertiblePropertyChangedHandler& other) const
+		{
+			return TargetProperty == other.TargetProperty &&
+				Target == other.Target &&
+				SourceProperty == other.SourceProperty &&
+				Source == other.Source;
+		}
+	};
+
+	template<CProperty TTargetProperty, CProperty TSourceProperty, typename TConverter>
+	class ConvertibleBinding : public BindingBase
+	{
+	public:
+		using TTarget = TTargetProperty::Owner;
+		using TSource = TSourceProperty::Owner;
+		using TTargetValue = TTargetProperty::Value;
+		using TSourceValue = TSourceProperty::Value;
+	public:
+		ConvertibleBinding(TTargetProperty& targetProperty, TSourceProperty& sourceProperty, 
+						   TConverter converter, BindingMode mode):
+			_targetProperty(targetProperty),
+			_sourceProperty(sourceProperty),
+			_converter(converter),
+			_mode(mode)
+		{}
+
+		void Apply(BindableObject& bindableObject) final
+		{
+			auto& dataContext = bindableObject.GetDataContext();
+
+			if(!dataContext)
+			{
+				throw Exception("Unable to set a binding. Data context is null.");
+			}
+
+			auto target = static_cast<TTarget*>(&bindableObject);
+			auto source = dataContext.GetAs<TSource>();
+
+			if(_mode == BindingMode::OneWay || _mode == BindingMode::TwoWay)
+			{
+				auto sourceValue = _sourceProperty.InvokeGetter(*source);
+				_targetProperty.InvokeSetter(*target, _converter(sourceValue));
+
+				source->PropertyChanged += ConvertiblePropertyChangedHandler<
+					TTargetProperty, TSourceProperty, TConverter>(
+						_targetProperty, target, _sourceProperty, source, _converter
+				);
+			}
+
+			if(_mode == BindingMode::OneWayToSource || _mode == BindingMode::TwoWay)
+			{
+				auto targetValue = _targetProperty.InvokeGetter(*target);
+				_sourceProperty.InvokeSetter(*source, _converter(targetValue));
+
+				target->PropertyChanged += ConvertiblePropertyChangedHandler<
+					TSourceProperty, TTargetProperty, TConverter>(
+						_sourceProperty, source, _targetProperty, target, _converter
+				);
+			}
+
+			_applied = true;
+		}
+
+		void Clear(BindableObject& bindableObject) final
+		{
+			auto& dataContext = bindableObject.GetDataContext();
+
+			if(!dataContext)
+			{
+				throw Exception("Unable to set a binding. Data context is null.");
+			}
+
+			auto target = static_cast<TTarget*>(&bindableObject);
+			auto source = dataContext.GetAs<TSource>();
+
+			if(_mode == BindingMode::OneWay || _mode == BindingMode::TwoWay)
+			{
+				source->PropertyChanged -= ConvertiblePropertyChangedHandler<
+					TTargetProperty, TSourceProperty, TConverter>(
+						_targetProperty, target, _sourceProperty, source, _converter
+				);
+			}
+
+			if(_mode == BindingMode::OneWayToSource || _mode == BindingMode::TwoWay)
+			{
+				target->PropertyChanged -= ConvertiblePropertyChangedHandler<
+					TSourceProperty, TTargetProperty, TConverter>(
+						_sourceProperty, source, _targetProperty, target, _converter
+				);
+			}
+
+			_applied = false;
+		}
+	private:
+		TTargetProperty& _targetProperty;
+		TSourceProperty& _sourceProperty;
+		TConverter _converter;
 		BindingMode _mode;
 	};
 }

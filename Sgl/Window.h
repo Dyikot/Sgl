@@ -130,11 +130,6 @@ namespace Sgl
 		DialogResult DialogResult = DialogResult::None;
 
 		/// <summary>
-		/// Provides a convenient way to load textures (e.g., icons, images) using the window's renderer.
-		/// </summary>
-		TextureLoader ImageLoader;
-
-		/// <summary>
 		/// Gets the underlying SDL window handle
 		/// </summary>
 		/// <returns>Pointer to the SDL_Window</returns>

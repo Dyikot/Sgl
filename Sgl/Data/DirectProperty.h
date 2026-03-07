@@ -18,6 +18,10 @@ namespace Sgl
 			_setter(setter),
 			_getter(getter)
 		{}
+		DirectProperty(Getter getter):
+			_setter(nullptr),
+			_getter(getter)
+		{}
 		DirectProperty(const DirectProperty&) = delete;
 		DirectProperty(DirectProperty&&) = delete;
 
@@ -30,6 +34,11 @@ namespace Sgl
 		{
 			return (owner.*_getter)();
 		}
+
+		bool HasSetter() const noexcept
+		{
+			return _setter != nullptr;
+		}
 	private:
 		Setter _setter;
 		Getter _getter;
@@ -37,4 +46,7 @@ namespace Sgl
 
 	template<typename TOwner, typename TValue>
 	DirectProperty(void(TOwner::*)(TValue), TValue(TOwner::*)() const) -> DirectProperty<TOwner, TValue>;
+
+	template<typename TOwner, typename TValue>
+	DirectProperty(TValue(TOwner::*)() const) -> DirectProperty<TOwner, TValue>;
 }

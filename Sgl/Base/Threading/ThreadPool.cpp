@@ -12,7 +12,7 @@ namespace Sgl
     public:
         using Task = Action<>;
 
-        ThreadPoolImpl(int maxWorkers)
+        ThreadPoolImpl(size_t maxWorkers)
         {
             _workers.reserve(maxWorkers);
 
