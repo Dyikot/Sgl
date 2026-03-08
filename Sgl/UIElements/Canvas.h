@@ -7,7 +7,7 @@ namespace Sgl::UIElements
 	class Canvas : public Panel
 	{
 	public:
-		struct AttachedProperties
+		struct Context
 		{
 			int Left = 0;
 			int Top = 0;
@@ -19,44 +19,44 @@ namespace Sgl::UIElements
 		Canvas(const Canvas&) = default;
 		Canvas(Canvas&&) = default;
 
-		int GetLeft(const Ref<UIElement>& element)
+		static int GetLeft(const Ref<UIElement>& element)
 		{
-			return element->GetAttachedValue(&AttachedProperties::Left);
+			return element->GetLayoutContext<Context>().Left;
 		}
 
-		int GetTop(const Ref<UIElement>& element)
+		static int GetTop(const Ref<UIElement>& element)
 		{
-			return element->GetAttachedValue(&AttachedProperties::Top);
+			return element->GetLayoutContext<Context>().Top;
 		}
 
-		int GetRight(const Ref<UIElement>& element)
+		static int GetRight(const Ref<UIElement>& element)
 		{
-			return element->GetAttachedValue(&AttachedProperties::Right);
+			return element->GetLayoutContext<Context>().Right;
 		}
 
-		int GetBottom(const Ref<UIElement>& element)
+		static int GetBottom(const Ref<UIElement>& element)
 		{
-			return element->GetAttachedValue(&AttachedProperties::Bottom);
+			return element->GetLayoutContext<Context>().Bottom;
 		}
 
-		void SetLeft(const Ref<UIElement>& element, int value)
+		static void SetLeft(const Ref<UIElement>& element, int value)
 		{
-			element->SetAttachedValue(&AttachedProperties::Left, value);
+			element->GetLayoutContext<Context>().Left = value;
 		}
 
-		void SetTop(const Ref<UIElement>& element, int value)
+		static void SetTop(const Ref<UIElement>& element, int value)
 		{
-			element->SetAttachedValue(&AttachedProperties::Top, value);
+			element->GetLayoutContext<Context>().Top = value;
 		}
 
-		void SetRight(const Ref<UIElement>& element, int value)
+		static void SetRight(const Ref<UIElement>& element, int value)
 		{
-			element->SetAttachedValue(&AttachedProperties::Right, value);
+			element->GetLayoutContext<Context>().Right = value;
 		}
 
-		void SetBottom(const Ref<UIElement>& element, int value)
+		static void SetBottom(const Ref<UIElement>& element, int value)
 		{
-			element->SetAttachedValue(&AttachedProperties::Bottom, value);
+			element->GetLayoutContext<Context>().Bottom = value;
 		}
 	protected:
 		FSize MeasureContent(FSize avaliableSize) override;

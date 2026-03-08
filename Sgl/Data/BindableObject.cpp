@@ -14,7 +14,6 @@ namespace Sgl
 	BindableObject::~BindableObject()
 	{
 		ClearBindings();
-		Destroying(*this);
 	}
 
 	void BindableObject::SetDataContext(const Ref<INotifyPropertyChanged>& value, ValueSource source)

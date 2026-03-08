@@ -4,7 +4,6 @@
 #include <concepts>
 #include "StyleableProperty.h"
 #include "INotifyPropertyChanged.h"
-#include "AttachPropertiesRegister.h"
 #include "../Base/Ref.h"
 #include "../Base/Exceptions.h"
 
@@ -25,15 +24,11 @@ namespace Sgl
 
 	class BindableObject : public INotifyPropertyChanged
 	{
-	private:
-		using DestroyingEventHandler = EventHandler<BindableObject>;	
 	public:
 		BindableObject() = default;
 		BindableObject(const BindableObject& other);
 		BindableObject(BindableObject&& other) noexcept;
 		~BindableObject();	
-
-		Event<DestroyingEventHandler> Destroying;
 
 		void SetDataContext(const Ref<INotifyPropertyChanged>& value, ValueSource source = ValueSource::Local);
 		const Ref<INotifyPropertyChanged>& GetDataContext() const { return _dataContext; }
@@ -59,29 +54,6 @@ namespace Sgl
 
 		void ClearBinding(PropertyBase& targetProperty);
 
-		template<typename... TArgs>
-		void UseAttachedProperties()
-		{
-			((Destroying += &ClearAttachedProperty<TArgs>), ...);
-		}
-
-		template<typename T, typename TValue, typename TSetValue>
-			requires std::constructible_from<TSetValue, TValue>
-		void SetAttachedValue(TValue T::* field, const TSetValue& value)
-		{
-			auto& reg = AttachPropertiesRegister<T>::Get();
-			auto& property = reg.GetAttachedProperty(this);
-			property.*field = value;
-		}
-
-		template<typename T, typename TValue>
-		TValue GetAttachedValue(TValue T::* field) const
-		{
-			auto& reg = AttachPropertiesRegister<T>::Get();
-			auto& property = reg.GetAttachedProperty(this);
-			return property.*field;
-		}
-
 		static inline StyleableProperty DataContextProperty { &SetDataContext, &GetDataContext };
 	protected:
 		virtual void NotifyPropertyChanged(PropertyBase& property);
@@ -104,14 +76,6 @@ namespace Sgl
 			NotifyPropertyChanged(property);
 
 			return true;
-		}
-	private:
-		template<typename T>
-		static void ClearAttachedProperty(BindableObject& sender, EventArgs e)
-		{
-			using TProperties = T::AttachedProperties;
-			auto& reg = AttachPropertiesRegister<TProperties>::Get();
-			reg.ClearAttachedProperty(&sender);
 		}
 	private:
 		std::vector<std::unique_ptr<BindingBase>> _bindings;
