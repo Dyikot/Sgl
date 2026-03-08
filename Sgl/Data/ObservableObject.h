@@ -13,15 +13,9 @@ namespace Sgl
 		ObservableObject() = default;
 		ObservableObject(const ObservableObject&) = default;
 		ObservableObject(ObservableObject&&) = default;
-	protected:
-		virtual void NotifyPropertyChanged(PropertyBase& property)
-		{
-			PropertyChanged(*this, property);
-		}
 
-		template<typename TOwner, typename TValue, typename TField>
-		bool SetProperty(DirectProperty<TOwner, TValue>& property, TField& field,
-						 DirectProperty<TOwner, TValue>::Value value)
+		template<CProperty TProperty, typename TField>
+		bool SetProperty(TProperty& property, TField& field, TProperty::Value value)
 		{
 			if(field == value)
 			{
@@ -34,11 +28,11 @@ namespace Sgl
 			return true;
 		}
 
-		template<typename TOwner, typename TValue>
-		bool SetProperty(DirectProperty<TOwner, TValue>& property,
-						 DirectProperty<TOwner, TValue>::Value oldValue,
-						 DirectProperty<TOwner, TValue>::Value newValue,
-						 Action<TValue>& changed)
+		template<CProperty TProperty, typename TField>
+		bool SetProperty(TProperty& property,
+						 TProperty::Value oldValue,
+						 TProperty::Value newValue,
+						 Action<typename TProperty::Value>& changed)
 		{
 			if(oldValue == newValue)
 			{
@@ -49,6 +43,11 @@ namespace Sgl
 			NotifyPropertyChanged(property);
 
 			return true;
+		}
+	protected:
+		virtual void NotifyPropertyChanged(PropertyBase& property)
+		{
+			PropertyChanged(*this, property);
 		}
 	};
 }

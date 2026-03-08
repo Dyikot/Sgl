@@ -1,7 +1,5 @@
 #pragma once
 
-#include <type_traits>
-
 #include "../Base/Any.h"
 #include "../Base/Event.h"
 #include "../Data/ObservableObject.h"
@@ -43,12 +41,6 @@ namespace Sgl
 		void SetToolTip(const Ref<UIElement>& value, ValueSource source = ValueSource::Local);
 		const Ref<UIElement>& GetToolTip() const { return _tooltip; }		
 
-		template<typename T>
-		T& GetLayoutContext() requires (sizeof(T) <= 32) && std::is_trivially_destructible_v<T>
-		{
-			return reinterpret_cast<T&>(_layoutContext);
-		}
-
 		bool IsMouseOver() const { return _isMouseOver; }
 
 		void Render(RenderContext context) override;	
@@ -73,7 +65,6 @@ namespace Sgl
 		friend class Window;
 		friend class ContentUIElement;
 
-		alignas(std::max_align_t) char _layoutContext[32] {};
 		Any _tag;
 		Ref<UIElement> _tooltip;
 		bool _isMouseOver = false;

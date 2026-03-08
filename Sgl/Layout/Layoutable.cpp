@@ -21,7 +21,9 @@ namespace Sgl
 		_horizontalAlignment(other._horizontalAlignment),
 		_isArrangeValid(other._isArrangeValid),
 		_isMeasureValid(other._isMeasureValid)
-	{}
+	{
+		std::memcpy(_layoutContext, other._layoutContext, 32);
+	}
 
 	Layoutable::Layoutable(Layoutable&& other) noexcept:
 		Renderable(std::move(other)),
@@ -39,7 +41,9 @@ namespace Sgl
 		_horizontalAlignment(other._horizontalAlignment),
 		_isArrangeValid(other._isArrangeValid),
 		_isMeasureValid(other._isMeasureValid)
-	{}
+	{
+		std::memcpy(_layoutContext, other._layoutContext, 32);
+	}
 
 	void Layoutable::SetWidth(float value, ValueSource source)
 	{

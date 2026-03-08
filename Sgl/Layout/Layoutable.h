@@ -1,5 +1,7 @@
 #pragma once
 
+#include <type_traits>
+
 #include "../Base/Primitives.h"
 #include "../Render/Renderable.h"
 #include "Layout.h"
@@ -12,7 +14,6 @@ namespace Sgl
 		Layoutable() = default;
 		Layoutable(const Layoutable& other);
 		Layoutable(Layoutable&& other) noexcept;
-		virtual ~Layoutable() = default;
 
 		void SetWidth(float value, ValueSource source = ValueSource::Local);
 		float GetWidth() const { return _width; }
@@ -47,6 +48,12 @@ namespace Sgl
 		void SetParent(IStyleHost* parent) override;
 		Layoutable* GetLayoutableParent() const { return _layotableParent; }
 
+		template<typename T>
+		T& GetLayoutContext() requires (sizeof(T) <= 32) && std::is_trivially_destructible_v<T>
+		{
+			return reinterpret_cast<T&>(_layoutContext);
+		}
+
 		FSize GetDesiredSize() const { return _desiredSize; }
 		FRect GetBounds() const { return _bounds; }
 		bool NeedsArrange() const { return !_isArrangeValid; }
@@ -78,6 +85,7 @@ namespace Sgl
 		FRect _bounds = {};
 		FSize _desiredSize = {};
 	private:
+		alignas(std::max_align_t) char _layoutContext[32] {};
 		float _width = 0;
 		float _height = 0;
 		float _minWidth = 0;

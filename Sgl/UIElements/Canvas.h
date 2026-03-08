@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../UIElement/Panel.h"
+#include "../Data/LayoutProperty.h"
 
 namespace Sgl::UIElements
 {
@@ -19,45 +20,22 @@ namespace Sgl::UIElements
 		Canvas(const Canvas&) = default;
 		Canvas(Canvas&&) = default;
 
-		static int GetLeft(const Ref<UIElement>& element)
-		{
-			return element->GetLayoutContext<Context>().Left;
-		}
+		static void SetLeft(const Ref<UIElement>& element, int value);
+		static int GetLeft(const Ref<UIElement>& element) { return element->GetLayoutContext<Context>().Left; }
 
-		static int GetTop(const Ref<UIElement>& element)
-		{
-			return element->GetLayoutContext<Context>().Top;
-		}
+		static void SetTop(const Ref<UIElement>& element, int value);
+		static int GetTop(const Ref<UIElement>& element) { return element->GetLayoutContext<Context>().Top; }
 
-		static int GetRight(const Ref<UIElement>& element)
-		{
-			return element->GetLayoutContext<Context>().Right;
-		}
+		static void SetRight(const Ref<UIElement>& element, int value);
+		static int GetRight(const Ref<UIElement>& element) { return element->GetLayoutContext<Context>().Right; }
 
-		static int GetBottom(const Ref<UIElement>& element)
-		{
-			return element->GetLayoutContext<Context>().Bottom;
-		}
+		static void SetBottom(const Ref<UIElement>& element, int value);
+		static int GetBottom(const Ref<UIElement>& element) { return element->GetLayoutContext<Context>().Bottom; }
 
-		static void SetLeft(const Ref<UIElement>& element, int value)
-		{
-			element->GetLayoutContext<Context>().Left = value;
-		}
-
-		static void SetTop(const Ref<UIElement>& element, int value)
-		{
-			element->GetLayoutContext<Context>().Top = value;
-		}
-
-		static void SetRight(const Ref<UIElement>& element, int value)
-		{
-			element->GetLayoutContext<Context>().Right = value;
-		}
-
-		static void SetBottom(const Ref<UIElement>& element, int value)
-		{
-			element->GetLayoutContext<Context>().Bottom = value;
-		}
+		static LayoutProperty<int> LeftProperty;
+		static LayoutProperty<int> TopProperty;
+		static LayoutProperty<int> RightProperty;
+		static LayoutProperty<int> BottomProperty;
 	protected:
 		FSize MeasureContent(FSize avaliableSize) override;
 		void ArrangeContent(FRect rect) override;	

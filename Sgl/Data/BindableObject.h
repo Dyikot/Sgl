@@ -33,6 +33,36 @@ namespace Sgl
 		void SetDataContext(const Ref<INotifyPropertyChanged>& value, ValueSource source = ValueSource::Local);
 		const Ref<INotifyPropertyChanged>& GetDataContext() const { return _dataContext; }
 
+		template<CProperty TProperty, typename TField>
+		bool SetProperty(TProperty& property, TField& field, TProperty::Value value,
+						 ValueSource& currentSource, ValueSource newSource)
+		{
+			if(currentSource > newSource || field == value)
+			{
+				return false;
+			}
+
+			field = value;
+			currentSource = newSource;
+			NotifyPropertyChanged(property);
+
+			return true;
+		}
+
+		template<CProperty TProperty, typename TField>
+		bool SetProperty(TProperty& property, TField& field, TProperty::Value value)
+		{
+			if(field == value)
+			{
+				return false;
+			}
+
+			field = value;
+			NotifyPropertyChanged(property);
+
+			return true;
+		}
+
 		template<CProperty TTargetProperty, CProperty TSourceProperty>
 		void Bind(TTargetProperty& targetProperty,
 				  TSourceProperty& sourceProperty,
@@ -60,23 +90,6 @@ namespace Sgl
 		virtual void OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext) {}
 		void ApplyBindings();
 		void ClearBindings();
-
-		template<typename TOwner, typename TValue, typename TField>
-		bool SetProperty(StyleableProperty<TOwner, TValue>& property, TField& field,
-						 StyleableProperty<TOwner, TValue>::Value value,
-						 ValueSource& currentSource, ValueSource newSource)
-		{
-			if(currentSource > newSource || field == value)
-			{
-				return false;
-			}
-
-			field = value;
-			currentSource = newSource;
-			NotifyPropertyChanged(property);
-
-			return true;
-		}
 	private:
 		std::vector<std::unique_ptr<BindingBase>> _bindings;
 		Ref<INotifyPropertyChanged> _dataContext;
