@@ -89,16 +89,6 @@ namespace Sgl
 		}
 	}
 
-	void ContentUIElement::SetStylingRoot(IStyleHost* value)
-	{
-		Renderable::SetStylingRoot(value);
-
-		if(_contentPresenter)
-		{
-			_contentPresenter->SetStylingRoot(value);
-		}
-	}
-
 	void ContentUIElement::Render(RenderContext context)
 	{
 		if(_contentPresenter && _contentPresenter->IsVisible())

@@ -1,7 +1,6 @@
 #include "StyleableElement.h"
 
 #include <sstream>
-#include "../Application.h"
 
 namespace Sgl
 {
@@ -10,7 +9,7 @@ namespace Sgl
 		PseudoClasses(other.PseudoClasses),
 		_classList(other._classList),
 		_stylingParent(other._stylingParent),
-		_stylingRoot(other._stylingRoot),
+		_isAttachedToLogicalTree(false),
 		_styles(other._styles)
 	{}
 
@@ -21,7 +20,7 @@ namespace Sgl
 		Styles(std::move(other.Styles)),
 		_classList(std::move(other._classList)),
 		_stylingParent(std::exchange(other._stylingParent, nullptr)),
-		_stylingRoot(std::exchange(other._stylingRoot, nullptr)),
+		_isAttachedToLogicalTree(other._isAttachedToLogicalTree),
 		_styles(std::move(other._styles))
 	{}
 
@@ -53,24 +52,7 @@ namespace Sgl
 
 	void StyleableElement::SetParent(IStyleHost* parent)
 	{
-		if(parent == nullptr)
-		{
-			_stylingParent = nullptr;
-			SetStylingRoot(nullptr);
-			return;
-		}
-
 		_stylingParent = parent;
-
-		if(auto stylingRoot = parent->GetStylingRoot())
-		{
-			SetStylingRoot(stylingRoot);
-		}
-	}
-
-	void StyleableElement::SetStylingRoot(IStyleHost* value)
-	{
-		_stylingRoot = value;
 	}
 
 	void StyleableElement::ApplyStyle()
@@ -83,30 +65,30 @@ namespace Sgl
 
 	void StyleableElement::OnAttachedToLogicalTree()
 	{
-		if(UpdateStyle())
+		if(FetchStyles())
 		{
 			ApplyStyle();
 		}
 
-		AttachedToElementsTree(*this);
+		AttachedToLogicalTree(*this);
 	}
 
 	void StyleableElement::OnDetachedFromLogicalTree()
 	{
-		DetachedFromElementsTree(*this);
+		DetachedFromLogicalTree(*this);
 	}
 
-	bool StyleableElement::UpdateStyle()
+	bool StyleableElement::FetchStyles()
 	{
 		_styles.clear();
 
-		GetStylesFrom(Styles);
+		FetchStylesFrom(Styles);
 
 		if(auto parent = _stylingParent)
 		{
 			while(parent != nullptr)
 			{
-				GetStylesFrom(parent->GetStyles());
+				FetchStylesFrom(parent->GetStyles());
 				parent = parent->GetStylingParent();
 			}
 		}
@@ -114,15 +96,7 @@ namespace Sgl
 		return _styles.size() > 0;
 	}
 
-	void StyleableElement::OnStyleClassesChanged()
-	{
-		if(UpdateStyle())
-		{
-			ApplyStyle();
-		}
-	}	
-
-	void StyleableElement::GetStylesFrom(const StyleCollection& styles)
+	void StyleableElement::FetchStylesFrom(const StyleCollection& styles)
 	{
 		if(styles.IsEmpty())
 		{
@@ -137,4 +111,12 @@ namespace Sgl
 			}
 		}
 	}
+
+	void StyleableElement::OnStyleClassesChanged()
+	{
+		if(FetchStyles())
+		{
+			ApplyStyle();
+		}
+	}		
 }

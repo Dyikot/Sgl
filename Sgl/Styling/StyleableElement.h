@@ -23,8 +23,8 @@ namespace Sgl
 		std::string Name;
 		StyleCollection Styles;
 		PseudoClassesSet PseudoClasses;
-		Event<StyleableElementEventHandler> AttachedToElementsTree;
-		Event<StyleableElementEventHandler> DetachedFromElementsTree;
+		Event<StyleableElementEventHandler> AttachedToLogicalTree;
+		Event<StyleableElementEventHandler> DetachedFromLogicalTree;
 
 		void SetClasses(const std::string& classNames);
 		void SetClasses(std::vector<std::string> classList);
@@ -33,25 +33,22 @@ namespace Sgl
 		virtual void SetParent(IStyleHost* parent);
 		StyleCollection& GetStyles() final { return Styles; }
 
-		virtual void SetStylingRoot(IStyleHost* value);
-		IStyleHost* GetStylingRoot() final { return _stylingRoot; }
-
 		IStyleHost* GetStylingParent() final { return _stylingParent; }
 
-		bool IsAttachedToLogicalTree() const { return _stylingRoot != nullptr; }
+		bool IsAttachedToLogicalTree() const noexcept { return _isAttachedToLogicalTree; }
 
 		virtual void ApplyStyle();
 	protected:
 		virtual void OnAttachedToLogicalTree();
 		virtual void OnDetachedFromLogicalTree();
 	private:
-		bool UpdateStyle();
+		bool FetchStyles();
+		void FetchStylesFrom(const StyleCollection& styles);
 		void OnStyleClassesChanged();
-		void GetStylesFrom(const StyleCollection& styles);
 	private:
 		std::vector<std::string> _classList;
 		std::vector<const Style*> _styles;
 		IStyleHost* _stylingParent = nullptr;
-		IStyleHost* _stylingRoot = nullptr;
+		bool _isAttachedToLogicalTree = false;
 	};
 }

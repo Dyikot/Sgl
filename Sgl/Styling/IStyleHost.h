@@ -11,6 +11,5 @@ namespace Sgl
 
         virtual StyleCollection& GetStyles() = 0;
         virtual IStyleHost* GetStylingParent() = 0;
-        virtual IStyleHost* GetStylingRoot() = 0;
     };
 }

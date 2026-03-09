@@ -113,12 +113,6 @@ namespace Sgl
 		IStyleHost* GetStylingParent() final { return nullptr; }
 
 		/// <summary>
-		/// Gets the root styling host for the entire UI tree.
-		/// </summary>
-		/// <returns>This application instance, as it is the styling root.</returns>
-		IStyleHost* GetStylingRoot() final { return this; }
-
-		/// <summary>
 		/// Gets a list of all currently open windows.
 		/// </summary>
 		/// <returns>A vector containing pointers to all active windows.</returns>

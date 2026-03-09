@@ -16,7 +16,6 @@ namespace Sgl
 		UIElementsCollection Children;
 
 		void SetVisualRoot(IVisualRoot* value) final;
-		void SetStylingRoot(IStyleHost* value) final;
 
 		void Render(RenderContext context) final;
 		void ApplyStyle() override;

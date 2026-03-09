@@ -30,7 +30,6 @@ namespace Sgl
 		HorizontalAlignment GetHorizontalContentAlignment() const { return _horizontalContentAlignment; }
 
 		void SetVisualRoot(IVisualRoot* value) final;
-		void SetStylingRoot(IStyleHost* value) final;
 
 		void Render(RenderContext context) override;
 		void ApplyStyle() override;

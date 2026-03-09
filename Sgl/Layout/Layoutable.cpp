@@ -128,17 +128,7 @@ namespace Sgl
 	void Layoutable::SetParent(IStyleHost* parent)
 	{
 		Renderable::SetParent(parent);
-
-		if(parent == nullptr)
-		{
-			_layotableParent = nullptr;
-			return;
-		}
-
-		if(auto layoutableParent = dynamic_cast<Layoutable*>(parent))
-		{
-			_layotableParent = layoutableParent;
-		}
+		_layotableParent = dynamic_cast<Layoutable*>(parent);
 	}
 
 	void Layoutable::Arrange(FRect rect)

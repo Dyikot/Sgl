@@ -379,12 +379,6 @@ namespace Sgl
 		bool IsClosed() const { return _isClosed; }
 
 		/// <summary>
-		/// Sets the styling root used to resolve styles and resources for this window.
-		/// </summary>
-		/// <param name="value"> - pointer to the style host.</param>
-		void SetStylingRoot(IStyleHost* value) final;
-
-		/// <summary>
 		/// Renders the window's content using the provided rendering context.
 		/// </summary>
 		/// <param name="context"> - the render context used to draw UI elements.</param>

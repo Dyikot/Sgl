@@ -43,6 +43,7 @@ namespace Sgl
 
 		if(parent == nullptr)
 		{
+			SetVisualRoot(nullptr);
 			return;
 		}
 
