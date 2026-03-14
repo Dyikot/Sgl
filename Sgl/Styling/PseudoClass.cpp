@@ -3,13 +3,13 @@
 
 namespace Sgl
 {
-    static constexpr size_t MaxStates = (sizeof(PseudoClassId) * 8) - 1;
+    static constexpr size_t MaxPseudoClassId = (sizeof(PseudoClassId) * 8) - 1;
 
     PseudoClassId PseudoClassesRegistry::Register(std::string_view name)
     {        
-        if(_nextId == MaxStates)
+        if(_nextId == MaxPseudoClassId)
         {
-            throw Exception("Unable to register preudoclass. Limit reached - {}.", MaxStates + 1);
+            throw Exception("Unable to register preudoclass. Limit reached - {}.", MaxPseudoClassId + 1);
         }
 
         auto id = _nextId++;
@@ -31,5 +31,51 @@ namespace Sgl
         }
 
         throw Exception("Trigger with name '{}' is not registered.", name);
+    }
+
+    PseudoClassesSet::PseudoClassesSet(PseudoClasses classes):
+        _classes(classes)
+    {}
+
+    PseudoClassesSet::PseudoClassesSet(const PseudoClassesSet& other):
+        _classes(other._classes)
+    {}
+
+    void PseudoClassesSet::Set(PseudoClassId pseudoClass, bool value)
+    {
+        if(_classes.test(pseudoClass) != value)
+        {
+            _classes.set(pseudoClass, value);
+            Changed(*this);
+        }
+    }
+
+    void PseudoClassesSet::Reset(PseudoClassId pseudoClass)
+    {
+        if(_classes.test(pseudoClass))
+        {
+            _classes.reset(pseudoClass);
+            Changed(*this);
+        }
+    }
+
+    bool PseudoClassesSet::IsEmpty() const noexcept
+    {
+        return _classes.none();
+    }
+
+    bool PseudoClassesSet::Has(PseudoClassId pseudoClass) const
+    {
+        return _classes.test(pseudoClass);
+    }
+
+    bool PseudoClassesSet::Has(PseudoClasses pseudoClasses) const
+    {
+        return (_classes & pseudoClasses) == pseudoClasses;
+    }
+
+    bool PseudoClassesSet::Has(const PseudoClassesSet& pseudoClasses) const
+    {
+        return (_classes & pseudoClasses._classes) == pseudoClasses._classes;
     }
 }

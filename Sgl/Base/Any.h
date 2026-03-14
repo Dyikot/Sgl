@@ -1,7 +1,7 @@
 #pragma once
 
-#include <memory>
-#include <concepts>
+#include <utility>
+#include <typeinfo>
 
 namespace Sgl
 {
@@ -18,7 +18,7 @@ namespace Sgl
 		public:
 			virtual ~IStorage() = default;
 
-			virtual std::unique_ptr<IStorage> Copy() const = 0;
+			virtual IStorage* Copy() const = 0;
 			virtual const std::type_info& Type() const = 0;
 
 			template<typename T>
@@ -50,9 +50,9 @@ namespace Sgl
 
 			T Value;
 
-			std::unique_ptr<IStorage> Copy() const override
+			IStorage* Copy() const override
 			{
-				return std::make_unique<Storage<T>>(Value);
+				return new Storage<T>(Value);
 			}
 
 			const std::type_info& Type() const override
@@ -85,7 +85,7 @@ namespace Sgl
 		static Any New(TArgs&&... args)
 		{
 			Any obj;
-			obj._data = std::make_unique<Storage<std::decay_t<T>>>(std::forward<TArgs>(args)...);
+			obj._data = new Storage<std::decay_t<T>>(std::forward<TArgs>(args)...);
 			return obj;
 		}
 
@@ -109,7 +109,7 @@ namespace Sgl
 		/// </summary>
 		template<typename T>
 		explicit Any(T&& value):
-			_data(std::make_unique<Storage<std::decay_t<T>>>(std::forward<T>(value)))
+			_data(new Storage<std::decay_t<T>>(std::forward<T>(value)))
 		{}
 
 		/// <summary>
@@ -149,9 +149,9 @@ namespace Sgl
 		/// <summary>
 		/// Returns true if this Any holds a value; otherwise, false.
 		/// </summary>
-		bool HasValue() const noexcept 
-		{ 
-			return _data != nullptr; 
+		bool HasValue() const noexcept
+		{
+			return _data != nullptr;
 		}
 
 		/// <summary>
@@ -161,7 +161,8 @@ namespace Sgl
 		template<typename T>
 		Any& operator=(T&& value)
 		{
-			_data = std::make_unique<Storage<std::decay_t<T>>>(std::forward<T>(value));
+			delete _data;
+			_data = new Storage<std::decay_t<T>>(std::forward<T>(value));
 			return *this;
 		}
 
@@ -181,6 +182,6 @@ namespace Sgl
 		/// </summary>
 		friend bool operator==(const Any& left, const Any& right);
 	private:
-		std::unique_ptr<IStorage> _data;
+		IStorage* _data = nullptr;
 	};
 }

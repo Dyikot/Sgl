@@ -9,8 +9,6 @@ namespace Sgl
 	template<std::equality_comparable T>
 	class Collection
 	{
-	protected:
-		std::vector<T> _items;
 	public:
 		Collection() = default;
 
@@ -123,5 +121,7 @@ namespace Sgl
 		{
 			_items.erase(_items.begin() + index);
 		}
+	protected:
+		std::vector<T> _items;
 	};
 }

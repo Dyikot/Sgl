@@ -1,7 +1,5 @@
 #pragma once
 
-#include <set>
-
 #include "UIElementsCollection.h"
 
 namespace Sgl
@@ -34,5 +32,6 @@ namespace Sgl
 		friend class UIElementsCollection;
 
 		Ref<UIElement> _currentChild;
+		Ref<UIElement> _mouseCapturedElement;
 	};	
 }

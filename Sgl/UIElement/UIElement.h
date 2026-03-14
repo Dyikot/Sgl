@@ -23,8 +23,9 @@ namespace Sgl
 		UIElement() = default;
 		UIElement(const UIElement& other);
 		UIElement(UIElement&& other) noexcept;
-		
-		static const PseudoClassId HoverPseudoClass;
+
+		static const PseudoClassId OnHover;
+		static const PseudoClassId OnPressed;
 
 		Event<KeyEventHandler> KeyUp;
 		Event<KeyEventHandler> KeyDown;
@@ -41,7 +42,7 @@ namespace Sgl
 		void SetToolTip(const Ref<UIElement>& value, ValueSource source = ValueSource::Local);
 		const Ref<UIElement>& GetToolTip() const { return _tooltip; }		
 
-		bool IsMouseOver() const { return _isMouseOver; }
+		bool IsMouseOver() const { return PseudoClasses.Has(OnHover); }
 
 		void Render(RenderContext context) override;	
 
@@ -67,7 +68,6 @@ namespace Sgl
 
 		Any _tag;
 		Ref<UIElement> _tooltip;
-		bool _isMouseOver = false;
 		ValueSource _tagSource {};
 		ValueSource _tooltipSource {};		
 	};

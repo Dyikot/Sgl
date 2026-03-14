@@ -10,7 +10,8 @@ namespace Sgl
 		Default,
 		Inheritance,
 		Style,
-		Local
+		Local,
+		PseudoClass
 	};
 
 	template<typename TOwner, typename TValue>

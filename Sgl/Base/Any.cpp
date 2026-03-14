@@ -7,7 +7,7 @@ namespace Sgl
 	{}
 
 	Any::Any(Any&& other) noexcept:
-		_data(std::move(other._data))
+		_data(std::exchange(other._data, nullptr))
 	{}
 
 	bool Any::Is(const std::type_info& typeInfo) const
@@ -18,13 +18,23 @@ namespace Sgl
 
 	Any& Any::operator=(const Any& other)
 	{
-		_data = other._data->Copy();
+		if(this != &other)
+		{
+			delete _data;
+			_data = other._data ? other._data->Copy() : nullptr;
+		}
+		
 		return *this;
 	}
 
 	Any& Any::operator=(Any&& other) noexcept
 	{
-		_data = std::move(other._data);
+		if(this != &other)
+		{
+			delete _data;
+			_data = std::exchange(other._data, nullptr);
+		}
+		
 		return *this;
 	}
 

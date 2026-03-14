@@ -9,11 +9,11 @@ The project is currently in development. The following has been implemented so f
 - Threading: Timer, ThreadPool, async operations using c++ 20 coroutines
 
 ## Roadmap
-- Pseudo classes
+- New Panels
 - Focus manager
 - Animation
 - Drag & drop
-- Expanding UIElements base
+- New UIElements
 - New renderer
 - Notifications
 - Documentation

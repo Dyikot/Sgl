@@ -52,6 +52,7 @@ namespace Sgl
 	{
 	public:
 		using EventHandler = EventHandler<TSender, TEventArgs>;
+		using EventHandlers = std::vector<EventHandler>;
 		using Sender = TSender;
 		using EventArgs = TEventArgs;
 	public:
@@ -60,22 +61,21 @@ namespace Sgl
 		/// </summary>
 		Event() = default;
 		Event(const Event&) = delete;
-		Event(Event&&) = delete;
+		Event(Event&& other) noexcept:
+			_eventHandlers(std::exchange(other._eventHandlers, nullptr))
+		{}
+
+		~Event()
+		{
+			Release();
+		}
 
 		/// <summary>
 		/// Removes all event handlers from the event.
 		/// </summary>
 		void Clear() noexcept
 		{ 
-			_eventHandlers.clear();
-		}
-
-		/// <summary>
-		/// Gets the number of registered handlers
-		/// </summary>
-		size_t Count() const noexcept
-		{
-			return _eventHandlers.size();
+			Release();
 		}
 
 		/// <summary>
@@ -84,7 +84,7 @@ namespace Sgl
 		/// <returns>True if there are registered handlers; otherwise, false.</returns>
 		bool HasHandlers() const noexcept
 		{
-			return !_eventHandlers.empty();
+			return _eventHandlers != nullptr;
 		}
 
 		/// <summary>
@@ -93,7 +93,12 @@ namespace Sgl
 		/// <param name="handler"> - The event handler to add.</param>
 		void operator+=(EventHandler handler)
 		{
-			_eventHandlers.emplace_back(std::move(handler));
+			if(!HasHandlers())
+			{
+				_eventHandlers = new EventHandlers();
+			}
+			
+			_eventHandlers->push_back(std::move(handler));
 		}
 
 		// <summary>
@@ -102,7 +107,15 @@ namespace Sgl
 		/// <param name="handler"> - The event handler to remove.</param>
 		void operator-=(const EventHandler& handler)
 		{
-			std::erase(_eventHandlers, handler);
+			if(HasHandlers())
+			{
+				std::erase(*_eventHandlers, handler);
+
+				if(_eventHandlers->empty())
+				{
+					Release();
+				}
+			}
 		}
 
 		/// <summary>
@@ -112,9 +125,12 @@ namespace Sgl
 		/// <param name="e"> - The event arguments containing data about the event.</param>
 		void operator()(TSender& sender, TEventArgs e) const
 		{
-			for(const EventHandler& eventHandler : _eventHandlers)
+			if(HasHandlers())
 			{
-				eventHandler(sender, e);
+				for(const auto& handler : *_eventHandlers)
+				{
+					handler(sender, e);
+				}
 			}
 		}
 
@@ -130,7 +146,13 @@ namespace Sgl
 		Event& operator=(const Event&) = delete;
 		Event& operator=(Event&&) = delete;
 	private:
-		std::vector<EventHandler> _eventHandlers;
+		void Release()
+		{
+			delete _eventHandlers;
+			_eventHandlers = nullptr;
+		}
+	private:
+		EventHandlers* _eventHandlers = nullptr;
 	};
 
 	template<typename T>

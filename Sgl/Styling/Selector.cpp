@@ -21,18 +21,17 @@ namespace Sgl
 
     Selector& Selector::On(PseudoClassId pseudoClass)
     {
-        _pseoduClasses.set(pseudoClass);
-        _flags |= PseudoClassFlag;
+        _pseudoClasses.set(pseudoClass);
         return *this;
     }
 
-    Selector& Selector::On(std::string_view pseudoClassName)
+    Selector& Selector::On(std::string_view pseudoClass)
     {
-        auto trigger = PseudoClassesRegistry::GetByName(pseudoClassName);
+        _pseudoClasses.set(PseudoClassesRegistry::GetByName(pseudoClass));
         return *this;
     }
 
-    Selector& Selector::Where(Func<bool, StyleableElement&> predicate)
+    Selector& Selector::Where(Predicate<StyleableElement&> predicate)
     {
         _predicate = std::move(predicate);
         _flags |= PredicateFlag;
@@ -78,16 +77,6 @@ namespace Sgl
             }
         }
 
-        if(_flags & PseudoClassFlag)
-        {
-            result &= (target.PseudoClasses & _pseoduClasses).any();
-
-            if(!result)
-            {
-                return false;
-            }
-        }
-
         if(_flags & PredicateFlag)
         {
             result &= _predicate(target);
@@ -99,6 +88,16 @@ namespace Sgl
         }
 
         return result;
+    }
+
+    bool Selector::MatchState(StyleableElement& target) const
+    {
+        return target.PseudoClasses.Has(_pseudoClasses);
+    }
+
+    bool Selector::HasState() const noexcept
+    {
+        return _pseudoClasses.any();
     }
 }
 

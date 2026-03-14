@@ -6,6 +6,7 @@
 #include "INotifyPropertyChanged.h"
 #include "../Base/Ref.h"
 #include "../Base/Exceptions.h"
+#include "../Base/Logging.h"
 
 namespace Sgl
 {
@@ -40,6 +41,24 @@ namespace Sgl
 			if(currentSource > newSource || field == value)
 			{
 				return false;
+			}
+
+			if(newSource >= ValueSource::PseudoClass)
+			{
+				if(!HasBaseState(property))
+				{
+					AddBaseState(property,
+						[&property, oldValue = field, oldValueSource = currentSource]
+						(BindableObject& object)
+					{
+						using Target = TProperty::Owner;
+						auto& target = static_cast<Target&>(object);
+						property.InvokeSetter(target, oldValue, oldValueSource);
+					});
+				}
+
+				field = value;
+				return true;
 			}
 
 			field = value;
@@ -88,6 +107,8 @@ namespace Sgl
 	protected:
 		virtual void NotifyPropertyChanged(PropertyBase& property);
 		virtual void OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext) {}
+		virtual void AddBaseState(PropertyBase& property, Action<BindableObject&> restoreState) {}
+		virtual bool HasBaseState(PropertyBase& property) const { return false; }
 		void ApplyBindings();
 		void ClearBindings();
 	private:
@@ -95,7 +116,7 @@ namespace Sgl
 		Ref<INotifyPropertyChanged> _dataContext;
 
 		ValueSource _dataContextSource {};
-	};	
+	};
 
 	class BindingBase
 	{

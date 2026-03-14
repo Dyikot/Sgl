@@ -1,9 +1,30 @@
 #include "StyleableElement.h"
-
-#include <sstream>
+#include "../Base/Tools/StringUtils.h"
+#include "../Base/Logging.h"
 
 namespace Sgl
 {
+	StyleableElement::StyleableElement()
+	{
+		PseudoClasses.Changed += [this](PseudoClassesSet& sender, EventArgs e)
+		{
+			RestoreState();
+
+			for(auto style : _stateStyles)
+			{
+				if(style->Selector.MatchState(*this))
+				{
+					style->Apply(*this, ValueSource::PseudoClass);
+				}
+			}
+
+			if(sender.IsEmpty())
+			{
+				_baseStates.clear();
+			}
+		};
+	}
+
 	StyleableElement::StyleableElement(const StyleableElement& other):
 		BindableObject(other),
 		PseudoClasses(other.PseudoClasses),
@@ -16,7 +37,7 @@ namespace Sgl
 	StyleableElement::StyleableElement(StyleableElement&& other) noexcept:
 		BindableObject(std::move(other)),
 		Name(std::move(other.Name)),
-		PseudoClasses(other.PseudoClasses),
+		PseudoClasses(std::move(other.PseudoClasses)),
 		Styles(std::move(other.Styles)),
 		_classList(std::move(other._classList)),
 		_stylingParent(std::exchange(other._stylingParent, nullptr)),
@@ -24,18 +45,9 @@ namespace Sgl
 		_styles(std::move(other._styles))
 	{}
 
-	void StyleableElement::SetClasses(const std::string& classNames)
+	void StyleableElement::SetClasses(std::string_view classNames)
 	{
-		_classList.clear();
-
-		std::stringstream stream(classNames);
-		std::string buffer;
-
-		while(stream >> buffer)
-		{
-			_classList.push_back(std::move(buffer));
-		}
-
+		_classList = SplitString(classNames, ' ');
 		OnStyleClassesChanged();
 	}
 
@@ -57,14 +69,16 @@ namespace Sgl
 
 	void StyleableElement::ApplyStyle()
 	{
-		for(int i = _styles.size() - 1; i >= 0; i--)
+		for(auto style : _styles)
 		{
-			_styles[i]->Apply(*this);
+			style->Apply(*this, ValueSource::Style);
 		}
 	}
 
 	void StyleableElement::OnAttachedToLogicalTree()
 	{
+		_isAttachedToLogicalTree = true;
+
 		if(FetchStyles())
 		{
 			ApplyStyle();
@@ -75,22 +89,57 @@ namespace Sgl
 
 	void StyleableElement::OnDetachedFromLogicalTree()
 	{
+		_isAttachedToLogicalTree = false;
 		DetachedFromLogicalTree(*this);
+	}
+
+	void StyleableElement::AddBaseState(PropertyBase& property, Action<BindableObject&> restoreState)
+	{
+		_baseStates.emplace_back(property, std::move(restoreState));
+	}
+
+	bool StyleableElement::HasBaseState(PropertyBase& property) const
+	{
+		for(auto& baseState : _baseStates)
+		{
+			if(baseState.Property == property)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	void StyleableElement::RestoreState()
+	{
+		for(auto& baseState : _baseStates)
+		{
+			baseState.Restore(*this);
+		}
 	}
 
 	bool StyleableElement::FetchStyles()
 	{
 		_styles.clear();
+		_stateStyles.clear();
 
-		FetchStylesFrom(Styles);
+		std::vector<const StyleCollection*> stylesCollections;
+		stylesCollections.reserve(4);
+		stylesCollections.push_back(&Styles);
 
 		if(auto parent = _stylingParent)
 		{
 			while(parent != nullptr)
 			{
-				FetchStylesFrom(parent->GetStyles());
+				stylesCollections.push_back(&parent->GetStyles());
 				parent = parent->GetStylingParent();
 			}
+		}
+		
+		for(auto it = stylesCollections.rbegin(); it != stylesCollections.rend(); ++it)
+		{
+			FetchStylesFrom(**it);
 		}
 
 		return _styles.size() > 0;
@@ -107,16 +156,28 @@ namespace Sgl
 		{
 			if(style.Selector.Match(*this))
 			{
-				_styles.push_back(&style);
+				if(style.Selector.HasState())
+				{
+					_stateStyles.push_back(&style);
+				}
+				else
+				{
+					_styles.push_back(&style);
+				}
 			}
 		}
 	}
 
 	void StyleableElement::OnStyleClassesChanged()
 	{
+		if(!IsAttachedToLogicalTree())
+		{
+			return;
+		}
+
 		if(FetchStyles())
 		{
 			ApplyStyle();
 		}
-	}		
+	}
 }

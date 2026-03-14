@@ -11,7 +11,7 @@ namespace Sgl
     public:
         virtual ~ISetter() = default;
 
-        virtual void Apply(StyleableElement& target) const = 0;
+        virtual void Apply(StyleableElement& target, ValueSource valueSource) const = 0;
     };
 
     template<typename TOwner, typename TValue>
@@ -25,9 +25,9 @@ namespace Sgl
             _value(value)
         {}
 
-        void Apply(StyleableElement& target) const final
+        void Apply(StyleableElement& target, ValueSource valueSource) const final
         {
-            _property.InvokeSetter(static_cast<TOwner&>(target), _value, ValueSource::Style);
+            _property.InvokeSetter(static_cast<TOwner&>(target), _value, valueSource);
         }
     private:
         StyleableProperty<TOwner, TValue>& _property;
@@ -47,11 +47,11 @@ namespace Sgl
             _resource(resource)
         {}
 
-        void Apply(StyleableElement& target) const final
+        void Apply(StyleableElement& target, ValueSource valueSource) const final
         {
             _property.InvokeSetter(static_cast<TOwner&>(target),
                                    _resources.*_resource,
-                                   ValueSource::Style);
+                                   valueSource);
         }
     private:
         StyleableProperty<TOwner, TValue>& _property;

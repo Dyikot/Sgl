@@ -13,14 +13,11 @@ namespace Sgl
     class Style
     {
     public:
-        Style() = default;
+        Style(Sgl::Selector selector): Selector(std::move(selector)) {}
         Style(const Style&) = delete;
         Style(Style&&) noexcept = default;
-        Style(Sgl::Selector selector):
-            Selector(std::move(selector))
-        {}
 
-        Selector Selector;
+        const Selector Selector;
 
         Style& Set(std::unique_ptr<ISetter> setter)
         {
@@ -44,15 +41,17 @@ namespace Sgl
             _setters.emplace_back(new ResourceSetter(property, resources, resource));
             return *this;
         }
-
-        void Apply(StyleableElement& target) const
+    private:
+        void Apply(StyleableElement& target, ValueSource source) const
         {
             for(auto& setter : _setters)
             {
-                setter->Apply(target);
+                setter->Apply(target, source);
             }
         }
     private:
         std::vector<std::unique_ptr<ISetter>> _setters;
+
+        friend class StyleableElement;
     };    
 }

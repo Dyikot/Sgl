@@ -4,6 +4,9 @@
 
 namespace Sgl
 {
+	const PseudoClassId UIElement::OnHover = PseudoClassesRegistry::Register("hover");
+	const PseudoClassId UIElement::OnPressed = PseudoClassesRegistry::Register("pressed");
+
 	class UIElementBackgroundRenderer
 	{
 	private:
@@ -28,18 +31,14 @@ namespace Sgl
 		}
 	};
 
-	const PseudoClassId UIElement::HoverPseudoClass = PseudoClassesRegistry::Register("hover");
-
 	UIElement::UIElement(const UIElement& other):
 		Layoutable(other),
-		_isMouseOver(other._isMouseOver),
 		_tag(other._tag),
 		_tooltip(other._tooltip)
 	{}
 
 	UIElement::UIElement(UIElement&& other) noexcept:
 		Layoutable(std::move(other)),
-		_isMouseOver(other._isMouseOver),
 		_tag(std::move(other._tag)),
 		_tooltip(std::move(other._tooltip))
 	{}
@@ -53,7 +52,7 @@ namespace Sgl
 	{
 		if(SetProperty(ToolTipProperty, _tooltip, value, _tooltipSource, source))
 		{
-			if(_isMouseOver)
+			if(IsMouseOver())
 			{
 				InvalidateRender();
 			}
@@ -77,7 +76,7 @@ namespace Sgl
 
 	void UIElement::OnCursorChanged(const Cursor& cursor)
 	{
-		if(_isMouseOver)
+		if(IsMouseOver())
 		{
 			Cursor::Set(cursor);
 		}
@@ -106,11 +105,21 @@ namespace Sgl
 
 	void UIElement::OnMouseDown(MouseButtonEventArgs e)
 	{
+		if(e.Button == MouseButton::Left)
+		{
+			PseudoClasses.Set(OnPressed);
+		}
+
 		MouseDown(*this, e);
 	}
 
 	void UIElement::OnMouseUp(MouseButtonEventArgs e)
 	{
+		if(e.Button == MouseButton::Left)
+		{
+			PseudoClasses.Reset(OnPressed);
+		}
+
 		MouseUp(*this, e);
 	}
 
@@ -121,17 +130,15 @@ namespace Sgl
 
 	void UIElement::OnMouseEnter(MouseMoveEventArgs e)
 	{
-		_isMouseOver = true;
 		Cursor::Set(GetCursor());
-		PseudoClasses.set(HoverPseudoClass);
+		PseudoClasses.Set(OnHover);
 		MouseEnter(*this, e);
 	}
 
 	void UIElement::OnMouseLeave(MouseMoveEventArgs e)
 	{
 		MouseLeave(*this, e);
-		PseudoClasses.reset(HoverPseudoClass);
-		_isMouseOver = false;
+		PseudoClasses.Reset(OnHover);
 	}
 
 	void UIElement::OnAttachedToLogicalTree()

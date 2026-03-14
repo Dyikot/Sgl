@@ -160,6 +160,7 @@ namespace Sgl
 
         if(_currentChild && _currentChild->IsVisible() && _currentChild->IsMouseOver())
         {
+            _mouseCapturedElement = _currentChild;
             _currentChild->OnMouseDown(e);
         }
     }
@@ -168,7 +169,12 @@ namespace Sgl
     {
         UIElement::OnMouseUp(e);
 
-        if(_currentChild && _currentChild->IsVisible() && _currentChild->IsMouseOver())
+        if(_mouseCapturedElement)
+        {
+            _mouseCapturedElement->OnMouseUp(e);
+            _mouseCapturedElement = nullptr;
+        }
+        else if(_currentChild && _currentChild->IsVisible() && _currentChild->IsMouseOver())
         {
             _currentChild->OnMouseUp(e);
         }

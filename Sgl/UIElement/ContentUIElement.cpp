@@ -174,7 +174,7 @@ namespace Sgl
 		if(_contentPresenter)
 		{
 			bool visible = _contentPresenter->IsVisible();
-			bool wasMouseOver = _contentPresenter->_isMouseOver;
+			bool wasMouseOver = _contentPresenter->IsMouseOver();
 			bool isMouseOver = visible && LayoutHelper::IsPointInRect(e.X, e.Y, _contentPresenter->_bounds);
 
 			if(isMouseOver)
@@ -200,6 +200,7 @@ namespace Sgl
 
 		if(_contentPresenter && _contentPresenter->IsVisible() && _contentPresenter->IsMouseOver())
 		{
+			_mouseCapturedElement = _contentPresenter;
 			_contentPresenter->OnMouseDown(e);
 		}
 	}
@@ -208,19 +209,14 @@ namespace Sgl
 	{
 		UIElement::OnMouseUp(e);
 
-		if(_contentPresenter && _contentPresenter->IsVisible() && _contentPresenter->IsMouseOver())
+		if(_mouseCapturedElement)
+		{
+			_mouseCapturedElement->OnMouseUp(e);
+			_mouseCapturedElement = nullptr;
+		}
+		else if(_contentPresenter && _contentPresenter->IsVisible() && _contentPresenter->IsMouseOver())
 		{
 			_contentPresenter->OnMouseUp(e);
-		}
-	}
-
-	void ContentUIElement::OnMouseLeave(MouseMoveEventArgs e)
-	{
-		UIElement::OnMouseLeave(e);
-
-		if(_contentPresenter && _contentPresenter->IsVisible())
-		{
-			_contentPresenter->OnMouseLeave(e);
 		}
 	}
 

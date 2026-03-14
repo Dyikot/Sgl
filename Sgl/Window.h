@@ -429,6 +429,7 @@ namespace Sgl
 		RenderContext _renderContext;
 		SDL_WindowID _id = 0;
 		Ref<UIElement> _content;
+		Ref<UIElement> _mouseCapturedElement;
 		bool _isModal = false;
 		bool _isClosing = false;
 		bool _isClosed = true;

@@ -1,7 +1,5 @@
 #include "TextBlock.h"
-#include <algorithm>
 #include <SDL3_ttf/SDL_ttf.h>
-#include <iostream>
 
 namespace Sgl::UIElements
 {
@@ -11,11 +9,6 @@ namespace Sgl::UIElements
 	static constexpr size_t FontOutlineFlag	  = 1 << 3;
 	static constexpr size_t FlowDirectionFlag = 1 << 4;
 	static constexpr size_t TextAlignmentFlag = 1 << 5;
-
-	TextBlock::TextBlock()
-	{
-		
-	}
 
 	TextBlock::TextBlock(const TextBlock& other):
 		UIElement(other),

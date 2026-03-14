@@ -536,7 +536,7 @@ namespace Sgl
         if(_content)
         {
             bool visible = _content->IsVisible();
-            bool wasMouseOver = _content->_isMouseOver;
+            bool wasMouseOver = _content->IsMouseOver();
             bool isMouseOver = visible && LayoutHelper::IsPointInRect(e.X, e.Y, _content->_bounds);
 
             if(isMouseOver)
@@ -560,13 +560,19 @@ namespace Sgl
     {
         if(_content && _content->IsMouseOver() && _content->IsVisible())
         {
+            _mouseCapturedElement = _content;
             _content->OnMouseDown(e);
         }
     }
 
     void Window::OnMouseUp(MouseButtonEventArgs e)
     {
-        if(_content && _content->IsMouseOver() && _content->IsVisible())
+        if(_mouseCapturedElement)
+        {
+            _mouseCapturedElement->OnMouseUp(e);
+            _mouseCapturedElement = nullptr;
+        }
+        else if(_content && _content->IsMouseOver() && _content->IsVisible())
         {
             _content->OnMouseUp(e);
         }

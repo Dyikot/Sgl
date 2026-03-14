@@ -10,7 +10,7 @@ namespace Sgl::UIElements
 	class TextBlock : public UIElement
 	{
 	public:
-		TextBlock();
+		TextBlock() = default;
 		TextBlock(const TextBlock& other);
 		TextBlock(TextBlock&& other) noexcept;		
 

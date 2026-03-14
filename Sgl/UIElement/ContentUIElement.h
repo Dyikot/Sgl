@@ -49,7 +49,6 @@ namespace Sgl
 		void OnMouseMove(MouseMoveEventArgs e) override;
 		void OnMouseDown(MouseButtonEventArgs e) override;
 		void OnMouseUp(MouseButtonEventArgs e) override;
-		void OnMouseLeave(MouseMoveEventArgs e) override;
 		void InvalidateContentPresenter();
 		
 		FSize MeasureContent(FSize avaliableSize) override;
@@ -61,6 +60,7 @@ namespace Sgl
 		Ref<INotifyPropertyChanged> _content;
 		Ref<IDataTemplate> _contentTemplate = New<UIElementDataTemplate>();
 		Ref<UIElement> _contentPresenter;
+		Ref<UIElement> _mouseCapturedElement;
 		Thickness _padding;
 		VerticalAlignment _verticalContentAlignment = VerticalAlignment::Top;
 		HorizontalAlignment _horizontalContentAlignment = HorizontalAlignment::Left;
