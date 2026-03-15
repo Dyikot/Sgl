@@ -13,17 +13,15 @@ namespace Sgl::UIElements
 		ToggleButton(const ToggleButton& other);
 		ToggleButton(ToggleButton&& other) noexcept;
 
-		Event<ToggleButtonEventHandler> CheckedChanged;
+		static const PseudoClassId OnChecked;
 
 		void SetIsChecked(bool value, ValueSource source = ValueSource::Local);
-		bool IsChecked() const { return _isChecked; }
+		bool IsChecked() const { return PseudoClasses.Has(OnChecked); }
 
 		static inline StyleableProperty IsCheckedProperty { &SetIsChecked, &IsChecked };
 	protected:
-		virtual void OnCheckChanged();
 		void OnClick() override;
 	private:
-		bool _isChecked = false;
 		ValueSource _isCheckedSource {};
 	};
 }

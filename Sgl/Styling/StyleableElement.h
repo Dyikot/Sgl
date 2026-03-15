@@ -49,6 +49,7 @@ namespace Sgl
 	protected:
 		virtual void OnAttachedToLogicalTree();
 		virtual void OnDetachedFromLogicalTree();
+		void ApplyStateStyle();
 	private:
 		void AddBaseState(PropertyBase& property, Action<BindableObject&> restoreState) final;
 		bool HasBaseState(PropertyBase& property) const final;

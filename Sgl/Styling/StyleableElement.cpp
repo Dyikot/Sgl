@@ -9,14 +9,7 @@ namespace Sgl
 		PseudoClasses.Changed += [this](PseudoClassesSet& sender, EventArgs e)
 		{
 			RestoreState();
-
-			for(auto style : _stateStyles)
-			{
-				if(style->Selector.MatchState(*this))
-				{
-					style->Apply(*this, ValueSource::PseudoClass);
-				}
-			}
+			ApplyStateStyle();
 
 			if(sender.IsEmpty())
 			{
@@ -82,6 +75,7 @@ namespace Sgl
 		if(FetchStyles())
 		{
 			ApplyStyle();
+			ApplyStateStyle();
 		}
 
 		AttachedToLogicalTree(*this);
@@ -91,6 +85,17 @@ namespace Sgl
 	{
 		_isAttachedToLogicalTree = false;
 		DetachedFromLogicalTree(*this);
+	}
+
+	void StyleableElement::ApplyStateStyle()
+	{
+		for(auto style : _stateStyles)
+		{
+			if(style->Selector.MatchState(*this))
+			{
+				style->Apply(*this, ValueSource::PseudoClass);
+			}
+		}
 	}
 
 	void StyleableElement::AddBaseState(PropertyBase& property, Action<BindableObject&> restoreState)
