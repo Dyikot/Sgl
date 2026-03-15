@@ -95,10 +95,10 @@ namespace Sgl
 	/// </summary>
 	enum class FontStyles
 	{
-		Normal = 0,          // No special styling.
-		Bold = 1,            // Thickened character strokes.
-		Italic = 2,          // Slanted, cursive-style characters.
-		Underline = 4,       // A line drawn beneath the text.
+		Normal		  =	0,   // No special styling.
+		Bold		  =	1,   // Thickened character strokes.
+		Italic        =	2,   // Slanted, cursive-style characters.
+		Underline	  =	4,   // A line drawn beneath the text.
 		Strikethrough = 8    // A horizontal line through the middle of the text.
 	};
 

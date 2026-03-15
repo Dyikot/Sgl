@@ -12,8 +12,8 @@ The project is currently in development. The following has been implemented so f
 - New Panels
 - Focus manager
 - Animation
-- Drag & drop
 - New UIElements
+- Drag & drop
 - New renderer
 - Notifications
 - Documentation

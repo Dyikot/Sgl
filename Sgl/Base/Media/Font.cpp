@@ -1,11 +1,9 @@
 #include "Font.h"
+#include "../Logging.h"
 
 #include <SDL3_ttf/SDL_ttf.h>
 #include <SDL3/SDL_platform_defines.h>
-#include <unordered_map>
 #include <filesystem>
-
-#include "../Logging.h"
 
 namespace Sgl
 {
@@ -25,7 +23,7 @@ namespace Sgl
 		int References;
 	};
 
-	static inline const FontFamily DefaultFontFamily { FamiliesPath, DefaultFamily };
+	static const FontFamily DefaultFontFamily { FamiliesPath, DefaultFamily };
 
 	static inline std::string GetFullPath(const std::string& path, const std::string& name)
 	{

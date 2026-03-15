@@ -22,9 +22,7 @@ namespace Sgl
 	class ObservableCollection : public Collection<T>
 	{
 	public:
-		using CollectionChangedEventHandler = EventHandler<ObservableCollection<T>, ObservableCollectionChangedEventArgs&>;
-
-		Event<CollectionChangedEventHandler> CollectionChanged;
+		using ChangedEventHandler = EventHandler<ObservableCollection<T>, const ObservableCollectionChangedEventArgs&>;
 	private:
 		using base = Collection<T>;
 	public:
@@ -36,9 +34,11 @@ namespace Sgl
 			base(init)
 		{}
 
-		ObservableCollection(std::vector<T> items):
+		explicit ObservableCollection(std::vector<T> items):
 			base(std::move(items))
 		{}
+
+		Event<ChangedEventHandler> Changed;
 
 		void Move(size_t fromIndex, size_t toIndex)
 		{
@@ -54,7 +54,7 @@ namespace Sgl
 				.FromIndex = 0,
 				.ToIndex = 0
 			};
-			OnCollectionChanged(args);
+			OnChanged(args);
 		}
 
 		void InsertItem(size_t index, const T& item) override
@@ -66,7 +66,7 @@ namespace Sgl
 				.FromIndex = index,
 				.ToIndex = index
 			};
-			OnCollectionChanged(args);
+			OnChanged(args);
 		}
 
 		void SetItem(size_t index, const T& item) override
@@ -78,7 +78,7 @@ namespace Sgl
 				.FromIndex = index,
 				.ToIndex = index
 			};
-			OnCollectionChanged(args);
+			OnChanged(args);
 		}
 
 		void RemoveItem(size_t index) override
@@ -89,7 +89,7 @@ namespace Sgl
 				.FromIndex = index,
 				.ToIndex = index
 			};
-			OnCollectionChanged(args);
+			OnChanged(args);
 			base::RemoveItem(index);
 		}
 
@@ -103,12 +103,12 @@ namespace Sgl
 				.FromIndex = fromIndex,
 				.ToIndex = toIndex
 			};
-			OnCollectionChanged(args);
+			OnChanged(args);
 		}
 
-		virtual void OnCollectionChanged(ObservableCollectionChangedEventArgs& e)
+		virtual void OnChanged(const ObservableCollectionChangedEventArgs& e)
 		{
-			CollectionChanged(*this, e);
+			Changed(*this, e);
 		}
 	};
 }

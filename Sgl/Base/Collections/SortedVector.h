@@ -2,18 +2,13 @@
 
 #include <vector>
 #include <ranges>
-#include <optional>
 #include <algorithm>
-#include "../Delegate.h"
 
 namespace Sgl
 {
 	template<typename T, typename TComparer = std::less<T>>
 	class SortedVector
 	{
-	protected:
-		std::vector<T> _items;
-		TComparer _comparer;
 	public:
 		SortedVector() = default;
 
@@ -22,14 +17,16 @@ namespace Sgl
 			_items.reserve(capacity);
 		}
 
-		SortedVector(std::initializer_list<T> init): _items(init)
+		SortedVector(std::initializer_list<T> init): 
+			_items(init)
 		{
 			std::ranges::sort(_items, _comparer);
 		}
 
 		template<std::ranges::range TRange>
 			requires std::same_as<std::ranges::range_value_t<TRange>, T>
-		SortedVector(TRange&& range): _items(std::ranges::begin(range), std::ranges::end(range))
+		SortedVector(TRange&& range): 
+			_items(std::ranges::begin(range), std::ranges::end(range))
 		{
 			std::ranges::sort(_items, _comparer);
 		}
@@ -46,6 +43,9 @@ namespace Sgl
 
 		auto begin() const { return _items.begin(); }
 		auto end() const { return _items.end(); }
+
+		auto rbegin() const { return _items.rbegin(); }
+		auto rend() const { return _items.rend(); }
 
 		void Add(const T& item)
 		{
@@ -82,7 +82,7 @@ namespace Sgl
 
 		bool IsEmpty() const noexcept
 		{
-			return _items.size() == 0;
+			return _items.empty();
 		}
 
 		void Clear() noexcept
@@ -122,16 +122,16 @@ namespace Sgl
 			return std::ranges::upper_bound(_items, item, _comparer);
 		}
 
-		std::optional<size_t> Find(const T& item) const
+		int Find(const T& item) const
 		{
 			auto it = LowerBound(item);
 
 			if(it != _items.end() && !_comparer(item, *it))
 			{
-				return std::ranges::distance(_items.begin(), it);
+				return static_cast<int>(it - _items.begin());
 			}
 
-			return std::nullopt;
+			return -1;
 		}
 
 		void Remove(const T& item)
@@ -149,6 +149,11 @@ namespace Sgl
 			_items.erase(_items.begin() + index);
 		}
 
+		const T& operator[](size_t index) const
+		{
+			return _items[index]; 
+		}
+
 		SortedVector& operator=(std::initializer_list<T> items)
 		{
 			_items = items;
@@ -156,12 +161,10 @@ namespace Sgl
 			return *this;
 		}
 
-		const T& operator[](size_t index) const
-		{
-			return _items[index]; 
-		}
-
 		SortedVector& operator=(const SortedVector&) = default;
 		SortedVector& operator=(SortedVector&&) noexcept = default;
+	protected:
+		std::vector<T> _items;
+		TComparer _comparer;
 	};
 }

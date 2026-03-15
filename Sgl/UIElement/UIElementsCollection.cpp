@@ -29,16 +29,12 @@ namespace Sgl
 
 	void UIElementsCollection::InsertItem(size_t index, const Ref<UIElement>& item)
 	{
-		assert(item != nullptr);
-
 		_owner.OnChildAdded(item.GetValue());
 		base::InsertItem(index, item);
 	}
 
 	void UIElementsCollection::SetItem(size_t index, const Ref<UIElement>& item)
 	{
-		assert(item != nullptr);
-
 		_owner.OnChildAdded(item.GetValue());
 		base::SetItem(index, item);
 	}

@@ -12,7 +12,7 @@ namespace Sgl
 	{
 	public:
 		using Task = Action<>;
-
+	public:
 		/// <summary>
 		/// Queues a task for execution by the thread pool.
 		/// The task will be executed by one of the available worker threads when possible.

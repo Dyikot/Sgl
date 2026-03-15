@@ -196,7 +196,7 @@ namespace Sgl
 				break;
 
 			case HorizontalAlignment::Center:
-				x += (availableWidth - width) / 2.f;
+				x += (availableWidth - width) * 0.5f;
 				break;
 
 			default:
@@ -210,7 +210,7 @@ namespace Sgl
 				break;
 
 			case VerticalAlignment::Center:
-				y += (availableHeight - height) / 2.f;
+				y += (availableHeight - height) * 0.5f;
 				break;
 
 			default:

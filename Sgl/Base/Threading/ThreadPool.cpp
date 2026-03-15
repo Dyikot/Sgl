@@ -11,7 +11,7 @@ namespace Sgl
     {
     public:
         using Task = Action<>;
-
+    public:
         ThreadPoolImpl(size_t maxWorkers)
         {
             _workers.reserve(maxWorkers);

@@ -48,12 +48,12 @@ namespace Sgl
 				if(!HasBaseState(property))
 				{
 					AddBaseState(property,
-						[&property, oldValue = field, oldValueSource = currentSource]
+						[&property, baseValue = field, baseValueSource = currentSource]
 						(BindableObject& object)
 					{
 						using Target = TProperty::Owner;
 						auto& target = static_cast<Target&>(object);
-						property.InvokeSetter(target, oldValue, oldValueSource);
+						property.InvokeSetter(target, baseValue, baseValueSource);
 					});
 				}
 

@@ -1,9 +1,5 @@
 #pragma once
 
-#include <unordered_map>
-#include <memory>
-#include <string>
-
 #include "Style.h"
 
 namespace Sgl
@@ -21,14 +17,35 @@ namespace Sgl
         auto end() { return _items.end(); }
         auto end() const { return _items.end(); }
 
+        auto rbegin() { return _items.rbegin(); }
+        auto rbegin() const { return _items.rbegin(); }
+
+        auto rend() { return _items.rend(); }
+        auto rend() const { return _items.rend(); }
+
         Style& Add(Selector selector)
         {
             return _items.emplace_back(std::move(selector));
         }
 
-        bool IsEmpty() const 
+        size_t Count() const noexcept
+        {
+            return _items.size();
+        }
+
+        bool IsEmpty() const noexcept
         { 
-            return _items.size() == 0; 
+            return _items.empty(); 
+        }
+
+        Style& operator[](size_t index)
+        {
+            return _items[index];
+        }
+
+        const Style& operator[](size_t index) const
+        {
+            return _items[index];
         }
 
         StyleCollection& operator=(const StyleCollection&) = delete;

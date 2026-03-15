@@ -1,7 +1,5 @@
 #pragma once
 
-#include <cassert>
-
 #include "UIElement.h"
 #include "../Base/Collections/Collection.h"
 
