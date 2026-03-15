@@ -14,9 +14,7 @@ namespace Sgl::UIElements
 
 	void ToggleButton::SetIsChecked(bool value, ValueSource source)
 	{
-		bool isChecked = PseudoClasses.Has(OnChecked);
-
-		if(SetProperty(IsCheckedProperty, isChecked, value, _isCheckedSource, source))
+		if(SetProperty(IsCheckedProperty, _isChecked, value, _isCheckedSource, source))
 		{
 			PseudoClasses.Set(OnChecked, value);
 		}
@@ -25,6 +23,6 @@ namespace Sgl::UIElements
 	void ToggleButton::OnClick()
 	{
 		Button::OnClick();
-		SetIsChecked(!PseudoClasses.Has(OnChecked), _isCheckedSource);
+		SetIsChecked(!_isChecked, _isCheckedSource);
 	}
 }

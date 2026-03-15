@@ -16,12 +16,13 @@ namespace Sgl::UIElements
 		static const PseudoClassId OnChecked;
 
 		void SetIsChecked(bool value, ValueSource source = ValueSource::Local);
-		bool IsChecked() const { return PseudoClasses.Has(OnChecked); }
+		bool IsChecked() const { return _isChecked; }
 
 		static inline StyleableProperty IsCheckedProperty { &SetIsChecked, &IsChecked };
 	protected:
 		void OnClick() override;
 	private:
+		bool _isChecked = false;
 		ValueSource _isCheckedSource {};
 	};
 }

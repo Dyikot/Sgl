@@ -217,7 +217,7 @@ namespace Sgl::UIElements
 
 	void TextBlock::InvalidateFont(size_t flag)
 	{
-		_fontFlags &= flag;
+		_fontFlags |= flag;
 	}
 
 	void TextBlock::UpdateFont()
