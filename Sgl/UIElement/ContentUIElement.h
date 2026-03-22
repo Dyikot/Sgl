@@ -72,4 +72,9 @@ namespace Sgl
 		ValueSource _verticalContentAlignmentSource {};
 		ValueSource _horizontalContentAlignmentSource {};
 	};
+
+	struct ContentUIElement_Content
+	{
+		StyleableElement& operator()(StyleableElement& target) const;
+	};
 }

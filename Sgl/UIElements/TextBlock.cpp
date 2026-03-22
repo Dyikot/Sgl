@@ -282,4 +282,6 @@ namespace Sgl::UIElements
 
 		_isTextTextureValid = true;
 	}
+
+	
 }

@@ -64,14 +64,6 @@ namespace Sgl
 
     Window::~Window()
     {
-        if(_content)
-        {
-            _content->OnDetachedFromLogicalTree();
-            _content = nullptr;
-        }
-
-        Close();
-
         if(App.Current() == nullptr)
         {
             throw Exception("Appication does not exist");
@@ -638,4 +630,9 @@ namespace Sgl
             SDL_RenderPresent(_renderer);
         }
     }    
+
+    StyleableElement& Window_Content::operator()(StyleableElement& target) const
+    {
+        return static_cast<Window&>(target).GetContent().GetValue();
+    }
 }

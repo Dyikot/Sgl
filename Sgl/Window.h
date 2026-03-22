@@ -441,4 +441,9 @@ namespace Sgl
 
 		ValueSource _contentSource {};
 	};
+
+	struct Window_Content
+	{
+		StyleableElement& operator()(StyleableElement& target) const;
+	};
 }

@@ -8,13 +8,16 @@ namespace Sgl
 	{
 		PseudoClasses.Changed += [this](PseudoClassesSet& sender, EventArgs e)
 		{
-			RestoreState();
-			ApplyStateStyle();
+			RestoreBaseState();
 
-			if(sender.IsEmpty())
+			if(PseudoClasses.IsEmpty())
 			{
-				_baseStates.clear();
+				_restoreStateActions.clear();
+				return;
 			}
+
+			SaveBaseState();
+			ApplyStateStyle();			
 		};
 	}
 
@@ -75,7 +78,12 @@ namespace Sgl
 		if(FetchStyles())
 		{
 			ApplyStyle();
-			ApplyStateStyle();
+			
+			if(!PseudoClasses.IsEmpty())
+			{
+				SaveBaseState();
+				ApplyStateStyle();
+			}
 		}
 
 		AttachedToLogicalTree(*this);
@@ -84,6 +92,7 @@ namespace Sgl
 	void StyleableElement::OnDetachedFromLogicalTree()
 	{
 		_isAttachedToLogicalTree = false;
+		ClearRestoreActionsTargeting(this);
 		DetachedFromLogicalTree(*this);
 	}
 
@@ -95,32 +104,6 @@ namespace Sgl
 			{
 				style->Apply(*this, ValueSource::PseudoClass);
 			}
-		}
-	}
-
-	void StyleableElement::AddBaseState(PropertyBase& property, Action<BindableObject&> restoreState)
-	{
-		_baseStates.emplace_back(property, std::move(restoreState));
-	}
-
-	bool StyleableElement::HasBaseState(PropertyBase& property) const
-	{
-		for(auto& baseState : _baseStates)
-		{
-			if(baseState.Property == property)
-			{
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	void StyleableElement::RestoreState()
-	{
-		for(auto& baseState : _baseStates)
-		{
-			baseState.Restore(*this);
 		}
 	}
 
@@ -183,6 +166,56 @@ namespace Sgl
 		if(FetchStyles())
 		{
 			ApplyStyle();
+		}
+	}
+
+	void StyleableElement::SaveBaseState()
+	{
+		if(!_restoreStateActions.empty() || _stateStyles.empty())
+		{
+			return;
+		}
+
+		for(auto style : _stateStyles)
+		{
+			auto& target = style->Projection ? style->Projection(*this) : *this;
+			for(auto& setter : style->_setters)
+			{
+				auto& property = setter->GetProperty();
+				_restoreStateActions.emplace_back(
+					property.CreateRestoreAction(&target),
+					&target
+				);
+			}
+		}
+	}
+
+	void StyleableElement::RestoreBaseState()
+	{
+		for(auto& restoreState : _restoreStateActions)
+		{
+			restoreState.Restore();
+		}
+	}
+
+	void StyleableElement::ClearRestoreActionsTargeting(StyleableElement* target)
+	{
+		auto byTarget = [target](const RestoreAction& action)
+		{
+			return action.Target == target;
+		};
+
+		std::erase_if(_restoreStateActions, byTarget);
+
+		IStyleHost* parent = GetStylingParent();
+		while(parent != nullptr)
+		{
+			if(auto* element = dynamic_cast<StyleableElement*>(parent))
+			{
+				std::erase_if(element->_restoreStateActions, byTarget);
+			}
+
+			parent = parent->GetStylingParent();
 		}
 	}
 }

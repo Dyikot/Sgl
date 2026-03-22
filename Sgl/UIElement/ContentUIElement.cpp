@@ -126,7 +126,7 @@ namespace Sgl
 			presenter.OnDetachedFromLogicalTree();
 		}
 
-		SetParent(nullptr);
+		presenter.SetParent(nullptr);
 	}
 
 	void ContentUIElement::OnAttachedToLogicalTree()
@@ -320,5 +320,10 @@ namespace Sgl
 				OnContentPresenterCreated(_contentPresenter.GetValue());
 			}
 		}
+	}
+
+	StyleableElement& ContentUIElement_Content::operator()(StyleableElement& target) const
+	{
+		return static_cast<ContentUIElement&>(target).GetContent().GetValueAs<StyleableElement>();
 	}
 }

@@ -3,27 +3,32 @@
 #include <memory>
 #include <vector>
 
-#include "../Base/Delegate.h"
+#include "../Base/Logging.h"
 #include "../Data/StyleableProperty.h"
 #include "Selector.h"
 #include "Setter.h"
+#include "Projection.h"
 
 namespace Sgl
 {
     class Style
     {
     public:
-        Style(Sgl::Selector selector): Selector(std::move(selector)) {}
+        Style(Sgl::Selector selector): 
+            Selector(std::move(selector)),
+            Projection(nullptr)
+        {}
+
+        Style(Sgl::Selector selector, TargetProjection projection):
+            Selector(std::move(selector)),
+            Projection(projection)
+        {}
+
         Style(const Style&) = delete;
         Style(Style&&) noexcept = default;
 
         const Selector Selector;
-
-        Style& Set(std::unique_ptr<ISetter> setter)
-        {
-            _setters.push_back(std::move(setter));
-            return *this;
-        }
+        const TargetProjection Projection;
 
         template<typename TOwner, typename TValue>
         Style& Set(StyleableProperty<TOwner, TValue>& property,
@@ -44,13 +49,15 @@ namespace Sgl
     private:
         void Apply(StyleableElement& target, ValueSource source) const
         {
+            auto& targetElement = Projection ? Projection(target) : target;
+
             for(auto& setter : _setters)
             {
-                setter->Apply(target, source);
+                setter->Apply(targetElement, source);
             }
         }
     private:
-        std::vector<std::unique_ptr<ISetter>> _setters;
+        std::vector<std::unique_ptr<SetterBase>> _setters;
 
         friend class StyleableElement;
     };    

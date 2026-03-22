@@ -190,4 +190,19 @@ namespace Sgl
             _currentChild = nullptr;
         }
     }
+
+    StyleableElement& Panel_FirstChild::operator()(StyleableElement& target) const
+    {
+        return static_cast<Panel&>(target).Children.Front().GetValue();
+    }
+
+    StyleableElement& Panel_LastChild::operator()(StyleableElement& target) const
+    {
+        return static_cast<Panel&>(target).Children.Back().GetValue();
+    }
+
+    StyleableElement& Panel_NthChild::operator()(StyleableElement& target) const
+    {
+        return static_cast<Panel&>(target).Children.GetElementAt(Index).GetValue();
+    }
 }

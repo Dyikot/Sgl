@@ -43,27 +43,13 @@ namespace Sgl
 				return false;
 			}
 
-			if(newSource >= ValueSource::PseudoClass)
-			{
-				if(!HasBaseState(property))
-				{
-					AddBaseState(property,
-						[&property, baseValue = field, baseValueSource = currentSource]
-						(BindableObject& object)
-					{
-						using Target = TProperty::Owner;
-						auto& target = static_cast<Target&>(object);
-						property.InvokeSetter(target, baseValue, baseValueSource);
-					});
-				}
-
-				field = value;
-				return true;
-			}
-
 			field = value;
-			currentSource = newSource;
-			NotifyPropertyChanged(property);
+
+			if(newSource < ValueSource::PseudoClass)
+			{
+				currentSource = newSource;
+				NotifyPropertyChanged(property);
+			}
 
 			return true;
 		}
@@ -107,8 +93,6 @@ namespace Sgl
 	protected:
 		virtual void NotifyPropertyChanged(PropertyBase& property);
 		virtual void OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext) {}
-		virtual void AddBaseState(PropertyBase& property, Action<BindableObject&> restoreState) {}
-		virtual bool HasBaseState(PropertyBase& property) const { return false; }
 		void ApplyBindings();
 		void ClearBindings();
 	private:

@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include "Property.h"
+#include "../Base/Delegate.h"
 
 namespace Sgl
 {
@@ -14,8 +15,14 @@ namespace Sgl
 		PseudoClass
 	};
 
+	class StyleablePropertyBase : public PropertyBase
+	{
+	public:
+		virtual Action<> CreateRestoreAction(void* element) = 0;
+	};
+
 	template<typename TOwner, typename TValue>
-	class StyleableProperty : public PropertyBase
+	class StyleableProperty : public StyleablePropertyBase
 	{
 	public:
 		using Owner = TOwner;
@@ -43,6 +50,15 @@ namespace Sgl
 		Value InvokeGetter(Owner& owner) const
 		{
 			return (owner.*_getter)();
+		}
+
+		Action<> CreateRestoreAction(void* element) final
+		{
+			auto& owner = *static_cast<TOwner*>(element);
+			return [this, &owner, value = InvokeGetter(owner)]()
+			{
+				InvokeSetter(owner, value, ValueSource::PseudoClass);
+			};
 		}
 	private:
 		Setter _setter;

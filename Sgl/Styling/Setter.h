@@ -5,56 +5,62 @@
 namespace Sgl
 {
     class StyleableElement;
-    
-    class ISetter
+
+    class SetterBase
     {
     public:
-        virtual ~ISetter() = default;
+        SetterBase(StyleablePropertyBase& property): _property(property) {}
+        virtual ~SetterBase() = default;
 
+        StyleablePropertyBase& GetProperty() const { return _property; }
         virtual void Apply(StyleableElement& target, ValueSource valueSource) const = 0;
+    private:
+        StyleablePropertyBase& _property;
     };
 
     template<typename TOwner, typename TValue>
-    class Setter : public ISetter
+    class Setter : public SetterBase
     {
     private:
         using Value = std::remove_reference_t<TValue>;
     public:
         Setter(StyleableProperty<TOwner, TValue>& property, TValue value):
-            _property(property),
+            SetterBase(property),
             _value(value)
         {}
 
         void Apply(StyleableElement& target, ValueSource valueSource) const final
         {
-            _property.InvokeSetter(static_cast<TOwner&>(target), _value, valueSource);
+            auto& property = static_cast<StyleableProperty<TOwner, TValue>&>(GetProperty());
+            property.InvokeSetter(static_cast<TOwner&>(target), _value, valueSource);
         }
     private:
-        StyleableProperty<TOwner, TValue>& _property;
         Value _value;
     };
 
     template<typename TOwner, typename TValue, typename TResources, typename TResource>
         requires std::constructible_from<TValue, TResource>
-    class ResourceSetter : public ISetter
+    class ResourceSetter : public SetterBase
     {
     public:
-        ResourceSetter(StyleableProperty<TOwner, TValue>& property, 
+        ResourceSetter(StyleableProperty<TOwner, TValue>& property,
                        TResources& resources,
                        TResource TResources::* resource):
-            _property(property),
+            SetterBase(property),
             _resources(resources),
             _resource(resource)
         {}
 
         void Apply(StyleableElement& target, ValueSource valueSource) const final
         {
-            _property.InvokeSetter(static_cast<TOwner&>(target),
-                                   _resources.*_resource,
-                                   valueSource);
+            auto& property = static_cast<StyleableProperty<TOwner, TValue>&>(GetProperty());
+            property.InvokeSetter(
+                static_cast<TOwner&>(target),
+                _resources.*_resource,
+                valueSource
+            );
         }
     private:
-        StyleableProperty<TOwner, TValue>& _property;
         TResources& _resources;
         TResource TResources::* _resource;
     };

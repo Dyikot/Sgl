@@ -34,4 +34,20 @@ namespace Sgl
 		Ref<UIElement> _currentChild;
 		Ref<UIElement> _mouseCapturedElement;
 	};	
+
+	struct Panel_FirstChild
+	{
+		StyleableElement& operator()(StyleableElement& target) const;
+	};
+
+	struct Panel_LastChild
+	{
+		StyleableElement& operator()(StyleableElement& target) const;
+	};
+
+	struct Panel_NthChild
+	{
+		size_t Index = 0;
+		StyleableElement& operator()(StyleableElement& target) const;
+	};
 }

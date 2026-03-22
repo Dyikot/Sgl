@@ -28,6 +28,11 @@ namespace Sgl
             return _items.emplace_back(std::move(selector));
         }
 
+        Style& Add(Selector selector, TargetProjection projection)
+        {
+            return _items.emplace_back(std::move(selector), projection);
+        }
+
         size_t Count() const noexcept
         {
             return _items.size();
