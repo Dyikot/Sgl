@@ -14,6 +14,7 @@ namespace Sgl
 		
 		const Ref<UIElement>& GetContentPresenter() const { return _contentPresenter; }
 
+		void SetContent(const std::string& value);
 		void SetContent(const Ref<INotifyPropertyChanged>& value, ValueSource source = ValueSource::Local);
 		const Ref<INotifyPropertyChanged>& GetContent() const { return _content; }
 

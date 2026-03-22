@@ -21,7 +21,7 @@ namespace Sgl
 
         Style(Sgl::Selector selector, TargetProjection projection):
             Selector(std::move(selector)),
-            Projection(projection)
+            Projection(std::move(projection))
         {}
 
         Style(const Style&) = delete;

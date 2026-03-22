@@ -1,6 +1,7 @@
 #include "ContentUIElement.h"
 #include <algorithm>
 #include "../Layout/LayoutHelper.h"
+#include "../UIElements/TextBlock.h"
 
 namespace Sgl
 {
@@ -32,6 +33,13 @@ namespace Sgl
 		{
 			OnContentPresenterDestroying(_contentPresenter.GetValue());
 		}
+	}
+
+	void ContentUIElement::SetContent(const std::string& value)
+	{
+		auto textBlock = New<UIElements::TextBlock>();
+		textBlock->SetText(value);
+		SetContent(textBlock, ValueSource::Local);
 	}
 
 	void ContentUIElement::SetContent(const Ref<INotifyPropertyChanged>& value, ValueSource source)
