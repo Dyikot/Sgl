@@ -8,14 +8,13 @@ namespace Sgl
 	{
 		PseudoClasses.Changed += [this](PseudoClassesSet& sender, EventArgs e)
 		{
-			RestoreBaseState();
-
 			if(PseudoClasses.IsEmpty())
 			{
-				_restoreStateActions.clear();
+				ClearAndRestoreBaseState();
 				return;
 			}
 
+			RestoreBaseState();
 			SaveBaseState();
 			ApplyStateStyle();			
 		};
@@ -92,7 +91,12 @@ namespace Sgl
 	void StyleableElement::OnDetachedFromLogicalTree()
 	{
 		_isAttachedToLogicalTree = false;
-		ClearRestoreActionsTargeting(this);
+
+		if(!PseudoClasses.IsEmpty())
+		{
+			ClearAndRestoreBaseState();
+		}
+
 		DetachedFromLogicalTree(*this);
 	}
 
@@ -169,6 +173,24 @@ namespace Sgl
 		}
 	}
 
+	struct ClearBaseStateHandler
+	{
+		StyleableElement& Source;
+
+		void operator()(StyleableElement& sender, EventArgs e) const
+		{
+			std::erase_if(Source._restoreStateActions, [&sender](const auto& action)
+			{
+				return action.Target == &sender;
+			});
+		}
+
+		bool operator==(const ClearBaseStateHandler& other) const
+		{
+			return &Source == &other.Source;
+		}
+	};
+
 	void StyleableElement::SaveBaseState()
 	{
 		if(!_restoreStateActions.empty() || _stateStyles.empty())
@@ -178,14 +200,33 @@ namespace Sgl
 
 		for(auto style : _stateStyles)
 		{
-			auto& target = style->Projection ? style->Projection(*this) : *this;
+			bool hasProjection = style->Projection.HasTarget();
+			auto& target = hasProjection ? style->Projection(*this) : *this;
+
 			for(auto& setter : style->_setters)
 			{
 				auto& property = setter->GetProperty();
-				_restoreStateActions.emplace_back(
-					property.CreateRestoreAction(&target),
-					&target
-				);
+				auto restore = property.CreateRestoreAction(&target);
+				
+				if(hasProjection)
+				{
+					StyleableElementEventHandler detachedHandler = ClearBaseStateHandler(*this);
+					target.DetachedFromLogicalTree += detachedHandler;
+					
+					_restoreStateActions.emplace_back(
+						std::move(restore),
+						&target,
+						std::move(detachedHandler)
+					);
+				}
+				else
+				{
+					_restoreStateActions.emplace_back(
+						std::move(restore),
+						&target,
+						nullptr
+					);
+				}				
 			}
 		}
 	}
@@ -198,24 +239,18 @@ namespace Sgl
 		}
 	}
 
-	void StyleableElement::ClearRestoreActionsTargeting(StyleableElement* target)
+	void StyleableElement::ClearAndRestoreBaseState()
 	{
-		auto byTarget = [target](const RestoreAction& action)
+		for(auto& restoreState : _restoreStateActions)
 		{
-			return action.Target == target;
-		};
+			restoreState.Restore();
 
-		std::erase_if(_restoreStateActions, byTarget);
-
-		IStyleHost* parent = GetStylingParent();
-		while(parent != nullptr)
-		{
-			if(auto* element = dynamic_cast<StyleableElement*>(parent))
+			if(restoreState.DetachedHandler)
 			{
-				std::erase_if(element->_restoreStateActions, byTarget);
+				restoreState.Target->DetachedFromLogicalTree -= restoreState.DetachedHandler;
 			}
-
-			parent = parent->GetStylingParent();
 		}
+
+		_restoreStateActions.clear();
 	}
 }

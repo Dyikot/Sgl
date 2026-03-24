@@ -15,13 +15,14 @@ namespace Sgl
 	class StyleableElement : public BindableObject, public IStyleHost
 	{
 	private:
+		using StyleableElementEventHandler = EventHandler<StyleableElement>;
+
 		struct RestoreAction
 		{
 			Action<> Restore;
 			StyleableElement* Target;
+			StyleableElementEventHandler DetachedHandler;
 		};
-
-		using StyleableElementEventHandler = EventHandler<StyleableElement>;
 	public:
 		StyleableElement();
 		StyleableElement(const StyleableElement& other);
@@ -56,7 +57,7 @@ namespace Sgl
 		void OnStyleClassesChanged();
 		void SaveBaseState();
 		void RestoreBaseState();
-		void ClearRestoreActionsTargeting(StyleableElement* target);
+		void ClearAndRestoreBaseState();
 	private:
 		std::vector<std::string> _classList;
 		std::vector<const Style*> _styles;
@@ -64,5 +65,7 @@ namespace Sgl
 		std::vector<RestoreAction> _restoreStateActions;
 		IStyleHost* _stylingParent = nullptr;
 		bool _isAttachedToLogicalTree = false;
+
+		friend class ClearBaseStateHandler;
 	};
 }
