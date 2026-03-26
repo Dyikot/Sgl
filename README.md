@@ -1,12 +1,15 @@
 ## About
 **Sgl** is a cross-platform UI framework developed on top of C++ 20 and SDL3.
 The project is currently in development. The following has been implemented so far:
-- Layout system
-- Basic styling, ThemeMode
-- Basic UIElements: Border, Image, TextBlock, Button, StackPanel, Canvas
-- Data binding
-- Localization
-- Threading: Timer, ThreadPool, async operations using c++ 20 coroutines
+- **Layout system** - Measure and arrange UI elements
+- **Styling system** - Style, selectors, pseudo-classes, projections and dynamic theme resources
+- **Theme support** - Light/Dark theme switching with runtime resource dictionaries
+- **UI Elements**:
+  - Content: `Border`, `TextBlock`, `Image`, `Button`
+  - Panels: `StackPanel`, `Canvas`
+- **Data binding** - `INotifyPropertyChanged`, `ObservableObject`, data templates
+- **Localization** - Runtime language switching with CSV-based localization files
+- **Threading** - Timer, ThreadPool, Dispatcher, async operations using C++20 coroutines
 
 ## Roadmap
 - New Panels
@@ -17,6 +20,68 @@ The project is currently in development. The following has been implemented so f
 - New renderer
 - Notifications
 - Documentation
+
+## Features
+
+### Styling
+Sgl provides a powerful CSS-like styling system for UI elements.
+Styles are defined using selectors and setters.
+
+```cpp
+// Style all TextBlock elements
+Styles.Add(Selector().OfType<TextBlock>())
+    .Set(TextBlock::FontSizeProperty, 16.0f)
+    .Set(TextBlock::ForegroundProperty, Colors::Black);
+
+// Style buttons when hovered
+Styles.Add(Selector().Is<Button>().On("hover"))
+    .Set(Button::BackgroundProperty, Colors::Green);
+```
+
+Use theme resources to automatically switch colors/brushes based on the active theme:
+```cpp
+// Register themed resources during app initialization
+app.Resources.AddBrush("Background", Colors::White, Colors::Black);
+
+// Use resources in styles
+Styles.Add(Selector().Is<Renderable>())
+    .Set(Renderable::BackgroundProperty, ResourceKey("Background"));
+```
+
+Projections allow styling specific parts of composite elements:
+
+```cpp
+// Style the content area of a Border
+Styles.Add(Selector().OfType<Border>(), ContentUIElement_Content())
+    .Set(TextBlock::ForegroundProperty, Colors::Red);
+```
+
+### Data Binding
+
+Create an observable and bind it to UI element:
+
+```cpp
+// ViewModel with property change notification
+class PersonViewModel : public ObservableObject
+{
+public:
+    void SetName(const std::string& value) { SetProperty(NameProperty, _name, value); }
+    const std::string& GetName() const { return _name; }
+    
+    static inline DirectProperty NameProperty { &SetName, &GetName };
+private:
+    std::string _name;
+};
+
+// Create
+auto vm = New<PersonViewModel>();
+vm->SetName("John");
+
+// Bind
+auto textBlock = New<TextBlock>();
+textBlock->SetDataContext(vm);
+textblock->Bind(TextBlock::TextProperty, PersonViewModel::NameProperty);
+```
 
 ## Dependencies
 - [SDL3](https://github.com/libsdl-org/SDL/releases/tag/release-3.2.26)

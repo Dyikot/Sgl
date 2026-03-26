@@ -7,6 +7,10 @@
 
 namespace Sgl
 {
+    /// <summary>
+    /// Provides themed color and brush resources that automatically switch based on the active theme.
+    /// Resources are stored separately for light and dark themes and are looked up at runtime.
+    /// </summary>
     class ThemeResourceProvider
     {
     public:
@@ -33,7 +37,6 @@ namespace Sgl
         /// </summary>
         /// <param name="key"> - the resource key.</param>
         /// <returns>The color value.</returns>
-        /// <exception cref="std::runtime_error">Thrown when the key is not found.</exception>
         Color GetColor(const std::string& key) const;
 
         /// <summary>
@@ -41,7 +44,6 @@ namespace Sgl
         /// </summary>
         /// <param name="key"> - the resource key.</param>
         /// <returns>The brush value.</returns>
-        /// <exception cref="std::runtime_error">Thrown when the key is not found.</exception>
         Brush GetBrush(const std::string& key) const;
 
         /// <summary>

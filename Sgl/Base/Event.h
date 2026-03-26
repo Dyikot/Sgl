@@ -87,6 +87,11 @@ namespace Sgl
 			return _eventHandlers != nullptr;
 		}
 
+
+		/// <summary>
+		/// Return the number of event handlers
+		/// </summary>
+		/// <returns>Number of event handlers</returns>
 		size_t Count() const noexcept
 		{
 			return _eventHandlers ? _eventHandlers->size() : 0;

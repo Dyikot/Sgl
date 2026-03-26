@@ -4,6 +4,10 @@
 
 namespace Sgl
 {
+	/// <summary>
+	/// Base class for all property types.
+	/// Provides identity comparison for properties.
+	/// </summary>
 	class PropertyBase
 	{
 	public:
@@ -13,6 +17,10 @@ namespace Sgl
 		}
 	};
 
+	/// <summary>
+	/// Concept that defines the requirements for a property type.
+	/// A property must support invoking getters and setters on an owner object.
+	/// </summary>
 	template<typename T, typename TOwner = T::Owner, typename TValue = T::Value>
 	concept CProperty = requires(T property, TOwner& owner, TValue value)
 	{
