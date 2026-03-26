@@ -4,6 +4,7 @@
 
 #include "Window.h"
 #include "Base/Media/ThemeMode.h"
+#include "Base/Media/ThemeResourceProvider.h"
 #include "Base/Localization/StringLocalizer.h"
 #include "Base/Localization/LocalizationStorage.h"
 
@@ -71,6 +72,11 @@ namespace Sgl
 		StyleCollection Styles;
 
 		/// <summary>
+		/// Theme resource provider for managing themed colors and brushes.
+		/// </summary>
+		ThemeResourceProvider Resources;
+
+		/// <summary>
 		/// The primary window of the application.
 		/// </summary>
 		Ref<Window> MainWindow;
@@ -133,20 +139,6 @@ namespace Sgl
 		void AddLocalizationFromCSV(std::string csvFilePath, char delimiter = ',');
 
 		/// <summary>
-		/// Registers a callback that will be invoked when theme changed.
-		/// Use this to update theme resources.
-		/// </summary>
-		/// <param name="themeResourcesNotifier"> - callback action that receives the new ThemeMode when ThemeVariant updated.</param>
-		void AddThemeResourcesNotifier(Action<ThemeMode> themeResourcesNotifier);
-
-		/// <summary>
-		/// Unregisters a previously added theme resources change callback.
-		/// Call this to stop receiving notifications when the theme changes
-		/// </summary>
-		/// <param name="themeResourcesNotifier"> - callback action that receives the new ThemeMode when ThemeVariant updated.</param>
-		void RemoveThemeResourcesNotifier(Action<ThemeMode> themeResourcesNotifier);
-
-		/// <summary>
 		/// Starts the application's main event loop.
 		/// Blocks until the application is shut down.
 		/// </summary>
@@ -178,8 +170,7 @@ namespace Sgl
 		bool _isRunning = false;
 		ThemeMode _themeMode;
 		ThemeVariant _themeVariant;
-		std::optional<LocalizationStorage> _localizationStorage;		
-		std::vector<Action<ThemeMode>> _themeResourcesNotifiers;
+		std::optional<LocalizationStorage> _localizationStorage;
 
 		Window* _focusedWindow = nullptr;
 		std::vector<Window*> _windows;

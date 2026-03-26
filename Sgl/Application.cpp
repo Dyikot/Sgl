@@ -36,6 +36,11 @@ namespace Sgl
 
         SDL_RegisterEvents(UserEventsNumber);
         SetThemeVariant(ThemeVariant::System);
+
+        ThemeVariantChanged += [this](Application& app, ThemeMode mode)
+        {
+            Resources.SetCurrentTheme(mode);
+        };
 	}
 
 	Application::~Application()
@@ -113,23 +118,6 @@ namespace Sgl
         _localizationStorage.emplace(std::move(localizationLoader));
     }
 
-    void Application::AddThemeResourcesNotifier(Action<ThemeMode> themeResourcesNotifier)
-    {
-        if(!themeResourcesNotifier)
-        {
-            throw Exception("ThemeResources notifier cannotbe empty");
-        }
-
-        themeResourcesNotifier(_themeMode);
-
-        _themeResourcesNotifiers.push_back(std::move(themeResourcesNotifier));
-    }
-
-    void Application::RemoveThemeResourcesNotifier(Action<ThemeMode> themeResourcesNotifier)
-    {
-        std::erase(_themeResourcesNotifiers, std::move(themeResourcesNotifier));
-    }
-
     void Application::Run()
 	{		
 		if(_isRunning)
@@ -185,7 +173,7 @@ namespace Sgl
 	void Application::OnStarted()
 	{
         _isRunning = true;
-		Started(*this);
+		Started.Invoke(*this);
 
         if(MainWindow)
         {
@@ -195,17 +183,12 @@ namespace Sgl
 
 	void Application::OnStopped()
 	{
-		Stopped(*this);
+		Stopped.Invoke(*this);
 	}
 
     void Application::OnThemeVariantChanged()
     {
-        ThemeVariantChanged(*this, _themeMode);
-
-        for(auto& themeResourcesNotifier : _themeResourcesNotifiers)
-        {
-            themeResourcesNotifier(_themeMode);
-        }
+        ThemeVariantChanged.Invoke(*this, _themeMode);
 
         for(auto& window : _activeWindows)
         {

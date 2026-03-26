@@ -46,7 +46,7 @@ namespace Sgl
         if(_classes.test(pseudoClass) != value)
         {
             _classes.set(pseudoClass, value);
-            Changed(*this);
+            Changed.Invoke(*this);
         }
     }
 
@@ -55,7 +55,7 @@ namespace Sgl
         if(_classes.test(pseudoClass))
         {
             _classes.reset(pseudoClass);
-            Changed(*this);
+            Changed.Invoke(*this);
         }
     }
 

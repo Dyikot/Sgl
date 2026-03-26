@@ -11,7 +11,7 @@ namespace Sgl
 	void LanguageInfo::SetCurrent(const LanguageInfo& languageInfo)
 	{
 		_languageInfo = languageInfo;
-		CurrentChanged(_languageInfo);
+		CurrentChanged.Invoke(_languageInfo);
 	}
 
 	const LanguageInfo& LanguageInfo::GetCurrent()

@@ -56,7 +56,7 @@ namespace Sgl
 
 	void BindableObject::NotifyPropertyChanged(PropertyBase& property)
 	{
-		PropertyChanged(*this, property);
+		PropertyChanged.Invoke(*this, property);
 	}
 
 	void BindableObject::ApplyBindings()

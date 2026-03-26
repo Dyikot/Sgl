@@ -38,30 +38,6 @@ namespace Sgl
         Value _value;
     };
 
-    template<typename TOwner, typename TValue, typename TResources, typename TResource>
-        requires std::constructible_from<TValue, TResource>
-    class ResourceSetter : public SetterBase
-    {
-    public:
-        ResourceSetter(StyleableProperty<TOwner, TValue>& property,
-                       TResources& resources,
-                       TResource TResources::* resource):
-            SetterBase(property),
-            _resources(resources),
-            _resource(resource)
-        {}
-
-        void Apply(StyleableElement& target, ValueSource valueSource) const final
-        {
-            auto& property = static_cast<StyleableProperty<TOwner, TValue>&>(GetProperty());
-            property.InvokeSetter(
-                static_cast<TOwner&>(target),
-                _resources.*_resource,
-                valueSource
-            );
-        }
-    private:
-        TResources& _resources;
-        TResource TResources::* _resource;
-    };
+    template<typename TOwner, typename TValue>
+    class ResourceSetter;
 }

@@ -47,7 +47,7 @@ namespace Sgl
 	protected:
 		virtual void NotifyPropertyChanged(PropertyBase& property)
 		{
-			PropertyChanged(*this, property);
+			PropertyChanged.Invoke(*this, property);
 		}
 	};
 }

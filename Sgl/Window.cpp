@@ -503,12 +503,12 @@ namespace Sgl
 
     void Window::OnWindowStateChanged(WindowStateChangedEventArgs e)
     {
-        WindowStateChanged(*this, e);
+        WindowStateChanged.Invoke(*this, e);
     }
 
     void Window::OnPositionChanged(WindowPositionChangedEventArgs e)
     {
-        PositionChanged(*this, e);
+        PositionChanged.Invoke(*this, e);
     }
 
     void Window::OnWindowSizeChanged(WindowSizeChangedEventArgs e)
@@ -520,7 +520,7 @@ namespace Sgl
             _content->InvalidateMeasure();
         }
 
-        SizeChanged(*this, e);
+        SizeChanged.Invoke(*this, e);
     }
 
     void Window::OnMouseMove(MouseMoveEventArgs e)
@@ -596,7 +596,7 @@ namespace Sgl
 
     void Window::OnClosing(CancelEventArgs& e)
     {   
-        Closing(*this, e);
+        Closing.Invoke(*this, e);
 
         if(e.Cancel)
         {
@@ -619,7 +619,7 @@ namespace Sgl
             _isModal = false;
         }
 
-        Closed(*this);
+        Closed.Invoke(*this);
     }
 
     void Window::RenderCore()

@@ -31,3 +31,17 @@ namespace Sgl::UIElements
 		ValueSource _borderColorSource {};
 	};
 }
+
+namespace Sgl
+{
+	template<>
+	class ResourceSetter<UIElements::Border, Color>: public SetterBase
+	{
+	public:
+		ResourceSetter(StyleableProperty<UIElements::Border, Color>& property, ResourceKey key);
+
+		void Apply(StyleableElement& target, ValueSource valueSource) const override;
+	private:
+		ResourceKey _key;
+	};
+}

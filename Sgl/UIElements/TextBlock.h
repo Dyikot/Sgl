@@ -94,3 +94,17 @@ namespace Sgl::UIElements
 		uint32_t _fontFlags = 1;
 	};
 }
+
+namespace Sgl
+{
+	template<>
+	class ResourceSetter<UIElements::TextBlock, Color>: public SetterBase
+	{
+	public:
+		ResourceSetter(StyleableProperty<UIElements::TextBlock, Color>& property, ResourceKey key);
+
+		void Apply(StyleableElement& target, ValueSource valueSource) const override;
+	private:
+		ResourceKey _key;
+	};
+}

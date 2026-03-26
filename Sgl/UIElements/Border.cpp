@@ -1,4 +1,5 @@
 #include "Border.h"
+#include "../Application.h"
 
 namespace Sgl::UIElements
 {
@@ -65,3 +66,24 @@ namespace Sgl::UIElements
 	}
 }
 
+namespace Sgl
+{
+	ResourceSetter<UIElements::Border, Color>::ResourceSetter(
+		StyleableProperty<UIElements::Border, Color>& property,
+		ResourceKey key):
+		SetterBase(property),
+		_key(std::move(key))
+	{}
+
+	void ResourceSetter<UIElements::Border, Color>::Apply(
+		StyleableElement& target,
+		ValueSource valueSource) const
+	{
+		auto& property = static_cast<StyleableProperty<UIElements::Border, Color>&>(GetProperty());
+		property.InvokeSetter(
+			static_cast<UIElements::Border&>(target),
+			App->Resources.GetColor(_key.GetName()),
+			valueSource
+		);
+	}
+}

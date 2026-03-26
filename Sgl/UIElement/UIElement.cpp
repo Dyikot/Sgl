@@ -74,17 +74,17 @@ namespace Sgl
 
 	void UIElement::OnKeyUp(KeyEventArgs e)
 	{
-		KeyUp(*this, e);
+		KeyUp.Invoke(*this, e);
 	}
 
 	void UIElement::OnKeyDown(KeyEventArgs e)
 	{
-		KeyDown(*this, e);
+		KeyDown.Invoke(*this, e);
 	}
 
 	void UIElement::OnMouseMove(MouseMoveEventArgs e)
 	{
-		MouseMove(*this, e);
+		MouseMove.Invoke(*this, e);
 	}
 
 	void UIElement::OnMouseDown(MouseButtonEventArgs e)
@@ -94,7 +94,7 @@ namespace Sgl
 			PseudoClasses.Set(OnPressed);
 		}
 
-		MouseDown(*this, e);
+		MouseDown.Invoke(*this, e);
 	}
 
 	void UIElement::OnMouseUp(MouseButtonEventArgs e)
@@ -104,24 +104,24 @@ namespace Sgl
 			PseudoClasses.Reset(OnPressed);
 		}
 
-		MouseUp(*this, e);
+		MouseUp.Invoke(*this, e);
 	}
 
 	void UIElement::OnMouseWheelChanged(MouseWheelEventArgs& e)
 	{
-		MouseWheel(*this, e);
+		MouseWheel.Invoke(*this, e);
 	}
 
 	void UIElement::OnMouseEnter(MouseMoveEventArgs e)
 	{
 		Cursor::Set(GetCursor());
 		PseudoClasses.Set(OnHover);
-		MouseEnter(*this, e);
+		MouseEnter.Invoke(*this, e);
 	}
 
 	void UIElement::OnMouseLeave(MouseMoveEventArgs e)
 	{
-		MouseLeave(*this, e);
+		MouseLeave.Invoke(*this, e);
 		PseudoClasses.Reset(OnHover);
 	}	
 

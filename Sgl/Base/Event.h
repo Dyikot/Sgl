@@ -128,7 +128,7 @@ namespace Sgl
 		/// </summary>
 		/// <param name="sender"> - The sender object that is raising the event.</param>
 		/// <param name="e"> - The event arguments containing data about the event.</param>
-		void operator()(TSender& sender, TEventArgs e) const
+		void Invoke(TSender& sender, TEventArgs e) const
 		{
 			if(HasHandlers())
 			{
@@ -143,9 +143,9 @@ namespace Sgl
 		/// Invokes event with default-constructed event arguments.
 		/// </summary>
 		/// <param name="sender">The sender object raising the event</param>
-		void operator()(TSender& sender) const requires std::default_initializable<TEventArgs>
+		void Invoke(TSender& sender) const requires std::default_initializable<TEventArgs>
 		{
-			operator()(sender, TEventArgs());
+			Invoke(sender, TEventArgs());
 		}
 
 		Event& operator=(const Event&) = delete;

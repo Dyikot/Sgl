@@ -421,9 +421,6 @@ namespace Sgl
 	private:
 		void RenderCore();
 	private:
-		friend class UIElement;
-		friend class Application;
-
 		SDL_Window* _sdlWindow;
 		SDL_Renderer* _renderer;
 		RenderContext _renderContext;
@@ -440,6 +437,9 @@ namespace Sgl
 		Surface _icon;
 
 		ValueSource _contentSource {};
+
+		friend class UIElement;
+		friend class Application;
 	};
 
 	struct Window_Content

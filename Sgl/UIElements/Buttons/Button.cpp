@@ -46,7 +46,7 @@ namespace Sgl::UIElements
 
 	void Button::OnClick()
 	{
-		Click(*this);
+		Click.Invoke(*this);
 
 		if(_command.HasTarget())
 		{

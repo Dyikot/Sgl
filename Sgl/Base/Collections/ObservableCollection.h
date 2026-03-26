@@ -108,7 +108,7 @@ namespace Sgl
 
 		virtual void OnChanged(const ObservableCollectionChangedEventArgs& e)
 		{
-			Changed(*this, e);
+			Changed.Invoke(*this, e);
 		}
 	};
 }

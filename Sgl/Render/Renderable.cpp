@@ -1,4 +1,5 @@
 #include "Renderable.h"
+#include "../Application.h"
 
 namespace Sgl
 {
@@ -62,5 +63,24 @@ namespace Sgl
 		{
 			_visualRoot->InvalidateRender();
 		}
+	}
+
+	ResourceSetter<Renderable, const Brush&>::ResourceSetter(
+		StyleableProperty<Renderable, const Brush&>& property, 
+		ResourceKey key):
+		SetterBase(property),
+		_key(std::move(key))
+	{}
+
+	void ResourceSetter<Renderable, const Brush&>::Apply(
+		StyleableElement& target, 
+		ValueSource valueSource) const
+	{
+		auto& property = static_cast<StyleableProperty<Renderable, const Brush&>&>(GetProperty());
+		property.InvokeSetter(
+			static_cast<Renderable&>(target),
+			App->Resources.GetBrush(_key.GetName()),
+			valueSource
+		);
 	}
 }

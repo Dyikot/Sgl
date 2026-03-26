@@ -36,7 +36,7 @@ namespace Sgl
 
 				if(IsElapsed())
 				{
-					Elapsed(*this);
+					Elapsed.Invoke(*this);
 					_stopwatch.Reset();
 
 					if(!AutoRestart)

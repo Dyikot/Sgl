@@ -85,7 +85,7 @@ namespace Sgl
 			}
 		}
 
-		AttachedToLogicalTree(*this);
+		AttachedToLogicalTree.Invoke(*this);
 	}
 
 	void StyleableElement::OnDetachedFromLogicalTree()
@@ -97,7 +97,7 @@ namespace Sgl
 			ClearAndRestoreBaseState();
 		}
 
-		DetachedFromLogicalTree(*this);
+		DetachedFromLogicalTree.Invoke(*this);
 	}
 
 	void StyleableElement::ApplyStateStyle()

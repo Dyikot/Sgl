@@ -42,4 +42,15 @@ namespace Sgl
         ValueSource _cursorSource {};
         ValueSource _backgroundSource {};
     };
+
+    template<>
+    class ResourceSetter<Renderable, const Brush&> : public SetterBase
+    {
+    public:
+        ResourceSetter(StyleableProperty<Renderable, const Brush&>& property, ResourceKey key);
+
+        void Apply(StyleableElement& target, ValueSource valueSource) const override;
+    private:
+        ResourceKey _key;
+    };
 }
