@@ -190,15 +190,12 @@ namespace Sgl::UIElements
 		{
 			auto& lastChild = Children.Back();
 
-			if(lastChild->IsVisible())
-			{
-				lastChild->Arrange({
+			lastChild->Arrange({
 					.x = remainingRect.x,
 					.y = remainingRect.y,
 					.w = remainingRect.w,
 					.h = remainingRect.h
-				});
-			}
+			});
 		}
 	}
 }

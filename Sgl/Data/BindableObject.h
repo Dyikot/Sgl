@@ -38,8 +38,14 @@ namespace Sgl
 		bool SetProperty(TProperty& property, TField& field, TProperty::Value value,
 						 ValueSource& currentSource, ValueSource newSource)
 		{
-			if(currentSource > newSource || field == value)
+			if(currentSource > newSource)
 			{
+				return false;
+			}
+
+			if(field == value)
+			{
+				currentSource = newSource;
 				return false;
 			}
 

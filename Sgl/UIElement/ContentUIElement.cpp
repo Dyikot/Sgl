@@ -240,24 +240,23 @@ namespace Sgl
 
 		if(_contentPresenter)
 		{
-			auto& contentPresenter = _contentPresenter.GetValue();
-			bool visible = contentPresenter.IsVisible();
+			bool visible = _contentPresenter->IsVisible();
 			auto padding = GetLayoutPadding();
-			int horizontalPadding = visible ? padding.Left + padding.Right : 0;
-			int verticalPadding = visible ? padding.Top + padding.Bottom : 0;
+			float horizontalPadding = visible ? padding.Left + padding.Right : 0;
+			float verticalPadding = visible ? padding.Top + padding.Bottom : 0;
 
 			FSize contentAvaliableSize =
 			{
-				.Width = std::clamp<float>(avaliableSize.Width - verticalPadding,
+				.Width = std::clamp<float>(avaliableSize.Width - horizontalPadding,
 					GetMinWidth(),
 					GetMaxWidth()),
-				.Height = std::clamp<float>(avaliableSize.Height - horizontalPadding,
+				.Height = std::clamp<float>(avaliableSize.Height - verticalPadding,
 					GetMinHeight(),
 					GetMaxHeight())
 			};
 
-			contentPresenter.Measure(contentAvaliableSize);
-			auto [width, height] = contentPresenter.GetDesiredSize();
+			_contentPresenter->Measure(contentAvaliableSize);
+			auto [width, height] = _contentPresenter->GetDesiredSize();
 
 			 return FSize 
 			 {
@@ -292,15 +291,8 @@ namespace Sgl
 				finalRect.h = 0;
 			}
 
-			if(_verticalContentAlignment != VerticalAlignment::Top)
-			{
-				_contentPresenter->SetVerticalAlignment(_verticalContentAlignment);
-			}
-
-			if(_horizontalContentAlignment != HorizontalAlignment::Left)
-			{
-				_contentPresenter->SetHorizontalAlignment(_horizontalContentAlignment);
-			}
+			_contentPresenter->SetVerticalAlignment(_verticalContentAlignment, ValueSource::Inheritance);
+			_contentPresenter->SetHorizontalAlignment(_horizontalContentAlignment, ValueSource::Inheritance);
 
 			_contentPresenter->Arrange(finalRect);
 		}
