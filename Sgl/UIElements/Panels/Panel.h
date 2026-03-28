@@ -14,7 +14,6 @@ namespace Sgl
 		UIElementsCollection Children;
 
 		void SetVisualRoot(IVisualRoot* value) final;
-
 		void Render(RenderContext context) final;
 		void ApplyStyle() override;
 	protected:
@@ -29,10 +28,10 @@ namespace Sgl
 		void OnMouseUp(MouseButtonEventArgs e) override;
 		void OnMouseLeave(MouseMoveEventArgs e) override;
 	private:
-		friend class UIElementsCollection;
-
 		Ref<UIElement> _currentChild;
 		Ref<UIElement> _mouseCapturedElement;
+
+		friend class UIElementsCollection;
 	};	
 
 	struct Panel_FirstChild

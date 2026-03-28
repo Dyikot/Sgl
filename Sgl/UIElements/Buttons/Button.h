@@ -38,8 +38,6 @@ namespace Sgl::UIElements
 		void SetCommandParameter(const Any& value, ValueSource source = ValueSource::Local);
 		const Any& GetCommandParameter() const { return _commandParameter; }
 
-		bool IsPressed() const noexcept { return _isPressed; }
-
 		void Render(RenderContext context) final;
 
 		static inline StyleableProperty ClickModeProperty { &SetClickMode, &GetClickMode };
@@ -50,7 +48,6 @@ namespace Sgl::UIElements
 		void OnMouseDown(MouseButtonEventArgs e) override;
 		void OnMouseUp(MouseButtonEventArgs e) override;
 	private:
-		bool _isPressed = false;
 		ClickMode _clickMode = ClickMode::Release;
 		Command _command;
 		Any _commandParameter;

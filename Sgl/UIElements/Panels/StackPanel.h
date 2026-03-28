@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../UIElement/Panel.h"
+#include "Panel.h"
 
-namespace Sgl
+namespace Sgl::UIElements
 {
 	class StackPanel : public Panel
 	{

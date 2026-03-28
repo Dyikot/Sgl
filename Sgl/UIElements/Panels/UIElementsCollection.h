@@ -1,7 +1,7 @@
 #pragma once
 
-#include "UIElement.h"
-#include "../Base/Collections/Collection.h"
+#include "../../UIElement/UIElement.h"
+#include "../../Base/Collections/Collection.h"
 
 namespace Sgl
 {

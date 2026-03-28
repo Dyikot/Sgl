@@ -18,5 +18,17 @@ namespace Sgl
 	{
 		float Width;
 		float Height;
+
+		auto operator<=>(const FSize&) const = default;
 	};
+
+	constexpr FSize operator+(const FSize& left, const FSize& right) noexcept
+	{
+		return FSize(left.Width + right.Width, left.Height + right.Height);
+	}
+
+	constexpr FSize operator-(const FSize& left, const FSize& right) noexcept
+	{
+		return FSize(left.Width - right.Width, left.Height - right.Height);
+	}
 }

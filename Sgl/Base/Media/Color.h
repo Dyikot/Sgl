@@ -99,13 +99,16 @@ namespace Sgl
 		}
 
 		/// <summary>
-		/// Compares this color with another color for equality (RGB components only)
+		/// Compares this color with another color for equality
 		/// </summary>
 		/// <param name="color">- the color to compare with</param>
-		/// <returns>True if RGB components are equal, false otherwise</returns>
+		/// <returns>True if RGBA components are equal, false otherwise</returns>
 		constexpr bool operator==(Color color) const
 		{
-			return Red == color.Red && Green == color.Green && Blue == color.Blue;
+			return Red == color.Red && 
+				   Green == color.Green && 
+				   Blue == color.Blue &&
+				   Alpha == color.Alpha;
 		}
 
 		/// <summary>

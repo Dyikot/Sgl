@@ -1,6 +1,6 @@
 #include "StackPanel.h"
 
-namespace Sgl
+namespace Sgl::UIElements
 {
 	StackPanel::StackPanel(const StackPanel& other) :
 		Panel(other),
@@ -89,7 +89,6 @@ namespace Sgl
 
 	void StackPanel::ArrangeContent(FRect rect)
 	{
-		size_t visibleChildren = Children.Count();
 		float spacing = _spacing;
 
 		if(_orientation == Orientation::Vertical)

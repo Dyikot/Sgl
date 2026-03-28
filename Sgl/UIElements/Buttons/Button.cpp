@@ -11,13 +11,11 @@ namespace Sgl::UIElements
 
 	Button::Button(const Button& other):
 		ContentUIElement(other),
-		_isPressed(other._isPressed),
 		_clickMode(other._clickMode)
 	{}
 
 	Button::Button(Button&& other) noexcept:
 		ContentUIElement(std::move(other)),
-		_isPressed(other._isPressed),
 		_clickMode(other._clickMode),
 		_command(std::move(other._command)),
 		_commandParameter(std::move(other._commandParameter))
@@ -58,14 +56,9 @@ namespace Sgl::UIElements
 	{
 		ContentUIElement::OnMouseDown(e);
 
-		if(e.Button == MouseButton::Left)
+		if(e.Button == MouseButton::Left && _clickMode == ClickMode::Press)
 		{
-			_isPressed = true;
-
-			if(_clickMode == ClickMode::Press)
-			{
-				OnClick();
-			}
+			OnClick();
 		}
 	}
 
@@ -73,14 +66,9 @@ namespace Sgl::UIElements
 	{
 		ContentUIElement::OnMouseUp(e);
 
-		if(e.Button == MouseButton::Left)
+		if(e.Button == MouseButton::Left && _clickMode == ClickMode::Release)
 		{
-			_isPressed = false;
-
-			if(_clickMode == ClickMode::Release)
-			{
-				OnClick();
-			}
+			OnClick();
 		}
 	}
 }

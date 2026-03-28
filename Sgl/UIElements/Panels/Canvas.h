@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../UIElement/Panel.h"
-#include "../Data/LayoutProperty.h"
+#include "Panel.h"
+#include "../../Data/LayoutProperty.h"
 
 namespace Sgl::UIElements
 {

@@ -38,6 +38,7 @@ namespace Sgl
 		const Any& GetTag() const { return _tag; }
 
 		bool IsMouseOver() const { return PseudoClasses.Has(OnHover); }	
+		bool IsMousePressed() const { return PseudoClasses.Has(OnPressed); }
 
 		static inline StyleableProperty TagProperty { &SetTag, &GetTag };
 	protected:
