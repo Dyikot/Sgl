@@ -18,8 +18,14 @@ namespace Sgl
 
 	void BindableObject::SetDataContext(const Ref<INotifyPropertyChanged>& value, ValueSource source)
 	{
-		if(_dataContextSource > source || _dataContext == value)
+		if(_dataContextSource > source)
 		{
+			return;
+		}
+
+		if(_dataContext == value)
+		{
+			_dataContextSource = source;
 			return;
 		}
 
