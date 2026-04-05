@@ -11,25 +11,6 @@ namespace Sgl::UIElements
 	static constexpr size_t FlowDirectionFlag = 1 << 4;
 	static constexpr size_t TextAlignmentFlag = 1 << 5;
 
-	TextBlock::TextBlock(const TextBlock& other):
-		UIElement(other),
-		_text(other._text),
-		_fontSize(other._fontSize),
-		_outline(other._outline),
-		_fontFamily(other._fontFamily),
-		_flowDirection(other._flowDirection),
-		_fontStyle(other._fontStyle),
-		_foreground(other._foreground),
-		_textWrapping(other._textWrapping),
-		_textAlignment(other._textAlignment),
-		_padding(other._padding),
-		_textTextureBounds(other._textTextureBounds),
-		_fontImpl(),
-		_textTexture(),
-		_isTextTextureValid(),
-		_fontFlags(FontFamilyFlag)
-	{}
-
 	TextBlock::TextBlock(TextBlock&& other) noexcept:
 		UIElement(std::move(other)),
 		_text(std::move(other._text)),
@@ -146,7 +127,7 @@ namespace Sgl::UIElements
 
 	void TextBlock::Render(RenderContext context)
 	{
-		RenderBackground(context);
+		RenderBackground(context, _bounds);
 
 		if(!_isTextTextureValid)
 		{

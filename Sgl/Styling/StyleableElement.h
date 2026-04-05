@@ -25,7 +25,7 @@ namespace Sgl
 		};
 	public:
 		StyleableElement();
-		StyleableElement(const StyleableElement& other);
+		StyleableElement(const StyleableElement&) = delete;
 		StyleableElement(StyleableElement&& other) noexcept;
 		~StyleableElement() = default;
 

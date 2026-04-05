@@ -2,10 +2,6 @@
 
 namespace Sgl
 {
-	BindableObject::BindableObject(const BindableObject& other):
-		_dataContext(other._dataContext)
-	{}
-
 	BindableObject::BindableObject(BindableObject&& other) noexcept:
 		_bindings(std::move(other._bindings)),
 		_dataContext(std::move(other._dataContext))

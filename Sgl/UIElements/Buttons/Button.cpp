@@ -9,11 +9,6 @@ namespace Sgl::UIElements
 		SetBackground(Colors::LightGray, ValueSource::Default);
 	}
 
-	Button::Button(const Button& other):
-		ContentUIElement(other),
-		_clickMode(other._clickMode)
-	{}
-
 	Button::Button(Button&& other) noexcept:
 		ContentUIElement(std::move(other)),
 		_clickMode(other._clickMode),
@@ -38,7 +33,7 @@ namespace Sgl::UIElements
 
 	void Button::Render(RenderContext context)
 	{
-		RenderBackground(context);
+		RenderBackground(context, _bounds);
 		ContentUIElement::Render(context);
 	}
 

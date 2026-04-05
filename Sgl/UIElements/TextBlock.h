@@ -11,7 +11,7 @@ namespace Sgl::UIElements
 	{
 	public:
 		TextBlock() = default;
-		TextBlock(const TextBlock& other);
+		TextBlock(const TextBlock&) = delete;
 		TextBlock(TextBlock&& other) noexcept;		
 
 		void SetText(const std::string& value, ValueSource source = ValueSource::Local);

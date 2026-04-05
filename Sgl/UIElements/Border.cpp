@@ -3,12 +3,6 @@
 
 namespace Sgl::UIElements
 {
-	Border::Border(const Border& other):
-		ContentUIElement(other),
-		_borderWidth(other._borderWidth),
-		_borderColor(other._borderColor)
-	{}
-
 	Border::Border(Border&& other) noexcept:
 		ContentUIElement(std::move(other)),
 		_borderWidth(other._borderWidth),
@@ -33,7 +27,7 @@ namespace Sgl::UIElements
 
 	void Border::Render(RenderContext context)
 	{
-		RenderBackground(context);
+		RenderBackground(context, _bounds);
 
 		if(!_borderColor.IsTransparent())
 		{			

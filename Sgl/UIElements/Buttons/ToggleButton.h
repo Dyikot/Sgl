@@ -10,7 +10,7 @@ namespace Sgl::UIElements
 		using ToggleButtonEventHandler = EventHandler<ToggleButton>;		
 	public:
 		ToggleButton() = default;
-		ToggleButton(const ToggleButton& other);
+		ToggleButton(const ToggleButton&) = delete;
 		ToggleButton(ToggleButton&& other) noexcept;
 
 		static const PseudoClassId OnChecked;

@@ -129,7 +129,7 @@ namespace Sgl
 		/// The loader is invoked whenever the language changes to load the appropriate translations.
 		/// </summary>
 		/// <param name="localizationLoader"> - delegate that loads localization data for a specified locale and returns a map of localization keys to translated strings.</param>
-		void AddLocalization(LocalizationStorage::LocalizationLoader localizationLoader);
+		void AddLocalization(LocalizationLoader localizationLoader);
 
 		/// <summary>
 		/// Initializes localization storage from CSV file.
@@ -156,6 +156,7 @@ namespace Sgl
 	private:
 		ThemeMode GetSystemThemeMode() const;
 		void HandleInputEvents();
+		void AddDefaultStyles();
 		void PushSDLUserEvent(uint32_t type);
 		void AddWindow(Window& window);
 		void RemoveWindow(Window& window);
@@ -164,6 +165,7 @@ namespace Sgl
 	private:
 		friend class Window;
 		friend class StringLocalizer;
+		friend class AssetsLoader;
 
 		static inline Application* _current;
 

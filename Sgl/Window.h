@@ -11,6 +11,8 @@
 
 namespace Sgl
 {
+	class Window;
+
 	/// <summary>
 	/// Specifies the display mode of a window.
 	/// </summary>
@@ -75,6 +77,22 @@ namespace Sgl
 		Cancel   // The user canceled the dialog (e.g., clicked Cancel).
 	};
 
+	class TexturesStorage
+	{
+	public:
+		TexturesStorage(Window& owner);
+
+		Texture Load(const std::string& path);
+		Texture Load(const ImagePath& path);
+	private:
+		void Clear();
+	private:
+		friend class Window;
+
+		std::unordered_map<std::string, Texture> _textures;
+		Window& _owner;
+	};
+
 	/// <summary>
 	/// The Window class provides a high-level interface for creating and managing window,
 	/// handling events, and rendering graphics. It encapsulates SDL_Window and SDL_Renderer
@@ -119,6 +137,8 @@ namespace Sgl
 		/// </summary>
 		Event<WindowEventHandler> Closed;
 
+		TexturesStorage Textures;
+
 		/// <summary>
 		/// Determines if the window should be rendered when minimized
 		/// </summary>
@@ -146,6 +166,8 @@ namespace Sgl
 		/// </summary>
 		/// <returns>Window unique id</returns>
 		SDL_WindowID GetId() const noexcept;
+
+		TexturesStorage& GetTextures() final;
 
 		/// <summary>
 		/// Sets the window width

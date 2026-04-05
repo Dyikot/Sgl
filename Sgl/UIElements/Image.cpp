@@ -2,14 +2,6 @@
 
 namespace Sgl::UIElements
 {
-	Image::Image(const Image& other):
-		UIElement(other),
-		_sourceBounds(other._sourceBounds),
-		_source(other._source),
-		_sourceTexture(nullptr),
-		_stretch(other._stretch)
-	{}
-
 	Image::Image(Image&& other) noexcept:
 		UIElement(std::move(other)),
 		_sourceBounds(other._sourceBounds),
@@ -37,7 +29,7 @@ namespace Sgl::UIElements
 
 	void Image::Render(RenderContext context)
 	{
-		RenderBackground(context);
+		RenderBackground(context, _bounds);
 
 		if(_sourceTexture)
 		{
@@ -45,7 +37,7 @@ namespace Sgl::UIElements
 			{
 				case Stretch::None:
 				{
-					FRect clip =
+					FRect clip = 
 					{
 						.x = 0,
 						.y = 0,
@@ -66,15 +58,7 @@ namespace Sgl::UIElements
 
 				case Stretch::UniformToFill:
 				{
-					FRect clip =
-					{
-						.x = _sourceBounds.x,
-						.y = _sourceBounds.y,
-						.w = _sourceBounds.w,
-						.h = _sourceBounds.h
-					};
-
-					context.DrawTexture(_sourceTexture, _bounds, clip);
+					context.DrawTexture(_sourceTexture, _bounds, _sourceBounds);
 					break;
 				}
 			}
@@ -159,8 +143,8 @@ namespace Sgl::UIElements
 		{
 			_sourceBounds =
 			{
-				.x = (sourceWidth - width) / 2.f,
-				.y = (sourceHeight - height) / 2.f,
+				.x = (sourceWidth - width) * 0.5f,
+				.y = (sourceHeight - height) * 0.5f,
 				.w = width,
 				.h = height
 			};
@@ -169,8 +153,8 @@ namespace Sgl::UIElements
 		{
 			_sourceBounds =
 			{
-				.x = _bounds.x + (_bounds.w - width) / 2.f,
-				.y = _bounds.y + (_bounds.h - height) / 2.f,
+				.x = _bounds.x + (_bounds.w - width) * 0.5f,
+				.y = _bounds.y + (_bounds.h - height) * 0.5f,
 				.w = width,
 				.h = height
 			};

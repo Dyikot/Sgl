@@ -17,7 +17,7 @@ namespace Sgl::UIElements
 		};
 	public:
 		Canvas() = default;
-		Canvas(const Canvas&) = default;
+		Canvas(const Canvas&) = delete;
 		Canvas(Canvas&&) = default;
 
 		static void SetLeft(const Ref<UIElement>& element, int value);

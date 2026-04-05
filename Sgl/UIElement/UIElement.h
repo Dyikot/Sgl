@@ -19,7 +19,7 @@ namespace Sgl
 		using MouseWheelEventHandler = EventHandler<UIElement, MouseWheelEventArgs&>;
 	public:
 		UIElement() = default;
-		UIElement(const UIElement& other);
+		UIElement(const UIElement&) = delete;
 		UIElement(UIElement&& other) noexcept;
 
 		static const PseudoClassId OnHover;
@@ -42,10 +42,8 @@ namespace Sgl
 
 		static inline StyleableProperty TagProperty { &SetTag, &GetTag };
 	protected:
-		void RenderBackground(RenderContext context);
 		void OnCursorChanged(const Cursor& cursor) override;
 		void OnAttachedToLogicalTree() override;
-		virtual void InheritProperties(StyleableElement& parent);
 		virtual void OnKeyUp(KeyEventArgs e);
 		virtual void OnKeyDown(KeyEventArgs e);
 		virtual void OnMouseMove(MouseMoveEventArgs e);

@@ -20,15 +20,6 @@ namespace Sgl
 		};
 	}
 
-	StyleableElement::StyleableElement(const StyleableElement& other):
-		BindableObject(other),
-		PseudoClasses(other.PseudoClasses),
-		_classList(other._classList),
-		_stylingParent(other._stylingParent),
-		_isAttachedToLogicalTree(false),
-		_styles(other._styles)
-	{}
-
 	StyleableElement::StyleableElement(StyleableElement&& other) noexcept:
 		BindableObject(std::move(other)),
 		Name(std::move(other.Name)),

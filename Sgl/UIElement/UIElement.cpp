@@ -5,35 +5,6 @@ namespace Sgl
 	const PseudoClassId UIElement::OnHover = PseudoClassesRegistry::Register("hover");
 	const PseudoClassId UIElement::OnPressed = PseudoClassesRegistry::Register("pressed");
 
-	class UIElementBackgroundRenderer
-	{
-	public:
-		UIElementBackgroundRenderer(RenderContext context, FRect rect):
-			_context(context), _rect(rect) 
-		{}
-
-		void operator()(Color color)
-		{
-			if(!color.IsTransparent())
-			{
-				_context.DrawRectangleFill(_rect, color);
-			}
-		}
-
-		void operator()(const Texture& texture)
-		{
-			_context.DrawTexture(texture, _rect);
-		}
-	private:
-		RenderContext _context;
-		FRect _rect;
-	};
-
-	UIElement::UIElement(const UIElement& other):
-		Layoutable(other),
-		_tag(other._tag)
-	{}
-
 	UIElement::UIElement(UIElement&& other) noexcept:
 		Layoutable(std::move(other)),
 		_tag(std::move(other._tag))
@@ -44,11 +15,6 @@ namespace Sgl
 		SetProperty(TagProperty, _tag, value, _tagSource, source);
 	}
 
-	void UIElement::RenderBackground(RenderContext context)
-	{
-		std::visit(UIElementBackgroundRenderer(context, _bounds), GetBackground());
-	}
-
 	void UIElement::OnCursorChanged(const Cursor& cursor)
 	{
 		if(IsMouseOver())
@@ -57,18 +23,14 @@ namespace Sgl
 		}
 	}
 
-	void UIElement::InheritProperties(StyleableElement& parent)
-	{
-		SetDataContext(parent.GetDataContext(), ValueSource::Inheritance);
-		SetCursor(static_cast<Renderable&>(parent).GetCursor(), ValueSource::Inheritance);
-	}
-
 	void UIElement::OnAttachedToLogicalTree()
 	{
 		Layoutable::OnAttachedToLogicalTree();
 
 		auto& parent = static_cast<StyleableElement&>(*GetStylingParent());
-		InheritProperties(parent);
+		SetDataContext(parent.GetDataContext(), ValueSource::Inheritance);
+		SetCursor(static_cast<Renderable&>(parent).GetCursor(), ValueSource::Inheritance);
+
 		ApplyBindings();
 	}
 

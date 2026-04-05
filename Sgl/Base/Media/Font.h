@@ -19,7 +19,6 @@ namespace Sgl
 	class FontFamily final
 	{
 	private:
-		struct FontFamilyImpl;
 		struct DefaultTag {};
 	public:
 		/// <summary>
@@ -85,6 +84,7 @@ namespace Sgl
 		void CopyFrom(const FontFamily& other);
 		void Release();
 	private:
+		struct FontFamilyImpl;
 		FontFamilyImpl* _impl = nullptr;
 	};
 

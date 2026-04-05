@@ -5,26 +5,6 @@
 
 namespace Sgl
 {
-	Layoutable::Layoutable(const Layoutable& other):
-		Renderable(other),
-		_bounds(other._bounds),
-		_desiredSize(other._desiredSize),
-		_width(other._width),
-		_height(other._height),
-		_minWidth(other._minWidth),
-		_minHeight(other._minHeight),
-		_maxWidth(other._maxWidth),
-		_maxHeight(other._maxHeight),
-		_margin(other._margin),
-		_isVisible(other._isVisible),
-		_verticalAlignment(other._verticalAlignment),
-		_horizontalAlignment(other._horizontalAlignment),
-		_isArrangeValid(other._isArrangeValid),
-		_isMeasureValid(other._isMeasureValid)
-	{
-		std::memcpy(_layoutContext, other._layoutContext, 32);
-	}
-
 	Layoutable::Layoutable(Layoutable&& other) noexcept:
 		Renderable(std::move(other)),
 		_bounds(other._bounds),

@@ -8,7 +8,7 @@ namespace Sgl::UIElements
 	{
 	public:
 		Border() = default;
-		Border(const Border& other);
+		Border(const Border&) = delete;
 		Border(Border&& other) noexcept;
 
 		void SetBorderWidth(uint32_t value, ValueSource source = ValueSource::Local);

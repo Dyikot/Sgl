@@ -19,7 +19,7 @@ namespace Sgl::UIElements
 	{
 	public:
 		Image() = default;
-		Image(const Image& other);
+		Image(const Image&) = delete;
 		Image(Image&& other) noexcept;
 
 		void SetSource(const std::string& value, ValueSource source = ValueSource::Local);

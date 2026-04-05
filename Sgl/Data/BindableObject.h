@@ -27,7 +27,7 @@ namespace Sgl
 	{
 	public:
 		BindableObject() = default;
-		BindableObject(const BindableObject& other);
+		BindableObject(const BindableObject&) = delete;
 		BindableObject(BindableObject&& other) noexcept;
 		~BindableObject();	
 

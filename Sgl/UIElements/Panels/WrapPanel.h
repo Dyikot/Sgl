@@ -8,7 +8,7 @@ namespace Sgl::UIElements
 	{
 	public:
 		WrapPanel() = default;
-		WrapPanel(const WrapPanel& other);
+		WrapPanel(const WrapPanel&) = delete;
 		WrapPanel(WrapPanel&& other) noexcept;
 		~WrapPanel() = default;
 
@@ -30,7 +30,7 @@ namespace Sgl::UIElements
 	private:
 		float _verticalSpacing = 0;
 		float _horizontalSpacing = 0;
-		Orientation _orientation = Orientation::Vertical;
+		Orientation _orientation = Orientation::Horizontal;
 
 		ValueSource _verticalSpacingSource {};
 		ValueSource _horizontalSpacingSource {};

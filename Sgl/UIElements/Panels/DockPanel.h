@@ -17,7 +17,7 @@ namespace Sgl::UIElements
 	{
 	public:
 		DockPanel() = default;
-		DockPanel(const DockPanel&) = default;
+		DockPanel(const DockPanel&) = delete;
 		DockPanel(DockPanel&&) noexcept = default;
 		
 		static void SetDock(const Ref<UIElement>& element, Dock dock);

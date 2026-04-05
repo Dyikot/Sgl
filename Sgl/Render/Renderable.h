@@ -12,7 +12,7 @@ namespace Sgl
     {
     public:
         Renderable() = default;
-        Renderable(const Renderable& other);
+        Renderable(const Renderable&) = delete;
         Renderable(Renderable&& other) noexcept;
         virtual ~Renderable() = default;
 
@@ -34,8 +34,17 @@ namespace Sgl
         static inline StyleableProperty BackgroundProperty { &SetBackground, &GetBackground };
     protected:
         virtual void OnCursorChanged(const Cursor& cursor) {}
+        void RenderBackground(RenderContext context);
+        void RenderBackground(RenderContext context, const FRect& rect);
+    protected:
+        TexturesStorage* GetTextures() const { return _textures; }
+    private:
+        void InvalidateBackground();
     private:
         IVisualRoot* _visualRoot = nullptr;
+        TexturesStorage* _textures = nullptr;
+        Texture _backgroundTexture;
+
         Cursor _cursor = Cursors::Arrow;
         Brush _background = Colors::Transparent;
 

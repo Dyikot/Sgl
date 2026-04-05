@@ -3,15 +3,53 @@
 
 namespace Sgl
 {  
+    UIElementsCollection::UIElementsCollection(Panel& owner):
+        _owner(owner)
+    {}
+
+    UIElementsCollection::UIElementsCollection(UIElementsCollection&& other) noexcept:
+        base(std::move(other)),
+        _owner(other._owner)
+    {}
+
+    UIElementsCollection::~UIElementsCollection()
+    {
+        ClearItems();
+    }
+
+    void UIElementsCollection::ClearItems()
+    {
+        for(auto& item : _items)
+        {
+            _owner.OnChildRemoving(item.GetValue());
+        }
+
+        base::ClearItems();
+    }
+
+    void UIElementsCollection::InsertItem(size_t index, const Ref<UIElement>& item)
+    {
+        _owner.OnChildAdded(item.GetValue());
+        base::InsertItem(index, item);
+    }
+
+    void UIElementsCollection::SetItem(size_t index, const Ref<UIElement>& item)
+    {
+        _owner.OnChildAdded(item.GetValue());
+        base::SetItem(index, item);
+    }
+
+    void UIElementsCollection::RemoveItem(size_t index)
+    {
+        auto& item = GetElementAt(index);
+        _owner.OnChildRemoving(item.GetValue());
+
+        base::RemoveItem(index);
+    }
+
     Panel::Panel():
         UIElement(),
         Children(*this)
-    {}
-
-    Panel::Panel(const Panel& other):
-        UIElement(other),
-        Children(*this),
-        _currentChild()
     {}
 
     Panel::Panel(Panel&& other) noexcept:
@@ -32,7 +70,7 @@ namespace Sgl
 
     void Panel::Render(RenderContext context)
     {
-        RenderBackground(context);
+        RenderBackground(context, _bounds);
 
         for(auto& child : Children)
         {

@@ -8,9 +8,9 @@ The project is currently in development.
 - **Theming** - Light/Dark theme modes
 - **Data binding** - MVVM support
 - **Localization** - Runtime language switching with CSV-based localization files
-- **Threading** - Timer, ThreadPool, Dispatcher, async operations using C++20 coroutines
+- **Threading** - `Timer`, `ThreadPool`, `Dispatcher`, async operations using C++20 coroutines
 - **UI Elements**:
-  - Panels: `StackPanel`, `DockPanel`, `Canvas`
+  - Panels: `StackPanel`, `WrapPanel`, `DockPanel`, `Canvas`
   - Basic: `Border`, `TextBlock`, `Image`
   - Buttons: `Button`, `ToggleButton`
 

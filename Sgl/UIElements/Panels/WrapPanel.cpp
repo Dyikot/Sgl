@@ -2,15 +2,8 @@
 
 namespace Sgl::UIElements
 {
-	WrapPanel::WrapPanel(const WrapPanel& other):
-		Panel(other),
-		_verticalSpacing(other._verticalSpacing),
-		_horizontalSpacing(other._horizontalSpacing),
-		_orientation(other._orientation)
-	{}
-
 	WrapPanel::WrapPanel(WrapPanel && other) noexcept:
-		Panel(other),
+		Panel(std::move(other)),
 		_verticalSpacing(other._verticalSpacing),
 		_horizontalSpacing(other._horizontalSpacing),
 		_orientation(other._orientation)

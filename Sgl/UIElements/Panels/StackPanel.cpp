@@ -2,12 +2,6 @@
 
 namespace Sgl::UIElements
 {
-	StackPanel::StackPanel(const StackPanel& other) :
-		Panel(other),
-		_spacing(other._spacing),
-		_orientation(other._orientation)
-	{}
-
 	StackPanel::StackPanel(StackPanel && other) noexcept :
 		Panel(std::move(other)),
 		_spacing(other._spacing),

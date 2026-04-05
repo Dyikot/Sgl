@@ -11,9 +11,12 @@
 #include "Base/Time/Stopwatch.h"
 #include "Input/SDLEvents.h"
 #include "Base/Tools/CSVReader.h"
+#include "UIElements/Buttons/CheckBox.h"
 
 namespace Sgl
 {
+    using namespace UIElements;
+
     static constexpr size_t MaxWindowsNumber = 100;
     static constexpr double MaxFrameTime = 1e3 / 60.0;
 
@@ -36,6 +39,7 @@ namespace Sgl
 
         SDL_RegisterEvents(UserEventsNumber);
         SetThemeVariant(ThemeVariant::System);
+        AddDefaultStyles();
 
         ThemeVariantChanged += [this](Application& app, ThemeMode mode)
         {
@@ -113,7 +117,7 @@ namespace Sgl
         AddLocalization(std::move(csvLanguageLoader));
     }
 
-    void Application::AddLocalization(LocalizationStorage::LocalizationLoader localizationLoader)
+    void Application::AddLocalization(LocalizationLoader localizationLoader)
     {
         _localizationStorage.emplace(std::move(localizationLoader));
     }
@@ -520,6 +524,12 @@ namespace Sgl
             }
 		}
 	}
+
+    void Application::AddDefaultStyles()
+    {
+        Styles.Add(Selector().OfType<CheckBox>().On("checked"))
+            .Set(CheckBox::BackgroundProperty, ImagePath(SDL_GetBasePath(), "Assets/Images/CheckButton.png"));
+    }
 
     void Application::PushSDLUserEvent(uint32_t type)
     {

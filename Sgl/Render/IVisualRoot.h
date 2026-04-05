@@ -4,6 +4,8 @@ struct SDL_Renderer;
 
 namespace Sgl
 {
+    class TexturesStorage;
+
     /// <summary>
     /// Represents an interface for a visual root object that manages rendering state and provides access to the underlying renderer.
     /// </summary>
@@ -28,5 +30,7 @@ namespace Sgl
         /// </summary>
         /// <returns>True if rendering is needed; otherwise, false.</returns>
         virtual bool NeedsRendering() const = 0;
+
+        virtual TexturesStorage& GetTextures() = 0;
     };
 }

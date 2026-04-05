@@ -6,19 +6,19 @@
 namespace Sgl
 {
     /// <summary>
+    /// Delegate type for loading localized strings.
+    /// </summary>
+    /// <param name="locale"> - the locale identifier (e.g., "en-US", "ru-RU").</param>
+    /// <param name="languageInfo"> - reference to the current language information.</param>
+    /// <returns>A map of localization keys to their translated strings.</returns>
+    using LocalizationLoader = Func<std::unordered_map<std::string, std::string>, const LanguageInfo&>;
+
+    /// <summary>
     /// Manages localized strings and provides lookup functionality based on the current language.
     /// Loads localization data through a provided loader delegate and handles language change events.
     /// </summary>
     class LocalizationStorage final
-    {
-    public:
-        /// <summary>
-        /// Delegate type for loading localized strings.
-        /// </summary>
-        /// <param name="locale"> - the locale identifier (e.g., "en-US", "ru-RU").</param>
-        /// <param name="languageInfo"> - reference to the current language information.</param>
-        /// <returns>A map of localization keys to their translated strings.</returns>
-        using LocalizationLoader = Func<std::unordered_map<std::string, std::string>, const LanguageInfo&>;
+    {        
     public:
         /// <summary>
         /// Constructs a LocalizationStorage instance with the specified loader.

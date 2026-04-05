@@ -8,31 +8,45 @@
 
 namespace Sgl
 {
+    TexturesStorage::TexturesStorage(Window& owner):
+        _owner(owner)
+    {}
+
+    Texture TexturesStorage::Load(const std::string& path)
+    {
+        if(path.empty())
+        {
+            return nullptr;
+        }
+
+        if(auto it = _textures.find(path); it != _textures.end())
+        {
+            return it->second;
+        }
+
+        auto [it, _] = _textures.emplace(path, Texture(_owner.GetRenderer(), path));
+        return it->second;
+    }
+
+    Texture TexturesStorage::Load(const ImagePath& path)
+    {
+        return Load(path.Get());
+    }
+
+    void TexturesStorage::Clear()
+    {
+        _textures.clear();
+    }
+
     static constexpr auto DefaultTitle = "Window";
     static constexpr auto DefaultWidth = 1280;
     static constexpr auto DefaultHeight = 720;
     static constexpr auto DefaultPosition = Point(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
-    
-    class WindowBackgroundRenderer
-    {
-    private:
-        RenderContext _context;
-    public:
-        explicit WindowBackgroundRenderer(RenderContext context): _context(context) {}
-
-        void operator()(Color color)
-        {
-            _context.FillBackground(color);
-        }
-
-        void operator()(const Texture& texture)
-        {
-            _context.DrawTexture(texture);
-        }
-    };
+    static constexpr auto DefaultFlags = SDL_WINDOW_HIDDEN;
 
     Window::Window():
-        _sdlWindow(SDL_CreateWindow(DefaultTitle, DefaultWidth, DefaultHeight, SDL_WINDOW_HIDDEN)),
+        Textures(*this),
+        _sdlWindow(SDL_CreateWindow(DefaultTitle, DefaultWidth, DefaultHeight, DefaultFlags)),
         _renderer(SDL_CreateRenderer(_sdlWindow, nullptr)),
         _renderContext(_renderer)
     {
@@ -70,6 +84,7 @@ namespace Sgl
         }
 
         App->RemoveWindow(*this);
+        Textures.Clear();
         SDL_DestroyRenderer(_renderer);
         SDL_DestroyWindow(_sdlWindow);
     }
@@ -87,6 +102,11 @@ namespace Sgl
     SDL_WindowID Window::GetId() const noexcept
     {
         return _id;
+    }
+
+    TexturesStorage& Window::GetTextures()
+    {
+        return Textures;
     }
 
     void Window::SetWidth(uint32_t value) noexcept
@@ -213,15 +233,15 @@ namespace Sgl
     {
         switch(state)
         {
-            case Sgl::WindowState::Normal:
+            case WindowState::Normal:
                 SDL_RestoreWindow(_sdlWindow);
                 break;
 
-            case Sgl::WindowState::Minimized:
+            case WindowState::Minimized:
                 SDL_MinimizeWindow(_sdlWindow);
                 break;
 
-            case Sgl::WindowState::Maximized:
+            case WindowState::Maximized:
                 SDL_MaximizeWindow(_sdlWindow);
                 break;
         }
@@ -420,7 +440,7 @@ namespace Sgl
 
     void Window::Render(RenderContext context)
     {
-        std::visit(WindowBackgroundRenderer(context), GetBackground());
+        RenderBackground(context);
 
         if(_content && _content->IsVisible())
         {
