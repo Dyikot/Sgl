@@ -19,6 +19,7 @@ namespace Sgl
 			virtual ~IStorage() = default;
 
 			virtual IStorage* Copy() const = 0;
+			virtual void CopyTo(void* dest) const = 0;
 			virtual const std::type_info& Type() const = 0;
 
 			template<typename T>
@@ -55,6 +56,11 @@ namespace Sgl
 				return new Storage<T>(Value);
 			}
 
+			void CopyTo(void* dest) const override
+			{
+				new (dest) Storage<T>(Value);
+			}
+
 			const std::type_info& Type() const override
 			{
 				return typeid(T);
@@ -84,8 +90,18 @@ namespace Sgl
 		template<typename T, typename... TArgs>
 		static Any New(TArgs&&... args)
 		{
+			using StorageType = Storage<std::decay_t<T>>;
+
 			Any obj;
-			obj._data = new Storage<std::decay_t<T>>(std::forward<TArgs>(args)...);
+			if constexpr (CanUseBuffer<std::decay_t<T>>())
+			{
+				new (obj._buffer) StorageType(std::forward<TArgs>(args)...);
+				obj._data = BufferSentinal;
+			}
+			else
+			{
+				obj._data = new StorageType(std::forward<TArgs>(args)...);
+			}
 			return obj;
 		}
 
@@ -108,9 +124,25 @@ namespace Sgl
 		/// Constructs an Any by copying or moving the given value into storage.
 		/// </summary>
 		template<typename T>
-		explicit Any(T&& value):
-			_data(new Storage<std::decay_t<T>>(std::forward<T>(value)))
-		{}
+		explicit Any(T&& value)
+		{
+			using StorageType = Storage<std::decay_t<T>>;
+
+			if constexpr (CanUseBuffer<std::decay_t<T>>())
+			{
+				new (_buffer) StorageType(std::forward<T>(value));
+				_data = BufferSentinal;
+			}
+			else
+			{
+				_data = new StorageType(std::forward<T>(value));
+			}
+		}
+
+		/// <summary>
+		/// Destroys the contained value, if any.
+		/// </summary>
+		~Any();
 
 		/// <summary>
 		/// Retrieves a reference to the stored value as type T.
@@ -119,7 +151,7 @@ namespace Sgl
 		template<typename T>
 		T& As()
 		{
-			return _data->Get<T>();
+			return GetStorage()->Get<T>();
 		}
 
 		/// <summary>
@@ -129,7 +161,7 @@ namespace Sgl
 		template<typename T>
 		const T& As() const
 		{
-			return _data->Get<T>();
+			return GetStorage()->Get<T>();
 		}
 
 		/// <summary>
@@ -138,13 +170,16 @@ namespace Sgl
 		template<typename T>
 		bool Is() const
 		{
-			return Is(typeid(T));
+			return _data ? GetStorage()->Type() == typeid(T) : false;
 		}
 
 		/// <summary>
 		/// Checks whether the contained value matches the given type_info.
 		/// </summary>
-		bool Is(const std::type_info& typeInfo) const;
+		bool Is(const std::type_info& typeInfo) const
+		{
+			return _data ? GetStorage()->Type() == typeInfo : false;
+		}
 
 		/// <summary>
 		/// Returns true if this Any holds a value; otherwise, false.
@@ -161,8 +196,19 @@ namespace Sgl
 		template<typename T>
 		Any& operator=(T&& value)
 		{
-			delete _data;
-			_data = new Storage<std::decay_t<T>>(std::forward<T>(value));
+			using StorageType = Storage<std::decay_t<T>>;
+
+			Destroy();
+			if constexpr (CanUseBuffer<std::decay_t<T>>())
+			{
+				new (_buffer) StorageType(std::forward<T>(value));
+				_data = BufferSentinal;
+			}
+			else
+			{
+				_data = new StorageType(std::forward<T>(value));
+			}
+
 			return *this;
 		}
 
@@ -182,6 +228,29 @@ namespace Sgl
 		/// </summary>
 		friend bool operator==(const Any& left, const Any& right);
 	private:
+		bool IsUsingBuffer() const noexcept { return _data == BufferSentinal; }
+		void Destroy() noexcept;
+
+		IStorage* GetStorage() noexcept
+		{
+			return IsUsingBuffer() ? reinterpret_cast<IStorage*>(_buffer) : _data;
+		}
+
+		const IStorage* GetStorage() const noexcept
+		{
+			return IsUsingBuffer() ? reinterpret_cast<const IStorage*>(_buffer) : _data;
+		}
+
+		template<typename T>
+		static constexpr bool CanUseBuffer()
+		{
+			return sizeof(Storage<T>) <= BufferSize;
+		}
+	private:
+		static constexpr size_t BufferSize = 24;
+		static constexpr IStorage* BufferSentinal = reinterpret_cast<IStorage*>(1);
+
 		IStorage* _data = nullptr;
+		alignas(std::max_align_t) uint8_t _buffer[BufferSize] {};
 	};
 }
