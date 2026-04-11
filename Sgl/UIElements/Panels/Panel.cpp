@@ -68,7 +68,7 @@ namespace Sgl
         }
     }
 
-    void Panel::Render(RenderContext context)
+    void Sgl::Panel::Render(RenderContext& context)
     {
         RenderBackground(context, _bounds);
 

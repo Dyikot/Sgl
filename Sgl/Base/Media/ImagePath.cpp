@@ -1,41 +1,58 @@
 #include "ImagePath.h"
-#include <filesystem>
 
 namespace fs = std::filesystem;
 
 namespace Sgl
 {
-	static const std::string Empty;
+	static const std::string EmptyString;
 
-	ImagePath::ImagePath(std::string_view path):
-		_path(new std::string(path))
+	static inline std::string NormalizePath(const fs::path& path)
+	{
+		return path.lexically_normal().generic_string();
+	}
+
+	ImagePath::ImagePath(const fs::path& path):
+		_data(new RefCountedString(NormalizePath(path), 1))
 	{}
 
-	ImagePath::ImagePath(std::string_view basePath, std::string_view relativePath):
-		_path(new std::string((fs::path(basePath) / relativePath).string()))
+	ImagePath::ImagePath(const fs::path& basePath, const fs::path& relativePath):
+		_data(new RefCountedString(NormalizePath(fs::path(basePath) / relativePath), 1))
 	{}
 
 	ImagePath::ImagePath(const ImagePath& other):
-		_path(new std::string(other._path ? *other._path : ""))
-	{}
+		_data(other._data)
+	{
+		Acquire();
+	}
 
 	ImagePath::ImagePath(ImagePath&& other) noexcept:
-		_path(other._path)
+		_data(other._data)
 	{
-		other._path = nullptr;
+		other._data = nullptr;
 	}
 
 	ImagePath::~ImagePath()
 	{
-		delete _path;
+		Release();
+	}
+
+	const std::string& ImagePath::Get() const
+	{
+		return _data ? _data->Value : EmptyString;
+	}
+
+	bool ImagePath::IsEmpty() const
+	{
+		return _data == nullptr;
 	}
 
 	ImagePath& ImagePath::operator=(const ImagePath& other)
 	{
-		if (this != &other)
+		if(this != &other)
 		{
-			delete _path;
-			_path = new std::string(*other._path);
+			Release();
+			_data = other._data;
+			Acquire();
 		}
 
 		return *this;
@@ -43,11 +60,11 @@ namespace Sgl
 
 	ImagePath& ImagePath::operator=(ImagePath&& other) noexcept
 	{
-		if (this != &other)
+		if(this != &other)
 		{
-			delete _path;
-			_path = other._path;
-			other._path = nullptr;
+			Release();
+			_data = other._data;
+			other._data = nullptr;
 		}
 
 		return *this;
@@ -55,18 +72,34 @@ namespace Sgl
 
 	bool ImagePath::operator==(const ImagePath& other) const
 	{
-		if(_path && other._path)
+		if(_data && other._data)
 		{
-			return *_path == *other._path;
+			return _data->Value == other._data->Value;
 		}
 		else
 		{
-			return !_path && !other._path;
+			return !_data && !other._data;
 		}
 	}
 
-	const std::string& ImagePath::Get() const
+	void ImagePath::Acquire()
 	{
-		return _path ? *_path : Empty;
+		if(_data)
+		{
+			++_data->References;
+		}
+	}
+
+	void ImagePath::Release()
+	{
+		if(_data)
+		{
+			if(--_data->References == 0)
+			{
+				delete _data;
+			}
+
+			_data = nullptr;
+		}
 	}
 }

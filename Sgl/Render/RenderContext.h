@@ -1,10 +1,9 @@
 #pragma once
 
-#include <string_view>
-#include <array>
+#include <list>
 #include <span>
+#include <unordered_map>
 
-#include "../Base/Delegate.h"
 #include "../Base/Primitives.h"
 #include "../Base/Media/Color.h"
 #include "Texture.h"
@@ -57,6 +56,14 @@ namespace Sgl
         /// Removes any active clipping rectangle, restoring full rendering access to the target.
         /// </summary>
         void ResetClip();
+
+        /// <summary>
+        /// Loads a texture from the specified file path, with optional caching.
+        /// </summary>
+        /// <param name="filePath"> - the path to the image file to load.</param>
+        /// <param name="cache"> - whether to cache the texture for future use. Defaults to true.</param>
+        /// <returns>The loaded texture. If the file fails to load, returns an invalid (null) texture.</returns>
+        Texture LoadTexture(const std::string& filePath, bool cache = true);
 
         /// <summary>
         /// Fills the entire current render target with a solid color.
@@ -256,7 +263,18 @@ namespace Sgl
         {
             SDL_SetRenderDrawColor(_renderer, color.Red, color.Green, color.Blue, color.Alpha);
         }
+        void ClearCache();
     private:
+        friend class Window;
+
+        struct CachedTexture
+        {
+            Texture Texture;
+            std::list<const std::string*>::iterator OrderIt;
+        };
+
         SDL_Renderer* _renderer;
+        std::unordered_map<std::string, CachedTexture> _cachedTextures;
+        std::list<const std::string*> _cacheOrder;
     };
 }

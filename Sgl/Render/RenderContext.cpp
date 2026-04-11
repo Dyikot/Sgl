@@ -39,6 +39,40 @@ namespace Sgl
 		SDL_SetRenderClipRect(_renderer, nullptr);
 	}
 
+	static constexpr size_t MaxCacheSize = 100;
+
+	Texture RenderContext::LoadTexture(const std::string& filePath, bool cache)
+	{
+		if(!cache)
+		{
+			return Texture(_renderer, filePath);
+		}
+
+		if(auto it = _cachedTextures.find(filePath); it != _cachedTextures.end())
+		{
+			_cacheOrder.splice(_cacheOrder.begin(), _cacheOrder, it->second.OrderIt);
+			return it->second.Texture;
+		}
+
+		Texture texture(_renderer, filePath);
+
+		if(texture)
+		{
+			if(_cachedTextures.size() >= MaxCacheSize)
+			{
+				auto path = _cacheOrder.back();
+				_cachedTextures.erase(*path);
+				_cacheOrder.pop_back();
+			}
+
+			auto [it, _] = _cachedTextures.emplace(filePath, CachedTexture(texture, {}));
+			auto orderIt = _cacheOrder.insert(_cacheOrder.begin(), &it->first);
+			it->second.OrderIt = orderIt;
+		}
+
+		return texture;
+	}
+
 	void RenderContext::FillBackground(Color color)
 	{
 		SetColor(color);
@@ -388,9 +422,15 @@ namespace Sgl
 	void RenderContext::DrawText(FPoint position, std::string_view text, float size, 
 								 Color color, const FontFamily& fontFamily)
 	{
-		FontImpl font(fontFamily, size);
+		TrueTypeFont font(fontFamily, size);
 		Texture texture(_renderer, FontQuality::Blended, font, text, color);
 		FRect rect(position.x, position.y, texture.GetWidth(), texture.GetHeight());
 		DrawTexture(texture, rect);
+	}
+
+	void RenderContext::ClearCache()
+	{
+		_cachedTextures.clear();
+		_cacheOrder.clear();
 	}
 }

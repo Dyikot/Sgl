@@ -44,7 +44,7 @@ namespace Sgl::UIElements
 		void SetPadding(Thickness value, ValueSource source = ValueSource::Local);
 		Thickness GetPadding() const { return _padding; }
 
-		void Render(RenderContext context) final;
+		void Render(RenderContext& context) final;
 
 		static inline StyleableProperty TextProperty { &SetText, &GetText };
 		static inline StyleableProperty FontSizeProperty { &SetFontSize, &GetFontSize };
@@ -88,7 +88,7 @@ namespace Sgl::UIElements
 		ValueSource _paddingSource {};
 
 		FRect _textTextureBounds {};
-		FontImpl _fontImpl;
+		TrueTypeFont _fontImpl;
 		Texture _textTexture;
 		bool _isTextTextureValid = false;
 		uint32_t _fontFlags = 1;

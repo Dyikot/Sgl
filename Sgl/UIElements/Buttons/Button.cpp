@@ -31,7 +31,7 @@ namespace Sgl::UIElements
 		SetProperty(CommandParameterProperty, _commandParameter, value, _commandParameterSource, source);
 	}
 
-	void Button::Render(RenderContext context)
+	void Sgl::UIElements::Button::Render(RenderContext& context)
 	{
 		RenderBackground(context, _bounds);
 		ContentUIElement::Render(context);

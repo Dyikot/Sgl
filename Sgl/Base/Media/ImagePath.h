@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <string_view>
+#include <filesystem>
 
 namespace Sgl
 {
@@ -9,18 +9,29 @@ namespace Sgl
 	{
 	public:
 		ImagePath() = default;
-		explicit ImagePath(std::string_view path);
-		ImagePath(std::string_view basePath, std::string_view relativePath);
+		explicit ImagePath(const std::filesystem::path& path);
+		ImagePath(const std::filesystem::path& basePath, 
+				  const std::filesystem::path& relativePath);
 		ImagePath(const ImagePath& other);
 		ImagePath(ImagePath&& other) noexcept;
 		~ImagePath();
 
+		const std::string& Get() const;
+		bool IsEmpty() const;
+
 		ImagePath& operator=(const ImagePath& other);
 		ImagePath& operator=(ImagePath&& other) noexcept;
 		bool operator==(const ImagePath& other) const;
-
-		const std::string& Get() const;
 	private:
-		std::string* _path = nullptr;
+		void Acquire();
+		void Release();
+	private:
+		struct RefCountedString
+		{
+			std::string Value;
+			uint32_t References;
+		};
+
+		RefCountedString* _data = nullptr;
 	};
 }

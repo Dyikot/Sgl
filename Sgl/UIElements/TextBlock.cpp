@@ -125,7 +125,7 @@ namespace Sgl::UIElements
 		}
 	}
 
-	void TextBlock::Render(RenderContext context)
+	void Sgl::UIElements::TextBlock::Render(RenderContext& context)
 	{
 		RenderBackground(context, _bounds);
 
@@ -206,7 +206,7 @@ namespace Sgl::UIElements
 	{
 		if(_fontFlags & FontFamilyFlag)
 		{
-			_fontImpl = FontImpl(_fontFamily, _fontSize);
+			_fontImpl = TrueTypeFont(_fontFamily, _fontSize);
 		}
 		else if(_fontFlags & FontSizeFlag)
 		{

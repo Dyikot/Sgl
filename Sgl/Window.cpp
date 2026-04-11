@@ -8,36 +8,6 @@
 
 namespace Sgl
 {
-    TexturesStorage::TexturesStorage(Window& owner):
-        _owner(owner)
-    {}
-
-    Texture TexturesStorage::Load(const std::string& path)
-    {
-        if(path.empty())
-        {
-            return nullptr;
-        }
-
-        if(auto it = _textures.find(path); it != _textures.end())
-        {
-            return it->second;
-        }
-
-        auto [it, _] = _textures.emplace(path, Texture(_owner.GetRenderer(), path));
-        return it->second;
-    }
-
-    Texture TexturesStorage::Load(const ImagePath& path)
-    {
-        return Load(path.Get());
-    }
-
-    void TexturesStorage::Clear()
-    {
-        _textures.clear();
-    }
-
     static constexpr auto DefaultTitle = "Window";
     static constexpr auto DefaultWidth = 1280;
     static constexpr auto DefaultHeight = 720;
@@ -45,7 +15,6 @@ namespace Sgl
     static constexpr auto DefaultFlags = SDL_WINDOW_HIDDEN;
 
     Window::Window():
-        Textures(*this),
         _sdlWindow(SDL_CreateWindow(DefaultTitle, DefaultWidth, DefaultHeight, DefaultFlags)),
         _renderer(SDL_CreateRenderer(_sdlWindow, nullptr)),
         _renderContext(_renderer)
@@ -84,8 +53,7 @@ namespace Sgl
         }
 
         App->RemoveWindow(*this);
-        Textures.Clear();
-        SDL_DestroyRenderer(_renderer);
+        DestroyRenderer();
         SDL_DestroyWindow(_sdlWindow);
     }
 
@@ -102,11 +70,6 @@ namespace Sgl
     SDL_WindowID Window::GetId() const noexcept
     {
         return _id;
-    }
-
-    TexturesStorage& Window::GetTextures()
-    {
-        return Textures;
     }
 
     void Window::SetWidth(uint32_t value) noexcept
@@ -438,7 +401,7 @@ namespace Sgl
         return !(SDL_GetWindowFlags(_sdlWindow) & SDL_WINDOW_HIDDEN);
     }
 
-    void Window::Render(RenderContext context)
+    void Sgl::Window::Render(RenderContext& context)
     {
         RenderBackground(context);
 
@@ -649,7 +612,13 @@ namespace Sgl
             Render(_renderContext);
             SDL_RenderPresent(_renderer);
         }
-    }    
+    }
+
+    void Window::DestroyRenderer()
+    {
+        _renderContext.ClearCache();
+        SDL_DestroyRenderer(_renderer);
+    }
 
     StyleableElement& Window_Content::operator()(StyleableElement& target) const
     {

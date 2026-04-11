@@ -30,7 +30,5 @@ namespace Sgl
         /// </summary>
         /// <returns>True if rendering is needed; otherwise, false.</returns>
         virtual bool NeedsRendering() const = 0;
-
-        virtual TexturesStorage& GetTextures() = 0;
     };
 }

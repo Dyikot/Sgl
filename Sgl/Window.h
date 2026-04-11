@@ -77,22 +77,6 @@ namespace Sgl
 		Cancel   // The user canceled the dialog (e.g., clicked Cancel).
 	};
 
-	class TexturesStorage
-	{
-	public:
-		TexturesStorage(Window& owner);
-
-		Texture Load(const std::string& path);
-		Texture Load(const ImagePath& path);
-	private:
-		void Clear();
-	private:
-		friend class Window;
-
-		std::unordered_map<std::string, Texture> _textures;
-		Window& _owner;
-	};
-
 	/// <summary>
 	/// The Window class provides a high-level interface for creating and managing window,
 	/// handling events, and rendering graphics. It encapsulates SDL_Window and SDL_Renderer
@@ -137,8 +121,6 @@ namespace Sgl
 		/// </summary>
 		Event<WindowEventHandler> Closed;
 
-		TexturesStorage Textures;
-
 		/// <summary>
 		/// Determines if the window should be rendered when minimized
 		/// </summary>
@@ -166,8 +148,6 @@ namespace Sgl
 		/// </summary>
 		/// <returns>Window unique id</returns>
 		SDL_WindowID GetId() const noexcept;
-
-		TexturesStorage& GetTextures() final;
 
 		/// <summary>
 		/// Sets the window width
@@ -404,7 +384,7 @@ namespace Sgl
 		/// Renders the window's content using the provided rendering context.
 		/// </summary>
 		/// <param name="context"> - the render context used to draw UI elements.</param>
-		void Render(RenderContext context) override;
+		void Render(RenderContext& context) override;
 
 		/// <summary>
 		/// Applies the current style rules to this window and its visual tree.
@@ -442,6 +422,7 @@ namespace Sgl
 		virtual void OnClosed();
 	private:
 		void RenderCore();
+		void DestroyRenderer();
 	private:
 		SDL_Window* _sdlWindow;
 		SDL_Renderer* _renderer;

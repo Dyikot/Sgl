@@ -7,7 +7,6 @@ namespace Sgl
 	Renderable::Renderable(Renderable&& other) noexcept:
 		StyleableElement(std::move(other)),
 		_visualRoot(std::exchange(other._visualRoot, nullptr)),
-		_textures(std::exchange(other._textures, nullptr)),
 		_cursor(other._cursor),
 		_background(std::move(other._background))
 	{}
@@ -33,7 +32,6 @@ namespace Sgl
 	void Renderable::SetVisualRoot(IVisualRoot* value)
 	{
 		_visualRoot = value;
-		_textures = value ? &value->GetTextures() : nullptr;
 	}
 
 	void Renderable::SetParent(IStyleHost* parent)
@@ -63,7 +61,7 @@ namespace Sgl
 		}
 	}
 
-	void Renderable::RenderBackground(RenderContext context)
+	void Sgl::Renderable::RenderBackground(RenderContext& context)
 	{
 		if(_background.index() == 0)
 		{
@@ -74,14 +72,14 @@ namespace Sgl
 			if(_backgroundTexture == nullptr)
 			{
 				auto& path = std::get<ImagePath>(_background);	
-				_backgroundTexture = _textures->Load(path);
+				_backgroundTexture = context.LoadTexture(path.Get());
 			}
 
 			context.DrawTexture(_backgroundTexture);
 		}
 	}
 
-	void Renderable::RenderBackground(RenderContext context, const FRect& rect)
+	void Sgl::Renderable::RenderBackground(RenderContext& context, const FRect& rect)
 	{
 		if(_background.index() == 0)
 		{
@@ -97,7 +95,7 @@ namespace Sgl
 			if(_backgroundTexture == nullptr)
 			{
 				auto& path = std::get<ImagePath>(_background);
-				_backgroundTexture = _textures->Load(path);
+				_backgroundTexture = context.LoadTexture(path.Get());
 				Logging::LogDebug("Texture loaded");
 			}
 

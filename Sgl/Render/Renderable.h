@@ -27,22 +27,19 @@ namespace Sgl
         
         void SetParent(IStyleHost* parent) override;
 
-        virtual void Render(RenderContext context) {}
+        virtual void Render(RenderContext& context) {}
         virtual void InvalidateRender();
 
         static inline StyleableProperty CursorProperty { &SetCursor, &GetCursor };
         static inline StyleableProperty BackgroundProperty { &SetBackground, &GetBackground };
     protected:
         virtual void OnCursorChanged(const Cursor& cursor) {}
-        void RenderBackground(RenderContext context);
-        void RenderBackground(RenderContext context, const FRect& rect);
-    protected:
-        TexturesStorage* GetTextures() const { return _textures; }
+        void RenderBackground(RenderContext& context);
+        void RenderBackground(RenderContext& context, const FRect& rect);
     private:
         void InvalidateBackground();
     private:
         IVisualRoot* _visualRoot = nullptr;
-        TexturesStorage* _textures = nullptr;
         Texture _backgroundTexture;
 
         Cursor _cursor = Cursors::Arrow;

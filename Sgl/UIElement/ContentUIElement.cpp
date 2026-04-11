@@ -86,7 +86,7 @@ namespace Sgl
 		}
 	}
 
-	void ContentUIElement::Render(RenderContext context)
+	void Sgl::ContentUIElement::Render(RenderContext& context)
 	{
 		if(_contentPresenter && _contentPresenter->IsVisible())
 		{

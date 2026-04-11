@@ -25,7 +25,7 @@ namespace Sgl::UIElements
 		}
 	}
 
-	void Border::Render(RenderContext context)
+	void Sgl::UIElements::Border::Render(RenderContext& context)
 	{
 		RenderBackground(context, _bounds);
 

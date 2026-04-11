@@ -5,6 +5,8 @@
 #include <SDL3/SDL_platform_defines.h>
 #include <filesystem>
 
+namespace fs = std::filesystem;
+
 namespace Sgl
 {
 	#ifdef SDL_PLATFORM_WIN32
@@ -16,18 +18,11 @@ namespace Sgl
 	#endif
 
 	static constexpr auto DefaultFamily = "segoeui.ttf";
-
-	struct FontFamily::FontFamilyImpl
-	{
-		std::string Source;
-		int References;
-	};
-
 	static const FontFamily DefaultFontFamily { FamiliesPath, DefaultFamily };
 
-	static inline std::string GetFullPath(const std::string& path, const std::string& name)
+	static inline std::string NormalizePath(const fs::path& path)
 	{
-		return (std::filesystem::path(path) / name).string();
+		return path.lexically_normal().generic_string();
 	}
 
 	FontFamily::FontFamily(DefaultTag):
@@ -39,12 +34,13 @@ namespace Sgl
 	{}
 
 	FontFamily::FontFamily(const std::string& path, const std::string& name):
-		_impl(new FontFamilyImpl(GetFullPath(path, name), 1))
+		_impl(new FontFamilyImpl(NormalizePath(fs::path(path) / name), 1))
 	{}
 
-	FontFamily::FontFamily(const FontFamily& other)
+	FontFamily::FontFamily(const FontFamily& other):
+		_impl(other._impl)
 	{
-		CopyFrom(other);
+		Acquire();
 	}
 
 	FontFamily::FontFamily(FontFamily&& other) noexcept:
@@ -66,7 +62,8 @@ namespace Sgl
 	FontFamily& FontFamily::operator=(const FontFamily& other)
 	{
 		Release();
-		CopyFrom(other);
+		_impl = other._impl;
+		Acquire();
 		return *this;
 	}
 
@@ -77,10 +74,8 @@ namespace Sgl
 		return *this;
 	}
 
-	void FontFamily::CopyFrom(const FontFamily& other)
+	void FontFamily::Acquire()
 	{
-		_impl = other._impl;
-
 		if(_impl)
 		{
 			_impl->References++;
@@ -96,7 +91,7 @@ namespace Sgl
 		}
 	}
 
-	FontImpl::FontImpl(const FontFamily& fontFamily, float size):
+	TrueTypeFont::TrueTypeFont(const FontFamily& fontFamily, float size):
 		_font(TTF_OpenFont(fontFamily.GetSource().data(), size))
 	{
 		if(_font == nullptr)
@@ -105,11 +100,11 @@ namespace Sgl
 		}
 	}
 
-	FontImpl::FontImpl(FontImpl&& other) noexcept:
+	TrueTypeFont::TrueTypeFont(TrueTypeFont&& other) noexcept:
 		_font(std::exchange(other._font, nullptr))
 	{}
 
-	FontImpl::~FontImpl()
+	TrueTypeFont::~TrueTypeFont()
 	{
 		if(_font)
 		{
@@ -117,33 +112,33 @@ namespace Sgl
 		}
 	}
 
-	void FontImpl::SetSize(float size)
+	void TrueTypeFont::SetSize(float size)
 	{
 		TTF_SetFontSize(_font, size);
 	}
 
-	void FontImpl::SetStyle(FontStyle fontStyle)
+	void TrueTypeFont::SetStyle(FontStyle fontStyle)
 	{
 		TTF_SetFontStyle(_font, static_cast<unsigned long>(fontStyle));
 	}
 
-	void FontImpl::SetOutline(int outline)
+	void TrueTypeFont::SetOutline(int outline)
 	{
 		TTF_SetFontOutline(_font, outline);
 	}
 
-	void FontImpl::SetFlowDirection(FlowDirection flowDirection)
+	void TrueTypeFont::SetFlowDirection(FlowDirection flowDirection)
 	{
 		auto ttfDirection = static_cast<TTF_Direction>(static_cast<int>(flowDirection) + 4);
 		TTF_SetFontDirection(_font, ttfDirection);
 	}
 
-	void FontImpl::SetTextAligment(TextAlignment textAlignment)
+	void TrueTypeFont::SetTextAligment(TextAlignment textAlignment)
 	{
 		TTF_SetFontWrapAlignment(_font, TTF_HorizontalAlignment(textAlignment));
 	}
 
-	FontImpl& FontImpl::operator=(FontImpl&& other) noexcept
+	TrueTypeFont& TrueTypeFont::operator=(TrueTypeFont&& other) noexcept
 	{
 		_font = std::exchange(other._font, _font);
 		return *this;

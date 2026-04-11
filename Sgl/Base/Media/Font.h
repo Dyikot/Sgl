@@ -81,10 +81,15 @@ namespace Sgl
 		/// </summary>
 		friend bool operator==(const FontFamily&, const FontFamily&) = default;
 	private:
-		void CopyFrom(const FontFamily& other);
+		void Acquire();
 		void Release();
 	private:
-		struct FontFamilyImpl;
+		struct FontFamilyImpl
+		{
+			std::string Source;
+			int References;
+		};
+
 		FontFamilyImpl* _impl = nullptr;
 	};
 
@@ -225,13 +230,13 @@ namespace Sgl
 	/// Encapsulates font rendering settings such as size, style, outline, text alignment, and flow direction.
 	/// Internally manages the lifetime of the TTF_Font resource and provides safe move semantics.
 	/// </summary>
-	class FontImpl final
+	class TrueTypeFont final
 	{
 	public:
 		/// <summary>
-		/// Constructs an empty FontImpl with no associated font.
+		/// Constructs an empty TrueTypeFont with no associated font.
 		/// </summary>
-		FontImpl() = default;
+		TrueTypeFont() = default;
 
 		/// <summary>
 		/// Constructs a font instance from the given font family and point size.
@@ -239,19 +244,19 @@ namespace Sgl
 		/// </summary>
 		/// <param name="fontFamily"> - the font family to use.</param>
 		/// <param name="size"> - the font size in points.</param>
-		FontImpl(const FontFamily& fontFamily, float size);
+		TrueTypeFont(const FontFamily& fontFamily, float size);
 
-		FontImpl(const FontImpl&) = delete;
+		TrueTypeFont(const TrueTypeFont&) = delete;
 
 		/// <summary>
 		/// Move constructor. Transfers ownership of the underlying TTF_Font resource.
 		/// </summary>
-		FontImpl(FontImpl&& other) noexcept;
+		TrueTypeFont(TrueTypeFont&& other) noexcept;
 
 		/// <summary>
 		/// Destructor. Releases the underlying TTF_Font if owned.
 		/// </summary>
-		~FontImpl();
+		~TrueTypeFont();
 
 		/// <summary>
 		/// Changes the font size.
@@ -284,12 +289,12 @@ namespace Sgl
 		/// <param name="textAlignment"> - the text alignment (left, center, or right).</param>
 		void SetTextAligment(TextAlignment textAlignment);
 
-		FontImpl& operator=(const FontImpl&) = delete;
+		TrueTypeFont& operator=(const TrueTypeFont&) = delete;
 
 		/// <summary>
 		/// Move assignment operator. Transfers ownership of the TTF_Font resource.
 		/// </summary>
-		FontImpl& operator=(FontImpl&& other) noexcept;
+		TrueTypeFont& operator=(TrueTypeFont&& other) noexcept;
 
 		/// <summary>
 		/// Implicit conversion to the underlying TTF_Font pointer for direct use with SDL_ttf APIs.
