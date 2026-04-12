@@ -14,9 +14,19 @@ namespace Sgl
 				return;
 			}
 
-			RestoreBaseState();
-			SaveBaseState();
-			ApplyStateStyle();			
+			auto matchedStyles = std::move(_matchingStateStyles);
+			bool match = MatchStateStyles();
+
+			if(matchedStyles != _matchingStateStyles)
+			{
+				RestoreBaseState();
+
+				if(match)
+				{
+					SaveBaseState();
+					ApplyStateStyle();
+				}
+			}
 		};
 	}
 
@@ -68,8 +78,8 @@ namespace Sgl
 		if(FetchStyles())
 		{
 			ApplyStyle();
-			
-			if(!PseudoClasses.IsEmpty())
+
+			if(!PseudoClasses.IsEmpty() && MatchStateStyles())
 			{
 				SaveBaseState();
 				ApplyStateStyle();
@@ -89,17 +99,6 @@ namespace Sgl
 		}
 
 		DetachedFromLogicalTree.Invoke(*this);
-	}
-
-	void StyleableElement::ApplyStateStyle()
-	{
-		for(auto style : _stateStyles)
-		{
-			if(style->Selector.MatchState(*this))
-			{
-				style->Apply(*this, ValueSource::PseudoClass);
-			}
-		}
 	}
 
 	bool StyleableElement::FetchStyles()
@@ -182,14 +181,17 @@ namespace Sgl
 		}
 	};
 
+	void StyleableElement::ApplyStateStyle()
+	{
+		for(auto style : _matchingStateStyles)
+		{
+			style->Apply(*this, ValueSource::PseudoClass);
+		}
+	}
+
 	void StyleableElement::SaveBaseState()
 	{
-		if(!_restoreStateActions.empty() || _stateStyles.empty())
-		{
-			return;
-		}
-
-		for(auto style : _stateStyles)
+		for(auto style : _matchingStateStyles)
 		{
 			bool hasProjection = style->Projection.HasTarget();
 			auto& target = hasProjection ? style->Projection(*this) : *this;
@@ -198,12 +200,12 @@ namespace Sgl
 			{
 				auto& property = setter->GetProperty();
 				auto restore = property.CreateRestoreAction(&target);
-				
+
 				if(hasProjection)
 				{
 					StyleableElementEventHandler detachedHandler = ClearBaseStateHandler(*this);
 					target.DetachedFromLogicalTree += detachedHandler;
-					
+
 					_restoreStateActions.emplace_back(
 						std::move(restore),
 						&target,
@@ -217,7 +219,7 @@ namespace Sgl
 						&target,
 						nullptr
 					);
-				}				
+				}
 			}
 		}
 	}
@@ -228,6 +230,21 @@ namespace Sgl
 		{
 			restoreState.Restore();
 		}
+	}
+
+	bool StyleableElement::MatchStateStyles()
+	{
+		_matchingStateStyles.clear();
+
+		for(auto& style : _stateStyles)
+		{
+			if(style->Selector.MatchState(*this))
+			{
+				_matchingStateStyles.push_back(style);
+			}
+		}
+
+		return _matchingStateStyles.size() > 0;
 	}
 
 	void StyleableElement::ClearAndRestoreBaseState()
@@ -243,5 +260,6 @@ namespace Sgl
 		}
 
 		_restoreStateActions.clear();
+		_matchingStateStyles.clear();
 	}
 }

@@ -16,13 +16,6 @@ namespace Sgl
 	{
 	private:
 		using StyleableElementEventHandler = EventHandler<StyleableElement>;
-
-		struct RestoreAction
-		{
-			Action<> Restore;
-			StyleableElement* Target;
-			StyleableElementEventHandler DetachedHandler;
-		};
 	public:
 		StyleableElement();
 		StyleableElement(const StyleableElement&) = delete;
@@ -51,17 +44,26 @@ namespace Sgl
 		virtual void OnAttachedToLogicalTree();
 		virtual void OnDetachedFromLogicalTree();
 	private:
-		void ApplyStateStyle();
 		bool FetchStyles();
 		void FetchStylesFrom(const StyleCollection& styles);
 		void OnStyleClassesChanged();
+		void ApplyStateStyle();
 		void SaveBaseState();
 		void RestoreBaseState();
+		bool MatchStateStyles();
 		void ClearAndRestoreBaseState();
 	private:
+		struct RestoreAction
+		{
+			Action<> Restore;
+			StyleableElement* Target;
+			StyleableElementEventHandler DetachedHandler;
+		};
+
 		std::vector<std::string> _classList;
 		std::vector<const Style*> _styles;
 		std::vector<const Style*> _stateStyles;
+		std::vector<const Style*> _matchingStateStyles;
 		std::vector<RestoreAction> _restoreStateActions;
 		IStyleHost* _stylingParent = nullptr;
 		bool _isAttachedToLogicalTree = false;

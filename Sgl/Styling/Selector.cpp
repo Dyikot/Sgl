@@ -31,14 +31,14 @@ namespace Sgl
         return *this;
     }
 
-    Selector& Selector::Where(Predicate<StyleableElement&> predicate)
+    Selector& Selector::Where(Predicate<const StyleableElement&> predicate)
     {
         _predicate = std::move(predicate);
         _flags |= PredicateFlag;
         return *this;
     }
 
-    bool Selector::Match(StyleableElement& target) const
+    bool Selector::Match(const StyleableElement& target) const
     {
         bool result = true;
 
@@ -90,7 +90,7 @@ namespace Sgl
         return result;
     }
 
-    bool Selector::MatchState(StyleableElement& target) const
+    bool Selector::MatchState(const StyleableElement& target) const
     {
         return target.PseudoClasses.Has(_pseudoClasses);
     }

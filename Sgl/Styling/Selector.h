@@ -12,7 +12,7 @@ namespace Sgl
 	class Selector
 	{
 	private:
-		using TypeComparer = bool(*)(StyleableElement&);
+		using TypeComparer = bool(*)(const StyleableElement&);
 		using PseudoClasses = std::bitset<64>;
 	public:
 		Selector() = default;
@@ -39,20 +39,20 @@ namespace Sgl
 		Selector& Class(std::string className);
 		Selector& On(PseudoClassId pseudoClass);
 		Selector& On(std::string_view pseudoClass);
-		Selector& Where(Predicate<StyleableElement&> predicate);
+		Selector& Where(Predicate<const StyleableElement&> predicate);
 
-		bool Match(StyleableElement& target) const;
-		bool MatchState(StyleableElement& target) const;
+		bool Match(const StyleableElement& target) const;
+		bool MatchState(const StyleableElement& target) const;
 		bool HasState() const noexcept;
 	private:
 		template<typename T>
-		static bool CompareType(StyleableElement& target)
+		static bool CompareType(const StyleableElement& target)
 		{
-			return dynamic_cast<T*>(&target);
+			return dynamic_cast<const T*>(&target);
 		}
 
 		template<typename T>
-		static bool CompareTypeById(StyleableElement& target)
+		static bool CompareTypeById(const StyleableElement& target)
 		{
 			return typeid(T) == typeid(target);
 		}
@@ -67,6 +67,6 @@ namespace Sgl
 		std::string _name;
 		std::vector<std::string> _classes;
 		PseudoClasses _pseudoClasses;
-		Func<bool, StyleableElement&> _predicate;
+		Predicate<const StyleableElement&> _predicate;
 	};
 }

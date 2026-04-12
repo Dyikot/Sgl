@@ -23,7 +23,6 @@ namespace Sgl
 	{
 		if(SetProperty(BackgroundProperty, _background, value, _backgroundSource, source))
 		{
-			Logging::LogDebug("[Backrgound] Source: {}", int(source));
 			InvalidateRender();
 			InvalidateBackground();
 		}
@@ -96,7 +95,6 @@ namespace Sgl
 			{
 				auto& path = std::get<ImagePath>(_background);
 				_backgroundTexture = context.LoadTexture(path.Get());
-				Logging::LogDebug("Texture loaded");
 			}
 
 			context.DrawTexture(_backgroundTexture, rect);
