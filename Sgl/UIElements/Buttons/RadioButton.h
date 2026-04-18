@@ -18,6 +18,7 @@ namespace Sgl::UIElements
 	protected:
 		void OnCheckedChanged() final;
 		void OnClick() final;
+		void OnAttachedToLogicalTree() override;
 		void OnDetachedFromLogicalTree() override;
 	private:
 		std::string _groupName;

@@ -86,7 +86,7 @@ namespace Sgl
 		}
 	}
 
-	void Sgl::ContentUIElement::Render(RenderContext& context)
+	void ContentUIElement::Render(RenderContext& context)
 	{
 		if(_contentPresenter && _contentPresenter->IsVisible())
 		{
@@ -128,6 +128,7 @@ namespace Sgl
 
 	void ContentUIElement::OnAttachedToLogicalTree()
 	{
+		UpdatePresenter();
 		UIElement::OnAttachedToLogicalTree();
 
 		if(_contentPresenter)
@@ -313,6 +314,6 @@ namespace Sgl
 
 	StyleableElement& ContentUIElement_Content::operator()(StyleableElement& target) const
 	{
-		return static_cast<ContentUIElement&>(target).GetContent().GetValueAs<StyleableElement>();
+		return static_cast<ContentUIElement&>(target).GetContentPresenter().GetValue();
 	}
 }

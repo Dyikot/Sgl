@@ -74,6 +74,7 @@ namespace Sgl
 	void StyleableElement::OnAttachedToLogicalTree()
 	{
 		_isAttachedToLogicalTree = true;
+		AttachedToLogicalTree.Invoke(*this);
 
 		if(FetchStyles())
 		{
@@ -85,8 +86,6 @@ namespace Sgl
 				ApplyStateStyle();
 			}
 		}
-
-		AttachedToLogicalTree.Invoke(*this);
 	}
 
 	void StyleableElement::OnDetachedFromLogicalTree()

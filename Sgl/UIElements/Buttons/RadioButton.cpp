@@ -72,12 +72,12 @@ namespace Sgl::UIElements
 		{
 			auto& registry = GetRadioButtonRegistry();
 
-			if(!oldValue.empty())
+			if(!oldValue.empty() && IsAttachedToLogicalTree())
 			{
 				registry.Remove(_groupName, this);
 			}
 
-			if(!_groupName.empty())
+			if(!_groupName.empty() && IsAttachedToLogicalTree())
 			{
 				registry.Add(_groupName, this);
 			}
@@ -101,6 +101,14 @@ namespace Sgl::UIElements
 		{
 			Check();
 		}
+	}
+
+	void RadioButton::OnAttachedToLogicalTree()
+	{
+		ToggleButton::OnAttachedToLogicalTree();
+
+		auto& registry = GetRadioButtonRegistry();
+		registry.Add(_groupName, this);
 	}
 
 	void RadioButton::OnDetachedFromLogicalTree()
