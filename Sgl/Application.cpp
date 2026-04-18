@@ -12,6 +12,7 @@
 #include "Input/SDLEvents.h"
 #include "Base/Tools/CSVReader.h"
 #include "UIElements/Buttons/CheckBox.h"
+#include "UIElements/Buttons/RadioButton.h"
 
 namespace Sgl
 {
@@ -529,6 +530,9 @@ namespace Sgl
     {
         Styles.Add(Selector().OfType<CheckBox>().On("checked"))
             .Set(CheckBox::BackgroundProperty, ImagePath(SDL_GetBasePath(), "Assets/Images/CheckButton.png"));
+
+        Styles.Add(Selector().OfType<RadioButton>().On("checked"))
+            .Set(CheckBox::BackgroundProperty, ImagePath(SDL_GetBasePath(), "Assets/Images/RadioButton.png"));
     }
 
     void Application::PushSDLUserEvent(uint32_t type)

@@ -12,7 +12,7 @@ The project is currently in development.
 - **UI Elements**:
   - Panels: `StackPanel`, `WrapPanel`, `DockPanel`, `Canvas`
   - Basic: `Border`, `TextBlock`, `Image`
-  - Buttons: `Button`, `ToggleButton`, `CheckBox`
+  - Buttons: `Button`, `ToggleButton`, `CheckBox`, `RadioButton`
 
 ## Roadmap
 - New Panels

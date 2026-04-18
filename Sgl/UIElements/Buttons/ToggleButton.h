@@ -20,7 +20,11 @@ namespace Sgl::UIElements
 
 		static inline StyleableProperty IsCheckedProperty { &SetIsChecked, &IsChecked };
 	protected:
+		virtual void OnCheckedChanged() {}
 		void OnClick() override;
+		void ToggleState();
+		void Check();
+		void Uncheck();
 	private:
 		bool _isChecked = false;
 		ValueSource _isCheckedSource {};

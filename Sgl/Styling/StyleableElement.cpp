@@ -124,7 +124,7 @@ namespace Sgl
 			FetchStylesFrom(**it);
 		}
 
-		return _styles.size() > 0;
+		return !_styles.empty() || !_stateStyles.empty();
 	}
 
 	void StyleableElement::FetchStylesFrom(const StyleCollection& styles)
