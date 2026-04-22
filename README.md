@@ -10,7 +10,7 @@ The project is currently in development.
 - **Localization** - Runtime language switching with CSV-based localization files
 - **Threading** - `Timer`, `ThreadPool`, `Dispatcher`, async operations using C++20 coroutines
 - **UI Elements**:
-  - Panels: `StackPanel`, `WrapPanel`, `DockPanel`, `Canvas`
+  - Panels: `StackPanel`, `WrapPanel`, `DockPanel`, `UniformGrid`, `Canvas`
   - Basic: `Border`, `TextBlock`, `Image`
   - Buttons: `Button`, `ToggleButton`, `CheckBox`, `RadioButton`
 
