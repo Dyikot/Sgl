@@ -401,7 +401,7 @@ namespace Sgl
         return !(SDL_GetWindowFlags(_sdlWindow) & SDL_WINDOW_HIDDEN);
     }
 
-    void Sgl::Window::Render(RenderContext& context)
+    void Window::Render(RenderContext& context)
     {
         RenderBackground(context);
 

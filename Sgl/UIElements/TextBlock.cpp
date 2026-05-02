@@ -150,7 +150,7 @@ namespace Sgl::UIElements
 		_isTextTextureValid = false;
 	}
 
-	FSize TextBlock::MeasureContent(FSize avaliableSize)
+	FSize TextBlock::MeasureContent(FSize availableSize)
 	{
 		if(_text == "")
 		{
@@ -175,7 +175,7 @@ namespace Sgl::UIElements
 
 			case Sgl::TextWrapping::Wrap:
 			{
-				int wrapWidth = avaliableSize.Width;
+				int wrapWidth = availableSize.Width;
 				TTF_GetStringSizeWrapped(_fontImpl, _text.data(), _text.length(),
 										 wrapWidth, &width, &height);
 				break;

@@ -27,7 +27,7 @@ namespace Sgl
         
         void SetParent(IStyleHost* parent) override;
 
-        virtual void Render(RenderContext& context) {}
+        virtual void Render(RenderContext& context);
         virtual void InvalidateRender();
 
         static inline StyleableProperty CursorProperty { &SetCursor, &GetCursor };
@@ -47,6 +47,8 @@ namespace Sgl
 
         ValueSource _cursorSource {};
         ValueSource _backgroundSource {};
+
+        bool _isDirty = true;
     };
 
     template<>
@@ -55,7 +57,7 @@ namespace Sgl
     public:
         ResourceSetter(StyleableProperty<Renderable, const Brush&>& property, ResourceKey key);
 
-        void Apply(StyleableElement& target, ValueSource valueSource) const override;
+        void Apply(StyleableElement& target, ValueSource valueSource) const final;
     private:
         ResourceKey _key;
     };

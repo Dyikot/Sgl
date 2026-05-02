@@ -322,7 +322,7 @@ namespace Sgl
 		/// Gets the root UI element currently displayed in the window.
 		/// </summary>
 		/// <returns>A reference to the current content element.</returns>
-		const Ref<UIElement>& GetContent() const { return _content; }
+		const Ref<UIElement>& GetContent() const noexcept { return _content; }
 
 		/// <summary>
 		/// Marks the window's visual content as invalid, requesting a re-render on the next frame.
@@ -333,7 +333,7 @@ namespace Sgl
 		/// Checks whether the window needs to be rendered due to pending changes.
 		/// </summary>
 		/// <returns>True if rendering is required; otherwise, false.</returns>
-		bool NeedsRendering() const final { return !_isRenderValid; }
+		bool NeedsRendering() const noexcept { return !_isRenderValid; }
 
 		/// <summary>
 		/// Shows the window
@@ -378,7 +378,7 @@ namespace Sgl
 		/// Checks whether the window has been closed.
 		/// </summary>
 		/// <returns>True if the window is closed; otherwise, false.</returns>
-		bool IsClosed() const { return _isClosed; }
+		bool IsClosed() const noexcept { return _isClosed; }
 
 		/// <summary>
 		/// Renders the window's content using the provided rendering context.

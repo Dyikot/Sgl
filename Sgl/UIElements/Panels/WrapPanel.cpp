@@ -33,7 +33,7 @@ namespace Sgl::UIElements
 		}
 	}
 
-	FSize WrapPanel::MeasureContent(FSize avaliableSize)
+	FSize WrapPanel::MeasureContent(FSize availableSize)
 	{
 		FSize size = {};
 
@@ -56,10 +56,10 @@ namespace Sgl::UIElements
 					continue;
 				}
 
-				child->Measure(avaliableSize);
+				child->Measure(availableSize);
 				auto [width, height] = child->GetDesiredSize();
 
-				if(columnHeight + height > avaliableSize.Height)
+				if(columnHeight + height > availableSize.Height)
 				{
 					totalWidth += columnWidth;
 					
@@ -102,10 +102,10 @@ namespace Sgl::UIElements
 					continue;
 				}
 
-				child->Measure(avaliableSize);
+				child->Measure(availableSize);
 				auto [width, height] = child->GetDesiredSize();
 
-				if(rowWidth + width > avaliableSize.Width)
+				if(rowWidth + width > availableSize.Width)
 				{
 					totalHeight += rowHeight;
 

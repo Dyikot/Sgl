@@ -40,7 +40,7 @@ namespace Sgl
 	public:
 		ResourceSetter(StyleableProperty<UIElements::Border, Color>& property, ResourceKey key);
 
-		void Apply(StyleableElement& target, ValueSource valueSource) const override;
+		void Apply(StyleableElement& target, ValueSource valueSource) const final;
 	private:
 		ResourceKey _key;
 	};

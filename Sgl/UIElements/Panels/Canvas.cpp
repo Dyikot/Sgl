@@ -2,11 +2,22 @@
 
 namespace Sgl::UIElements
 {
+	struct Context
+	{
+		int Left = 0;
+		int Top = 0;
+		int Right = 0;
+		int Bottom = 0;
+	};
+
 	LayoutProperty<int> Canvas::LeftProperty =
 	{
 		[](Layoutable& element, int value)
 		{
-			element.SetProperty(LeftProperty, element.GetLayoutContext<Context>().Left, value);
+			if(element.SetProperty(LeftProperty, element.GetLayoutContext<Context>().Left, value))
+			{
+				element.InvalidateMeasure();
+			}
 		},
 		[](Layoutable& element) { return element.GetLayoutContext<Context>().Left; }
 	};
@@ -15,7 +26,10 @@ namespace Sgl::UIElements
 	{
 		[](Layoutable& element, int value)
 		{
-			element.SetProperty(TopProperty, element.GetLayoutContext<Context>().Top, value);
+			if(element.SetProperty(TopProperty, element.GetLayoutContext<Context>().Top, value))
+			{
+				element.InvalidateMeasure();
+			}
 		},
 		[](Layoutable& element) { return element.GetLayoutContext<Context>().Top; }
 	};
@@ -24,7 +38,10 @@ namespace Sgl::UIElements
 	{
 		[](Layoutable& element, int value)
 		{
-			element.SetProperty(RightProperty, element.GetLayoutContext<Context>().Left, value);
+			if(element.SetProperty(RightProperty, element.GetLayoutContext<Context>().Left, value))
+			{
+				element.InvalidateMeasure();
+			}
 		},
 		[](Layoutable& element) { return element.GetLayoutContext<Context>().Right; }
 	};
@@ -33,36 +50,71 @@ namespace Sgl::UIElements
 	{
 		[](Layoutable& element, int value)
 		{
-			element.SetProperty(BottomProperty, element.GetLayoutContext<Context>().Bottom, value);
+			if(element.SetProperty(BottomProperty, element.GetLayoutContext<Context>().Bottom, value))
+			{
+				element.InvalidateMeasure();
+			}
 		},
 		[](Layoutable& element) { return element.GetLayoutContext<Context>().Bottom; }
 	};
 
 	void Canvas::SetLeft(const Ref<UIElement>& element, int value)
 	{
-		element->SetProperty(LeftProperty, element->GetLayoutContext<Context>().Left, value);
+		if(element->SetProperty(LeftProperty, element->GetLayoutContext<Context>().Left, value))
+		{
+			element->InvalidateMeasure();
+		}
+	}
+
+	int Canvas::GetLeft(const Ref<UIElement>& element)
+	{
+		return element->GetLayoutContext<Context>().Left;
 	}
 
 	void Canvas::SetTop(const Ref<UIElement>&element, int value)
 	{
-		element->SetProperty(TopProperty, element->GetLayoutContext<Context>().Top, value);
+		if(element->SetProperty(TopProperty, element->GetLayoutContext<Context>().Top, value))
+		{
+			element->InvalidateMeasure();
+		}
+	}
+
+	int Canvas::GetTop(const Ref<UIElement>& element)
+	{
+		return element->GetLayoutContext<Context>().Top;
 	}
 
 	void Canvas::SetRight(const Ref<UIElement>&element, int value)
 	{
-		element->SetProperty(RightProperty, element->GetLayoutContext<Context>().Right, value);
+		if(element->SetProperty(RightProperty, element->GetLayoutContext<Context>().Right, value))
+		{
+			element->InvalidateMeasure();
+		}
+	}
+
+	int Canvas::GetRight(const Ref<UIElement>& element)
+	{
+		return element->GetLayoutContext<Context>().Right;
 	}
 
 	void Canvas::SetBottom(const Ref<UIElement>&element, int value)
 	{
-		element->SetProperty(BottomProperty, element->GetLayoutContext<Context>().Bottom, value);
+		if(element->SetProperty(BottomProperty, element->GetLayoutContext<Context>().Bottom, value))
+		{
+			element->InvalidateMeasure();
+		}
 	}
 
-	FSize Canvas::MeasureContent(FSize avaliableSize)
+	int Canvas::GetBottom(const Ref<UIElement>& element)
+	{
+		return element->GetLayoutContext<Context>().Bottom;
+	}
+
+	FSize Canvas::MeasureContent(FSize availableSize)
 	{
 		for(auto& child : Children)
 		{
-			child->Measure(avaliableSize);
+			child->Measure(availableSize);
 		}
 
 		return FSize();

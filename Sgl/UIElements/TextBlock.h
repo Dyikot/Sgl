@@ -58,7 +58,7 @@ namespace Sgl::UIElements
 		static inline StyleableProperty PaddingProperty { &SetPadding, &GetPadding };
 	protected:
 		void InvalidateTextTexture();
-		FSize MeasureContent(FSize avaliableSize) override;
+		FSize MeasureContent(FSize availableSize) override;
 		void ArrangeContent(FRect rect) override;
 	private:
 		void InvalidateFont(size_t flag);
@@ -98,12 +98,12 @@ namespace Sgl::UIElements
 namespace Sgl
 {
 	template<>
-	class ResourceSetter<UIElements::TextBlock, Color>: public SetterBase
+	class ResourceSetter<UIElements::TextBlock, Color> : public SetterBase
 	{
 	public:
 		ResourceSetter(StyleableProperty<UIElements::TextBlock, Color>& property, ResourceKey key);
 
-		void Apply(StyleableElement& target, ValueSource valueSource) const override;
+		void Apply(StyleableElement& target, ValueSource valueSource) const final;
 	private:
 		ResourceKey _key;
 	};

@@ -20,7 +20,7 @@ namespace Sgl::UIElements
 		static inline StyleableProperty SpacingProperty { &SetSpacing, &GetSpacing };
 		static inline StyleableProperty OrientationProperty { &SetOrientation, &GetOrientation };
 	protected:
-		FSize MeasureContent(FSize avaliableSize) override;
+		FSize MeasureContent(FSize availableSize) override;
 		void ArrangeContent(FRect rect) override;
 	private:
 		float _spacing = 0;

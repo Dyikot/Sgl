@@ -15,7 +15,6 @@ The project is currently in development.
   - Buttons: `Button`, `ToggleButton`, `CheckBox`, `RadioButton`
 
 ## Roadmap
-- New Panels
 - New UIElements
 - Focus manager
 - Animation

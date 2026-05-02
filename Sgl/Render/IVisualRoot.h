@@ -4,8 +4,6 @@ struct SDL_Renderer;
 
 namespace Sgl
 {
-    class TexturesStorage;
-
     /// <summary>
     /// Represents an interface for a visual root object that manages rendering state and provides access to the underlying renderer.
     /// </summary>
@@ -24,11 +22,5 @@ namespace Sgl
         /// Marks the visual content as dirty, indicating that a re-render is required.
         /// </summary>
         virtual void InvalidateRender() = 0;
-
-        /// <summary>
-        /// Checks whether the visual content needs to be rendered (e.g., due to invalidation or changes).
-        /// </summary>
-        /// <returns>True if rendering is needed; otherwise, false.</returns>
-        virtual bool NeedsRendering() const = 0;
     };
 }

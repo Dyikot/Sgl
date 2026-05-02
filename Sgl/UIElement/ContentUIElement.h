@@ -52,7 +52,7 @@ namespace Sgl
 		void OnMouseUp(MouseButtonEventArgs e) override;
 		void InvalidateContentPresenter();
 		
-		FSize MeasureContent(FSize avaliableSize) override;
+		FSize MeasureContent(FSize availableSize) override;
 		void ArrangeContent(FRect rect) override;
 		virtual Thickness GetLayoutPadding() const { return _padding; }
 	private:

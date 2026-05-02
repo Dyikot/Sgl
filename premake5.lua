@@ -1,4 +1,4 @@
-workspace "Sgl"
+workspace "SglApp"
     architecture "x64"
     configurations { "Debug", "Release" }
 
@@ -26,7 +26,7 @@ project "Sgl"
 
     filter "configurations:Release"
         defines { "NDEBUG" }
-        optimize "on"
+        optimize "On"
 
 project "App"
     kind "ConsoleApp"
@@ -63,4 +63,4 @@ project "App"
 
     filter "configurations:Release"
         defines { "NDEBUG" }
-        optimize "on"
+        optimize "On"

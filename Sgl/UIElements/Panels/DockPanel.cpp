@@ -6,14 +6,25 @@ namespace Sgl::UIElements
 	{
 		[](Layoutable& element, Dock value)
 		{
-			element.SetProperty(DockProperty, element.GetLayoutContext<Dock>(), value);
+			if(element.SetProperty(DockProperty, element.GetLayoutContext<Dock>(), value))
+			{
+				element.InvalidateMeasure();
+			}
 		},
 		[](Layoutable& element) { return element.GetLayoutContext<Dock>(); }
 	};
 
 	void DockPanel::SetDock(const Ref<UIElement>& element, Dock dock)
 	{
-		element->SetProperty(DockProperty, element->GetLayoutContext<Dock>(), dock);
+		if(element->SetProperty(DockProperty, element->GetLayoutContext<Dock>(), dock))
+		{
+			element->InvalidateMeasure();
+		}
+	}
+
+	Dock DockPanel::GetDock(const Ref<UIElement>& element)
+	{
+		return element->GetLayoutContext<Dock>();
 	}
 
 	void DockPanel::SetLastChildFill(bool value, ValueSource source)

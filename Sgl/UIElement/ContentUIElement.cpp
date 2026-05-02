@@ -224,7 +224,7 @@ namespace Sgl
 		_isContentPresenterValid = false;
 	}	
 
-	FSize ContentUIElement::MeasureContent(FSize avaliableSize)
+	FSize ContentUIElement::MeasureContent(FSize availableSize)
 	{
 		UpdatePresenter();
 
@@ -235,17 +235,17 @@ namespace Sgl
 			float horizontalPadding = visible ? padding.Left + padding.Right : 0;
 			float verticalPadding = visible ? padding.Top + padding.Bottom : 0;
 
-			FSize contentAvaliableSize =
+			FSize contentAvailableSize =
 			{
-				.Width = std::clamp<float>(avaliableSize.Width - horizontalPadding,
+				.Width = std::clamp<float>(availableSize.Width - horizontalPadding,
 					GetMinWidth(),
 					GetMaxWidth()),
-				.Height = std::clamp<float>(avaliableSize.Height - verticalPadding,
+				.Height = std::clamp<float>(availableSize.Height - verticalPadding,
 					GetMinHeight(),
 					GetMaxHeight())
 			};
 
-			_contentPresenter->Measure(contentAvaliableSize);
+			_contentPresenter->Measure(contentAvailableSize);
 			auto [width, height] = _contentPresenter->GetDesiredSize();
 
 			 return FSize 

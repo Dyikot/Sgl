@@ -1,6 +1,5 @@
 #include "Renderable.h"
 #include "../Application.h"
-#include "../Base/Time/Stopwatch.h"
 
 namespace Sgl
 {
@@ -8,7 +7,8 @@ namespace Sgl
 		StyleableElement(std::move(other)),
 		_visualRoot(std::exchange(other._visualRoot, nullptr)),
 		_cursor(other._cursor),
-		_background(std::move(other._background))
+		_background(std::move(other._background)),
+		_isDirty(other._isDirty)
 	{}
 
 	void Renderable::SetCursor(const Cursor& value, ValueSource source)
@@ -52,11 +52,17 @@ namespace Sgl
 		}
 	}
 
+	void Renderable::Render(RenderContext& context)
+	{
+		_isDirty = false;
+	}
+
 	void Renderable::InvalidateRender()
 	{
-		if(_visualRoot)
+		if(_visualRoot && !_isDirty)
 		{
 			_visualRoot->InvalidateRender();
+			_isDirty = true;
 		}
 	}
 

@@ -21,7 +21,7 @@ namespace Sgl::UIElements
 		DockPanel(DockPanel&&) noexcept = default;
 		
 		static void SetDock(const Ref<UIElement>& element, Dock dock);
-		static Dock GetDock(const Ref<UIElement>& element) { return element->GetLayoutContext<Dock>(); }
+		static Dock GetDock(const Ref<UIElement>& element);
 
 		void SetLastChildFill(bool value, ValueSource source = ValueSource::Local);
 		bool GetLastChildFill() const { return _lastChildFill; }
@@ -29,7 +29,7 @@ namespace Sgl::UIElements
 		static LayoutProperty<Dock> DockProperty;
 		static inline StyleableProperty LastChildFillProperty { &SetLastChildFill, &GetLastChildFill };
 	protected:
-		FSize MeasureContent(FSize avaliableSize) override;
+		FSize MeasureContent(FSize availableSize) override;
 		void ArrangeContent(FRect rect) override;
 	private:
 		bool _lastChildFill = false;

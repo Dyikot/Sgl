@@ -25,7 +25,7 @@ namespace Sgl::UIElements
 		static inline StyleableProperty HorizontalSpacingProperty { &SetHorizontalSpacing, &GetHorizontalSpacing};
 		static inline StyleableProperty OrientationProperty { &SetOrientation, &GetOrientation };
 	protected:
-		FSize MeasureContent(FSize avaliableSize) override;
+		FSize MeasureContent(FSize availableSize) override;
 		void ArrangeContent(FRect rect) override;
 	private:
 		float _verticalSpacing = 0;

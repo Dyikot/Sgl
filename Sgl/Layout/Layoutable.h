@@ -60,9 +60,9 @@ namespace Sgl
 		bool NeedsMeasure() const { return !_isMeasureValid; }
 
 		void Arrange(FRect rect);
-		void Measure(FSize avaliableSize);
+		void Measure(FSize availableSize);
 		virtual void ArrangeCore(FRect rect);
-		virtual FSize MeasureCore(FSize avaliableSize);
+		virtual FSize MeasureCore(FSize availableSize);
 		void InvalidateArrange();
 		void InvalidateMeasure();
 
@@ -77,7 +77,7 @@ namespace Sgl
 		static inline StyleableProperty VerticalAlignmentProperty { &SetVerticalAlignment, &GetVerticalAlignment };
 		static inline StyleableProperty HorizontalAlignmentProperty { &SetHorizontalAlignment, &GetHorizontalAlignment };
 	protected:
-		virtual FSize MeasureContent(FSize avaliableSize) { return FSize(); }
+		virtual FSize MeasureContent(FSize availableSize) { return FSize(); }
 		virtual void ArrangeContent(FRect rect) { }
 		void OnAttachedToLogicalTree() override;
 		void OnDetachedFromLogicalTree() override;

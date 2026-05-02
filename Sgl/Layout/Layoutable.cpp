@@ -126,12 +126,12 @@ namespace Sgl
 		}
 	}
 
-	void Layoutable::Measure(FSize avaliableSize)
+	void Layoutable::Measure(FSize availableSize)
 	{
 		if(!_isMeasureValid)
 		{
 			_isMeasureValid = true;
-			_desiredSize = IsVisible() ? MeasureCore(avaliableSize) : FSize();
+			_desiredSize = IsVisible() ? MeasureCore(availableSize) : FSize();
 		}
 	}
 
@@ -201,19 +201,19 @@ namespace Sgl
 		ArrangeContent(_bounds);
 	}
 
-	FSize Layoutable::MeasureCore(FSize avaliableSize)
+	FSize Layoutable::MeasureCore(FSize availableSize)
 	{
-		FSize contentAvaliableSize =
+		FSize contentAvailableSize =
 		{
-			.Width = std::clamp<float>(avaliableSize.Width - _margin.Left - _margin.Right,
+			.Width = std::clamp<float>(availableSize.Width - _margin.Left - _margin.Right,
 				_minWidth,
 				_maxWidth),
-			.Height = std::clamp<float>(avaliableSize.Height - _margin.Top - _margin.Bottom,
+			.Height = std::clamp<float>(availableSize.Height - _margin.Top - _margin.Bottom,
 				_minHeight,
 				_maxHeight)
 		};
 
-		auto [contentWidth, contentHeight] = MeasureContent(contentAvaliableSize);
+		auto [contentWidth, contentHeight] = MeasureContent(contentAvailableSize);
 
 		float width = std::clamp<float>(std::fmax(_width, contentWidth), _minWidth, _maxWidth);
 		float height = std::clamp<float>(std::fmax(_height, contentHeight), _minHeight, _maxHeight);
@@ -221,18 +221,18 @@ namespace Sgl
 		width += _margin.Left + _margin.Right;
 		height += _margin.Top + _margin.Bottom;
 
-		if(width > avaliableSize.Width)
+		if(width > availableSize.Width)
 		{
-			width = avaliableSize.Width;
+			width = availableSize.Width;
 		}
 		else if(width < 0)
 		{
 			width = 0;
 		}
 
-		if(height > avaliableSize.Height)
+		if(height > availableSize.Height)
 		{
-			height = avaliableSize.Height;
+			height = availableSize.Height;
 		}
 		else if(height < 0)
 		{

@@ -24,7 +24,7 @@ namespace Sgl::UIElements
 		}
 	}
 
-	FSize StackPanel::MeasureContent(FSize avaliableSize)
+	FSize StackPanel::MeasureContent(FSize availableSize)
 	{
 		FSize size = {};
 
@@ -44,7 +44,7 @@ namespace Sgl::UIElements
 					visibleChildren--;
 				}
 
-				child->Measure(avaliableSize);
+				child->Measure(availableSize);
 				auto [width, height] = child->GetDesiredSize();
 
 				size.Width = std::max(size.Width, width);
@@ -65,7 +65,7 @@ namespace Sgl::UIElements
 					visibleChildren--;
 				}
 
-				child->Measure(avaliableSize);
+				child->Measure(availableSize);
 				auto [width, height] = child->GetDesiredSize();
 
 				size.Width += width;
