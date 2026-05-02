@@ -23,6 +23,10 @@ namespace Sgl::UIElements
 	class Grid : public Panel
 	{		
 	public:
+		Grid() = default;
+		Grid(const Grid&) = delete;
+		Grid(Grid&& other) noexcept;
+
 		static void SetColumn(const Ref<UIElement>& element, uint32_t value);
 		static uint32_t GetColumn(const Ref<UIElement>& element);
 
@@ -45,8 +49,8 @@ namespace Sgl::UIElements
 		static LayoutProperty<uint32_t> RowProperty;
 		static LayoutProperty<uint32_t> ColumnSpanProperty;
 		static LayoutProperty<uint32_t> RowSpanProperty;
-		static inline StyleableProperty ColumnsDefenitionProperty { &SetColumnDefenitions, &GetColumnDefenitions };
-		static inline StyleableProperty RowsDefenitionProperty { &SetRowDefenitions, &GetRowDefenitions };
+		static inline StyleableProperty ColumnDefenitionsProperty { &SetColumnDefenitions, &GetColumnDefenitions };
+		static inline StyleableProperty RowDefenitionsProperty { &SetRowDefenitions, &GetRowDefenitions };
 	protected:
 		FSize MeasureContent(FSize availableSize) override;
 		void ArrangeContent(FRect rect) override;

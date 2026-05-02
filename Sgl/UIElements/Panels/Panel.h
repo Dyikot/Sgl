@@ -7,7 +7,7 @@ namespace Sgl
 {
 	class Panel;
 
-	class UIElementsCollection: public Collection<Ref<UIElement>>
+	class UIElementsCollection : public Collection<Ref<UIElement>>
 	{
 	private:
 		using base = Collection<Ref<UIElement>>;

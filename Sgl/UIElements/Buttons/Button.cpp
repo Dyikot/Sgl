@@ -5,7 +5,7 @@ namespace Sgl::UIElements
 	Button::Button()
 	{
 		SetCursor(Cursors::Pointer);
-		SetPadding(Thickness(10), ValueSource::Default);
+		SetPadding(Thickness(16, 8), ValueSource::Default);
 		SetBackground(Colors::LightGray, ValueSource::Default);
 	}
 

@@ -512,7 +512,7 @@ namespace Sgl
         {
             bool visible = _content->IsVisible();
             bool wasMouseOver = _content->IsMouseOver();
-            bool isMouseOver = visible && LayoutHelper::IsPointInRect(e.X, e.Y, _content->_bounds);
+            bool isMouseOver = visible && IsPointInRect(e.X, e.Y, _content->_bounds);
 
             if(isMouseOver)
             {

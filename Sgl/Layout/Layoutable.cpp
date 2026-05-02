@@ -137,11 +137,11 @@ namespace Sgl
 
 	void Layoutable::ArrangeCore(FRect rect)
 	{
-		auto x = rect.x + _margin.Left;
-		auto y = rect.y + _margin.Top;
+		float x = rect.x + _margin.Left;
+		float y = rect.y + _margin.Top;
 
-		auto availableWidth = rect.w - _margin.Left - _margin.Right;
-		auto availableHeight = rect.h - _margin.Top - _margin.Bottom;
+		float availableWidth = rect.w - _margin.Left - _margin.Right;
+		float availableHeight = rect.h - _margin.Top - _margin.Bottom;
 
 		if(availableWidth < 0)
 		{
@@ -153,8 +153,8 @@ namespace Sgl
 			availableHeight = 0;
 		}
 
-		auto width = availableWidth;
-		auto height = availableHeight;
+		float width = availableWidth;
+		float height = availableHeight;
 
 		if(_horizontalAlignment != HorizontalAlignment::Stretch)
 		{
@@ -166,8 +166,8 @@ namespace Sgl
 			height = std::fmin(height, _desiredSize.Height - _margin.Top - _margin.Bottom);
 		}
 
-		width = std::clamp<float>(width, _minWidth, _maxWidth);
-		height = std::clamp<float>(height, _minHeight, _maxHeight);
+		width = std::clamp(width, _minWidth, _maxWidth);
+		height = std::clamp(height, _minHeight, _maxHeight);
 
 		switch(_horizontalAlignment)
 		{
@@ -203,23 +203,21 @@ namespace Sgl
 
 	FSize Layoutable::MeasureCore(FSize availableSize)
 	{
+		auto [left, top, right, bottom] = _margin;
+
 		FSize contentAvailableSize =
 		{
-			.Width = std::clamp<float>(availableSize.Width - _margin.Left - _margin.Right,
-				_minWidth,
-				_maxWidth),
-			.Height = std::clamp<float>(availableSize.Height - _margin.Top - _margin.Bottom,
-				_minHeight,
-				_maxHeight)
+			.Width = std::clamp(availableSize.Width - left - right, _minWidth, _maxWidth),
+			.Height = std::clamp(availableSize.Height - top - bottom, _minHeight, _maxHeight)
 		};
 
 		auto [contentWidth, contentHeight] = MeasureContent(contentAvailableSize);
 
-		float width = std::clamp<float>(std::fmax(_width, contentWidth), _minWidth, _maxWidth);
-		float height = std::clamp<float>(std::fmax(_height, contentHeight), _minHeight, _maxHeight);
+		float width = std::clamp(std::fmax(_width, contentWidth), _minWidth, _maxWidth);
+		float height = std::clamp(std::fmax(_height, contentHeight), _minHeight, _maxHeight);
 
-		width += _margin.Left + _margin.Right;
-		height += _margin.Top + _margin.Bottom;
+		width += left + right;
+		height += top + bottom;
 
 		if(width > availableSize.Width)
 		{

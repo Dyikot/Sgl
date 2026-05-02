@@ -1,6 +1,7 @@
 #include "Grid.h"
-#include "../../Base/Views.h"
+
 #include <algorithm>
+#include "../../Base/Views.h"
 
 namespace Sgl::UIElements
 {
@@ -59,6 +60,16 @@ namespace Sgl::UIElements
 		},
 		[](Layoutable& element) { return element.GetLayoutContext<Context>().RowSpan; }
 	};
+
+	Grid::Grid(Grid&& other) noexcept:
+		Panel(std::move(other)),
+		_columnDefenitionsStr(std::move(other._columnDefenitionsStr)),
+		_rowDefenitionsStr(std::move(other._rowDefenitionsStr)),
+		_rowDefenitions(std::move(other._rowDefenitions)),
+		_columnDefenitions(std::move(other._columnDefenitions)),
+		_measuredWidth(std::move(other._measuredWidth)),
+		_measuredHeight(std::move(other._measuredHeight))
+	{}
 
 	void Grid::SetColumn(const Ref<UIElement>& element, uint32_t value)
 	{
@@ -167,7 +178,7 @@ namespace Sgl::UIElements
 
 	void Grid::SetColumnDefenitions(const std::string& value, ValueSource source)
 	{
-		if(SetProperty(ColumnsDefenitionProperty, _columnDefenitionsStr, value, _columnDefenitionsValueSource, source))
+		if(SetProperty(ColumnDefenitionsProperty, _columnDefenitionsStr, value, _columnDefenitionsValueSource, source))
 		{
 			InvalidateMeasure();
 			_columnDefenitions = ParseDefenition(_columnDefenitionsStr);
@@ -176,7 +187,7 @@ namespace Sgl::UIElements
 
 	void Grid::SetRowDefenitions(const std::string& value, ValueSource source)
 	{
-		if(SetProperty(RowsDefenitionProperty, _rowDefenitionsStr, value, _rowDefenitionsValueSource, source))
+		if(SetProperty(RowDefenitionsProperty, _rowDefenitionsStr, value, _rowDefenitionsValueSource, source))
 		{
 			InvalidateMeasure();
 			_rowDefenitions = ParseDefenition(_rowDefenitionsStr);
@@ -294,7 +305,7 @@ namespace Sgl::UIElements
 		float remainingWidth = std::max(0.f, availableSize.Width - usedWidth);
 		float remainingHeight = std::max(0.f, availableSize.Height - usedHeight);
 
-		if(proportionalHeight > 0)
+		if(proportionalHeight > 0.f)
 		{
 			for(size_t i = 0; i < rows; i++)
 			{
@@ -305,7 +316,7 @@ namespace Sgl::UIElements
 			}
 		}
 
-		if(proportionalWidth > 0)
+		if(proportionalWidth > 0.f)
 		{
 			for(size_t i = 0; i < columns; i++)
 			{

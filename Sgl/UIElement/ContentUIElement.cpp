@@ -1,4 +1,5 @@
 #include "ContentUIElement.h"
+
 #include <algorithm>
 #include "../Layout/LayoutHelper.h"
 #include "../UIElements/TextBlock.h"
@@ -173,8 +174,8 @@ namespace Sgl
 		{
 			bool visible = _contentPresenter->IsVisible();
 			bool wasMouseOver = _contentPresenter->IsMouseOver();
-			bool isMouseOver = visible && LayoutHelper::IsPointInRect(e.X, e.Y, _contentPresenter->_bounds);
-
+			bool isMouseOver = visible && IsPointInRect(e.X, e.Y, _contentPresenter->_bounds);
+			
 			if(isMouseOver)
 			{
 				if(!wasMouseOver)
@@ -231,18 +232,14 @@ namespace Sgl
 		if(_contentPresenter)
 		{
 			bool visible = _contentPresenter->IsVisible();
-			auto padding = GetLayoutPadding();
-			float horizontalPadding = visible ? padding.Left + padding.Right : 0;
-			float verticalPadding = visible ? padding.Top + padding.Bottom : 0;
+			auto [left, top, right, bottom] = GetLayoutPadding();
+			float horizontalPadding = visible ? left + right : 0;
+			float verticalPadding = visible ? top + bottom : 0;
 
 			FSize contentAvailableSize =
 			{
-				.Width = std::clamp<float>(availableSize.Width - horizontalPadding,
-					GetMinWidth(),
-					GetMaxWidth()),
-				.Height = std::clamp<float>(availableSize.Height - verticalPadding,
-					GetMinHeight(),
-					GetMaxHeight())
+				.Width = std::clamp(availableSize.Width - horizontalPadding, GetMinWidth(), GetMaxWidth()),
+				.Height = std::clamp(availableSize.Height - verticalPadding, GetMinHeight(), GetMaxHeight())
 			};
 
 			_contentPresenter->Measure(contentAvailableSize);
@@ -262,13 +259,13 @@ namespace Sgl
 	{
 		if(_contentPresenter)
 		{
-			auto padding = GetLayoutPadding();
+			auto [left, top, right, bottom] = GetLayoutPadding();
 			FRect finalRect =
 			{
-				.x = rect.x + padding.Left,
-				.y = rect.y + padding.Top,
-				.w = rect.w - padding.Left - padding.Right,
-				.h = rect.h - padding.Top - padding.Bottom
+				.x = rect.x + left,
+				.y = rect.y + top,
+				.w = rect.w - left - right,
+				.h = rect.h - top - bottom
 			};
 
 			if(finalRect.w < 0)

@@ -159,7 +159,7 @@ namespace Sgl
 
         if(current)
         {   
-            if(current->IsVisible() && LayoutHelper::IsPointInRect(e.X, e.Y, current->GetBounds()))
+            if(current->IsVisible() && IsPointInRect(e.X, e.Y, current->GetBounds()))
             {
                 current->OnMouseMove(e);
                 return;
@@ -178,7 +178,7 @@ namespace Sgl
                 continue;
             }
 
-            if(LayoutHelper::IsPointInRect(e.X, e.Y, child->GetBounds()))
+            if(IsPointInRect(e.X, e.Y, child->GetBounds()))
             {
                 Cursor::Set(child->GetCursor());
 
