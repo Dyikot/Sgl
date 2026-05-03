@@ -342,6 +342,11 @@ namespace Sgl
         _isRenderValid = false;
     }
 
+    bool Window::NeedsRendering() const noexcept
+    {
+        return !_isRenderValid;
+    }
+
     void Window::Show()
     {
         if(IsVisible())
@@ -396,9 +401,19 @@ namespace Sgl
         SDL_RaiseWindow(_sdlWindow);
     }
 
+    bool Window::IsActivated() const noexcept
+    {
+        return _isActivated;
+    }
+
     bool Window::IsVisible() const
     {
         return !(SDL_GetWindowFlags(_sdlWindow) & SDL_WINDOW_HIDDEN);
+    }
+
+    bool Window::IsClosed() const noexcept
+    {
+        return _isClosed;
     }
 
     void Window::Render(RenderContext& context)

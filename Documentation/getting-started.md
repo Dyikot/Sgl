@@ -1,3 +1,5 @@
+# Getting started
+
 ## What is Sgl?
 Sgl is a modern, cross-platform UI framework built on top of C++20 and SDL3. Designed for developers who want to create native desktop applications with a clean, declarative API, Sgl combines the performance of native code with the productivity features of modern UI frameworks.
 
@@ -23,9 +25,9 @@ Before creating a Sgl project, ensure you have the following installed:
 3. Generate project files using Premake:
     ```
     premake5 vs2022    # For Visual Studio 2022
-    premake5 gmake2    # For Makefiles (Linux/GCC)
+    premake5 gmake     # For Makefiles (Linux/GCC)
     ```
-4. Open the generated solution or build via command line:
+4. Build solution:
     ```
     # Visual Studio
     msbuild Sgl.sln
@@ -106,8 +108,3 @@ This example defines a custom window with a single centered button:
 4. `SetContent(button)` – establishes the button as the root element of the window's visual tree. Since `Button` is a content control, it can host simple content like text; for complex layouts, you would typically set a panel (e.g., `StackPanel`, `Grid`) as the content instead.
 
 ![ExampleWindow](Images/ExampleWindow.PNG)
-
-## Next Steps
-Now that you have a basic Sgl application running, explore these topics:
-1. [Styling guide](styling.md) - Learn to create reusable styles with selectors and themes
-2. [Data binding](data-binding.md) - Implement MVVM pattern with automatic UI synchronization

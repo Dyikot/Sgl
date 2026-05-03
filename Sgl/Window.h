@@ -333,7 +333,7 @@ namespace Sgl
 		/// Checks whether the window needs to be rendered due to pending changes.
 		/// </summary>
 		/// <returns>True if rendering is required; otherwise, false.</returns>
-		bool NeedsRendering() const noexcept { return !_isRenderValid; }
+		bool NeedsRendering() const noexcept;
 
 		/// <summary>
 		/// Shows the window
@@ -366,7 +366,7 @@ namespace Sgl
 		/// Checks if the window has a focus
 		/// </summary>
 		/// <returns>True if has focus, false otherwise</returns>
-		bool IsActivated() const { return _isActivated; }
+		bool IsActivated() const noexcept;
 
 		/// <summary>
 		/// Checks if the window is visible
@@ -378,7 +378,7 @@ namespace Sgl
 		/// Checks whether the window has been closed.
 		/// </summary>
 		/// <returns>True if the window is closed; otherwise, false.</returns>
-		bool IsClosed() const noexcept { return _isClosed; }
+		bool IsClosed() const noexcept;
 
 		/// <summary>
 		/// Renders the window's content using the provided rendering context.
