@@ -4,12 +4,12 @@
 
 namespace Sgl::UIElements
 {
-	static constexpr size_t FontFamilyFlag	  = 1 << 0;
-	static constexpr size_t FontSizeFlag	  = 1 << 1;
-	static constexpr size_t FontStyleFlag	  = 1 << 2;
-	static constexpr size_t FontOutlineFlag	  = 1 << 3;
-	static constexpr size_t FlowDirectionFlag = 1 << 4;
-	static constexpr size_t TextAlignmentFlag = 1 << 5;
+	static constexpr size_t FontFamilyFlag	  = 0x01;
+	static constexpr size_t FontSizeFlag	  = 0x02;
+	static constexpr size_t FontStyleFlag	  = 0x04;
+	static constexpr size_t FontOutlineFlag	  = 0x08;
+	static constexpr size_t FlowDirectionFlag = 0x10;
+	static constexpr size_t TextAlignmentFlag = 0x20;
 
 	TextBlock::TextBlock(TextBlock&& other) noexcept:
 		UIElement(std::move(other)),
@@ -125,7 +125,7 @@ namespace Sgl::UIElements
 		}
 	}
 
-	void Sgl::UIElements::TextBlock::Render(RenderContext& context)
+	void TextBlock::Render(RenderContext& context)
 	{
 		RenderBackground(context, _bounds);
 
@@ -136,8 +136,8 @@ namespace Sgl::UIElements
 
 		if(_textTexture)
 		{
-			const auto& bounds = GetBounds();
-			context.SetClip(Rect(bounds.x, bounds.y, bounds.w, bounds.h));
+			auto [x, y, width, height] = GetBounds();
+			context.SetClip(Rect(x, y, width, height));
 			context.DrawTexture(_textTexture, _textTextureBounds);
 			context.ResetClip();
 		}
@@ -152,9 +152,11 @@ namespace Sgl::UIElements
 
 	FSize TextBlock::MeasureContent(FSize availableSize)
 	{
+		FSize size {};
+
 		if(_text == "")
 		{
-			return FSize();
+			return size;
 		}
 
 		if(_fontFlags > 0)
@@ -164,6 +166,8 @@ namespace Sgl::UIElements
 
 		int width = 0;
 		int height = 0;		
+
+		auto [left, top, right, bottom] = GetPadding();
 
 		switch(_textWrapping)
 		{
@@ -183,12 +187,10 @@ namespace Sgl::UIElements
 		}
 
 		_textTextureBounds = FRect(0, 0, width, height);
+		size.Width = width + left + right;
+		size.Height = height + top + bottom;
 
-		return FSize
-		{
-			.Width = static_cast<float>(width) + _padding.Left + _padding.Right,
-			.Height = static_cast<float>(height) + _padding.Top + _padding.Bottom
-		};
+		return size;
 	}
 
 	void TextBlock::ArrangeContent(FRect rect)
@@ -282,7 +284,7 @@ namespace Sgl
 		auto& property = static_cast<StyleableProperty<UIElements::TextBlock, Color>&>(GetProperty());
 		property.InvokeSetter(
 			static_cast<UIElements::TextBlock&>(target),
-			App->Resources.GetColor(_key.GetName()),
+			App->Resources.GetColor(_key.Value),
 			valueSource
 		);
 	}

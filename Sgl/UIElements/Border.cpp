@@ -76,7 +76,7 @@ namespace Sgl
 		auto& property = static_cast<StyleableProperty<UIElements::Border, Color>&>(GetProperty());
 		property.InvokeSetter(
 			static_cast<UIElements::Border&>(target),
-			App->Resources.GetColor(_key.GetName()),
+			App->Resources.GetColor(_key.Value),
 			valueSource
 		);
 	}

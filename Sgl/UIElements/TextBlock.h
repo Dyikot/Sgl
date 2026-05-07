@@ -70,7 +70,7 @@ namespace Sgl::UIElements
 		int _outline = 0;
 		FontFamily _fontFamily = FontFamily::Default;
 		FlowDirection _flowDirection = FlowDirection::BottomToTop;
-		FontStyle _fontStyle;
+		FontStyle _fontStyle = FontStyle::Normal;
 		Color _foreground = Colors::Black;
 		TextWrapping _textWrapping = TextWrapping::NoWrap;
 		TextAlignment _textAlignment = TextAlignment::Left;

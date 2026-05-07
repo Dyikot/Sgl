@@ -119,7 +119,7 @@ namespace Sgl
 
 	void TrueTypeFont::SetStyle(FontStyle fontStyle)
 	{
-		TTF_SetFontStyle(_font, static_cast<unsigned long>(fontStyle));
+		TTF_SetFontStyle(_font, static_cast<int>(fontStyle));
 	}
 
 	void TrueTypeFont::SetOutline(int outline)
@@ -129,8 +129,7 @@ namespace Sgl
 
 	void TrueTypeFont::SetFlowDirection(FlowDirection flowDirection)
 	{
-		auto ttfDirection = static_cast<TTF_Direction>(static_cast<int>(flowDirection) + 4);
-		TTF_SetFontDirection(_font, ttfDirection);
+		TTF_SetFontDirection(_font, TTF_Direction(static_cast<int>(flowDirection) + 4));
 	}
 
 	void TrueTypeFont::SetTextAligment(TextAlignment textAlignment)

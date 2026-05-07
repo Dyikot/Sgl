@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <bitset>
 #include <memory>
 #include "Color.h"
 
@@ -98,89 +97,19 @@ namespace Sgl
 	/// Values are defined as bit flags and can be combined using bitwise OR to represent multiple styles simultaneously
 	/// (e.g., Bold | Italic for bold italic text).
 	/// </summary>
-	enum class FontStyles
+	enum class FontStyle
 	{
-		Normal		  =	0,   // No special styling.
-		Bold		  =	1,   // Thickened character strokes.
-		Italic        =	2,   // Slanted, cursive-style characters.
-		Underline	  =	4,   // A line drawn beneath the text.
-		Strikethrough = 8    // A horizontal line through the middle of the text.
+		Normal		  =	0x0,   // No special styling.
+		Bold		  =	0x1,   // Thickened character strokes.
+		Italic        =	0x2,   // Slanted, cursive-style characters.
+		Underline	  =	0x4,   // A line drawn beneath the text.
+		Strikethrough = 0x8    // A horizontal line through the middle of the text.
 	};
 
-	/// <summary>
-	/// Represents a set of font style attributes (bold, italic, underline, strikethrough) as a compact, immutable value.
-	/// Styles are stored internally as a bitset and can be combined at construction using FontStyles enumeration values.
-	/// Provides named accessors for each style and supports comparison, assignment, and conversion to an unsigned long bitmask.
-	/// </summary>
-	class FontStyle
+	constexpr FontStyle operator|(FontStyle left, FontStyle right) noexcept
 	{
-	public:
-		/// <summary>
-		/// Constructs a FontStyle with no styles enabled (equivalent to FontStyles::Normal).
-		/// </summary>
-		constexpr FontStyle() noexcept = default;
-
-		/// <summary>
-		/// Constructs a FontStyle by combining one or more FontStyles flags.
-		/// Only values from the FontStyles enum are accepted.
-		/// Example: FontStyle(FontStyles::Bold, FontStyles::Italic)
-		/// </summary>
-		template<std::same_as<FontStyles>... TStyles>
-		constexpr FontStyle(TStyles... styles):
-			_styles((static_cast<unsigned long>(styles) | ...))
-		{}
-
-		constexpr FontStyle(const FontStyle&) = default;
-		constexpr FontStyle(FontStyle&&) = default;
-
-		/// <summary>
-		/// Returns true if the italic style is enabled.
-		/// </summary>
-		constexpr bool IsItalic() const noexcept
-		{
-			return _styles[0];
-		}
-
-		/// <summary>
-		/// Returns true if the bold style is enabled.
-		/// </summary>
-		constexpr bool IsBold() const noexcept
-		{
-			return _styles[1];
-		}
-
-		/// <summary>
-		/// Returns true if underline is enabled.
-		/// </summary>
-		constexpr bool HasUnderline() const noexcept
-		{ 
-			return _styles[2];
-		}
-
-		/// <summary>
-		/// Returns true if strikethrough is enabled.
-		/// </summary>
-		constexpr bool HasStrikethrough() const noexcept
-		{
-			return _styles[3]; 
-		}
-
-		constexpr FontStyle& operator=(const FontStyle&) = default;
-		constexpr FontStyle& operator=(FontStyle&&) = default;
-
-		/// <summary>
-		/// Compares two FontStyle instances for equality based on their underlying bit representation.
-		/// </summary>
-		friend bool operator==(const FontStyle&, const FontStyle&) = default;
-
-		/// <summary>
-		/// Implicitly converts the FontStyle to its underlying bitmask representation (unsigned long),
-		/// where bits correspond to FontStyles values (bit 0 = Italic, bit 1 = Bold, etc.).
-		/// </summary>
-		operator unsigned long() const noexcept { return _styles.to_ulong(); }
-	private:
-		std::bitset<4> _styles;
-	};
+		return FontStyle(static_cast<int>(left) | static_cast<int>(right));
+	}
 
 	/// <summary>
 	/// Specifies the direction in which content flows within a layout container.

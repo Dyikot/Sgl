@@ -126,7 +126,7 @@ namespace Sgl
 		auto& property = static_cast<StyleableProperty<Renderable, const Brush&>&>(GetProperty());
 		property.InvokeSetter(
 			static_cast<Renderable&>(target),
-			App->Resources.GetBrush(_key.GetName()),
+			App->Resources.GetBrush(_key.Value),
 			valueSource
 		);
 	}
