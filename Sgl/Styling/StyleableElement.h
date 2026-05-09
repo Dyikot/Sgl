@@ -18,9 +18,7 @@ namespace Sgl
 		using StyleableElementEventHandler = EventHandler<StyleableElement>;
 	public:
 		StyleableElement();
-		StyleableElement(const StyleableElement&) = delete;
 		StyleableElement(StyleableElement&& other) noexcept;
-		~StyleableElement() = default;
 
 		std::string Name;
 		StyleCollection Styles;

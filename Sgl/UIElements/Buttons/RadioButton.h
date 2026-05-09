@@ -8,7 +8,6 @@ namespace Sgl::UIElements
 	{
 	public:
 		RadioButton();
-		RadioButton(const RadioButton&) = delete;
 		RadioButton(RadioButton&& other) noexcept;
 
 		void SetGroupName(const std::string& value, ValueSource source = ValueSource::Local);

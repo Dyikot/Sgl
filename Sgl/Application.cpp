@@ -5,7 +5,6 @@
 #include <SDL3_ttf/SDL_ttf.h>
 
 #include "Base/Threading/Dispatcher.h"
-#include "Base/Threading/DelayDispatcher.h"
 #include "Base/Exceptions.h"
 #include "Base/Logging.h"
 #include "Base/Time/Stopwatch.h"
@@ -138,7 +137,6 @@ namespace Sgl
             uint64_t start = SDL_GetPerformanceCounter();
 
 			HandleInputEvents();
-            DefaultDelayDispatcher.Process();
             UIThread.Process();
 
             for(auto window : _activeWindows)

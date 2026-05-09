@@ -12,9 +12,7 @@ namespace Sgl
     {
     public:
         Renderable() = default;
-        Renderable(const Renderable&) = delete;
         Renderable(Renderable&& other) noexcept;
-        virtual ~Renderable() = default;
 
         void SetCursor(const Cursor& value, ValueSource source = ValueSource::Local);
         const Cursor& GetCursor() const { return _cursor; }

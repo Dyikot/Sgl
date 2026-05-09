@@ -19,7 +19,6 @@ namespace Sgl
 		using MouseWheelEventHandler = EventHandler<UIElement, MouseWheelEventArgs&>;
 	public:
 		UIElement() = default;
-		UIElement(const UIElement&) = delete;
 		UIElement(UIElement&& other) noexcept;
 
 		static const PseudoClassId OnHover;

@@ -24,7 +24,6 @@ namespace Sgl::UIElements
 		using ButtonEventHandler = EventHandler<Button>;
 	public:
 		Button();
-		Button(const Button&) = delete;
 		Button(Button&& other) noexcept;
 
 		Event<ButtonEventHandler> Click;

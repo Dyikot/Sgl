@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>
+#include <filesystem>
 #include "TaskAwaitable.h"
 
 namespace Sgl
@@ -13,7 +13,7 @@ namespace Sgl
 	class ReadFileAwaitable : public TaskAwaitable<std::string>
 	{
 	public:
-		explicit ReadFileAwaitable(std::string path, bool saveContext = false);
+		explicit ReadFileAwaitable(const std::filesystem::path& path, bool saveContext = false);
 	};
 
 	/// <summary>
@@ -24,6 +24,6 @@ namespace Sgl
 	class WriteFileAwaitable : public TaskAwaitable<void>
 	{
 	public:
-		WriteFileAwaitable(std::string path, std::string text);
+		WriteFileAwaitable(const std::filesystem::path& path, std::string text);
 	};
 }

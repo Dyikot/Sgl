@@ -37,7 +37,7 @@ namespace Sgl
 
         if(_localizedStrings.empty())
         {
-            Logging::LogWarning("Failed to get localization for '{}' language.", languageInfo.GetName());
+            Logging::LogWarning("Failed to load a localization for '{}' language.", languageInfo.GetName());
         }
     }
 }

@@ -1,31 +1,32 @@
 #include "FileAwaitables.h"
 
-#include <sstream>
 #include <fstream>
 #include "../Exceptions.h"
 
 namespace Sgl
 {
-	ReadFileAwaitable::ReadFileAwaitable(std::string path, bool saveContext):
+	ReadFileAwaitable::ReadFileAwaitable(const std::filesystem::path& path, bool saveContext):
 		TaskAwaitable<std::string>(
-            [path = std::move(path)]
+            [path]
             {
-                if(auto stream = std::ifstream(path))
+                if(auto stream = std::ifstream(path, std::ios::binary))
                 {
-                    std::ostringstream ss;
-                    ss << stream.rdbuf();
-                    return std::move(ss).str();
+                    const auto size = std::filesystem::file_size(path);
+                    std::string text(size, '\0');
+
+                    stream.read(text.data(), size);
+                    return text;
                 }
 
-                throw Exception("Unable ro read text. Unable open file '{}'.", path);
+                throw Exception("Unable ro read text. Unable open file '{}'.", path.string());
 
             }, saveContext
         )
 	{}
 
-    WriteFileAwaitable::WriteFileAwaitable(std::string path, std::string text):
+    WriteFileAwaitable::WriteFileAwaitable(const std::filesystem::path& path, std::string text):
         TaskAwaitable<void>(
-            [path = std::move(path), text = std::move(text)]
+            [path, text = std::move(text)]
             {
                 if(auto stream = std::ofstream(path))
                 {

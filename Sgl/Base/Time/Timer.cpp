@@ -1,6 +1,6 @@
 #include "Timer.h"
-#include <iostream>
 #include <future>
+#include "DispatcherTimer.h"
 
 using namespace std::chrono;
 
@@ -14,7 +14,7 @@ namespace Sgl
 		Duration(TimeSpan::FromMilliseconds(milliseconds))
 	{}
 
-	void Timer::Start() noexcept
+	void Timer::Start()
 	{
 		if(_stopwatch.IsRunning())
 		{

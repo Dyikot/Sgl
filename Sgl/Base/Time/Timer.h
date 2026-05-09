@@ -16,7 +16,6 @@ namespace Sgl
 	public:
 		explicit Timer(TimeSpan interval) noexcept;
 		explicit Timer(int64_t milliseconds) noexcept;
-
 		Timer(const Timer&) = delete;
 		Timer(Timer&&) = default;
 
@@ -38,7 +37,7 @@ namespace Sgl
 		/// <summary>
 		/// Starts the timer.
 		/// </summary>
-		void Start() noexcept;
+		void Start();
 
 		/// <summary>
 		/// Restarts the timer by resetting and starting it again.

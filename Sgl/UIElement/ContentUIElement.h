@@ -8,7 +8,6 @@ namespace Sgl
 	{
 	public:
 		ContentUIElement() = default;
-		ContentUIElement(const ContentUIElement&) = delete;
 		ContentUIElement(ContentUIElement&& other) noexcept;
 		~ContentUIElement();
 		

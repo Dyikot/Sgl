@@ -1,5 +1,5 @@
 #include "DelayAwaitable.h"
-#include "DelayDispatcher.h"
+#include "Dispatcher.h"
 
 namespace Sgl
 {
@@ -30,6 +30,6 @@ namespace Sgl
 
 	void DelayAwaitable::await_suspend(std::coroutine_handle<> handle)
 	{
-		DefaultDelayDispatcher.Add(_duration, _stopToken, handle);
+		UIThread.AddHandle(_duration, _stopToken, handle);
 	}
 }
