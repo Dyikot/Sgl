@@ -54,6 +54,7 @@ project "App"
         "Sgl",
         "SDL3",
         "SDL3_image",
+        "SDL3_mixer",
         "SDL3_ttf"
     }
 
