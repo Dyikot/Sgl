@@ -25,7 +25,7 @@ namespace Sgl
 
 	void Dispatcher::AddHandle(TimeSpan duration, std::stop_token stopToken, std::coroutine_handle<> handle)
 	{
-		auto resumeTime = Clock::now() + Ns(duration.ToNanoseconds());
+		auto resumeTime = Clock::now() + Ns(duration.GetNanoseconds());
 
 		if(stopToken.stop_possible())
 		{
@@ -41,7 +41,7 @@ namespace Sgl
 
 	void Dispatcher::AddTimer(DispatcherTimer& timer)
 	{
-		auto tickTime = Clock::now() + Ns(timer.Interval.ToNanoseconds());
+		auto tickTime = Clock::now() + Ns(timer.Interval.GetNanoseconds());
 		_timerContexts.emplace_back(&timer, tickTime);
 	}
 
@@ -109,7 +109,7 @@ namespace Sgl
 			if(tickTime <= now)
 			{
 				timer->Tick.Invoke(*timer);
-				tickTime = now + Ns(timer->Interval.ToNanoseconds());
+				tickTime = now + Ns(timer->Interval.GetNanoseconds());
 			}
 		}
 

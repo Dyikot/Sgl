@@ -3,10 +3,13 @@
 #include <list>
 #include <span>
 #include <unordered_map>
+#include <SDL3/SDL_render.h>
 
+#include "Surface.h"
+#include "Texture.h"
 #include "../Base/Primitives.h"
 #include "../Base/Media/Color.h"
-#include "Texture.h"
+#include "../Base/Media/SourcePath.h"
 
 namespace Sgl
 {
@@ -60,10 +63,10 @@ namespace Sgl
         /// <summary>
         /// Loads a texture from the specified file path, with optional caching.
         /// </summary>
-        /// <param name="filePath"> - the path to the image file to load.</param>
+        /// <param name="texturePath"> - the path to the image file to load.</param>
         /// <param name="cache"> - whether to cache the texture for future use. Defaults to true.</param>
         /// <returns>The loaded texture. If the file fails to load, returns an invalid (null) texture.</returns>
-        Texture LoadTexture(const std::string& filePath, bool cache = true);
+        Texture LoadTexture(SourcePath imagePath, bool cache = true);
 
         /// <summary>
         /// Fills the entire current render target with a solid color.
@@ -226,7 +229,7 @@ namespace Sgl
         /// <param name="angle"> - rotation angle in degrees (counter-clockwise).</param>
         /// <param name="center"> - optional pivot point for rotation (if null, rotates around the center of the target).</param>
         /// <param name="flip"> - specifies horizontal/vertical flipping mode.</param>
-        void DrawTextureTransformed(const Texture& texture, double angle, const FPoint* center, SDL_FlipMode flip);
+        void DrawTextureTransformed(const Texture& texture, double angle, const FPoint* center, FlipMode flip);
 
         /// <summary>
         /// Draws a transformed texture into a specific target rectangle.
@@ -236,7 +239,7 @@ namespace Sgl
         /// <param name="center"> - optional rotation center (relative to target).</param>
         /// <param name="flip"> - flipping mode.</param>
         /// <param name="target"> - destination rectangle.</param>
-        void DrawTextureTransformed(const Texture& texture, double angle, const FPoint* center, SDL_FlipMode flip, FRect target);
+        void DrawTextureTransformed(const Texture& texture, double angle, const FPoint* center, FlipMode flip, FRect target);
 
         /// <summary>
         /// Draws a transformed and clipped texture into a target rectangle.
@@ -247,7 +250,7 @@ namespace Sgl
         /// <param name="flip"> - flipping mode.</param>
         /// <param name="target"> - destination rectangle.</param>
         /// <param name="clip"> - source rectangle within the texture to draw.</param>
-        void DrawTextureTransformed(const Texture& texture, double angle, const FPoint* center, SDL_FlipMode flip, FRect target, FRect clip);
+        void DrawTextureTransformed(const Texture& texture, double angle, const FPoint* center, FlipMode flip, FRect target, FRect clip);
 
         /// <summary>
         /// Renders a string of text at the specified position using the given font and color.
@@ -270,11 +273,11 @@ namespace Sgl
         struct CachedTexture
         {
             Texture Texture;
-            std::list<const std::string*>::iterator OrderIt;
+            std::list<SourcePath>::iterator OrderIt;
         };
 
         SDL_Renderer* _renderer;
-        std::unordered_map<std::string, CachedTexture> _cachedTextures;
-        std::list<const std::string*> _cacheOrder;
+        std::unordered_map<SourcePath, CachedTexture> _cachedTextures;
+        std::list<SourcePath> _cacheOrder;
     };
 }

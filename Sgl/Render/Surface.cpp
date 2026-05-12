@@ -105,9 +105,9 @@ namespace Sgl
 		SDL_UnlockSurface(_surface);
 	}
 
-	void Surface::Flip(SDL_FlipMode flipMode)
+	void Surface::Flip(FlipMode flipMode)
 	{
-		SDL_FlipSurface(_surface, flipMode);
+		SDL_FlipSurface(_surface, SDL_FlipMode(flipMode));
 	}
 
 	Surface Surface::Clone() const

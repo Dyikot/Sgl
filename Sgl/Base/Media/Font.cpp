@@ -10,15 +10,15 @@ namespace fs = std::filesystem;
 namespace Sgl
 {
 	#ifdef SDL_PLATFORM_WIN32
-	static constexpr auto FamiliesPath = "C:/Windows/Fonts/";
+	constexpr auto FamiliesPath = "C:/Windows/Fonts/";
 	#elif SDL_PLATFORM_LINUX
-	static constexpr auto FamiliesPath = "/usr/share/fonts/";
+	constexpr auto FamiliesPath = "/usr/share/fonts/";
 	#elif SDL_PLATFORM_MACOS
-	static constexpr auto FamiliesPath = "/System/Library/Fonts/";
+	constexpr auto FamiliesPath = "/System/Library/Fonts/";
 	#endif
 
-	static constexpr auto DefaultFamily = "segoeui.ttf";
-	static const FontFamily DefaultFontFamily { FamiliesPath, DefaultFamily };
+	constexpr auto DefaultFamily = "segoeui.ttf";
+	const FontFamily DefaultFontFamily { FamiliesPath, DefaultFamily };
 
 	static inline std::string NormalizePath(const fs::path& path)
 	{

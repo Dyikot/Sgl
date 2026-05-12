@@ -1,10 +1,14 @@
 #pragma once
 
-#include <SDL3/SDL_render.h>
+#include <SDL3/SDL_pixels.h>
+#include <SDL3/SDL_blendmode.h>
 
 #include "../Base/Primitives.h"
 #include "../Base/Media/Font.h"
 #include "../Base/Size.h"
+
+struct SDL_Renderer;
+struct SDL_Texture;
 
 namespace Sgl
 {
@@ -20,6 +24,11 @@ namespace Sgl
 		Target     // The texture can be used as a render target (i.e., rendered into via SetTarget).
 	};
 	
+	enum class ScaleMode
+	{
+		Nearest, Linear
+	};
+
 	/// <summary>
 	/// A RAII wrapper around SDL_Texture that manages a reference-counted GPU texture.
 	/// </summary>
@@ -142,13 +151,13 @@ namespace Sgl
 		/// Sets the scale quality (filtering) used when the texture is scaled during rendering.
 		/// </summary>
 		/// <param name="value"> - the scaling mode.</param>
-		void SetScaleMode(SDL_ScaleMode value);
+		void SetScaleMode(ScaleMode value);
 
 		/// <summary>
 		/// Gets the current scale mode of the texture.
 		/// </summary>
 		/// <returns>The scale filtering mode currently in use.</returns>
-		SDL_ScaleMode GetScaleMode() const;
+		ScaleMode GetScaleMode() const;
 
 		/// <summary>
 		/// Gets the width of the texture in pixels.

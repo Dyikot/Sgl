@@ -35,7 +35,7 @@ namespace Sgl
         /// <summary>
         /// Constructs an empty reference.
         /// </summary>
-        Ref() noexcept = default;
+        Ref() noexcept {}
 
         /// <summary>
         /// Constructs an empty reference explicitly from nullptr.

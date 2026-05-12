@@ -8,11 +8,11 @@
 
 namespace Sgl
 {
-    static constexpr auto DefaultTitle = "Window";
-    static constexpr auto DefaultWidth = 1280;
-    static constexpr auto DefaultHeight = 720;
-    static constexpr auto DefaultPosition = Point(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
-    static constexpr auto DefaultFlags = SDL_WINDOW_HIDDEN;
+    constexpr auto DefaultTitle = "Window";
+    constexpr auto DefaultWidth = 1280;
+    constexpr auto DefaultHeight = 720;
+    constexpr auto DefaultPosition = Point(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+    constexpr auto DefaultFlags = SDL_WINDOW_HIDDEN;
 
     Window::Window():
         _sdlWindow(SDL_CreateWindow(DefaultTitle, DefaultWidth, DefaultHeight, DefaultFlags)),
@@ -29,7 +29,7 @@ namespace Sgl
             throw Exception("Unable to create a renderer: {}", SDL_GetError());
         }
 
-        if(App.Current() == nullptr)
+        if(App == nullptr)
         {
             throw Exception("Cannot create a window without an application");
         }
@@ -47,7 +47,7 @@ namespace Sgl
 
     Window::~Window()
     {
-        if(App.Current() == nullptr)
+        if(App == nullptr)
         {
             throw Exception("Appication does not exist");
         }

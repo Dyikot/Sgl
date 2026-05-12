@@ -3,7 +3,7 @@
 
 namespace Sgl
 {
-    static constexpr size_t MaxPseudoClassId = (sizeof(PseudoClassId) * 8) - 1;
+    constexpr size_t MaxPseudoClassId = (sizeof(PseudoClassId) * 8) - 1;
 
     PseudoClassId PseudoClassesRegistry::Register(std::string_view name)
     {        

@@ -6,7 +6,7 @@ namespace Sgl::Converters
 {
 	struct IntToStringConverter
 	{
-		IntToStringConverter(int fallback = 0) : Fallback(fallback) {}
+		constexpr IntToStringConverter(int fallback = 0) : Fallback(fallback) {}
 
 		int Fallback;
 
@@ -16,7 +16,7 @@ namespace Sgl::Converters
 
 	struct UIntToStringConverter
 	{
-		UIntToStringConverter(uint32_t fallback = 0) : Fallback(fallback) {}
+		constexpr UIntToStringConverter(uint32_t fallback = 0) : Fallback(fallback) {}
 
 		uint32_t Fallback;
 
@@ -26,7 +26,7 @@ namespace Sgl::Converters
 
 	struct Int64ToStringConverter
 	{
-		Int64ToStringConverter(int64_t fallback = 0) : Fallback(fallback) {}
+		constexpr Int64ToStringConverter(int64_t fallback = 0) : Fallback(fallback) {}
 
 		int64_t Fallback;
 
@@ -36,7 +36,7 @@ namespace Sgl::Converters
 
 	struct UInt64ToStringConverter
 	{
-		UInt64ToStringConverter(uint64_t fallback = 0) : Fallback(fallback) {}
+		constexpr UInt64ToStringConverter(uint64_t fallback = 0) : Fallback(fallback) {}
 
 		uint64_t Fallback;
 
@@ -46,7 +46,7 @@ namespace Sgl::Converters
 
 	struct FloatToStringConverter
 	{
-		FloatToStringConverter(float fallback = 0.0f) : Fallback(fallback) {}
+		constexpr FloatToStringConverter(float fallback = 0.0f) : Fallback(fallback) {}
 
 		float Fallback;
 
@@ -56,7 +56,7 @@ namespace Sgl::Converters
 
 	struct DoubleToStringConverter
 	{
-		DoubleToStringConverter(double fallback = 0.0) : Fallback(fallback) {}
+		constexpr DoubleToStringConverter(double fallback = 0.0) : Fallback(fallback) {}
 
 		double Fallback;
 

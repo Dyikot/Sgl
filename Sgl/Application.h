@@ -1,12 +1,12 @@
 #pragma once
 
-#include <ranges>
-
 #include "Window.h"
 #include "Base/Media/ThemeMode.h"
 #include "Base/Media/ThemeResourceProvider.h"
 #include "Base/Localization/StringLocalizer.h"
 #include "Base/Localization/LocalizationStorage.h"
+
+struct MIX_Mixer;
 
 namespace Sgl
 {
@@ -23,7 +23,7 @@ namespace Sgl
 	/// <summary>
 	/// Represents the main application instance, managing windows, styling, theme, and the event loop.
 	/// </summary>
-	class Application: public IStyleHost
+	class Application : public IStyleHost
 	{
 	public:
 		/// <summary>
@@ -31,8 +31,8 @@ namespace Sgl
 		/// </summary>
 		struct Context
 		{
-			Application* Current() { return Application::_current; }
 			Application* operator->() { return Application::_current; }
+			operator Application*() { return Application::_current; }
 		};
 	private:
 		using ApplicationEventHandler = EventHandler<Application>;
@@ -125,6 +125,12 @@ namespace Sgl
 		const std::vector<Window*> GetWindows() const noexcept { return _activeWindows; }
 
 		/// <summary>
+		/// Gets an audio mixer
+		/// </summary>
+		/// <returns>A pointer to audio mixer</returns>
+		MIX_Mixer* GetAudioMixer() const { return _mixer; }
+
+		/// <summary>
 		/// Initializes localization storage using the provided loader delegate.
 		/// The loader is invoked whenever the language changes to load the appropriate translations.
 		/// </summary>
@@ -137,6 +143,11 @@ namespace Sgl
 		/// <param name="csvFilePath"> - path to the CSV file containing localization data.</param>
 		/// <param name="delimiter"> - character used as delimiter in the CSV file (default is comma).</param>
 		void AddLocalizationFromCSV(std::string csvFilePath, char delimiter = ',');
+
+		/// <summary>
+		/// Creates a mixer for playing music and sounds.
+		/// </summary>
+		void AddAudioMixer();
 
 		/// <summary>
 		/// Starts the application's main event loop.
@@ -163,20 +174,21 @@ namespace Sgl
 		void AttachWindow(Window& window);
 		void DetachWindow(Window& window);
 	private:
-		friend class Window;
-		friend class StringLocalizer;
-		friend class AssetsLoader;
-
 		static inline Application* _current;
 
 		bool _isRunning = false;
 		ThemeMode _themeMode;
 		ThemeVariant _themeVariant;
 		std::optional<LocalizationStorage> _localizationStorage;
+		MIX_Mixer* _mixer = nullptr;
 
 		Window* _focusedWindow = nullptr;
 		std::vector<Window*> _windows;
 		std::vector<Window*> _activeWindows;
+
+		friend class Window;
+		friend class StringLocalizer;
+		friend class AssetsLoader;
 	};
 
 	/// <summary>

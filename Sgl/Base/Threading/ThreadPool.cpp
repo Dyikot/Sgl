@@ -85,11 +85,11 @@ namespace Sgl
         std::counting_semaphore<> _semaphore { 0 };
     };
 
-    static size_t _maxThreads = 4;
+    constinit size_t maxThreads = 4;
 
     static ThreadPoolImpl& GetThreadPoolImpl()
     {
-        static ThreadPoolImpl threadPool(_maxThreads);
+        static ThreadPoolImpl threadPool(maxThreads);
         return threadPool;
     }
 
@@ -110,7 +110,7 @@ namespace Sgl
 
     void ThreadPool::SetThreadCount(size_t threads) noexcept
     {
-        _maxThreads = threads;
+        maxThreads = threads;
     }
 }
 

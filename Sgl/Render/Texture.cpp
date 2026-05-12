@@ -147,16 +147,16 @@ namespace Sgl
 		return blendMode;
 	}
 
-	void Texture::SetScaleMode(SDL_ScaleMode value)
+	void Texture::SetScaleMode(ScaleMode value)
 	{
-		SDL_SetTextureScaleMode(_texture, value);
+		SDL_SetTextureScaleMode(_texture, SDL_ScaleMode(value));
 	}
 
-	SDL_ScaleMode Texture::GetScaleMode() const
+	ScaleMode Texture::GetScaleMode() const
 	{
 		SDL_ScaleMode scaleMode = SDL_SCALEMODE_LINEAR;
 		SDL_GetTextureScaleMode(_texture, &scaleMode);
-		return scaleMode;
+		return ScaleMode(scaleMode);
 	}
 
 	uint32_t Texture::GetWidth() const

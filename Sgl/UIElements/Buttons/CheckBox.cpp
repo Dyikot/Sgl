@@ -5,7 +5,7 @@ namespace Sgl::UIElements
 {
 	CheckBox::CheckBox()
 	{
-		static ImagePath imagePath = ImagePath(SDL_GetBasePath(), "Assets/Images/CheckButtonOutline.png");
+		static SourcePath imagePath = SourcePath(SDL_GetBasePath(), "Assets/Images/CheckButtonOutline.png");
 
 		SetWidth(24, ValueSource::Default);
 		SetHeight(24, ValueSource::Default);		

@@ -10,7 +10,7 @@ namespace Sgl::UIElements
 		_stretch(other._stretch)
 	{}
 
-	void Image::SetSource(const std::string& value, ValueSource source)
+	void Image::SetSource(SourcePath value, ValueSource source)
 	{
 		if(SetProperty(SourceProperty, _source, value, _sourceSource, source))
 		{
@@ -163,7 +163,7 @@ namespace Sgl::UIElements
 
 	void Image::UpdateTexture()
 	{
-		_sourceTexture = Texture(GetVisualRoot()->GetRenderer(), _source);
+		_sourceTexture = Texture(GetVisualRoot()->GetRenderer(), _source.Path());
 		_isImageTextureValid = true;
 	}
 }

@@ -7,7 +7,7 @@ Sgl is a modern, cross-platform UI framework built on top of C++20 and SDL3. Des
 ### Prerequisites
 Before creating a Sgl project, ensure you have the following installed:
 1. C++20 compatible compiler (MSVC 2022+, GCC 11+, Clang 14+).
-2. [SDL3](https://github.com/libsdl-org/SDL/releases/tag/release-3.2.26), [SDL_image](https://github.com/libsdl-org/SDL_image/releases/tag/release-3.2.4), and [SDL_ttf](https://github.com/libsdl-org/SDL_ttf/releases/tag/release-3.2.2) development libraries.
+2. [SDL3](https://github.com/libsdl-org/SDL/releases/tag/release-3.4.8), [SDL_image](https://github.com/libsdl-org/SDL_image/releases/tag/release-3.4.4), [SDL_mixer](https://github.com/libsdl-org/SDL_mixer/releases/tag/release-3.2.0) and [SDL_ttf](https://github.com/libsdl-org/SDL_ttf/releases/tag/release-3.2.2) development libraries.
 3. [Premake](https://premake.github.io/) for project generation.
 
 ### Project Setup Steps
@@ -19,8 +19,8 @@ Before creating a Sgl project, ensure you have the following installed:
     ```
     SglApp/
     └── Dependencies/
-        ├── Include/     # SDL3, SDL_image, SDL_ttf headers
-        └── Libraries/   # SDL3, SDL_image, SDL_ttf static libraries
+        ├── Include/     # SDL3, SDL_image, SDL_mixer, SDL_ttf headers
+        └── Libraries/   # SDL3, SDL_image, SDL_mixer, SDL_ttf static libraries
     ```
 3. Generate project files using Premake:
     ```
@@ -51,6 +51,7 @@ Ensure your main.cpp includes the required headers:
 Copy these DLLs/shared libraries to your output directory `bin/App/Output/{Debug/Release}/`:
 - SDL3.dll / libSDL3.so
 - SDL_image.dll / libSDL_image.so
+- SDL_mixer.dll / libSDL_mixer.so
 - SDL_ttf.dll / libSDL_ttf.so
 
 ## Configure application

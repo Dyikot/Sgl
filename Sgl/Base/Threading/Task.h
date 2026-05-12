@@ -2,8 +2,6 @@
 
 #include <utility>
 #include <coroutine>
-#include <execution>
-#include <type_traits>
 
 #include "../Logging.h"
 
@@ -37,9 +35,9 @@ namespace Sgl
 
 			T await_resume() const
 			{
-				if(auto exeption = Handle.promise().Exception)
+				if(auto exception = Handle.promise().Exception)
 				{
-					std::rethrow_exception(exeption);
+					std::rethrow_exception(exception);
 				}
 
 				if constexpr(!std::is_void_v<T>)

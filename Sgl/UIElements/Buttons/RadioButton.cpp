@@ -53,7 +53,7 @@ namespace Sgl::UIElements
 
 	RadioButton::RadioButton()
 	{
-		static ImagePath imagePath = ImagePath(SDL_GetBasePath(), "Assets/Images/RadioButtonOutline.png");
+		static SourcePath imagePath = SourcePath(SDL_GetBasePath(), "Assets/Images/RadioButtonOutline.png");
 
 		SetWidth(24, ValueSource::Default);
 		SetHeight(24, ValueSource::Default);

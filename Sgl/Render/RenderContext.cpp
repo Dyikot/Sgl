@@ -8,12 +8,12 @@
 
 namespace Sgl
 {
-	static constexpr size_t VerticesNumber = 181;
-	static constexpr size_t EllipseVerticesNumber = 91;
-	static constexpr size_t EllipseAngleStep = 2;
+	constexpr size_t VerticesNumber = 181;
+	constexpr size_t EllipseVerticesNumber = 91;
+	constexpr size_t EllipseAngleStep = 2;
 
-	static const std::vector<float> SinRange = Math::SinRange(VerticesNumber);
-	static const std::vector<float> CosRange = Math::CosRange(VerticesNumber);
+	const std::vector<float> SinRange = Math::SinRange(VerticesNumber);
+	const std::vector<float> CosRange = Math::CosRange(VerticesNumber);
 
 	RenderContext::RenderContext(SDL_Renderer* _renderer):
 		_renderer(_renderer)
@@ -39,34 +39,34 @@ namespace Sgl
 		SDL_SetRenderClipRect(_renderer, nullptr);
 	}
 
-	static constexpr size_t MaxCacheSize = 100;
+	constexpr size_t MaxCacheSize = 100;
 
-	Texture RenderContext::LoadTexture(const std::string& filePath, bool cache)
+	Texture RenderContext::LoadTexture(SourcePath imagePath, bool cache)
 	{
 		if(!cache)
 		{
-			return Texture(_renderer, filePath);
+			return Texture(_renderer, imagePath.Path());
 		}
 
-		if(auto it = _cachedTextures.find(filePath); it != _cachedTextures.end())
+		if(auto it = _cachedTextures.find(imagePath); it != _cachedTextures.end())
 		{
 			_cacheOrder.splice(_cacheOrder.begin(), _cacheOrder, it->second.OrderIt);
 			return it->second.Texture;
 		}
 
-		Texture texture(_renderer, filePath);
+		Texture texture(_renderer, imagePath.Path());
 
 		if(texture)
 		{
 			if(_cachedTextures.size() >= MaxCacheSize)
 			{
 				auto path = _cacheOrder.back();
-				_cachedTextures.erase(*path);
+				_cachedTextures.erase(path);
 				_cacheOrder.pop_back();
 			}
 
-			auto [it, _] = _cachedTextures.emplace(filePath, CachedTexture(texture, {}));
-			auto orderIt = _cacheOrder.insert(_cacheOrder.begin(), &it->first);
+			auto [it, _] = _cachedTextures.emplace(imagePath, CachedTexture(texture, {}));
+			auto orderIt = _cacheOrder.insert(_cacheOrder.begin(), it->first);
 			it->second.OrderIt = orderIt;
 		}
 
@@ -397,26 +397,26 @@ namespace Sgl
 	}
 
 	void RenderContext::DrawTextureTransformed(const Texture& texture, double angle, 
-											   const FPoint* center, SDL_FlipMode flip)
+											   const FPoint* center, FlipMode flip)
 	{
 		SDL_RenderTextureRotated(_renderer, texture.GetSDLTexture(), nullptr, nullptr,
-								 angle, center, flip);
+								 angle, center, SDL_FlipMode(flip));
 	}
 
 	void RenderContext::DrawTextureTransformed(const Texture& texture, double angle, 
-											   const FPoint* center, SDL_FlipMode flip, 
+											   const FPoint* center, FlipMode flip, 
 											   FRect target)
 	{
 		SDL_RenderTextureRotated(_renderer, texture.GetSDLTexture(), nullptr,
-								 &target, angle, center, flip);
+								 &target, angle, center, SDL_FlipMode(flip));
 	}
 
 	void RenderContext::DrawTextureTransformed(const Texture& texture, double angle, 
-											   const FPoint* center, SDL_FlipMode flip, 
+											   const FPoint* center, FlipMode flip, 
 											   FRect target, FRect clip)
 	{
 		SDL_RenderTextureRotated(_renderer, texture.GetSDLTexture(), &clip,
-								 &target, angle, center, flip);
+								 &target, angle, center, SDL_FlipMode(flip));
 	}
 
 	void RenderContext::DrawText(FPoint position, std::string_view text, float size, 

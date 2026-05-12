@@ -57,10 +57,10 @@ namespace Sgl
 			return typeid(T) == typeid(target);
 		}
 	private:
-		static constexpr uint32_t TypeFlag           = 1 << 0;
-		static constexpr uint32_t NameFlag			 = 1 << 1;
-		static constexpr uint32_t ClassFlag	         = 1 << 2;
-		static constexpr uint32_t PredicateFlag		 = 1 << 3;
+		static constexpr uint32_t TypeFlag       = 0x1;
+		static constexpr uint32_t NameFlag		 = 0x2;
+		static constexpr uint32_t ClassFlag	     = 0x4;
+		static constexpr uint32_t PredicateFlag	 = 0x8;
 
 		uint32_t _flags = 0;
 		TypeComparer _typeComparer = nullptr;

@@ -25,10 +25,10 @@ namespace Sgl::UIElements
 		}
 	}
 
-	void Sgl::UIElements::Border::Render(RenderContext& context)
+	void Border::Render(RenderContext& context)
 	{
 		RenderBackground(context, _bounds);
-
+		
 		if(!_borderColor.IsTransparent())
 		{			
 			if(_borderWidth == 1u)

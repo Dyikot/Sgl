@@ -78,11 +78,6 @@ namespace Sgl
 			return TimeSpan(value * static_cast<int64_t>(NanosecondsPerDay));
 		}
 
-		constexpr int64_t ToNanoseconds() const noexcept
-		{
-			return _nanoseconds;
-		}
-
 		constexpr double ToMicroseconds() const noexcept
 		{
 			return _nanoseconds * ToMicrosecondsCoefficient;
@@ -111,6 +106,41 @@ namespace Sgl
 		constexpr double ToDays() const noexcept 
 		{ 
 			return _nanoseconds * ToDaysCoefficient;
+		}
+
+		constexpr int64_t GetNanoseconds() const noexcept
+		{
+			return _nanoseconds;
+		}
+
+		constexpr int64_t GetMicrosecond() const noexcept
+		{
+			return static_cast<int64_t>(_nanoseconds / NanosecondsPerDay) % 1000;
+		}
+
+		constexpr int64_t GetMilliseconds() const noexcept
+		{
+			return static_cast<int64_t>(ToMilliseconds()) % 1000;
+		}
+
+		constexpr int64_t GetSeconds() const noexcept
+		{
+			return static_cast<int64_t>(ToSeconds()) % 60;
+		}
+
+		constexpr int64_t GetMinutes() const noexcept
+		{
+			return static_cast<int64_t>(ToMinutes()) % 60;
+		}
+
+		constexpr int64_t GetHours() const noexcept
+		{
+			return static_cast<int64_t>(ToHours()) % 24;
+		}
+
+		constexpr int64_t GetDays() const noexcept
+		{
+			return static_cast<int64_t>(ToDays());
 		}
 
 		constexpr TimeSpan Duration() const noexcept
@@ -212,12 +242,12 @@ namespace Sgl
 		static constexpr double ToHoursCoefficient = 1 / NanosecondsPerHour;
 		static constexpr double ToDaysCoefficient = 1 / NanosecondsPerDay;
 
-		static constexpr int64_t ThresholdMicroseconds = 10 * NanosecondsPerMicrosecond;
-		static constexpr int64_t ThresholdMilliseconds = 10 * NanosecondsPerMillisecond;
-		static constexpr int64_t ThresholdSeconds = 10 * NanosecondsPerSecond;
-		static constexpr int64_t ThresholdMinutes = 10 * NanosecondsPerMinute;
-		static constexpr int64_t ThresholdHours = 10 * NanosecondsPerHour;
-		static constexpr int64_t ThresholdDays = 10 * NanosecondsPerDay;
+		static constexpr int64_t ThresholdMicroseconds = 2 * NanosecondsPerMicrosecond;
+		static constexpr int64_t ThresholdMilliseconds = 2 * NanosecondsPerMillisecond;
+		static constexpr int64_t ThresholdSeconds = 2 * NanosecondsPerSecond;
+		static constexpr int64_t ThresholdMinutes = 2 * NanosecondsPerMinute;
+		static constexpr int64_t ThresholdHours = 2 * NanosecondsPerHour;
+		static constexpr int64_t ThresholdDays = 2 * NanosecondsPerDay;
 
 		int64_t _nanoseconds;
 	};

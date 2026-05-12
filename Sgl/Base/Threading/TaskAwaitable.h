@@ -17,7 +17,7 @@ namespace Sgl
 	class TaskAwaitable
 	{
 	public:
-		explicit TaskAwaitable(Func<T> func, bool saveContext = false):
+		explicit TaskAwaitable(Func<T> func, bool saveContext = true):
 			_func(std::move(func)),
 			_saveContext(saveContext)
 		{}
@@ -76,7 +76,7 @@ namespace Sgl
 	class TaskAwaitable<void>
 	{
 	public:
-		explicit TaskAwaitable(Action<> action, bool saveContext = false):
+		explicit TaskAwaitable(Action<> action, bool saveContext = true):
 			_action(std::move(action)),
 			_saveContext(saveContext)
 		{}

@@ -1,6 +1,5 @@
 #include "Timer.h"
 #include <future>
-#include "DispatcherTimer.h"
 
 using namespace std::chrono;
 
@@ -26,7 +25,7 @@ namespace Sgl
 			std::mutex mutex;
 			std::unique_lock<std::mutex> lock(mutex);
 			std::condition_variable_any cv;
-			nanoseconds waitDuration((Duration - _stopwatch.Elapsed()).ToNanoseconds());
+			nanoseconds waitDuration((Duration - _stopwatch.Elapsed()).GetNanoseconds());
 
 			while(!stopToken.stop_requested())
 			{

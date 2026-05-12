@@ -8,7 +8,7 @@ namespace Sgl
 
 		if(ns < ThresholdMicroseconds)
 		{
-			return std::format("{} ns", ToNanoseconds());
+			return std::format("{} ns", GetNanoseconds());
 		}
 		else if(ns < ThresholdMilliseconds)
 		{
@@ -18,21 +18,13 @@ namespace Sgl
 		{
 			return std::format("{:.2f} ms", ToMilliseconds());
 		}
-		else if(ns < ThresholdMinutes)
-		{
-			return std::format("{:.2f} sec", ToSeconds());
-		}
-		else if(ns < ThresholdHours)
-		{
-			return std::format("{:.2f} min", ToMinutes());
-		}
 		else if(ns < ThresholdDays)
 		{
-			return std::format("{:.2f} hr", ToHours());
+			return std::format("{:02}:{:02}:{:02}", GetHours(), GetMinutes(), GetSeconds());
 		}
 		else
 		{
-			return std::format("{:.2f} days", ToDays());
+			return std::format("{}.{:02}:{:02}:{:02}", GetDays(), GetHours(), GetMinutes(), GetSeconds());
 		}
 	}
 }

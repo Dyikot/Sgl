@@ -2,7 +2,7 @@
 
 namespace Sgl
 {
-	static LanguageInfo _languageInfo("en-US");
+	LanguageInfo _languageInfo("en-US");
 
 	LanguageInfo::LanguageInfo(std::string name):
 		_name(std::move(name))

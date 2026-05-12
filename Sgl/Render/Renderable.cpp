@@ -66,7 +66,7 @@ namespace Sgl
 		}
 	}
 
-	void Sgl::Renderable::RenderBackground(RenderContext& context)
+	void Renderable::RenderBackground(RenderContext& context)
 	{
 		if(_background.index() == 0)
 		{
@@ -76,15 +76,15 @@ namespace Sgl
 		{
 			if(_backgroundTexture == nullptr)
 			{
-				auto& path = std::get<ImagePath>(_background);	
-				_backgroundTexture = context.LoadTexture(path.Get());
+				auto& path = std::get<SourcePath>(_background);	
+				_backgroundTexture = context.LoadTexture(path);
 			}
 
 			context.DrawTexture(_backgroundTexture);
 		}
 	}
 
-	void Sgl::Renderable::RenderBackground(RenderContext& context, const FRect& rect)
+	void Renderable::RenderBackground(RenderContext& context, const FRect& rect)
 	{
 		if(_background.index() == 0)
 		{
@@ -99,8 +99,8 @@ namespace Sgl
 		{
 			if(_backgroundTexture == nullptr)
 			{
-				auto& path = std::get<ImagePath>(_background);
-				_backgroundTexture = context.LoadTexture(path.Get());
+				auto& path = std::get<SourcePath>(_background);
+				_backgroundTexture = context.LoadTexture(path);
 			}
 
 			context.DrawTexture(_backgroundTexture, rect);

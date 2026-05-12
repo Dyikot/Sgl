@@ -1,13 +1,20 @@
 #pragma once
 
 #include <string_view>
-#include <SDL3/SDL_surface.h>
+#include <SDL3/SDL_blendmode.h>
 
 #include "../Base/Size.h"
 #include "../Base/Media/Color.h"
 
+struct SDL_Surface;
+
 namespace Sgl
 {
+	enum class FlipMode
+	{
+		None, Horizontal, Verical
+	};
+
 	/// <summary>
 	/// A RAII wrapper around SDL_Surface that manages a reference-counted surface.
 	/// </summary>
@@ -127,7 +134,7 @@ namespace Sgl
 		/// Flips the surface contents horizontally, vertically, or both.
 		/// </summary>
 		/// <param name="flipMode"> - specifies the flip orientation.</param>
-		void Flip(SDL_FlipMode flipMode);
+		void Flip(FlipMode flipMode);
 
 		/// <summary>
 		/// Creates a deep copy of this surface.

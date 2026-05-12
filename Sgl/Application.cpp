@@ -3,6 +3,7 @@
 #include <cassert>
 #include <SDL3/SDL_init.h>
 #include <SDL3_ttf/SDL_ttf.h>
+#include <SDL3_mixer/SDL_mixer.h>
 
 #include "Base/Threading/Dispatcher.h"
 #include "Base/Exceptions.h"
@@ -17,8 +18,8 @@ namespace Sgl
 {
     using namespace UIElements;
 
-    static constexpr size_t MaxWindowsNumber = 100;
-    static constexpr double MaxFrameTime = 1e3 / 60.0;
+    constexpr size_t MaxWindowsNumber = 100;
+    constexpr double MaxFrameTime = 1e3 / 60.0;
 
 	Application::Application() noexcept:
         _windows(MaxWindowsNumber)
@@ -33,6 +34,11 @@ namespace Sgl
         if(!TTF_Init())
         {
             Logging::LogError("Unable to initialize TTF: {}", SDL_GetError());
+        }
+
+        if(!MIX_Init())
+        {
+            Logging::LogError("Unable to initialize MIX: {}", SDL_GetError());
         }
 
         SDL_SetHint(SDL_HINT_RENDER_LINE_METHOD, "2");
@@ -50,6 +56,8 @@ namespace Sgl
 	Application::~Application()
 	{        
         MainWindow = nullptr;
+        MIX_DestroyMixer(_mixer);
+        MIX_Quit();
 		TTF_Quit();
 		SDL_Quit();
 	}
@@ -115,6 +123,16 @@ namespace Sgl
         };
 
         AddLocalization(std::move(csvLanguageLoader));
+    }
+
+    void Application::AddAudioMixer()
+    {
+        _mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, nullptr);
+
+        if(!_mixer)
+        {
+            Logging::LogError("Unable to create mixer device: {}", SDL_GetError());
+        }
     }
 
     void Application::AddLocalization(LocalizationLoader localizationLoader)
@@ -290,10 +308,13 @@ namespace Sgl
                 {
                     if(auto window = _focusedWindow)
                     {
+                        KeyModifier modifier = e.key.mod & ~SDL_KMOD_NUM;
+                        KeyCode key = SDL_GetKeyFromScancode(e.key.scancode, modifier, false);
+
                         KeyEventArgs args =
                         {
-                            .Key = e.key.key,
-                            .Modifier = e.key.mod & ~SDL_KMOD_NUM
+                            .Key = key,
+                            .Modifier = modifier
                         };
 
                         window->OnKeyDown(args);
@@ -306,10 +327,13 @@ namespace Sgl
                 {                   
                     if(auto window = _focusedWindow)
                     {
+                        KeyModifier modifier = e.key.mod & ~SDL_KMOD_NUM;
+                        KeyCode key = SDL_GetKeyFromScancode(e.key.scancode, modifier, false);
+
                         KeyEventArgs args =
                         {
-                            .Key = e.key.key,
-                            .Modifier = e.key.mod & ~SDL_KMOD_NUM
+                            .Key = key,
+                            .Modifier = modifier
                         };
 
                         window->OnKeyUp(args);
@@ -527,10 +551,10 @@ namespace Sgl
     void Application::AddDefaultStyles()
     {
         Styles.Add(Selector().OfType<CheckBox>().On("checked"))
-            .Set(CheckBox::BackgroundProperty, ImagePath(SDL_GetBasePath(), "Assets/Images/CheckButton.png"));
+            .Set(CheckBox::BackgroundProperty, SourcePath(SDL_GetBasePath(), "Assets/Images/CheckButton.png"));
 
         Styles.Add(Selector().OfType<RadioButton>().On("checked"))
-            .Set(CheckBox::BackgroundProperty, ImagePath(SDL_GetBasePath(), "Assets/Images/RadioButton.png"));
+            .Set(CheckBox::BackgroundProperty, SourcePath(SDL_GetBasePath(), "Assets/Images/RadioButton.png"));
     }
 
     void Application::PushSDLUserEvent(uint32_t type)
