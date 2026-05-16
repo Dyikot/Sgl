@@ -15,8 +15,8 @@ namespace Sgl
 		/// Retrieves the localized string for the given key without formatting.
 		/// </summary>
 		/// <param name="key"> - the localization key.</param>
-		/// <returns>A const reference to the localized string.</returns>
-		std::string operator()(const std::string& key) const;
+		/// <returns>The localized string.</returns>
+		std::string operator()(std::string_view key) const;
 
 		/// <summary>
 		/// Retrieves the localized string for the given key and formats it using the provided arguments.
@@ -26,7 +26,7 @@ namespace Sgl
 		/// <param name="args"> - arguments to substitute into the formatted string.</param>
 		/// <returns>A formatted std::string.</returns>
 		template<typename... TArgs>
-		std::string operator()(const std::string& key, TArgs&&... args) const
+		std::string operator()(std::string_view key, TArgs&&... args) const
 		{
 			return std::vformat(operator()(key), std::make_format_args(args...));
 		}

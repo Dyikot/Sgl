@@ -10,7 +10,6 @@
 #include "Base/Logging.h"
 #include "Base/Time/Stopwatch.h"
 #include "Input/SDLEvents.h"
-#include "Base/Tools/CSVReader.h"
 #include "UIElements/Buttons/CheckBox.h"
 #include "UIElements/Buttons/RadioButton.h"
 
@@ -116,7 +115,7 @@ namespace Sgl
 
     void Application::AddLocalizationFromCSV(std::string csvFilePath, char delimiter)
     {
-        auto csvLanguageLoader = [csv = CSVReader(std::move(csvFilePath), delimiter)]
+        auto csvLanguageLoader = [csv = LocalizationCSVReader(std::move(csvFilePath), delimiter)]
             (const LanguageInfo& languageInfo)
         {
             return csv.GetLocalization(languageInfo.GetName());
@@ -597,7 +596,7 @@ namespace Sgl
         window.OnDetachedFromLogicalTree();
     }
 
-    std::string StringLocalizer::operator()(const std::string& key) const
+    std::string StringLocalizer::operator()(std::string_view key) const
     {
         return App->_localizationStorage->GetLocalizedString(key);
     }

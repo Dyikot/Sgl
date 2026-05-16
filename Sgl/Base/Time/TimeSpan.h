@@ -33,6 +33,10 @@ namespace Sgl
 			_nanoseconds(timespan._nanoseconds)
 		{}
 
+		constexpr TimeSpan(TimeSpan&& timespan) noexcept:
+			_nanoseconds(timespan._nanoseconds)
+		{}
+
 		/// <summary>
 		/// Represents a zero time interval (0 nanoseconds).
 		/// </summary>
@@ -223,6 +227,18 @@ namespace Sgl
 		constexpr TimeSpan& operator/=(double number) noexcept
 		{
 			_nanoseconds /= number;
+			return *this;
+		}
+
+		constexpr TimeSpan& operator=(const TimeSpan& other) noexcept
+		{
+			_nanoseconds = other._nanoseconds;
+			return *this;
+		}
+
+		constexpr TimeSpan& operator=(TimeSpan&& other) noexcept
+		{
+			_nanoseconds = other._nanoseconds;
 			return *this;
 		}
 

@@ -26,7 +26,7 @@ namespace Sgl
 		std::string_view GetArtist() const;
 		std::string_view GetAlbum() const;
 		uint32_t GetReleaseYear() const;
-		MIX_Audio* GetSDLAduio() const;
+		MIX_Audio* GetSDLAudio() const;
 
 		Audio& operator=(const Audio&) = delete;
 		Audio& operator=(Audio&& other) noexcept;

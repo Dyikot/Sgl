@@ -1,8 +1,7 @@
 #pragma once
 
-#include <string>
-#include <string_view>
 #include <unordered_map>
+#include "Tools/StringUtils.h"
 
 namespace Sgl
 {
@@ -15,7 +14,7 @@ namespace Sgl
 		std::string_view Get(Handle handle);
 		Handle Create(std::string_view str);
 	private:
-		std::vector<std::string> _pool;
-		std::unordered_map<std::string_view, Handle> _map;
+		std::vector<std::string_view> _pool;
+		std::unordered_map<std::string, Handle, StringHash, std::equal_to<>> _map;
 	};
 }

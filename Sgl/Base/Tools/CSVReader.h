@@ -2,7 +2,6 @@
 
 #include <string>
 #include <vector>
-#include <unordered_map>
 
 namespace Sgl
 {
@@ -26,12 +25,12 @@ namespace Sgl
         /// <summary>
         /// The file path associated with this parser.
         /// </summary>
-        std::string FilePath;
+        const std::string FilePath;
 
         /// <summary>
         /// The delimiter character used to separate fields in the CSV file.
         /// </summary>
-        char Delimiter;
+        const char Delimiter;
 
         /// <summary>
         /// Returns all records from the CSV file as a 2D vector of strings.
@@ -60,13 +59,7 @@ namespace Sgl
         /// <param name="name"> - the name of the column to retrieve.</param>
         /// <returns>A vector of field values for the specified column (excluding the header row). Returns an empty vector if the column is not found.</returns>
         std::vector<std::string> GetColumnByName(std::string_view name) const;
-
-        /// <summary>
-        /// Returns a localization map for the specified language.
-        /// Assumes the first row contains column headers and the first column contains localization keys.
-        /// </summary>
-        /// <param name="languageName"> - the name of the language column to retrieve.</param>
-        /// <returns>A map where keys are values from the first column and values are from the specified language column.</returns>
-        std::unordered_map<std::string, std::string> GetLocalization(std::string_view languageName) const;
+    protected:
+        std::vector<std::string> ParseLine(const std::string& line, char delimeter) const;
     };
 }

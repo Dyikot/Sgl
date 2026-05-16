@@ -1,51 +1,10 @@
 #include "CSVReader.h"
+#include "../Logging.h"
 
 #include <fstream>
-#include <format>
-
-#include "../Logging.h"
 
 namespace Sgl
 {
-	static std::vector<std::string> ParseLine(const std::string& line, char delimeter)
-	{
-		std::vector<std::string> records;
-		std::string record;
-		bool inQuotes = false;		
-
-		record.reserve(line.size() / 4);
-
-		for(size_t i = 0; i < line.length(); i++)
-		{
-			const char current = line[i];
-
-			if(current == '"')
-			{
-				if(i + 1 < line.length() && line[i + 1] == '"')
-				{
-					record.push_back('\"');
-					i++;
-				}
-				else
-				{
-					inQuotes = !inQuotes;
-				}
-			}
-			else if(current == delimeter && !inQuotes)
-			{
-				records.push_back(std::move(record));
-				record.clear();
-			}
-			else
-			{
-				record.push_back(current);
-			}
-		}
-
-		records.push_back(record);
-		return records;
-	}
-
 	CSVReader::CSVReader(std::string path, char delimiter):
 		FilePath(std::move(path)),
 		Delimiter(delimiter)
@@ -152,47 +111,44 @@ namespace Sgl
 		}
 
 		return {};
-	}
+	}	
 
-	std::unordered_map<std::string, std::string> CSVReader::GetLocalization(std::string_view languageName) const
+	std::vector<std::string> CSVReader::ParseLine(const std::string& line, char delimeter) const
 	{
-		std::unordered_map<std::string, std::string> localization;
+		std::vector<std::string> records;
+		std::string record;
+		bool inQuotes = false;
 
-		if(auto stream = std::ifstream(FilePath))
+		record.reserve(line.size() / 4);
+
+		for(size_t i = 0; i < line.length(); i++)
 		{
-			std::string line;
-			if(std::getline(stream, line))
+			const char current = line[i];
+
+			if(current == '"')
 			{
-				auto headers = ParseLine(line, Delimiter);
-
-				int languageIndex = -1;
-				for(size_t i = 0; i < headers.size(); i++)
+				if(i + 1 < line.length() && line[i + 1] == '"')
 				{
-					if(headers[i] == languageName)
-					{
-						languageIndex = static_cast<int>(i);
-						break;
-					}
+					record.push_back('\"');
+					i++;
 				}
-
-				if(languageIndex >= 0)
+				else
 				{
-					while(std::getline(stream, line))
-					{
-						auto record = ParseLine(line, Delimiter);
-						if(!record.empty() && languageIndex < static_cast<int>(record.size()))
-						{
-							localization.emplace(record[0], record[languageIndex]);
-						}
-					}
+					inQuotes = !inQuotes;
 				}
 			}
-		}
-		else
-		{
-			Logging::LogWarning("Unable to open a csv file: '{}'.", FilePath);
+			else if(current == delimeter && !inQuotes)
+			{
+				records.push_back(std::move(record));
+				record.clear();
+			}
+			else
+			{
+				record.push_back(current);
+			}
 		}
 
-		return localization;
+		records.push_back(record);
+		return records;
 	}
 }

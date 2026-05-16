@@ -23,20 +23,11 @@ namespace Sgl
 	{
 	public:
 		using ChangedEventHandler = EventHandler<ObservableCollection<T>, const ObservableCollectionChangedEventArgs&>;
-	private:
 		using base = Collection<T>;
 	public:
-		ObservableCollection() = default;
+		using base::base;
 		ObservableCollection(const ObservableCollection&) = default;
 		ObservableCollection(ObservableCollection&&) noexcept = default;
-
-		ObservableCollection(std::initializer_list<T> init):
-			base(init)
-		{}
-
-		explicit ObservableCollection(std::vector<T> items):
-			base(std::move(items))
-		{}
 
 		Event<ChangedEventHandler> Changed;
 

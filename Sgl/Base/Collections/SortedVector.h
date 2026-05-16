@@ -23,14 +23,6 @@ namespace Sgl
 			std::ranges::sort(_items, _comparer);
 		}
 
-		template<std::ranges::range TRange>
-			requires std::same_as<std::ranges::range_value_t<TRange>, T>
-		SortedVector(TRange&& range): 
-			_items(std::ranges::begin(range), std::ranges::end(range))
-		{
-			std::ranges::sort(_items, _comparer);
-		}
-
 		SortedVector(const SortedVector& other):
 			_items(other._items),
 			_comparer(other._comparer)
@@ -54,14 +46,12 @@ namespace Sgl
 
 		void Add(T&& item)
 		{
-			_items.insert(LowerBound(item), std::forward<T>(item));
+			_items.insert(LowerBound(item), std::move(item));
 		}
 
-		template<std::ranges::range TRange>
-			requires std::same_as<std::ranges::range_value_t<TRange>, T>
-		void AddRange(TRange&& range)
+		void AddRange(std::ranges::range auto&& range)
 		{
-			if constexpr(std::ranges::sized_range<TRange>)
+			if constexpr(std::ranges::sized_range<decltype(range)>)
 			{
 				_items.reserve(_items.size() + std::ranges::size(range));
 			}
@@ -165,6 +155,6 @@ namespace Sgl
 		SortedVector& operator=(SortedVector&&) noexcept = default;
 	protected:
 		std::vector<T> _items;
-		TComparer _comparer;
+		[[no_unique_address]] TComparer _comparer;
 	};
 }

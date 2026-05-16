@@ -92,7 +92,7 @@ namespace Sgl
 		return SDL_GetNumberProperty(properties, MIX_PROP_METADATA_YEAR_NUMBER, 0);
 	}
 
-	MIX_Audio* Audio::GetSDLAduio() const
+	MIX_Audio* Audio::GetSDLAudio() const
 	{
 		return _audio;
 	}
@@ -135,7 +135,7 @@ namespace Sgl
 
 	void Track::SetAudio(const Audio& audio)
 	{
-		MIX_SetTrackAudio(_track, audio.GetSDLAduio());
+		MIX_SetTrackAudio(_track, audio.GetSDLAudio());
 	}
 
 	void Track::SetVolume(float volume)

@@ -44,8 +44,7 @@ namespace Sgl
 		/// The action must be invocable with no arguments.
 		/// </summary>
 		/// <param name="action"> - the code to benchmark.</param>
-		template<std::invocable TAction> 
-		void Run(TAction action) const
+		void Run(std::invocable auto action) const
 		{
 			Stopwatch stopwatch = Stopwatch::StartNew();
 

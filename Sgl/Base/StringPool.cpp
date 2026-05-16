@@ -22,8 +22,8 @@ namespace Sgl
 		}
 
 		auto handle = _pool.size();
-		auto& stored_value = _pool.emplace_back(str);
-		_map.emplace(stored_value, handle);
+		auto [it, _] = _map.emplace(str, handle);
+		auto& stored_value = _pool.emplace_back(it->first);
 		return handle;
 	}
 }
