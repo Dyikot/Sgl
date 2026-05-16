@@ -1,8 +1,8 @@
 #pragma once
 
-#include <string>
 #include <memory>
 #include "Color.h"
+#include "SourcePath.h"
 
 struct TTF_Font;
 
@@ -10,49 +10,32 @@ namespace Sgl
 {
 	/// <summary>
 	/// Represents a font family, encapsulating either a system-default font or a custom font loaded from a file.
-	/// Internally uses reference counting to manage shared platform-specific resources safely.
-	/// Supports copy, move, and comparison semantics. The default font is accessible via the static Default tag.
-	/// Reference counting ensures that the underlying font resource is released only when all FontFamily instances
-	/// referencing it are destroyed.
 	/// </summary>
-	class FontFamily final
+	class FontFamily
 	{
 	private:
 		struct DefaultTag {};
 	public:
 		/// <summary>
-		/// Constructs a reference to the system's default font family.
-		/// Shares a globally managed default font resource with other default instances.
+		/// Constructs Segoe UI font family.
 		/// </summary>
 		FontFamily(DefaultTag);
 
 		/// <summary>
 		/// Constructs a font family by name, typically resolving to a system-installed font.
 		/// </summary>
-		/// <param name="name"> - the name of the system font (e.g., "Arial", "Times New Roman").</param>
-		explicit FontFamily(const std::string& name);
+		/// <param name="familyName"> - the name of the system font (e.g., "Arial", "Times New Roman").</param>
+		explicit FontFamily(const std::string& familyName);
 
 		/// <summary>
 		/// Constructs a font family from a font file at the given path with an associated display name.
 		/// </summary>
-		/// <param name="path"> - file system path to the font file (e.g., .ttf or .otf).</param>
-		/// <param name="name"> - logical name to associate with this font (used for identification and sharing).</param>
-		FontFamily(const std::string& path, const std::string& name);
+		/// <param name="basePath"> - the base path that is used to resolve familyName</param>
+		/// <param name="familyName"> - the name of the system font (e.g., "Arial", "Times New Roman").</param>
+		FontFamily(const std::filesystem::path& basePath, const std::string& familyName);
 
-		/// <summary>
-		/// Copy constructor. Increments the reference count of the shared implementation.
-		/// </summary>
 		FontFamily(const FontFamily& other);
-
-		/// <summary>
-		/// Move constructor. Transfers ownership of the implementation without modifying reference counts.
-		/// </summary>
 		FontFamily(FontFamily&& other) noexcept;
-
-		/// <summary>
-		/// Destructor. Decrements the reference count and releases the underlying resource if this was the last owner.
-		/// </summary>
-		~FontFamily();
 
 		/// <summary>
 		/// Tag used to construct the default system font family.
@@ -60,36 +43,21 @@ namespace Sgl
 		static constexpr DefaultTag Default;
 
 		/// <summary>
-		/// Returns the source identifier of the font family.
+		/// Returns the file path of the font family.
 		/// </summary>
-		const std::string& GetSource() const;
+		std::string_view GetSource() const;
 
 		/// <summary>
-		/// Copy assignment operator. Properly manages reference counts when assigning from another instance.
+		/// Returns the name of the font family.
 		/// </summary>
-		FontFamily& operator=(const FontFamily& other);
+		std::string_view GetName() const;
 
-		/// <summary>
-		/// Move assignment operator. Efficiently transfers ownership without reference count overhead.
-		/// </summary>
+		FontFamily& operator=(FontFamily other);
 		FontFamily& operator=(FontFamily&& other) noexcept;
-
-		/// <summary>
-		/// Compares two FontFamily instances for equality based on their underlying implementation.
-		/// Two instances are equal if they refer to the same font resource.
-		/// </summary>
-		friend bool operator==(const FontFamily&, const FontFamily&) = default;
+		bool operator==(const FontFamily&) const = default;
 	private:
-		void Acquire();
-		void Release();
-	private:
-		struct FontFamilyImpl
-		{
-			std::string Source;
-			int References;
-		};
-
-		FontFamilyImpl* _impl = nullptr;
+		SourcePath _fontPath;
+		uint32_t _nameLength;
 	};
 
 	/// <summary>
@@ -173,7 +141,7 @@ namespace Sgl
 		/// </summary>
 		/// <param name="fontFamily"> - the font family to use.</param>
 		/// <param name="size"> - the font size in points.</param>
-		TrueTypeFont(const FontFamily& fontFamily, float size);
+		TrueTypeFont(FontFamily fontFamily, float size);
 
 		TrueTypeFont(const TrueTypeFont&) = delete;
 

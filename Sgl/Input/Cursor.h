@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string_view>
+#include "../Base/Primitives.h"
 
 struct SDL_Cursor;
 
@@ -42,41 +43,32 @@ namespace Sgl
         /// Loads a custom cursor from an image file at the given path.
         /// The image format must be supported by the underlying platform (typically .png or .cur).
         /// </summary>
-        /// <param name="path"> - file path to the cursor image.</param>
-        explicit Cursor(std::string_view path);
+        /// <param name="filePath"> - file path to the cursor image.</param>
+        /// <param name="hotSpot"> - cursor hot spot position.</param>
+        Cursor(std::string_view filePath, Point hotSpot);
 
         Cursor(const Cursor& other);
         Cursor(Cursor&& other) noexcept;
         ~Cursor() = default;
 
-        /// <summary>
-        /// Sets the current system cursor to the one represented by this instance.
-        /// </summary>
-        /// <param name="cursor"> - the cursor to activate.</param>
-        static void Set(const Cursor& cursor);
-
-        /// <summary>
-        /// Makes the mouse cursor visible.
-        /// </summary>
-        static void Show();
-
-        /// <summary>
-        /// Hides the mouse cursor.
-        /// </summary>
-        static void Hide();
-
-        /// <summary>
-        /// Checks whether the mouse cursor is currently visible.
-        /// </summary>
-        /// <returns>True if the cursor is visible; otherwise, false.</returns>
-        static bool IsVisible();
+        SDL_Cursor* GetSDLCursor() const;
 
         Cursor& operator=(const Cursor&) = default;
         Cursor& operator=(Cursor&&) noexcept = default;
-        friend bool operator==(const Cursor&, const Cursor&) = default;
-        operator SDL_Cursor* () const { return _cursor; }
+        bool operator==(const Cursor&) const = default;
         explicit operator bool() const noexcept { return _cursor != nullptr; }
     private:
-        SDL_Cursor* _cursor = nullptr;
+        SDL_Cursor* _cursor;
     };
+
+    class CurrentCursorImpl
+    {
+    public:
+        void Set(const Cursor& cursor);
+        void Show();
+        void Hide();
+        bool IsVisible();
+    };
+
+    inline CurrentCursorImpl CurrentCursor;
 }

@@ -133,7 +133,7 @@ namespace Sgl
         }
     }
 
-    void Panel::OnCursorChanged(const Cursor& cursor)
+    void Panel::OnCursorChanged(Cursor cursor)
     {
         UIElement::OnCursorChanged(cursor);
 
@@ -180,7 +180,7 @@ namespace Sgl
 
             if(IsPointInRect(e.X, e.Y, child->GetBounds()))
             {
-                Cursor::Set(child->GetCursor());
+                CurrentCursor.Set(child->GetCursor());
 
                 current = child;
                 child->OnMouseEnter(e);
@@ -189,7 +189,7 @@ namespace Sgl
             }
         }        
 
-        Cursor::Set(GetCursor());
+        CurrentCursor.Set(GetCursor());
     }
 
     void Panel::OnMouseDown(MouseButtonEventArgs e)

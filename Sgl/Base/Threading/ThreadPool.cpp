@@ -3,6 +3,7 @@
 #include <mutex>
 #include <queue>
 #include <thread>
+#include <vector>
 #include <semaphore>
 
 namespace Sgl
@@ -28,7 +29,6 @@ namespace Sgl
 
                         if(stopToken.stop_requested())
                         {
-                            _semaphore.release();
                             break;
                         }
 
@@ -85,7 +85,7 @@ namespace Sgl
         std::counting_semaphore<> _semaphore { 0 };
     };
 
-    constinit size_t maxThreads = 4;
+    static constinit size_t maxThreads = 4;
 
     static ThreadPoolImpl& GetThreadPoolImpl()
     {
@@ -100,7 +100,9 @@ namespace Sgl
 
     size_t ThreadPool::GetPendingTaskCount() noexcept
     {
-        return GetThreadPoolImpl()._tasks.size();
+        auto& impl = GetThreadPoolImpl();
+        std::lock_guard lock(impl._mutex);
+        return impl._tasks.size();
     }
 
     void ThreadPool::QueueTask(Task task)

@@ -143,11 +143,11 @@ namespace Sgl
 		void return_void() noexcept {}
 	};
 
-	struct async_void
+	struct AsyncTask
 	{
 		struct promise_type
 		{
-			async_void get_return_object() { return {}; }
+			AsyncTask get_return_object() { return {}; }
 			std::suspend_never initial_suspend() noexcept { return {}; }
 			std::suspend_never final_suspend() noexcept { return {}; }
 			void unhandled_exception() 

@@ -148,7 +148,7 @@ namespace Sgl
 		}
 	}
 
-	void ContentUIElement::OnCursorChanged(const Cursor& cursor)
+	void ContentUIElement::OnCursorChanged(Cursor cursor)
 	{
 		UIElement::OnCursorChanged(cursor);
 		
@@ -188,7 +188,7 @@ namespace Sgl
 			else if(wasMouseOver)
 			{
 				_contentPresenter->OnMouseLeave(e);
-				Cursor::Set(GetCursor());
+				CurrentCursor.Set(GetCursor());
 			}
 		}
 	}

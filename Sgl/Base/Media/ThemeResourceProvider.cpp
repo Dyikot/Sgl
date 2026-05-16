@@ -3,8 +3,8 @@
 
 namespace Sgl
 {
-    constexpr size_t LightIndex = static_cast<size_t>(ThemeMode::Light);
-    constexpr size_t DarkIndex = static_cast<size_t>(ThemeMode::Dark);
+    static constexpr size_t LightIndex = static_cast<size_t>(ThemeMode::Light);
+    static constexpr size_t DarkIndex  = static_cast<size_t>(ThemeMode::Dark);
 
     void ThemeResourceProvider::AddColor(const std::string& key, Color lightColor, Color darkColor)
     {

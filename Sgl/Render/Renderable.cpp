@@ -7,11 +7,11 @@ namespace Sgl
 		StyleableElement(std::move(other)),
 		_visualRoot(std::exchange(other._visualRoot, nullptr)),
 		_cursor(other._cursor),
-		_background(std::move(other._background)),
+		_background(other._background),
 		_isDirty(other._isDirty)
 	{}
 
-	void Renderable::SetCursor(const Cursor& value, ValueSource source)
+	void Renderable::SetCursor(Cursor value, ValueSource source)
 	{
 		if(SetProperty(CursorProperty, _cursor, value, _cursorSource, source))
 		{
@@ -19,7 +19,7 @@ namespace Sgl
 		}
 	}
 
-	void Renderable::SetBackground(const Brush& value, ValueSource source)
+	void Renderable::SetBackground(Brush value, ValueSource source)
 	{
 		if(SetProperty(BackgroundProperty, _background, value, _backgroundSource, source))
 		{
@@ -112,18 +112,18 @@ namespace Sgl
 		_backgroundTexture = nullptr;
 	}
 
-	ResourceSetter<Renderable, const Brush&>::ResourceSetter(
-		StyleableProperty<Renderable, const Brush&>& property, 
+	ResourceSetter<Renderable, Brush>::ResourceSetter(
+		StyleableProperty<Renderable, Brush>& property, 
 		ResourceKey key):
 		SetterBase(property),
 		_key(std::move(key))
 	{}
 
-	void ResourceSetter<Renderable, const Brush&>::Apply(
+	void ResourceSetter<Renderable, Brush>::Apply(
 		StyleableElement& target, 
 		ValueSource valueSource) const
 	{
-		auto& property = static_cast<StyleableProperty<Renderable, const Brush&>&>(GetProperty());
+		auto& property = static_cast<StyleableProperty<Renderable, Brush>&>(GetProperty());
 		property.InvokeSetter(
 			static_cast<Renderable&>(target),
 			App->Resources.GetBrush(_key.Value),

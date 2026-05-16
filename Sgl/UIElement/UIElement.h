@@ -41,7 +41,7 @@ namespace Sgl
 
 		static inline StyleableProperty TagProperty { &SetTag, &GetTag };
 	protected:
-		void OnCursorChanged(const Cursor& cursor) override;
+		void OnCursorChanged(Cursor cursor) override;
 		void OnAttachedToLogicalTree() override;
 		virtual void OnKeyUp(KeyEventArgs e);
 		virtual void OnKeyDown(KeyEventArgs e);

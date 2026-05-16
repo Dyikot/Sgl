@@ -10,22 +10,22 @@ namespace Sgl
 		return path.lexically_normal().generic_string();
 	}
 
-	StringPool Pool;
+	static StringPool PathPool;
 
 	SourcePath::SourcePath():
-		_handle(Pool.Create(""))
+		_handle(PathPool.Create(""))
 	{}
 
 	SourcePath::SourcePath(const fs::path& path)
 	{
 		auto normalized_path = NormalizePath(path);
-		_handle = Pool.Create(normalized_path);
+		_handle = PathPool.Create(normalized_path);
 	}
 
 	SourcePath::SourcePath(const fs::path& basePath, const fs::path& relativePath)
 	{
 		auto normalized_path = NormalizePath(fs::path(basePath) / relativePath);
-		_handle = Pool.Create(normalized_path);
+		_handle = PathPool.Create(normalized_path);
 	}
 
 	SourcePath::SourcePath(const SourcePath& other):
@@ -38,7 +38,7 @@ namespace Sgl
 
 	std::string_view SourcePath::Path() const
 	{
-		return Pool.Get(_handle);
+		return PathPool.Get(_handle);
 	}
 
 	SourcePath& SourcePath::operator=(const SourcePath& other)

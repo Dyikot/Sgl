@@ -8,8 +8,8 @@
 
 namespace Sgl
 {
-	constexpr float MinVolume = 0;
-	constexpr float MaxVolume = 1;
+	static constexpr float MinVolume = 0;
+	static constexpr float MaxVolume = 1;
 
 	static float Adjust(float volume)
 	{
@@ -24,7 +24,7 @@ namespace Sgl
 		}
 	};
 
-	constexpr AppMixer Mixer;
+	static constexpr AppMixer Mixer;
 
 	Audio::Audio(std::string_view path, bool predecode):
 		_audio(MIX_LoadAudio(Mixer, path.data(), predecode))

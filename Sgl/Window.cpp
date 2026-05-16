@@ -8,11 +8,11 @@
 
 namespace Sgl
 {
-    constexpr auto DefaultTitle = "Window";
-    constexpr auto DefaultWidth = 1280;
-    constexpr auto DefaultHeight = 720;
-    constexpr auto DefaultPosition = Point(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
-    constexpr auto DefaultFlags = SDL_WINDOW_HIDDEN;
+    static constexpr auto DefaultTitle = "Window";
+    static constexpr auto DefaultWidth = 1280;
+    static constexpr auto DefaultHeight = 720;
+    static constexpr auto DefaultPosition = Point(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+    static constexpr auto DefaultFlags = SDL_WINDOW_HIDDEN;
 
     Window::Window():
         _sdlWindow(SDL_CreateWindow(DefaultTitle, DefaultWidth, DefaultHeight, DefaultFlags)),
@@ -456,17 +456,17 @@ namespace Sgl
         }
     }    
 
-    void Window::OnCursorChanged(const Cursor& cursor)
+    void Window::OnCursorChanged(Cursor cursor)
     {
         if(_content)
         {
             _content->SetCursor(cursor, ValueSource::Inheritance);
-            auto& current = _content->IsMouseOver() ? _content->GetCursor() : GetCursor();
-            Cursor::Set(current);
+            auto current = _content->IsMouseOver() ? _content->GetCursor() : GetCursor();
+            CurrentCursor.Set(current);
         }
         else
         {
-            Cursor::Set(GetCursor());
+            CurrentCursor.Set(GetCursor());
         }
     }
 
@@ -541,7 +541,7 @@ namespace Sgl
             else if(wasMouseOver)
             {
                 _content->OnMouseLeave(e);
-                Cursor::Set(GetCursor());
+                CurrentCursor.Set(GetCursor());
             }
         }
     }
@@ -574,11 +574,11 @@ namespace Sgl
 
         if(_content && _content->IsMouseOver())
         {
-            Cursor::Set(_content->GetCursor());
+            CurrentCursor.Set(_content->GetCursor());
         }
         else
         {
-            Cursor::Set(GetCursor());
+            CurrentCursor.Set(GetCursor());
         }
     }
 

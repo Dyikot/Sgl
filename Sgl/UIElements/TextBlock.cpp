@@ -4,12 +4,12 @@
 
 namespace Sgl::UIElements
 {
-	constexpr size_t FontFamilyFlag		= 0x01;
-	constexpr size_t FontSizeFlag		= 0x02;
-	constexpr size_t FontStyleFlag		= 0x04;
-	constexpr size_t FontOutlineFlag	= 0x08;
-	constexpr size_t FlowDirectionFlag	= 0x10;
-	constexpr size_t TextAlignmentFlag	= 0x20;
+	static constexpr size_t FontFamilyFlag		= 0x01;
+	static constexpr size_t FontSizeFlag		= 0x02;
+	static constexpr size_t FontStyleFlag		= 0x04;
+	static constexpr size_t FontOutlineFlag		= 0x08;
+	static constexpr size_t FlowDirectionFlag	= 0x10;
+	static constexpr size_t TextAlignmentFlag	= 0x20;
 
 	TextBlock::TextBlock(TextBlock&& other) noexcept:
 		UIElement(std::move(other)),
@@ -59,7 +59,7 @@ namespace Sgl::UIElements
 		}
 	}
 
-	void TextBlock::SetFontFamily(const FontFamily& value, ValueSource source)
+	void TextBlock::SetFontFamily(FontFamily value, ValueSource source)
 	{
 		if(SetProperty(FontFamilyProperty, _fontFamily, value, _fontFamilySource, source))
 		{

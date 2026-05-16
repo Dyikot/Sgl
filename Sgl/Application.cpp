@@ -17,8 +17,8 @@ namespace Sgl
 {
     using namespace UIElements;
 
-    constexpr size_t MaxWindowsNumber = 100;
-    constexpr double MaxFrameTime = 1e3 / 60.0;
+    static constexpr size_t MaxWindowsNumber = 100;
+    static constexpr double MaxFrameTime = 1e3 / 60.0;
 
 	Application::Application() noexcept:
         _windows(MaxWindowsNumber)

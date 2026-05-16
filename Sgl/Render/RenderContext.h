@@ -260,7 +260,7 @@ namespace Sgl
         /// <param name="size"> - font size in points.</param>
         /// <param name="color"> - text color.</param>
         /// <param name="fontFamily"> - font family to use; defaults to FontFamily::Default if not specified.</param>
-        void DrawText(FPoint position, std::string_view text, float size, Color color, const FontFamily& fontFamily = FontFamily::Default);
+        void DrawText(FPoint position, std::string_view text, float size, Color color, FontFamily fontFamily = FontFamily::Default);
     private:
         void SetColor(Color color) const noexcept
         {

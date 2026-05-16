@@ -7,6 +7,7 @@
 #include "../Base/Logging.h"
 #include "../Render/Surface.h"
 #include "../Base/Exceptions.h"
+#include "../Base/Tools/StringUtils.h"
 
 namespace Sgl
 {
@@ -41,15 +42,15 @@ namespace Sgl
             return cursor;
         }
 
-        SDL_Cursor* Create(std::string_view path)
+        SDL_Cursor* Create(std::string_view filePath, Point hotSpot)
         {
-            if(auto it = _customCursors.find(path); it != _customCursors.end())
+            if(auto it = _customCursors.find(filePath); it != _customCursors.end())
             {
                 return it->second;
             }
 
-            Surface surface(path);
-            auto cursor = SDL_CreateColorCursor(surface.GetSDLSurface(), 0, 0);
+            Surface surface(filePath);
+            auto cursor = SDL_CreateColorCursor(surface.GetSDLSurface(), hotSpot.x, hotSpot.y);
 
             if(cursor == nullptr)
             {
@@ -57,24 +58,24 @@ namespace Sgl
             }
             else
             {
-                _customCursors.emplace(path, cursor);
+                _customCursors.emplace(filePath, cursor);
             }
 
             return cursor;
         }
     private:
         SDL_Cursor* _systemCursors[12] {};
-        std::unordered_map<std::string_view, SDL_Cursor*> _customCursors;
+        std::unordered_map<std::string, SDL_Cursor*, StringHash, std::equal_to<>> _customCursors;
     };
 
-    CursorsPool cursorsPool;
+    static CursorsPool cursorsPool;
 
     Cursor::Cursor(Cursors systemCursor) noexcept:
         _cursor(cursorsPool.Create(systemCursor))
     {}
 
-    Cursor::Cursor(std::string_view path):
-        _cursor(cursorsPool.Create(path))
+    Cursor::Cursor(std::string_view filePath, Point hotSpot):
+        _cursor(cursorsPool.Create(filePath, hotSpot))
     {}
 
     Cursor::Cursor(const Cursor& other):
@@ -85,15 +86,20 @@ namespace Sgl
         _cursor(other._cursor)
     {}
 
-    void Cursor::Set(const Cursor& cursor)
+    SDL_Cursor* Cursor::GetSDLCursor() const
     {
-        if(cursor && cursor != SDL_GetCursor())
+        return _cursor;
+    }
+
+    void CurrentCursorImpl::Set(const Cursor& cursor)
+    {
+        if(auto impl = cursor.GetSDLCursor(); impl && impl != SDL_GetCursor())
         {
-            SDL_SetCursor(cursor);
+            SDL_SetCursor(impl);
         }
     }
 
-    void Cursor::Show()
+    void CurrentCursorImpl::Show()
     {
         if(SDL_ShowCursor())
         {
@@ -101,7 +107,7 @@ namespace Sgl
         }
     }
 
-    void Cursor::Hide()
+    void CurrentCursorImpl::Hide()
     {
         if(SDL_HideCursor())
         {
@@ -109,7 +115,7 @@ namespace Sgl
         }
     }
 
-    bool Cursor::IsVisible()
+    bool CurrentCursorImpl::IsVisible()
     {
         return SDL_CursorVisible();
     }

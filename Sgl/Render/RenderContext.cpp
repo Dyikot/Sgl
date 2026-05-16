@@ -8,12 +8,12 @@
 
 namespace Sgl
 {
-	constexpr size_t VerticesNumber = 181;
-	constexpr size_t EllipseVerticesNumber = 91;
-	constexpr size_t EllipseAngleStep = 2;
+	static constexpr size_t VerticesNumber = 181;
+	static constexpr size_t EllipseVerticesNumber = 91;
+	static constexpr size_t EllipseAngleStep = 2;
 
-	const std::vector<float> SinRange = Math::SinRange(VerticesNumber);
-	const std::vector<float> CosRange = Math::CosRange(VerticesNumber);
+	static const std::vector<float> SinRange = Math::SinRange(VerticesNumber);
+	static const std::vector<float> CosRange = Math::CosRange(VerticesNumber);
 
 	RenderContext::RenderContext(SDL_Renderer* _renderer):
 		_renderer(_renderer)
@@ -39,8 +39,6 @@ namespace Sgl
 		SDL_SetRenderClipRect(_renderer, nullptr);
 	}
 
-	constexpr size_t MaxCacheSize = 100;
-
 	Texture RenderContext::LoadTexture(SourcePath imagePath, bool cache)
 	{
 		if(!cache)
@@ -54,11 +52,12 @@ namespace Sgl
 			return it->second.Texture;
 		}
 
+		static constexpr size_t cacheSize = 100;
 		Texture texture(_renderer, imagePath.Path());
 
 		if(texture)
 		{
-			if(_cachedTextures.size() >= MaxCacheSize)
+			if(_cachedTextures.size() >= cacheSize)
 			{
 				auto path = _cacheOrder.back();
 				_cachedTextures.erase(path);
@@ -420,7 +419,7 @@ namespace Sgl
 	}
 
 	void RenderContext::DrawText(FPoint position, std::string_view text, float size, 
-								 Color color, const FontFamily& fontFamily)
+								 Color color, FontFamily fontFamily)
 	{
 		TrueTypeFont font(fontFamily, size);
 		Texture texture(_renderer, FontQuality::Blended, font, text, color);

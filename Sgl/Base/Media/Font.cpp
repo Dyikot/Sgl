@@ -3,95 +3,75 @@
 
 #include <SDL3_ttf/SDL_ttf.h>
 #include <SDL3/SDL_platform_defines.h>
-#include <filesystem>
 
 namespace fs = std::filesystem;
 
 namespace Sgl
 {
 	#ifdef SDL_PLATFORM_WIN32
-	constexpr auto FamiliesPath = "C:/Windows/Fonts/";
+	static constexpr auto FontsPath = "C:/Windows/Fonts/";
 	#elif SDL_PLATFORM_LINUX
-	constexpr auto FamiliesPath = "/usr/share/fonts/";
+	static constexpr auto FontsPath = "/usr/share/fonts/";
 	#elif SDL_PLATFORM_MACOS
-	constexpr auto FamiliesPath = "/System/Library/Fonts/";
+	static constexpr auto FontsPath = "/System/Library/Fonts/";
 	#endif
 
-	constexpr auto DefaultFamily = "segoeui.ttf";
-	const FontFamily DefaultFontFamily { FamiliesPath, DefaultFamily };
+	static constexpr std::string_view DefaultFontName = "segoeui.ttf";
 
-	static inline std::string NormalizePath(const fs::path& path)
+	static SourcePath GetDefaultSource()
 	{
-		return path.lexically_normal().generic_string();
+		static SourcePath defaultFilePath(FontsPath, DefaultFontName);
+		return defaultFilePath;
 	}
 
 	FontFamily::FontFamily(DefaultTag):
-		FontFamily(DefaultFontFamily)
+		_fontPath(GetDefaultSource()),
+		_nameLength(DefaultFontName.length())
 	{}
 
-	FontFamily::FontFamily(const std::string& name):
-		FontFamily(FamiliesPath, name)
+	FontFamily::FontFamily(const std::string& familyName):
+		FontFamily(FontsPath, familyName)
 	{}
 
-	FontFamily::FontFamily(const std::string& path, const std::string& name):
-		_impl(new FontFamilyImpl(NormalizePath(fs::path(path) / name), 1))
+	FontFamily::FontFamily(const std::filesystem::path& basePath, const std::string& familyName):
+		_fontPath(basePath, familyName),
+		_nameLength(familyName.length())
 	{}
 
 	FontFamily::FontFamily(const FontFamily& other):
-		_impl(other._impl)
-	{
-		Acquire();
-	}
+		_fontPath(other._fontPath),
+		_nameLength(other._nameLength)
+	{}
 
 	FontFamily::FontFamily(FontFamily&& other) noexcept:
-		_impl(other._impl)
+		_fontPath(std::move(other._fontPath)),
+		_nameLength(other._nameLength)
+	{}
+
+	std::string_view FontFamily::GetSource() const
 	{
-		other._impl = nullptr;
+		return _fontPath.Path();
 	}
 
-	FontFamily::~FontFamily()
+	std::string_view FontFamily::GetName() const
 	{
-		Release();
+		auto path = _fontPath.Path();
+		return path.substr(path.length() - _nameLength);
 	}
 
-	const std::string& FontFamily::GetSource() const
+	FontFamily& FontFamily::operator=(FontFamily other)
 	{
-		return _impl->Source;
-	}
-
-	FontFamily& FontFamily::operator=(const FontFamily& other)
-	{
-		Release();
-		_impl = other._impl;
-		Acquire();
+		_fontPath = other._fontPath;
 		return *this;
 	}
 
 	FontFamily& FontFamily::operator=(FontFamily&& other) noexcept
 	{
-		_impl = other._impl;
-		other._impl = nullptr;
+		_fontPath = other._fontPath;
 		return *this;
 	}
 
-	void FontFamily::Acquire()
-	{
-		if(_impl)
-		{
-			_impl->References++;
-		}
-	}
-
-	void FontFamily::Release()
-	{
-		if(_impl && --(_impl->References) == 0)
-		{
-			delete _impl;
-			_impl = nullptr;
-		}
-	}
-
-	TrueTypeFont::TrueTypeFont(const FontFamily& fontFamily, float size):
+	TrueTypeFont::TrueTypeFont(FontFamily fontFamily, float size):
 		_font(TTF_OpenFont(fontFamily.GetSource().data(), size))
 	{
 		if(_font == nullptr)

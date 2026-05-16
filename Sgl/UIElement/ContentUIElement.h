@@ -44,7 +44,7 @@ namespace Sgl
 		virtual void OnContentPresenterDestroying(UIElement& presenter);
 		void OnAttachedToLogicalTree() override;
 		void OnDetachedFromLogicalTree() override;
-		void OnCursorChanged(const Cursor& cursor) override;
+		void OnCursorChanged(Cursor cursor) override;
 		void OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext) override;
 		void OnMouseMove(MouseMoveEventArgs e) override;
 		void OnMouseDown(MouseButtonEventArgs e) override;

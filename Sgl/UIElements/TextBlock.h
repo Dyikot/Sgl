@@ -23,8 +23,8 @@ namespace Sgl::UIElements
 		void SetFontOutline(int value, ValueSource source = ValueSource::Local);
 		int GetFontOutline() const { return _outline; }
 
-		void SetFontFamily(const FontFamily& value, ValueSource source = ValueSource::Local);
-		const FontFamily& GetFontFamily() const { return _fontFamily; }
+		void SetFontFamily(FontFamily value, ValueSource source = ValueSource::Local);
+		FontFamily GetFontFamily() const { return _fontFamily; }
 
 		void SetFlowDirection(FlowDirection value, ValueSource source = ValueSource::Local);
 		FlowDirection GetFlowDirection() const { return _flowDirection; }

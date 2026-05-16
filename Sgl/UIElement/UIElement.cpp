@@ -15,11 +15,11 @@ namespace Sgl
 		SetProperty(TagProperty, _tag, value, _tagSource, source);
 	}
 
-	void UIElement::OnCursorChanged(const Cursor& cursor)
+	void UIElement::OnCursorChanged(Cursor cursor)
 	{
 		if(IsMouseOver())
 		{
-			Cursor::Set(cursor);
+			CurrentCursor.Set(cursor);
 		}
 	}
 
@@ -76,7 +76,7 @@ namespace Sgl
 
 	void UIElement::OnMouseEnter(MouseMoveEventArgs e)
 	{
-		Cursor::Set(GetCursor());
+		CurrentCursor.Set(GetCursor());
 		PseudoClasses.Set(OnHover);
 		MouseEnter.Invoke(*this, e);
 	}

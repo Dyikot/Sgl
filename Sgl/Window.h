@@ -398,7 +398,7 @@ namespace Sgl
 
 		static inline StyleableProperty ContentProperty { &SetContent, &GetContent };
 	protected:
-		void OnCursorChanged(const Cursor& cursor) override;
+		void OnCursorChanged(Cursor cursor) override;
 		void OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext) override;
 		void OnAttachedToLogicalTree() override;
 		void OnDetachedFromLogicalTree() override;

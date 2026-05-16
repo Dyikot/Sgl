@@ -14,11 +14,11 @@ namespace Sgl
         Renderable() = default;
         Renderable(Renderable&& other) noexcept;
 
-        void SetCursor(const Cursor& value, ValueSource source = ValueSource::Local);
-        const Cursor& GetCursor() const { return _cursor; }
+        void SetCursor(Cursor value, ValueSource source = ValueSource::Local);
+        Cursor GetCursor() const { return _cursor; }
 
-        void SetBackground(const Brush& value, ValueSource source = ValueSource::Local);
-        const Brush& GetBackground() const { return _background; }
+        void SetBackground(Brush value, ValueSource source = ValueSource::Local);
+        Brush GetBackground() const { return _background; }
 
         virtual void SetVisualRoot(IVisualRoot* value);
         IVisualRoot* GetVisualRoot() const { return _visualRoot; }
@@ -31,7 +31,7 @@ namespace Sgl
         static inline StyleableProperty CursorProperty { &SetCursor, &GetCursor };
         static inline StyleableProperty BackgroundProperty { &SetBackground, &GetBackground };
     protected:
-        virtual void OnCursorChanged(const Cursor& cursor) {}
+        virtual void OnCursorChanged(Cursor cursor) {}
         void RenderBackground(RenderContext& context);
         void RenderBackground(RenderContext& context, const FRect& rect);
     private:
@@ -50,10 +50,10 @@ namespace Sgl
     };
 
     template<>
-    class ResourceSetter<Renderable, const Brush&> : public SetterBase
+    class ResourceSetter<Renderable, Brush> : public SetterBase
     {
     public:
-        ResourceSetter(StyleableProperty<Renderable, const Brush&>& property, ResourceKey key);
+        ResourceSetter(StyleableProperty<Renderable, Brush>& property, ResourceKey key);
 
         void Apply(StyleableElement& target, ValueSource valueSource) const final;
     private:
