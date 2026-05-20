@@ -53,11 +53,11 @@ namespace Sgl::UIElements
 
 	RadioButton::RadioButton()
 	{
-		static SourcePath imagePath = SourcePath(SDL_GetBasePath(), "Assets/Images/RadioButtonOutline.png");
+		static ImageSource imageSource(AssetId::RadioButtonOutline);
 
 		SetWidth(24, ValueSource::Default);
 		SetHeight(24, ValueSource::Default);
-		SetBackground(imagePath, ValueSource::Default);
+		SetBackground(imageSource, ValueSource::Default);
 	}
 
 	RadioButton::RadioButton(RadioButton&& other) noexcept:

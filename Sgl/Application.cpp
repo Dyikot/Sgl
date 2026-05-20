@@ -17,7 +17,7 @@ namespace Sgl
 {
     using namespace UIElements;
 
-    static constexpr size_t MaxWindowsNumber = 100;
+    static constexpr size_t MaxWindowsNumber = 8;
     static constexpr double MaxFrameTime = 1e3 / 60.0;
 
 	Application::Application() noexcept:
@@ -136,7 +136,7 @@ namespace Sgl
 
     void Application::AddLocalization(LocalizationLoader localizationLoader)
     {
-        _localizationStorage.emplace(std::move(localizationLoader));
+        _localizationStorage = std::make_unique<LocalizationStorage>(std::move(localizationLoader));
     }
 
     void Application::Run()
@@ -550,10 +550,10 @@ namespace Sgl
     void Application::AddDefaultStyles()
     {
         Styles.Add(Selector().OfType<CheckBox>().On("checked"))
-            .Set(CheckBox::BackgroundProperty, SourcePath(SDL_GetBasePath(), "Assets/Images/CheckButton.png"));
+            .Set(CheckBox::BackgroundProperty, ImageSource(AssetId::CheckButton));
 
         Styles.Add(Selector().OfType<RadioButton>().On("checked"))
-            .Set(CheckBox::BackgroundProperty, SourcePath(SDL_GetBasePath(), "Assets/Images/RadioButton.png"));
+            .Set(CheckBox::BackgroundProperty, ImageSource(AssetId::RadioButton));
     }
 
     void Application::PushSDLUserEvent(uint32_t type)
@@ -591,9 +591,11 @@ namespace Sgl
 
     void Application::DetachWindow(Window& window)
     {
-        std::erase(_activeWindows, &window);
-        window.SetParent(nullptr);
-        window.OnDetachedFromLogicalTree();
+        if(std::erase(_activeWindows, &window) > 0)
+        {
+            window.SetParent(nullptr);
+            window.OnDetachedFromLogicalTree();
+        }
     }
 
     std::string StringLocalizer::operator()(std::string_view key) const

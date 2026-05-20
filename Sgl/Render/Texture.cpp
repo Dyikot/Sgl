@@ -30,6 +30,17 @@ namespace Sgl
 		}
 	}
 
+	Texture::Texture(SDL_Renderer* renderer, std::span<const uint8_t> data)
+	{
+		auto stream = SDL_IOFromConstMem(data.data(), data.size());
+		_texture = IMG_LoadTextureTyped_IO(renderer, stream, true, "PNG");
+
+		if(_texture == nullptr)
+		{
+			Logging::LogError("Unable to create a texture: {}", SDL_GetError());
+		}
+	}
+
 	Texture::Texture(SDL_Renderer* renderer, Size size, 
 					 TextureAccess access, 
 					 SDL_PixelFormat format):

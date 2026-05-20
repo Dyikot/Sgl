@@ -17,8 +17,8 @@ namespace Sgl
         void SetCursor(Cursor value, ValueSource source = ValueSource::Local);
         Cursor GetCursor() const { return _cursor; }
 
-        void SetBackground(Brush value, ValueSource source = ValueSource::Local);
-        Brush GetBackground() const { return _background; }
+        void SetBackground(const Brush& value, ValueSource source = ValueSource::Local);
+        const Brush& GetBackground() const { return _background; }
 
         virtual void SetVisualRoot(IVisualRoot* value);
         IVisualRoot* GetVisualRoot() const { return _visualRoot; }
@@ -50,10 +50,12 @@ namespace Sgl
     };
 
     template<>
-    class ResourceSetter<Renderable, Brush> : public SetterBase
+    class ResourceSetter<Renderable, const Brush&> : public SetterBase
     {
     public:
-        ResourceSetter(StyleableProperty<Renderable, Brush>& property, ResourceKey key);
+        using BackgroundProperty = decltype(Renderable::BackgroundProperty);
+    public:
+        ResourceSetter(BackgroundProperty& property, ResourceKey key);
 
         void Apply(StyleableElement& target, ValueSource valueSource) const final;
     private:

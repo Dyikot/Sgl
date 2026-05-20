@@ -9,7 +9,7 @@
 #include "Texture.h"
 #include "../Base/Primitives.h"
 #include "../Base/Media/Color.h"
-#include "../Base/Media/SourcePath.h"
+#include "../Base/Media/ImageSource.h"
 
 namespace Sgl
 {
@@ -63,10 +63,10 @@ namespace Sgl
         /// <summary>
         /// Loads a texture from the specified file path, with optional caching.
         /// </summary>
-        /// <param name="texturePath"> - the path to the image file to load.</param>
+        /// <param name="imageSource"> - the source of the image.</param>
         /// <param name="cache"> - whether to cache the texture for future use. Defaults to true.</param>
         /// <returns>The loaded texture. If the file fails to load, returns an invalid (null) texture.</returns>
-        Texture LoadTexture(SourcePath imagePath, bool cache = true);
+        Texture LoadTexture(const ImageSource& imageSource, bool cache = true);
 
         /// <summary>
         /// Fills the entire current render target with a solid color.
@@ -273,11 +273,11 @@ namespace Sgl
         struct CachedTexture
         {
             Texture Texture;
-            std::list<SourcePath>::iterator OrderIt;
+            std::list<ImageSource>::iterator OrderIt;
         };
-
+    private:
         SDL_Renderer* _renderer;
-        std::unordered_map<SourcePath, CachedTexture> _cachedTextures;
-        std::list<SourcePath> _cacheOrder;
+        std::unordered_map<ImageSource, CachedTexture> _cachedTextures;
+        std::list<ImageSource> _cacheOrder;
     };
 }

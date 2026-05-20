@@ -101,7 +101,9 @@ namespace Sgl
 	class ResourceSetter<UIElements::TextBlock, Color> : public SetterBase
 	{
 	public:
-		ResourceSetter(StyleableProperty<UIElements::TextBlock, Color>& property, ResourceKey key);
+		using ForegroundProperty = decltype(UIElements::TextBlock::ForegroundProperty);
+	public:
+		ResourceSetter(ForegroundProperty& property, ResourceKey key);
 
 		void Apply(StyleableElement& target, ValueSource valueSource) const final;
 	private:

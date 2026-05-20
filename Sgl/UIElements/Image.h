@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../UIElement/UIElement.h"
-#include "../Base/Media/SourcePath.h"
 
 namespace Sgl::UIElements
 {
@@ -23,8 +22,8 @@ namespace Sgl::UIElements
 		Image(const Image&) = delete;
 		Image(Image&& other) noexcept;
 
-		void SetSource(SourcePath value, ValueSource source = ValueSource::Local);
-		SourcePath GetSource() const { return _source; }
+		void SetSource(const ImageSource& value, ValueSource source = ValueSource::Local);
+		const ImageSource& GetSource() const { return _source; }
 
 		void SetStretch(Stretch value, ValueSource source = ValueSource::Local);
 		Stretch GetStretch() const { return _stretch; }
@@ -39,7 +38,7 @@ namespace Sgl::UIElements
 	private:
 		void UpdateTexture();
 	private:
-		SourcePath _source;
+		ImageSource _source;
 		Stretch _stretch = Stretch::Uniform;
 
 		FRect _sourceBounds {};

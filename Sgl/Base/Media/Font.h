@@ -1,8 +1,8 @@
 #pragma once
 
 #include <memory>
+#include <filesystem>
 #include "Color.h"
-#include "SourcePath.h"
 
 struct TTF_Font;
 
@@ -56,7 +56,7 @@ namespace Sgl
 		FontFamily& operator=(FontFamily&& other) noexcept;
 		bool operator==(const FontFamily&) const = default;
 	private:
-		SourcePath _fontPath;
+		uint32_t _handle;
 		uint32_t _nameLength;
 	};
 

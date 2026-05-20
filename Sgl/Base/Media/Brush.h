@@ -2,22 +2,22 @@
 
 #include <variant>
 #include "Color.h"
-#include "SourcePath.h"
+#include "ImageSource.h"
 
 namespace Sgl
 {	
 	/// <summary>
-	/// Represents a drawing brush that can be either a solid color or an image path.
+	/// Represents a drawing brush that can be either a solid color or an image source.
 	/// </summary>
-	using Brush = std::variant<Color, SourcePath>;
+	using Brush = std::variant<Color, ImageSource>;
 
 	inline bool operator==(Brush brush, Color color)
 	{
 		return brush.index() == 0 && std::get<Color>(brush) == color;
 	}
 
-	inline bool operator==(Brush brush, SourcePath path)
+	inline bool operator==(Brush brush, const ImageSource& imageSource)
 	{
-		return brush.index() == 1 && std::get<SourcePath>(brush) == path;
+		return brush.index() == 1 && std::get<ImageSource>(brush) == imageSource;
 	}
 }

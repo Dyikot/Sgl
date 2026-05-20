@@ -11,8 +11,6 @@
 
 namespace Sgl
 {
-	class Window;
-
 	/// <summary>
 	/// Specifies the display mode of a window.
 	/// </summary>
@@ -120,11 +118,6 @@ namespace Sgl
 		/// Event triggered after the window has been closed.
 		/// </summary>
 		Event<WindowEventHandler> Closed;
-
-		/// <summary>
-		/// Determines if the window should be rendered when minimized
-		/// </summary>
-		bool IsRenderableWhenMinimized = false;
 
 		/// <summary>
 		/// The result returned by this dialog when it closes.
@@ -424,10 +417,10 @@ namespace Sgl
 		void RenderCore();
 		void DestroyRenderer();
 	private:
+		SDL_WindowID _id = 0;
 		SDL_Window* _sdlWindow;
 		SDL_Renderer* _renderer;
 		RenderContext _renderContext;
-		SDL_WindowID _id = 0;
 		Ref<UIElement> _content;
 		Ref<UIElement> _mouseCapturedElement;
 		bool _isModal = false;

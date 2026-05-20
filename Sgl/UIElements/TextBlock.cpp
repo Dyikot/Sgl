@@ -271,7 +271,7 @@ namespace Sgl::UIElements
 namespace Sgl
 {
 	ResourceSetter<UIElements::TextBlock, Color>::ResourceSetter(
-		StyleableProperty<UIElements::TextBlock, Color>& property,
+		ForegroundProperty& property,
 		ResourceKey key):
 		SetterBase(property),
 		_key(std::move(key))
@@ -281,7 +281,7 @@ namespace Sgl
 		StyleableElement& target,
 		ValueSource valueSource) const
 	{
-		auto& property = static_cast<StyleableProperty<UIElements::TextBlock, Color>&>(GetProperty());
+		auto& property = static_cast<ForegroundProperty&>(GetProperty());
 		property.InvokeSetter(
 			static_cast<UIElements::TextBlock&>(target),
 			App->Resources.GetColor(_key.Value),

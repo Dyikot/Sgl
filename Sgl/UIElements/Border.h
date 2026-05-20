@@ -38,7 +38,9 @@ namespace Sgl
 	class ResourceSetter<UIElements::Border, Color>: public SetterBase
 	{
 	public:
-		ResourceSetter(StyleableProperty<UIElements::Border, Color>& property, ResourceKey key);
+		using BorderColorProperty = decltype(UIElements::Border::BorderColorProperty);
+	public:
+		ResourceSetter(BorderColorProperty& property, ResourceKey key);
 
 		void Apply(StyleableElement& target, ValueSource valueSource) const final;
 	private:

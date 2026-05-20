@@ -1,5 +1,6 @@
 #include "Font.h"
 #include "../Logging.h"
+#include "../StringPool.h"
 
 #include <SDL3_ttf/SDL_ttf.h>
 #include <SDL3/SDL_platform_defines.h>
@@ -18,14 +19,21 @@ namespace Sgl
 
 	static constexpr std::string_view DefaultFontName = "segoeui.ttf";
 
-	static SourcePath GetDefaultSource()
+	static StringPool FontsPool;
+
+	static inline std::string NormalizePath(const fs::path& base, const std::string& name)
 	{
-		static SourcePath defaultFilePath(FontsPath, DefaultFontName);
-		return defaultFilePath;
+		return (base / name).lexically_normal().string();
+	}
+
+	static uint32_t GetDefaultFontPath()
+	{
+		static uint32_t handle = FontsPool.Create(NormalizePath(FontsPath, DefaultFontName.data()));
+		return handle;
 	}
 
 	FontFamily::FontFamily(DefaultTag):
-		_fontPath(GetDefaultSource()),
+		_handle(GetDefaultFontPath()),
 		_nameLength(DefaultFontName.length())
 	{}
 
@@ -34,40 +42,40 @@ namespace Sgl
 	{}
 
 	FontFamily::FontFamily(const std::filesystem::path& basePath, const std::string& familyName):
-		_fontPath(basePath, familyName),
+		_handle(FontsPool.Create(NormalizePath(basePath, familyName))),
 		_nameLength(familyName.length())
 	{}
 
 	FontFamily::FontFamily(const FontFamily& other):
-		_fontPath(other._fontPath),
+		_handle(other._handle),
 		_nameLength(other._nameLength)
 	{}
 
 	FontFamily::FontFamily(FontFamily&& other) noexcept:
-		_fontPath(std::move(other._fontPath)),
+		_handle(std::move(other._handle)),
 		_nameLength(other._nameLength)
 	{}
 
 	std::string_view FontFamily::GetSource() const
 	{
-		return _fontPath.Path();
+		return FontsPool.Get(_handle);
 	}
 
 	std::string_view FontFamily::GetName() const
 	{
-		auto path = _fontPath.Path();
+		auto path = FontsPool.Get(_handle);
 		return path.substr(path.length() - _nameLength);
 	}
 
 	FontFamily& FontFamily::operator=(FontFamily other)
 	{
-		_fontPath = other._fontPath;
+		_handle = other._handle;
 		return *this;
 	}
 
 	FontFamily& FontFamily::operator=(FontFamily&& other) noexcept
 	{
-		_fontPath = other._fontPath;
+		_handle = other._handle;
 		return *this;
 	}
 

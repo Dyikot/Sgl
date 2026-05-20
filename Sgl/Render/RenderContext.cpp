@@ -39,32 +39,32 @@ namespace Sgl
 		SDL_SetRenderClipRect(_renderer, nullptr);
 	}
 
-	Texture RenderContext::LoadTexture(SourcePath imagePath, bool cache)
+	Texture RenderContext::LoadTexture(const ImageSource& imageSource, bool cache)
 	{
 		if(!cache)
 		{
-			return Texture(_renderer, imagePath.Path());
+			return imageSource.CreateTexture(_renderer);
 		}
 
-		if(auto it = _cachedTextures.find(imagePath); it != _cachedTextures.end())
+		if(auto it = _cachedTextures.find(imageSource); it != _cachedTextures.end())
 		{
 			_cacheOrder.splice(_cacheOrder.begin(), _cacheOrder, it->second.OrderIt);
 			return it->second.Texture;
 		}
 
 		static constexpr size_t cacheSize = 100;
-		Texture texture(_renderer, imagePath.Path());
+		auto texture = imageSource.CreateTexture(_renderer);
 
 		if(texture)
 		{
 			if(_cachedTextures.size() >= cacheSize)
 			{
-				auto path = _cacheOrder.back();
-				_cachedTextures.erase(path);
+				const auto& source = _cacheOrder.back();
+				_cachedTextures.erase(source);
 				_cacheOrder.pop_back();
 			}
 
-			auto [it, _] = _cachedTextures.emplace(imagePath, CachedTexture(texture, {}));
+			auto [it, _] = _cachedTextures.emplace(imageSource, CachedTexture(texture, {}));
 			auto orderIt = _cacheOrder.insert(_cacheOrder.begin(), it->first);
 			it->second.OrderIt = orderIt;
 		}

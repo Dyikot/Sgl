@@ -119,6 +119,12 @@ namespace Sgl
 		IStyleHost* GetStylingParent() final { return nullptr; }
 
 		/// <summary>
+		/// Gets the active window.
+		/// </summary>
+		/// <returns>A pointer to the active window.</returns>
+		Window* GetActiveWindow() { return _focusedWindow; }
+
+		/// <summary>
 		/// Gets a list of all currently open windows.
 		/// </summary>
 		/// <returns>A vector containing pointers to all active windows.</returns>
@@ -176,19 +182,18 @@ namespace Sgl
 	private:
 		static inline Application* _current;
 
-		bool _isRunning = false;
-		ThemeMode _themeMode;
-		ThemeVariant _themeVariant;
-		std::optional<LocalizationStorage> _localizationStorage;
-		MIX_Mixer* _mixer = nullptr;
-
 		Window* _focusedWindow = nullptr;
 		std::vector<Window*> _windows;
 		std::vector<Window*> _activeWindows;
 
+		bool _isRunning = false;
+		ThemeMode _themeMode;
+		ThemeVariant _themeVariant;
+		std::unique_ptr<LocalizationStorage> _localizationStorage;
+		MIX_Mixer* _mixer = nullptr;
+
 		friend class Window;
 		friend class StringLocalizer;
-		friend class AssetsLoader;
 	};
 
 	/// <summary>

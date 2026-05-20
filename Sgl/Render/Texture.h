@@ -1,5 +1,6 @@
 #pragma once
 
+#include <span>
 #include <SDL3/SDL_pixels.h>
 #include <SDL3/SDL_blendmode.h>
 
@@ -58,6 +59,13 @@ namespace Sgl
 		/// <param name="renderer"> - the SDL renderer used to create the texture.</param>
 		/// <param name="surface"> - the surface whose contents will be copied into the texture.</param>
 		Texture(SDL_Renderer* renderer, const Surface& surface);
+
+		/// <summary>
+		/// Creates a texture by uploading PNG image data from memory.
+		/// </summary>
+		/// <param name="renderer"> - the SDL renderer used to create the texture.</param>
+		/// <param name="data"> - span containing the raw bytes of a PNG file.</param>
+		Texture(SDL_Renderer* renderer, std::span<const uint8_t> data);
 
 		/// <summary>
 		/// Creates an empty texture with specified dimensions, access type, and pixel format.

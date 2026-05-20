@@ -19,7 +19,7 @@ namespace Sgl
 		}
 	}
 
-	void Renderable::SetBackground(Brush value, ValueSource source)
+	void Renderable::SetBackground(const Brush& value, ValueSource source)
 	{
 		if(SetProperty(BackgroundProperty, _background, value, _backgroundSource, source))
 		{
@@ -76,8 +76,8 @@ namespace Sgl
 		{
 			if(_backgroundTexture == nullptr)
 			{
-				auto& path = std::get<SourcePath>(_background);	
-				_backgroundTexture = context.LoadTexture(path);
+				auto& source = std::get<ImageSource>(_background);	
+				_backgroundTexture = context.LoadTexture(source);
 			}
 
 			context.DrawTexture(_backgroundTexture);
@@ -99,8 +99,8 @@ namespace Sgl
 		{
 			if(_backgroundTexture == nullptr)
 			{
-				auto& path = std::get<SourcePath>(_background);
-				_backgroundTexture = context.LoadTexture(path);
+				auto& source = std::get<ImageSource>(_background);
+				_backgroundTexture = context.LoadTexture(source);
 			}
 
 			context.DrawTexture(_backgroundTexture, rect);
@@ -112,18 +112,18 @@ namespace Sgl
 		_backgroundTexture = nullptr;
 	}
 
-	ResourceSetter<Renderable, Brush>::ResourceSetter(
-		StyleableProperty<Renderable, Brush>& property, 
+	ResourceSetter<Renderable, const Brush&>::ResourceSetter(
+		BackgroundProperty& property,
 		ResourceKey key):
 		SetterBase(property),
 		_key(std::move(key))
 	{}
 
-	void ResourceSetter<Renderable, Brush>::Apply(
+	void ResourceSetter<Renderable, const Brush&>::Apply(
 		StyleableElement& target, 
 		ValueSource valueSource) const
 	{
-		auto& property = static_cast<StyleableProperty<Renderable, Brush>&>(GetProperty());
+		auto& property = static_cast<BackgroundProperty&>(GetProperty());
 		property.InvokeSetter(
 			static_cast<Renderable&>(target),
 			App->Resources.GetBrush(_key.Value),

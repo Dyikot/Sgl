@@ -52,6 +52,7 @@ namespace Sgl
             throw Exception("Appication does not exist");
         }
 
+        App->DetachWindow(*this);
         App->RemoveWindow(*this);
         DestroyRenderer();
         SDL_DestroyWindow(_sdlWindow);
@@ -622,7 +623,7 @@ namespace Sgl
 
     void Window::RenderCore()
     {
-        if(NeedsRendering() && !IsRenderableWhenMinimized)
+        if(NeedsRendering())
         {
             Render(_renderContext);
             SDL_RenderPresent(_renderer);

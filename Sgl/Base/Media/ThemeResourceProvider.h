@@ -79,7 +79,7 @@ namespace Sgl
             std::unordered_map<std::string, Brush> Brushes;
         };
 
-        ThemeDictionary _resources[2];
         ThemeMode _currentMode = ThemeMode::Light;
+        ThemeDictionary _resources[2];
     };
 }
