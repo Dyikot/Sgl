@@ -63,10 +63,10 @@ namespace Sgl::UIElements
 
 	Grid::Grid(Grid&& other) noexcept:
 		Panel(std::move(other)),
-		_columnDefenitionsStr(std::move(other._columnDefenitionsStr)),
-		_rowDefenitionsStr(std::move(other._rowDefenitionsStr)),
-		_rowDefenitions(std::move(other._rowDefenitions)),
-		_columnDefenitions(std::move(other._columnDefenitions)),
+		_columnDefinitionsStr(std::move(other._columnDefinitionsStr)),
+		_rowDefinitionsStr(std::move(other._rowDefinitionsStr)),
+		_rowDefinitions(std::move(other._rowDefinitions)),
+		_columnDefinitions(std::move(other._columnDefinitions)),
 		_measuredWidth(std::move(other._measuredWidth)),
 		_measuredHeight(std::move(other._measuredHeight))
 	{}
@@ -123,9 +123,9 @@ namespace Sgl::UIElements
 		return element->GetLayoutContext<Context>().RowSpan;
 	}
 
-	static std::vector<ColumnDefenition> ParseDefenition(std::string_view defenition)
+	static std::vector<ColumnDefinition> ParseDefenition(std::string_view defenition)
 	{
-		std::vector<ColumnDefenition> defenitions;
+		std::vector<ColumnDefinition> defenitions;
 
 		for(auto token : defenition | std::views::split(' ') | Views::Cast<std::string_view>())
 		{
@@ -176,21 +176,21 @@ namespace Sgl::UIElements
 		return defenitions;
 	}
 
-	void Grid::SetColumnDefenitions(const std::string& value, ValueSource source)
+	void Grid::SetColumnDefinitions(const std::string& value, ValueSource source)
 	{
-		if(SetProperty(ColumnDefenitionsProperty, _columnDefenitionsStr, value, _columnDefenitionsValueSource, source))
+		if(SetProperty(ColumnDefinitionsProperty, _columnDefinitionsStr, value, _columnDefinitionsValueSource, source))
 		{
 			InvalidateMeasure();
-			_columnDefenitions = ParseDefenition(_columnDefenitionsStr);
+			_columnDefinitions = ParseDefenition(_columnDefinitionsStr);
 		}
 	}
 
-	void Grid::SetRowDefenitions(const std::string& value, ValueSource source)
+	void Grid::SetRowDefinitions(const std::string& value, ValueSource source)
 	{
-		if(SetProperty(RowDefenitionsProperty, _rowDefenitionsStr, value, _rowDefenitionsValueSource, source))
+		if(SetProperty(RowDefinitionsProperty, _rowDefinitionsStr, value, _rowDefinitionsValueSource, source))
 		{
 			InvalidateMeasure();
-			_rowDefenitions = ParseDefenition(_rowDefenitionsStr);
+			_rowDefinitions = ParseDefenition(_rowDefinitionsStr);
 		}
 	}
 	
@@ -198,15 +198,15 @@ namespace Sgl::UIElements
 	{
 		FSize size {};
 
-		if(_rowDefenitions.empty() || _columnDefenitions.empty())
+		if(_rowDefinitions.empty() || _columnDefinitions.empty())
 		{
 			_measuredWidth.clear();
 			_measuredHeight.clear();
 			return size;
 		}
 
-		const auto rows = _rowDefenitions.size();
-		const auto columns = _columnDefenitions.size();
+		const auto rows = _rowDefinitions.size();
+		const auto columns = _columnDefinitions.size();
 		const auto cells = rows * columns;
 
 		// Mearuse children and save desired width/height
@@ -239,14 +239,14 @@ namespace Sgl::UIElements
 		// Set the height for rows
 		for(size_t i = 0; i < rows; i++)
 		{
-			switch(_rowDefenitions[i].Mode)
+			switch(_rowDefinitions[i].Mode)
 			{
 				case SizingMode::Auto:
-					actualHeight[i] = std::max(desiredHeight[i], _rowDefenitions[i].Value);
+					actualHeight[i] = std::max(desiredHeight[i], _rowDefinitions[i].Value);
 					break;
 
 				case SizingMode::Fixed:
-					actualHeight[i] = _rowDefenitions[i].Value;
+					actualHeight[i] = _rowDefinitions[i].Value;
 					break;
 
 				case SizingMode::Proportional:
@@ -257,14 +257,14 @@ namespace Sgl::UIElements
 		// Set the width for columns
 		for(size_t i = 0; i < columns; i++)
 		{
-			switch(_columnDefenitions[i].Mode)
+			switch(_columnDefinitions[i].Mode)
 			{
 				case SizingMode::Auto:
-					actualWidth[i] = std::max(desiredWidth[i], _columnDefenitions[i].Value);
+					actualWidth[i] = std::max(desiredWidth[i], _columnDefinitions[i].Value);
 					break;
 
 				case SizingMode::Fixed:
-					actualWidth[i] = _columnDefenitions[i].Value;
+					actualWidth[i] = _columnDefinitions[i].Value;
 					break;
 
 				case SizingMode::Proportional:
@@ -280,9 +280,9 @@ namespace Sgl::UIElements
 
 		for(size_t i = 0; i < rows; ++i)
 		{
-			if(_rowDefenitions[i].Mode == SizingMode::Proportional)
+			if(_rowDefinitions[i].Mode == SizingMode::Proportional)
 			{
-				proportionalHeight += _rowDefenitions[i].Value;
+				proportionalHeight += _rowDefinitions[i].Value;
 			}
 			else
 			{
@@ -292,9 +292,9 @@ namespace Sgl::UIElements
 
 		for(size_t i = 0; i < columns; ++i)
 		{
-			if(_columnDefenitions[i].Mode == SizingMode::Proportional)
+			if(_columnDefinitions[i].Mode == SizingMode::Proportional)
 			{
-				proportionalWidth += _columnDefenitions[i].Value;
+				proportionalWidth += _columnDefinitions[i].Value;
 			}
 			else
 			{
@@ -309,9 +309,9 @@ namespace Sgl::UIElements
 		{
 			for(size_t i = 0; i < rows; i++)
 			{
-				if(_rowDefenitions[i].Mode == SizingMode::Proportional)
+				if(_rowDefinitions[i].Mode == SizingMode::Proportional)
 				{
-					actualHeight[i] = _rowDefenitions[i].Value / proportionalHeight * remainingHeight;
+					actualHeight[i] = _rowDefinitions[i].Value / proportionalHeight * remainingHeight;
 				}
 			}
 		}
@@ -320,9 +320,9 @@ namespace Sgl::UIElements
 		{
 			for(size_t i = 0; i < columns; i++)
 			{
-				if(_columnDefenitions[i].Mode == SizingMode::Proportional)
+				if(_columnDefinitions[i].Mode == SizingMode::Proportional)
 				{
-					actualWidth[i] = _columnDefenitions[i].Value / proportionalWidth * remainingWidth;
+					actualWidth[i] = _columnDefinitions[i].Value / proportionalWidth * remainingWidth;
 				}
 			}
 		}
@@ -346,8 +346,8 @@ namespace Sgl::UIElements
 			return;
 		}
 
-		const uint32_t rows = _rowDefenitions.size();
-		const uint32_t columns = _columnDefenitions.size();
+		const uint32_t rows = _rowDefinitions.size();
+		const uint32_t columns = _columnDefinitions.size();
 
 		// Calculating column and row positions
 		std::vector<float> rowY(rows + 1, rect.y);

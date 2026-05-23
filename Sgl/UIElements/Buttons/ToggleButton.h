@@ -12,7 +12,7 @@ namespace Sgl::UIElements
 		ToggleButton() = default;
 		ToggleButton(ToggleButton&& other) noexcept;
 
-		static const PseudoClassId OnChecked;
+		static inline const PseudoClass OnChecked { "checked" };
 
 		void SetIsChecked(bool value, ValueSource source = ValueSource::Local);
 		bool IsChecked() const { return _isChecked; }

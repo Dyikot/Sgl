@@ -21,8 +21,8 @@ namespace Sgl
 		UIElement() = default;
 		UIElement(UIElement&& other) noexcept;
 
-		static const PseudoClassId OnHover;
-		static const PseudoClassId OnPressed;
+		static inline const PseudoClass OnHover { "hover" };
+		static inline const PseudoClass OnPressed { "pressed" };
 
 		Event<KeyEventHandler> KeyUp;
 		Event<KeyEventHandler> KeyDown;

@@ -2,8 +2,6 @@
 
 namespace Sgl::UIElements
 {
-	const PseudoClassId ToggleButton::OnChecked = PseudoClassesRegistry::Register("checked");
-
 	ToggleButton::ToggleButton(ToggleButton&& other) noexcept:
 		Button(std::move(other)),
 		_isChecked(other._isChecked)

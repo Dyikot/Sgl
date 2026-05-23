@@ -31,4 +31,5 @@ See the [Getting Started Guide](Documentation/getting-started.md) for detailed p
 - [Getting Started](Documentation/getting-started.md)
 - [Events](Documentation/events.md)
 - [Styling](Documentation/styling.md)
+- [Panels](Documentation/panels.md)
 - [Data Binding](Documentation/data-binding.md)

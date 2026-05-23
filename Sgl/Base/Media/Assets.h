@@ -1,14 +1,13 @@
 #pragma once
 
-#include <string_view>
 #include <span>
 
 namespace Sgl
 {
 	enum class AssetId
 	{
-		CheckButton,
-		CheckButtonOutline,
+		CheckBox,
+		CheckBoxOutline,
 		RadioButton,
 		RadioButtonOutline
 	};

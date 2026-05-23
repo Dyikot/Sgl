@@ -29,9 +29,9 @@ namespace Sgl
         static constexpr KeyModifier Mode = 0x4000u;
         static constexpr KeyModifier Scroll = 0x8000u;
 
-        static constexpr KeyModifier Ctrl = (LCtrl | RCtrl);
-        static constexpr KeyModifier Shift = (LShift | RShift);
-        static constexpr KeyModifier Alt = (LAlt | RAlt);
-        static constexpr KeyModifier Gui = (LGui | RGui);
+        static constexpr KeyModifier Ctrl = LCtrl | RCtrl;
+        static constexpr KeyModifier Shift = LShift | RShift;
+        static constexpr KeyModifier Alt = LAlt | RAlt;
+        static constexpr KeyModifier Gui = LGui | RGui;
     };
 }

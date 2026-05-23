@@ -51,7 +51,7 @@ namespace Sgl
         Cursor(Cursor&& other) noexcept;
         ~Cursor() = default;
 
-        SDL_Cursor* GetSDLCursor() const;
+        SDL_Cursor* GetSDLCursor() const { return _cursor; }
 
         Cursor& operator=(const Cursor&) = default;
         Cursor& operator=(Cursor&&) noexcept = default;

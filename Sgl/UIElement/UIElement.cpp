@@ -2,9 +2,6 @@
 
 namespace Sgl
 {
-	const PseudoClassId UIElement::OnHover = PseudoClassesRegistry::Register("hover");
-	const PseudoClassId UIElement::OnPressed = PseudoClassesRegistry::Register("pressed");
-
 	UIElement::UIElement(UIElement&& other) noexcept:
 		Layoutable(std::move(other)),
 		_tag(std::move(other._tag))

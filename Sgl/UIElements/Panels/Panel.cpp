@@ -239,6 +239,10 @@ namespace Sgl
         return static_cast<Panel&>(target).Children.Back().GetValue();
     }
 
+    Panel_NthChild::Panel_NthChild(size_t position):
+        Index(std::max(1ull, position - 1ull))
+    {}
+
     StyleableElement& Panel_NthChild::operator()(StyleableElement& target) const
     {
         return static_cast<Panel&>(target).Children.GetElementAt(Index).GetValue();

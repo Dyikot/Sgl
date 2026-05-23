@@ -37,8 +37,8 @@ namespace Sgl
 
 		Selector& Name(std::string name);
 		Selector& Class(std::string className);
-		Selector& On(PseudoClassId pseudoClass);
-		Selector& On(std::string_view pseudoClass);
+		Selector& On(PseudoClass pseudoClass);
+		Selector& On(std::string_view pseudoClassName);
 		Selector& Where(Predicate<const StyleableElement&> predicate);
 
 		bool Match(const StyleableElement& target) const;

@@ -1,10 +1,21 @@
 #include "Selector.h"
 #include "StyleableElement.h"
 
-#include <algorithm>
-
 namespace Sgl
 {
+    static bool Contains(const std::vector<std::string> &classes, const std::string& className)
+    {
+        for(auto& aclass : classes)
+        {
+            if(aclass == className)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     Selector& Selector::Name(std::string name)
     {
         _name = std::move(name);
@@ -19,15 +30,15 @@ namespace Sgl
         return *this;
     }
 
-    Selector& Selector::On(PseudoClassId pseudoClass)
+    Selector& Selector::On(PseudoClass pseudoClass)
     {
-        _pseudoClasses.set(pseudoClass);
+        _pseudoClasses.set(pseudoClass.GetId());
         return *this;
     }
 
-    Selector& Selector::On(std::string_view pseudoClass)
+    Selector& Selector::On(std::string_view pseudoClassName)
     {
-        _pseudoClasses.set(PseudoClassesRegistry::GetByName(pseudoClass));
+        _pseudoClasses.set(PseudoClass::GetByName(pseudoClassName).GetId());
         return *this;
     }
 
@@ -68,7 +79,7 @@ namespace Sgl
 
             for(auto& className : _classes)
             {
-                result &= (std::ranges::find(classes, className) != classes.end());
+                result &= Contains(classes, className);
 
                 if(!result)
                 {

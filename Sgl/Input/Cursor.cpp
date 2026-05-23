@@ -86,11 +86,6 @@ namespace Sgl
         _cursor(other._cursor)
     {}
 
-    SDL_Cursor* Cursor::GetSDLCursor() const
-    {
-        return _cursor;
-    }
-
     void CurrentCursorImpl::Set(const Cursor& cursor)
     {
         if(auto impl = cursor.GetSDLCursor(); impl && impl != SDL_GetCursor())

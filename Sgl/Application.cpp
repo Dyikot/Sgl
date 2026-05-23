@@ -550,7 +550,7 @@ namespace Sgl
     void Application::AddDefaultStyles()
     {
         Styles.Add(Selector().OfType<CheckBox>().On("checked"))
-            .Set(CheckBox::BackgroundProperty, ImageSource(AssetId::CheckButton));
+            .Set(CheckBox::BackgroundProperty, ImageSource(AssetId::CheckBox));
 
         Styles.Add(Selector().OfType<RadioButton>().On("checked"))
             .Set(CheckBox::BackgroundProperty, ImageSource(AssetId::RadioButton));

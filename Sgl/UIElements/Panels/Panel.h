@@ -67,7 +67,8 @@ namespace Sgl
 
 	struct Panel_NthChild
 	{
-		size_t Index = 0;
-		StyleableElement& operator()(StyleableElement& target) const;
+		explicit Panel_NthChild(size_t position);
+		const size_t Index;
+		StyleableElement& operator()(StyleableElement& target) const;	
 	};
 }

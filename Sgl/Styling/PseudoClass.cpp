@@ -3,34 +3,38 @@
 
 namespace Sgl
 {
-    static constexpr size_t MaxPseudoClassId = (sizeof(PseudoClassId) * 8) - 1;
+    static constexpr size_t MaxPseudoClassId = (sizeof(size_t) * 8) - 1;
 
-    PseudoClassId PseudoClassesRegistry::Register(std::string_view name)
-    {        
-        if(_nextId == MaxPseudoClassId)
+    PseudoClass::PseudoClass(std::string_view name)
+    {
+        auto nextId = _registry.size();
+
+        if(nextId == MaxPseudoClassId)
         {
             throw Exception("Unable to register preudoclass. Limit reached - {}.", MaxPseudoClassId + 1);
         }
 
-        auto id = _nextId++;
-
-        if(_nameToId.contains(name))
+        if(_registry.contains(name))
         {
             throw Exception("Pseudoclass with name '{}' already registered.", name);
         }
 
-        _nameToId.emplace(name, id);
-        return id;
+        _registry.emplace(name, nextId);
+        _id = nextId;
     }
 
-    PseudoClassId PseudoClassesRegistry::GetByName(std::string_view name)
-    {        
-        if(auto it = _nameToId.find(name); it != _nameToId.end())
+    PseudoClass::PseudoClass(size_t id):
+        _id(id)
+    {}
+
+    PseudoClass PseudoClass::GetByName(std::string_view name)
+    {
+        if(auto it = _registry.find(name); it != _registry.end())
         {
-            return it->second;
+            return PseudoClass(it->second);
         }
 
-        throw Exception("Trigger with name '{}' is not registered.", name);
+        throw Exception("Pseudoclass with name '{}' is not registered.", name);
     }
 
     PseudoClassesSet::PseudoClassesSet(PseudoClasses classes):
@@ -41,20 +45,20 @@ namespace Sgl
         _classes(other._classes)
     {}
 
-    void PseudoClassesSet::Set(PseudoClassId pseudoClass, bool value)
+    void PseudoClassesSet::Set(PseudoClass pseudoClass, bool value)
     {
-        if(_classes.test(pseudoClass) != value)
+        if(_classes.test(pseudoClass.GetId()) != value)
         {
-            _classes.set(pseudoClass, value);
+            _classes.set(pseudoClass.GetId(), value);
             Changed.Invoke(*this);
         }
     }
 
-    void PseudoClassesSet::Reset(PseudoClassId pseudoClass)
+    void PseudoClassesSet::Reset(PseudoClass pseudoClass)
     {
-        if(_classes.test(pseudoClass))
+        if(_classes.test(pseudoClass.GetId()))
         {
-            _classes.reset(pseudoClass);
+            _classes.reset(pseudoClass.GetId());
             Changed.Invoke(*this);
         }
     }
@@ -64,9 +68,9 @@ namespace Sgl
         return _classes.none();
     }
 
-    bool PseudoClassesSet::Has(PseudoClassId pseudoClass) const
+    bool PseudoClassesSet::Has(PseudoClass pseudoClass) const
     {
-        return _classes.test(pseudoClass);
+        return _classes.test(pseudoClass.GetId());
     }
 
     bool PseudoClassesSet::Has(PseudoClasses pseudoClasses) const

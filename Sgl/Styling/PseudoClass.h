@@ -8,33 +8,37 @@
 namespace Sgl
 {
 	/// <summary>
-	/// Unique identifier for a pseudo-class.
+	/// Represents a class that denotes a specific state. For example, "hover," "pressed," etc.
 	/// </summary>
-	using PseudoClassId = unsigned long long;
-
-	/// <summary>
-	/// Registry for pseudo-class names and their unique identifiers.
-	/// Provides global registration and lookup of pseudo-classes by name.
-	/// </summary>
-	class PseudoClassesRegistry
+	class PseudoClass
 	{
 	public:
 		/// <summary>
-		/// Registers a new pseudo-class with the specified name.
+		/// Register a PseudoClass from a name. 
+		/// A new unique ID is assigned (sequentially from 0 up to 63).
 		/// </summary>
-		/// <param name="name"> - the pseudo-class name.</param>
-		/// <returns>The unique identifier for the registered pseudo-class.</returns>
-		static PseudoClassId Register(std::string_view name);
+		/// <param name="name">- the string identifier for the pseudo-class.</param>
+		explicit PseudoClass(std::string_view name);
+		PseudoClass(const PseudoClass&) = default;
+		PseudoClass(PseudoClass&&) noexcept = default;
 
 		/// <summary>
-		/// Gets the identifier for a pseudo-class by name.
+		/// Retrieves an existing PseudoClass by name without modifying the registry.
 		/// </summary>
-		/// <param name="name"> - the pseudo-class name.</param>
-		/// <returns>The unique identifier</returns>
-		static PseudoClassId GetByName(std::string_view name);
+		/// <param name="name"> - the string identifier to look up.</param>
+		/// <returns></returns>
+		static PseudoClass GetByName(std::string_view name);
+
+		/// <summary>
+		/// Returns the unique numeric identifier for this instance.
+		/// </summary>
+		/// <returns>The assigned ID, guaranteed to be in the range [0, 63] for valid instances.</returns>
+		size_t GetId() const noexcept { return _id; }
 	private:
-		static inline PseudoClassId _nextId = 0;
-		static inline std::unordered_map<std::string_view, PseudoClassId> _nameToId;
+		explicit PseudoClass(size_t id);
+	private:
+		static inline std::unordered_map<std::string_view, size_t> _registry;
+		size_t _id = 0;
 	};
 
 	/// <summary>
@@ -63,15 +67,15 @@ namespace Sgl
 		/// <summary>
 		/// Sets or resets a pseudo-class in the set.
 		/// </summary>
-		/// <param name="pseudoClass"> - the pseudo-class identifier.</param>
+		/// <param name="pseudoClass"> - the pseudo-class.</param>
 		/// <param name="value"> - true to set, false to reset.</param>
-		void Set(PseudoClassId pseudoClass, bool value = true);
+		void Set(PseudoClass pseudoClass, bool value = true);
 
 		/// <summary>
 		/// Resets a pseudo-class in the set.
 		/// </summary>
-		/// <param name="pseudoClass"> - the pseudo-class identifier.</param>
-		void Reset(PseudoClassId pseudoClass);
+		/// <param name="pseudoClass"> - the pseudo-class.</param>
+		void Reset(PseudoClass pseudoClass);
 
 		/// <summary>
 		/// Determines whether the set is empty.
@@ -82,9 +86,9 @@ namespace Sgl
 		/// <summary>
 		/// Checks if a specific pseudo-class is set.
 		/// </summary>
-		/// <param name="pseudoClass"> - the pseudo-class identifier.</param>
+		/// <param name="pseudoClass"> - the pseudo-class.</param>
 		/// <returns>True if the pseudo-class is set, false otherwise.</returns>
-		bool Has(PseudoClassId pseudoClass) const;
+		bool Has(PseudoClass pseudoClass) const;
 
 		/// <summary>
 		/// Checks if all pseudo-classes in a mask are set.
