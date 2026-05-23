@@ -29,11 +29,8 @@ namespace Sgl
     class LocalizationStorage final
     {        
     public:
-        /// <summary>
-        /// Constructs a LocalizationStorage instance with the specified loader.
-        /// </summary>
-        /// <param name="localizationLoader">Delegate used to load localized strings for a given locale.</param>
-        LocalizationStorage(LocalizationLoader localizationLoader);
+        
+        LocalizationStorage(LanguageManager& languageManager, LocalizationLoader localizationLoader);
         LocalizationStorage(const LocalizationStorage&) = delete;
         LocalizationStorage(LocalizationStorage&&) = default;
         ~LocalizationStorage();
@@ -45,10 +42,11 @@ namespace Sgl
         /// <returns>A localized string.</returns>
         std::string GetLocalizedString(std::string_view key) const;
     private:
-        void OnLanguageChanged(LanguageInfo& sender, EventArgs e);
+        void OnLanguageChanged(LanguageManager& sender, EventArgs e);
         void LoadLocalizationStrings(const LanguageInfo& languageInfo);
     private:
         LocalizationMap _map;
+        LanguageManager& _languageManager;
         LocalizationLoader _loader;
     };
 

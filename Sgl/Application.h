@@ -128,7 +128,13 @@ namespace Sgl
 		/// Gets a list of all currently open windows.
 		/// </summary>
 		/// <returns>A vector containing pointers to all active windows.</returns>
-		const std::vector<Window*> GetWindows() const noexcept { return _activeWindows; }
+		const std::vector<Window*>& GetWindows() const noexcept { return _activeWindows; }
+
+		/// <summary>
+		/// Gets a language manager
+		/// </summary>
+		/// <returns>A reference to language manager</returns>
+		LanguageManager& GetLanguageManager() const { return *_lanaguageManager; }
 
 		/// <summary>
 		/// Gets an audio mixer
@@ -189,6 +195,7 @@ namespace Sgl
 		bool _isRunning = false;
 		ThemeMode _themeMode;
 		ThemeVariant _themeVariant;
+		std::unique_ptr<LanguageManager> _lanaguageManager;
 		std::unique_ptr<LocalizationStorage> _localizationStorage;
 		MIX_Mixer* _mixer = nullptr;
 

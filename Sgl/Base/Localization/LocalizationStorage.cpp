@@ -6,16 +6,18 @@
 
 namespace Sgl
 {
-    LocalizationStorage::LocalizationStorage(LocalizationLoader localizationLoader):
-        _loader(std::move(localizationLoader))
-    {
-        LoadLocalizationStrings(LanguageInfo::GetCurrent());
-        LanguageInfo::CurrentChanged += MethodEventHandler(&LocalizationStorage::OnLanguageChanged, this);
-    }
+	LocalizationStorage::LocalizationStorage(LanguageManager& languageManager, 
+											 LocalizationLoader localizationLoader):
+		_languageManager(languageManager),
+		_loader(std::move(localizationLoader))
+	{
+		LoadLocalizationStrings(languageManager.GetCurrent());
+		_languageManager.CurrentChanged += MethodEventHandler(&LocalizationStorage::OnLanguageChanged, this);
+	}
 
-    LocalizationStorage::~LocalizationStorage()
+	LocalizationStorage::~LocalizationStorage()
     {
-        LanguageInfo::CurrentChanged -= MethodEventHandler(&LocalizationStorage::OnLanguageChanged, this);
+        _languageManager.CurrentChanged -= MethodEventHandler(&LocalizationStorage::OnLanguageChanged, this);
     }
 
     std::string LocalizationStorage::GetLocalizedString(std::string_view key) const
@@ -28,9 +30,9 @@ namespace Sgl
         return std::string(key);
     }
 
-    void LocalizationStorage::OnLanguageChanged(LanguageInfo& sender, EventArgs e)
+    void LocalizationStorage::OnLanguageChanged(LanguageManager& sender, EventArgs e)
     {
-        LoadLocalizationStrings(sender);
+        LoadLocalizationStrings(sender.GetCurrent());
     }
 
     void LocalizationStorage::LoadLocalizationStrings(const LanguageInfo& languageInfo)
@@ -39,7 +41,7 @@ namespace Sgl
 
         if(_map.empty())
         {
-            Logging::LogWarning("Failed to load a localization for '{}' language.", languageInfo.GetName());
+            Logging::LogWarning("Failed to load a localization for '{}' language.", languageInfo.Name);
         }
     }
 

@@ -2,24 +2,19 @@
 
 namespace Sgl
 {
-	static LanguageInfo current("en-US");
-
-	LanguageInfo::LanguageInfo(std::string name):
-		_name(std::move(name))
-	{}
-
-	void LanguageInfo::SetCurrent(const LanguageInfo& languageInfo)
+	void LanguageManager::SetCurrent(const LanguageInfo& languageInfo)
 	{
-		if(current != languageInfo)
+		if(_current.Name != languageInfo.Name)
 		{
-			current = languageInfo;
-			CurrentChanged.Invoke(current);
+			_current = languageInfo;
 		}
+
+		CurrentChanged.Invoke(*this);
 	}
 
-	const LanguageInfo& LanguageInfo::GetCurrent()
+	const LanguageInfo& LanguageManager::GetCurrent() const
 	{
-		return current;
+		return _current;
 	}
 }
 

@@ -19,7 +19,6 @@ The project is currently in development.
 - Focus manager
 - Animation
 - New renderer
-- Declarative UI (XML Compiler)
 - Notifications
 - Drag & drop
 - Documentation

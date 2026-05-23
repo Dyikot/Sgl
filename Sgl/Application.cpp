@@ -21,7 +21,8 @@ namespace Sgl
     static constexpr double MaxFrameTime = 1e3 / 60.0;
 
 	Application::Application() noexcept:
-        _windows(MaxWindowsNumber)
+        _windows(MaxWindowsNumber),
+        _lanaguageManager(new LanguageManager())
 	{
 		_current = this;
 
@@ -118,7 +119,7 @@ namespace Sgl
         auto csvLanguageLoader = [csv = LocalizationCSVReader(std::move(csvFilePath), delimiter)]
             (const LanguageInfo& languageInfo)
         {
-            return csv.GetLocalization(languageInfo.GetName());
+            return csv.GetLocalization(languageInfo.Name);
         };
 
         AddLocalization(std::move(csvLanguageLoader));
@@ -136,7 +137,10 @@ namespace Sgl
 
     void Application::AddLocalization(LocalizationLoader localizationLoader)
     {
-        _localizationStorage = std::make_unique<LocalizationStorage>(std::move(localizationLoader));
+        _localizationStorage = std::make_unique<LocalizationStorage>(
+            *_lanaguageManager,
+            std::move(localizationLoader)
+        );
     }
 
     void Application::Run()

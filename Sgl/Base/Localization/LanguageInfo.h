@@ -1,61 +1,35 @@
 #pragma once
 
-#include <string>
 #include "../Event.h"
+#include <string>
 
 namespace Sgl
 {
 	/// <summary>
-	/// Represents information about a language, including its name and provides functionality
-	/// to manage the current application language.
+	/// Represents basic information about a language.
 	/// </summary>
-	class LanguageInfo
+	struct LanguageInfo
 	{
-	private:
-		using LanguageChangedEventHandler = EventHandler<LanguageInfo>;
+		/// <summary>
+		/// The identifier of the language (e.g., "en-US", "fr-FR", "de-DE").
+		/// </summary>
+		std::string Name;
+	};
+
+	/// <summary>
+	/// Manages the application's current language state and notifies subscribers when it changes.
+	/// </summary>
+	class LanguageManager
+	{
 	public:
-		/// <summary>
-		/// Constructs a LanguageInfo object with the specified language name.
-		/// </summary>
-		/// <param name="name"> - the name of the language.</param>
-		explicit LanguageInfo(std::string name);		
-		LanguageInfo(const LanguageInfo&) = default;
-		LanguageInfo(LanguageInfo&&) noexcept = default;
+		using CurrentChangedEventHandler = EventHandler<LanguageManager>;
 
-		/// <summary>
-		/// Event triggered when the current language changes.
-		/// </summary>
-		static inline Event<LanguageChangedEventHandler> CurrentChanged;
+		Event<CurrentChangedEventHandler> CurrentChanged;
 
-		/// <summary>
-		/// Sets the current application language to the specified language info.
-		/// </summary>
-		/// <param name="languageInfo"> - the language info to set as current.</param>
-		static void SetCurrent(const LanguageInfo& languageInfo);
-		
-		/// <summary>
-		/// Gets the current application language.
-		/// </summary>
-		/// <returns>A const reference to the current language info.</returns>
-		static const LanguageInfo& GetCurrent();
-
-		/// <summary>
-		/// Gets the name of the language.
-		/// </summary>
-		/// <returns>A const reference to the language name.</returns>
-		const std::string& GetName() const noexcept { return _name; }
-
-		LanguageInfo& operator=(const LanguageInfo&) = default;
-		LanguageInfo& operator=(LanguageInfo&&) noexcept = default;
-
-		/// <summary>
-		/// Compares this LanguageInfo object with another for equality based on language name.
-		/// </summary>
-		/// <param name="other"> - the other LanguageInfo object to compare with.</param>
-		/// <returns>True if both objects have the same language name, false otherwise.</returns>
-		bool operator==(const LanguageInfo& other) const { return _name == other._name; }
+		void SetCurrent(const LanguageInfo& languageInfo);
+		const LanguageInfo& GetCurrent() const;
 	private:
-		std::string _name;
+		LanguageInfo _current { "en-US" };
 	};
 }
 
@@ -66,7 +40,7 @@ namespace std
 	{
 		size_t operator()(const Sgl::LanguageInfo& info) const noexcept
 		{
-			return hash<string>()(info.GetName());
+			return hash<string>()(info.Name);
 		}
 	};
 }
