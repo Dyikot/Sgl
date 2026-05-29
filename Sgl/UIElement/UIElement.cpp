@@ -16,7 +16,7 @@ namespace Sgl
 	{
 		if(IsMouseOver())
 		{
-			CurrentCursor.Set(cursor);
+			_platformCursor.Set(cursor);
 		}
 	}
 
@@ -73,7 +73,7 @@ namespace Sgl
 
 	void UIElement::OnMouseEnter(MouseMoveEventArgs e)
 	{
-		CurrentCursor.Set(GetCursor());
+		_platformCursor.Set(GetCursor());
 		PseudoClasses.Set(OnHover);
 		MouseEnter.Invoke(*this, e);
 	}

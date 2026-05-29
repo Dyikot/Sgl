@@ -180,7 +180,7 @@ namespace Sgl
 
             if(IsPointInRect(e.X, e.Y, child->GetBounds()))
             {
-                CurrentCursor.Set(child->GetCursor());
+                _platformCursor.Set(child->GetCursor());
 
                 current = child;
                 child->OnMouseEnter(e);
@@ -189,7 +189,7 @@ namespace Sgl
             }
         }        
 
-        CurrentCursor.Set(GetCursor());
+        _platformCursor.Set(GetCursor());
     }
 
     void Panel::OnMouseDown(MouseButtonEventArgs e)

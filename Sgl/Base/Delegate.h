@@ -27,7 +27,7 @@ namespace Sgl
 		};
 
 		template<typename T>
-		struct Callable : public ICallable
+		struct Callable final : public ICallable
 		{
 		public:
 			Callable(T object):
@@ -55,7 +55,7 @@ namespace Sgl
 
 				if constexpr(std::equality_comparable<T>)
 				{
-					const auto& otherCallable = static_cast<const Callable<T>&>(other);
+					auto& otherCallable = static_cast<const Callable<T>&>(other);
 					return Object == otherCallable.Object;
 				}
 

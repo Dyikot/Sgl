@@ -17,7 +17,7 @@ namespace Sgl
 		explicit DispatcherTimer(TimeSpan interval);
 		explicit DispatcherTimer(int64_t milliseconds);
 		DispatcherTimer(const DispatcherTimer&) = delete;
-		DispatcherTimer(DispatcherTimer&&) = default;
+		DispatcherTimer(DispatcherTimer&& other) = default;
 		~DispatcherTimer();
 
 		/// <summary>

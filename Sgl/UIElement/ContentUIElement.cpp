@@ -188,7 +188,7 @@ namespace Sgl
 			else if(wasMouseOver)
 			{
 				_contentPresenter->OnMouseLeave(e);
-				CurrentCursor.Set(GetCursor());
+				_platformCursor.Set(GetCursor());
 			}
 		}
 	}

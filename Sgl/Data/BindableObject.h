@@ -6,7 +6,6 @@
 #include "INotifyPropertyChanged.h"
 #include "../Base/Ref.h"
 #include "../Base/Exceptions.h"
-#include "../Base/Logging.h"
 
 namespace Sgl
 {

@@ -36,6 +36,8 @@ namespace Sgl
         void RenderBackground(RenderContext& context, const FRect& rect);
     private:
         void InvalidateBackground();
+    protected:
+        static inline PlatformCursor _platformCursor;
     private:
         IVisualRoot* _visualRoot = nullptr;
         Texture _backgroundTexture;

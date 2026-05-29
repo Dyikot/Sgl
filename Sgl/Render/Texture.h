@@ -5,6 +5,7 @@
 #include <SDL3/SDL_blendmode.h>
 
 #include "../Base/Primitives.h"
+#include "../Base/Media/Color.h"
 #include "../Base/Media/Font.h"
 #include "../Base/Size.h"
 

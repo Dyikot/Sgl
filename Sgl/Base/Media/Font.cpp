@@ -16,66 +16,54 @@ namespace Sgl
 	#elif SDL_PLATFORM_MACOS
 	static constexpr auto FontsPath = "/System/Library/Fonts/";
 	#endif
-
-	static constexpr std::string_view DefaultFontName = "segoeui.ttf";
-
+	
 	static StringPool FontsPool;
+	FontFamily const FontFamily::Default { FontsPath, "segoeui.ttf" };
 
 	static inline std::string NormalizePath(const fs::path& base, const std::string& name)
 	{
 		return (base / name).lexically_normal().string();
 	}
 
-	static uint32_t GetDefaultFontPath()
-	{
-		static uint32_t handle = FontsPool.Create(NormalizePath(FontsPath, DefaultFontName.data()));
-		return handle;
-	}
-
-	FontFamily::FontFamily(DefaultTag):
-		_handle(GetDefaultFontPath()),
-		_nameLength(DefaultFontName.length())
-	{}
-
 	FontFamily::FontFamily(const std::string& familyName):
 		FontFamily(FontsPath, familyName)
 	{}
 
 	FontFamily::FontFamily(const std::filesystem::path& basePath, const std::string& familyName):
-		_handle(FontsPool.Create(NormalizePath(basePath, familyName))),
+		_source(FontsPool.Create(NormalizePath(basePath, familyName))),
 		_nameLength(familyName.length())
 	{}
 
 	FontFamily::FontFamily(const FontFamily& other):
-		_handle(other._handle),
+		_source(other._source),
 		_nameLength(other._nameLength)
 	{}
 
 	FontFamily::FontFamily(FontFamily&& other) noexcept:
-		_handle(std::move(other._handle)),
+		_source(other._source),
 		_nameLength(other._nameLength)
 	{}
 
 	std::string_view FontFamily::GetSource() const
 	{
-		return FontsPool.Get(_handle);
+		return *_source;
 	}
 
 	std::string_view FontFamily::GetName() const
 	{
-		auto path = FontsPool.Get(_handle);
-		return path.substr(path.length() - _nameLength);
+		auto source = GetSource();
+		return source.substr(source.length() - _nameLength);
 	}
 
 	FontFamily& FontFamily::operator=(FontFamily other)
 	{
-		_handle = other._handle;
+		_source = other._source;
 		return *this;
 	}
 
 	FontFamily& FontFamily::operator=(FontFamily&& other) noexcept
 	{
-		_handle = other._handle;
+		_source = other._source;
 		return *this;
 	}
 

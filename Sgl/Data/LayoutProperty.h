@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stdint.h>
 #include "Property.h"
 
 namespace Sgl

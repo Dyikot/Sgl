@@ -1,8 +1,6 @@
 #pragma once
 
-#include <memory>
 #include <filesystem>
-#include "Color.h"
 
 struct TTF_Font;
 
@@ -13,14 +11,7 @@ namespace Sgl
 	/// </summary>
 	class FontFamily
 	{
-	private:
-		struct DefaultTag {};
 	public:
-		/// <summary>
-		/// Constructs Segoe UI font family.
-		/// </summary>
-		FontFamily(DefaultTag);
-
 		/// <summary>
 		/// Constructs a font family by name, typically resolving to a system-installed font.
 		/// </summary>
@@ -38,9 +29,9 @@ namespace Sgl
 		FontFamily(FontFamily&& other) noexcept;
 
 		/// <summary>
-		/// Tag used to construct the default system font family.
+		/// Default font family.
 		/// </summary>
-		static constexpr DefaultTag Default;
+		static const FontFamily Default;
 
 		/// <summary>
 		/// Returns the file path of the font family.
@@ -56,7 +47,7 @@ namespace Sgl
 		FontFamily& operator=(FontFamily&& other) noexcept;
 		bool operator==(const FontFamily&) const = default;
 	private:
-		uint32_t _handle;
+		const std::string* _source;
 		uint32_t _nameLength;
 	};
 

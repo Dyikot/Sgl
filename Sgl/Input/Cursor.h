@@ -56,19 +56,16 @@ namespace Sgl
         Cursor& operator=(const Cursor&) = default;
         Cursor& operator=(Cursor&&) noexcept = default;
         bool operator==(const Cursor&) const = default;
-        explicit operator bool() const noexcept { return _cursor != nullptr; }
     private:
         SDL_Cursor* _cursor;
     };
 
-    class CurrentCursorImpl
+    class PlatformCursor
     {
     public:
-        void Set(const Cursor& cursor);
+        void Set(Cursor cursor);
         void Show();
         void Hide();
         bool IsVisible();
     };
-
-    inline CurrentCursorImpl CurrentCursor;
 }

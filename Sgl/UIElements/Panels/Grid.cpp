@@ -1,6 +1,7 @@
 #include "Grid.h"
 
 #include <algorithm>
+#include <numeric>
 #include "../../Base/Views.h"
 
 namespace Sgl::UIElements

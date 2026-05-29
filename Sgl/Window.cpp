@@ -463,11 +463,11 @@ namespace Sgl
         {
             _content->SetCursor(cursor, ValueSource::Inheritance);
             auto current = _content->IsMouseOver() ? _content->GetCursor() : GetCursor();
-            CurrentCursor.Set(current);
+            _platformCursor.Set(current);
         }
         else
         {
-            CurrentCursor.Set(GetCursor());
+            _platformCursor.Set(GetCursor());
         }
     }
 
@@ -542,7 +542,7 @@ namespace Sgl
             else if(wasMouseOver)
             {
                 _content->OnMouseLeave(e);
-                CurrentCursor.Set(GetCursor());
+                _platformCursor.Set(GetCursor());
             }
         }
     }
@@ -575,11 +575,11 @@ namespace Sgl
 
         if(_content && _content->IsMouseOver())
         {
-            CurrentCursor.Set(_content->GetCursor());
+            _platformCursor.Set(_content->GetCursor());
         }
         else
         {
-            CurrentCursor.Set(GetCursor());
+            _platformCursor.Set(GetCursor());
         }
     }
 

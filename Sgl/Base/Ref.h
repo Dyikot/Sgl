@@ -3,7 +3,6 @@
 #include <atomic>
 #include <memory>
 #include <utility>
-#include <stdexcept>
 
 namespace Sgl
 {
@@ -246,11 +245,9 @@ namespace Sgl
 
         void Release()
         {
-            if(_memoryBlock && _memoryBlock->References.fetch_sub(1) == 1)
+            if(_memoryBlock && _memoryBlock->References.fetch_sub(1, std::memory_order_acq_rel) == 1)
             {
                 delete _memoryBlock;
-                _memoryBlock = nullptr;
-                _data = nullptr;
             }
         }
 
@@ -262,7 +259,7 @@ namespace Sgl
 
             if(_memoryBlock)
             {
-                _memoryBlock->References++;
+                _memoryBlock->References.fetch_add(1, std::memory_order_relaxed);
             }
         }
 
@@ -284,7 +281,7 @@ namespace Sgl
 
             if(_memoryBlock)
             {
-                _memoryBlock->References++;
+                _memoryBlock->References.fetch_add(1, std::memory_order_relaxed);
             }
         }
 

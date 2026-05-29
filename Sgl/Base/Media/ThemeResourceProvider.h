@@ -30,7 +30,7 @@ namespace Sgl
         /// <param name="key"> - the resource key.</param>
         /// <param name="lightBrush"> - the brush value for light theme.</param>
         /// <param name="darkBrush"> - the brush value for dark theme.</param>
-        void AddBrush(const std::string& key, Brush lightBrush, Brush darkBrush);
+        void AddBrush(const std::string& key, const Brush& lightBrush, const Brush& darkBrush);
 
         /// <summary>
         /// Gets a color resource for the current active theme.

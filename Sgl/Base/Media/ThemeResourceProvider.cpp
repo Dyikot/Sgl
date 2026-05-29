@@ -12,10 +12,10 @@ namespace Sgl
         _resources[DarkIndex].Colors.emplace(key, darkColor);
     }
 
-    void ThemeResourceProvider::AddBrush(const std::string& key, Brush lightBrush, Brush darkBrush)
+    void ThemeResourceProvider::AddBrush(const std::string& key, const Brush& lightBrush, const Brush& darkBrush)
     {
-        _resources[LightIndex].Brushes.emplace(key, std::move(lightBrush));
-        _resources[DarkIndex].Brushes.emplace(key, std::move(darkBrush));
+        _resources[LightIndex].Brushes.emplace(key, lightBrush);
+        _resources[DarkIndex].Brushes.emplace(key, darkBrush);
     }
 
     Color ThemeResourceProvider::GetColor(const std::string& key) const
@@ -44,7 +44,7 @@ namespace Sgl
 
     bool ThemeResourceProvider::TryGetColor(const std::string& key, Color& out) const
     {
-        const auto& dict = _resources[static_cast<size_t>(_currentMode)];
+        auto& dict = _resources[static_cast<size_t>(_currentMode)];
         
         if (auto it = dict.Colors.find(key); it != dict.Colors.end())
         {
@@ -57,7 +57,7 @@ namespace Sgl
 
     bool ThemeResourceProvider::TryGetBrush(const std::string& key, Brush& out) const
     {
-        const auto& dict = _resources[static_cast<size_t>(_currentMode)];
+        auto& dict = _resources[static_cast<size_t>(_currentMode)];
         
         if (auto it = dict.Brushes.find(key); it != dict.Brushes.end())
         {

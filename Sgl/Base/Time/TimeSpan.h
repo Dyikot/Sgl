@@ -8,23 +8,7 @@ namespace Sgl
 {
 	class TimeSpan
 	{
-	private:
-		struct ZeroTag {};
-		struct MaxTag {};
-		struct MinTag {};
 	public:
-		constexpr TimeSpan(ZeroTag):
-			_nanoseconds()
-		{}
-
-		constexpr TimeSpan(MaxTag):
-			_nanoseconds(std::numeric_limits<int64_t>::max())
-		{}
-
-		constexpr TimeSpan(MinTag):
-			_nanoseconds(std::numeric_limits<int64_t>::min())
-		{}
-
 		constexpr explicit TimeSpan(int64_t nanoseconds) noexcept:
 			_nanoseconds(nanoseconds)
 		{}
@@ -40,17 +24,17 @@ namespace Sgl
 		/// <summary>
 		/// Represents a zero time interval (0 nanoseconds).
 		/// </summary>
-		constexpr static ZeroTag Zero;
+		static const TimeSpan Zero;
 
 		/// <summary>
 		/// Represents the maximum possible time interval.
 		/// </summary>
-		constexpr static MaxTag MaxValue;
+		static const TimeSpan MaxValue;
 
 		/// <summary>
 		/// Represents the minimum possible time interval.
 		/// </summary>
-		constexpr static MinTag MinValue;
+		static const TimeSpan MinValue;
 
 		static constexpr TimeSpan FromMicroseconds(int64_t value) noexcept
 		{
@@ -267,4 +251,8 @@ namespace Sgl
 
 		int64_t _nanoseconds;
 	};
+
+	inline constexpr TimeSpan TimeSpan::Zero { 0 };
+	inline constexpr TimeSpan TimeSpan::MaxValue { std::numeric_limits<int64_t>::max() };
+	inline constexpr TimeSpan TimeSpan::MinValue { std::numeric_limits<int64_t>::min() };
 }

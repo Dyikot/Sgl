@@ -56,14 +56,9 @@ namespace Sgl
 		using Sender = TSender;
 		using EventArgs = TEventArgs;
 	public:
-		/// <summary>
-		/// Default constructor. Creates an empty event with no handlers.
-		/// </summary>
 		Event() = default;
 		Event(const Event&) = delete;
-		Event(Event&& other) noexcept:
-			_eventHandlers(std::exchange(other._eventHandlers, nullptr))
-		{}
+		Event(Event&&) noexcept = default;
 
 		~Event()
 		{
@@ -86,7 +81,6 @@ namespace Sgl
 		{
 			return _eventHandlers != nullptr;
 		}
-
 
 		/// <summary>
 		/// Return the number of event handlers
@@ -137,7 +131,7 @@ namespace Sgl
 		{
 			if(HasHandlers())
 			{
-				for(const auto& handler : *_eventHandlers)
+				for(auto& handler : *_eventHandlers)
 				{
 					handler(sender, e);
 				}

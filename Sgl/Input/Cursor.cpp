@@ -86,7 +86,7 @@ namespace Sgl
         _cursor(other._cursor)
     {}
 
-    void CurrentCursorImpl::Set(const Cursor& cursor)
+    void PlatformCursor::Set(Cursor cursor)
     {
         if(auto impl = cursor.GetSDLCursor(); impl && impl != SDL_GetCursor())
         {
@@ -94,7 +94,7 @@ namespace Sgl
         }
     }
 
-    void CurrentCursorImpl::Show()
+    void PlatformCursor::Show()
     {
         if(SDL_ShowCursor())
         {
@@ -102,7 +102,7 @@ namespace Sgl
         }
     }
 
-    void CurrentCursorImpl::Hide()
+    void PlatformCursor::Hide()
     {
         if(SDL_HideCursor())
         {
@@ -110,7 +110,7 @@ namespace Sgl
         }
     }
 
-    bool CurrentCursorImpl::IsVisible()
+    bool PlatformCursor::IsVisible()
     {
         return SDL_CursorVisible();
     }

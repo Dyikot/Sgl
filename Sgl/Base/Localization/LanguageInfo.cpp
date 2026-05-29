@@ -7,9 +7,8 @@ namespace Sgl
 		if(_current.Name != languageInfo.Name)
 		{
 			_current = languageInfo;
+			CurrentChanged.Invoke(*this);
 		}
-
-		CurrentChanged.Invoke(*this);
 	}
 
 	const LanguageInfo& LanguageManager::GetCurrent() const

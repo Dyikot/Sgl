@@ -1,7 +1,7 @@
 #pragma once
 
 #include <format>
-#include <execution>
+#include <exception>
 
 namespace Sgl
 {
@@ -17,7 +17,7 @@ namespace Sgl
         /// Constructs an exception with a pre-formatted message.
         /// </summary>
         /// <param name="message"> - the error message.</param>
-        Exception(std::string_view message):
+        explicit Exception(std::string_view message):
             _message(message.data())
         {}
 

@@ -46,9 +46,9 @@ namespace Sgl
         }
 
         template<typename TOwner, typename TValue>
-        Style& Set(StyleableProperty<TOwner, TValue>& property, ResourceKey key)
+        Style& Set(StyleableProperty<TOwner, TValue>& property, const ResourceKey& key)
         {
-            _setters.emplace_back(new ResourceSetter<TOwner, TValue>(property, std::move(key)));
+            _setters.emplace_back(new ResourceSetter<TOwner, TValue>(property, key));
             return *this;
         }
     private:
