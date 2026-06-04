@@ -8,10 +8,19 @@
 
 namespace Sgl
 {
+    class IBackgroundRenderer
+    {
+    public:
+        virtual ~IBackgroundRenderer() = default;
+
+        virtual void Render(RenderContext context) const = 0;
+        virtual void Render(RenderContext context, const FRect& rect) const = 0;
+    };
+
     class Renderable : public StyleableElement
     {
     public:
-        Renderable() = default;
+        Renderable();
         Renderable(Renderable&& other) noexcept;
 
         void SetCursor(Cursor value, ValueSource source = ValueSource::Local);
@@ -25,22 +34,22 @@ namespace Sgl
         
         void SetParent(IStyleHost* parent) override;
 
-        virtual void Render(RenderContext& context);
+        virtual void Render(RenderContext context);
         virtual void InvalidateRender();
 
         static inline StyleableProperty CursorProperty { &SetCursor, &GetCursor };
         static inline StyleableProperty BackgroundProperty { &SetBackground, &GetBackground };
     protected:
         virtual void OnCursorChanged(Cursor cursor) {}
-        void RenderBackground(RenderContext& context);
-        void RenderBackground(RenderContext& context, const FRect& rect);
+        void RenderBackground(RenderContext context);
+        void RenderBackground(RenderContext context, const FRect& rect);
     private:
-        void InvalidateBackground();
+        void UpdateBackgroundRenderer();
     protected:
         static inline PlatformCursor _platformCursor;
     private:
         IVisualRoot* _visualRoot = nullptr;
-        Texture _backgroundTexture;
+        std::unique_ptr<IBackgroundRenderer> _backgroundRenderer;
 
         Cursor _cursor = Cursors::Arrow;
         Brush _background = Colors::Transparent;

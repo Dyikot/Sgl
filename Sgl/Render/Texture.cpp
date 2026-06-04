@@ -116,9 +116,13 @@ namespace Sgl
 		}
 	}
 
-	Texture::Texture(const Texture& other)
+	Texture::Texture(const Texture& other):
+		_texture(other._texture)
 	{
-		CopyFrom(other);
+		if(_texture)
+		{
+			_texture->refcount++;
+		}
 	}
 
 	Texture::Texture(Texture&& other) noexcept:
@@ -129,7 +133,7 @@ namespace Sgl
 
 	Texture::~Texture()
 	{
-		Destroy();
+		Release();
 	}
 
 	void Texture::SetColor(Color value)
@@ -204,45 +208,40 @@ namespace Sgl
 
 	Texture& Texture::operator=(std::nullptr_t)
 	{
-		Destroy();
+		Release();
+		_texture = nullptr;
 		return *this;
 	}
 
 	Texture& Texture::operator=(const Texture& other)
 	{
-		Destroy();
-		CopyFrom(other);
+		Release();		
+		_texture = other._texture;
+		if(_texture)
+		{
+			_texture->refcount++;
+		}
+
 		return *this;
 	}
 
 	Texture& Texture::operator=(Texture&& other) noexcept
 	{
-		Destroy();
+		Release();
 		_texture = other._texture;
 		other._texture = nullptr;
 		return *this;
 	}
 
-	void Texture::CopyFrom(const Texture& other)
+	void Texture::Release()
 	{
-		_texture = other._texture;
-
-		if(_texture != nullptr)
-		{
-			_texture->refcount++;
-		}
-	}	
-
-	void Texture::Destroy()
-	{
-		if(_texture != nullptr)
+		if(_texture)
 		{
 			SDL_DestroyTexture(_texture);
-			_texture = nullptr;
 		}
 	}
 
-	TextureLock::TextureLock(Texture& texture, const Rect* rect):
+	TextureLock::TextureLock(Texture texture, const Rect* rect):
 		_texture(texture)
 	{
 		if(!SDL_LockTexture(_texture.GetSDLTexture(), rect, &Pixels, &Pitch))

@@ -236,8 +236,7 @@ namespace Sgl
 		/// <returns>True if the texture owns a valid SDL_Texture; otherwise, false.</returns>
 		explicit operator bool() const noexcept { return _texture != nullptr; }
 	private:
-		void CopyFrom(const Texture& other);
-		void Destroy();
+		void Release();
 	private:
 		SDL_Texture* _texture = nullptr;
 	};
@@ -249,9 +248,20 @@ namespace Sgl
 	/// </summary>
 	class TextureLock
 	{
-	private:
-		Texture& _texture;
 	public:
+		/// <summary>
+		/// Locks the specified texture for direct pixel access.
+		/// If a rectangle is provided, only that region is locked; otherwise, the entire texture is locked.
+		/// </summary>
+		/// <param name="texture"> - the streaming texture to lock (must be valid and unlocked).</param>
+		/// <param name="rect"> - optional rectangle to lock; if null, the whole texture is locked.</param>
+		TextureLock(Texture texture, const Rect* rect = nullptr);
+
+		/// <summary>
+		/// Unlocks the texture, committing any changes made to the pixel data.
+		/// </summary>
+		~TextureLock();
+
 		/// <summary>
 		/// Pointer to the raw pixel data of the locked texture region.
 		/// </summary>
@@ -261,18 +271,27 @@ namespace Sgl
 		/// Number of bytes per row (including padding) in the locked pixel data.
 		/// </summary>
 		int Pitch = 0;
+	private:
+		Texture _texture;
+	};
+
+	class ImageSource;
+
+	/// <summary>
+	/// Interface for factory objects that manage the creation and lifecycle of textures.
+	/// This abstraction isolates the texture loading logic and asset management from the rest of the application.
+	/// </summary>
+	class ITextureFactory
+	{
+	public:
+		virtual ~ITextureFactory() = default;
 
 		/// <summary>
-		/// Locks the specified texture for direct pixel access.
-		/// If a rectangle is provided, only that region is locked; otherwise, the entire texture is locked.
+		/// Creates a texture from the specified source, with optional caching.
 		/// </summary>
-		/// <param name="texture"> - the streaming texture to lock (must be valid and unlocked).</param>
-		/// <param name="rect"> - optional rectangle to lock; if null, the whole texture is locked.</param>
-		TextureLock(Texture& texture, const Rect* rect = nullptr);
-
-		/// <summary>
-		/// Unlocks the texture, committing any changes made to the pixel data.
-		/// </summary>
-		~TextureLock();
+		/// <param name="imageSource"> - the source of the image.</param>
+		/// <param name="cache"> - whether to cache the texture for future use. Defaults to true.</param>
+		/// <returns>The loaded texture. If the file fails to load, returns an invalid (null) texture.</returns>
+		virtual Texture Create(const ImageSource& source, bool cache) = 0;
 	};
 }

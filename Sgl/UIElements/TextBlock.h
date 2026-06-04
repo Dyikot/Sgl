@@ -44,7 +44,7 @@ namespace Sgl::UIElements
 		void SetPadding(Thickness value, ValueSource source = ValueSource::Local);
 		Thickness GetPadding() const { return _padding; }
 
-		void Render(RenderContext& context) override;
+		void Render(RenderContext context) override;
 
 		static inline StyleableProperty TextProperty { &SetText, &GetText };
 		static inline StyleableProperty FontSizeProperty { &SetFontSize, &GetFontSize };

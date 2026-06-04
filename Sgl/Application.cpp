@@ -396,6 +396,16 @@ namespace Sgl
                     break;
                 }
 
+                case SDL_EVENT_WINDOW_EXPOSED:
+                {
+                    if(auto window = _windows[e.window.windowID])
+                    {
+                        SDL_RenderPresent(window->GetRenderer());
+                    }
+
+                    break;
+                }
+
                 case SDL_EVENT_WINDOW_MOVED:
                 {
                     if(auto window = _windows[e.window.windowID])

@@ -37,7 +37,7 @@ namespace Sgl::UIElements
 		void SetCommandParameter(const Any& value, ValueSource source = ValueSource::Local);
 		const Any& GetCommandParameter() const { return _commandParameter; }
 
-		void Render(RenderContext& context) override;
+		void Render(RenderContext context) override;
 
 		static inline StyleableProperty ClickModeProperty { &SetClickMode, &GetClickMode };
 		static inline StyleableProperty CommandProperty { &SetCommand, &GetCommand };

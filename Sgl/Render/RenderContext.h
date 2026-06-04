@@ -1,15 +1,12 @@
 #pragma once
 
-#include <list>
 #include <span>
-#include <unordered_map>
 #include <SDL3/SDL_render.h>
 
 #include "Surface.h"
 #include "Texture.h"
 #include "../Base/Primitives.h"
 #include "../Base/Media/Color.h"
-#include "../Base/Media/ImageSource.h"
 
 namespace Sgl
 {
@@ -61,14 +58,6 @@ namespace Sgl
         void ResetClip();
 
         /// <summary>
-        /// Loads a texture from the specified file path, with optional caching.
-        /// </summary>
-        /// <param name="imageSource"> - the source of the image.</param>
-        /// <param name="cache"> - whether to cache the texture for future use. Defaults to true.</param>
-        /// <returns>The loaded texture. If the file fails to load, returns an invalid (null) texture.</returns>
-        Texture LoadTexture(const ImageSource& imageSource, bool cache = true);
-
-        /// <summary>
         /// Fills the entire current render target with a solid color.
         /// </summary>
         /// <param name="color"> - the color to use for the background fill.</param>
@@ -108,14 +97,7 @@ namespace Sgl
         /// </summary>
         /// <param name="rect"> - the rectangle to draw (x, y, width, height).</param>
         /// <param name="color"> - the color of the rectangle outline.</param>
-        void DrawRectange(FRect rect, Color color);
-
-        /// <summary>
-        /// Fills a rectangle with a solid color using floating-point coordinates and dimensions.
-        /// </summary>
-        /// <param name="rect"> - the rectangle to fill (x, y, width, height).</param>
-        /// <param name="color"> - the fill color.</param>
-        void DrawRectangleFill(FRect rect, Color color);
+        void DrawRectangle(FRect rect, Color color);
 
         /// <summary>
         /// Draws outlines of multiple rectangles.
@@ -123,6 +105,13 @@ namespace Sgl
         /// <param name="rects"> - a span of FRect structures to draw as unfilled rectangles.</param>
         /// <param name="color"> - the color used for all rectangle outlines.</param>
         void DrawRectangles(std::span<const FRect> rects, Color color);
+
+        /// <summary>
+        /// Fills a rectangle with a solid color using floating-point coordinates and dimensions.
+        /// </summary>
+        /// <param name="rect"> - the rectangle to fill (x, y, width, height).</param>
+        /// <param name="color"> - the fill color.</param>
+        void DrawRectangleFill(FRect rect, Color color);
 
         /// <summary>
         /// Fills multiple rectangles with a solid color.
@@ -160,86 +149,36 @@ namespace Sgl
         void DrawEllipseFill(FRect rect, const Texture& texture);
 
         /// <summary>
-        /// Renders a custom geometry defined by vertices, optionally using an index order.
-        /// </summary>
-        /// <param name="vertices"> - a span of SDL_Vertex structures defining the geometry.</param>
-        /// <param name="order"> - optional span of indices defining the drawing order (e.g., triangle strips or fans). If empty, vertices are drawn in sequence.</param>
-        void DrawGeometry(std::span<const Vertex> vertices, std::span<const int> order = {});
-
-        /// <summary>
-        /// Renders a custom textured geometry defined by vertices and a texture, optionally using an index order.
+        /// Renders a custom textured geometry defined by vertices, optionally using a texture and an index order.
         /// </summary>
         /// <param name="vertices"> - a span of SDL_Vertex structures defining the geometry.</param>
         /// <param name="texture"> - the texture to apply to the geometry.</param>
         /// <param name="order"> - optional span of indices defining the drawing order. If empty, vertices are drawn in sequence.</param>
-        void DrawGeometry(std::span<const Vertex> vertices, const Texture& texture, std::span<const int> order = {});
+        void DrawGeometry(std::span<const Vertex> vertices, 
+                          const Texture& texture = {},
+                          std::span<const int> order = {});
 
         /// <summary>
-        /// Draws a texture at its natural size and position (typically at origin (0,0) scaled to texture size).
-        /// </summary>
-        /// <param name="texture"> - the texture to render.</param>
-        void DrawTexture(const Texture& texture);
-
-        /// <summary>
-        /// Draws a texture stretched or positioned within the specified target rectangle.
-        /// </summary>
-        /// <param name="texture"> - the texture to render.</param>
-        /// <param name="target"> - the destination rectangle where the texture will be drawn.</param>
-        void DrawTexture(const Texture& texture, FRect target);
-
-        /// <summary>
-        /// Draws a portion of a texture (defined by a source clip) into a target rectangle.
+        /// Draws a texture to the screen with optional both target and source clipping.
         /// </summary>
         /// <param name="texture"> - the texture to render.</param>
         /// <param name="target"> - the destination rectangle on the render target.</param>
         /// <param name="clip"> - the source rectangle within the texture to draw (in texture coordinates).</param>
-        void DrawTexture(const Texture& texture, FRect target, FRect clip);
+        void DrawTexture(const Texture& texture, const FRect* target, const FRect* clip);
 
         /// <summary>
-        /// Renders a texture using a 9-grid (9-slice) scaling technique based on corner width and uniform scale.
-        /// </summary>
-        /// <param name="texture"> - the texture to render (assumed to have consistent border regions).</param>
-        /// <param name="cornersWidth"> - width (and height) of the corner regions in pixels.</param>
-        /// <param name="scale"> - uniform scaling factor applied to the non-corner regions.</param>
-        void DrawTexture9Grid(const Texture& texture, float cornersWidth, float scale);
-
-        /// <summary>
-        /// Renders a 9-grid scaled texture into a specific target rectangle.
+        /// Renders a 9-grid scaled texture with optional both target and source clipping.
         /// </summary>
         /// <param name="texture"> - the texture to render.</param>
-        /// <param name="cornersWidth"> - width of the corner regions.</param>
-        /// <param name="scale"> - scaling factor for stretchable regions.</param>
-        /// <param name="target"> - destination rectangle for the rendered 9-grid texture.</param>
-        void DrawTexture9Grid(const Texture& texture, float cornersWidth, float scale, FRect target);
-
-        /// <summary>
-        /// Renders a 9-grid scaled texture with both target and source clipping.
-        /// </summary>
-        /// <param name="texture"> - the texture to render.</param>
-        /// <param name="cornersWidth"> - width of the corner regions.</param>
+        /// <param name="cornersLength"> - length of the corner regions.</param>
         /// <param name="scale"> - scaling factor.</param>
         /// <param name="target"> - destination rectangle.</param>
         /// <param name="clip"> - source rectangle within the texture (optional clipping of the original texture before 9-grid processing).</param>
-        void DrawTexture9Grid(const Texture& texture, float cornersWidth, float scale, FRect target, FRect clip);
-
-        /// <summary>
-        /// Draws a texture with rotation, optional center pivot, and flipping.
-        /// </summary>
-        /// <param name="texture"> - the texture to render.</param>
-        /// <param name="angle"> - rotation angle in degrees (counter-clockwise).</param>
-        /// <param name="center"> - optional pivot point for rotation (if null, rotates around the center of the target).</param>
-        /// <param name="flip"> - specifies horizontal/vertical flipping mode.</param>
-        void DrawTextureTransformed(const Texture& texture, double angle, const FPoint* center, FlipMode flip);
-
-        /// <summary>
-        /// Draws a transformed texture into a specific target rectangle.
-        /// </summary>
-        /// <param name="texture"> - the texture to render.</param>
-        /// <param name="angle"> - rotation angle in degrees.</param>
-        /// <param name="center"> - optional rotation center (relative to target).</param>
-        /// <param name="flip"> - flipping mode.</param>
-        /// <param name="target"> - destination rectangle.</param>
-        void DrawTextureTransformed(const Texture& texture, double angle, const FPoint* center, FlipMode flip, FRect target);
+        void DrawTexture9Grid(const Texture& texture, 
+                              float cornersLength, 
+                              float scale, 
+                              const FRect* target, 
+                              const FRect* clip);
 
         /// <summary>
         /// Draws a transformed and clipped texture into a target rectangle.
@@ -250,7 +189,12 @@ namespace Sgl
         /// <param name="flip"> - flipping mode.</param>
         /// <param name="target"> - destination rectangle.</param>
         /// <param name="clip"> - source rectangle within the texture to draw.</param>
-        void DrawTextureTransformed(const Texture& texture, double angle, const FPoint* center, FlipMode flip, FRect target, FRect clip);
+        void DrawTextureTransformed(const Texture& texture, 
+                                    double angle, 
+                                    const FPoint* center, 
+                                    FlipMode flip, 
+                                    const FRect* target, 
+                                    const FRect* clip);
 
         /// <summary>
         /// Renders a string of text at the specified position using the given font and color.
@@ -260,24 +204,17 @@ namespace Sgl
         /// <param name="size"> - font size in points.</param>
         /// <param name="color"> - text color.</param>
         /// <param name="fontFamily"> - font family to use; defaults to FontFamily::Default if not specified.</param>
-        void DrawText(FPoint position, std::string_view text, float size, Color color, FontFamily fontFamily = FontFamily::Default);
+        void DrawText(FPoint position, 
+                      std::string_view text, 
+                      float size, 
+                      Color color, 
+                      FontFamily fontFamily = FontFamily::Default);
     private:
         void SetColor(Color color) const noexcept
         {
             SDL_SetRenderDrawColor(_renderer, color.Red, color.Green, color.Blue, color.Alpha);
-        }
-        void ClearCache();
-    private:
-        friend class Window;
-
-        struct CachedTexture
-        {
-            Texture Texture;
-            std::list<ImageSource>::iterator OrderIt;
-        };
+        }        
     private:
         SDL_Renderer* _renderer;
-        std::unordered_map<ImageSource, CachedTexture> _cachedTextures;
-        std::list<ImageSource> _cacheOrder;
     };
 }

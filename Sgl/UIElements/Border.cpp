@@ -25,30 +25,27 @@ namespace Sgl::UIElements
 		}
 	}
 
-	void Border::Render(RenderContext& context)
+	void Border::Render(RenderContext context)
 	{
 		RenderBackground(context, _bounds);
 		
-		if(!_borderColor.IsTransparent())
-		{			
-			if(_borderWidth == 1u)
+		if(_borderWidth == 1u)
+		{
+			context.DrawRectangle(_bounds, _borderColor);
+		}
+		else if(_borderWidth > 1u)
+		{
+			float width = _borderWidth;
+			auto [x, y, w, h] = _bounds;
+			FRect sides[] =
 			{
-				context.DrawRectange(_bounds, _borderColor);
-			}
-			else if(_borderWidth > 1u)
-			{
-				float width = _borderWidth;
-				auto [x, y, w, h] = _bounds;
-				FRect sides[] =
-				{
-					{ x, y, w, width },										// top
-					{ x, y + h - width, w, width },							// bottom
-					{ x, y + width, width, h - 2 * width },					// left
-					{ x + w - width, y + width, width, h - 2 * width },		// right
-				};
+				{ x, y, w, width },										// top
+				{ x, y + h - width, w, width },							// bottom
+				{ x, y + width, width, h - 2 * width },					// left
+				{ x + w - width, y + width, width, h - 2 * width },		// right
+			};
 
-				context.DrawRectanglesFill(sides, _borderColor);
-			}
+			context.DrawRectanglesFill(sides, _borderColor);
 		}
 
 		ContentUIElement::Render(context);

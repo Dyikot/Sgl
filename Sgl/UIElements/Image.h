@@ -28,7 +28,7 @@ namespace Sgl::UIElements
 		void SetStretch(Stretch value, ValueSource source = ValueSource::Local);
 		Stretch GetStretch() const { return _stretch; }
 
-		void Render(RenderContext& context) override;
+		void Render(RenderContext context) override;
 
 		static inline StyleableProperty SourceProperty { &SetSource, &GetSource };
 		static inline StyleableProperty StretchProperty { &SetStretch, &GetStretch };

@@ -27,7 +27,7 @@ namespace Sgl::UIElements
 		}
 	}
 
-	void Sgl::UIElements::Image::Render(RenderContext& context)
+	void Image::Render(RenderContext context)
 	{
 		RenderBackground(context, _bounds);
 
@@ -45,20 +45,20 @@ namespace Sgl::UIElements
 						.h = _sourceBounds.h
 					};
 
-					context.DrawTexture(_sourceTexture, _sourceBounds, clip);
+					context.DrawTexture(_sourceTexture, &_sourceBounds, &clip);
 					break;
 				}
 
 				case Stretch::Fill:
 				case Stretch::Uniform:
 				{
-					context.DrawTexture(_sourceTexture, _sourceBounds);
+					context.DrawTexture(_sourceTexture, &_sourceBounds, nullptr);
 					break;
 				}
 
 				case Stretch::UniformToFill:
 				{
-					context.DrawTexture(_sourceTexture, _bounds, _sourceBounds);
+					context.DrawTexture(_sourceTexture, &_bounds, &_sourceBounds);
 					break;
 				}
 			}
@@ -163,7 +163,7 @@ namespace Sgl::UIElements
 
 	void Image::UpdateTexture()
 	{
-		_sourceTexture = _source.CreateTexture(GetVisualRoot()->GetRenderer());
+		_sourceTexture = GetVisualRoot()->GetTextureFactory().Create(_source, false);
 		_isImageTextureValid = true;
 	}
 }

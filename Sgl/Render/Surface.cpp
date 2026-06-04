@@ -43,9 +43,13 @@ namespace Sgl
 		}
 	}
 
-	Surface::Surface(const Surface& other)
+	Surface::Surface(const Surface& other):
+		_surface(other._surface)
 	{
-		CopyFrom(other);
+		if(_surface)
+		{
+			_surface->refcount++;
+		}
 	}
 
 	Surface::Surface(Surface&& other) noexcept:
@@ -56,7 +60,7 @@ namespace Sgl
 
 	Surface::~Surface()
 	{
-		Destroy();
+		Release();
 	}
 
 	void Surface::SetColor(Color value)
@@ -95,6 +99,16 @@ namespace Sgl
 		return blendMode;
 	}
 
+	void Surface::Fill(const Rect* rect, Color color)
+	{
+		SDL_FillSurfaceRect(_surface, rect, color.ToRgba());
+	}
+
+	void Surface::FillRects(std::span<const Rect> rects, Color color)
+	{
+		SDL_FillSurfaceRects(_surface, rects.data(), rects.size(), color.ToRgba());
+	}
+
 	void Surface::Lock()
 	{
 		SDL_LockSurface(_surface);
@@ -124,41 +138,36 @@ namespace Sgl
 
 	Surface& Surface::operator=(std::nullptr_t)
 	{
-		Destroy();
+		Release();
+		_surface = nullptr;
 		return *this;
 	}
 
 	Surface& Surface::operator=(const Surface& other)
 	{
-		Destroy();
-		CopyFrom(other);
+		Release();
+		_surface = other._surface;
+		if(_surface)
+		{
+			_surface->refcount++;
+		}
+
 		return *this;
 	}
 
 	Surface& Surface::operator=(Surface&& other) noexcept
 	{
-		Destroy();
+		Release();
 		_surface = other._surface;
 		other._surface = nullptr;
 		return *this;
 	}
 
-	void Surface::CopyFrom(const Surface& other)
+	void Surface::Release()
 	{
-		_surface = other._surface;
-
-		if(_surface != nullptr)
-		{
-			_surface->refcount++;
-		}
-	}
-
-	void Surface::Destroy()
-	{
-		if(_surface != nullptr)
+		if(_surface)
 		{
 			SDL_DestroySurface(_surface);
-			_surface = nullptr;
 		}
 	}
 }

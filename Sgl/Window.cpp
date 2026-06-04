@@ -8,6 +8,55 @@
 
 namespace Sgl
 {
+    class TextureFactory final : public ITextureFactory
+    {
+    public:
+        TextureFactory(SDL_Renderer* renderer): _renderer(renderer) {}
+
+        Texture Create(const ImageSource& source, bool cache) override
+        {
+            if(!cache)
+            {
+                return source.CreateTexture(_renderer);
+            }
+
+            if(auto it = _textures.find(source); it != _textures.end())
+            {
+                _order.splice(_order.begin(), _order, it->second.OrderIt);
+                return it->second.Texture;
+            }
+
+            static constexpr size_t cacheSize = 100;
+            auto texture = source.CreateTexture(_renderer);
+
+            if(texture)
+            {
+                if(_textures.size() >= cacheSize)
+                {
+                    const auto& source = _order.back();
+                    _textures.erase(source);
+                    _order.pop_back();
+                }
+
+                auto [it, _] = _textures.emplace(source, CachedTexture(texture, {}));
+                auto orderIt = _order.insert(_order.begin(), it->first);
+                it->second.OrderIt = orderIt;
+            }
+
+            return texture;
+        }
+    private:
+        struct CachedTexture
+        {
+            Texture Texture;
+            std::list<ImageSource>::iterator OrderIt;
+        };
+
+        SDL_Renderer* _renderer;
+        std::unordered_map<ImageSource, CachedTexture> _textures;
+        std::list<ImageSource> _order;
+    };
+
     static constexpr auto DefaultTitle = "Window";
     static constexpr auto DefaultWidth = 1280;
     static constexpr auto DefaultHeight = 720;
@@ -17,7 +66,7 @@ namespace Sgl
     Window::Window():
         _sdlWindow(SDL_CreateWindow(DefaultTitle, DefaultWidth, DefaultHeight, DefaultFlags)),
         _renderer(SDL_CreateRenderer(_sdlWindow, nullptr)),
-        _renderContext(_renderer)
+        _textureFactory(new TextureFactory(_renderer))
     {
         if(_sdlWindow == nullptr)
         {
@@ -343,6 +392,11 @@ namespace Sgl
         _isRenderValid = false;
     }
 
+    ITextureFactory& Window::GetTextureFactory()
+    {
+        return *_textureFactory;
+    }
+
     bool Window::NeedsRendering() const noexcept
     {
         return !_isRenderValid;
@@ -417,7 +471,7 @@ namespace Sgl
         return _isClosed;
     }
 
-    void Window::Render(RenderContext& context)
+    void Window::Render(RenderContext context)
     {
         RenderBackground(context);
 
@@ -625,14 +679,14 @@ namespace Sgl
     {
         if(NeedsRendering())
         {
-            Render(_renderContext);
+            Render(RenderContext(_renderer));
             SDL_RenderPresent(_renderer);
         }
     }
 
     void Window::DestroyRenderer()
     {
-        _renderContext.ClearCache();
+        delete _textureFactory;
         SDL_DestroyRenderer(_renderer);
     }
 

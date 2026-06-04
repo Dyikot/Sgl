@@ -31,7 +31,7 @@ namespace Sgl
 
 		void SetVisualRoot(IVisualRoot* value) final;
 
-		void Render(RenderContext& context) override;
+		void Render(RenderContext context) override;
 		void ApplyStyle() override;
 
 		static inline StyleableProperty ContentProperty { &SetContent, &GetContent };

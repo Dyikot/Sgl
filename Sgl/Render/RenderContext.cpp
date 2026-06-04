@@ -39,39 +39,6 @@ namespace Sgl
 		SDL_SetRenderClipRect(_renderer, nullptr);
 	}
 
-	Texture RenderContext::LoadTexture(const ImageSource& imageSource, bool cache)
-	{
-		if(!cache)
-		{
-			return imageSource.CreateTexture(_renderer);
-		}
-
-		if(auto it = _cachedTextures.find(imageSource); it != _cachedTextures.end())
-		{
-			_cacheOrder.splice(_cacheOrder.begin(), _cacheOrder, it->second.OrderIt);
-			return it->second.Texture;
-		}
-
-		static constexpr size_t cacheSize = 100;
-		auto texture = imageSource.CreateTexture(_renderer);
-
-		if(texture)
-		{
-			if(_cachedTextures.size() >= cacheSize)
-			{
-				const auto& source = _cacheOrder.back();
-				_cachedTextures.erase(source);
-				_cacheOrder.pop_back();
-			}
-
-			auto [it, _] = _cachedTextures.emplace(imageSource, CachedTexture(texture, {}));
-			auto orderIt = _cacheOrder.insert(_cacheOrder.begin(), it->first);
-			it->second.OrderIt = orderIt;
-		}
-
-		return texture;
-	}
-
 	void RenderContext::FillBackground(Color color)
 	{
 		SetColor(color);
@@ -102,7 +69,7 @@ namespace Sgl
 		SDL_RenderLines(_renderer, points.data(), points.size());
 	}
 
-	void RenderContext::DrawRectange(FRect rect, Color color)
+	void RenderContext::DrawRectangle(FRect rect, Color color)
 	{
 		SetColor(color);
 		SDL_RenderRect(_renderer, &rect);
@@ -330,7 +297,7 @@ namespace Sgl
 		auto vertices = ComputeFillEllipseVertices(rect, color, false);
 		auto order = Math::TriangulateEllipse(EllipseVerticesNumber - 1);
 
-		DrawGeometry(vertices, order);
+		DrawGeometry(vertices, {}, order);
 	}
 
 	void RenderContext::DrawEllipseFill(FRect rect, const Texture& texture)
@@ -342,13 +309,6 @@ namespace Sgl
 		DrawGeometry(vertices, texture, order);
 	}
 
-	void RenderContext::DrawGeometry(std::span<const Vertex> vertices, std::span<const int> order)
-	{
-		SDL_RenderGeometry(_renderer, nullptr, 
-						   vertices.data(), vertices.size(),
-						   order.data(), order.size());
-	}
-
 	void RenderContext::DrawGeometry(std::span<const Vertex> vertices, 
 									 const Texture& texture, 
 									 std::span<const int> order)
@@ -358,64 +318,31 @@ namespace Sgl
 						   order.data(), order.size());
 	}
 
-	void RenderContext::DrawTexture(const Texture& texture)
+	void RenderContext::DrawTexture(const Texture& texture, const FRect* target, const FRect* clip)
 	{
-		SDL_RenderTexture(_renderer, texture.GetSDLTexture(), nullptr, nullptr);
+		SDL_RenderTexture(_renderer, texture.GetSDLTexture(), clip, target);
+	}
+	
+	void RenderContext::DrawTexture9Grid(const Texture & texture, 
+										 float cornersLength, 
+										 float scale, 
+										 const FRect* target, 
+										 const FRect* clip)
+	{
+		SDL_RenderTexture9Grid(_renderer, texture.GetSDLTexture(), clip,
+			cornersLength, cornersLength, cornersLength, cornersLength,
+			scale, target);
 	}
 
-	void RenderContext::DrawTexture(const Texture& texture, FRect target)
+	void RenderContext::DrawTextureTransformed(const Texture& texture, 
+											   double angle, 
+											   const FPoint* center, 
+											   FlipMode flip, 
+											   const FRect* target, 
+											   const FRect* clip)
 	{
-		SDL_RenderTexture(_renderer, texture.GetSDLTexture(), nullptr, &target);
-	}
-
-	void RenderContext::DrawTexture(const Texture& texture, FRect target, FRect clip)
-	{
-		SDL_RenderTexture(_renderer, texture.GetSDLTexture(), &clip, &target);
-	}
-
-	void RenderContext::DrawTexture9Grid(const Texture& texture, float cornersWidth, float scale)
-	{
-		SDL_RenderTexture9Grid(_renderer, texture.GetSDLTexture(), nullptr, 
-							   cornersWidth, cornersWidth, cornersWidth, cornersWidth,
-							   scale, nullptr);
-	}
-
-	void RenderContext::DrawTexture9Grid(const Texture & texture, float cornersWidth, float scale,
-										 FRect target)
-	{
-		SDL_RenderTexture9Grid(_renderer, texture.GetSDLTexture(), nullptr,
-			cornersWidth, cornersWidth, cornersWidth, cornersWidth,
-			scale, &target);
-	}
-
-	void RenderContext::DrawTexture9Grid(const Texture & texture, float cornersWidth, float scale, FRect target, FRect clip)
-	{
-		SDL_RenderTexture9Grid(_renderer, texture.GetSDLTexture(), &clip,
-			cornersWidth, cornersWidth, cornersWidth, cornersWidth,
-			scale, &target);
-	}
-
-	void RenderContext::DrawTextureTransformed(const Texture& texture, double angle, 
-											   const FPoint* center, FlipMode flip)
-	{
-		SDL_RenderTextureRotated(_renderer, texture.GetSDLTexture(), nullptr, nullptr,
-								 angle, center, SDL_FlipMode(flip));
-	}
-
-	void RenderContext::DrawTextureTransformed(const Texture& texture, double angle, 
-											   const FPoint* center, FlipMode flip, 
-											   FRect target)
-	{
-		SDL_RenderTextureRotated(_renderer, texture.GetSDLTexture(), nullptr,
-								 &target, angle, center, SDL_FlipMode(flip));
-	}
-
-	void RenderContext::DrawTextureTransformed(const Texture& texture, double angle, 
-											   const FPoint* center, FlipMode flip, 
-											   FRect target, FRect clip)
-	{
-		SDL_RenderTextureRotated(_renderer, texture.GetSDLTexture(), &clip,
-								 &target, angle, center, SDL_FlipMode(flip));
+		SDL_RenderTextureRotated(_renderer, texture.GetSDLTexture(), clip,
+								 target, angle, center, SDL_FlipMode(flip));
 	}
 
 	void RenderContext::DrawText(FPoint position, std::string_view text, float size, 
@@ -424,12 +351,6 @@ namespace Sgl
 		TrueTypeFont font(fontFamily, size);
 		Texture texture(_renderer, FontQuality::Blended, font, text, color);
 		FRect rect(position.x, position.y, texture.GetWidth(), texture.GetHeight());
-		DrawTexture(texture, rect);
-	}
-
-	void RenderContext::ClearCache()
-	{
-		_cachedTextures.clear();
-		_cacheOrder.clear();
+		DrawTexture(texture, &rect, nullptr);
 	}
 }

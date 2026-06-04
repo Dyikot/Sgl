@@ -3,9 +3,51 @@
 
 namespace Sgl
 {
+	class ColorBackgroundRenderer final : public IBackgroundRenderer
+	{
+	public:
+		explicit ColorBackgroundRenderer(Color color): _color(color) {}
+
+		void Render(RenderContext context) const
+		{
+			context.FillBackground(_color);
+		}
+
+		void Render(RenderContext context, const FRect& rect) const
+		{
+			context.DrawRectangleFill(rect, _color);
+		}
+	private:
+		Color _color;
+	};
+
+	class TextureBackgroundRenderer final : public IBackgroundRenderer
+	{
+	public:
+		explicit TextureBackgroundRenderer(const Texture& texture): _texture(texture) {}
+
+		void Render(RenderContext context) const
+		{
+			context.DrawTexture(_texture, nullptr, nullptr);
+		}
+
+		void Render(RenderContext context, const FRect& rect) const
+		{
+			context.DrawTexture(_texture, &rect, nullptr);
+		}
+	private:
+		Texture _texture;
+	};
+
+	Renderable::Renderable()
+	{
+		UpdateBackgroundRenderer();
+	}
+
 	Renderable::Renderable(Renderable&& other) noexcept:
 		StyleableElement(std::move(other)),
 		_visualRoot(std::exchange(other._visualRoot, nullptr)),
+		_backgroundRenderer(std::move(other._backgroundRenderer)),
 		_cursor(other._cursor),
 		_background(other._background),
 		_isDirty(other._isDirty)
@@ -24,7 +66,7 @@ namespace Sgl
 		if(SetProperty(BackgroundProperty, _background, value, _backgroundSource, source))
 		{
 			InvalidateRender();
-			InvalidateBackground();
+			UpdateBackgroundRenderer();
 		}
 	}
 
@@ -52,7 +94,7 @@ namespace Sgl
 		}
 	}
 
-	void Renderable::Render(RenderContext& context)
+	void Renderable::Render(RenderContext context)
 	{
 		_isDirty = false;
 	}
@@ -66,50 +108,29 @@ namespace Sgl
 		}
 	}
 
-	void Renderable::RenderBackground(RenderContext& context)
+	void Renderable::RenderBackground(RenderContext context)
 	{
-		if(_background.index() == 0)
-		{
-			context.FillBackground(std::get<Color>(_background));
-		}
-		else
-		{
-			if(_backgroundTexture == nullptr)
-			{
-				auto& source = std::get<ImageSource>(_background);	
-				_backgroundTexture = context.LoadTexture(source);
-			}
-
-			context.DrawTexture(_backgroundTexture);
-		}
+		_backgroundRenderer->Render(context);
 	}
 
-	void Renderable::RenderBackground(RenderContext& context, const FRect& rect)
+	void Renderable::RenderBackground(RenderContext context, const FRect& rect)
+	{
+		_backgroundRenderer->Render(context, rect);
+	}
+
+	void Renderable::UpdateBackgroundRenderer()
 	{
 		if(_background.index() == 0)
 		{
 			Color color = std::get<Color>(_background);
-
-			if(color != Colors::Transparent)
-			{
-				context.DrawRectangleFill(rect, color);
-			}
+			_backgroundRenderer = std::make_unique<ColorBackgroundRenderer>(color);
 		}
 		else
 		{
-			if(_backgroundTexture == nullptr)
-			{
-				auto& source = std::get<ImageSource>(_background);
-				_backgroundTexture = context.LoadTexture(source);
-			}
-
-			context.DrawTexture(_backgroundTexture, rect);
+			auto& source = std::get<ImageSource>(_background);
+			Texture texture = GetVisualRoot()->GetTextureFactory().Create(source, false);
+			_backgroundRenderer = std::make_unique<TextureBackgroundRenderer>(texture);
 		}
-	}
-
-	void Renderable::InvalidateBackground()
-	{
-		_backgroundTexture = nullptr;
 	}
 
 	ResourceSetter<Renderable, const Brush&>::ResourceSetter(

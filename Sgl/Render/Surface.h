@@ -5,6 +5,8 @@
 
 #include "../Base/Size.h"
 #include "../Base/Media/Color.h"
+#include "../Base/Primitives.h"
+#include <span>
 
 struct SDL_Surface;
 
@@ -120,6 +122,20 @@ namespace Sgl
 		SDL_Surface* GetSDLSurface() const noexcept { return _surface; }
 
 		/// <summary>
+		/// Fills a specific rectangular area with a solid color.
+		/// </summary>
+		/// <param name="rect"> - a pointer to the rectangle structure. Pass nullptr to fill the entire surface.</param>
+		/// <param name="color">The color used to fill the rectangle.</param>
+		void Fill(const Rect* rect, Color color);
+
+		/// <summary>
+		/// Fills a collection of rectangular areas with a solid color.
+		/// </summary>
+		/// <param name="rects"> - a span of rectangles to be filled.</param>
+		/// <param name="color"> - the color used to fill the rectangles.</param>
+		void FillRects(std::span<const Rect> rects, Color color);
+
+		/// <summary>
 		/// Locks the surface pixel buffer for direct access.
 		/// Must be paired with Unlock().
 		/// </summary>
@@ -181,8 +197,7 @@ namespace Sgl
 		/// <returns>True if the surface owns a valid SDL_Surface; otherwise, false.</returns>
 		explicit operator bool() const noexcept { return _surface != nullptr; }
 	private:
-		void CopyFrom(const Surface& other);
-		void Destroy();
+		void Release();
 	private:
 		SDL_Surface* _surface = nullptr;
 	};

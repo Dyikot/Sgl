@@ -18,7 +18,6 @@ The project is currently in development.
 - New UIElements
 - Focus manager
 - Animation
-- New renderer
 - Notifications
 - Drag & drop
 - Documentation

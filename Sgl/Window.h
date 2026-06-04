@@ -321,6 +321,12 @@ namespace Sgl
 		/// Marks the window's visual content as invalid, requesting a re-render on the next frame.
 		/// </summary>
 		void InvalidateRender() final;
+		
+		/// <summary>
+		/// Provides access to the texture factory instance.
+		/// </summary>
+		/// <returns>A reference to the active ITextureFactory implementation.</returns>
+		ITextureFactory& GetTextureFactory() final;
 
 		/// <summary>
 		/// Checks whether the window needs to be rendered due to pending changes.
@@ -377,7 +383,7 @@ namespace Sgl
 		/// Renders the window's content using the provided rendering context.
 		/// </summary>
 		/// <param name="context"> - the render context used to draw UI elements.</param>
-		void Render(RenderContext& context) override;
+		void Render(RenderContext context) override;
 
 		/// <summary>
 		/// Applies the current style rules to this window and its visual tree.
@@ -420,7 +426,7 @@ namespace Sgl
 		SDL_WindowID _id = 0;
 		SDL_Window* _sdlWindow;
 		SDL_Renderer* _renderer;
-		RenderContext _renderContext;
+		ITextureFactory* _textureFactory;
 		Ref<UIElement> _content;
 		Ref<UIElement> _mouseCapturedElement;
 		bool _isModal = false;
@@ -435,7 +441,7 @@ namespace Sgl
 		ValueSource _contentSource {};
 
 		friend class UIElement;
-		friend class Application;
+		friend class Application;		
 	};
 
 	struct Window_Content

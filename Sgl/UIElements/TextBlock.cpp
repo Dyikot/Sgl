@@ -125,7 +125,7 @@ namespace Sgl::UIElements
 		}
 	}
 
-	void TextBlock::Render(RenderContext& context)
+	void TextBlock::Render(RenderContext context)
 	{
 		RenderBackground(context, _bounds);
 
@@ -138,7 +138,7 @@ namespace Sgl::UIElements
 		{
 			auto [x, y, width, height] = GetBounds();
 			context.SetClip(Rect(x, y, width, height));
-			context.DrawTexture(_textTexture, _textTextureBounds);
+			context.DrawTexture(_textTexture, &_textTextureBounds, nullptr);
 			context.ResetClip();
 		}
 
