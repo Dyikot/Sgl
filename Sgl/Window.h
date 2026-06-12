@@ -397,7 +397,8 @@ namespace Sgl
 
 		static inline StyleableProperty ContentProperty { &SetContent, &GetContent };
 	protected:
-		void OnCursorChanged(Cursor cursor) override;
+		void OnCursorChanged(Cursor cursor) final;
+		void OnBackgroundChanged(const Brush& background) final;
 		void OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext) override;
 		void OnAttachedToLogicalTree() override;
 		void OnDetachedFromLogicalTree() override;
@@ -437,6 +438,7 @@ namespace Sgl
 		Window* _owner = nullptr;
 		std::list<Window*> _ownedWindows;
 		Surface _icon;
+		Action<RenderContext> _backgroundRenderer;
 
 		ValueSource _contentSource {};
 

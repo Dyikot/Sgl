@@ -18,7 +18,7 @@ namespace Sgl
 		using MouseButtonEventHandler = EventHandler<UIElement, MouseButtonEventArgs>;
 		using MouseWheelEventHandler = EventHandler<UIElement, MouseWheelEventArgs&>;
 	public:
-		UIElement() = default;
+		UIElement();
 		UIElement(UIElement&& other) noexcept;
 
 		static inline const PseudoClass OnHover { "hover" };
@@ -36,12 +36,18 @@ namespace Sgl
 		void SetTag(const Any& value, ValueSource source = ValueSource::Local);
 		const Any& GetTag() const { return _tag; }
 
+		void SetIsCornersRounded(bool value, ValueSource source = ValueSource::Local);
+		bool GetIsCornersRounded() const { return _isCornersRounded; }
+
 		bool IsMouseOver() const { return PseudoClasses.Has(OnHover); }	
 		bool IsMousePressed() const { return PseudoClasses.Has(OnPressed); }
 
 		static inline StyleableProperty TagProperty { &SetTag, &GetTag };
+		static inline StyleableProperty IsCornersRoundedProperty { &SetIsCornersRounded, &GetIsCornersRounded };
 	protected:
+		void RenderBackground(RenderContext context, const FRect& rect);
 		void OnCursorChanged(Cursor cursor) override;
+		void OnBackgroundChanged(const Brush& background) override;
 		void OnAttachedToLogicalTree() override;
 		virtual void OnKeyUp(KeyEventArgs e);
 		virtual void OnKeyDown(KeyEventArgs e);
@@ -52,8 +58,15 @@ namespace Sgl
 		virtual void OnMouseEnter(MouseMoveEventArgs e);
 		virtual void OnMouseLeave(MouseMoveEventArgs e);
 	private:
+		void UpdateBackgroundRenderer(const Brush& background);
+	private:
+		Action<RenderContext, const FRect&> _backgroundRenderer;
+
 		Any _tag;
+		bool _isCornersRounded = false;
+
 		ValueSource _tagSource {};	
+		ValueSource _isCornersRoundedSource {};
 
 		friend class Panel;
 		friend class Window;

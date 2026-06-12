@@ -1,15 +1,39 @@
 #include "UIElement.h"
+#include "../Application.h"
 
 namespace Sgl
 {
+	UIElement::UIElement()
+	{
+		UpdateBackgroundRenderer(GetBackground());
+	}
+
 	UIElement::UIElement(UIElement&& other) noexcept:
 		Layoutable(std::move(other)),
-		_tag(std::move(other._tag))
+		_backgroundRenderer(std::move(other._backgroundRenderer)),
+		_tag(std::move(other._tag)),
+		_isCornersRounded(other._isCornersRounded),
+		_tagSource(other._tagSource),
+		_isCornersRoundedSource(other._isCornersRoundedSource)
 	{}
 
 	void UIElement::SetTag(const Any& value, ValueSource source)
 	{
 		SetProperty(TagProperty, _tag, value, _tagSource, source);
+	}
+
+	void UIElement::SetIsCornersRounded(bool value, ValueSource source)
+	{
+		if(SetProperty(IsCornersRoundedProperty, _isCornersRounded, value, _isCornersRoundedSource, source))
+		{
+			InvalidateRender();
+			UpdateBackgroundRenderer(GetBackground());
+		}
+	}
+
+	void UIElement::RenderBackground(RenderContext context, const FRect& rect)
+	{
+		_backgroundRenderer(context, rect);
 	}
 
 	void UIElement::OnCursorChanged(Cursor cursor)
@@ -18,6 +42,11 @@ namespace Sgl
 		{
 			_platformCursor.Set(cursor);
 		}
+	}
+
+	void UIElement::OnBackgroundChanged(const Brush& background)
+	{
+		UpdateBackgroundRenderer(background);
 	}
 
 	void UIElement::OnAttachedToLogicalTree()
@@ -82,7 +111,91 @@ namespace Sgl
 	{
 		MouseLeave.Invoke(*this, e);
 		PseudoClasses.Reset(OnHover);
-	}	
+	}
+
+	static constexpr size_t ColorBg   = 0;
+	static constexpr size_t TextureBg = 1;
+	static constexpr size_t RoundedColorBg   =   ColorBg | 2;
+	static constexpr size_t RoundedTextureBg = TextureBg | 2;
+
+	void UIElement::UpdateBackgroundRenderer(const Brush& background)
+	{
+		auto states = background.index() | (static_cast<size_t>(_isCornersRounded) << 1);
+
+		switch(states)
+		{
+			case ColorBg:
+			{
+				auto color = std::get<Color>(background);
+				_backgroundRenderer = [color](RenderContext context, const FRect& rect)
+				{
+					context.DrawRectangleFill(rect, color);
+				};
+
+				break;
+			}
+
+			case TextureBg:
+			{
+				auto& source = std::get<ImageSource>(background);
+				auto texture = GetVisualRoot()->GetTextureFactory().Create(source, false);
+				_backgroundRenderer = [texture](RenderContext context, const FRect& rect)
+				{
+					context.DrawTexture(texture, &rect, nullptr);
+				};
+
+				break;
+			}
+
+			case RoundedColorBg:
+			{
+				auto color = std::get<Color>(background);
+				auto circleFill = GetVisualRoot()->GetTextureFactory().CreatePrimitive(0);
+				_backgroundRenderer = [color, circleFill](RenderContext context, const FRect& rect) mutable
+				{
+					circleFill.SetColor(color);
+					context.DrawTexture9Grid(circleFill, 16, 1, &rect, nullptr);
+				};
+
+				break;
+			}
+
+			case RoundedTextureBg:
+			{
+				auto& factory = GetVisualRoot()->GetTextureFactory();
+
+				auto& source = std::get<ImageSource>(background);
+				auto texture = factory.Create(source, false);
+				auto circleFill = factory.CreatePrimitive(0);
+				_backgroundRenderer = [texture, circleFill, cache = Texture()]
+					(RenderContext context, const FRect& rect) mutable
+				{
+					if(!cache || cache.GetWidth() != rect.w || cache.GetHeight() != rect.h)
+					{
+						cache = Texture(context.GetRenderer(), 
+										 Size(rect.w, rect.h),
+										 TextureAccess::Target);
+
+						context.SetTarget(cache);
+						{
+							circleFill.SetColor(Colors::White);
+							context.DrawTexture9Grid(circleFill, 16, 1, nullptr, nullptr);
+
+							texture.SetBlendMode(SDL_BLENDMODE_MOD);
+							context.DrawTexture(texture, nullptr, nullptr);
+							texture.SetBlendMode(SDL_BLENDMODE_BLEND);
+						}
+						context.ResetTarget();
+					}
+
+					context.DrawTexture(cache, &rect, nullptr);
+				};
+
+				break;
+			}
+		}
+	}
+
 
 	Ref<UIElement> UIElementDataTemplate::Build(const Ref<INotifyPropertyChanged>& data)
 	{

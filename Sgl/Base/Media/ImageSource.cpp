@@ -28,7 +28,7 @@ namespace Sgl
 
 		Texture CreateTexture(SDL_Renderer* renderer) const final
 		{
-			return Texture(renderer, LoadAssetRaw(_asset));
+			return Texture(renderer, LoadEmbeddedAsset(_asset));
 		}
 	private:
 		AssetId _asset;

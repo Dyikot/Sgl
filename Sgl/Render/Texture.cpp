@@ -206,6 +206,11 @@ namespace Sgl
 		return _texture;
 	}
 
+	SDL_Renderer* Texture::GetRenderer() const
+	{
+		return SDL_GetRendererFromTexture(_texture);
+	}
+
 	Texture& Texture::operator=(std::nullptr_t)
 	{
 		Release();

@@ -3,53 +3,11 @@
 
 namespace Sgl
 {
-	class ColorBackgroundRenderer final : public IBackgroundRenderer
-	{
-	public:
-		explicit ColorBackgroundRenderer(Color color): _color(color) {}
-
-		void Render(RenderContext context) const
-		{
-			context.FillBackground(_color);
-		}
-
-		void Render(RenderContext context, const FRect& rect) const
-		{
-			context.DrawRectangleFill(rect, _color);
-		}
-	private:
-		Color _color;
-	};
-
-	class TextureBackgroundRenderer final : public IBackgroundRenderer
-	{
-	public:
-		explicit TextureBackgroundRenderer(const Texture& texture): _texture(texture) {}
-
-		void Render(RenderContext context) const
-		{
-			context.DrawTexture(_texture, nullptr, nullptr);
-		}
-
-		void Render(RenderContext context, const FRect& rect) const
-		{
-			context.DrawTexture(_texture, &rect, nullptr);
-		}
-	private:
-		Texture _texture;
-	};
-
-	Renderable::Renderable()
-	{
-		UpdateBackgroundRenderer();
-	}
-
 	Renderable::Renderable(Renderable&& other) noexcept:
 		StyleableElement(std::move(other)),
 		_visualRoot(std::exchange(other._visualRoot, nullptr)),
-		_backgroundRenderer(std::move(other._backgroundRenderer)),
-		_cursor(other._cursor),
-		_background(other._background),
+		_cursor(std::move(other._cursor)),
+		_background(std::move(other._background)),
 		_isDirty(other._isDirty)
 	{}
 
@@ -66,7 +24,7 @@ namespace Sgl
 		if(SetProperty(BackgroundProperty, _background, value, _backgroundSource, source))
 		{
 			InvalidateRender();
-			UpdateBackgroundRenderer();
+			OnBackgroundChanged(_background);
 		}
 	}
 
@@ -105,31 +63,6 @@ namespace Sgl
 		{
 			_visualRoot->InvalidateRender();
 			_isDirty = true;
-		}
-	}
-
-	void Renderable::RenderBackground(RenderContext context)
-	{
-		_backgroundRenderer->Render(context);
-	}
-
-	void Renderable::RenderBackground(RenderContext context, const FRect& rect)
-	{
-		_backgroundRenderer->Render(context, rect);
-	}
-
-	void Renderable::UpdateBackgroundRenderer()
-	{
-		if(_background.index() == 0)
-		{
-			Color color = std::get<Color>(_background);
-			_backgroundRenderer = std::make_unique<ColorBackgroundRenderer>(color);
-		}
-		else
-		{
-			auto& source = std::get<ImageSource>(_background);
-			Texture texture = GetVisualRoot()->GetTextureFactory().Create(source, false);
-			_backgroundRenderer = std::make_unique<TextureBackgroundRenderer>(texture);
 		}
 	}
 

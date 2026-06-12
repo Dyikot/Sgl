@@ -1,4 +1,4 @@
-#include "Assets.h"
+#include "AssetsEmbedded.h"
 
 namespace Sgl
 {
@@ -114,7 +114,7 @@ namespace Sgl
         0xae, 0x42, 0x60, 0x82
     };
 
-    std::span<const uint8_t> LoadAssetRaw(AssetId asset)
+    std::span<const uint8_t> LoadEmbeddedAsset(AssetId asset)
     {
         switch(asset)
         {

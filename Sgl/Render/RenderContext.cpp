@@ -8,12 +8,12 @@
 
 namespace Sgl
 {
-	static constexpr size_t VerticesNumber = 181;
-	static constexpr size_t EllipseVerticesNumber = 91;
+	static constexpr size_t PointsNumber = 181;
+	static constexpr size_t EllipsePointsNumber = 91;
 	static constexpr size_t EllipseAngleStep = 2;
 
-	static const std::vector<float> SinRange = Math::SinRange(VerticesNumber);
-	static const std::vector<float> CosRange = Math::CosRange(VerticesNumber);
+	static const std::vector<float> SinRange = Math::SinRange(PointsNumber);
+	static const std::vector<float> CosRange = Math::CosRange(PointsNumber);
 
 	RenderContext::RenderContext(SDL_Renderer* _renderer):
 		_renderer(_renderer)
@@ -95,16 +95,20 @@ namespace Sgl
 
 	void RenderContext::DrawEllipse(FRect rect, Color color)
 	{
-		std::vector<FPoint> points(VerticesNumber);
+		const bool isMoreThan64x64 = rect.w > 64.f && rect.h > 64.f;
+		const size_t stride = isMoreThan64x64 ? 1 : 2;
+		const size_t pointsNumber = isMoreThan64x64 ? PointsNumber: PointsNumber / 2 + 1;
+
+		std::vector<FPoint> points(pointsNumber);
 
 		const float radiusX = 0.5f * rect.w;
 		const float radiusY = 0.5f * rect.h;
 		const FPoint center(rect.x + radiusX, rect.y + radiusY);
 
-		for(size_t i = 0; i < VerticesNumber; i++)
+		for(size_t i = 0, j = 0; i < pointsNumber; i++, j += stride)
 		{
-			points[i].x = center.x + radiusX * CosRange[i];
-			points[i].y = center.y + radiusY * SinRange[i];
+			points[i].x = center.x + radiusX * CosRange[j];
+			points[i].y = center.y + radiusY * SinRange[j];
 		}
 
 		DrawLines(points, color);
@@ -250,7 +254,7 @@ namespace Sgl
 
 	static std::vector<Vertex> ComputeFillEllipseVertices(FRect rect, Color color, bool hasTexture)
 	{
-		std::vector<Vertex> vertices(EllipseVerticesNumber);
+		std::vector<Vertex> vertices(EllipsePointsNumber);
 
 		size_t angleStep = 0;
 		float radiusX = rect.w * 0.5f;
@@ -259,7 +263,7 @@ namespace Sgl
 
 		if(hasTexture)
 		{
-			for(size_t i = 0; i < EllipseVerticesNumber; i++)
+			for(size_t i = 0; i < EllipsePointsNumber; i++)
 			{
 				float cos = CosRange[angleStep];
 				float sin = SinRange[angleStep];
@@ -276,7 +280,7 @@ namespace Sgl
 		}
 		else
 		{
-			for(size_t i = 0; i < EllipseVerticesNumber; i++)
+			for(size_t i = 0; i < EllipsePointsNumber; i++)
 			{
 				float cos = CosRange[angleStep];
 				float sin = SinRange[angleStep];
@@ -295,7 +299,7 @@ namespace Sgl
 	void RenderContext::DrawEllipseFill(FRect rect, Color color)
 	{
 		auto vertices = ComputeFillEllipseVertices(rect, color, false);
-		auto order = Math::TriangulateEllipse(EllipseVerticesNumber - 1);
+		auto order = Math::TriangulateEllipse(EllipsePointsNumber - 1);
 
 		DrawGeometry(vertices, {}, order);
 	}
@@ -304,7 +308,7 @@ namespace Sgl
 	{
 		auto color = texture.GetColor();
 		auto vertices = ComputeFillEllipseVertices(rect, color, true);
-		auto order = Math::TriangulateEllipse(EllipseVerticesNumber - 1);
+		auto order = Math::TriangulateEllipse(EllipsePointsNumber - 1);
 
 		DrawGeometry(vertices, texture, order);
 	}

@@ -50,7 +50,7 @@ namespace Sgl
 		/// </summary>
 		/// <param name="size"> - width and height of the new surface.</param>
 		/// <param name="format"> - pixel format for the new surface.</param>
-		Surface(Size size, SDL_PixelFormat format);
+		Surface(Size size, SDL_PixelFormat format = SDL_PIXELFORMAT_RGBA8888);
 
 		/// <summary>
 		/// Creates a surface that references external pixel data with custom pitch.

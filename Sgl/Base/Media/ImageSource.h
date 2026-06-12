@@ -1,7 +1,7 @@
 #pragma once
 
 #include <filesystem>
-#include "Assets.h"
+#include "AssetsEmbedded.h"
 #include "../../Render/Texture.h"
 #include "../Ref.h"
 

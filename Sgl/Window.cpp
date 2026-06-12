@@ -5,13 +5,23 @@
 #include "Base/Exceptions.h"
 #include "Base/Logging.h"
 #include "Input/SDLEvents.h"
+#include "Render/PrimitivesEmbedded.h"
 
 namespace Sgl
 {
     class TextureFactory final : public ITextureFactory
     {
     public:
-        TextureFactory(SDL_Renderer* renderer): _renderer(renderer) {}
+        TextureFactory(SDL_Renderer* renderer): 
+            _renderer(renderer) 
+        {
+            _primitives[0] = Texture(renderer, CircleFill32x32);
+            _primitives[1] = Texture(renderer, CircleOutline32x32p1);
+            _primitives[2] = Texture(renderer, CircleOutline32x32p2);
+            _primitives[3] = Texture(renderer, CircleOutline32x32p3);
+            _primitives[4] = Texture(renderer, CircleOutline32x32p4);
+            _primitives[5] = Texture(renderer, CircleOutline32x32p5);
+        }
 
         Texture Create(const ImageSource& source, bool cache) override
         {
@@ -45,7 +55,19 @@ namespace Sgl
 
             return texture;
         }
+
+        Texture CreatePrimitive(size_t id) override
+        {
+            if(id >= PrimitivesCount)
+            {
+                return nullptr;
+            }
+
+            return _primitives[id];
+        }
     private:
+        static constexpr size_t PrimitivesCount = 6;
+
         struct CachedTexture
         {
             Texture Texture;
@@ -53,6 +75,7 @@ namespace Sgl
         };
 
         SDL_Renderer* _renderer;
+        Texture _primitives[PrimitivesCount];
         std::unordered_map<ImageSource, CachedTexture> _textures;
         std::list<ImageSource> _order;
     };
@@ -292,7 +315,7 @@ namespace Sgl
     {
         return _icon;
     }
-
+    
     void Window::SetResizable(bool value) noexcept
     {
         SDL_SetWindowResizable(_sdlWindow, value);
@@ -473,7 +496,7 @@ namespace Sgl
 
     void Window::Render(RenderContext context)
     {
-        RenderBackground(context);
+        _backgroundRenderer(context);
 
         if(_content && _content->IsVisible())
         {
@@ -522,6 +545,27 @@ namespace Sgl
         else
         {
             _platformCursor.Set(GetCursor());
+        }
+    }
+
+    void Window::OnBackgroundChanged(const Brush& background)
+    {
+        if(background.index() == 0)
+        {
+            auto color = std::get<Color>(background);
+            _backgroundRenderer = [color](RenderContext context)
+            {
+                context.FillBackground(color);
+            };
+        }
+        else
+        {
+            auto& source = std::get<ImageSource>(background);
+            auto texture = _textureFactory->Create(source, false);
+            _backgroundRenderer = [texture](RenderContext context)
+            {
+                context.DrawTexture(texture, nullptr, nullptr);
+            };
         }
     }
 

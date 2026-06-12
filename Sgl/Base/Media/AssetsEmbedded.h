@@ -12,5 +12,5 @@ namespace Sgl
 		RadioButtonOutline
 	};
 
-	std::span<const uint8_t> LoadAssetRaw(AssetId asset);
+	std::span<const uint8_t> LoadEmbeddedAsset(AssetId asset);
 }

@@ -20,6 +20,7 @@ The project is currently in development.
 - Animation
 - Notifications
 - Drag & drop
+- New rendering
 - Documentation
 
 ## Quick Start
