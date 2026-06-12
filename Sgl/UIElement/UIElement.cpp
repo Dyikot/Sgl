@@ -3,11 +3,6 @@
 
 namespace Sgl
 {
-	UIElement::UIElement()
-	{
-		UpdateBackgroundRenderer(GetBackground());
-	}
-
 	UIElement::UIElement(UIElement&& other) noexcept:
 		Layoutable(std::move(other)),
 		_backgroundRenderer(std::move(other._backgroundRenderer)),
@@ -56,6 +51,11 @@ namespace Sgl
 		auto& parent = static_cast<StyleableElement&>(*GetStylingParent());
 		SetDataContext(parent.GetDataContext(), ValueSource::Inheritance);
 		SetCursor(static_cast<Renderable&>(parent).GetCursor(), ValueSource::Inheritance);
+
+		if(!_backgroundRenderer)
+		{
+			UpdateBackgroundRenderer(GetBackground());
+		}
 
 		ApplyBindings();
 	}
@@ -120,6 +120,11 @@ namespace Sgl
 
 	void UIElement::UpdateBackgroundRenderer(const Brush& background)
 	{
+		if(!IsAttachedToLogicalTree())
+		{
+			return;
+		}
+
 		auto states = background.index() | (static_cast<size_t>(_isCornersRounded) << 1);
 
 		switch(states)

@@ -18,7 +18,7 @@ namespace Sgl
 		using MouseButtonEventHandler = EventHandler<UIElement, MouseButtonEventArgs>;
 		using MouseWheelEventHandler = EventHandler<UIElement, MouseWheelEventArgs&>;
 	public:
-		UIElement();
+		UIElement() = default;
 		UIElement(UIElement&& other) noexcept;
 
 		static inline const PseudoClass OnHover { "hover" };
