@@ -1,4 +1,4 @@
-#include "LocalizationStorage.h"
+#include "LocalizationResources.h"
 #include "../Logging.h"
 #include "../Exceptions.h"
 
@@ -6,21 +6,36 @@
 
 namespace Sgl
 {
-	LocalizationStorage::LocalizationStorage(LanguageManager& languageManager, 
-											 LocalizationLoader localizationLoader):
-		_languageManager(languageManager),
-		_loader(std::move(localizationLoader))
+	void LocalizationResources::SetProvider(LocalizationProvider localizationProvider)
 	{
-		LoadLocalizationStrings(languageManager.GetCurrent());
-		_languageManager.CurrentChanged += MethodEventHandler(&LocalizationStorage::OnLanguageChanged, this);
+		_provider = std::move(localizationProvider);
+		LoadLocalization();
 	}
 
-	LocalizationStorage::~LocalizationStorage()
-    {
-        _languageManager.CurrentChanged -= MethodEventHandler(&LocalizationStorage::OnLanguageChanged, this);
-    }
+	void LocalizationResources::SetCVSProvider(std::string csvFilePath, char delimiter)
+	{
+		auto csvProvider = [csv = LocalizationCSVReader(std::move(csvFilePath), delimiter)]
+			(const LanguageInfo& languageInfo)
+		{
+			return csv.GetLocalization(languageInfo.Name);
+		};
 
-    std::string LocalizationStorage::GetLocalizedString(std::string_view key) const
+		SetProvider(std::move(csvProvider));
+	}
+
+	void LocalizationResources::SetLanguage(const LanguageInfo& language)
+	{
+		if(_language == language)
+		{
+			return;
+		}
+
+		_language = language;
+		LoadLocalization();
+		LanguageChanged.Invoke(*this, _language);
+	}
+
+	std::string LocalizationResources::GetLocalizedString(std::string_view key) const
     {
         if(auto it = _map.find(key); it != _map.end())
         {
@@ -30,20 +45,13 @@ namespace Sgl
         return std::string(key);
     }
 
-    void LocalizationStorage::OnLanguageChanged(LanguageManager& sender, EventArgs e)
-    {
-        LoadLocalizationStrings(sender.GetCurrent());
-    }
-
-    void LocalizationStorage::LoadLocalizationStrings(const LanguageInfo& languageInfo)
-    {
-        _map = _loader(languageInfo);
-
-        if(_map.empty())
-        {
-            Logging::LogWarning("Failed to load a localization for '{}' language.", languageInfo.Name);
-        }
-    }
+	void LocalizationResources::LoadLocalization()
+	{
+		if(_provider)
+		{
+			_map = _provider(_language);
+		}
+	}
 
 	LocalizationMap LocalizationCSVReader::GetLocalization(std::string_view languageName) const
 	{

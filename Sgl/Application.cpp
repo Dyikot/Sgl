@@ -21,8 +21,7 @@ namespace Sgl
     static constexpr double MaxFrameTime = 1e3 / 60.0;
 
 	Application::Application() noexcept:
-        _windows(MaxWindowsNumber),
-        _lanaguageManager(new LanguageManager())
+        _windows(MaxWindowsNumber)
 	{
 		_current = this;
 
@@ -46,11 +45,6 @@ namespace Sgl
         SDL_RegisterEvents(UserEventsNumber);
         SetThemeVariant(ThemeVariant::System);
         AddDefaultStyles();
-
-        ThemeVariantChanged += [this](Application& app, ThemeMode mode)
-        {
-            Resources.SetCurrentTheme(mode);
-        };
 	}
 
 	Application::~Application()
@@ -69,26 +63,28 @@ namespace Sgl
             return;
         }
 
-        _themeVariant = value;
+        ThemeMode themeMode;
 
         switch(value)
         {
             case ThemeVariant::Light:
-                _themeMode = ThemeMode::Light; 
+                themeMode = ThemeMode::Light; 
                 break;
 
             case ThemeVariant::Dark:
-                _themeMode = ThemeMode::Dark;
+                themeMode = ThemeMode::Dark;
                 break;
 
             case ThemeVariant::System:
-                _themeMode = GetSystemThemeMode();
+                themeMode = GetSystemThemeMode();
                 break;
 
             default:
                 throw Exception("ThemeVariant with index '{}' does not exist", static_cast<int>(value));
         }
 
+        _themeVariant = value;
+        Resources.SetCurrentTheme(themeMode);
         OnThemeVariantChanged();
     }
 
@@ -114,17 +110,6 @@ namespace Sgl
         }
     }
 
-    void Application::AddLocalizationFromCSV(std::string csvFilePath, char delimiter)
-    {
-        auto csvLanguageLoader = [csv = LocalizationCSVReader(std::move(csvFilePath), delimiter)]
-            (const LanguageInfo& languageInfo)
-        {
-            return csv.GetLocalization(languageInfo.Name);
-        };
-
-        AddLocalization(std::move(csvLanguageLoader));
-    }
-
     void Application::AddAudioMixer()
     {
         _mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, nullptr);
@@ -133,14 +118,6 @@ namespace Sgl
         {
             Logging::LogError("Unable to create mixer device: {}", SDL_GetError());
         }
-    }
-
-    void Application::AddLocalization(LocalizationLoader localizationLoader)
-    {
-        _localizationStorage = std::make_unique<LocalizationStorage>(
-            *_lanaguageManager,
-            std::move(localizationLoader)
-        );
     }
 
     void Application::Run()
@@ -212,7 +189,7 @@ namespace Sgl
 
     void Application::OnThemeVariantChanged()
     {
-        ThemeVariantChanged.Invoke(*this, _themeMode);
+        ThemeVariantChanged.Invoke(*this);
 
         for(auto& window : _activeWindows)
         {
@@ -614,6 +591,6 @@ namespace Sgl
 
     std::string StringLocalizer::operator()(std::string_view key) const
     {
-        return App->_localizationStorage->GetLocalizedString(key);
+        return App->Localization.GetLocalizedString(key);
     }
 }

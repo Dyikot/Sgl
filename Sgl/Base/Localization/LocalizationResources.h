@@ -2,6 +2,7 @@
 
 #include <unordered_map>
 #include "LanguageInfo.h"
+#include "../Event.h"
 #include "../Tools/StringUtils.h"
 #include "../Tools/CSVReader.h"
 
@@ -15,25 +16,43 @@ namespace Sgl
     using LocalizationMap = std::unordered_map<std::string, std::string, StringHash, std::equal_to<void>>;
 
     /// <summary>
-    /// Delegate type for loading localized strings.
+    /// Delegate type for providing localized strings.
     /// </summary>
-    /// <param name="locale"> - the locale identifier (e.g., "en-US", "ru-RU").</param>
-    /// <param name="languageInfo"> - reference to the current language information.</param>
+    /// <param name="language"> - the language identifier (e.g., "en", "ru", "fr").</param>
     /// <returns>A map of localization keys to their translated strings.</returns>
-    using LocalizationLoader = Func<LocalizationMap, const LanguageInfo&>;
+    using LocalizationProvider = Func<LocalizationMap, const LanguageInfo&>;
 
     /// <summary>
     /// Manages localized strings and provides lookup functionality based on the current language.
-    /// Loads localization data through a provided loader delegate and handles language change events.
+    /// Loads localization data through a provided delegate and handles language change events.
     /// </summary>
-    class LocalizationStorage final
+    class LocalizationResources
     {        
     public:
-        
-        LocalizationStorage(LanguageManager& languageManager, LocalizationLoader localizationLoader);
-        LocalizationStorage(const LocalizationStorage&) = delete;
-        LocalizationStorage(LocalizationStorage&&) = default;
-        ~LocalizationStorage();
+        using LanguageChangedEventHandler = EventHandler<LocalizationResources, const LanguageInfo&>;
+    public:
+        LocalizationResources() = default;
+        LocalizationResources(const LocalizationResources&) = delete;
+        LocalizationResources(LocalizationResources&&) = default;
+
+        Event<LanguageChangedEventHandler> LanguageChanged;
+
+        /// <summary>
+        /// Initializes localization resources using the provider delegate.
+        /// The provider delegate is invoked whenever the language changes to load the appropriate translations.
+        /// </summary>
+        /// <param name="localizationProvider"> - delegate that loads localization data for a specified locale and returns a map of localization keys to translated strings.</param>
+        void SetProvider(LocalizationProvider localizationProvider);
+
+        /// <summary>
+        /// Initializes localization resources from CSV file.
+        /// </summary>
+        /// <param name="csvFilePath"> - path to the CSV file containing localization data.</param>
+        /// <param name="delimiter"> - character used as delimiter in the CSV file (default is comma).</param>
+        void SetCVSProvider(std::string csvFilePath, char delimiter = ',');
+
+        void SetLanguage(const LanguageInfo& language);
+        const LanguageInfo& GetLanguage() const { return _language; }
 
         /// <summary>
         /// Retrieves the localized string for the specified key.
@@ -42,12 +61,11 @@ namespace Sgl
         /// <returns>A localized string.</returns>
         std::string GetLocalizedString(std::string_view key) const;
     private:
-        void OnLanguageChanged(LanguageManager& sender, EventArgs e);
-        void LoadLocalizationStrings(const LanguageInfo& languageInfo);
+        void LoadLocalization();
     private:
         LocalizationMap _map;
-        LanguageManager& _languageManager;
-        LocalizationLoader _loader;
+        LanguageInfo _language { "en" };
+        LocalizationProvider _provider;
     };
 
     /// <summary>

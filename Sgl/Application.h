@@ -4,7 +4,7 @@
 #include "Base/Media/ThemeMode.h"
 #include "Base/Media/ThemeResourceProvider.h"
 #include "Base/Localization/StringLocalizer.h"
-#include "Base/Localization/LocalizationStorage.h"
+#include "Base/Localization/LocalizationResources.h"
 
 struct MIX_Mixer;
 
@@ -36,7 +36,6 @@ namespace Sgl
 		};
 	private:
 		using ApplicationEventHandler = EventHandler<Application>;
-		using ThemeVariantChangedEventHanlder = EventHandler<Application, ThemeMode>;
 	public:
 		/// <summary>
 		/// Constructs an application instance.
@@ -64,7 +63,7 @@ namespace Sgl
 		/// <summary>
 		/// Event raised when the active theme variant changes.
 		/// </summary>
-		Event<ThemeVariantChangedEventHanlder> ThemeVariantChanged;
+		Event<ApplicationEventHandler> ThemeVariantChanged;
 
 		/// <summary>
 		/// Collection of global styles applied to all UI elements in the application.
@@ -75,6 +74,11 @@ namespace Sgl
 		/// Theme resource provider for managing themed colors and brushes.
 		/// </summary>
 		ThemeResourceProvider Resources;
+
+		/// <summary>
+		/// Localization resources for managing text translation
+		/// </summary>
+		LocalizationResources Localization;
 
 		/// <summary>
 		/// The primary window of the application.
@@ -101,12 +105,6 @@ namespace Sgl
 		ThemeVariant GetThemeVariant() const { return _themeVariant; }
 
 		/// <summary>
-		/// Gets the current theme mode (Light or Dark).
-		/// </summary>
-		/// <returns>The detected theme mode.</returns>
-		ThemeMode GetThemeMode() const noexcept { return _themeMode; }
-
-		/// <summary>
 		/// Gets the global style collection for this application.
 		/// </summary>
 		/// <returns>Reference to the application's StyleCollection.</returns>
@@ -131,30 +129,10 @@ namespace Sgl
 		const std::vector<Window*>& GetWindows() const noexcept { return _activeWindows; }
 
 		/// <summary>
-		/// Gets a language manager
-		/// </summary>
-		/// <returns>A reference to language manager</returns>
-		LanguageManager& GetLanguageManager() const { return *_lanaguageManager; }
-
-		/// <summary>
 		/// Gets an audio mixer
 		/// </summary>
 		/// <returns>A pointer to audio mixer</returns>
 		MIX_Mixer* GetAudioMixer() const { return _mixer; }
-
-		/// <summary>
-		/// Initializes localization storage using the provided loader delegate.
-		/// The loader is invoked whenever the language changes to load the appropriate translations.
-		/// </summary>
-		/// <param name="localizationLoader"> - delegate that loads localization data for a specified locale and returns a map of localization keys to translated strings.</param>
-		void AddLocalization(LocalizationLoader localizationLoader);
-
-		/// <summary>
-		/// Initializes localization storage from CSV file.
-		/// </summary>
-		/// <param name="csvFilePath"> - path to the CSV file containing localization data.</param>
-		/// <param name="delimiter"> - character used as delimiter in the CSV file (default is comma).</param>
-		void AddLocalizationFromCSV(std::string csvFilePath, char delimiter = ',');
 
 		/// <summary>
 		/// Creates a mixer for playing music and sounds.
@@ -193,10 +171,7 @@ namespace Sgl
 		std::vector<Window*> _activeWindows;
 
 		bool _isRunning = false;
-		ThemeMode _themeMode;
 		ThemeVariant _themeVariant;
-		std::unique_ptr<LanguageManager> _lanaguageManager;
-		std::unique_ptr<LocalizationStorage> _localizationStorage;
 		MIX_Mixer* _mixer = nullptr;
 
 		friend class Window;

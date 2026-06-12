@@ -48,9 +48,9 @@ namespace Sgl
 	{
 		Layoutable::OnAttachedToLogicalTree();
 
-		auto& parent = static_cast<StyleableElement&>(*GetStylingParent());
+		auto& parent = static_cast<Renderable&>(*GetStylingParent());
 		SetDataContext(parent.GetDataContext(), ValueSource::Inheritance);
-		SetCursor(static_cast<Renderable&>(parent).GetCursor(), ValueSource::Inheritance);
+		SetCursor(parent.GetCursor(), ValueSource::Inheritance);
 
 		if(!_backgroundRenderer)
 		{
