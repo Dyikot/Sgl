@@ -47,8 +47,6 @@ namespace Sgl::UIElements
 
 			context.DrawRectanglesFill(sides, _borderColor);
 		}
-
-		ContentUIElement::Render(context);
 	}
 
 	Thickness Border::GetLayoutPadding() const
