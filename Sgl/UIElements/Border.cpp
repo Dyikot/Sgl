@@ -27,16 +27,16 @@ namespace Sgl::UIElements
 
 	void Border::Render(RenderContext context)
 	{
-		RenderBackground(context, _bounds);
+		ContentUIElement::Render(context);
 		
 		if(_borderWidth == 1u)
 		{
-			context.DrawRectangle(_bounds, _borderColor);
+			context.DrawRectangle(GetBounds(), _borderColor);
 		}
 		else if(_borderWidth > 1u)
 		{
 			float width = _borderWidth;
-			auto [x, y, w, h] = _bounds;
+			auto [x, y, w, h] = GetBounds();
 			FRect sides[] =
 			{
 				{ x, y, w, width },										// top

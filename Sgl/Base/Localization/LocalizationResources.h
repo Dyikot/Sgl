@@ -49,7 +49,7 @@ namespace Sgl
         /// </summary>
         /// <param name="csvFilePath"> - path to the CSV file containing localization data.</param>
         /// <param name="delimiter"> - character used as delimiter in the CSV file (default is comma).</param>
-        void SetCVSProvider(std::string csvFilePath, char delimiter = ',');
+        void SetCSVProvider(std::string csvFilePath, char delimiter = ',');
 
         void SetLanguage(const LanguageInfo& language);
         const LanguageInfo& GetLanguage() const { return _language; }

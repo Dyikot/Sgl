@@ -29,7 +29,7 @@ namespace Sgl::UIElements
 
 	void Image::Render(RenderContext context)
 	{
-		RenderBackground(context, _bounds);
+		UIElement::Render(context);
 
 		if(_sourceTexture)
 		{
@@ -58,7 +58,8 @@ namespace Sgl::UIElements
 
 				case Stretch::UniformToFill:
 				{
-					context.DrawTexture(_sourceTexture, &_bounds, &_sourceBounds);
+					auto bounds = GetBounds();
+					context.DrawTexture(_sourceTexture, &bounds, &_sourceBounds);
 					break;
 				}
 			}
@@ -83,8 +84,9 @@ namespace Sgl::UIElements
 
 		auto sourceWidth = _sourceTexture.GetWidth();
 		auto sourceHeight = _sourceTexture.GetHeight();
-		float width = _bounds.w;
-		float height = _bounds.h;
+		auto [x, y, w, h] = GetBounds();
+		float width = w;
+		float height = h;
 
 		switch(_stretch)
 		{
@@ -127,12 +129,12 @@ namespace Sgl::UIElements
 				if(height > width)
 				{
 					height = sourceHeight;
-					width = _bounds.w * height / _bounds.h;
+					width = w * height / h;
 				}
 				else
 				{
 					width = sourceWidth;
-					height = _bounds.h * width / _bounds.w;
+					height = h * width / w;
 				}
 
 				break;
@@ -153,8 +155,8 @@ namespace Sgl::UIElements
 		{
 			_sourceBounds =
 			{
-				.x = _bounds.x + (_bounds.w - width) * 0.5f,
-				.y = _bounds.y + (_bounds.h - height) * 0.5f,
+				.x = x + (w - width)  * 0.5f,
+				.y = y + (h - height) * 0.5f,
 				.w = width,
 				.h = height
 			};

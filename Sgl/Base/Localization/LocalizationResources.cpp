@@ -12,7 +12,7 @@ namespace Sgl
 		LoadLocalization();
 	}
 
-	void LocalizationResources::SetCVSProvider(std::string csvFilePath, char delimiter)
+	void LocalizationResources::SetCSVProvider(std::string csvFilePath, char delimiter)
 	{
 		auto csvProvider = [csv = LocalizationCSVReader(std::move(csvFilePath), delimiter)]
 			(const LanguageInfo& languageInfo)

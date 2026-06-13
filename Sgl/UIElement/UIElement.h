@@ -42,10 +42,11 @@ namespace Sgl
 		bool IsMouseOver() const { return PseudoClasses.Has(OnHover); }	
 		bool IsMousePressed() const { return PseudoClasses.Has(OnPressed); }
 
+		void Render(RenderContext context) override;
+
 		static inline StyleableProperty TagProperty { &SetTag, &GetTag };
 		static inline StyleableProperty IsCornersRoundedProperty { &SetIsCornersRounded, &GetIsCornersRounded };
 	protected:
-		void RenderBackground(RenderContext context, const FRect& rect);
 		void OnCursorChanged(Cursor cursor) override;
 		void OnBackgroundChanged(const Brush& background) override;
 		void OnAttachedToLogicalTree() override;

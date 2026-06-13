@@ -26,9 +26,10 @@ namespace Sgl
 		}
 	}
 
-	void UIElement::RenderBackground(RenderContext context, const FRect& rect)
+	void UIElement::Render(RenderContext context)
 	{
-		_backgroundRenderer(context, rect);
+		Renderable::Render(context);
+		_backgroundRenderer(context, GetBounds());
 	}
 
 	void UIElement::OnCursorChanged(Cursor cursor)

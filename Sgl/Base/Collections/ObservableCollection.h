@@ -74,6 +74,7 @@ namespace Sgl
 
 		void RemoveItem(size_t index) override
 		{
+			base::RemoveItem(index);
 			ObservableCollectionChangedEventArgs args
 			{
 				.Action = ObservableCollectionChangedAction::Remove,
@@ -81,7 +82,6 @@ namespace Sgl
 				.ToIndex = index
 			};
 			OnChanged(args);
-			base::RemoveItem(index);
 		}
 
 		virtual void MoveItem(size_t fromIndex, size_t toIndex)

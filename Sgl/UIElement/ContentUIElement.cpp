@@ -89,12 +89,12 @@ namespace Sgl
 
 	void ContentUIElement::Render(RenderContext context)
 	{
+		UIElement::Render(context);
+
 		if(_contentPresenter && _contentPresenter->IsVisible())
 		{
 			_contentPresenter->Render(context);
 		}
-
-		UIElement::Render(context);
 	}
 
 	void ContentUIElement::ApplyStyle()
@@ -174,7 +174,7 @@ namespace Sgl
 		{
 			bool visible = _contentPresenter->IsVisible();
 			bool wasMouseOver = _contentPresenter->IsMouseOver();
-			bool isMouseOver = visible && IsPointInRect(e.X, e.Y, _contentPresenter->_bounds);
+			bool isMouseOver = visible && IsPointInRect(e.X, e.Y, _contentPresenter->GetBounds());
 			
 			if(isMouseOver)
 			{

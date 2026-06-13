@@ -127,7 +127,7 @@ namespace Sgl::UIElements
 
 	void TextBlock::Render(RenderContext context)
 	{
-		RenderBackground(context, _bounds);
+		UIElement::Render(context);
 
 		if(!_isTextTextureValid)
 		{

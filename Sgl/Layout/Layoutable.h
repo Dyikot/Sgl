@@ -80,9 +80,6 @@ namespace Sgl
 		virtual void ArrangeContent(FRect rect) { }
 		void OnAttachedToLogicalTree() override;
 		void OnDetachedFromLogicalTree() override;
-	protected:
-		FRect _bounds = {};
-		FSize _desiredSize = {};
 	private:
 		alignas(std::max_align_t) char _layoutContext[32] {};
 		float _width = 0;
@@ -96,6 +93,9 @@ namespace Sgl
 		VerticalAlignment _verticalAlignment = VerticalAlignment::Top;
 		HorizontalAlignment _horizontalAlignment = HorizontalAlignment::Left;
 		Layoutable* _layotableParent = nullptr;
+
+		FRect _bounds = {};
+		FSize _desiredSize = {};
 
 		bool _isArrangeValid = false;
 		bool _isMeasureValid = false;
