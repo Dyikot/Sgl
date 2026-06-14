@@ -3,6 +3,8 @@
 
 namespace Sgl::UIElements
 {
+	static constexpr uint32_t MaxBorderWidth = 5;
+
 	Border::Border(Border&& other) noexcept:
 		ContentUIElement(std::move(other)),
 		_borderWidth(other._borderWidth),
@@ -11,6 +13,8 @@ namespace Sgl::UIElements
 
 	void Border::SetBorderWidth(uint32_t value, ValueSource source)
 	{
+		value = std::min(value, MaxBorderWidth);
+
 		if(SetProperty(BorderWidthProperty, _borderWidth, value, _borderWidthSource, source))
 		{
 			InvalidateMeasure();
@@ -29,11 +33,25 @@ namespace Sgl::UIElements
 	{
 		ContentUIElement::Render(context);
 		
-		if(_borderWidth == 1u)
+		if(_borderWidth == 0)
+		{
+			return;
+		}
+
+		if(GetIsCornersRounded())
+		{
+			auto id = _borderWidth;
+			auto borderTexture = GetVisualRoot()->GetTextureFactory().CreatePrimitive(id);
+			borderTexture.SetColor(_borderColor);
+
+			auto bounds = GetBounds();
+			context.DrawTexture9Grid(borderTexture, 16, 1, &bounds, nullptr);
+		}
+		else if (_borderWidth == 1)
 		{
 			context.DrawRectangle(GetBounds(), _borderColor);
 		}
-		else if(_borderWidth > 1u)
+		else if(_borderWidth > 1)
 		{
 			float width = _borderWidth;
 			auto [x, y, w, h] = GetBounds();
