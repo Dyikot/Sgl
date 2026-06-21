@@ -93,11 +93,36 @@ namespace Sgl
         void DrawLines(std::span<const FPoint> points, Color color);
 
         /// <summary>
-        /// Draws the outline of a rectangle with floating-point coordinates and dimensions.
+        /// Draws the outline of a rectangle.
         /// </summary>
         /// <param name="rect"> - the rectangle to draw (x, y, width, height).</param>
         /// <param name="color"> - the color of the rectangle outline.</param>
         void DrawRectangle(FRect rect, Color color);
+
+        /// <summary>
+        /// Draws the outline of a rectangle with a specified border thickness.
+        /// </summary>
+        /// <param name="rect"> - the rectangle to draw (x, y, width, height).</param>
+        /// <param name="thickness"> - the thickness of the rectangle outline.</param>
+        /// <param name="color"> - the color of the rectangle outline.</param>
+        void DrawRectangle(FRect rect, float thickness, Color color);
+                
+        /// <summary>
+        /// Draws the outline of a rounded rectangle.
+        /// </summary>
+        /// <param name="rect"> - the rectangle to draw (x, y, width, height).</param>
+        /// <param name="cornersRadius"> - the radius of the rectangle corners.</param>
+        /// <param name="color"> - the color of the rectangle outline.</param>
+        void DrawRoundedRectangle(FRect rect, float cornersRadius, Color color);
+
+        /// <summary>
+        /// Draws the outline of a rounded rectangle with a specific line thickness.
+        /// </summary>
+        /// <param name="rect"> - the rectangle to draw (x, y, width, height).</param>
+        /// <param name="cornersRadius"> - the radius of the rectangle corners.</param>
+        /// <param name="thickness"> - the thickness of the rectangle outline.</param>
+        /// <param name="color"> - the color of the rectangle outline.</param>
+        void DrawRoundedRectangle(FRect rect, float cornersRadius, float thickness, Color color);
 
         /// <summary>
         /// Draws outlines of multiple rectangles.
@@ -107,11 +132,27 @@ namespace Sgl
         void DrawRectangles(std::span<const FRect> rects, Color color);
 
         /// <summary>
-        /// Fills a rectangle with a solid color using floating-point coordinates and dimensions.
+        /// Fills a rectangle with a solid color.
         /// </summary>
         /// <param name="rect"> - the rectangle to fill (x, y, width, height).</param>
         /// <param name="color"> - the fill color.</param>
         void DrawRectangleFill(FRect rect, Color color);
+
+        /// <summary>
+        /// Fills a rectangle with a solid color and rounded corners.
+        /// </summary>
+        /// <param name="rect"> - the rectangle to fill (x, y, width, height).</param>
+        /// <param name="cornersRadius"> - the radius of the rectangle's rounded corners.</param>
+        /// <param name="color"> - the fill color.</param>
+        void DrawRectangleFill(FRect rect, float cornersRadius, Color color);
+
+        /// <summary>
+        /// Fills a rectangle with a texture and rounded corners.
+        /// </summary>
+        /// <param name="rect">The rectangle to fill (x, y, width, height).</param>
+        /// <param name="cornersRadius">The radius of the rectangle's rounded corners.</param>
+        /// <param name="texture"> - the texture to apply as a fill.</param>
+        void DrawRectangleFill(FRect rect, float cornersRadius, const Texture& texture);
 
         /// <summary>
         /// Fills multiple rectangles with a solid color.
@@ -126,13 +167,6 @@ namespace Sgl
         /// <param name="rect"> - the bounding rectangle that defines the ellipse (x, y, width, height).</param>
         /// <param name="color"> - the color of the ellipse outline.</param>
         void DrawEllipse(FRect rect, Color color);
-
-        /// <summary>
-        /// Draws a smoothed (anti-aliased) outline of an ellipse inscribed within the given rectangle.
-        /// </summary>
-        /// <param name="rect"> - the bounding rectangle that defines the ellipse.</param>
-        /// <param name="color"> - the color of the smoothed ellipse outline.</param>
-        void DrawEllipseSmooth(FRect rect, Color color);
 
         /// <summary>
         /// Fills an ellipse inscribed within the given rectangle with a solid color.
@@ -153,10 +187,10 @@ namespace Sgl
         /// </summary>
         /// <param name="vertices"> - a span of SDL_Vertex structures defining the geometry.</param>
         /// <param name="texture"> - the texture to apply to the geometry.</param>
-        /// <param name="order"> - optional span of indices defining the drawing order. If empty, vertices are drawn in sequence.</param>
+        /// <param name="indices"> - optional span of indices defining the drawing order. If empty, vertices are drawn in sequence.</param>
         void DrawGeometry(std::span<const Vertex> vertices, 
                           const Texture& texture = {},
-                          std::span<const int> order = {});
+                          std::span<const int> indices = {});
 
         /// <summary>
         /// Draws a texture to the screen with optional both target and source clipping.
@@ -210,6 +244,9 @@ namespace Sgl
                       Color color, 
                       FontFamily fontFamily = FontFamily::Default);
     private:
+        void DrawEllipseCore(FRect rect, const Texture& texture, Color color);
+        void DrawRectangleFillCore(FRect rect, float cornersRadius, const Texture& texture, Color color);
+
         void SetColor(Color color) const noexcept
         {
             SDL_SetRenderDrawColor(_renderer, color.Red, color.Green, color.Blue, color.Alpha);

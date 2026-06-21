@@ -18,7 +18,7 @@ namespace Sgl
 		/// <param name="name"> - the descriptive name of the benchmark, shown in the output.</param>
 		explicit Benchmark(std::string name):
 			_name(std::move(name)),
-			_loopsNumber(DefaultLoopsNumber)
+			_loopsNumber(1)
 		{}
 
 		/// <summary>
@@ -58,8 +58,6 @@ namespace Sgl
 			std::cout << std::format("{}: {}\n", _name, elapsed.ToString());
 		}
 	private:
-		constexpr static size_t DefaultLoopsNumber = 1000;
-
 		std::string _name;
 		size_t _loopsNumber;
 	};

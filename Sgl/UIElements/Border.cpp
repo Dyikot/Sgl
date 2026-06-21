@@ -3,8 +3,6 @@
 
 namespace Sgl::UIElements
 {
-	static constexpr uint32_t MaxBorderWidth = 5;
-
 	Border::Border(Border&& other) noexcept:
 		ContentUIElement(std::move(other)),
 		_borderWidth(other._borderWidth),
@@ -13,8 +11,6 @@ namespace Sgl::UIElements
 
 	void Border::SetBorderWidth(uint32_t value, ValueSource source)
 	{
-		value = std::min(value, MaxBorderWidth);
-
 		if(SetProperty(BorderWidthProperty, _borderWidth, value, _borderWidthSource, source))
 		{
 			InvalidateMeasure();
@@ -38,32 +34,15 @@ namespace Sgl::UIElements
 			return;
 		}
 
-		if(GetIsCornersRounded())
-		{
-			auto id = _borderWidth;
-			auto borderTexture = GetVisualRoot()->GetTextureFactory().CreatePrimitive(id);
-			borderTexture.SetColor(_borderColor);
+		float cornersRadius = GetCornersRadius();
 
-			auto bounds = GetBounds();
-			context.DrawTexture9Grid(borderTexture, 16, 1, &bounds, nullptr);
-		}
-		else if (_borderWidth == 1)
+		if(cornersRadius > 0.0f)
 		{
-			context.DrawRectangle(GetBounds(), _borderColor);
+			context.DrawRoundedRectangle(GetBounds(), cornersRadius, _borderWidth, _borderColor);
 		}
-		else if(_borderWidth > 1)
+		else
 		{
-			float width = _borderWidth;
-			auto [x, y, w, h] = GetBounds();
-			FRect sides[] =
-			{
-				{ x, y, w, width },										// top
-				{ x, y + h - width, w, width },							// bottom
-				{ x, y + width, width, h - 2 * width },					// left
-				{ x + w - width, y + width, width, h - 2 * width },		// right
-			};
-
-			context.DrawRectanglesFill(sides, _borderColor);
+			context.DrawRectangle(GetBounds(), _borderWidth, _borderColor);
 		}
 	}
 

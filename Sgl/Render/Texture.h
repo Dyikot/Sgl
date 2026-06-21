@@ -295,7 +295,5 @@ namespace Sgl
 		/// <param name="cache"> - whether to cache the texture for future use. Defaults to true.</param>
 		/// <returns>The loaded texture. If the file fails to load, returns an invalid (null) texture.</returns>
 		virtual Texture Create(const ImageSource& source, bool cache) = 0;
-
-		virtual Texture CreatePrimitive(size_t id) = 0;
 	};
 }

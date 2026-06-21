@@ -1,19 +1,284 @@
 #include "RenderContext.h"
 
+#include <cassert>
+#include <numbers>
 #include <SDL3_ttf/SDL_ttf.h>
 #include <SDL3_image/SDL_image.h>
 
 #include "../Base/Math.h"
 #include "../Base/Media/Font.h"
+#include "../Base/Logging.h"
 
 namespace Sgl
 {
-	static constexpr size_t PointsNumber = 181;
-	static constexpr size_t EllipsePointsNumber = 91;
-	static constexpr size_t EllipseAngleStep = 2;
+	static constexpr float PI = std::numbers::pi_v<float>;
+	
+	static constexpr size_t EllipseNormalizedSize = 61;
+	static constexpr FPoint EllipseNormalized[] =
+	{
+		{ 1.000000f,  0.000000f}, { 0.994522f,  0.104528f}, { 0.978148f,  0.207912f},
+		{ 0.951057f,  0.309017f}, { 0.913545f,  0.406737f}, { 0.866025f,  0.500000f},
+		{ 0.809017f,  0.587785f}, { 0.743145f,  0.669131f}, { 0.669131f,  0.743145f},
+		{ 0.587785f,  0.809017f}, { 0.500000f,  0.866025f}, { 0.406737f,  0.913545f},
+		{ 0.309017f,  0.951057f}, { 0.207912f,  0.978148f}, { 0.104528f,  0.994522f},
+		{ 0.000000f,  1.000000f}, {-0.104528f,  0.994522f}, {-0.207912f,  0.978148f},
+		{-0.309017f,  0.951057f}, {-0.406737f,  0.913545f}, {-0.500000f,  0.866025f},
+		{-0.587785f,  0.809017f}, {-0.669131f,  0.743145f}, {-0.743145f,  0.669131f},
+		{-0.809017f,  0.587785f}, {-0.866025f,  0.500000f}, {-0.913545f,  0.406737f},
+		{-0.951057f,  0.309017f}, {-0.978148f,  0.207912f}, {-0.994522f,  0.104528f},
+		{-1.000000f,  0.000000f}, {-0.994522f, -0.104528f}, {-0.978148f, -0.207912f},
+		{-0.951057f, -0.309017f}, {-0.913545f, -0.406737f}, {-0.866025f, -0.500000f},
+		{-0.809017f, -0.587785f}, {-0.743145f, -0.669131f}, {-0.669131f, -0.743145f},
+		{-0.587785f, -0.809017f}, {-0.500000f, -0.866025f}, {-0.406737f, -0.913545f},
+		{-0.309017f, -0.951057f}, {-0.207912f, -0.978148f}, {-0.104528f, -0.994522f},
+		{ 0.000000f, -1.000000f}, { 0.104528f, -0.994522f}, { 0.207912f, -0.978148f},
+		{ 0.309017f, -0.951057f}, { 0.406737f, -0.913545f}, { 0.500000f, -0.866025f},
+		{ 0.587785f, -0.809017f}, { 0.669131f, -0.743145f}, { 0.743145f, -0.669131f},
+		{ 0.809017f, -0.587785f}, { 0.866025f, -0.500000f}, { 0.913545f, -0.406737f},
+		{ 0.951057f, -0.309017f}, { 0.978148f, -0.207912f}, { 0.994522f, -0.104528f},
+		{ 1.000000f,  0.000000f}
+	};
 
-	static const std::vector<float> SinRange = Math::SinRange(PointsNumber);
-	static const std::vector<float> CosRange = Math::CosRange(PointsNumber);
+	class Arc
+	{
+	public:
+		static constexpr size_t Segments = 8;
+		static constexpr size_t VerticesCount = Segments + 1;
+		
+		static constexpr FPoint Coordinates[] =
+		{
+			{ 1.000000f,  0.000000f}, { 0.980785f,  0.195090f}, { 0.923880f,  0.382683f},
+			{ 0.831470f,  0.555570f}, { 0.707107f,  0.707107f}, { 0.555570f,  0.831470f},
+			{ 0.382683f,  0.923880f}, { 0.195090f,  0.980785f}, { 0.000000f,  1.000000f},
+		};
+
+		static std::array<FPoint, VerticesCount> CalculatePoints(float radius)
+		{
+			std::array<FPoint, VerticesCount> points;
+			for(size_t i = 0; i < VerticesCount; i++)
+			{
+				points[i].x = radius * Coordinates[i].x;
+				points[i].y = radius * Coordinates[i].y;
+			}
+
+			return points;
+		}
+	};		
+
+	class VertexFactory
+	{
+	public:
+		explicit VertexFactory(Color color):
+			_color(color),
+			_uv()
+		{}
+
+		VertexFactory(Color color, FPoint uv):
+			_color(color),
+			_uv(uv)
+		{}	
+
+		inline Vertex operator()(float x, float y) const
+		{
+			return Vertex(FPoint(x, y), _color, _uv);
+		}
+
+		inline Vertex operator()(float x, float y, FPoint uv) const
+		{
+			return Vertex(FPoint(x, y), _color, uv);
+		}
+	private:
+		SDL_FColor _color;
+		FPoint _uv;
+	};
+
+	static void CalculateRoundedRectVertices(std::span<Vertex> vertices, FRect rect, 
+											 float radius, Color color)
+	{
+		const std::array arcPoints = Arc::CalculatePoints(radius);
+		size_t i = 0;
+
+		VertexFactory createVertex(color);
+
+		// Center
+		vertices[i++] = createVertex(rect.x + rect.w / 2.0f, rect.y + rect.h / 2.0f);
+
+		// Top-Left
+		{
+			float x = rect.x + radius;
+			float y = rect.y + radius;
+
+			for(auto& p : arcPoints)
+			{
+				vertices[i++] = createVertex(x - p.x, y - p.y);
+			}
+		}
+
+		// Top-Right
+		{
+			float x = rect.x + rect.w - radius;
+			float y = rect.y + radius;
+
+			for(int j = arcPoints.size() - 1; j >= 0; j--)
+			{
+				auto& p = arcPoints[j];
+				vertices[i++] = createVertex(x + p.x, y - p.y);
+			}
+		}
+
+		// Bottom-Right
+		{
+			float x = rect.x + rect.w - radius;
+			float y = rect.y + rect.h - radius;
+
+			for(auto& p : arcPoints)
+			{
+				vertices[i++] = createVertex(x + p.x, y + p.y);
+			}
+		}
+
+		// Bottom-Left
+		{
+			float x = rect.x + radius;
+			float y = rect.y + rect.h - radius;
+
+			for(int j = arcPoints.size() - 1; j >= 0; j--)
+			{
+				auto& p = arcPoints[j];
+				vertices[i++] = createVertex(x - p.x, y + p.y);
+			}
+		}
+	}
+
+	static void CalculateRoundedRectVertices(std::span<Vertex> vertices, FRect rect,
+											 float radius, const Texture& texture)
+	{	
+		const std::array arcPoints = Arc::CalculatePoints(radius);
+		size_t i = 0;
+
+		VertexFactory createVertex(texture.GetColor());
+
+		// Center
+		vertices[i++] = createVertex(rect.x + rect.w / 2.0f, rect.y + rect.h / 2.0f, FPoint(0.5, 0.5));
+
+		// Top-Left
+		{
+			float x = rect.x + radius;
+			float y = rect.y + radius;
+
+			for(auto& p : arcPoints)
+			{
+				const float px = x - p.x;
+				const float py = y - p.y;
+				const float u = (px - rect.x) / rect.w;
+				const float v = (py - rect.y) / rect.h;
+
+				vertices[i++] = createVertex(px, py, FPoint(u, v));
+			}
+		}
+
+		// Top-Right
+		{
+			float x = rect.x + rect.w - radius;
+			float y = rect.y + radius;
+
+			for(int j = arcPoints.size() - 1; j >= 0; j--)
+			{
+				auto& p = arcPoints[j];
+				const float px = x + p.x;
+				const float py = y - p.y;
+				const float u = (px - rect.x) / rect.w;
+				const float v = (py - rect.y) / rect.h;
+
+				vertices[i++] = createVertex(px, py, FPoint(u, v));
+			}
+		}
+
+		// Bottom-Right
+		{
+			float x = rect.x + rect.w - radius;
+			float y = rect.y + rect.h - radius;
+
+			for(auto& p : arcPoints)
+			{
+				const float px = x + p.x;
+				const float py = y + p.y;
+				const float u = (px - rect.x) / rect.w;
+				const float v = (py - rect.y) / rect.h;
+
+				vertices[i++] = createVertex(px, py, FPoint(u, v));
+			}
+		}
+
+		// Bottom-Left
+		{
+			float x = rect.x + radius;
+			float y = rect.y + rect.h - radius;
+
+			for(int j = arcPoints.size() - 1; j >= 0; j--)
+			{
+				auto& p = arcPoints[j];
+				const float px = x - p.x;
+				const float py = y + p.y;
+				const float u = (px - rect.x) / rect.w;
+				const float v = (py - rect.y) / rect.h;
+
+				vertices[i++] = createVertex(px, py, FPoint(u, v));
+			}
+		}
+	}
+
+	static void CalculateRoundedRectPoints(std::span<FPoint> points, FRect rect, float radius)
+	{
+		const std::array arcPoints = Arc::CalculatePoints(radius);
+		size_t i = 0;
+
+		// Top-Left
+		{
+			float x = rect.x + radius;
+			float y = rect.y + radius;
+
+			for(auto& p : arcPoints)
+			{
+				points[i++] = { x - p.x, y - p.y };
+			}
+		}
+
+		// Top-Right
+		{
+			float x = rect.x + rect.w - radius;
+			float y = rect.y + radius;
+
+			for(int j = arcPoints.size() - 1; j >= 0; j--)
+			{
+				auto& p = arcPoints[j];
+				points[i++] = { x + p.x, y - p.y };
+			}
+		}
+
+		// Bottom-Right
+		{
+			float x = rect.x + rect.w - radius;
+			float y = rect.y + rect.h - radius;
+
+			for(auto& p : arcPoints)
+			{
+				points[i++] = { x + p.x, y + p.y };
+			}
+		}
+
+		// Bottom-Left
+		{
+			float x = rect.x + radius;
+			float y = rect.y + rect.h - radius;
+
+			for(int j = arcPoints.size() - 1; j >= 0; j--)
+			{
+				auto& p = arcPoints[j];
+				points[i++] = { x - p.x, y + p.y };
+			}
+		}
+	}
 
 	RenderContext::RenderContext(SDL_Renderer* _renderer):
 		_renderer(_renderer)
@@ -75,17 +340,192 @@ namespace Sgl
 		SDL_RenderRect(_renderer, &rect);
 	}
 
-	void RenderContext::DrawRectangleFill(FRect rect, Color color)
+	void RenderContext::DrawRectangle(FRect rect, float thickness, Color color)
 	{
-		SetColor(color);
-		SDL_RenderFillRect(_renderer, &rect);
+		if(thickness < 1.0f)
+		{
+			return;
+		}
+
+		if(thickness == 1.0f)
+		{
+			DrawRectangle(rect, color);
+			return;
+		}
+
+		VertexFactory createVertex(color);
+		auto [x, y, w, h] = rect;
+
+		const std::array vertices =
+		{
+			// Outer rect
+			createVertex(x, y),
+			createVertex(x + w, y),
+			createVertex(x + w, y + h),
+			createVertex(x, y + h),
+
+			// Inner rect
+			createVertex(x + thickness, y + thickness),
+			createVertex(x + w - thickness, y + thickness),
+			createVertex(x + w - thickness, y + h - thickness),
+			createVertex(x + thickness, y + h - thickness),
+		};
+
+		const std::array indices =
+		{
+			0, 1, 4,  4, 5, 1,	// Top
+			1, 2, 5,  5, 6, 2,	// Left
+			2, 3, 6,  6, 7, 3,	// Bottom
+			3, 0, 7,  7, 4, 0	// Right
+		};
+
+		DrawGeometry(vertices, nullptr, indices);
+	}
+
+	void RenderContext::DrawRoundedRectangle(FRect rect, float cornersRadius, Color color)
+	{
+		if(rect.w <= 0.0f || rect.h <= 0.0f)
+		{
+			return;
+		}
+
+		cornersRadius = std::clamp(cornersRadius, 0.0f, std::min(rect.w, rect.h) / 2.0f);
+
+		const size_t totalPoints = 4 * Arc::VerticesCount + 1;
+		std::array<FPoint, totalPoints> points;
+		CalculateRoundedRectPoints(points, rect, cornersRadius);
+
+		points.back() = points.front();
+
+		DrawLines(points, color);
+	}
+
+	void RenderContext::DrawRoundedRectangle(FRect rect, float cornersRadius, 
+											 float thickness, Color color)
+	{
+		if(rect.w <= 0.0f || rect.h <= 0.0f || thickness <= 0.0f)
+		{
+			return;
+		}
+
+		if(thickness == 1.0f)
+		{
+			DrawRoundedRectangle(rect, cornersRadius, color);
+			return;
+		}
+
+		cornersRadius = std::clamp(cornersRadius, 0.0f, std::min(rect.w, rect.h) / 2.0f);
+
+		// Validate thickness
+		float maxThickness = std::min(rect.w, rect.h) / 2.0f;
+		if(thickness > maxThickness)
+		{
+			thickness = maxThickness;
+		}
+
+		// Inner rect
+		float innerRadius = std::max(0.0f, cornersRadius - thickness);
+		FRect innerRect = 
+		{
+			rect.x + thickness,
+			rect.y + thickness,
+			rect.w - 2.0f * thickness,
+			rect.h - 2.0f * thickness
+		};
+
+		const size_t cornerPoints = Arc::VerticesCount;
+		const size_t perimeterPoints = 4 * cornerPoints;
+		const size_t totalVertices = 2 * perimeterPoints;
+		const size_t totalIndices = 6 * perimeterPoints;
+
+		// Calculate perimeter pints for outer and inner rects
+		std::array<FPoint, perimeterPoints> outerPoints;
+		std::array<FPoint, perimeterPoints> innerPoints;
+		CalculateRoundedRectPoints(outerPoints, rect, cornersRadius);
+		CalculateRoundedRectPoints(innerPoints, innerRect, innerRadius);
+
+		static std::array<Vertex, totalVertices> vertices;
+		static std::array<int, totalIndices> indices;
+
+		VertexFactory createVertex(color);
+
+		// Assign vertices
+		for(size_t i = 0; i < perimeterPoints; ++i)
+		{
+			auto& outer = outerPoints[i];
+			vertices[i] = createVertex(outer.x, outer.y);
+
+			auto& inner = innerPoints[i];
+			vertices[i + perimeterPoints] = createVertex(inner.x, inner.y);
+		}
+
+		// Generate indices
+		size_t i = 0;
+		for(int j = 0; j < perimeterPoints - 1; ++j)
+		{
+			int next = j + 1;
+
+			int outer = j;
+			int outerNext = next;
+			int inner = j + perimeterPoints;
+			int innerNext = next + perimeterPoints;
+
+			// Triangle 1
+			indices[i++] = outer;
+			indices[i++] = outerNext;
+			indices[i++] = inner;
+
+			// Triangle 2
+			indices[i++] = outerNext;
+			indices[i++] = innerNext;
+			indices[i++] = inner;
+		}
+
+		// Connect back to the first point to close the loop
+		{
+			size_t j = perimeterPoints - 1;
+			size_t next = 0;
+
+			int outer = j;
+			int outerNext = next;
+			int inner = j + perimeterPoints;
+			int innerNext = next + perimeterPoints;
+
+			// Triangle 1
+			indices[i++] = outer;
+			indices[i++] = outerNext;
+			indices[i++] = inner;
+
+			// Triangle 2
+			indices[i++] = outerNext;
+			indices[i++] = innerNext;
+			indices[i++] = inner;
+		}
+
+		DrawGeometry(vertices, nullptr, indices);
 	}
 
 	void RenderContext::DrawRectangles(std::span<const FRect> rects, Color color)
 	{
 		SetColor(color);
 		SDL_RenderRects(_renderer, rects.data(), rects.size());
-	}	
+	}
+
+	void RenderContext::DrawRectangleFill(FRect rect, Color color)
+	{
+		SetColor(color);
+		SDL_RenderFillRect(_renderer, &rect);
+	}
+
+	void RenderContext::DrawRectangleFill(FRect rect, float cornersRadius, Color color)
+	{
+		DrawRectangleFillCore(rect, cornersRadius, nullptr, color);
+	}
+
+	void RenderContext::DrawRectangleFill(FRect rect, float cornersRadius, const Texture& texture)
+	{
+		DrawRectangleFillCore(rect, cornersRadius, texture, texture.GetColor());
+	}
 
 	void RenderContext::DrawRectanglesFill(std::span<const FRect> rects, Color color)
 	{
@@ -95,231 +535,39 @@ namespace Sgl
 
 	void RenderContext::DrawEllipse(FRect rect, Color color)
 	{
-		const bool isMoreThan64x64 = rect.w > 64.f && rect.h > 64.f;
-		const size_t stride = isMoreThan64x64 ? 1 : 2;
-		const size_t pointsNumber = isMoreThan64x64 ? PointsNumber: PointsNumber / 2 + 1;
-
-		std::vector<FPoint> points(pointsNumber);
+		std::array<FPoint, EllipseNormalizedSize> points;
 
 		const float radiusX = 0.5f * rect.w;
 		const float radiusY = 0.5f * rect.h;
-		const FPoint center(rect.x + radiusX, rect.y + radiusY);
+		const float x = rect.x + radiusX;
+		const float y = rect.y + radiusY;
 
-		for(size_t i = 0, j = 0; i < pointsNumber; i++, j += stride)
+		for(size_t i = 0; i < EllipseNormalizedSize; i++)
 		{
-			points[i].x = center.x + radiusX * CosRange[j];
-			points[i].y = center.y + radiusY * SinRange[j];
+			points[i].x = x + radiusX * EllipseNormalized[i].x;
+			points[i].y = y + radiusY * EllipseNormalized[i].y;
 		}
 
 		DrawLines(points, color);
 	}
 
-	void RenderContext::DrawEllipseSmooth(FRect rect, Color color)
-	{
-		if(rect.w <= 0.0f || rect.h <= 0.0f)
-		{
-			return;
-		}
-
-		const float a = rect.w * 0.5f;
-		const float b = rect.h * 0.5f;
-		const float cx = rect.x + a;
-		const float cy = rect.y + b;
-
-		const float a2 = a * a;
-		const float b2 = b * b;
-		const float inv_a2 = 1.0f / a2;
-		const float inv_b2 = 1.0f / b2;
-		const uint8_t red = color.Red;
-		const uint8_t green = color.Green;
-		const uint8_t blue = color.Blue;
-		const float alpha = (float)color.Alpha;
-
-		// Precompute constant factors for midpoint algorithm
-		const float sigma_y_step1 = 4.0f * a2;
-		const float sigma_x_step1 = 4.0f * b2;
-		const float sigma_x_step2 = 4.0f * b2;
-		const float sigma_y_step2 = 4.0f * a2;
-
-		// First octant (0 to 45 degrees) - restructured for ILP
-		float x = 0.0f;
-		float y = b;
-		float sigma = 2.0f * b2 + a2 * (1.0f - 2.0f * b);
-
-		while(b2 * x <= a2 * y)
-		{
-			// Geometry
-			float t = 1.0f - (x * x) * inv_a2;
-			t = t < 0.0f ? 0.0f : t;  // Branchless clamp
-			const float exact_y = b * sqrtf(t);
-			const float cx_plus_x = cx + x;
-			const float cx_minus_x = cx - x;
-			const float screen_y_top = cy - exact_y;
-			const float screen_y_bottom = cy + exact_y;
-
-			// Alpha values
-			const int y_top_floor = (int)floorf(screen_y_top);
-			const int y_bottom_floor = (int)floorf(screen_y_bottom);
-			const float f_top = screen_y_top - (float)y_top_floor;
-			const float f_bottom = screen_y_bottom - (float)y_bottom_floor;
-			const uint8_t alpha1_top = (uint8_t)(alpha * (1.0f - f_top));
-			const uint8_t alpha2_top = (uint8_t)(alpha * f_top);
-			const uint8_t alpha1_bottom = (uint8_t)(alpha * (1.0f - f_bottom));
-			const uint8_t alpha2_bottom = (uint8_t)(alpha * f_bottom);
-
-			// Batch draw operations with minimal state changes
-			FPoint points[4];
-			points[0] = { cx_plus_x, (float)y_top_floor };
-			points[1] = { cx_minus_x, (float)y_top_floor };
-			points[2] = { cx_plus_x, (float)y_bottom_floor };
-			points[3] = { cx_minus_x, (float)y_bottom_floor };
-
-			SDL_SetRenderDrawColor(_renderer, red, green, blue, alpha1_top);
-			SDL_RenderPoints(_renderer, points, 2);
-			SDL_SetRenderDrawColor(_renderer, red, green, blue, alpha1_bottom);
-			SDL_RenderPoints(_renderer, &points[2], 2);
-
-			points[0].y = (float)(y_top_floor + 1);
-			points[1].y = (float)(y_top_floor + 1);
-			points[2].y = (float)(y_bottom_floor + 1);
-			points[3].y = (float)(y_bottom_floor + 1);
-
-			SDL_SetRenderDrawColor(_renderer, red, green, blue, alpha2_top);
-			SDL_RenderPoints(_renderer, points, 2);
-			SDL_SetRenderDrawColor(_renderer, red, green, blue, alpha2_bottom);
-			SDL_RenderPoints(_renderer, &points[2], 2);
-
-			// Midpoint update with independent components
-			const float update_y = (sigma >= 0.0f) ? 1.0f : 0.0f;
-			sigma += sigma_x_step1 * (x + 1.0f) + update_y * (sigma_y_step1 * (1.0f - y));
-			y -= update_y;
-			x += 1.0f;
-		}
-
-		// Second octant (45 to 90 degrees) - same ILP principles
-		x = a;
-		y = 0.0f;
-		sigma = 2.0f * a2 + b2 * (1.0f - 2.0f * a);
-
-		while(a2 * y <= b2 * x)
-		{
-			// Geometry
-			float t = 1.0f - (y * y) * inv_b2;
-			t = t < 0.0f ? 0.0f : t;  // Branchless clamp
-			const float exact_x = a * sqrtf(t);
-			const float cy_plus_y = cy + y;
-			const float cy_minus_y = cy - y;
-			const float screen_x_right = cx + exact_x;
-			const float screen_x_left = cx - exact_x;
-
-			// Alpha values
-			const int x_right_floor = (int)floorf(screen_x_right);
-			const int x_left_floor = (int)floorf(screen_x_left);
-			const float f_right = screen_x_right - (float)x_right_floor;
-			const float f_left = screen_x_left - (float)x_left_floor;
-			const uint8_t alpha1_right = (uint8_t)(alpha * (1.0f - f_right));
-			const uint8_t alpha2_right = (uint8_t)(alpha * f_right);
-			const uint8_t alpha1_left = (uint8_t)(alpha * (1.0f - f_left));
-			const uint8_t alpha2_left = (uint8_t)(alpha * f_left);
-
-			// Batch draw operations
-			SDL_FPoint points[4];
-			points[0] = { (float)x_right_floor, cy_minus_y };
-			points[1] = { (float)x_right_floor, cy_plus_y };
-			points[2] = { (float)x_left_floor, cy_minus_y };
-			points[3] = { (float)x_left_floor, cy_plus_y };
-
-			SDL_SetRenderDrawColor(_renderer, red, green, blue, alpha1_right);
-			SDL_RenderPoints(_renderer, points, 2);
-			SDL_SetRenderDrawColor(_renderer, red, green, blue, alpha1_left);
-			SDL_RenderPoints(_renderer, &points[2], 2);
-
-			points[0].x = (float)(x_right_floor + 1);
-			points[1].x = (float)(x_right_floor + 1);
-			points[2].x = (float)(x_left_floor + 1);
-			points[3].x = (float)(x_left_floor + 1);
-
-			SDL_SetRenderDrawColor(_renderer, red, green, blue, alpha2_right);
-			SDL_RenderPoints(_renderer, points, 2);
-			SDL_SetRenderDrawColor(_renderer, red, green, blue, alpha2_left);
-			SDL_RenderPoints(_renderer, &points[2], 2);
-
-			// Midpoint update with independent components
-			const float update_x = (sigma >= 0.0f) ? 1.0f : 0.0f;
-			sigma += sigma_y_step2 * (y + 1.0f) + update_x * (sigma_x_step2 * (1.0f - x));
-			x -= update_x;
-			y += 1.0f;
-		}
-	}
-
-	static std::vector<Vertex> ComputeFillEllipseVertices(FRect rect, Color color, bool hasTexture)
-	{
-		std::vector<Vertex> vertices(EllipsePointsNumber);
-
-		size_t angleStep = 0;
-		float radiusX = rect.w * 0.5f;
-		float radiusY = rect.h * 0.5f;
-		FPoint center(rect.x + radiusX, rect.y + radiusY);
-
-		if(hasTexture)
-		{
-			for(size_t i = 0; i < EllipsePointsNumber; i++)
-			{
-				float cos = CosRange[angleStep];
-				float sin = SinRange[angleStep];
-				float u = (cos + 1.0f) * 0.5f;
-				float v = (sin + 1.0f) * 0.5f;
-
-				vertices[i].position.x = center.x + radiusX * cos;
-				vertices[i].position.y = center.y + radiusY * sin;
-				vertices[i].color = color;
-				vertices[i].tex_coord = FPoint(u, v);
-
-				angleStep += EllipseAngleStep;
-			}
-		}
-		else
-		{
-			for(size_t i = 0; i < EllipsePointsNumber; i++)
-			{
-				float cos = CosRange[angleStep];
-				float sin = SinRange[angleStep];
-
-				vertices[i].position.x = center.x + radiusX * cos;
-				vertices[i].position.y = center.y + radiusY * sin;
-				vertices[i].color = color;
-
-				angleStep += EllipseAngleStep;
-			}
-		}
-
-		return vertices;
-	}
-
 	void RenderContext::DrawEllipseFill(FRect rect, Color color)
 	{
-		auto vertices = ComputeFillEllipseVertices(rect, color, false);
-		auto order = Math::TriangulateEllipse(EllipsePointsNumber - 1);
-
-		DrawGeometry(vertices, {}, order);
+		DrawEllipseCore(rect, {}, color);
 	}
 
 	void RenderContext::DrawEllipseFill(FRect rect, const Texture& texture)
 	{
-		auto color = texture.GetColor();
-		auto vertices = ComputeFillEllipseVertices(rect, color, true);
-		auto order = Math::TriangulateEllipse(EllipsePointsNumber - 1);
-
-		DrawGeometry(vertices, texture, order);
+		DrawEllipseCore(rect, texture, texture.GetColor());
 	}
 
 	void RenderContext::DrawGeometry(std::span<const Vertex> vertices, 
 									 const Texture& texture, 
-									 std::span<const int> order)
+									 std::span<const int> indices)
 	{
 		SDL_RenderGeometry(_renderer, texture.GetSDLTexture(),
 						   vertices.data(), vertices.size(),
-						   order.data(), order.size());
+						   indices.data(), indices.size());
 	}
 
 	void RenderContext::DrawTexture(const Texture& texture, const FRect* target, const FRect* clip)
@@ -356,5 +604,79 @@ namespace Sgl
 		Texture texture(_renderer, FontQuality::Blended, font, text, color);
 		FRect rect(position.x, position.y, texture.GetWidth(), texture.GetHeight());
 		DrawTexture(texture, &rect, nullptr);
+	}
+
+	void RenderContext::DrawEllipseCore(FRect rect, const Texture& texture, Color color)
+	{
+		const float radiusX = 0.5f * rect.w;
+		const float radiusY = 0.5f * rect.h;
+		const float x = rect.x + radiusX;
+		const float y = rect.y + radiusY;
+		VertexFactory createVertex(color);
+
+		// Vertices
+		const size_t totalVertices = EllipseNormalizedSize + 1;
+		static std::array<Vertex, totalVertices> vertices;
+
+		if(texture)
+		{
+			vertices[0] = createVertex(x, y, FPoint(0.5f, 0.5f));
+
+			for(size_t i = 0; i < EllipseNormalizedSize; i++)
+			{
+				float nx = EllipseNormalized[i].x;
+				float ny = EllipseNormalized[i].y;
+				float u = (nx + 1.0f) * 0.5f;
+				float v = (ny + 1.0f) * 0.5f;
+
+				vertices[i + 1] = createVertex(x + radiusX * nx, y + radiusY * ny, FPoint(u, v));
+			}
+		}
+		else
+		{
+			vertices[0] = createVertex(x, y);
+
+			for(size_t i = 0; i < EllipseNormalizedSize; i++)
+			{
+				vertices[i + 1] = createVertex(x + radiusX * EllipseNormalized[i].x,
+											   y + radiusY * EllipseNormalized[i].y);
+			}
+		}
+
+		// Indices
+		const int totalIndices = 3 * (totalVertices - 1);
+		static const std::array indices = Math::FanTriangulate<totalIndices>(totalVertices - 1);
+
+		DrawGeometry(vertices, texture, indices);
+	}
+
+	void RenderContext::DrawRectangleFillCore(FRect rect, float cornersRadius, 
+											  const Texture& texture, Color color)
+	{
+		if(rect.w <= 0.0f || rect.h <= 0.0f)
+		{
+			return;
+		}
+
+		cornersRadius = std::clamp(cornersRadius, 0.0f, std::min(rect.w, rect.h) / 2.0f);
+
+		static constexpr size_t totalVertices = 1 + 4 * Arc::VerticesCount;
+		static constexpr size_t totalIndices = 3 * (totalVertices - 1);
+
+		// Vertices
+		static std::array<Vertex, totalVertices> vertices;
+		// Indices
+		static const std::array indices = Math::FanTriangulate<totalIndices>(totalVertices - 1);
+
+		if(texture)
+		{
+			CalculateRoundedRectVertices(vertices, rect, cornersRadius, texture);
+			DrawGeometry(vertices, texture, indices);
+		}
+		else
+		{
+			CalculateRoundedRectVertices(vertices, rect, cornersRadius, color);
+			DrawGeometry(vertices, nullptr, indices);
+		}
 	}
 }

@@ -36,8 +36,8 @@ namespace Sgl
 		void SetTag(const Any& value, ValueSource source = ValueSource::Local);
 		const Any& GetTag() const { return _tag; }
 
-		void SetIsCornersRounded(bool value, ValueSource source = ValueSource::Local);
-		bool GetIsCornersRounded() const { return _isCornersRounded; }
+		void SetCornersRadius(float value, ValueSource source = ValueSource::Local);
+		float GetCornersRadius() const { return _cornersRadius; }
 
 		bool IsMouseOver() const { return PseudoClasses.Has(OnHover); }	
 		bool IsMousePressed() const { return PseudoClasses.Has(OnPressed); }
@@ -45,7 +45,7 @@ namespace Sgl
 		void Render(RenderContext context) override;
 
 		static inline StyleableProperty TagProperty { &SetTag, &GetTag };
-		static inline StyleableProperty IsCornersRoundedProperty { &SetIsCornersRounded, &GetIsCornersRounded };
+		static inline StyleableProperty CornersRadiusProperty { &SetCornersRadius, &GetCornersRadius };
 	protected:
 		void OnCursorChanged(Cursor cursor) override;
 		void OnBackgroundChanged(const Brush& background) override;
@@ -64,10 +64,10 @@ namespace Sgl
 		Action<RenderContext, const FRect&> _backgroundRenderer;
 
 		Any _tag;
-		bool _isCornersRounded = false;
+		float _cornersRadius = 0;
 
 		ValueSource _tagSource {};	
-		ValueSource _isCornersRoundedSource {};
+		ValueSource _cornersRadiusSource {};
 
 		friend class Panel;
 		friend class Window;

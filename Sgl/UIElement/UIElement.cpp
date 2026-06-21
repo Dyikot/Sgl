@@ -7,9 +7,9 @@ namespace Sgl
 		Layoutable(std::move(other)),
 		_backgroundRenderer(std::move(other._backgroundRenderer)),
 		_tag(std::move(other._tag)),
-		_isCornersRounded(other._isCornersRounded),
+		_cornersRadius(other._cornersRadius),
 		_tagSource(other._tagSource),
-		_isCornersRoundedSource(other._isCornersRoundedSource)
+		_cornersRadiusSource(other._cornersRadiusSource)
 	{}
 
 	void UIElement::SetTag(const Any& value, ValueSource source)
@@ -17,9 +17,9 @@ namespace Sgl
 		SetProperty(TagProperty, _tag, value, _tagSource, source);
 	}
 
-	void UIElement::SetIsCornersRounded(bool value, ValueSource source)
+	void UIElement::SetCornersRadius(float value, ValueSource source)
 	{
-		if(SetProperty(IsCornersRoundedProperty, _isCornersRounded, value, _isCornersRoundedSource, source))
+		if(SetProperty(CornersRadiusProperty, _cornersRadius, value, _cornersRadiusSource, source))
 		{
 			InvalidateRender();
 			UpdateBackgroundRenderer(GetBackground());
@@ -114,11 +114,6 @@ namespace Sgl
 		PseudoClasses.Reset(OnHover);
 	}
 
-	static constexpr size_t ColorBg   = 0;
-	static constexpr size_t TextureBg = 1;
-	static constexpr size_t RoundedColorBg   =   ColorBg | 2;
-	static constexpr size_t RoundedTextureBg = TextureBg | 2;
-
 	void UIElement::UpdateBackgroundRenderer(const Brush& background)
 	{
 		if(!IsAttachedToLogicalTree())
@@ -126,22 +121,41 @@ namespace Sgl
 			return;
 		}
 
-		auto states = background.index() | (static_cast<size_t>(_isCornersRounded) << 1);
-
-		switch(states)
+		if(std::holds_alternative<Color>(background))
 		{
-			case ColorBg:
+			if(_cornersRadius > 0.0f)
+			{
+				auto color = std::get<Color>(background);
+				auto cornersRadius = _cornersRadius;
+				_backgroundRenderer = [color, cornersRadius]
+					(RenderContext context, const FRect& rect) mutable
+				{
+					context.DrawRectangleFill(rect, cornersRadius, color);
+				};
+			}
+			else
 			{
 				auto color = std::get<Color>(background);
 				_backgroundRenderer = [color](RenderContext context, const FRect& rect)
 				{
 					context.DrawRectangleFill(rect, color);
 				};
-
-				break;
 			}
-
-			case TextureBg:
+		}
+		else
+		{
+			if(_cornersRadius > 0.0f)
+			{
+				auto& source = std::get<ImageSource>(background);
+				auto texture = GetVisualRoot()->GetTextureFactory().Create(source, false);
+				auto cornersRadius = _cornersRadius;
+				_backgroundRenderer = [texture, cornersRadius]
+				(RenderContext context, const FRect& rect)
+				{
+					context.DrawRectangleFill(rect, cornersRadius, texture);
+				};
+			}
+			else
 			{
 				auto& source = std::get<ImageSource>(background);
 				auto texture = GetVisualRoot()->GetTextureFactory().Create(source, false);
@@ -149,59 +163,9 @@ namespace Sgl
 				{
 					context.DrawTexture(texture, &rect, nullptr);
 				};
-
-				break;
-			}
-
-			case RoundedColorBg:
-			{
-				auto color = std::get<Color>(background);
-				auto circleFill = GetVisualRoot()->GetTextureFactory().CreatePrimitive(0);
-				_backgroundRenderer = [color, circleFill](RenderContext context, const FRect& rect) mutable
-				{
-					circleFill.SetColor(color);
-					context.DrawTexture9Grid(circleFill, 16, 1, &rect, nullptr);
-				};
-
-				break;
-			}
-
-			case RoundedTextureBg:
-			{
-				auto& factory = GetVisualRoot()->GetTextureFactory();
-
-				auto& source = std::get<ImageSource>(background);
-				auto texture = factory.Create(source, false);
-				auto circleFill = factory.CreatePrimitive(0);
-				_backgroundRenderer = [texture, circleFill, cache = Texture()]
-					(RenderContext context, const FRect& rect) mutable
-				{
-					if(!cache || cache.GetWidth() != rect.w || cache.GetHeight() != rect.h)
-					{
-						cache = Texture(context.GetRenderer(), 
-										 Size(rect.w, rect.h),
-										 TextureAccess::Target);
-
-						context.SetTarget(cache);
-						{
-							circleFill.SetColor(Colors::White);
-							context.DrawTexture9Grid(circleFill, 16, 1, nullptr, nullptr);
-
-							texture.SetBlendMode(SDL_BLENDMODE_MOD);
-							context.DrawTexture(texture, nullptr, nullptr);
-							texture.SetBlendMode(SDL_BLENDMODE_BLEND);
-						}
-						context.ResetTarget();
-					}
-
-					context.DrawTexture(cache, &rect, nullptr);
-				};
-
-				break;
 			}
 		}
 	}
-
 
 	Ref<UIElement> UIElementDataTemplate::Build(const Ref<INotifyPropertyChanged>& data)
 	{
