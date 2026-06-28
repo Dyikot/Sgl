@@ -9,7 +9,9 @@ namespace Sgl
 		CheckBox,
 		CheckBoxOutline,
 		RadioButton,
-		RadioButtonOutline
+		RadioButtonOutline,
+		SwitchButtonOff,
+		SwitchButtonOn
 	};
 
 	std::span<const uint8_t> LoadEmbeddedAsset(AssetId asset);

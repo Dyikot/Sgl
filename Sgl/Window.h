@@ -438,7 +438,7 @@ namespace Sgl
 		Window* _owner = nullptr;
 		std::list<Window*> _ownedWindows;
 		Surface _icon;
-		Action<RenderContext> _backgroundRenderer;
+		RenderFragment _backgroundFragment;
 
 		ValueSource _contentSource {};
 

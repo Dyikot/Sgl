@@ -475,7 +475,7 @@ namespace Sgl
 
     void Window::Render(RenderContext context)
     {
-        _backgroundRenderer(context);
+        _backgroundFragment(context, {});
 
         if(_content && _content->IsVisible())
         {
@@ -529,10 +529,11 @@ namespace Sgl
 
     void Window::OnBackgroundChanged(const Brush& background)
     {
-        if(background.index() == 0)
+        if(std::holds_alternative<Color>(background))
         {
             auto color = std::get<Color>(background);
-            _backgroundRenderer = [color](RenderContext context)
+
+            _backgroundFragment = [color](RenderContext context, const FRect& rect)
             {
                 context.FillBackground(color);
             };
@@ -541,7 +542,8 @@ namespace Sgl
         {
             auto& source = std::get<ImageSource>(background);
             auto texture = _textureFactory->Create(source, false);
-            _backgroundRenderer = [texture](RenderContext context)
+
+            _backgroundFragment = [texture](RenderContext context, const FRect& rect)
             {
                 context.DrawTexture(texture, nullptr, nullptr);
             };

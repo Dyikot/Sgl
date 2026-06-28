@@ -12,6 +12,7 @@
 #include "Input/SDLEvents.h"
 #include "UIElements/Buttons/CheckBox.h"
 #include "UIElements/Buttons/RadioButton.h"
+#include "UIElements/Buttons/SwithButton.h"
 
 namespace Sgl
 {
@@ -545,6 +546,9 @@ namespace Sgl
 
         Styles.Add(Selector().OfType<RadioButton>().On("checked"))
             .Set(CheckBox::BackgroundProperty, ImageSource(AssetId::RadioButton));
+
+        Styles.Add(Selector().OfType<SwitchButon>().On("checked"))
+            .Set(CheckBox::BackgroundProperty, ImageSource(AssetId::SwitchButtonOn));
     }
 
     void Application::PushSDLUserEvent(uint32_t type)

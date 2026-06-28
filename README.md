@@ -12,7 +12,7 @@ The project is currently in development.
 - **UI Elements**:
   - Panels: `Panel`, `StackPanel`, `WrapPanel`, `DockPanel`, `Grid`, `UniformGrid`, `Canvas`
   - Basic: `Border`, `TextBlock`, `Image`
-  - Buttons: `Button`, `ToggleButton`, `CheckBox`, `RadioButton`, `RepeatButton`
+  - Buttons: `Button`, `ToggleButton`, `CheckBox`, `SwitchButton`, `RadioButton`, `RepeatButton`
   - RangeBase: `ProgressBar`
 
 ## Roadmap

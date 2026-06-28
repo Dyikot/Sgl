@@ -245,11 +245,6 @@ namespace Sgl
 
         for(auto& child : Children)
         {
-            if(!child->IsVisible())
-            {
-                continue;
-            }
-
             child->Measure(availableSize);
 
             auto [width, height] = child->GetDesiredSize();
@@ -272,11 +267,6 @@ namespace Sgl
     {
         for(auto& child : Children)
         {
-            if(!child->IsVisible())
-            {
-                continue;
-            }
-
             child->Arrange(rect);
         }
     }
