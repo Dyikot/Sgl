@@ -4,6 +4,7 @@
 #include "../Data/IDataTemplate.h"
 #include "../Input/MouseAndKeyEventArgs.h"
 #include "../Layout/Layoutable.h"
+#include "../Render/RenderFragment.h"
 
 namespace Sgl
 {
@@ -59,9 +60,9 @@ namespace Sgl
 		virtual void OnMouseEnter(MouseMoveEventArgs e);
 		virtual void OnMouseLeave(MouseMoveEventArgs e);
 	private:
-		void UpdateBackgroundRenderer(const Brush& background);
+		void UpdateBackgroundFragment(const Brush& background);
 	private:
-		Action<RenderContext, const FRect&> _backgroundRenderer;
+		RenderFragment _backgroundFragment;
 
 		Any _tag;
 		float _cornersRadius = 0;

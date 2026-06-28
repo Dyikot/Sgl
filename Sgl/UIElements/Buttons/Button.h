@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../UIElement/ContentUIElement.h"
+#include "../ContentUIElement.h"
 
 namespace Sgl::UIElements
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../UIElement/UIElement.h"
+#include "../UIElement.h"
 #include "../../Base/Collections/Collection.h"
 
 namespace Sgl
@@ -16,6 +16,22 @@ namespace Sgl
 		UIElementsCollection(const UIElementsCollection&) = delete;
 		UIElementsCollection(UIElementsCollection&& other) noexcept;
 		~UIElementsCollection();
+
+		Ref<UIElement> FindByName(std::string_view name) const;
+
+		template<typename T>
+		Ref<T> FindOfType() const
+		{
+			for(auto& item : _items)
+			{
+				if(item.OfType<T>())
+				{
+					return item.As<T>();
+				}
+			}
+
+			return nullptr;
+		}
 	protected:
 		void ClearItems() override;
 		void InsertItem(size_t index, const Ref<UIElement>& item) override;
@@ -48,6 +64,8 @@ namespace Sgl
 		void OnMouseDown(MouseButtonEventArgs e) override;
 		void OnMouseUp(MouseButtonEventArgs e) override;
 		void OnMouseLeave(MouseMoveEventArgs e) override;
+		FSize MeasureContent(FSize availableSize) override;
+		void ArrangeContent(FRect rect) override;
 	private:
 		Ref<UIElement> _currentChild;
 		Ref<UIElement> _mouseCapturedElement;

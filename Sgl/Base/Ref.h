@@ -139,6 +139,16 @@ namespace Sgl
         }
 
         /// <summary>
+        /// Checks whether the managed object is of type T.
+        /// </summary>
+        template<typename T>
+        bool OfType() const
+        {
+            auto& type = _data ? typeid(*_data) : typeid(nullptr);
+            return type == typeid(T);
+        }
+
+        /// <summary>
         /// Returns a raw pointer to the managed object, or nullptr if empty.
         /// </summary>
         T* Get() const noexcept

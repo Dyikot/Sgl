@@ -230,8 +230,15 @@ namespace Sgl::UIElements
 				throw Exception("Column index exceeds number of columns - {}.", rows);
 			}
 
-			desiredHeight[row] = height;
-			desiredWidth[column] = width;
+			if(height > desiredHeight[row])
+			{
+				desiredHeight[row] = height;
+			}
+
+			if(width > desiredWidth[column])
+			{
+				desiredWidth[column] = width;
+			}
 		}
 
 		std::vector<float> actualHeight(rows);

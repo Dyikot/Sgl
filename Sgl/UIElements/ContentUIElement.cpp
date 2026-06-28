@@ -27,9 +27,17 @@ namespace Sgl
 
 	void ContentUIElement::SetContent(const std::string& value)
 	{
-		auto textBlock = New<UIElements::TextBlock>();
-		textBlock->SetText(value);
-		SetContent(textBlock);
+		if(_content.OfType<UIElements::TextBlock>())
+		{
+			auto& textBlock = _content.GetValueAs<UIElements::TextBlock>();
+			textBlock.SetText(value);
+		}
+		else
+		{
+			auto textBlock = New<UIElements::TextBlock>();
+			textBlock->SetText(value);
+			SetContent(textBlock);
+		}
 	}
 
 	void ContentUIElement::SetContent(const Ref<INotifyPropertyChanged>& value, ValueSource source)

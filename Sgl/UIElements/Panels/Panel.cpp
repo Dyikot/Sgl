@@ -17,6 +17,19 @@ namespace Sgl
         ClearItems();
     }
 
+    Ref<UIElement> UIElementsCollection::FindByName(std::string_view name) const
+    {
+        for(auto& item : _items)
+        {
+            if(item->Name == name)
+            {
+                return item;
+            }
+        }
+
+        return nullptr;
+    }
+
     void UIElementsCollection::ClearItems()
     {
         for(auto& item : _items)
@@ -223,6 +236,48 @@ namespace Sgl
         {
             _currentChild->OnMouseLeave(e);
             _currentChild = nullptr;
+        }
+    }
+
+    FSize Panel::MeasureContent(FSize availableSize)
+    {
+        FSize size {};
+
+        for(auto& child : Children)
+        {
+            if(!child->IsVisible())
+            {
+                continue;
+            }
+
+            child->Measure(availableSize);
+
+            auto [width, height] = child->GetDesiredSize();
+            
+            if(width > size.Width)
+            {
+                size.Width = width;
+            }
+
+            if(height > size.Height)
+            {
+                size.Height = height;
+            }
+        }
+
+        return size;
+    }
+
+    void Panel::ArrangeContent(FRect rect)
+    {
+        for(auto& child : Children)
+        {
+            if(!child->IsVisible())
+            {
+                continue;
+            }
+
+            child->Arrange(rect);
         }
     }
 

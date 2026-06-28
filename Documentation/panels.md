@@ -1,9 +1,34 @@
 # Panels
 Panels are container elements in a UI framework responsible for layout management. They define how child elements are arranged, sized, and positioned within a visual tree. Panels are fundamental building blocks for creating structured, responsive user interfaces.
 
-`Panel` is the base class for all layout containers in the framework. All panels store their child elements in a `UIElementsCollection` accessed via the Children field.
+## Panel
+`Panel` is the base class for all layout containers in the framework. All panels store their child elements in a `UIElementsCollection` accessed via the Children field. Children in a Panel are arranged on top of each other, stacked in the order they are added.
 
 Style selectors such as `Panel_NthChild`, `Panel_FirstChild`, and `Panel_LastChild` allow targeting children by position.
+
+```c++
+auto panel = New<Panel>();
+panel->SetVerticalAlignment(VerticalAlignment::Center);
+panel->SetHorizontalAlignment(HorizontalAlignment::Center);
+
+std::pair<Size, Color> data[] =
+{ 
+	{ Size(200, 200), Colors::Green },
+	{ Size(150, 150), Colors::Brown },
+	{ Size(100, 100), Colors::Gold  }
+};
+
+for(auto [size, color] : data)
+{
+	auto child = New<Border>();
+	child->SetBackground(color);
+	child->SetWidth(size.Width);
+	child->SetHeight(size.Height);
+	panel->Children.Add(child);
+}
+```
+
+![Panel](Images/Panel.PNG)
 
 ## StackPanel
 `StackPanel` arranges child elements in a single linear sequence, either vertically from top to bottom or horizontally from left to right. This makes it ideal for vertical lists, horizontal toolbars, sequential form fields, or any scenario where elements should flow in one direction without wrapping.

@@ -5,7 +5,7 @@ namespace Sgl
 {
 	UIElement::UIElement(UIElement&& other) noexcept:
 		Layoutable(std::move(other)),
-		_backgroundRenderer(std::move(other._backgroundRenderer)),
+		_backgroundFragment(std::move(other._backgroundFragment)),
 		_tag(std::move(other._tag)),
 		_cornersRadius(other._cornersRadius),
 		_tagSource(other._tagSource),
@@ -22,14 +22,14 @@ namespace Sgl
 		if(SetProperty(CornersRadiusProperty, _cornersRadius, value, _cornersRadiusSource, source))
 		{
 			InvalidateRender();
-			UpdateBackgroundRenderer(GetBackground());
+			UpdateBackgroundFragment(GetBackground());
 		}
 	}
 
 	void UIElement::Render(RenderContext context)
 	{
 		Renderable::Render(context);
-		_backgroundRenderer(context, GetBounds());
+		_backgroundFragment(context, GetBounds());
 	}
 
 	void UIElement::OnCursorChanged(Cursor cursor)
@@ -42,7 +42,7 @@ namespace Sgl
 
 	void UIElement::OnBackgroundChanged(const Brush& background)
 	{
-		UpdateBackgroundRenderer(background);
+		UpdateBackgroundFragment(background);
 	}
 
 	void UIElement::OnAttachedToLogicalTree()
@@ -53,9 +53,9 @@ namespace Sgl
 		SetDataContext(parent.GetDataContext(), ValueSource::Inheritance);
 		SetCursor(parent.GetCursor(), ValueSource::Inheritance);
 
-		if(!_backgroundRenderer)
+		if(!_backgroundFragment)
 		{
-			UpdateBackgroundRenderer(GetBackground());
+			UpdateBackgroundFragment(GetBackground());
 		}
 
 		ApplyBindings();
@@ -114,7 +114,7 @@ namespace Sgl
 		PseudoClasses.Reset(OnHover);
 	}
 
-	void UIElement::UpdateBackgroundRenderer(const Brush& background)
+	void UIElement::UpdateBackgroundFragment(const Brush& background)
 	{
 		if(!IsAttachedToLogicalTree())
 		{
@@ -123,46 +123,29 @@ namespace Sgl
 
 		if(std::holds_alternative<Color>(background))
 		{
+			Color color = std::get<Color>(background);
+			
 			if(_cornersRadius > 0.0f)
 			{
-				auto color = std::get<Color>(background);
-				auto cornersRadius = _cornersRadius;
-				_backgroundRenderer = [color, cornersRadius]
-					(RenderContext context, const FRect& rect) mutable
-				{
-					context.DrawRectangleFill(rect, cornersRadius, color);
-				};
+				_backgroundFragment = RenderFragments::RoundedRectangle(color, _cornersRadius);
 			}
 			else
 			{
-				auto color = std::get<Color>(background);
-				_backgroundRenderer = [color](RenderContext context, const FRect& rect)
-				{
-					context.DrawRectangleFill(rect, color);
-				};
+				_backgroundFragment = RenderFragments::Rectangle(color);
 			}
 		}
 		else
 		{
+			auto& source = std::get<ImageSource>(background);
+			auto texture = GetVisualRoot()->GetTextureFactory().Create(source, false);
+
 			if(_cornersRadius > 0.0f)
 			{
-				auto& source = std::get<ImageSource>(background);
-				auto texture = GetVisualRoot()->GetTextureFactory().Create(source, false);
-				auto cornersRadius = _cornersRadius;
-				_backgroundRenderer = [texture, cornersRadius]
-				(RenderContext context, const FRect& rect)
-				{
-					context.DrawRectangleFill(rect, cornersRadius, texture);
-				};
+				_backgroundFragment = RenderFragments::RoundedImage(texture, _cornersRadius);
 			}
 			else
 			{
-				auto& source = std::get<ImageSource>(background);
-				auto texture = GetVisualRoot()->GetTextureFactory().Create(source, false);
-				_backgroundRenderer = [texture](RenderContext context, const FRect& rect)
-				{
-					context.DrawTexture(texture, &rect, nullptr);
-				};
+				_backgroundFragment = RenderFragments::Image(texture);
 			}
 		}
 	}

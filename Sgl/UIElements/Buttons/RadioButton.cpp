@@ -1,5 +1,4 @@
 #include "RadioButton.h"
-#include <SDL3/SDL_filesystem.h>
 
 namespace Sgl::UIElements
 {
@@ -53,11 +52,11 @@ namespace Sgl::UIElements
 
 	RadioButton::RadioButton()
 	{
-		static ImageSource imageSource(AssetId::RadioButtonOutline);
+		static ImageSource source(AssetId::RadioButtonOutline);
 
 		SetWidth(24, ValueSource::Default);
 		SetHeight(24, ValueSource::Default);
-		SetBackground(imageSource, ValueSource::Default);
+		SetBackground(source, ValueSource::Default);
 	}
 
 	RadioButton::RadioButton(RadioButton&& other) noexcept:
