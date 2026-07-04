@@ -578,7 +578,7 @@ namespace Sgl
     {
         if(std::ranges::find(_activeWindows, &window) == _activeWindows.end())
         {
-            _activeWindows.push_back(&window);            
+            _activeWindows.push_back(&window);     
             window.SetParent(this);
             window.OnAttachedToLogicalTree();
         }

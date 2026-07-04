@@ -44,7 +44,7 @@ namespace Sgl
 		void SetHorizontalAlignment(HorizontalAlignment value, ValueSource source = ValueSource::Local);
 		HorizontalAlignment GetHorizontalAlignment() const { return _horizontalAlignment; }
 
-		void SetParent(IStyleHost* parent) override;
+		
 		Layoutable* GetLayoutableParent() const { return _layotableParent; }
 
 		template<typename T>
@@ -78,6 +78,7 @@ namespace Sgl
 	protected:
 		virtual FSize MeasureContent(FSize availableSize) { return FSize(); }
 		virtual void ArrangeContent(FRect rect) { }
+		void SetParent(IStyleHost* parent) override;
 		void OnAttachedToLogicalTree() override;
 		void OnDetachedFromLogicalTree() override;
 	private:

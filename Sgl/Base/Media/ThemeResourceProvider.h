@@ -15,6 +15,7 @@ namespace Sgl
     {
     public:
         ThemeResourceProvider() = default;
+        ~ThemeResourceProvider();
 
         /// <summary>
         /// Adds a color resource for both light and dark themes.
@@ -80,6 +81,6 @@ namespace Sgl
         };
 
         ThemeMode _currentMode = ThemeMode::Light;
-        ThemeDictionary _resources[2];
+        ThemeDictionary* _resources = new ThemeDictionary[2];
     };
 }

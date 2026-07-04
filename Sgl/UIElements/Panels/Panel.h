@@ -52,12 +52,9 @@ namespace Sgl
 
 		void SetVisualRoot(IVisualRoot* value) final;
 		void Render(RenderContext context) override;
-		void ApplyStyle() override;
 	protected:
-		void OnChildAdded(UIElement& child);
-		void OnChildRemoving(UIElement& child);
-		void OnAttachedToLogicalTree() override;
-		void OnDetachedFromLogicalTree() override;
+		void OnChildAdded(UIElement* child);
+		void OnChildRemoving(UIElement* child);
 		void OnCursorChanged(Cursor cursor) override;
 		void OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext) override;
 		void OnMouseMove(MouseMoveEventArgs e) override;

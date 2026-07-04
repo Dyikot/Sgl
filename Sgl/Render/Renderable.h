@@ -23,14 +23,13 @@ namespace Sgl
         virtual void SetVisualRoot(IVisualRoot* value);
         IVisualRoot* GetVisualRoot() const { return _visualRoot; }
         
-        void SetParent(IStyleHost* parent) override;
-
         virtual void Render(RenderContext context);
         virtual void InvalidateRender();
 
         static inline StyleableProperty CursorProperty { &SetCursor, &GetCursor };
         static inline StyleableProperty BackgroundProperty { &SetBackground, &GetBackground };
     protected:
+        void SetParent(IStyleHost* parent) override;
         virtual void OnCursorChanged(Cursor cursor) {}
         virtual void OnBackgroundChanged(const Brush& background) {}
     protected:

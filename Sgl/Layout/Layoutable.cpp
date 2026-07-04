@@ -105,12 +105,6 @@ namespace Sgl
 		}
 	}
 
-	void Layoutable::SetParent(IStyleHost* parent)
-	{
-		Renderable::SetParent(parent);
-		_layotableParent = dynamic_cast<Layoutable*>(parent);
-	}
-
 	void Layoutable::Arrange(FRect rect)
 	{
 		if(!_isMeasureValid)
@@ -269,6 +263,12 @@ namespace Sgl
 				_layotableParent->InvalidateMeasure();
 			}
 		}
+	}
+
+	void Layoutable::SetParent(IStyleHost* parent)
+	{
+		Renderable::SetParent(parent);
+		_layotableParent = dynamic_cast<Layoutable*>(parent);
 	}
 
 	void Layoutable::OnAttachedToLogicalTree()

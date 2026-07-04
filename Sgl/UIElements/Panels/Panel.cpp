@@ -34,7 +34,7 @@ namespace Sgl
     {
         for(auto& item : _items)
         {
-            _panel.OnChildRemoving(item.GetValue());
+            _panel.OnChildRemoving(item.Get());
         }
 
         base::ClearItems();
@@ -42,20 +42,20 @@ namespace Sgl
 
     void UIElementsCollection::InsertItem(size_t index, const Ref<UIElement>& item)
     {
-        _panel.OnChildAdded(item.GetValue());
+        _panel.OnChildAdded(item.Get());
         base::InsertItem(index, item);
     }
 
     void UIElementsCollection::SetItem(size_t index, const Ref<UIElement>& item)
     {
-        _panel.OnChildAdded(item.GetValue());
+        _panel.OnChildAdded(item.Get());
         base::SetItem(index, item);
     }
 
     void UIElementsCollection::RemoveItem(size_t index)
     {
         auto& item = GetElementAt(index);
-        _panel.OnChildRemoving(item.GetValue());
+        _panel.OnChildRemoving(item.Get());
         base::RemoveItem(index);
     }
 
@@ -93,55 +93,15 @@ namespace Sgl
         }
     }
 
-    void Panel::ApplyStyle()
+    void Panel::OnChildAdded(UIElement* child)
     {
-        StyleableElement::ApplyStyle();
-
-        for(auto& child : Children)
-        {
-            child->ApplyStyle();
-        }
+        AddLogicalChild(child);
     }
 
-    void Panel::OnChildAdded(UIElement& child)
+    void Panel::OnChildRemoving(UIElement* child)
     {
-        child.SetParent(this);
-        
-        if(IsAttachedToLogicalTree())
-        {
-            child.OnAttachedToLogicalTree();
-        }
-    }
-
-    void Panel::OnChildRemoving(UIElement& child)
-    {
-        if(IsAttachedToLogicalTree())
-        {
-            child.OnDetachedFromLogicalTree();
-        }
-
-        child.SetParent(nullptr);
-    }    
-
-    void Panel::OnAttachedToLogicalTree()
-    {
-        UIElement::OnAttachedToLogicalTree();
-
-        for(auto& child : Children)
-        {
-            child->OnAttachedToLogicalTree();
-        }
-    }
-
-    void Panel::OnDetachedFromLogicalTree()
-    {
-        UIElement::OnDetachedFromLogicalTree();
-
-        for(auto& child : Children)
-        {
-            child->OnDetachedFromLogicalTree();
-        }
-    }
+        RemoveLogicalChild(child);
+    }   
 
     void Panel::OnCursorChanged(Cursor cursor)
     {

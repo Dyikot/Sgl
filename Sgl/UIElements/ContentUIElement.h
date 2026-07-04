@@ -32,7 +32,6 @@ namespace Sgl
 		void SetVisualRoot(IVisualRoot* value) final;
 
 		void Render(RenderContext context) override;
-		void ApplyStyle() override;
 
 		static inline StyleableProperty ContentProperty { &SetContent, &GetContent };
 		static inline StyleableProperty ContentTemplateProperty { &SetContentTemplate, &GetContentTemplate };
@@ -40,10 +39,7 @@ namespace Sgl
 		static inline StyleableProperty VerticalContentAlignmentProperty { &SetVerticalContentAlignment, &GetVerticalContentAlignment };
 		static inline StyleableProperty HorizontalContentAlignmentProperty { &SetHorizontalContentAlignment, &GetHorizontalContentAlignment };
 	protected:
-		virtual void OnContentPresenterCreated(UIElement& presenter);
-		virtual void OnContentPresenterDestroying(UIElement& presenter);
 		void OnAttachedToLogicalTree() override;
-		void OnDetachedFromLogicalTree() override;
 		void OnCursorChanged(Cursor cursor) override;
 		void OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext) override;
 		void OnMouseMove(MouseMoveEventArgs e) override;

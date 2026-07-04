@@ -21,7 +21,7 @@ namespace Sgl
 	{
 		if(_contentPresenter)
 		{
-			OnContentPresenterDestroying(_contentPresenter.GetValue());
+			RemoveLogicalChild(_contentPresenter.Get());
 		}
 	}
 
@@ -105,55 +105,10 @@ namespace Sgl
 		}
 	}
 
-	void ContentUIElement::ApplyStyle()
-	{
-		StyleableElement::ApplyStyle();
-
-		if(_contentPresenter)
-		{
-			_contentPresenter->ApplyStyle();
-		}
-	}
-
-	void ContentUIElement::OnContentPresenterCreated(UIElement& presenter)
-	{
-		presenter.SetParent(this);
-
-		if(IsAttachedToLogicalTree())
-		{
-			presenter.OnAttachedToLogicalTree();		
-		}
-	}
-
-	void ContentUIElement::OnContentPresenterDestroying(UIElement& presenter)
-	{
-		if(IsAttachedToLogicalTree())
-		{
-			presenter.OnDetachedFromLogicalTree();
-		}
-
-		presenter.SetParent(nullptr);
-	}
-
 	void ContentUIElement::OnAttachedToLogicalTree()
 	{
 		UpdatePresenter();
 		UIElement::OnAttachedToLogicalTree();
-
-		if(_contentPresenter)
-		{
-			_contentPresenter->OnAttachedToLogicalTree();
-		}
-	}
-
-	void ContentUIElement::OnDetachedFromLogicalTree()
-	{
-		UIElement::OnDetachedFromLogicalTree();
-
-		if(_contentPresenter)
-		{
-			_contentPresenter->OnDetachedFromLogicalTree();
-		}
 	}
 
 	void ContentUIElement::OnCursorChanged(Cursor cursor)
@@ -304,7 +259,7 @@ namespace Sgl
 		{
 			if(_contentPresenter)
 			{
-				OnContentPresenterDestroying(_contentPresenter.GetValue());
+				RemoveLogicalChild(_contentPresenter.Get());
 			}
 
 			_contentPresenter = _contentTemplate->Build(_content);
@@ -312,7 +267,7 @@ namespace Sgl
 
 			if(_contentPresenter)
 			{
-				OnContentPresenterCreated(_contentPresenter.GetValue());
+				AddLogicalChild(_contentPresenter.Get());
 			}
 		}
 	}

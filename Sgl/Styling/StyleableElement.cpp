@@ -69,6 +69,11 @@ namespace Sgl
 		{
 			style->Apply(*this, ValueSource::Style);
 		}
+
+		for(auto child : _logicalChildren)
+		{
+			child->ApplyStyle();
+		}
 	}
 
 	void StyleableElement::OnAttachedToLogicalTree()
@@ -86,6 +91,11 @@ namespace Sgl
 				ApplyStateStyle();
 			}
 		}
+
+		for(auto child : _logicalChildren)
+		{
+			child->OnAttachedToLogicalTree();
+		}
 	}
 
 	void StyleableElement::OnDetachedFromLogicalTree()
@@ -97,7 +107,26 @@ namespace Sgl
 			ClearAndRestoreBaseState();
 		}
 
+		for(auto child : _logicalChildren)
+		{
+			child->OnDetachedFromLogicalTree();
+		}
+
 		DetachedFromLogicalTree.Invoke(*this);
+	}
+
+	void StyleableElement::AddLogicalChild(StyleableElement* child)
+	{
+		_logicalChildren.push_back(child);
+		child->SetParent(this);
+		child->OnAttachedToLogicalTree();
+	}
+
+	void StyleableElement::RemoveLogicalChild(StyleableElement* child)
+	{
+		std::erase(_logicalChildren, child);
+		child->SetParent(nullptr);
+		child->OnDetachedFromLogicalTree();
 	}
 
 	bool StyleableElement::FetchStyles()
@@ -109,13 +138,11 @@ namespace Sgl
 		stylesCollections.reserve(4);
 		stylesCollections.push_back(&Styles);
 
-		if(auto parent = _stylingParent)
+		auto parent = _stylingParent;
+		while(parent != nullptr)
 		{
-			while(parent != nullptr)
-			{
-				stylesCollections.push_back(&parent->GetStyles());
-				parent = parent->GetStylingParent();
-			}
+			stylesCollections.push_back(&parent->GetStyles());
+			parent = parent->GetStylingParent();
 		}
 		
 		for(auto it = stylesCollections.rbegin(); it != stylesCollections.rend(); ++it)

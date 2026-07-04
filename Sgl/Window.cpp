@@ -365,12 +365,7 @@ namespace Sgl
 
         if(_content)
         {
-            if(IsAttachedToLogicalTree())
-            {
-                _content->OnDetachedFromLogicalTree();
-            }
-
-            _content->SetParent(nullptr);
+            RemoveLogicalChild(_content.Get());
         }
 
         if(SetProperty(ContentProperty, _content, value, _contentSource, source))
@@ -380,12 +375,7 @@ namespace Sgl
 
         if(_content)
         {
-            _content->SetParent(this);
-
-            if(IsAttachedToLogicalTree())
-            {
-                _content->OnAttachedToLogicalTree();
-            }
+            AddLogicalChild(_content.Get());
         }
     }
 
@@ -485,16 +475,6 @@ namespace Sgl
         _isRenderValid = true;
     }
 
-    void Window::ApplyStyle()
-    {
-        StyleableElement::ApplyStyle();
-
-        if(_content)
-        {
-            _content->ApplyStyle();
-        }
-    }
-
     void Window::Process()
     {
         if(_content)
@@ -562,21 +542,6 @@ namespace Sgl
     {
         StyleableElement::OnAttachedToLogicalTree();
         ApplyBindings();
-
-        if(_content)
-        {
-            _content->OnAttachedToLogicalTree();
-        }
-    }
-
-    void Window::OnDetachedFromLogicalTree()
-    {
-        StyleableElement::OnDetachedFromLogicalTree();
-
-        if(_content)
-        {
-            _content->OnDetachedFromLogicalTree();
-        }
     }
 
     void Window::OnWindowStateChanged(WindowStateChangedEventArgs e)

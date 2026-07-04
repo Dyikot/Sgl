@@ -386,11 +386,6 @@ namespace Sgl
 		void Render(RenderContext context) override;
 
 		/// <summary>
-		/// Applies the current style rules to this window and its visual tree.
-		/// </summary>
-		void ApplyStyle() override;
-
-		/// <summary>
 		/// Processes window-specific logic.
 		/// </summary>
 		virtual void Process();
@@ -401,7 +396,6 @@ namespace Sgl
 		void OnBackgroundChanged(const Brush& background) final;
 		void OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext) override;
 		void OnAttachedToLogicalTree() override;
-		void OnDetachedFromLogicalTree() override;
 		virtual void OnWindowStateChanged(WindowStateChangedEventArgs e);
 		virtual void OnPositionChanged(WindowPositionChangedEventArgs e);
 		virtual void OnWindowSizeChanged(WindowSizeChangedEventArgs e);
