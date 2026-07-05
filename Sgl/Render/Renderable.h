@@ -30,7 +30,7 @@ namespace Sgl
         static inline StyleableProperty BackgroundProperty { &SetBackground, &GetBackground };
     protected:
         void SetParent(IStyleHost* parent) override;
-        virtual void OnCursorChanged(Cursor cursor) {}
+        virtual void OnCursorChanged(Cursor cursor);
         virtual void OnBackgroundChanged(const Brush& background) {}
     protected:
         static inline PlatformCursor _platformCursor;

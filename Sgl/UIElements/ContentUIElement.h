@@ -30,7 +30,6 @@ namespace Sgl
 		HorizontalAlignment GetHorizontalContentAlignment() const { return _horizontalContentAlignment; }
 
 		void SetVisualRoot(IVisualRoot* value) final;
-
 		void Render(RenderContext context) override;
 
 		static inline StyleableProperty ContentProperty { &SetContent, &GetContent };
@@ -40,8 +39,6 @@ namespace Sgl
 		static inline StyleableProperty HorizontalContentAlignmentProperty { &SetHorizontalContentAlignment, &GetHorizontalContentAlignment };
 	protected:
 		void OnAttachedToLogicalTree() override;
-		void OnCursorChanged(Cursor cursor) override;
-		void OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext) override;
 		void OnMouseMove(MouseMoveEventArgs e) override;
 		void OnMouseDown(MouseButtonEventArgs e) override;
 		void OnMouseUp(MouseButtonEventArgs e) override;

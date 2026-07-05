@@ -13,7 +13,7 @@ namespace Sgl
     /// Uses std::string keys with custom StringHash hasher and transparent equality comparator
     /// to support efficient lookups with string_view without temporary string allocations.
     /// </summary>
-    using LocalizationMap = std::unordered_map<std::string, std::string, StringHash, std::equal_to<void>>;
+    using LocalizationMap = std::unordered_map<std::string, std::string, StringHash, std::equal_to<>>;
 
     /// <summary>
     /// Delegate type for providing localized strings.

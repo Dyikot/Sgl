@@ -107,26 +107,8 @@ namespace Sgl
 
 	void ContentUIElement::OnAttachedToLogicalTree()
 	{
-		UpdatePresenter();
 		UIElement::OnAttachedToLogicalTree();
-	}
-
-	void ContentUIElement::OnCursorChanged(Cursor cursor)
-	{
-		UIElement::OnCursorChanged(cursor);
-		
-		if(_contentPresenter)
-		{
-			_contentPresenter->SetCursor(cursor, ValueSource::Inheritance);
-		}
-	}
-
-	void ContentUIElement::OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext)
-	{
-		if(_contentPresenter)
-		{
-			_contentPresenter->SetDataContext(dataContext, ValueSource::Inheritance);
-		}
+		UpdatePresenter();
 	}
 
 	void ContentUIElement::OnMouseMove(MouseMoveEventArgs e)

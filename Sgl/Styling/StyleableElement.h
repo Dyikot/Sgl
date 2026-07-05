@@ -1,20 +1,17 @@
 #pragma once
 
 #include <vector>
-#include <stack>
 #include <string_view>
 
 #include "IStyleHost.h"
 #include "PseudoClass.h"
 #include "../Data/BindableObject.h"
-#include "../Base/Ref.h"
-#include "../Base/Event.h"
 
 namespace Sgl
 {
 	class StyleableElement : public BindableObject, public IStyleHost
 	{
-	private:
+	public:
 		using StyleableElementEventHandler = EventHandler<StyleableElement>;
 	public:
 		StyleableElement();
@@ -39,8 +36,10 @@ namespace Sgl
 		virtual void SetParent(IStyleHost* parent);
 		virtual void OnAttachedToLogicalTree();
 		virtual void OnDetachedFromLogicalTree();
+		void OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext) final;
 		void AddLogicalChild(StyleableElement* child);
 		void RemoveLogicalChild(StyleableElement* child);
+		const std::vector<StyleableElement*> GetLogicalChildren() const { return _logicalChildren; }
 	private:
 		bool FetchStyles();
 		void FetchStylesFrom(const StyleCollection& styles);

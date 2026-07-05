@@ -34,6 +34,8 @@ namespace Sgl
 
 	void UIElement::OnCursorChanged(Cursor cursor)
 	{
+		Renderable::OnCursorChanged(cursor);
+
 		if(IsMouseOver())
 		{
 			_platformCursor.Set(cursor);
@@ -49,9 +51,9 @@ namespace Sgl
 	{
 		Layoutable::OnAttachedToLogicalTree();
 
-		auto& parent = static_cast<Renderable&>(*GetStylingParent());
-		SetDataContext(parent.GetDataContext(), ValueSource::Inheritance);
-		SetCursor(parent.GetCursor(), ValueSource::Inheritance);
+		auto parent = static_cast<Renderable*>(GetStylingParent());
+		SetDataContext(parent->GetDataContext(), ValueSource::Inheritance);
+		SetCursor(parent->GetCursor(), ValueSource::Inheritance);
 
 		if(!_backgroundFragment)
 		{

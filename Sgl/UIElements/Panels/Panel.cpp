@@ -101,24 +101,6 @@ namespace Sgl
     void Panel::OnChildRemoving(UIElement* child)
     {
         RemoveLogicalChild(child);
-    }   
-
-    void Panel::OnCursorChanged(Cursor cursor)
-    {
-        UIElement::OnCursorChanged(cursor);
-
-        for(auto& child : Children)
-        {
-            child->SetCursor(cursor, ValueSource::Inheritance);
-        }
-    }
-
-    void Panel::OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext)
-    {
-        for(auto& child : Children)
-        {
-            child->SetDataContext(dataContext, ValueSource::Inheritance);
-        }
     }
 
     void Panel::OnMouseMove(MouseMoveEventArgs e)

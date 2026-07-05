@@ -495,15 +495,11 @@ namespace Sgl
 
     void Window::OnCursorChanged(Cursor cursor)
     {
-        if(_content)
+        Renderable::OnCursorChanged(cursor);
+
+        if(!_content || !_content->IsMouseOver())
         {
-            _content->SetCursor(cursor, ValueSource::Inheritance);
-            auto current = _content->IsMouseOver() ? _content->GetCursor() : GetCursor();
-            _platformCursor.Set(current);
-        }
-        else
-        {
-            _platformCursor.Set(GetCursor());
+            _platformCursor.Set(cursor);
         }
     }
 
@@ -527,14 +523,6 @@ namespace Sgl
             {
                 context.DrawTexture(texture, nullptr, nullptr);
             };
-        }
-    }
-
-    void Window::OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext)
-    {
-        if(_content)
-        {
-            _content->OnDataContextChanged(dataContext);
         }
     }
 

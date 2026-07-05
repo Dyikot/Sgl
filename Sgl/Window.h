@@ -394,7 +394,6 @@ namespace Sgl
 	protected:
 		void OnCursorChanged(Cursor cursor) final;
 		void OnBackgroundChanged(const Brush& background) final;
-		void OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext) override;
 		void OnAttachedToLogicalTree() override;
 		virtual void OnWindowStateChanged(WindowStateChangedEventArgs e);
 		virtual void OnPositionChanged(WindowPositionChangedEventArgs e);
