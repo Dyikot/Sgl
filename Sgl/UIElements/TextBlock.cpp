@@ -141,8 +141,6 @@ namespace Sgl::UIElements
 			context.DrawTexture(_textTexture, &_textTextureBounds, nullptr);
 			context.ResetClip();
 		}
-
-		UIElement::Render(context);
 	}
 
 	void TextBlock::InvalidateTextTexture()

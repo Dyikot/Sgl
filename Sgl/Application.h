@@ -123,6 +123,13 @@ namespace Sgl
 		Window* GetActiveWindow() { return _focusedWindow; }
 
 		/// <summary>
+		/// Search for a window by ID
+		/// </summary>
+		/// <param name="id"> - unique window identifier</param>
+		/// <returns>Pointer to a window or nullptr if not found</returns>
+		Window* GetWindow(SDL_WindowID id);
+
+		/// <summary>
 		/// Gets a list of all currently open windows.
 		/// </summary>
 		/// <returns>A vector containing pointers to all active windows.</returns>
@@ -167,6 +174,7 @@ namespace Sgl
 		static inline Application* _current;
 
 		Window* _focusedWindow = nullptr;
+		std::vector<SDL_WindowID> _windowsIds;
 		std::vector<Window*> _windows;
 		std::vector<Window*> _activeWindows;
 

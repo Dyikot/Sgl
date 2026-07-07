@@ -39,7 +39,7 @@ namespace Sgl
 		void OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext) final;
 		void AddLogicalChild(StyleableElement* child);
 		void RemoveLogicalChild(StyleableElement* child);
-		const std::vector<StyleableElement*> GetLogicalChildren() const { return _logicalChildren; }
+		const std::vector<StyleableElement*>& GetLogicalChildren() const { return _logicalChildren; }
 	private:
 		bool FetchStyles();
 		void FetchStylesFrom(const StyleCollection& styles);

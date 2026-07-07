@@ -246,11 +246,7 @@ namespace Sgl
     private:
         void DrawEllipseCore(FRect rect, const Texture& texture, Color color);
         void DrawRectangleFillCore(FRect rect, float cornersRadius, const Texture& texture, Color color);
-
-        void SetColor(Color color) const noexcept
-        {
-            SDL_SetRenderDrawColor(_renderer, color.Red, color.Green, color.Blue, color.Alpha);
-        }        
+        void SetColor(Color color) const noexcept;
     private:
         SDL_Renderer* _renderer;
     };

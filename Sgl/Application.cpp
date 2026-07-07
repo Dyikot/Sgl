@@ -18,11 +18,10 @@ namespace Sgl
 {
     using namespace UIElements;
 
-    static constexpr size_t MaxWindowsNumber = 8;
     static constexpr double MaxFrameTime = 1e3 / 60.0;
 
 	Application::Application() noexcept:
-        _windows(MaxWindowsNumber)
+        _windows()
 	{
 		_current = this;
 
@@ -109,6 +108,19 @@ namespace Sgl
             _fps = 0;
             s.Restart();
         }
+    }
+
+    Window* Application::GetWindow(SDL_WindowID id)
+    {
+        for(size_t i = 0; i < _windowsIds.size(); i++)
+        {
+            if(_windowsIds[i] == id)
+            {
+                return _windows[i];
+            }
+        }
+
+        return nullptr;
     }
 
     void Application::AddAudioMixer()
@@ -220,7 +232,7 @@ namespace Sgl
             {    
                 case SDL_EVENT_MOUSE_MOTION:
                 {
-                    if(auto window = _windows[e.window.windowID])
+                    if(auto window = GetWindow(e.window.windowID))
                     {
                         MouseMoveEventArgs args
                         {
@@ -353,7 +365,7 @@ namespace Sgl
                 
                 case SDL_EVENT_WINDOW_SHOWN:
                 {
-                    if(auto window = _windows[e.window.windowID])
+                    if(auto window = GetWindow(e.window.windowID))
                     {
                         window->OnShown();
                     }
@@ -363,7 +375,7 @@ namespace Sgl
 
                 case SDL_EVENT_WINDOW_HIDDEN:
                 {
-                    if(auto window = _windows[e.window.windowID])
+                    if(auto window = GetWindow(e.window.windowID))
                     {
                         if(window->_isClosing)
                         {
@@ -376,7 +388,7 @@ namespace Sgl
 
                 /*case SDL_EVENT_WINDOW_EXPOSED:
                 {
-                    if(auto window = _windows[e.window.windowID])
+                    if(auto window = GetWindow(e.window.windowID))
                     {
                         window->RenderCore();
                     }
@@ -386,7 +398,7 @@ namespace Sgl
 
                 case SDL_EVENT_WINDOW_MOVED:
                 {
-                    if(auto window = _windows[e.window.windowID])
+                    if(auto window = GetWindow(e.window.windowID))
                     {
                         WindowPositionChangedEventArgs args
                         {
@@ -402,7 +414,7 @@ namespace Sgl
 
                 case SDL_EVENT_WINDOW_RESIZED:
                 {
-                    if(auto window = _windows[e.window.windowID])
+                    if(auto window = GetWindow(e.window.windowID))
                     {
                         WindowSizeChangedEventArgs args
                         {
@@ -418,7 +430,7 @@ namespace Sgl
 
                 case SDL_EVENT_WINDOW_MINIMIZED:
                 {
-                    if(auto window = _windows[e.window.windowID])
+                    if(auto window = GetWindow(e.window.windowID))
                     {
                         WindowStateChangedEventArgs args(WindowState::Minimized);
                         window->OnWindowStateChanged(args);
@@ -429,7 +441,7 @@ namespace Sgl
 
                 case SDL_EVENT_WINDOW_MAXIMIZED:
                 {
-                    if(auto window = _windows[e.window.windowID])
+                    if(auto window = GetWindow(e.window.windowID))
                     {
                         WindowStateChangedEventArgs args(WindowState::Maximized);
                         window->OnWindowStateChanged(args);
@@ -440,7 +452,7 @@ namespace Sgl
 
                 case SDL_EVENT_WINDOW_RESTORED:
                 {
-                    if(auto window = _windows[e.window.windowID])
+                    if(auto window = GetWindow(e.window.windowID))
                     {
                         WindowStateChangedEventArgs args(WindowState::Normal);
                         window->OnWindowStateChanged(args);
@@ -451,7 +463,7 @@ namespace Sgl
 
                 case SDL_EVENT_WINDOW_MOUSE_ENTER:
                 {
-                    if(auto window = _windows[e.window.windowID])
+                    if(auto window = GetWindow(e.window.windowID))
                     {
                         window->OnMouseEnter();
                     }
@@ -461,7 +473,7 @@ namespace Sgl
 
                 case SDL_EVENT_WINDOW_MOUSE_LEAVE:
                 {
-                    if(auto window = _windows[e.window.windowID])
+                    if(auto window = GetWindow(e.window.windowID))
                     {
                         window->OnMouseLeave();
                     }
@@ -471,7 +483,7 @@ namespace Sgl
 
                 case SDL_EVENT_WINDOW_FOCUS_GAINED:
                 {
-                    if(auto window = _windows[e.window.windowID])
+                    if(auto window = GetWindow(e.window.windowID))
                     {
                         window->OnActivated();
                         _focusedWindow = window;
@@ -482,7 +494,7 @@ namespace Sgl
 
                 case SDL_EVENT_WINDOW_FOCUS_LOST:
                 {
-                    if(auto window = _windows[e.window.windowID])
+                    if(auto window = GetWindow(e.window.windowID))
                     {
                         window->OnDeactivated();
                         _focusedWindow = nullptr;
@@ -493,7 +505,7 @@ namespace Sgl
 
                 case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
                 {
-                    if(auto window = _windows[e.window.windowID])
+                    if(auto window = GetWindow(e.window.windowID))
                     {
                         CancelEventArgs args {};
                         window->OnClosing(args);
@@ -560,18 +572,31 @@ namespace Sgl
 
     void Application::AddWindow(Window& window)
     {
-        auto id = window._id;
-        if(id >= _windows.size())
-        {
-            _windows.resize(_windows.size() + MaxWindowsNumber);
-        }
-
-        _windows[id] = &window;
+        auto id = window.GetId();
+        _windowsIds.push_back(id);
+        _windows.push_back(&window);
     }
 
     void Application::RemoveWindow(Window& window)
     {
-        _windows[window._id] = nullptr;
+        auto id = window.GetId();
+        std::optional<size_t> found;
+
+        for(size_t i = 0; i < _windowsIds.size(); i++)
+        {
+            if(_windowsIds[i] == id)
+            {
+                found = i;
+                break;
+            }
+        }
+
+        if(found)
+        {
+            auto index = *found;
+            _windows.erase(_windows.begin() + index);
+            _windowsIds.erase(_windowsIds.begin() + index);
+        }
     }
 
     void Application::AttachWindow(Window& window)

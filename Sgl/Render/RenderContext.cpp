@@ -679,4 +679,9 @@ namespace Sgl
 			DrawGeometry(vertices, nullptr, indices);
 		}
 	}
+
+	void RenderContext::SetColor(Color color) const noexcept
+	{
+		SDL_SetRenderDrawColor(_renderer, color.Red, color.Green, color.Blue, color.Alpha);
+	}
 }
