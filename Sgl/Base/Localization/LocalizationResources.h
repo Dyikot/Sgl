@@ -35,6 +35,9 @@ namespace Sgl
         LocalizationResources(const LocalizationResources&) = delete;
         LocalizationResources(LocalizationResources&&) = default;
 
+        /// <summary>
+        /// Event triggered immediately after the current language has been successfully changed.
+        /// </summary>
         Event<LanguageChangedEventHandler> LanguageChanged;
 
         /// <summary>
@@ -51,7 +54,16 @@ namespace Sgl
         /// <param name="delimiter"> - character used as delimiter in the CSV file (default is comma).</param>
         void SetCSVProvider(std::string csvFilePath, char delimiter = ',');
 
+        /// <summary>
+        /// Changes the current language and automatically reloads the localization data.
+        /// </summary>
+        /// <param name="language"> - information about the target language/locale to switch to.</param>
         void SetLanguage(const LanguageInfo& language);
+
+        /// <summary>
+        /// Gets the currently active language information.
+        /// </summary>
+        /// <returns>A constant reference to the LanguageInfo object.</returns>
         const LanguageInfo& GetLanguage() const { return _language; }
 
         /// <summary>

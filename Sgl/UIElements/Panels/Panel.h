@@ -14,7 +14,7 @@ namespace Sgl
 	public:
 		explicit UIElementsCollection(Panel& panel);
 		UIElementsCollection(const UIElementsCollection&) = delete;
-		UIElementsCollection(UIElementsCollection&& other) noexcept;
+		UIElementsCollection(UIElementsCollection&&) = delete;
 		~UIElementsCollection();
 
 		Ref<UIElement> FindByName(std::string_view name) const;
@@ -49,21 +49,12 @@ namespace Sgl
 		Panel(Panel&& other) noexcept;
 
 		UIElementsCollection Children;
-
-		void SetVisualRoot(IVisualRoot* value) final;
-		void Render(RenderContext context) override;
 	protected:
 		void OnChildAdded(UIElement* child);
 		void OnChildRemoving(UIElement* child);
-		void OnMouseMove(MouseMoveEventArgs e) override;
-		void OnMouseDown(MouseButtonEventArgs e) override;
-		void OnMouseUp(MouseButtonEventArgs e) override;
-		void OnMouseLeave(MouseMoveEventArgs e) override;
+		std::span<const Ref<UIElement>> GetChildren() const final;
 		FSize MeasureContent(FSize availableSize) override;
 		void ArrangeContent(FRect rect) override;
-	private:
-		Ref<UIElement> _currentChild;
-		Ref<UIElement> _mouseCapturedElement;
 
 		friend class UIElementsCollection;
 	};	

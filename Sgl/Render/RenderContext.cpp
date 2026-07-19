@@ -286,7 +286,7 @@ namespace Sgl
 
 	void RenderContext::SetTarget(const Texture& texture)
 	{
-		SDL_SetRenderTarget(_renderer, texture.GetSDLTexture());
+		SDL_SetRenderTarget(_renderer, texture);
 	}
 
 	void RenderContext::ResetTarget()
@@ -565,14 +565,14 @@ namespace Sgl
 									 const Texture& texture, 
 									 std::span<const int> indices)
 	{
-		SDL_RenderGeometry(_renderer, texture.GetSDLTexture(),
+		SDL_RenderGeometry(_renderer, texture,
 						   vertices.data(), vertices.size(),
 						   indices.data(), indices.size());
 	}
 
 	void RenderContext::DrawTexture(const Texture& texture, const FRect* target, const FRect* clip)
 	{
-		SDL_RenderTexture(_renderer, texture.GetSDLTexture(), clip, target);
+		SDL_RenderTexture(_renderer, texture, clip, target);
 	}
 	
 	void RenderContext::DrawTexture9Grid(const Texture & texture, 
@@ -581,7 +581,7 @@ namespace Sgl
 										 const FRect* target, 
 										 const FRect* clip)
 	{
-		SDL_RenderTexture9Grid(_renderer, texture.GetSDLTexture(), clip,
+		SDL_RenderTexture9Grid(_renderer, texture, clip,
 			cornersLength, cornersLength, cornersLength, cornersLength,
 			scale, target);
 	}
@@ -593,7 +593,7 @@ namespace Sgl
 											   const FRect* target, 
 											   const FRect* clip)
 	{
-		SDL_RenderTextureRotated(_renderer, texture.GetSDLTexture(), clip,
+		SDL_RenderTextureRotated(_renderer, texture, clip,
 								 target, angle, center, SDL_FlipMode(flip));
 	}
 

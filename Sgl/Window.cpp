@@ -280,17 +280,17 @@ namespace Sgl
         }
     }
 
-    void Window::SetIcon(const Surface& icon)
+    void Window::SetIcon(Surface icon)
     {
         _icon = icon;
 
-        if(!SDL_SetWindowIcon(_sdlWindow, _icon.GetSDLSurface()))
+        if(!SDL_SetWindowIcon(_sdlWindow, _icon))
         {
             Logging::LogWarning("Unable to set a window icon: {}", SDL_GetError());
         }
     }
 
-    const Surface& Window::GetIcon() const
+    Surface Window::GetIcon() const
     {
         return _icon;
     }
@@ -370,13 +370,18 @@ namespace Sgl
 
         if(SetProperty(ContentProperty, _content, value, _contentSource, source))
         {
+            if(_content)
+            {
+                AddLogicalChild(_content.Get());
+            }
+
             InvalidateRender();
         }
+    }
 
-        if(_content)
-        {
-            AddLogicalChild(_content.Get());
-        }
+    Ref<UIElement> Window::HitTest(FPoint point) const
+    {
+        return _content ? UIElement::HitTest(_content, point) : nullptr;
     }
 
     void Window::InvalidateRender()
@@ -499,7 +504,7 @@ namespace Sgl
 
         if(!_content || !_content->IsMouseOver())
         {
-            _platformCursor.Set(cursor);
+            SetCurrentCursor(cursor);
         }
     }
 
@@ -554,64 +559,17 @@ namespace Sgl
         SizeChanged.Invoke(*this, e);
     }
 
-    void Window::OnMouseMove(MouseMoveEventArgs e)
-    {
-        if(_content)
-        {
-            bool visible = _content->IsVisible();
-            bool wasMouseOver = _content->IsMouseOver();
-            bool isMouseOver = visible && IsPointInRect(e.X, e.Y, _content->GetBounds());
-
-            if(isMouseOver)
-            {
-                if(!wasMouseOver)
-                {
-                    _content->OnMouseEnter(e);
-                }
-
-                _content->OnMouseMove(e);
-            }
-            else if(wasMouseOver)
-            {
-                _content->OnMouseLeave(e);
-                _platformCursor.Set(GetCursor());
-            }
-        }
-    }
-
-    void Window::OnMouseDown(MouseButtonEventArgs e)
-    {
-        if(_content && _content->IsMouseOver() && _content->IsVisible())
-        {
-            _mouseCapturedElement = _content;
-            _content->OnMouseDown(e);
-        }
-    }
-
-    void Window::OnMouseUp(MouseButtonEventArgs e)
-    {
-        if(_mouseCapturedElement)
-        {
-            _mouseCapturedElement->OnMouseUp(e);
-            _mouseCapturedElement = nullptr;
-        }
-        else if(_content && _content->IsMouseOver() && _content->IsVisible())
-        {
-            _content->OnMouseUp(e);
-        }
-    }
-
     void Window::OnActivated()
     {
         _isActivated = true;
 
         if(_content && _content->IsMouseOver())
         {
-            _platformCursor.Set(_content->GetCursor());
+            SetCurrentCursor(_content->GetCursor());
         }
         else
         {
-            _platformCursor.Set(GetCursor());
+            SetCurrentCursor(GetCursor());
         }
     }
 

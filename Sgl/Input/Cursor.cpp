@@ -50,7 +50,7 @@ namespace Sgl
             }
 
             Surface surface(filePath);
-            auto cursor = SDL_CreateColorCursor(surface.GetSDLSurface(), hotSpot.x, hotSpot.y);
+            auto cursor = SDL_CreateColorCursor(surface, hotSpot.x, hotSpot.y);
 
             if(cursor == nullptr)
             {
@@ -86,15 +86,15 @@ namespace Sgl
         _cursor(other._cursor)
     {}
 
-    void PlatformCursor::Set(Cursor cursor)
+    void SetCurrentCursor(Cursor cursor)
     {
-        if(auto impl = cursor.GetSDLCursor(); impl && impl != SDL_GetCursor())
+        if(cursor && cursor != SDL_GetCursor())
         {
-            SDL_SetCursor(impl);
+            SDL_SetCursor(cursor);
         }
     }
 
-    void PlatformCursor::Show()
+    void ShowCursor()
     {
         if(SDL_ShowCursor())
         {
@@ -102,7 +102,7 @@ namespace Sgl
         }
     }
 
-    void PlatformCursor::Hide()
+    void HideCursor()
     {
         if(SDL_HideCursor())
         {
@@ -110,7 +110,7 @@ namespace Sgl
         }
     }
 
-    bool PlatformCursor::IsVisible()
+    bool IsCursorVisible()
     {
         return SDL_CursorVisible();
     }

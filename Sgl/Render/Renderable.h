@@ -20,7 +20,7 @@ namespace Sgl
         void SetBackground(const Brush& value, ValueSource source = ValueSource::Local);
         const Brush& GetBackground() const { return _background; }
 
-        virtual void SetVisualRoot(IVisualRoot* value);
+        void SetVisualRoot(IVisualRoot* value);
         IVisualRoot* GetVisualRoot() const { return _visualRoot; }
         
         virtual void Render(RenderContext context);
@@ -30,15 +30,15 @@ namespace Sgl
         static inline StyleableProperty BackgroundProperty { &SetBackground, &GetBackground };
     protected:
         void SetParent(IStyleHost* parent) override;
+        bool IsBackgroundTransparent() const { return _isBackgroundTransparent; }
         virtual void OnCursorChanged(Cursor cursor);
         virtual void OnBackgroundChanged(const Brush& background) {}
-    protected:
-        static inline PlatformCursor _platformCursor;
     private:
         IVisualRoot* _visualRoot = nullptr;
 
         Cursor _cursor = Cursors::Arrow;
         Brush _background = Colors::Transparent;
+        bool _isBackgroundTransparent = true;
 
         ValueSource _cursorSource {};
         ValueSource _backgroundSource {};

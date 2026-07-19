@@ -87,6 +87,26 @@ namespace Sgl
 		/// </summary>
 		int Bottom;
 
+		/// <summary>
+		/// Creates a new thickness expanded by the specified value on all sides.
+		/// </summary>
+		/// <param name="value"> - the value to add to each side.</param>
+		/// <returns>A new Thickness instance with increased boundaries.</returns>
+		constexpr Thickness Inflate(int value) const
+		{
+			return Thickness(Left + value, Top + value, Right + value, Bottom + value);
+		}
+
+		/// <summary>
+		/// Creates a new thickness decreased by the specified value on all sides.
+		/// </summary>
+		/// <param name="value"> - the value to subtract from each side.</param>
+		/// <returns>A new Thickness instance with decreased boundaries.</returns>
+		constexpr Thickness Deflate(int value) const
+		{
+			return Thickness(Left - value, Top - value, Right - value, Bottom - value);
+		}
+
 		friend constexpr bool operator==(const Thickness&, const Thickness&) noexcept = default;
 
 		friend constexpr Thickness operator+(const Thickness& left, const Thickness& right) noexcept

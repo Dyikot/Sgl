@@ -1,5 +1,8 @@
 #include "UIElement.h"
 #include "../Application.h"
+#include "../Layout/LayoutHelper.h"
+#include <cassert>
+#include <ranges>
 
 namespace Sgl
 {
@@ -22,14 +25,56 @@ namespace Sgl
 		if(SetProperty(CornersRadiusProperty, _cornersRadius, value, _cornersRadiusSource, source))
 		{
 			InvalidateRender();
-			UpdateBackgroundFragment(GetBackground());
+			InvalidateBackground();
 		}
+	}
+
+	Ref<UIElement> UIElement::HitTest(const Ref<UIElement>& self, FPoint point)
+	{
+		Ref<UIElement> hit;
+
+		for(auto& child : self->GetChildren() | std::views::reverse)
+		{
+			hit = HitTest(child, point);
+
+			if(hit)
+			{
+				return hit;
+			}
+		}
+
+		return self->IsVisible() && IsPointInRect(point.x, point.y, self->GetBounds()) ? self : nullptr;
 	}
 
 	void UIElement::Render(RenderContext context)
 	{
 		Renderable::Render(context);
-		_backgroundFragment(context, GetBounds());
+
+		if(!IsVisible())
+		{
+			return;
+		}
+
+		if(!IsBackgroundTransparent())
+		{
+			if(!_backgroundFragment)
+			{
+				_backgroundFragment = CreateBackgroundFragment(GetBackground());
+			}
+
+			_backgroundFragment(context, GetBounds());
+		}
+
+		for(auto& child : GetChildren())
+		{
+			child->Render(context);
+		}
+	}
+
+	void UIElement::SetParent(IStyleHost* parent)
+	{
+		Layoutable::SetParent(parent);
+		_parent = dynamic_cast<UIElement*>(parent);
 	}
 
 	void UIElement::OnCursorChanged(Cursor cursor)
@@ -38,13 +83,13 @@ namespace Sgl
 
 		if(IsMouseOver())
 		{
-			_platformCursor.Set(cursor);
+			SetCurrentCursor(cursor);
 		}
 	}
 
 	void UIElement::OnBackgroundChanged(const Brush& background)
 	{
-		UpdateBackgroundFragment(background);
+		InvalidateBackground();
 	}
 
 	void UIElement::OnAttachedToLogicalTree()
@@ -55,12 +100,12 @@ namespace Sgl
 		SetDataContext(parent->GetDataContext(), ValueSource::Inheritance);
 		SetCursor(parent->GetCursor(), ValueSource::Inheritance);
 
-		if(!_backgroundFragment)
-		{
-			UpdateBackgroundFragment(GetBackground());
-		}
-
 		ApplyBindings();
+	}
+
+	std::span<const Ref<UIElement>> UIElement::GetChildren() const
+	{
+		return {};
 	}
 
 	void UIElement::OnKeyUp(KeyEventArgs e)
@@ -75,7 +120,27 @@ namespace Sgl
 
 	void UIElement::OnMouseMove(MouseMoveEventArgs e)
 	{
-		MouseMove.Invoke(*this, e);
+		bool wasMouseOver = IsMouseOver();
+		bool isMouseOver = IsVisible() && IsPointInRect(e.X, e.Y, GetBounds());
+
+		if(isMouseOver)
+		{
+			if(!wasMouseOver)
+			{
+				OnMouseEnter(e);		
+			}
+
+			MouseMove.Invoke(*this, e);			
+		}
+		else if (wasMouseOver)
+		{
+			OnMouseLeave(e);
+		}	
+
+		if(_parent)
+		{
+			_parent->OnMouseMove(e);
+		}
 	}
 
 	void UIElement::OnMouseDown(MouseButtonEventArgs e)
@@ -86,6 +151,11 @@ namespace Sgl
 		}
 
 		MouseDown.Invoke(*this, e);
+
+		if(_parent)
+		{
+			_parent->OnMouseDown(e);
+		}
 	}
 
 	void UIElement::OnMouseUp(MouseButtonEventArgs e)
@@ -96,6 +166,11 @@ namespace Sgl
 		}
 
 		MouseUp.Invoke(*this, e);
+
+		if(_parent)
+		{
+			_parent->OnMouseUp(e);
+		}
 	}
 
 	void UIElement::OnMouseWheelChanged(MouseWheelEventArgs& e)
@@ -105,35 +180,31 @@ namespace Sgl
 
 	void UIElement::OnMouseEnter(MouseMoveEventArgs e)
 	{
-		_platformCursor.Set(GetCursor());
+		//Logging::LogInfo("OnMouseEnter: {}", Name);
 		PseudoClasses.Set(OnHover);
 		MouseEnter.Invoke(*this, e);
 	}
 
 	void UIElement::OnMouseLeave(MouseMoveEventArgs e)
 	{
+		//Logging::LogInfo("OnMouseLeave: {}", Name);
 		MouseLeave.Invoke(*this, e);
 		PseudoClasses.Reset(OnHover);
 	}
 
-	void UIElement::UpdateBackgroundFragment(const Brush& background)
+	RenderFragment UIElement::CreateBackgroundFragment(const Brush& background)
 	{
-		if(!IsAttachedToLogicalTree())
-		{
-			return;
-		}
-
 		if(std::holds_alternative<Color>(background))
 		{
 			Color color = std::get<Color>(background);
 			
 			if(_cornersRadius > 0.0f)
 			{
-				_backgroundFragment = RenderFragments::RoundedRectangle(color, _cornersRadius);
+				return RenderFragments::RoundedRectangle(color, _cornersRadius);
 			}
 			else
 			{
-				_backgroundFragment = RenderFragments::Rectangle(color);
+				return RenderFragments::Rectangle(color);
 			}
 		}
 		else
@@ -143,13 +214,18 @@ namespace Sgl
 
 			if(_cornersRadius > 0.0f)
 			{
-				_backgroundFragment = RenderFragments::RoundedImage(texture, _cornersRadius);
+				return RenderFragments::RoundedImage(texture, _cornersRadius);
 			}
 			else
 			{
-				_backgroundFragment = RenderFragments::Image(texture);
+				return RenderFragments::Image(texture);
 			}
 		}
+	}
+
+	void UIElement::InvalidateBackground()
+	{
+		_backgroundFragment = nullptr;
 	}
 
 	Ref<UIElement> UIElementDataTemplate::Build(const Ref<INotifyPropertyChanged>& data)

@@ -38,7 +38,7 @@ namespace Sgl
 			ApplyBindings();
 		}
 
-		NotifyPropertyChanged(DataContextProperty);
+		OnPropertyChanged(DataContextProperty);
 		OnDataContextChanged(value);
 	}
 
@@ -56,7 +56,7 @@ namespace Sgl
 		}
 	}
 
-	void BindableObject::NotifyPropertyChanged(PropertyBase& property)
+	void BindableObject::OnPropertyChanged(PropertyBase& property)
 	{
 		PropertyChanged.Invoke(*this, property);
 	}

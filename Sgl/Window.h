@@ -254,13 +254,13 @@ namespace Sgl
 		/// Sets the window icon
 		/// </summary>
 		/// <param name="icon">- an icon surface</param>
-		void SetIcon(const Surface& icon);
+		void SetIcon(Surface icon);
 
 		/// <summary>
 		/// Gets the current window icon
 		/// </summary>
 		/// <returns>Path to the icon</returns>
-		const Surface& GetIcon() const;
+		Surface GetIcon() const;
 
 		/// <summary>
 		/// Sets whether the window is resizable
@@ -316,6 +316,8 @@ namespace Sgl
 		/// </summary>
 		/// <returns>A reference to the current content element.</returns>
 		const Ref<UIElement>& GetContent() const noexcept { return _content; }
+
+		Ref<UIElement> HitTest(FPoint point) const;
 
 		/// <summary>
 		/// Marks the window's visual content as invalid, requesting a re-render on the next frame.
@@ -400,9 +402,9 @@ namespace Sgl
 		virtual void OnWindowSizeChanged(WindowSizeChangedEventArgs e);
 		virtual void OnKeyUp(KeyEventArgs e) {}
 		virtual void OnKeyDown(KeyEventArgs e) {}
-		virtual void OnMouseMove(MouseMoveEventArgs e);
-		virtual void OnMouseDown(MouseButtonEventArgs e);
-		virtual void OnMouseUp(MouseButtonEventArgs e);
+		virtual void OnMouseMove(MouseMoveEventArgs e) {}
+		virtual void OnMouseDown(MouseButtonEventArgs e) {}
+		virtual void OnMouseUp(MouseButtonEventArgs e) {}
 		virtual void OnMouseWheelChanged(MouseWheelEventArgs e) {}
 		virtual void OnTextInput(TextInputEventArgs& e) {}
 		virtual void OnTextEditing(TextEditingEventArgs& e) {}
@@ -422,7 +424,6 @@ namespace Sgl
 		SDL_Renderer* _renderer;
 		ITextureFactory* _textureFactory;
 		Ref<UIElement> _content;
-		Ref<UIElement> _mouseCapturedElement;
 		bool _isModal = false;
 		bool _isClosing = false;
 		bool _isClosed = true;

@@ -7,11 +7,6 @@ namespace Sgl
         _panel(panel)
     {}
 
-    UIElementsCollection::UIElementsCollection(UIElementsCollection&& other) noexcept:
-        base(std::move(other)),
-        _panel(other._panel)
-    {}
-
     UIElementsCollection::~UIElementsCollection()
     {
         ClearItems();
@@ -66,32 +61,8 @@ namespace Sgl
 
     Panel::Panel(Panel&& other) noexcept:
         UIElement(std::move(other)),
-        Children(std::move(Children)),
-        _currentChild(std::exchange(other._currentChild, nullptr))
+        Children(*this)
     {}
-
-    void Panel::SetVisualRoot(IVisualRoot* value)
-    {
-        UIElement::SetVisualRoot(value);
-
-        for(auto& child : Children)
-        {
-            child->SetVisualRoot(value);
-        }
-    }
-
-    void Panel::Render(RenderContext context)
-    {
-        UIElement::Render(context);
-
-        for(auto& child : Children)
-        {
-            if(child->IsVisible())
-            {
-                child->Render(context);
-            }
-        }
-    }
 
     void Panel::OnChildAdded(UIElement* child)
     {
@@ -103,82 +74,9 @@ namespace Sgl
         RemoveLogicalChild(child);
     }
 
-    void Panel::OnMouseMove(MouseMoveEventArgs e)
+    std::span<const Ref<UIElement>> Panel::GetChildren() const
     {
-        UIElement::OnMouseMove(e);
-
-        auto& current = _currentChild;
-
-        if(current)
-        {   
-            if(current->IsVisible() && IsPointInRect(e.X, e.Y, current->GetBounds()))
-            {
-                current->OnMouseMove(e);
-                return;
-            }
-            else
-            {
-                current->OnMouseLeave(e);
-                current = nullptr;
-            }
-        }
-
-        for(auto& child : Children)
-        {
-            if(!child->IsVisible())
-            {
-                continue;
-            }
-
-            if(IsPointInRect(e.X, e.Y, child->GetBounds()))
-            {
-                _platformCursor.Set(child->GetCursor());
-
-                current = child;
-                child->OnMouseEnter(e);
-                child->OnMouseMove(e);
-                return;
-            }
-        }        
-
-        _platformCursor.Set(GetCursor());
-    }
-
-    void Panel::OnMouseDown(MouseButtonEventArgs e)
-    {
-        UIElement::OnMouseDown(e);
-
-        if(_currentChild && _currentChild->IsVisible() && _currentChild->IsMouseOver())
-        {
-            _mouseCapturedElement = _currentChild;
-            _currentChild->OnMouseDown(e);
-        }
-    }
-
-    void Panel::OnMouseUp(MouseButtonEventArgs e)
-    {
-        UIElement::OnMouseUp(e);
-
-        if(_mouseCapturedElement)
-        {
-            _mouseCapturedElement->OnMouseUp(e);
-            _mouseCapturedElement = nullptr;
-        }
-        else if(_currentChild && _currentChild->IsVisible() && _currentChild->IsMouseOver())
-        {
-            _currentChild->OnMouseUp(e);
-        }
-    }
-
-    void Panel::OnMouseLeave(MouseMoveEventArgs e)
-    {
-        UIElement::OnMouseLeave(e);
-
-        if(_currentChild && _currentChild->IsVisible())
-        {
-            _currentChild->OnMouseLeave(e);
-            _currentChild = nullptr;
-        }
+        return Children;
     }
 
     FSize Panel::MeasureContent(FSize availableSize)

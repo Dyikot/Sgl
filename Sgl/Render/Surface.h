@@ -116,12 +116,6 @@ namespace Sgl
 		uint32_t GetHeight() const;
 
 		/// <summary>
-		/// Gets the raw SDL_Surface pointer managed by this object.
-		/// </summary>
-		/// <returns>Pointer to the underlying SDL_Surface, or nullptr if empty.</returns>
-		SDL_Surface* GetSDLSurface() const noexcept { return _surface; }
-
-		/// <summary>
 		/// Fills a specific rectangular area with a solid color.
 		/// </summary>
 		/// <param name="rect"> - a pointer to the rectangle structure. Pass nullptr to fill the entire surface.</param>
@@ -190,6 +184,15 @@ namespace Sgl
 		/// </summary>
 		/// <returns>True if the surface is null; otherwise, false.</returns>
 		bool operator==(std::nullptr_t) const noexcept { return _surface == nullptr; }
+
+		/// <summary>
+		/// Gets the raw SDL_Surface pointer managed by this object.
+		/// </summary>
+		/// <returns>Pointer to the underlying SDL_Surface, or nullptr if empty.</returns>
+		operator SDL_Surface* () const noexcept
+		{
+			return _surface;
+		}
 
 		/// <summary>
 		/// Checks whether the surface is valid (non-null).

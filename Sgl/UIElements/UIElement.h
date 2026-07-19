@@ -9,6 +9,7 @@
 namespace Sgl
 {
 	class Window;
+	class InputManager;
 
 	class UIElement : public Layoutable
 	{
@@ -43,14 +44,17 @@ namespace Sgl
 		bool IsMouseOver() const { return PseudoClasses.Has(OnHover); }	
 		bool IsMousePressed() const { return PseudoClasses.Has(OnPressed); }
 
+		static Ref<UIElement> HitTest(const Ref<UIElement>& self, FPoint point);
 		void Render(RenderContext context) override;
 
 		static inline StyleableProperty TagProperty { &SetTag, &GetTag };
 		static inline StyleableProperty CornersRadiusProperty { &SetCornersRadius, &GetCornersRadius };
 	protected:
+		void SetParent(IStyleHost* parent) override;
 		void OnCursorChanged(Cursor cursor) override;
 		void OnBackgroundChanged(const Brush& background) override;
 		void OnAttachedToLogicalTree() override;
+		virtual std::span<const Ref<UIElement>> GetChildren() const;
 		virtual void OnKeyUp(KeyEventArgs e);
 		virtual void OnKeyDown(KeyEventArgs e);
 		virtual void OnMouseMove(MouseMoveEventArgs e);
@@ -60,9 +64,11 @@ namespace Sgl
 		virtual void OnMouseEnter(MouseMoveEventArgs e);
 		virtual void OnMouseLeave(MouseMoveEventArgs e);
 	private:
-		void UpdateBackgroundFragment(const Brush& background);
+		RenderFragment CreateBackgroundFragment(const Brush& background);
+		void InvalidateBackground();
 	private:
 		RenderFragment _backgroundFragment;
+		UIElement* _parent {};
 
 		Any _tag;
 		float _cornersRadius = 0;
@@ -72,6 +78,7 @@ namespace Sgl
 
 		friend class Panel;
 		friend class Window;
+		friend class InputManager;
 		friend class ContentUIElement;
 	};
 

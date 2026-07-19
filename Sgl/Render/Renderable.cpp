@@ -8,6 +8,7 @@ namespace Sgl
 		_visualRoot(std::exchange(other._visualRoot, nullptr)),
 		_cursor(std::move(other._cursor)),
 		_background(std::move(other._background)),
+		_isBackgroundTransparent(other._isBackgroundTransparent),
 		_isDirty(other._isDirty)
 	{}
 
@@ -23,6 +24,7 @@ namespace Sgl
 	{
 		if(SetProperty(BackgroundProperty, _background, value, _backgroundSource, source))
 		{
+			_isBackgroundTransparent = value == Colors::Transparent;
 			InvalidateRender();
 			OnBackgroundChanged(_background);
 		}
@@ -31,6 +33,11 @@ namespace Sgl
 	void Renderable::SetVisualRoot(IVisualRoot* value)
 	{
 		_visualRoot = value;
+
+		for(auto child : GetLogicalChildren())
+		{
+			static_cast<Renderable*>(child)->SetVisualRoot(value);
+		}
 	}
 
 	void Renderable::SetParent(IStyleHost* parent)

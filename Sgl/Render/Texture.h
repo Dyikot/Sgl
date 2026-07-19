@@ -192,12 +192,6 @@ namespace Sgl
 		/// <returns>The SDL pixel format used by this texture.</returns>
 		SDL_PixelFormat GetFormat() const;
 
-		/// <summary>
-		/// Gets the raw SDL_Texture pointer managed by this object.
-		/// </summary>
-		/// <returns>Pointer to the underlying SDL_Texture, or nullptr if empty.</returns>
-		SDL_Texture* GetSDLTexture() const noexcept;
-
 		SDL_Renderer* GetRenderer() const;
 
 		/// <summary>
@@ -231,6 +225,15 @@ namespace Sgl
 		/// </summary>
 		/// <returns>True if the texture is null; otherwise, false.</returns>
 		bool operator==(std::nullptr_t) const noexcept { return _texture == nullptr; }
+
+		/// <summary>
+		/// Gets the raw SDL_Texture pointer managed by this object.
+		/// </summary>
+		/// <returns>Pointer to the underlying SDL_Texture, or nullptr if empty.</returns>
+		operator SDL_Texture* () const noexcept
+		{
+			return _texture;
+		}
 
 		/// <summary>
 		/// Checks whether the texture is valid (non-null).

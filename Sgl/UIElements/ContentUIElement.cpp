@@ -1,8 +1,8 @@
 #include "ContentUIElement.h"
 
 #include <algorithm>
-#include "../Layout/LayoutHelper.h"
 #include "../UIElements/TextBlock.h"
+#include "../Layout/LayoutHelper.h"
 
 namespace Sgl
 {
@@ -74,6 +74,11 @@ namespace Sgl
 		if(SetProperty(VerticalContentAlignmentProperty, _verticalContentAlignment, value, _verticalContentAlignmentSource, source))
 		{
 			InvalidateArrange();
+
+			if(_contentPresenter)
+			{
+				_contentPresenter->SetVerticalAlignment(value, ValueSource::Inheritance);
+			}
 		}
 	}
 
@@ -82,86 +87,18 @@ namespace Sgl
 		if(SetProperty(HorizontalContentAlignmentProperty, _horizontalContentAlignment, value, _horizontalContentAlignmentSource, source))
 		{
 			InvalidateArrange();
+
+			if(_contentPresenter)
+			{
+				_contentPresenter->SetHorizontalAlignment(value, ValueSource::Inheritance);
+			}
 		}
 	}
-		
-	void ContentUIElement::SetVisualRoot(IVisualRoot* value)
-	{
-		Renderable::SetVisualRoot(value);
-
-		if(_contentPresenter)
-		{
-			_contentPresenter->SetVisualRoot(value);
-		}
-	}
-
-	void ContentUIElement::Render(RenderContext context)
-	{
-		UIElement::Render(context);
-
-		if(_contentPresenter && _contentPresenter->IsVisible())
-		{
-			_contentPresenter->Render(context);
-		}
-	}
-
+	
 	void ContentUIElement::OnAttachedToLogicalTree()
 	{
 		UIElement::OnAttachedToLogicalTree();
 		UpdatePresenter();
-	}
-
-	void ContentUIElement::OnMouseMove(MouseMoveEventArgs e)
-	{
-		UIElement::OnMouseMove(e);
-
-		if(_contentPresenter)
-		{
-			bool visible = _contentPresenter->IsVisible();
-			bool wasMouseOver = _contentPresenter->IsMouseOver();
-			bool isMouseOver = visible && IsPointInRect(e.X, e.Y, _contentPresenter->GetBounds());
-			
-			if(isMouseOver)
-			{
-				if(!wasMouseOver)
-				{
-					_contentPresenter->OnMouseEnter(e);
-				}
-
-				_contentPresenter->OnMouseMove(e);
-			}
-			else if(wasMouseOver)
-			{
-				_contentPresenter->OnMouseLeave(e);
-				_platformCursor.Set(GetCursor());
-			}
-		}
-	}
-
-	void ContentUIElement::OnMouseDown(MouseButtonEventArgs e)
-	{
-		UIElement::OnMouseDown(e);
-
-		if(_contentPresenter && _contentPresenter->IsVisible() && _contentPresenter->IsMouseOver())
-		{
-			_mouseCapturedElement = _contentPresenter;
-			_contentPresenter->OnMouseDown(e);
-		}
-	}
-
-	void ContentUIElement::OnMouseUp(MouseButtonEventArgs e)
-	{
-		UIElement::OnMouseUp(e);
-
-		if(_mouseCapturedElement)
-		{
-			_mouseCapturedElement->OnMouseUp(e);
-			_mouseCapturedElement = nullptr;
-		}
-		else if(_contentPresenter && _contentPresenter->IsVisible() && _contentPresenter->IsMouseOver())
-		{
-			_contentPresenter->OnMouseUp(e);
-		}
 	}
 
 	void ContentUIElement::InvalidateContentPresenter()
@@ -170,64 +107,25 @@ namespace Sgl
 		_isContentPresenterValid = false;
 	}	
 
+	std::span<const Ref<UIElement>> ContentUIElement::GetChildren() const
+	{
+		if(!_contentPresenter)
+		{
+			return {};
+		}
+
+		return std::span(&_contentPresenter, 1);
+	}
+
 	FSize ContentUIElement::MeasureContent(FSize availableSize)
 	{
 		UpdatePresenter();
-
-		if(_contentPresenter)
-		{
-			bool visible = _contentPresenter->IsVisible();
-			auto [left, top, right, bottom] = GetLayoutPadding();
-			float horizontalPadding = visible ? left + right : 0;
-			float verticalPadding = visible ? top + bottom : 0;
-
-			FSize contentAvailableSize =
-			{
-				.Width = std::clamp(availableSize.Width - horizontalPadding, GetMinWidth(), GetMaxWidth()),
-				.Height = std::clamp(availableSize.Height - verticalPadding, GetMinHeight(), GetMaxHeight())
-			};
-
-			_contentPresenter->Measure(contentAvailableSize);
-			auto [width, height] = _contentPresenter->GetDesiredSize();
-
-			 return FSize 
-			 {
-				 .Width = width + horizontalPadding,
-				 .Height = height + verticalPadding
-			 };
-		}
-
-		return FSize();
+		return MeasureChild(_contentPresenter.Get(), availableSize, _padding);
 	}
 
 	void ContentUIElement::ArrangeContent(FRect rect)
 	{
-		if(_contentPresenter)
-		{
-			auto [left, top, right, bottom] = GetLayoutPadding();
-			FRect finalRect =
-			{
-				.x = rect.x + left,
-				.y = rect.y + top,
-				.w = rect.w - left - right,
-				.h = rect.h - top - bottom
-			};
-
-			if(finalRect.w < 0)
-			{
-				finalRect.w = 0;
-			}
-
-			if(finalRect.h < 0)
-			{
-				finalRect.h = 0;
-			}
-
-			_contentPresenter->SetVerticalAlignment(_verticalContentAlignment, ValueSource::Inheritance);
-			_contentPresenter->SetHorizontalAlignment(_horizontalContentAlignment, ValueSource::Inheritance);
-
-			_contentPresenter->Arrange(finalRect);
-		}
+		ArrangeChild(_contentPresenter.Get(), rect, _padding);
 	}
 
 	void ContentUIElement::UpdatePresenter()
@@ -250,6 +148,8 @@ namespace Sgl
 			if(_contentPresenter)
 			{
 				AddLogicalChild(_contentPresenter.Get());
+				_contentPresenter->SetVerticalAlignment(_verticalContentAlignment, ValueSource::Inheritance);
+				_contentPresenter->SetHorizontalAlignment(_horizontalContentAlignment, ValueSource::Inheritance);
 			}
 		}
 	}

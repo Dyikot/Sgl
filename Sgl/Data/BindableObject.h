@@ -53,7 +53,7 @@ namespace Sgl
 			if(newSource < ValueSource::PseudoClass)
 			{
 				currentSource = newSource;
-				NotifyPropertyChanged(property);
+				OnPropertyChanged(property);
 			}
 
 			return true;
@@ -68,7 +68,7 @@ namespace Sgl
 			}
 
 			field = value;
-			NotifyPropertyChanged(property);
+			OnPropertyChanged(property);
 
 			return true;
 		}
@@ -96,7 +96,7 @@ namespace Sgl
 
 		static inline StyleableProperty DataContextProperty { &SetDataContext, &GetDataContext };
 	protected:
-		virtual void NotifyPropertyChanged(PropertyBase& property);
+		virtual void OnPropertyChanged(PropertyBase& property);
 		virtual void OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext) {}
 		void ApplyBindings();
 		void ClearBindings();

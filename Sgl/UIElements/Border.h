@@ -1,10 +1,10 @@
 #pragma once
 
-#include "ContentUIElement.h"
+#include "Decorator.h"
 
 namespace Sgl::UIElements
 {
-	class Border : public ContentUIElement
+	class Border : public Decorator
 	{
 	public:
 		Border() = default;
@@ -22,7 +22,8 @@ namespace Sgl::UIElements
 		static inline StyleableProperty BorderWidthProperty { &SetBorderWidth, &GetBorderWidth };
 		static inline StyleableProperty BorderColorProperty { &SetBorderColor, &GetBorderColor };
 	protected:
-		Thickness GetLayoutPadding() const override;
+		FSize MeasureContent(FSize availableSize) override;
+		void ArrangeContent(FRect rect) override;
 	private:
 		uint32_t _borderWidth = 1;
 		Color _borderColor = Colors::Black;

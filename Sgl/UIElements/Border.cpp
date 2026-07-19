@@ -1,10 +1,11 @@
 #include "Border.h"
 #include "../Application.h"
+#include "../Layout/LayoutHelper.h"
 
 namespace Sgl::UIElements
 {
 	Border::Border(Border&& other) noexcept:
-		ContentUIElement(std::move(other)),
+		Decorator(std::move(other)),
 		_borderWidth(other._borderWidth),
 		_borderColor(other._borderColor)
 	{}
@@ -27,7 +28,7 @@ namespace Sgl::UIElements
 
 	void Border::Render(RenderContext context)
 	{
-		ContentUIElement::Render(context);
+		Decorator::Render(context);
 		
 		if(_borderWidth == 0)
 		{
@@ -46,9 +47,14 @@ namespace Sgl::UIElements
 		}
 	}
 
-	Thickness Border::GetLayoutPadding() const
+	FSize Border::MeasureContent(FSize availableSize)
 	{
-		return ContentUIElement::GetLayoutPadding() + Thickness(_borderWidth);
+		return MeasureChild(GetChild().Get(), availableSize, GetPadding().Inflate(_borderWidth));
+	}
+
+	void Border::ArrangeContent(FRect rect)
+	{
+		ArrangeChild(GetChild().Get(), rect, GetPadding().Inflate(_borderWidth));
 	}
 }
 

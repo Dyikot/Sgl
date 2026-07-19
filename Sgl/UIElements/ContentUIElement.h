@@ -29,9 +29,6 @@ namespace Sgl
 		void SetHorizontalContentAlignment(HorizontalAlignment value, ValueSource source = ValueSource::Local);
 		HorizontalAlignment GetHorizontalContentAlignment() const { return _horizontalContentAlignment; }
 
-		void SetVisualRoot(IVisualRoot* value) final;
-		void Render(RenderContext context) override;
-
 		static inline StyleableProperty ContentProperty { &SetContent, &GetContent };
 		static inline StyleableProperty ContentTemplateProperty { &SetContentTemplate, &GetContentTemplate };
 		static inline StyleableProperty PaddingProperty { &SetPadding, &GetPadding };
@@ -39,21 +36,17 @@ namespace Sgl
 		static inline StyleableProperty HorizontalContentAlignmentProperty { &SetHorizontalContentAlignment, &GetHorizontalContentAlignment };
 	protected:
 		void OnAttachedToLogicalTree() override;
-		void OnMouseMove(MouseMoveEventArgs e) override;
-		void OnMouseDown(MouseButtonEventArgs e) override;
-		void OnMouseUp(MouseButtonEventArgs e) override;
 		void InvalidateContentPresenter();
 		
+		std::span<const Ref<UIElement>> GetChildren() const final;
 		FSize MeasureContent(FSize availableSize) override;
 		void ArrangeContent(FRect rect) override;
-		virtual Thickness GetLayoutPadding() const { return _padding; }
 	private:
 		void UpdatePresenter();
 	private:
 		Ref<INotifyPropertyChanged> _content;
 		Ref<IDataTemplate> _contentTemplate = New<UIElementDataTemplate>();
 		Ref<UIElement> _contentPresenter;
-		Ref<UIElement> _mouseCapturedElement;
 		Thickness _padding;
 		VerticalAlignment _verticalContentAlignment = VerticalAlignment::Top;
 		HorizontalAlignment _horizontalContentAlignment = HorizontalAlignment::Left;

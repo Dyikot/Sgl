@@ -22,7 +22,7 @@ namespace Sgl
 	}
 
 	Texture::Texture(SDL_Renderer* renderer, const Surface& surface):
-		_texture(SDL_CreateTextureFromSurface(renderer, surface.GetSDLSurface()))
+		_texture(SDL_CreateTextureFromSurface(renderer, surface))
 	{
 		if(_texture == nullptr)
 		{
@@ -201,11 +201,6 @@ namespace Sgl
 		return _texture->format;
 	}
 
-	SDL_Texture* Texture::GetSDLTexture() const noexcept
-	{
-		return _texture;
-	}
-
 	SDL_Renderer* Texture::GetRenderer() const
 	{
 		return SDL_GetRendererFromTexture(_texture);
@@ -249,7 +244,7 @@ namespace Sgl
 	TextureLock::TextureLock(Texture texture, const Rect* rect):
 		_texture(texture)
 	{
-		if(!SDL_LockTexture(_texture.GetSDLTexture(), rect, &Pixels, &Pitch))
+		if(!SDL_LockTexture(_texture, rect, &Pixels, &Pitch))
 		{
 			Logging::LogError("Unable to lock a texture: {}", SDL_GetError());
 		}
@@ -257,6 +252,6 @@ namespace Sgl
 
 	TextureLock::~TextureLock()
 	{
-		SDL_UnlockTexture(_texture.GetSDLTexture());
+		SDL_UnlockTexture(_texture);
 	}
 }

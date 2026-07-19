@@ -240,6 +240,7 @@ namespace Sgl
                             .Y = e.button.y
                         };
 
+                        _inputManager.HandleMouseMove(*window, args);
                         window->OnMouseMove(args);
                     }
 
@@ -256,6 +257,7 @@ namespace Sgl
                             .ClicksNumber = e.button.clicks
                         };
 
+                        _inputManager.HandleMouseDown(*window, args);
                         window->OnMouseDown(args);
                     }
 
@@ -272,6 +274,7 @@ namespace Sgl
                             .ClicksNumber = e.button.clicks
                         };
 
+                        _inputManager.HandleMouseUp(*window, args);
                         window->OnMouseUp(args);
                     }
 
