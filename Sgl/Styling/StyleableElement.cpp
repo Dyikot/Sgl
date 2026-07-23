@@ -4,6 +4,24 @@
 
 namespace Sgl
 {
+	struct ClearBaseStateHandler
+	{
+		StyleableElement& Source;
+
+		void operator()(StyleableElement& sender, EventArgs e) const
+		{
+			std::erase_if(Source._restoreStateActions, [&sender](const auto& action)
+			{
+				return action.GetTarget() == &sender;
+			});
+		}
+
+		bool operator==(const ClearBaseStateHandler& other) const
+		{
+			return &Source == &other.Source;
+		}
+	};
+
 	StyleableElement::StyleableElement()
 	{
 		PseudoClasses.Changed += [this](PseudoClassesSet& sender, EventArgs e)
@@ -206,24 +224,6 @@ namespace Sgl
 		}
 	}
 
-	struct ClearBaseStateHandler
-	{
-		StyleableElement& Source;
-
-		void operator()(StyleableElement& sender, EventArgs e) const
-		{
-			std::erase_if(Source._restoreStateActions, [&sender](const auto& action)
-			{
-				return action.Target == &sender;
-			});
-		}
-
-		bool operator==(const ClearBaseStateHandler& other) const
-		{
-			return &Source == &other.Source;
-		}
-	};
-
 	void StyleableElement::ApplyStateStyle()
 	{
 		for(auto style : _matchingStateStyles)
@@ -271,7 +271,7 @@ namespace Sgl
 	{
 		for(auto& restoreState : _restoreStateActions)
 		{
-			restoreState.Restore();
+			restoreState();
 		}
 	}
 
@@ -292,17 +292,56 @@ namespace Sgl
 
 	void StyleableElement::ClearAndRestoreBaseState()
 	{
-		for(auto& restoreState : _restoreStateActions)
-		{
-			restoreState.Restore();
-
-			if(restoreState.DetachedHandler)
-			{
-				restoreState.Target->DetachedFromLogicalTree -= restoreState.DetachedHandler;
-			}
-		}
-
 		_restoreStateActions.clear();
 		_matchingStateStyles.clear();
+	}
+
+	StyleableElement::RestoreAction::RestoreAction(Action<> restore, 
+												   StyleableElement* target, 
+												   StyleableElementEventHandler detachedHandler):
+		_restore(std::move(restore)),
+		_target(target),
+		_detachedHandler(std::move(detachedHandler))
+	{}
+
+	StyleableElement::RestoreAction::RestoreAction(RestoreAction&& other) noexcept:
+		_restore(std::move(other._restore)),
+		_target(std::exchange(other._target, nullptr)),
+		_detachedHandler(std::move(other._detachedHandler))
+	{}
+
+	StyleableElement::RestoreAction::~RestoreAction()
+	{
+		if(_restore.HasTarget())
+		{
+			_restore();
+		}
+
+		if(_detachedHandler.HasTarget())
+		{
+			_target->DetachedFromLogicalTree -= _detachedHandler;
+		}
+	}
+
+	StyleableElement* StyleableElement::RestoreAction::GetTarget() const noexcept
+	{
+		return _target;
+	}
+
+	void StyleableElement::RestoreAction::operator()()
+	{
+		_restore();
+	}
+
+	StyleableElement::RestoreAction& StyleableElement::RestoreAction::operator=(RestoreAction&& other) noexcept
+	{
+		if(this != &other)
+		{
+			_restore = std::move(other._restore);
+			_target = std::exchange(other._target, nullptr);
+			_detachedHandler = std::move(other._detachedHandler);
+		}
+
+		return *this;
 	}
 }

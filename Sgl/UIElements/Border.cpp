@@ -63,7 +63,7 @@ namespace Sgl
 	ResourceSetter<UIElements::Border, Color>::ResourceSetter(
 		BorderColorProperty& property,
 		ResourceKey key):
-		SetterBase(property),
+		Setter(property),
 		_key(std::move(key))
 	{}
 

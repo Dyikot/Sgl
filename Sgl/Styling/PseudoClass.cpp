@@ -5,7 +5,11 @@ namespace Sgl
 {
     static constexpr size_t MaxPseudoClassId = (sizeof(size_t) * 8) - 1;
 
-    PseudoClass::PseudoClass(std::string_view name)
+    PseudoClass::PseudoClass(size_t id):
+        _id(id)
+    {}
+
+    PseudoClass PseudoClass::Register(std::string_view name)
     {
         auto nextId = _registry.size();
 
@@ -20,12 +24,8 @@ namespace Sgl
         }
 
         _registry.emplace(name, nextId);
-        _id = nextId;
-    }
-
-    PseudoClass::PseudoClass(size_t id):
-        _id(id)
-    {}
+        return PseudoClass(nextId);
+    }   
 
     PseudoClass PseudoClass::GetByName(std::string_view name)
     {

@@ -98,7 +98,7 @@ namespace Sgl::UIElements
 namespace Sgl
 {
 	template<>
-	class ResourceSetter<UIElements::TextBlock, Color> : public SetterBase
+	class ResourceSetter<UIElements::TextBlock, Color> : public Setter
 	{
 	public:
 		using ForegroundProperty = decltype(UIElements::TextBlock::ForegroundProperty);

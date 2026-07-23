@@ -1,8 +1,5 @@
 #pragma once
 
-#include <memory>
-#include <vector>
-
 #include "../Base/Logging.h"
 #include "../Base/Media/ResourceKey.h"
 #include "../Data/StyleableProperty.h"
@@ -31,7 +28,7 @@ namespace Sgl
         const Selector Selector;
         const TargetProjection Projection;
 
-        Style& Set(std::unique_ptr<SetterBase> setter)
+        Style& Set(std::unique_ptr<Setter> setter)
         {
             _setters.push_back(std::move(setter));
             return *this;
@@ -41,7 +38,7 @@ namespace Sgl
         Style& Set(StyleableProperty<TOwner, TValue>& property,
                    StyleableProperty<TOwner, TValue>::Value value)
         {
-            _setters.emplace_back(new Setter<TOwner, TValue>(property, value));
+            _setters.emplace_back(new ValueSetter<TOwner, TValue>(property, value));
             return *this;
         }
 
@@ -62,7 +59,7 @@ namespace Sgl
             }
         }
     private:
-        std::vector<std::unique_ptr<SetterBase>> _setters;
+        std::vector<std::unique_ptr<Setter>> _setters;
 
         friend class StyleableElement;
     };    

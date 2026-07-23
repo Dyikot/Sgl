@@ -10,11 +10,11 @@ namespace Sgl
     /// Base class for all style setters.
     /// A setter applies a value to a property on a styleable element.
     /// </summary>
-    class SetterBase
+    class Setter
     {
     public:
-        SetterBase(StyleablePropertyBase& property): _property(property) {}
-        virtual ~SetterBase() = default;
+        Setter(StyleablePropertyBase& property): _property(property) {}
+        virtual ~Setter() = default;
 
         /// <summary>
         /// Gets the property that this setter modifies.
@@ -35,7 +35,7 @@ namespace Sgl
     /// A setter that applies a fixed value to a property.
     /// </summary>
     template<typename TOwner, typename TValue>
-    class Setter : public SetterBase
+    class ValueSetter final : public Setter
     {
     private:
         using Value = std::remove_reference_t<TValue>;
@@ -45,12 +45,12 @@ namespace Sgl
         /// </summary>
         /// <param name="property"> - the property to set.</param>
         /// <param name="value"> - the value to apply.</param>
-        Setter(StyleableProperty<TOwner, TValue>& property, TValue value):
-            SetterBase(property),
+        ValueSetter(StyleableProperty<TOwner, TValue>& property, TValue value):
+            Setter(property),
             _value(value)
         {}
 
-        void Apply(StyleableElement& target, ValueSource valueSource) const final
+        void Apply(StyleableElement& target, ValueSource valueSource) const
         {
             auto& property = static_cast<StyleableProperty<TOwner, TValue>&>(GetProperty());
             property.InvokeSetter(static_cast<TOwner&>(target), _value, valueSource);

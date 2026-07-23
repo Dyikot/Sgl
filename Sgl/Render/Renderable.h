@@ -47,7 +47,7 @@ namespace Sgl
     };
 
     template<>
-    class ResourceSetter<Renderable, const Brush&> : public SetterBase
+    class ResourceSetter<Renderable, const Brush&> : public Setter
     {
     public:
         using BackgroundProperty = decltype(Renderable::BackgroundProperty);

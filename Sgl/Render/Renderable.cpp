@@ -84,7 +84,7 @@ namespace Sgl
 	ResourceSetter<Renderable, const Brush&>::ResourceSetter(
 		BackgroundProperty& property,
 		ResourceKey key):
-		SetterBase(property),
+		Setter(property),
 		_key(std::move(key))
 	{}
 

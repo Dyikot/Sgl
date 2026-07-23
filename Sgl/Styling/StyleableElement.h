@@ -1,8 +1,5 @@
 #pragma once
 
-#include <vector>
-#include <string_view>
-
 #include "IStyleHost.h"
 #include "PseudoClass.h"
 #include "../Data/BindableObject.h"
@@ -50,11 +47,25 @@ namespace Sgl
 		bool MatchStateStyles();
 		void ClearAndRestoreBaseState();
 	private:
-		struct RestoreAction
+		class RestoreAction
 		{
-			Action<> Restore;
-			StyleableElement* Target;
-			StyleableElementEventHandler DetachedHandler;
+		public:
+			RestoreAction(Action<> restore, 
+						  StyleableElement* target, 
+						  StyleableElementEventHandler detachedHandler);
+			RestoreAction(const RestoreAction&) = delete;
+			RestoreAction(RestoreAction&& other) noexcept;
+			~RestoreAction();
+
+			StyleableElement* GetTarget() const noexcept;
+
+			void operator()();
+			RestoreAction& operator=(const RestoreAction&) = delete;
+			RestoreAction& operator=(RestoreAction&& other) noexcept;
+		private:
+			Action<> _restore;
+			StyleableElement* _target;
+			StyleableElementEventHandler _detachedHandler;
 		};
 
 		std::vector<StyleableElement*> _logicalChildren;

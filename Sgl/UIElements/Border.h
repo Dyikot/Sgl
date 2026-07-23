@@ -36,7 +36,7 @@ namespace Sgl::UIElements
 namespace Sgl
 {
 	template<>
-	class ResourceSetter<UIElements::Border, Color>: public SetterBase
+	class ResourceSetter<UIElements::Border, Color>: public Setter
 	{
 	public:
 		using BorderColorProperty = decltype(UIElements::Border::BorderColorProperty);

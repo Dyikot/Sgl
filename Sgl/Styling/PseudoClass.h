@@ -1,9 +1,9 @@
 #pragma once
 
 #include <bitset>
-#include <string_view>
 #include <unordered_map>
 #include "../Base/Event.h"
+#include "../Base/Tools/StringUtils.h"
 
 namespace Sgl
 {
@@ -18,15 +18,14 @@ namespace Sgl
 		/// A new unique ID is assigned (sequentially from 0 up to 63).
 		/// </summary>
 		/// <param name="name">- the string identifier for the pseudo-class.</param>
-		explicit PseudoClass(std::string_view name);
-		PseudoClass(const PseudoClass&) = default;
-		PseudoClass(PseudoClass&&) noexcept = default;
+		/// <returns>Pseudoclass instance</returns>
+		static PseudoClass Register(std::string_view name);
 
 		/// <summary>
 		/// Retrieves an existing PseudoClass by name without modifying the registry.
 		/// </summary>
 		/// <param name="name"> - the string identifier to look up.</param>
-		/// <returns></returns>
+		/// <returns>Pseudoclass instance</returns>
 		static PseudoClass GetByName(std::string_view name);
 
 		/// <summary>
@@ -37,7 +36,7 @@ namespace Sgl
 	private:
 		explicit PseudoClass(size_t id);
 	private:
-		static inline std::unordered_map<std::string_view, size_t> _registry;
+		static inline std::unordered_map<std::string, size_t, StringHash, std::equal_to<>> _registry;
 		size_t _id = 0;
 	};
 

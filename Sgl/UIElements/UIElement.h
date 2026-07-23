@@ -23,9 +23,6 @@ namespace Sgl
 		UIElement() = default;
 		UIElement(UIElement&& other) noexcept;
 
-		static inline const PseudoClass OnHover { "hover" };
-		static inline const PseudoClass OnPressed { "pressed" };
-
 		Event<KeyEventHandler> KeyUp;
 		Event<KeyEventHandler> KeyDown;
 		Event<MouseMoveEventHandler> MouseMove;
@@ -49,6 +46,8 @@ namespace Sgl
 
 		static inline StyleableProperty TagProperty { &SetTag, &GetTag };
 		static inline StyleableProperty CornersRadiusProperty { &SetCornersRadius, &GetCornersRadius };
+		static inline const PseudoClass OnHover = PseudoClass::Register("hover");
+		static inline const PseudoClass OnPressed = PseudoClass::Register("pressed");
 	protected:
 		void SetParent(IStyleHost* parent) override;
 		void OnCursorChanged(Cursor cursor) override;

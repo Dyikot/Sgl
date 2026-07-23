@@ -1,8 +1,6 @@
 #include "Cursor.h"
 
-#include <stdexcept>
 #include <unordered_map>
-#include <SDL3_image/SDL_image.h>
 #include <SDL3/SDL_mouse.h>
 #include "../Base/Logging.h"
 #include "../Render/Surface.h"
@@ -88,26 +86,17 @@ namespace Sgl
 
     void SetCurrentCursor(Cursor cursor)
     {
-        if(cursor && cursor != SDL_GetCursor())
-        {
-            SDL_SetCursor(cursor);
-        }
+        SDL_SetCursor(cursor);
     }
 
     void ShowCursor()
     {
-        if(SDL_ShowCursor())
-        {
-            Logging::LogWarning("Unable to show a cursor: {}", SDL_GetError());
-        }
+        SDL_ShowCursor();
     }
 
     void HideCursor()
     {
-        if(SDL_HideCursor())
-        {
-            Logging::LogWarning("Unable to hide a cursor: {}", SDL_GetError());
-        }
+        SDL_HideCursor();
     }
 
     bool IsCursorVisible()

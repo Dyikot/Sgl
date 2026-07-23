@@ -271,7 +271,7 @@ namespace Sgl
 	ResourceSetter<UIElements::TextBlock, Color>::ResourceSetter(
 		ForegroundProperty& property,
 		ResourceKey key):
-		SetterBase(property),
+		Setter(property),
 		_key(std::move(key))
 	{}
 
