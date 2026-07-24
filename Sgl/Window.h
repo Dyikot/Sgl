@@ -442,6 +442,6 @@ namespace Sgl
 
 	struct Window_Content
 	{
-		StyleableElement& operator()(StyleableElement& target) const;
+		StyleableElement& operator()(StyleableElement& element) const;
 	};
 }

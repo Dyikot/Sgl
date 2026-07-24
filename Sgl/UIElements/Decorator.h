@@ -29,4 +29,9 @@ namespace Sgl
 		ValueSource _childSource {};
 		ValueSource _paddingSource {};
 	};
+
+	struct Decorator_Child
+	{
+		StyleableElement& operator()(StyleableElement& element) const;
+	};
 }

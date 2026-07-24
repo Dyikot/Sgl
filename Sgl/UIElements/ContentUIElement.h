@@ -61,6 +61,6 @@ namespace Sgl
 
 	struct ContentUIElement_Content
 	{
-		StyleableElement& operator()(StyleableElement& target) const;
+		StyleableElement& operator()(StyleableElement& element) const;
 	};
 }

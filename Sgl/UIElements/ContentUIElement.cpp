@@ -154,8 +154,8 @@ namespace Sgl
 		}
 	}
 
-	StyleableElement& ContentUIElement_Content::operator()(StyleableElement& target) const
+	StyleableElement& ContentUIElement_Content::operator()(StyleableElement& element) const
 	{
-		return static_cast<ContentUIElement&>(target).GetContentPresenter().GetValue();
+		return static_cast<ContentUIElement&>(element).GetContentPresenter().GetValue();
 	}
 }

@@ -626,8 +626,8 @@ namespace Sgl
         SDL_DestroyRenderer(_renderer);
     }
 
-    StyleableElement& Window_Content::operator()(StyleableElement& target) const
+    StyleableElement& Window_Content::operator()(StyleableElement& element) const
     {
-        return static_cast<Window&>(target).GetContent().GetValue();
+        return static_cast<Window&>(element).GetContent().GetValue();
     }
 }

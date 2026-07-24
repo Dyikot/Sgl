@@ -111,22 +111,22 @@ namespace Sgl
         }
     }
 
-    StyleableElement& Panel_FirstChild::operator()(StyleableElement& target) const
+    StyleableElement& Panel_FirstChild::operator()(StyleableElement& element) const
     {
-        return static_cast<Panel&>(target).Children.Front().GetValue();
+        return static_cast<Panel&>(element).Children.Front().GetValue();
     }
 
-    StyleableElement& Panel_LastChild::operator()(StyleableElement& target) const
+    StyleableElement& Panel_LastChild::operator()(StyleableElement& element) const
     {
-        return static_cast<Panel&>(target).Children.Back().GetValue();
+        return static_cast<Panel&>(element).Children.Back().GetValue();
     }
 
     Panel_NthChild::Panel_NthChild(size_t position):
         Index(std::max(1ull, position - 1ull))
     {}
 
-    StyleableElement& Panel_NthChild::operator()(StyleableElement& target) const
+    StyleableElement& Panel_NthChild::operator()(StyleableElement& element) const
     {
-        return static_cast<Panel&>(target).Children.GetElementAt(Index).GetValue();
+        return static_cast<Panel&>(element).Children.GetElementAt(Index).GetValue();
     }
 }

@@ -61,18 +61,18 @@ namespace Sgl
 
 	struct Panel_FirstChild
 	{
-		StyleableElement& operator()(StyleableElement& target) const;
+		StyleableElement& operator()(StyleableElement& element) const;
 	};
 
 	struct Panel_LastChild
 	{
-		StyleableElement& operator()(StyleableElement& target) const;
+		StyleableElement& operator()(StyleableElement& element) const;
 	};
 
 	struct Panel_NthChild
 	{
 		explicit Panel_NthChild(size_t position);
 		const size_t Index;
-		StyleableElement& operator()(StyleableElement& target) const;	
+		StyleableElement& operator()(StyleableElement& element) const;
 	};
 }
