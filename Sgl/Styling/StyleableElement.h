@@ -44,24 +44,23 @@ namespace Sgl
 		void ApplyStateStyle();
 		void SaveBaseState();
 		void RestoreBaseState();
+		void ClearMatchingStateStyles();
 		bool MatchStateStyles();
-		void ClearAndRestoreBaseState();
 	private:
-		class RestoreAction
+		class SavedState
 		{
 		public:
-			RestoreAction(Action<> restore, 
-						  StyleableElement* target, 
-						  StyleableElementEventHandler detachedHandler);
-			RestoreAction(const RestoreAction&) = delete;
-			RestoreAction(RestoreAction&& other) noexcept;
-			~RestoreAction();
+			SavedState(Action<> restore, 
+					   StyleableElement* target, 
+					   StyleableElementEventHandler detachedHandler);
+			SavedState(const SavedState&) = delete;
+			SavedState(SavedState&& other) noexcept;
+			~SavedState();
 
 			StyleableElement* GetTarget() const noexcept;
 
-			void operator()();
-			RestoreAction& operator=(const RestoreAction&) = delete;
-			RestoreAction& operator=(RestoreAction&& other) noexcept;
+			SavedState& operator=(const SavedState&) = delete;
+			SavedState& operator=(SavedState&& other) noexcept;
 		private:
 			Action<> _restore;
 			StyleableElement* _target;
@@ -73,10 +72,10 @@ namespace Sgl
 		std::vector<const Style*> _styles;
 		std::vector<const Style*> _stateStyles;
 		std::vector<const Style*> _matchingStateStyles;
-		std::vector<RestoreAction> _restoreStateActions;
+		std::vector<SavedState> _savedStates;
 		IStyleHost* _stylingParent = nullptr;
 		bool _isAttachedToLogicalTree = false;
 
-		friend class ClearBaseStateHandler;
+		friend class EraseSavedStateHandler;
 	};
 }

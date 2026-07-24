@@ -4,19 +4,19 @@
 
 namespace Sgl
 {
-	struct ClearBaseStateHandler
+	struct EraseSavedStateHandler
 	{
 		StyleableElement& Source;
 
 		void operator()(StyleableElement& sender, EventArgs e) const
 		{
-			std::erase_if(Source._restoreStateActions, [&sender](const auto& action)
+			std::erase_if(Source._savedStates, [&sender](const auto& action)
 			{
 				return action.GetTarget() == &sender;
 			});
 		}
 
-		bool operator==(const ClearBaseStateHandler& other) const
+		bool operator==(const EraseSavedStateHandler& other) const
 		{
 			return &Source == &other.Source;
 		}
@@ -28,7 +28,8 @@ namespace Sgl
 		{
 			if(PseudoClasses.IsEmpty())
 			{
-				ClearAndRestoreBaseState();
+				RestoreBaseState();
+				ClearMatchingStateStyles();
 				return;
 			}
 
@@ -123,7 +124,8 @@ namespace Sgl
 
 		if(!PseudoClasses.IsEmpty())
 		{
-			ClearAndRestoreBaseState();
+			RestoreBaseState();
+			ClearMatchingStateStyles();
 		}
 
 		for(auto child : _logicalChildren)
@@ -236,43 +238,37 @@ namespace Sgl
 	{
 		for(auto style : _matchingStateStyles)
 		{
-			bool hasProjection = style->Projection.HasTarget();
-			auto& target = hasProjection ? style->Projection(*this) : *this;
+			auto& target = style->SelectTarget(*this);
 
 			for(auto& setter : style->_setters)
 			{
 				auto& property = setter->GetProperty();
 				auto restore = property.CreateRestoreAction(&target);
 
-				if(hasProjection)
+				StyleableElementEventHandler detachedHandler;
+				if(this != &target)
 				{
-					StyleableElementEventHandler detachedHandler = ClearBaseStateHandler(*this);
-					target.DetachedFromLogicalTree += detachedHandler;
-
-					_restoreStateActions.emplace_back(
-						std::move(restore),
-						&target,
-						std::move(detachedHandler)
-					);
+					detachedHandler = EraseSavedStateHandler(*this);
+					target.DetachedFromLogicalTree += detachedHandler;				
 				}
-				else
-				{
-					_restoreStateActions.emplace_back(
-						std::move(restore),
-						&target,
-						nullptr
-					);
-				}
+				
+				_savedStates.emplace_back(
+					std::move(restore),
+					&target,
+					std::move(detachedHandler)
+				);
 			}
 		}
 	}
 
 	void StyleableElement::RestoreBaseState()
 	{
-		for(auto& restoreState : _restoreStateActions)
-		{
-			restoreState();
-		}
+		_savedStates.clear();
+	}
+
+	void StyleableElement::ClearMatchingStateStyles()
+	{
+		_matchingStateStyles.clear();
 	}
 
 	bool StyleableElement::MatchStateStyles()
@@ -290,27 +286,21 @@ namespace Sgl
 		return _matchingStateStyles.size() > 0;
 	}
 
-	void StyleableElement::ClearAndRestoreBaseState()
-	{
-		_restoreStateActions.clear();
-		_matchingStateStyles.clear();
-	}
-
-	StyleableElement::RestoreAction::RestoreAction(Action<> restore, 
-												   StyleableElement* target, 
-												   StyleableElementEventHandler detachedHandler):
+	StyleableElement::SavedState::SavedState(Action<> restore,
+										     StyleableElement* target, 
+										     StyleableElementEventHandler detachedHandler):
 		_restore(std::move(restore)),
 		_target(target),
 		_detachedHandler(std::move(detachedHandler))
 	{}
 
-	StyleableElement::RestoreAction::RestoreAction(RestoreAction&& other) noexcept:
+	StyleableElement::SavedState::SavedState(SavedState&& other) noexcept:
 		_restore(std::move(other._restore)),
 		_target(std::exchange(other._target, nullptr)),
 		_detachedHandler(std::move(other._detachedHandler))
 	{}
 
-	StyleableElement::RestoreAction::~RestoreAction()
+	StyleableElement::SavedState::~SavedState()
 	{
 		if(_restore.HasTarget())
 		{
@@ -323,17 +313,12 @@ namespace Sgl
 		}
 	}
 
-	StyleableElement* StyleableElement::RestoreAction::GetTarget() const noexcept
+	StyleableElement* StyleableElement::SavedState::GetTarget() const noexcept
 	{
 		return _target;
 	}
 
-	void StyleableElement::RestoreAction::operator()()
-	{
-		_restore();
-	}
-
-	StyleableElement::RestoreAction& StyleableElement::RestoreAction::operator=(RestoreAction&& other) noexcept
+	StyleableElement::SavedState& StyleableElement::SavedState::operator=(SavedState&& other) noexcept
 	{
 		if(this != &other)
 		{

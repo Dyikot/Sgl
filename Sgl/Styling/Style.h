@@ -14,19 +14,18 @@ namespace Sgl
     public:
         Style(Sgl::Selector selector): 
             Selector(std::move(selector)),
-            Projection(nullptr)
+            _projection(nullptr)
         {}
 
         Style(Sgl::Selector selector, TargetProjection projection):
             Selector(std::move(selector)),
-            Projection(std::move(projection))
+            _projection(std::move(projection))
         {}
 
         Style(const Style&) = delete;
         Style(Style&&) noexcept = default;
 
-        const Selector Selector;
-        const TargetProjection Projection;
+        const Selector Selector;        
 
         Style& Set(std::unique_ptr<Setter> setter)
         {
@@ -48,18 +47,24 @@ namespace Sgl
             _setters.emplace_back(new ResourceSetter<TOwner, TValue>(property, key));
             return *this;
         }
-    private:
-        void Apply(StyleableElement& target, ValueSource source) const
+
+        StyleableElement& SelectTarget(StyleableElement& element) const
         {
-            auto& targetElement = Projection ? Projection(target) : target;
+            return _projection ? _projection(element) : element;
+        }
+    private:
+        void Apply(StyleableElement& element, ValueSource source) const
+        {
+            auto& target = SelectTarget(element);
 
             for(auto& setter : _setters)
             {
-                setter->Apply(targetElement, source);
+                setter->Apply(target, source);
             }
         }
     private:
         std::vector<std::unique_ptr<Setter>> _setters;
+        TargetProjection _projection;
 
         friend class StyleableElement;
     };    

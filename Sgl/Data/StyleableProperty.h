@@ -15,14 +15,14 @@ namespace Sgl
 		PseudoClass
 	};
 
-	class StyleablePropertyBase : public PropertyBase
+	class RestorableProperty : public PropertyBase
 	{
 	public:
 		virtual Action<> CreateRestoreAction(void* element) = 0;
 	};
 
 	template<typename TOwner, typename TValue>
-	class StyleableProperty : public StyleablePropertyBase
+	class StyleableProperty : public RestorableProperty
 	{
 	public:
 		using Owner = TOwner;

@@ -13,13 +13,13 @@ namespace Sgl
     class Setter
     {
     public:
-        Setter(StyleablePropertyBase& property): _property(property) {}
+        Setter(RestorableProperty& property): _property(property) {}
         virtual ~Setter() = default;
 
         /// <summary>
         /// Gets the property that this setter modifies.
         /// </summary>
-        StyleablePropertyBase& GetProperty() const { return _property; }
+        RestorableProperty& GetProperty() const { return _property; }
 
         /// <summary>
         /// Applies the setter's value to the specified target element.
@@ -28,7 +28,7 @@ namespace Sgl
         /// <param name="valueSource"> - the source of the value (Style, Local, etc.).</param>
         virtual void Apply(StyleableElement& target, ValueSource valueSource) const = 0;
     private:
-        StyleablePropertyBase& _property;
+        RestorableProperty& _property;
     };
 
     /// <summary>
