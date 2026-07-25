@@ -2,7 +2,7 @@
 
 namespace Sgl
 {
-	// <summary>
+	/// <summary>
 	/// Represents a 2D size with unsigned integer dimensions.
 	/// </summary>
 	struct Size

@@ -75,10 +75,7 @@ namespace Sgl
 		ValueSource _tagSource {};	
 		ValueSource _cornersRadiusSource {};
 
-		friend class Panel;
-		friend class Window;
 		friend class InputManager;
-		friend class ContentUIElement;
 	};
 
 	class UIElementDataTemplate : public IDataTemplate
