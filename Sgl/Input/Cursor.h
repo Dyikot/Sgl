@@ -59,9 +59,4 @@ namespace Sgl
     private:
         SDL_Cursor* _cursor;
     };
-
-    void SetCurrentCursor(Cursor cursor);
-    void ShowCursor();
-    void HideCursor();
-    bool IsCursorVisible();
 }

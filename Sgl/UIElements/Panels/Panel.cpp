@@ -57,7 +57,9 @@ namespace Sgl
     Panel::Panel():
         UIElement(),
         Children(*this)
-    {}
+    {
+        Name = "Panel";
+    }
 
     Panel::Panel(Panel&& other) noexcept:
         UIElement(std::move(other)),

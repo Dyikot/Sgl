@@ -83,7 +83,7 @@ namespace Sgl
 
 		if(IsMouseOver())
 		{
-			SetCurrentCursor(cursor);
+			SDL_SetCursor(cursor);
 		}
 	}
 
@@ -99,7 +99,7 @@ namespace Sgl
 		auto parent = static_cast<Renderable*>(GetStylingParent());
 		SetDataContext(parent->GetDataContext(), ValueSource::Inheritance);
 		SetCursor(parent->GetCursor(), ValueSource::Inheritance);
-
+		
 		ApplyBindings();
 	}
 

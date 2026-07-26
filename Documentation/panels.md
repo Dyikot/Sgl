@@ -21,6 +21,8 @@ std::pair<Size, Color> data[] =
 for(auto [size, color] : data)
 {
 	auto child = New<Border>();
+	child->SetVerticalAlignment(VerticalAlignment::Top);
+	child->SetHorizontalAlignment(HorizontalAlignment::Left);
 	child->SetBackground(color);
 	child->SetWidth(size.Width);
 	child->SetHeight(size.Height);

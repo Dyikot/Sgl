@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../UIElement.h"
+#include "../TemplatedUIElement.h"
 
 namespace Sgl::UIElements
 {
-	class RangeBase : public UIElement
+	class RangeBase : public TemplatedUIElement
 	{
 	public:
 		using ValueChangedEventHandler = EventHandler<RangeBase, float>;
@@ -32,6 +32,8 @@ namespace Sgl::UIElements
 		static inline StyleableProperty MaxValueProperty { &SetMaxValue, &GetMaxValue };
 		static inline StyleableProperty ValueProperty { &SetValue, &GetValue };
 		static inline StyleableProperty OrientationProperty { &SetOrientation, &GetOrientation };
+	protected:
+		virtual void OnValueChanged(float value);
 	private:
 		float _minValue = 0;
 		float _maxValue = 100;

@@ -3,14 +3,14 @@
 
 namespace Sgl::UIElements
 {
-	RepearButton::RepearButton(RepearButton&& other) noexcept:
+	RepeatButton::RepeatButton(RepeatButton&& other) noexcept:
 		Button(std::move(other)),
 		_timer(std::move(other._timer)),
 		_delay(other._delay),
 		_interval(other._interval)
 	{}
 
-	void RepearButton::SetDelay(uint32_t value, ValueSource source)
+	void RepeatButton::SetDelay(uint32_t value, ValueSource source)
 	{
 		if(SetProperty(DelayProperty, _delay, value, _delaySource, source))
 		{
@@ -18,7 +18,7 @@ namespace Sgl::UIElements
 		}
 	}
 
-	void RepearButton::SetInterval(uint32_t value, ValueSource source)
+	void RepeatButton::SetInterval(uint32_t value, ValueSource source)
 	{
 		if(SetProperty(IntervalProperty, _interval, value, _intervalSource, source))
 		{
@@ -26,9 +26,9 @@ namespace Sgl::UIElements
 		}
 	}
 
-	void RepearButton::OnMouseDown(MouseButtonEventArgs e)
+	void RepeatButton::OnMouseDown(MouseButtonEventArgs e)
 	{
-		ContentUIElement::OnMouseDown(e);
+		Button::OnMouseDown(e);
 
 		if(e.Button == MouseButton::Left)
 		{
@@ -36,9 +36,9 @@ namespace Sgl::UIElements
 		}
 	}
 
-	void RepearButton::OnMouseUp(MouseButtonEventArgs e)
+	void RepeatButton::OnMouseUp(MouseButtonEventArgs e)
 	{
-		ContentUIElement::OnMouseUp(e);
+		Button::OnMouseUp(e);
 
 		if(e.Button == MouseButton::Left)
 		{
@@ -46,7 +46,7 @@ namespace Sgl::UIElements
 		}
 	}
 
-	void RepearButton::StartTimer()
+	void RepeatButton::StartTimer()
 	{
 		_timer.emplace(_interval);
 		_timer->Tick += [this](DispatcherTimer& sender, EventArgs e)
@@ -57,7 +57,7 @@ namespace Sgl::UIElements
 		_timer->Start();
 	}
 
-	void RepearButton::ResetTimer()
+	void RepeatButton::ResetTimer()
 	{
 		if(_timer)
 		{

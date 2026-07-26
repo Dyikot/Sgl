@@ -504,7 +504,7 @@ namespace Sgl
 
         if(!_content || !_content->IsMouseOver())
         {
-            SetCurrentCursor(cursor);
+            SDL_SetCursor(cursor);
         }
     }
 
@@ -565,11 +565,11 @@ namespace Sgl
 
         if(_content && _content->IsMouseOver())
         {
-            SetCurrentCursor(_content->GetCursor());
+            SDL_SetCursor(_content->GetCursor());
         }
         else
         {
-            SetCurrentCursor(GetCursor());
+            SDL_SetCursor(GetCursor());
         }
     }
 

@@ -83,24 +83,4 @@ namespace Sgl
     Cursor::Cursor(Cursor&& other) noexcept:
         _cursor(other._cursor)
     {}
-
-    void SetCurrentCursor(Cursor cursor)
-    {
-        SDL_SetCursor(cursor);
-    }
-
-    void ShowCursor()
-    {
-        SDL_ShowCursor();
-    }
-
-    void HideCursor()
-    {
-        SDL_HideCursor();
-    }
-
-    bool IsCursorVisible()
-    {
-        return SDL_CursorVisible();
-    }
 }

@@ -9,7 +9,7 @@ namespace Sgl
 		FPoint point(e.X, e.Y);
 		Ref<UIElement> target = window.HitTest(point);
 
-		SetCurrentCursor(target ? target->GetCursor() : window.GetCursor());
+		SDL_SetCursor(target ? target->GetCursor() : window.GetCursor());
 
 		if(_hoveredElement != target && _hoveredElement && !IsPointInRect(e.X, e.Y, _hoveredElement->GetBounds()))
 		{

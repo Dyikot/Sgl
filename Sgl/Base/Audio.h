@@ -8,7 +8,7 @@
 struct MIX_Audio;
 struct MIX_Track;
 
-namespace Sgl
+namespace Sgl::Audio
 {
 	class Audio
 	{

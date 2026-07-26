@@ -3,7 +3,7 @@
 namespace Sgl::UIElements
 {
 	RangeBase::RangeBase(RangeBase&& other) noexcept:
-		UIElement(std::move(other)),
+		TemplatedUIElement(std::move(other)),
 		_minValue(other._minValue),
 		_maxValue(other._maxValue),
 		_value(other._value),
@@ -43,7 +43,7 @@ namespace Sgl::UIElements
 		if(SetProperty(ValueProperty, _value, value, _valueSource, source))
 		{
 			InvalidateRender();
-			ValueChanged.Invoke(*this, value);
+			OnValueChanged(value);
 		}
 	}
 
@@ -63,6 +63,11 @@ namespace Sgl::UIElements
 		}
 
 		return (_value - _minValue) / (_maxValue - _minValue);
+	}
+
+	void RangeBase::OnValueChanged(float value)
+	{
+		ValueChanged.Invoke(*this, value);
 	}
 }
 

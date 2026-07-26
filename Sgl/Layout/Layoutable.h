@@ -43,8 +43,7 @@ namespace Sgl
 
 		void SetHorizontalAlignment(HorizontalAlignment value, ValueSource source = ValueSource::Local);
 		HorizontalAlignment GetHorizontalAlignment() const { return _horizontalAlignment; }
-
-		
+			
 		Layoutable* GetLayoutableParent() const { return _layotableParent; }
 
 		template<typename T>
@@ -91,8 +90,8 @@ namespace Sgl
 		float _maxHeight = std::numeric_limits<float>::max();
 		Thickness _margin;
 		bool _isVisible = true;
-		VerticalAlignment _verticalAlignment = VerticalAlignment::Top;
-		HorizontalAlignment _horizontalAlignment = HorizontalAlignment::Left;
+		VerticalAlignment _verticalAlignment = VerticalAlignment::Stretch;
+		HorizontalAlignment _horizontalAlignment = HorizontalAlignment::Stretch;
 		Layoutable* _layotableParent = nullptr;
 
 		FRect _bounds = {};

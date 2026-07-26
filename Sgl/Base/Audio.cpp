@@ -6,7 +6,7 @@
 #include <SDL3_mixer/SDL_mixer.h>
 #include <algorithm>
 
-namespace Sgl
+namespace Sgl::Audio
 {
 	static constexpr float MinVolume = 0;
 	static constexpr float MaxVolume = 1;

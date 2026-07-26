@@ -5,11 +5,11 @@
 
 namespace Sgl::UIElements
 {
-	class RepearButton : public Button
+	class RepeatButton : public Button
 	{
 	public:
-		RepearButton() = default;
-		RepearButton(RepearButton&& other) noexcept;
+		RepeatButton() = default;
+		RepeatButton(RepeatButton&& other) noexcept;
 
 		void SetDelay(uint32_t value, ValueSource source = ValueSource::Local);
 		uint32_t GetDelay() const { return _delay; }

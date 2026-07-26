@@ -15,8 +15,8 @@ namespace Sgl
 		const Ref<UIElement>& GetTemplate() const { return _template; }
 
 		std::span<const Ref<UIElement>> GetChildren() const final;
-		FSize MeasureContent(FSize availableSize) final;
-		void ArrangeContent(FRect rect) final;
+		FSize MeasureContent(FSize availableSize) override;
+		void ArrangeContent(FRect rect) override;
 	private:
 		Ref<UIElement> _template;
 	};
