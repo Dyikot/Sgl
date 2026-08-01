@@ -245,7 +245,7 @@ namespace Sgl::Audio
 		return MIX_GetMixerGain(Mixer);
 	}
 
-	void RemuseAllTracks()
+	void ResumeAllTracks()
 	{
 		MIX_ResumeAllTracks(Mixer);
 	}

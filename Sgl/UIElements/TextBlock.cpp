@@ -28,7 +28,9 @@ namespace Sgl::UIElements
 		_textTexture(std::move(other._textTexture)),
 		_isTextTextureValid(other._isTextTextureValid),
 		_fontFlags(other._fontFlags)
-	{}
+	{
+		Name = "TextBlock";
+	}
 
 	void TextBlock::SetText(const std::string& value, ValueSource source)
 	{

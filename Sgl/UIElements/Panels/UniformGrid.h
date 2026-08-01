@@ -7,8 +7,7 @@ namespace Sgl::UIElements
 	class UniformGrid : public Panel
 	{
 	public:
-		UniformGrid() = default;
-		UniformGrid(const UniformGrid&) = delete;
+		UniformGrid();
 		UniformGrid(UniformGrid&& other) noexcept;
 
 		void SetRows(uint32_t value, ValueSource source = ValueSource::Local);

@@ -59,14 +59,6 @@ namespace Sgl
 		}
 	}
 
-	void Renderable::OnCursorChanged(Cursor cursor)
-	{
-		for(auto child : GetLogicalChildren())
-		{
-			static_cast<Renderable*>(child)->SetCursor(cursor, ValueSource::Inheritance);
-		}
-	}
-
 	void Renderable::Render(RenderContext context)
 	{
 		_isDirty = false;
@@ -76,7 +68,7 @@ namespace Sgl
 	{
 		if(_visualRoot && !_isDirty)
 		{
-			_visualRoot->InvalidateRender();
+			_visualRoot->MarkDirty();
 			_isDirty = true;
 		}
 	}

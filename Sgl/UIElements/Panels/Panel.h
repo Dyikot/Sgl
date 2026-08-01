@@ -44,34 +44,37 @@ namespace Sgl
 	class Panel : public UIElement
 	{
 	public:
+		struct FirstChild;
+		struct LastChild;
+		struct NthChild;
+	public:
 		Panel();
-		Panel(const Panel&) = delete;
 		Panel(Panel&& other) noexcept;
 
 		UIElementsCollection Children;
 	protected:
 		void OnChildAdded(UIElement* child);
 		void OnChildRemoving(UIElement* child);
-		std::span<const Ref<UIElement>> GetChildren() const final;
+		std::span<const Ref<UIElement>> GetVisualChildren() const final;
 		FSize MeasureContent(FSize availableSize) override;
 		void ArrangeContent(FRect rect) override;
 
 		friend class UIElementsCollection;
 	};	
 
-	struct Panel_FirstChild
+	struct Panel::FirstChild
 	{
 		StyleableElement& operator()(StyleableElement& element) const;
 	};
 
-	struct Panel_LastChild
+	struct Panel::LastChild
 	{
 		StyleableElement& operator()(StyleableElement& element) const;
 	};
 
-	struct Panel_NthChild
+	struct Panel::NthChild
 	{
-		explicit Panel_NthChild(size_t position);
+		explicit Panel::NthChild(size_t position);
 		const size_t Index;
 		StyleableElement& operator()(StyleableElement& element) const;
 	};

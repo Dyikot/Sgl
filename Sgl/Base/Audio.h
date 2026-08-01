@@ -87,7 +87,7 @@ namespace Sgl::Audio
 	void SetMixerVolume(float volume);
 	float GetMixerVolume();
 
-	void RemuseAllTracks();
+	void ResumeAllTracks();
 	void PauseAllTracks();
 	void StopAllTracks();
 }

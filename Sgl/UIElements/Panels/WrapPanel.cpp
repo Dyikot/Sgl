@@ -2,6 +2,11 @@
 
 namespace Sgl::UIElements
 {
+	WrapPanel::WrapPanel()
+	{
+		Name = "WrapPanel";
+	}
+
 	WrapPanel::WrapPanel(WrapPanel && other) noexcept:
 		Panel(std::move(other)),
 		_verticalSpacing(other._verticalSpacing),

@@ -8,7 +8,9 @@ namespace Sgl::UIElements
 		Decorator(std::move(other)),
 		_borderWidth(other._borderWidth),
 		_borderColor(other._borderColor)
-	{}
+	{
+		Name = "Border";
+	}
 
 	void Border::SetBorderWidth(uint32_t value, ValueSource source)
 	{

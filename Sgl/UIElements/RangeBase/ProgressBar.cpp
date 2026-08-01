@@ -1,57 +1,38 @@
 #include "ProgressBar.h"
+#include "Track.h"
 
 namespace Sgl::UIElements
 {
 	ProgressBar::ProgressBar()
 	{
-		SetBackground(Colors::LightGray, ValueSource::Default);
+		Name = "ProgressBar";
+		BuildTemplate();
 	}
 
 	ProgressBar::ProgressBar(ProgressBar&& other) noexcept:
 		RangeBase(std::move(other)),
-		_progressColor(other._progressColor)
+		_track(std::move(other._track))
 	{}
 
-	void ProgressBar::SetProgressColor(Color value, ValueSource source)
+	void ProgressBar::OnValueChanged(float value)
 	{
-		if(SetProperty(ProgressColorProperty, _progressColor, value, _progressColorSource, source))
+		RangeBase::OnValueChanged(value);
+		_track->SetFillRatio(GetRelativeValue());
+	}
+
+	void ProgressBar::OnPropertyChanged(PropertyBase& property)
+	{
+		RangeBase::OnPropertyChanged(property);
+
+		if(property == OrientationProperty)
 		{
-			InvalidateRender();
+			_track->SetOrientation(GetOrientation(), ValueSource::Inheritance);
 		}
 	}
 
-	void ProgressBar::Render(RenderContext context)
+	void ProgressBar::BuildTemplate()
 	{
-		UIElement::Render(context);
-
-		auto [x, y, w, h] = GetBounds();
-
-		auto orientation = GetOrientation();
-		float relativeValue = GetRelativeValue();
-		float cornersRadius = GetCornersRadius();
-
-		FRect progress = orientation == Orientation::Horizontal
-			? FRect(x, y, w * relativeValue, h)
-			: FRect(x, y + h - h * relativeValue, w, h * relativeValue);
-
-		if(cornersRadius > 0.0f)
-		{
-			if(orientation == Orientation::Horizontal && progress.w < cornersRadius)
-			{
-				progress.y = y + cornersRadius - progress.w;
-				progress.h -= 2 * (cornersRadius - progress.w);
-			}
-			else if(orientation == Orientation::Vertical && progress.h < cornersRadius)
-			{
-				progress.x = x + cornersRadius - progress.h;
-				progress.w -= 2 * (cornersRadius - progress.h);
-			}
-
-			context.DrawRectangleFill(progress, cornersRadius, _progressColor);
-		}
-		else
-		{
-			context.DrawRectangleFill(progress, _progressColor);
-		}		
+		_track = New<Track>();
+		SetTemplate(_track);
 	}
 }

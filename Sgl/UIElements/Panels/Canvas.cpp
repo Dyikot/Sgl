@@ -58,6 +58,11 @@ namespace Sgl::UIElements
 		[](Layoutable& element) { return element.GetLayoutContext<Context>().Bottom; }
 	};
 
+	Canvas::Canvas()
+	{
+		Name = "Canvas";
+	}
+
 	void Canvas::SetLeft(const Ref<UIElement>& element, int value)
 	{
 		if(element->SetProperty(LeftProperty, element->GetLayoutContext<Context>().Left, value))

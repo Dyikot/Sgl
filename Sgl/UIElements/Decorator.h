@@ -7,6 +7,8 @@ namespace Sgl
 	class Decorator : public UIElement
 	{
 	public:
+		struct Child;
+	public:
 		Decorator() = default;
 		Decorator(Decorator&& other) noexcept;
 
@@ -19,7 +21,7 @@ namespace Sgl
 		static inline StyleableProperty ChildProperty { &SetChild, &GetChild };
 		static inline StyleableProperty PaddingProperty { &SetPadding, &GetPadding };
 	protected:
-		std::span<const Ref<UIElement>> GetChildren() const final;
+		std::span<const Ref<UIElement>> GetVisualChildren() const final;
 		FSize MeasureContent(FSize availableSize) override;
 		void ArrangeContent(FRect rect) override;
 	private:
@@ -30,7 +32,7 @@ namespace Sgl
 		ValueSource _paddingSource {};
 	};
 
-	struct Decorator_Child
+	struct Decorator::Child
 	{
 		StyleableElement& operator()(StyleableElement& element) const;
 	};

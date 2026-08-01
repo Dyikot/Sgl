@@ -2,7 +2,12 @@
 
 namespace Sgl::UIElements
 {
-	UniformGrid::UniformGrid(UniformGrid&& other) noexcept:
+    UniformGrid::UniformGrid()
+    {
+        Name = "UniformGrid";
+    }
+
+    UniformGrid::UniformGrid(UniformGrid&& other) noexcept:
         Panel(std::move(other)),
         _rows(other._rows),
         _columns(other._columns),

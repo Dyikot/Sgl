@@ -62,6 +62,11 @@ namespace Sgl::UIElements
 		[](Layoutable& element) { return element.GetLayoutContext<Context>().RowSpan; }
 	};
 
+	Grid::Grid()
+	{
+		Name = "Grid";
+	}
+
 	Grid::Grid(Grid&& other) noexcept:
 		Panel(std::move(other)),
 		_columnDefinitionsStr(std::move(other._columnDefinitionsStr)),

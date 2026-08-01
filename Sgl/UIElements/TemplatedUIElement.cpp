@@ -7,14 +7,14 @@ namespace Sgl
 		_template(std::move(_template))
 	{}
 
-	void TemplatedUIElement::SetTemplate(const Ref<UIElement>& atemplate)
+	void TemplatedUIElement::SetTemplate(const Ref<UIElement>& template_)
 	{
 		if(_template)
 		{
 			RemoveLogicalChild(_template.Get());
 		}
 
-		_template = atemplate;
+		_template = template_;
 
 		if(_template)
 		{
@@ -24,7 +24,7 @@ namespace Sgl
 		InvalidateMeasure();
 	}
 
-	std::span<const Ref<UIElement>> TemplatedUIElement::GetChildren() const
+	std::span<const Ref<UIElement>> TemplatedUIElement::GetVisualChildren() const
 	{
 		if(!_template)
 		{
@@ -51,6 +51,11 @@ namespace Sgl
 		{
 			_template->Arrange(rect);
 		}
+	}
+
+	StyleableElement& TemplatedUIElement::Template::operator()(StyleableElement& element) const
+	{
+		return static_cast<TemplatedUIElement&>(element).GetTemplate().GetValue();
 	}
 }
 

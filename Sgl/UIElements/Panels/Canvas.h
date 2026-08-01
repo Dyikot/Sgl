@@ -8,9 +8,8 @@ namespace Sgl::UIElements
 	class Canvas : public Panel
 	{
 	public:
-		Canvas() = default;
-		Canvas(const Canvas&) = delete;
-		Canvas(Canvas&&) = default;
+		Canvas();
+		Canvas(Canvas&&) noexcept = default;
 
 		static void SetLeft(const Ref<UIElement>& element, int value);
 		static int GetLeft(const Ref<UIElement>& element);

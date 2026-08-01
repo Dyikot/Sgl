@@ -139,11 +139,11 @@ Projections allow styles to target specific parts of composite elements. Instead
 A `TargetProjection` is a callable that takes a `StyleableElement&` and returns a `StyleableElement&` to style.
 
 Built-in projections:
-- `ContentUIElement_Content`
-- `Window_Content`
-- `Panel_FirstChild`
-- `Panel_LastChild`
-- `Panel_NthChild`
+- `ContentUIElement::ContentPresenter`
+- `Window::Content`
+- `Panel::FirstChild`
+- `Panel::LastChild`
+- `Panel::NthChild`
 
 ### Composed Projections
 
@@ -151,7 +151,7 @@ Projections can be chained using the `>` operator or `ComposedProjection` class.
 
 ```cpp
 Styles.Add(Selector().OfType<CustomControl>(), 
-           Panel_FirstChild() > ContentUIElement_Content());
+           Panel::FirstChild() > ContentUIElement::ContentPresenter());
 ```
 
 ## Style Collections

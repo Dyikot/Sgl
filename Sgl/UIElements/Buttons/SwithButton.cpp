@@ -6,6 +6,7 @@ namespace Sgl::UIElements
 	{
 		static ImageSource source(AssetId::SwitchButtonOff);
 
+		Name = "SwitchButon";
 		SetWidth(48, ValueSource::Default);
 		SetHeight(24, ValueSource::Default);
 		SetBackground(source, ValueSource::Default);

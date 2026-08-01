@@ -7,8 +7,7 @@ namespace Sgl::UIElements
 	class StackPanel : public Panel
 	{
 	public:
-		StackPanel() = default;
-		StackPanel(const StackPanel&) = delete;
+		StackPanel();
 		StackPanel(StackPanel&& other) noexcept;
 
 		void SetSpacing(float value, ValueSource source = ValueSource::Local);

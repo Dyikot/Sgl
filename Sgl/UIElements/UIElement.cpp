@@ -33,7 +33,7 @@ namespace Sgl
 	{
 		Ref<UIElement> hit;
 
-		for(auto& child : self->GetChildren() | std::views::reverse)
+		for(auto& child : self->GetVisualChildren() | std::views::reverse)
 		{
 			hit = HitTest(child, point);
 
@@ -65,7 +65,7 @@ namespace Sgl
 			_backgroundFragment(context, GetBounds());
 		}
 
-		for(auto& child : GetChildren())
+		for(auto& child : GetVisualChildren())
 		{
 			child->Render(context);
 		}
@@ -79,7 +79,10 @@ namespace Sgl
 
 	void UIElement::OnCursorChanged(Cursor cursor)
 	{
-		Renderable::OnCursorChanged(cursor);
+		for(auto& child : GetVisualChildren())
+		{
+			child->SetCursor(cursor, ValueSource::Inheritance);
+		}
 
 		if(IsMouseOver())
 		{
@@ -103,7 +106,7 @@ namespace Sgl
 		ApplyBindings();
 	}
 
-	std::span<const Ref<UIElement>> UIElement::GetChildren() const
+	std::span<const Ref<UIElement>> UIElement::GetVisualChildren() const
 	{
 		return {};
 	}

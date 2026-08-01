@@ -2,6 +2,11 @@
 
 namespace Sgl::UIElements
 {
+	StackPanel::StackPanel()
+	{
+		Name = "StackPanel";
+	}
+
 	StackPanel::StackPanel(StackPanel && other) noexcept :
 		Panel(std::move(other)),
 		_spacing(other._spacing),

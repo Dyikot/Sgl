@@ -7,6 +7,8 @@ namespace Sgl
 	class ContentUIElement : public UIElement
 	{
 	public:
+		struct ContentPresenter;
+	public:
 		ContentUIElement() = default;
 		ContentUIElement(ContentUIElement&& other) noexcept;
 		~ContentUIElement();
@@ -38,7 +40,7 @@ namespace Sgl
 		void OnAttachedToLogicalTree() override;
 		void InvalidateContentPresenter();
 		
-		std::span<const Ref<UIElement>> GetChildren() const final;
+		std::span<const Ref<UIElement>> GetVisualChildren() const final;
 		FSize MeasureContent(FSize availableSize) override;
 		void ArrangeContent(FRect rect) override;
 	private:
@@ -48,8 +50,8 @@ namespace Sgl
 		Ref<IDataTemplate> _contentTemplate = New<UIElementDataTemplate>();
 		Ref<UIElement> _contentPresenter;
 		Thickness _padding;
-		VerticalAlignment _verticalContentAlignment = VerticalAlignment::Top;
-		HorizontalAlignment _horizontalContentAlignment = HorizontalAlignment::Left;
+		VerticalAlignment _verticalContentAlignment = VerticalAlignment::Stretch;
+		HorizontalAlignment _horizontalContentAlignment = HorizontalAlignment::Stretch;
 		bool _isContentPresenterValid = false;
 
 		ValueSource _contentSource {};
@@ -59,7 +61,7 @@ namespace Sgl
 		ValueSource _horizontalContentAlignmentSource {};
 	};
 
-	struct ContentUIElement_Content
+	struct ContentUIElement::ContentPresenter
 	{
 		StyleableElement& operator()(StyleableElement& element) const;
 	};

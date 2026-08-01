@@ -23,8 +23,7 @@ namespace Sgl::UIElements
 	class Grid : public Panel
 	{		
 	public:
-		Grid() = default;
-		Grid(const Grid&) = delete;
+		Grid();
 		Grid(Grid&& other) noexcept;
 
 		static void SetColumn(const Ref<UIElement>& element, uint32_t value);

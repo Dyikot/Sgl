@@ -27,6 +27,6 @@ namespace Sgl
         /// <summary>
         /// Marks the visual content as dirty, indicating that a re-render is required.
         /// </summary>
-        virtual void InvalidateRender() = 0;
+        virtual void MarkDirty() = 0;
     };
 }

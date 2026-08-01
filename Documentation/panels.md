@@ -4,7 +4,7 @@ Panels are container elements in a UI framework responsible for layout managemen
 ## Panel
 `Panel` is the base class for all layout containers in the framework. All panels store their child elements in a `UIElementsCollection` accessed via the Children field. Children in a Panel are arranged on top of each other, stacked in the order they are added.
 
-Style selectors such as `Panel_NthChild`, `Panel_FirstChild`, and `Panel_LastChild` allow targeting children by position.
+Style selectors such as `Panel::NthChild`, `Panel::FirstChild`, and `Panel::LastChild` allow targeting children by position.
 
 ```c++
 auto panel = New<Panel>();

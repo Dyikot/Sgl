@@ -18,7 +18,7 @@ namespace Sgl::UIElements
 	class Image : public UIElement
 	{
 	public:
-		Image() = default;
+		Image();
 		Image(const Image&) = delete;
 		Image(Image&& other) noexcept;
 
@@ -38,7 +38,7 @@ namespace Sgl::UIElements
 	private:
 		void UpdateTexture();
 	private:
-		ImageSource _source;
+		ImageSource _source { nullptr };
 		Stretch _stretch = Stretch::Uniform;
 
 		FRect _sourceBounds {};

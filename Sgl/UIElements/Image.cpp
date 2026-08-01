@@ -2,6 +2,11 @@
 
 namespace Sgl::UIElements
 {
+	Image::Image()
+	{
+		Name = "Image";
+	}
+
 	Image::Image(Image&& other) noexcept:
 		UIElement(std::move(other)),
 		_sourceBounds(other._sourceBounds),

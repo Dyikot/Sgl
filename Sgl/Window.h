@@ -82,7 +82,8 @@ namespace Sgl
 	/// </summary>
 	class Window : public Renderable, public IVisualRoot
 	{
-	private:
+	public:
+		struct Content;
 		using WindowEventHandler = EventHandler<Window>;
 		using WindowStateEventHandler = EventHandler<Window, WindowStateChangedEventArgs>;
 		using WindowPositionChangedEventHandler = EventHandler<Window, WindowPositionChangedEventArgs>;
@@ -322,7 +323,7 @@ namespace Sgl
 		/// <summary>
 		/// Marks the window's visual content as invalid, requesting a re-render on the next frame.
 		/// </summary>
-		void InvalidateRender() final;
+		void MarkDirty() final;
 		
 		/// <summary>
 		/// Provides access to the texture factory instance.
@@ -440,7 +441,7 @@ namespace Sgl
 		friend class Application;		
 	};
 
-	struct Window_Content
+	struct Window::Content
 	{
 		StyleableElement& operator()(StyleableElement& element) const;
 	};

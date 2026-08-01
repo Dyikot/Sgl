@@ -7,10 +7,8 @@ namespace Sgl::UIElements
 	class WrapPanel : public Panel
 	{
 	public:
-		WrapPanel() = default;
-		WrapPanel(const WrapPanel&) = delete;
+		WrapPanel();
 		WrapPanel(WrapPanel&& other) noexcept;
-		~WrapPanel() = default;
 
 		void SetVerticalSpacing(float value, ValueSource source = ValueSource::Local);
 		float GetVerticalSpacing() const { return _verticalSpacing; }

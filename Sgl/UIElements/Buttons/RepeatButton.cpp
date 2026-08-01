@@ -3,6 +3,11 @@
 
 namespace Sgl::UIElements
 {
+	RepeatButton::RepeatButton()
+	{
+		Name = "RepeatButton";
+	}
+
 	RepeatButton::RepeatButton(RepeatButton&& other) noexcept:
 		Button(std::move(other)),
 		_timer(std::move(other._timer)),

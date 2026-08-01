@@ -8,7 +8,7 @@ namespace Sgl::UIElements
 	class RepeatButton : public Button
 	{
 	public:
-		RepeatButton() = default;
+		RepeatButton();
 		RepeatButton(RepeatButton&& other) noexcept;
 
 		void SetDelay(uint32_t value, ValueSource source = ValueSource::Local);

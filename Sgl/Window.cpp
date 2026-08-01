@@ -384,7 +384,7 @@ namespace Sgl
         return _content ? UIElement::HitTest(_content, point) : nullptr;
     }
 
-    void Window::InvalidateRender()
+    void Window::MarkDirty()
     {
         _isRenderValid = false;
     }
@@ -470,6 +470,8 @@ namespace Sgl
 
     void Window::Render(RenderContext context)
     {
+        Renderable::Render(context);
+
         _backgroundFragment(context, {});
 
         if(_content && _content->IsVisible())
@@ -500,8 +502,6 @@ namespace Sgl
 
     void Window::OnCursorChanged(Cursor cursor)
     {
-        Renderable::OnCursorChanged(cursor);
-
         if(!_content || !_content->IsMouseOver())
         {
             SDL_SetCursor(cursor);
@@ -626,7 +626,7 @@ namespace Sgl
         SDL_DestroyRenderer(_renderer);
     }
 
-    StyleableElement& Window_Content::operator()(StyleableElement& element) const
+    StyleableElement& Window::Content::operator()(StyleableElement& element) const
     {
         return static_cast<Window&>(element).GetContent().GetValue();
     }

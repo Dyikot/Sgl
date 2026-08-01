@@ -1,16 +1,17 @@
 #pragma once
 
 #include "RangeBase.h"
+#include "Track.h"
 
 namespace Sgl::UIElements
 {
-	class Track;
+	class RepeatButton;
 
-	class ProgressBar : public RangeBase
+	class Slider : public RangeBase
 	{
 	public:
-		ProgressBar();
-		ProgressBar(ProgressBar&& other) noexcept;
+		Slider();
+		Slider(Slider&&) noexcept = default;
 
 	protected:
 		void OnValueChanged(float value) override;
@@ -18,8 +19,7 @@ namespace Sgl::UIElements
 	private:
 		void BuildTemplate();
 	private:
+		Ref<RepeatButton> _button;
 		Ref<Track> _track;
 	};
 }
-
-

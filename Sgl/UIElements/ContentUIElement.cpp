@@ -107,7 +107,7 @@ namespace Sgl
 		_isContentPresenterValid = false;
 	}	
 
-	std::span<const Ref<UIElement>> ContentUIElement::GetChildren() const
+	std::span<const Ref<UIElement>> ContentUIElement::GetVisualChildren() const
 	{
 		if(!_contentPresenter)
 		{
@@ -154,7 +154,7 @@ namespace Sgl
 		}
 	}
 
-	StyleableElement& ContentUIElement_Content::operator()(StyleableElement& element) const
+	StyleableElement& ContentUIElement::ContentPresenter::operator()(StyleableElement& element) const
 	{
 		return static_cast<ContentUIElement&>(element).GetContentPresenter().GetValue();
 	}

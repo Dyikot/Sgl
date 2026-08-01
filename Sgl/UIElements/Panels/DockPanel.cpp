@@ -14,6 +14,11 @@ namespace Sgl::UIElements
 		[](Layoutable& element) { return element.GetLayoutContext<Dock>(); }
 	};
 
+	DockPanel::DockPanel()
+	{
+		Name = "DockPanel";
+	}
+
 	void DockPanel::SetDock(const Ref<UIElement>& element, Dock dock)
 	{
 		if(element->SetProperty(DockProperty, element->GetLayoutContext<Dock>(), dock))
