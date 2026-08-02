@@ -91,8 +91,8 @@ namespace Sgl
         }
 
         _id = SDL_GetWindowID(_sdlWindow);
-        App->AddWindow(*this);
         SetVisualRoot(this);
+        App->AddWindow(*this);
         SetBackground(Colors::White, ValueSource::Default);
     }
 
@@ -404,16 +404,6 @@ namespace Sgl
         }
     }
 
-    void Window::SetVisualRoot(IVisualRoot* value)
-    {
-        Renderable::SetVisualRoot(value);
-
-        if(_content)
-        {
-            _content->SetVisualRoot(value);
-        }
-    }
-
     void Window::MarkDirty()
     {
         _isRenderValid = false;
@@ -528,7 +518,7 @@ namespace Sgl
                 _content->Arrange(FRect(0, 0, width, height));
             }
         }
-    }    
+    }
 
     void Window::OnCursorChanged(Cursor cursor)
     {

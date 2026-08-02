@@ -239,13 +239,13 @@ namespace Sgl
 
 	void Layoutable::OnAttachedToLogicalTree()
 	{
-		Styleable::OnAttachedToLogicalTree();
+		Renderable::OnAttachedToLogicalTree();
 		InvalidateMeasure();
 	}
 
 	void Layoutable::OnDetachedFromLogicalTree()
 	{
-		Styleable::OnDetachedFromLogicalTree();
+		Renderable::OnDetachedFromLogicalTree();
 		InvalidateMeasure();
 	}
 }

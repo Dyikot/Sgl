@@ -331,12 +331,6 @@ namespace Sgl
 		void ApplyStyle() final;
 
 		/// <summary>
-		/// Sets visual root. Typically the visual root is the window.
-		/// </summary>
-		/// <param name="value"> - pointer to IVisualRoot</param>
-		void SetVisualRoot(IVisualRoot* value) final;
-
-		/// <summary>
 		/// Marks the window's visual content as invalid, requesting a re-render on the next frame.
 		/// </summary>
 		void MarkDirty() final;

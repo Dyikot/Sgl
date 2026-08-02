@@ -32,8 +32,6 @@ namespace Sgl
 		Event<MouseButtonEventHandler> MouseDown;
 		Event<MouseWheelEventHandler> MouseWheel;
 
-		void SetVisualRoot(IVisualRoot* value) final;
-
 		void SetTag(const Any& value, ValueSource source = ValueSource::Local);
 		const Any& GetTag() const { return _tag; }
 

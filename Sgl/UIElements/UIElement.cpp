@@ -17,16 +17,6 @@ namespace Sgl
 		_cornersRadiusSource(other._cornersRadiusSource)
 	{}
 
-	void UIElement::SetVisualRoot(IVisualRoot* value)
-	{
-		Renderable::SetVisualRoot(value);
-
-		for(auto& child : _children)
-		{
-			child->SetVisualRoot(value);
-		}
-	}
-
 	void UIElement::SetTag(const Any& value, ValueSource source)
 	{
 		SetProperty(TagProperty, _tag, value, _tagSource, source);

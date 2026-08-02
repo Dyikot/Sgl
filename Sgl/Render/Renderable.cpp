@@ -30,30 +30,6 @@ namespace Sgl
 		}
 	}
 
-	void Renderable::SetVisualRoot(IVisualRoot* value)
-	{
-		_visualRoot = value;
-	}
-
-	void Renderable::SetParent(IStyleHost* parent)
-	{
-		Styleable::SetParent(parent);
-
-		if(parent == nullptr)
-		{
-			SetVisualRoot(nullptr);
-			return;
-		}
-
-		if(auto renderable = dynamic_cast<Renderable*>(parent))
-		{
-			if(auto visualRoot = renderable->GetVisualRoot())
-			{
-				SetVisualRoot(visualRoot);
-			}
-		}
-	}
-
 	void Renderable::Render(RenderContext context)
 	{
 		_isDirty = false;
@@ -66,6 +42,31 @@ namespace Sgl
 			_visualRoot->MarkDirty();
 			_isDirty = true;
 		}
+	}
+
+	void Renderable::SetVisualRoot(IVisualRoot* visualRoot)
+	{
+		_visualRoot = visualRoot;
+	}
+
+	void Renderable::OnAttachedToLogicalTree()
+	{
+		Styleable::OnAttachedToLogicalTree();
+
+		if(auto renderable = dynamic_cast<Renderable*>(GetStylingParent()))
+		{
+			_visualRoot = renderable->GetVisualRoot();
+		}
+		else
+		{
+			_visualRoot = nullptr;
+		}
+	}
+
+	void Renderable::OnDetachedFromLogicalTree()
+	{
+		Styleable::OnDetachedFromLogicalTree();
+		_visualRoot = nullptr;
 	}
 
 	ResourceSetter<Renderable, const Brush&>::ResourceSetter(
