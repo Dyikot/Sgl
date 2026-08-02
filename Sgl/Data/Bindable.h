@@ -22,13 +22,13 @@ namespace Sgl
 	template<CProperty TTargetProperty, CProperty TSourceProperty, typename TConverter>
 	class ConvertibleBinding;
 
-	class BindableObject : public INotifyPropertyChanged
+	class Bindable : public INotifyPropertyChanged
 	{
 	public:
-		BindableObject() = default;
-		BindableObject(const BindableObject&) = delete;
-		BindableObject(BindableObject&& other) noexcept;
-		~BindableObject();	
+		Bindable() = default;
+		Bindable(const Bindable&) = delete;
+		Bindable(Bindable&& other) noexcept;
+		~Bindable();
 
 		void SetDataContext(const Ref<INotifyPropertyChanged>& value, ValueSource source = ValueSource::Local);
 		const Ref<INotifyPropertyChanged>& GetDataContext() const { return _dataContext; }
@@ -114,8 +114,8 @@ namespace Sgl
 
 		bool IsApplied() const noexcept { return _applied; }
 
-		virtual void Apply(BindableObject& bindableObject) = 0;
-		virtual void Clear(BindableObject& bindableObject) = 0;
+		virtual void Apply(Bindable& bindableObject) = 0;
+		virtual void Clear(Bindable& bindableObject) = 0;
 		virtual PropertyBase& GetTarget() const = 0;
 	protected:
 		bool _applied = false;
@@ -161,7 +161,7 @@ namespace Sgl
 			_mode(mode)
 		{}
 
-		void Apply(BindableObject& bindableObject) override
+		void Apply(Bindable& bindableObject) override
 		{
 			auto& dataContext = bindableObject.GetDataContext();
 
@@ -192,7 +192,7 @@ namespace Sgl
 			_applied = true;
 		}
 
-		void Clear(BindableObject& bindableObject) override
+		void Clear(Bindable& bindableObject) override
 		{
 			auto& dataContext = bindableObject.GetDataContext();
 
@@ -279,7 +279,7 @@ namespace Sgl
 			_mode(mode)
 		{}
 
-		void Apply(BindableObject& bindableObject) override
+		void Apply(Bindable& bindableObject) override
 		{
 			auto& dataContext = bindableObject.GetDataContext();
 
@@ -316,7 +316,7 @@ namespace Sgl
 			_applied = true;
 		}
 
-		void Clear(BindableObject& bindableObject) override
+		void Clear(Bindable& bindableObject) override
 		{
 			auto& dataContext = bindableObject.GetDataContext();
 

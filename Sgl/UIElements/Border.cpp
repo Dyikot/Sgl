@@ -70,7 +70,7 @@ namespace Sgl
 	{}
 
 	void ResourceSetter<UIElements::Border, Color>::Apply(
-		StyleableElement& target,
+		Styleable& target,
 		ValueSource valueSource) const
 	{
 		auto& property = static_cast<BorderColorProperty&>(GetProperty());

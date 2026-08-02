@@ -5,22 +5,22 @@
 
 namespace Sgl
 {
-	class StyleableElement;
+	class Styleable;
 
 	/// <summary>
 	/// Function type for projecting a styleable element to a target element.
 	/// Used to apply styles to a specific part of a composite element.
 	/// </summary>
-	using TargetProjection = Func<StyleableElement&, StyleableElement&>;
+	using TargetProjection = Func<Styleable&, Styleable&>;
 
 	/// <summary>
 	/// Concept that defines the requirements for a target projection function.
 	/// Must take a StyleableElement reference and return a StyleableElement reference.
 	/// </summary>
 	template<typename T>
-	concept CTargetProjection = requires (T func, StyleableElement& target)
+	concept CTargetProjection = requires (T func, Styleable& target)
 	{
-		{ func(target) } -> std::same_as<StyleableElement&>;
+		{ func(target) } -> std::same_as<Styleable&>;
 	};
 
 	/// <summary>
@@ -36,7 +36,7 @@ namespace Sgl
 			_second(std::move(second))
 		{}
 
-		StyleableElement& operator()(StyleableElement& target) const
+		Styleable& operator()(Styleable& target) const
 		{
 			return _second(_first(target));
 		}

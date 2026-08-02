@@ -48,12 +48,12 @@ namespace Sgl
             return *this;
         }
 
-        StyleableElement& SelectTarget(StyleableElement& element) const
+        Styleable& SelectTarget(Styleable& element) const
         {
             return _projection ? _projection(element) : element;
         }
     private:
-        void Apply(StyleableElement& element, ValueSource source) const
+        void Apply(Styleable& element, ValueSource source) const
         {
             auto& target = SelectTarget(element);
 
@@ -66,6 +66,6 @@ namespace Sgl
         std::vector<std::unique_ptr<Setter>> _setters;
         TargetProjection _projection;
 
-        friend class StyleableElement;
+        friend class Styleable;
     };    
 }

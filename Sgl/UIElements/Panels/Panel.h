@@ -55,7 +55,7 @@ namespace Sgl
 	protected:
 		void OnChildAdded(UIElement* child);
 		void OnChildRemoving(UIElement* child);
-		std::span<const Ref<UIElement>> GetVisualChildren() const final;
+		std::span<const Ref<UIElement>> GetChildren() const final;
 		FSize MeasureContent(FSize availableSize) override;
 		void ArrangeContent(FRect rect) override;
 
@@ -64,18 +64,18 @@ namespace Sgl
 
 	struct Panel::FirstChild
 	{
-		StyleableElement& operator()(StyleableElement& element) const;
+		Styleable& operator()(Styleable& element) const;
 	};
 
 	struct Panel::LastChild
 	{
-		StyleableElement& operator()(StyleableElement& element) const;
+		Styleable& operator()(Styleable& element) const;
 	};
 
 	struct Panel::NthChild
 	{
 		explicit Panel::NthChild(size_t position);
 		const size_t Index;
-		StyleableElement& operator()(StyleableElement& element) const;
+		Styleable& operator()(Styleable& element) const;
 	};
 }

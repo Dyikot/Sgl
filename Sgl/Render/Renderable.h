@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Styling/StyleableElement.h"
+#include "../Styling/Styleable.h"
 #include "../Input/Cursor.h"
 #include "../Base/Media/Brush.h"
 #include "IVisualRoot.h"
@@ -8,7 +8,7 @@
 
 namespace Sgl
 {
-    class Renderable : public StyleableElement
+    class Renderable : public Styleable
     {
     public:
         Renderable() = default;
@@ -54,7 +54,7 @@ namespace Sgl
     public:
         ResourceSetter(BackgroundProperty& property, ResourceKey key);
 
-        void Apply(StyleableElement& target, ValueSource valueSource) const final;
+        void Apply(Styleable& target, ValueSource valueSource) const final;
     private:
         ResourceKey _key;
     };

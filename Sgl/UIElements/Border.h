@@ -43,7 +43,7 @@ namespace Sgl
 	public:
 		ResourceSetter(BorderColorProperty& property, ResourceKey key);
 
-		void Apply(StyleableElement& target, ValueSource valueSource) const final;
+		void Apply(Styleable& target, ValueSource valueSource) const final;
 	private:
 		ResourceKey _key;
 	};

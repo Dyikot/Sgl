@@ -98,7 +98,7 @@ Matches elements using custom logic via a predicate function.
 
 ```cpp
 // Matches elements with a specific property value
-Selector().Is<Button>().Where([](StyleableElement& element)
+Selector().Is<Button>().Where([](Styleable& element)
 {
     auto& button = static_cast<Button&>(element);
     return button->GetClickMode() == ClickMode::Press;
@@ -136,7 +136,7 @@ Projections allow styles to target specific parts of composite elements. Instead
 
 ### TargetProjection
 
-A `TargetProjection` is a callable that takes a `StyleableElement&` and returns a `StyleableElement&` to style.
+A `TargetProjection` is a callable that takes a `Styleable&` and returns a `Styleable&` to style.
 
 Built-in projections:
 - `ContentUIElement::ContentPresenter`
@@ -185,12 +185,12 @@ public:
 };
 ```
 
-### StyleableElement
+### Styleable
 
-`StyleableElement` is the base class for all styleable UI elements:
+`Styleable` is the base class for all styleable UI elements:
 
 ```cpp
-class StyleableElement : public BindableObject, public IStyleHost
+class Styleable : public BindableObject, public IStyleHost
 {
 public:
     std::string Name;

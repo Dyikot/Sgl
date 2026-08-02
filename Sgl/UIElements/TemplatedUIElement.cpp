@@ -24,7 +24,7 @@ namespace Sgl
 		InvalidateMeasure();
 	}
 
-	std::span<const Ref<UIElement>> TemplatedUIElement::GetVisualChildren() const
+	std::span<const Ref<UIElement>> TemplatedUIElement::GetChildren() const
 	{
 		if(!_template)
 		{
@@ -53,7 +53,7 @@ namespace Sgl
 		}
 	}
 
-	StyleableElement& TemplatedUIElement::Template::operator()(StyleableElement& element) const
+	Styleable& TemplatedUIElement::Template::operator()(Styleable& element) const
 	{
 		return static_cast<TemplatedUIElement&>(element).GetTemplate().GetValue();
 	}

@@ -40,7 +40,7 @@ namespace Sgl
 		}
 	}
 
-	std::span<const Ref<UIElement>> Decorator::GetVisualChildren() const
+	std::span<const Ref<UIElement>> Decorator::GetChildren() const
 	{
 		if(!_child)
 		{
@@ -60,7 +60,7 @@ namespace Sgl
 		ArrangeChild(_child.Get(), rect, _padding);
 	}
 
-	StyleableElement& Decorator::Child::operator()(StyleableElement& element) const
+	Styleable& Decorator::Child::operator()(Styleable& element) const
 	{
 		return static_cast<Decorator&>(element).GetChild().GetValue();
 	}

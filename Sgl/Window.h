@@ -443,6 +443,6 @@ namespace Sgl
 
 	struct Window::Content
 	{
-		StyleableElement& operator()(StyleableElement& element) const;
+		Styleable& operator()(Styleable& element) const;
 	};
 }

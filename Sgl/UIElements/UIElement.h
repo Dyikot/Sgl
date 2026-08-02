@@ -53,7 +53,7 @@ namespace Sgl
 		void OnCursorChanged(Cursor cursor) override;
 		void OnBackgroundChanged(const Brush& background) override;
 		void OnAttachedToLogicalTree() override;
-		virtual std::span<const Ref<UIElement>> GetVisualChildren() const;
+		virtual std::span<const Ref<UIElement>> GetChildren() const;
 		virtual void OnKeyUp(KeyEventArgs e);
 		virtual void OnKeyDown(KeyEventArgs e);
 		virtual void OnMouseMove(MouseMoveEventArgs e);

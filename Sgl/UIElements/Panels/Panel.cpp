@@ -76,7 +76,7 @@ namespace Sgl
         RemoveLogicalChild(child);
     }
 
-    std::span<const Ref<UIElement>> Panel::GetVisualChildren() const
+    std::span<const Ref<UIElement>> Panel::GetChildren() const
     {
         return Children;
     }
@@ -113,12 +113,12 @@ namespace Sgl
         }
     }
 
-    StyleableElement& Panel::FirstChild::operator()(StyleableElement& element) const
+    Styleable& Panel::FirstChild::operator()(Styleable& element) const
     {
         return static_cast<Panel&>(element).Children.Front().GetValue();
     }
 
-    StyleableElement& Panel::LastChild::operator()(StyleableElement& element) const
+    Styleable& Panel::LastChild::operator()(Styleable& element) const
     {
         return static_cast<Panel&>(element).Children.Back().GetValue();
     }
@@ -127,7 +127,7 @@ namespace Sgl
         Index(std::max(1ull, position - 1ull))
     {}
 
-    StyleableElement& Panel::NthChild::operator()(StyleableElement& element) const
+    Styleable& Panel::NthChild::operator()(Styleable& element) const
     {
         return static_cast<Panel&>(element).Children.GetElementAt(Index).GetValue();
     }

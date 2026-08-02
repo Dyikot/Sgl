@@ -1,4 +1,4 @@
-#include "StyleableElement.h"
+#include "Styleable.h"
 #include "../Base/Tools/StringUtils.h"
 #include "../Base/Logging.h"
 
@@ -6,9 +6,9 @@ namespace Sgl
 {
 	struct EraseSavedStateHandler
 	{
-		StyleableElement& Source;
+		Styleable& Source;
 
-		void operator()(StyleableElement& sender, EventArgs e) const
+		void operator()(Styleable& sender, EventArgs e) const
 		{
 			std::erase_if(Source._savedStates, [&sender](const auto& action)
 			{
@@ -22,7 +22,7 @@ namespace Sgl
 		}
 	};
 
-	StyleableElement::StyleableElement()
+	Styleable::Styleable()
 	{
 		PseudoClasses.Changed += [this](PseudoClassesSet& sender, EventArgs e)
 		{
@@ -49,8 +49,8 @@ namespace Sgl
 		};
 	}
 
-	StyleableElement::StyleableElement(StyleableElement&& other) noexcept:
-		BindableObject(std::move(other)),
+	Styleable::Styleable(Styleable&& other) noexcept:
+		Bindable(std::move(other)),
 		Name(std::move(other.Name)),
 		PseudoClasses(std::move(other.PseudoClasses)),
 		Styles(std::move(other.Styles)),
@@ -61,29 +61,29 @@ namespace Sgl
 		_styles(std::move(other._styles))
 	{}
 
-	void StyleableElement::SetClasses(std::string_view classNames)
+	void Styleable::SetClasses(std::string_view classNames)
 	{
 		_classList = SplitString(classNames, ' ');
 		OnStyleClassesChanged();
 	}
 
-	void StyleableElement::SetClasses(std::vector<std::string> classList)
+	void Styleable::SetClasses(std::vector<std::string> classList)
 	{
 		_classList = std::move(classList);
 		OnStyleClassesChanged();
 	}
 
-	const std::vector<std::string>& StyleableElement::GetClasses() const
+	const std::vector<std::string>& Styleable::GetClasses() const
 	{
 		return _classList;
 	}
 
-	void StyleableElement::SetParent(IStyleHost* parent)
+	void Styleable::SetParent(IStyleHost* parent)
 	{
 		_stylingParent = parent;
 	}
 
-	void StyleableElement::ApplyStyle()
+	void Styleable::ApplyStyle()
 	{
 		for(auto style : _styles)
 		{
@@ -96,7 +96,7 @@ namespace Sgl
 		}
 	}
 
-	void StyleableElement::OnAttachedToLogicalTree()
+	void Styleable::OnAttachedToLogicalTree()
 	{
 		_isAttachedToLogicalTree = true;
 		AttachedToLogicalTree.Invoke(*this);
@@ -118,7 +118,7 @@ namespace Sgl
 		}
 	}
 
-	void StyleableElement::OnDetachedFromLogicalTree()
+	void Styleable::OnDetachedFromLogicalTree()
 	{
 		_isAttachedToLogicalTree = false;
 
@@ -136,7 +136,7 @@ namespace Sgl
 		DetachedFromLogicalTree.Invoke(*this);
 	}
 
-	void StyleableElement::OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext)
+	void Styleable::OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext)
 	{
 		for(auto child : GetLogicalChildren())
 		{
@@ -144,7 +144,7 @@ namespace Sgl
 		}
 	}
 
-	void StyleableElement::AddLogicalChild(StyleableElement* child)
+	void Styleable::AddLogicalChild(Styleable* child)
 	{
 		_logicalChildren.push_back(child);
 		child->SetParent(this);
@@ -155,7 +155,7 @@ namespace Sgl
 		}
 	}
 
-	void StyleableElement::RemoveLogicalChild(StyleableElement* child)
+	void Styleable::RemoveLogicalChild(Styleable* child)
 	{
 		std::erase(_logicalChildren, child);
 		child->SetParent(nullptr);
@@ -166,7 +166,7 @@ namespace Sgl
 		}
 	}
 
-	bool StyleableElement::FetchStyles()
+	bool Styleable::FetchStyles()
 	{
 		_styles.clear();
 		_stateStyles.clear();
@@ -190,7 +190,7 @@ namespace Sgl
 		return !_styles.empty() || !_stateStyles.empty();
 	}
 
-	void StyleableElement::FetchStylesFrom(const StyleCollection& styles)
+	void Styleable::FetchStylesFrom(const StyleCollection& styles)
 	{
 		if(styles.IsEmpty())
 		{
@@ -213,7 +213,7 @@ namespace Sgl
 		}
 	}
 
-	void StyleableElement::OnStyleClassesChanged()
+	void Styleable::OnStyleClassesChanged()
 	{
 		if(!IsAttachedToLogicalTree())
 		{
@@ -226,7 +226,7 @@ namespace Sgl
 		}
 	}
 
-	void StyleableElement::ApplyStateStyle()
+	void Styleable::ApplyStateStyle()
 	{
 		for(auto style : _matchingStateStyles)
 		{
@@ -234,7 +234,7 @@ namespace Sgl
 		}
 	}
 
-	void StyleableElement::SaveBaseState()
+	void Styleable::SaveBaseState()
 	{
 		for(auto style : _matchingStateStyles)
 		{
@@ -261,17 +261,17 @@ namespace Sgl
 		}
 	}
 
-	void StyleableElement::RestoreBaseState()
+	void Styleable::RestoreBaseState()
 	{
 		_savedStates.clear();
 	}
 
-	void StyleableElement::ClearMatchingStateStyles()
+	void Styleable::ClearMatchingStateStyles()
 	{
 		_matchingStateStyles.clear();
 	}
 
-	bool StyleableElement::MatchStateStyles()
+	bool Styleable::MatchStateStyles()
 	{
 		_matchingStateStyles.clear();
 
@@ -286,21 +286,21 @@ namespace Sgl
 		return _matchingStateStyles.size() > 0;
 	}
 
-	StyleableElement::SavedState::SavedState(Action<> restore,
-										     StyleableElement* target, 
+	Styleable::SavedState::SavedState(Action<> restore,
+										     Styleable* target, 
 										     StyleableElementEventHandler detachedHandler):
 		_restore(std::move(restore)),
 		_target(target),
 		_detachedHandler(std::move(detachedHandler))
 	{}
 
-	StyleableElement::SavedState::SavedState(SavedState&& other) noexcept:
+	Styleable::SavedState::SavedState(SavedState&& other) noexcept:
 		_restore(std::move(other._restore)),
 		_target(std::exchange(other._target, nullptr)),
 		_detachedHandler(std::move(other._detachedHandler))
 	{}
 
-	StyleableElement::SavedState::~SavedState()
+	Styleable::SavedState::~SavedState()
 	{
 		if(_restore.HasTarget())
 		{
@@ -313,12 +313,12 @@ namespace Sgl
 		}
 	}
 
-	StyleableElement* StyleableElement::SavedState::GetTarget() const noexcept
+	Styleable* Styleable::SavedState::GetTarget() const noexcept
 	{
 		return _target;
 	}
 
-	StyleableElement::SavedState& StyleableElement::SavedState::operator=(SavedState&& other) noexcept
+	Styleable::SavedState& Styleable::SavedState::operator=(SavedState&& other) noexcept
 	{
 		if(this != &other)
 		{

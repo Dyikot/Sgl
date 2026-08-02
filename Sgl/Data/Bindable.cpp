@@ -1,18 +1,18 @@
-#include "BindableObject.h"
+#include "Bindable.h"
 
 namespace Sgl
 {
-	BindableObject::BindableObject(BindableObject&& other) noexcept:
+	Bindable::Bindable(Bindable&& other) noexcept:
 		_bindings(std::move(other._bindings)),
 		_dataContext(std::move(other._dataContext))
 	{}
 
-	BindableObject::~BindableObject()
+	Bindable::~Bindable()
 	{
 		ClearBindings();
 	}
 
-	void BindableObject::SetDataContext(const Ref<INotifyPropertyChanged>& value, ValueSource source)
+	void Bindable::SetDataContext(const Ref<INotifyPropertyChanged>& value, ValueSource source)
 	{
 		if(_dataContextSource > source)
 		{
@@ -42,7 +42,7 @@ namespace Sgl
 		OnDataContextChanged(value);
 	}
 
-	void BindableObject::ClearBinding(PropertyBase& targetProperty)
+	void Bindable::ClearBinding(PropertyBase& targetProperty)
 	{
 		auto it = std::ranges::find_if(_bindings, [&targetProperty](auto& binding)
 		{
@@ -56,12 +56,12 @@ namespace Sgl
 		}
 	}
 
-	void BindableObject::OnPropertyChanged(PropertyBase& property)
+	void Bindable::OnPropertyChanged(PropertyBase& property)
 	{
 		PropertyChanged.Invoke(*this, property);
 	}
 
-	void BindableObject::ApplyBindings()
+	void Bindable::ApplyBindings()
 	{
 		for(auto& binding : _bindings)
 		{
@@ -72,7 +72,7 @@ namespace Sgl
 		}
 	}
 
-	void BindableObject::ClearBindings()
+	void Bindable::ClearBindings()
 	{
 		for(auto& binding : _bindings)
 		{

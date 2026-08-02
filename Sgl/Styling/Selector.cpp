@@ -1,5 +1,5 @@
 #include "Selector.h"
-#include "StyleableElement.h"
+#include "Styleable.h"
 
 namespace Sgl
 {
@@ -42,14 +42,14 @@ namespace Sgl
         return *this;
     }
 
-    Selector& Selector::Where(Predicate<const StyleableElement&> predicate)
+    Selector& Selector::Where(Predicate<const Styleable&> predicate)
     {
         _predicate = std::move(predicate);
         _flags |= PredicateFlag;
         return *this;
     }
 
-    bool Selector::Match(const StyleableElement& target) const
+    bool Selector::Match(const Styleable& target) const
     {
         bool result = true;
 
@@ -101,7 +101,7 @@ namespace Sgl
         return result;
     }
 
-    bool Selector::MatchState(const StyleableElement& target) const
+    bool Selector::MatchState(const Styleable& target) const
     {
         return target.PseudoClasses.Has(_pseudoClasses);
     }

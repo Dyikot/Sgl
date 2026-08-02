@@ -2,17 +2,17 @@
 
 #include "IStyleHost.h"
 #include "PseudoClass.h"
-#include "../Data/BindableObject.h"
+#include "../Data/Bindable.h"
 
 namespace Sgl
 {
-	class StyleableElement : public BindableObject, public IStyleHost
+	class Styleable : public Bindable, public IStyleHost
 	{
 	public:
-		using StyleableElementEventHandler = EventHandler<StyleableElement>;
+		using StyleableElementEventHandler = EventHandler<Styleable>;
 	public:
-		StyleableElement();
-		StyleableElement(StyleableElement&& other) noexcept;
+		Styleable();
+		Styleable(Styleable&& other) noexcept;
 
 		std::string Name;
 		StyleCollection Styles;
@@ -34,9 +34,9 @@ namespace Sgl
 		virtual void OnAttachedToLogicalTree();
 		virtual void OnDetachedFromLogicalTree();
 		void OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext) final;
-		void AddLogicalChild(StyleableElement* child);
-		void RemoveLogicalChild(StyleableElement* child);
-		const std::vector<StyleableElement*>& GetLogicalChildren() const { return _logicalChildren; }
+		void AddLogicalChild(Styleable* child);
+		void RemoveLogicalChild(Styleable* child);
+		const std::vector<Styleable*>& GetLogicalChildren() const { return _logicalChildren; }
 	private:
 		bool FetchStyles();
 		void FetchStylesFrom(const StyleCollection& styles);
@@ -51,23 +51,23 @@ namespace Sgl
 		{
 		public:
 			SavedState(Action<> restore, 
-					   StyleableElement* target, 
+					   Styleable* target, 
 					   StyleableElementEventHandler detachedHandler);
 			SavedState(const SavedState&) = delete;
 			SavedState(SavedState&& other) noexcept;
 			~SavedState();
 
-			StyleableElement* GetTarget() const noexcept;
+			Styleable* GetTarget() const noexcept;
 
 			SavedState& operator=(const SavedState&) = delete;
 			SavedState& operator=(SavedState&& other) noexcept;
 		private:
 			Action<> _restore;
-			StyleableElement* _target;
+			Styleable* _target;
 			StyleableElementEventHandler _detachedHandler;
 		};
 
-		std::vector<StyleableElement*> _logicalChildren;
+		std::vector<Styleable*> _logicalChildren;
 		std::vector<std::string> _classList;
 		std::vector<const Style*> _styles;
 		std::vector<const Style*> _stateStyles;

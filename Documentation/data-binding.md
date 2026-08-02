@@ -8,7 +8,7 @@ Data binding is a mechanism that establishes a connection between a **source** (
 
 - **Source**: The object that provides the data. In the Sgl framework, the source typically implements the `INotifyPropertyChanged` interface, which allows it to notify subscribers when its properties change.
 
-- **Target**: The object that consumes the data. Targets are usually UI elements that inherit from `BindableObject`, which provides the infrastructure for receiving and applying data bindings.
+- **Target**: The object that consumes the data. Targets are usually UI elements that inherit from `Bindable`, which provides the infrastructure for receiving and applying data bindings.
 
 ### How It Works
 
@@ -34,13 +34,13 @@ textBlock->Bind(
 
 ## Data Context
 
-The **Data Context** is the default source object for bindings. It is set on a `BindableObject` using the `SetDataContext` method and can be inherited by child elements in the UI tree.
+The **Data Context** is the default source object for bindings. It is set on a `Bindable` using the `SetDataContext` method and can be inherited by child elements in the UI tree.
 
 ### Setting Data Context
 
 ```cpp
 #include "Sgl/Base/Ref.h"
-#include "Sgl/Data/BindableObject.h"
+#include "Sgl/Data/Bindable.h"
 
 // Create a view model wrapped in a Ref
 auto viewModel = New<MyViewModel>();
@@ -65,7 +65,7 @@ parent->Children.Add(child);  // child->GetDataContext() == viewModel
 
 ```cpp
 // Get the current data context
-auto context = bindableObject->GetDataContext();
+auto context = Bindable->GetDataContext();
 
 // Cast to specific type
 auto viewModel = context.GetAs<MyViewModel>();

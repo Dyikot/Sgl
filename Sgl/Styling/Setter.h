@@ -4,7 +4,7 @@
 
 namespace Sgl
 {
-    class StyleableElement;
+    class Styleable;
 
     /// <summary>
     /// Base class for all style setters.
@@ -26,7 +26,7 @@ namespace Sgl
         /// </summary>
         /// <param name="target"> - the target element.</param>
         /// <param name="valueSource"> - the source of the value (Style, Local, etc.).</param>
-        virtual void Apply(StyleableElement& target, ValueSource valueSource) const = 0;
+        virtual void Apply(Styleable& target, ValueSource valueSource) const = 0;
     private:
         RestorableProperty& _property;
     };
@@ -50,7 +50,7 @@ namespace Sgl
             _value(value)
         {}
 
-        void Apply(StyleableElement& target, ValueSource valueSource) const
+        void Apply(Styleable& target, ValueSource valueSource) const
         {
             auto& property = static_cast<StyleableProperty<TOwner, TValue>&>(GetProperty());
             property.InvokeSetter(static_cast<TOwner&>(target), _value, valueSource);

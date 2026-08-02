@@ -4,7 +4,7 @@
 namespace Sgl
 {
 	Renderable::Renderable(Renderable&& other) noexcept:
-		StyleableElement(std::move(other)),
+		Styleable(std::move(other)),
 		_visualRoot(std::exchange(other._visualRoot, nullptr)),
 		_cursor(std::move(other._cursor)),
 		_background(std::move(other._background)),
@@ -42,7 +42,7 @@ namespace Sgl
 
 	void Renderable::SetParent(IStyleHost* parent)
 	{
-		StyleableElement::SetParent(parent);
+		Styleable::SetParent(parent);
 
 		if(parent == nullptr)
 		{
@@ -81,7 +81,7 @@ namespace Sgl
 	{}
 
 	void ResourceSetter<Renderable, const Brush&>::Apply(
-		StyleableElement& target, 
+		Styleable& target, 
 		ValueSource valueSource) const
 	{
 		auto& property = static_cast<BackgroundProperty&>(GetProperty());

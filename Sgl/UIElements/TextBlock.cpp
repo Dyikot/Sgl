@@ -278,7 +278,7 @@ namespace Sgl
 	{}
 
 	void ResourceSetter<UIElements::TextBlock, Color>::Apply(
-		StyleableElement& target,
+		Styleable& target,
 		ValueSource valueSource) const
 	{
 		auto& property = static_cast<ForegroundProperty&>(GetProperty());

@@ -533,7 +533,7 @@ namespace Sgl
 
     void Window::OnAttachedToLogicalTree()
     {
-        StyleableElement::OnAttachedToLogicalTree();
+        Styleable::OnAttachedToLogicalTree();
         ApplyBindings();
     }
 
@@ -626,7 +626,7 @@ namespace Sgl
         SDL_DestroyRenderer(_renderer);
     }
 
-    StyleableElement& Window::Content::operator()(StyleableElement& element) const
+    Styleable& Window::Content::operator()(Styleable& element) const
     {
         return static_cast<Window&>(element).GetContent().GetValue();
     }

@@ -40,7 +40,7 @@ namespace Sgl
 		void OnAttachedToLogicalTree() override;
 		void InvalidateContentPresenter();
 		
-		std::span<const Ref<UIElement>> GetVisualChildren() const final;
+		std::span<const Ref<UIElement>> GetChildren() const final;
 		FSize MeasureContent(FSize availableSize) override;
 		void ArrangeContent(FRect rect) override;
 	private:
@@ -63,6 +63,6 @@ namespace Sgl
 
 	struct ContentUIElement::ContentPresenter
 	{
-		StyleableElement& operator()(StyleableElement& element) const;
+		Styleable& operator()(Styleable& element) const;
 	};
 }
