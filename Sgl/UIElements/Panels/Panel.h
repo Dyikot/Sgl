@@ -53,9 +53,6 @@ namespace Sgl
 
 		UIElementsCollection Children;
 	protected:
-		void OnChildAdded(UIElement* child);
-		void OnChildRemoving(UIElement* child);
-		std::span<const Ref<UIElement>> GetChildren() const final;
 		FSize MeasureContent(FSize availableSize) override;
 		void ArrangeContent(FRect rect) override;
 

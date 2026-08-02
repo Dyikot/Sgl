@@ -11,27 +11,17 @@ namespace Sgl
 	{
 		if(_template)
 		{
-			RemoveLogicalChild(_template.Get());
+			RemoveChild(_template);
 		}
 
 		_template = template_;
 
 		if(_template)
 		{
-			AddLogicalChild(_template.Get());
+			AddChild(_template);
 		}
 
 		InvalidateMeasure();
-	}
-
-	std::span<const Ref<UIElement>> TemplatedUIElement::GetChildren() const
-	{
-		if(!_template)
-		{
-			return {};
-		}
-
-		return std::span(&_template, 1);
 	}
 
 	FSize TemplatedUIElement::MeasureContent(FSize availableSize)

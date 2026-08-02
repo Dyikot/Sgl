@@ -32,6 +32,8 @@ namespace Sgl
 		Event<MouseButtonEventHandler> MouseDown;
 		Event<MouseWheelEventHandler> MouseWheel;
 
+		void SetVisualRoot(IVisualRoot* value) final;
+
 		void SetTag(const Any& value, ValueSource source = ValueSource::Local);
 		const Any& GetTag() const { return _tag; }
 
@@ -50,10 +52,11 @@ namespace Sgl
 		static inline const PseudoClass OnPressed = PseudoClass::Register("pressed");
 	protected:
 		void SetParent(IStyleHost* parent) override;
-		void OnCursorChanged(Cursor cursor) override;
-		void OnBackgroundChanged(const Brush& background) override;
+		void OnCursorChanged(Cursor cursor) final;
+		void OnBackgroundChanged(const Brush& background) final;
+		void OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext) final;
 		void OnAttachedToLogicalTree() override;
-		virtual std::span<const Ref<UIElement>> GetChildren() const;
+		void OnDetachedFromLogicalTree() override;
 		virtual void OnKeyUp(KeyEventArgs e);
 		virtual void OnKeyDown(KeyEventArgs e);
 		virtual void OnMouseMove(MouseMoveEventArgs e);
@@ -62,12 +65,16 @@ namespace Sgl
 		virtual void OnMouseWheelChanged(MouseWheelEventArgs& e);
 		virtual void OnMouseEnter(MouseMoveEventArgs e);
 		virtual void OnMouseLeave(MouseMoveEventArgs e);
+		void AddChild(const Ref<UIElement>& child);
+		void RemoveChild(const Ref<UIElement>& child);
+		const std::vector<Ref<UIElement>>& GetChildren() const { return _children; }
 	private:
 		RenderFragment CreateBackgroundFragment(const Brush& background);
 		void InvalidateBackground();
 	private:
 		RenderFragment _backgroundFragment;
 		UIElement* _parent {};
+		std::vector<Ref<UIElement>> _children;
 
 		Any _tag;
 		float _cornersRadius = 0;
@@ -75,6 +82,7 @@ namespace Sgl
 		ValueSource _tagSource {};	
 		ValueSource _cornersRadiusSource {};
 
+		friend class Window;
 		friend class InputManager;
 	};
 

@@ -190,7 +190,7 @@ public:
 `Styleable` is the base class for all styleable UI elements:
 
 ```cpp
-class Styleable : public BindableObject, public IStyleHost
+class Styleable : public Bindable, public IStyleHost
 {
 public:
     std::string Name;

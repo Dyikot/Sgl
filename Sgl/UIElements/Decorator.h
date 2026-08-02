@@ -21,7 +21,6 @@ namespace Sgl
 		static inline StyleableProperty ChildProperty { &SetChild, &GetChild };
 		static inline StyleableProperty PaddingProperty { &SetPadding, &GetPadding };
 	protected:
-		std::span<const Ref<UIElement>> GetChildren() const final;
 		FSize MeasureContent(FSize availableSize) override;
 		void ArrangeContent(FRect rect) override;
 	private:

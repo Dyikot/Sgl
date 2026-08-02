@@ -365,14 +365,24 @@ namespace Sgl
 
         if(_content)
         {
-            RemoveLogicalChild(_content.Get());
+            _content->SetParent(nullptr);
+
+            if(IsAttachedToLogicalTree())
+            {
+                _content->OnDetachedFromLogicalTree();
+            }
         }
 
         if(SetProperty(ContentProperty, _content, value, _contentSource, source))
         {
             if(_content)
             {
-                AddLogicalChild(_content.Get());
+                _content->SetParent(this);
+
+                if(IsAttachedToLogicalTree())
+                {
+                    _content->OnAttachedToLogicalTree();
+                }
             }
 
             InvalidateRender();
@@ -382,6 +392,26 @@ namespace Sgl
     Ref<UIElement> Window::HitTest(FPoint point) const
     {
         return _content ? UIElement::HitTest(_content, point) : nullptr;
+    }
+
+    void Window::ApplyStyle()
+    {
+        Styleable::ApplyStyle();
+
+        if(_content)
+        {
+            _content->ApplyStyle();
+        }
+    }
+
+    void Window::SetVisualRoot(IVisualRoot* value)
+    {
+        Renderable::SetVisualRoot(value);
+
+        if(_content)
+        {
+            _content->SetVisualRoot(value);
+        }
     }
 
     void Window::MarkDirty()
@@ -531,10 +561,33 @@ namespace Sgl
         }
     }
 
+    void Window::OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext)
+    {
+        if(_content)
+        {
+            _content->SetDataContext(dataContext, ValueSource::Inheritance);
+        }
+    }
+
     void Window::OnAttachedToLogicalTree()
     {
         Styleable::OnAttachedToLogicalTree();
         ApplyBindings();
+        
+        if(_content)
+        {
+            _content->OnAttachedToLogicalTree();
+        }
+    }
+
+    void Window::OnDetachedFromLogicalTree()
+    {
+        Styleable::OnDetachedFromLogicalTree();
+
+        if(_content)
+        {
+            _content->OnDetachedFromLogicalTree();
+        }
     }
 
     void Window::OnWindowStateChanged(WindowStateChangedEventArgs e)

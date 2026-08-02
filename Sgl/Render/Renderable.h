@@ -20,7 +20,7 @@ namespace Sgl
         void SetBackground(const Brush& value, ValueSource source = ValueSource::Local);
         const Brush& GetBackground() const { return _background; }
 
-        void SetVisualRoot(IVisualRoot* value);
+        virtual void SetVisualRoot(IVisualRoot* value);
         IVisualRoot* GetVisualRoot() const { return _visualRoot; }
         
         virtual void Render(RenderContext context);

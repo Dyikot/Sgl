@@ -21,7 +21,7 @@ namespace Sgl
 	{
 		if(_contentPresenter)
 		{
-			RemoveLogicalChild(_contentPresenter.Get());
+			RemoveChild(_contentPresenter);
 		}
 	}
 
@@ -107,16 +107,6 @@ namespace Sgl
 		_isContentPresenterValid = false;
 	}	
 
-	std::span<const Ref<UIElement>> ContentUIElement::GetChildren() const
-	{
-		if(!_contentPresenter)
-		{
-			return {};
-		}
-
-		return std::span(&_contentPresenter, 1);
-	}
-
 	FSize ContentUIElement::MeasureContent(FSize availableSize)
 	{
 		UpdatePresenter();
@@ -139,7 +129,7 @@ namespace Sgl
 		{
 			if(_contentPresenter)
 			{
-				RemoveLogicalChild(_contentPresenter.Get());
+				RemoveChild(_contentPresenter);
 			}
 
 			_contentPresenter = _contentTemplate->Build(_content);
@@ -147,7 +137,7 @@ namespace Sgl
 
 			if(_contentPresenter)
 			{
-				AddLogicalChild(_contentPresenter.Get());
+				AddChild(_contentPresenter);
 				_contentPresenter->SetVerticalAlignment(_verticalContentAlignment, ValueSource::Inheritance);
 				_contentPresenter->SetHorizontalAlignment(_horizontalContentAlignment, ValueSource::Inheritance);
 			}

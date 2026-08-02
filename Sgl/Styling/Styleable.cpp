@@ -54,7 +54,6 @@ namespace Sgl
 		Name(std::move(other.Name)),
 		PseudoClasses(std::move(other.PseudoClasses)),
 		Styles(std::move(other.Styles)),
-		_logicalChildren(std::move(other._logicalChildren)),
 		_classList(std::move(other._classList)),
 		_stylingParent(std::exchange(other._stylingParent, nullptr)),
 		_isAttachedToLogicalTree(other._isAttachedToLogicalTree),
@@ -78,6 +77,11 @@ namespace Sgl
 		return _classList;
 	}
 
+	StyleCollection& Styleable::GetStyles()
+	{
+		return Styles;
+	}
+
 	void Styleable::SetParent(IStyleHost* parent)
 	{
 		_stylingParent = parent;
@@ -88,11 +92,6 @@ namespace Sgl
 		for(auto style : _styles)
 		{
 			style->Apply(*this, ValueSource::Style);
-		}
-
-		for(auto child : _logicalChildren)
-		{
-			child->ApplyStyle();
 		}
 	}
 
@@ -111,11 +110,6 @@ namespace Sgl
 				ApplyStateStyle();
 			}
 		}
-
-		for(auto child : _logicalChildren)
-		{
-			child->OnAttachedToLogicalTree();
-		}
 	}
 
 	void Styleable::OnDetachedFromLogicalTree()
@@ -128,42 +122,7 @@ namespace Sgl
 			ClearMatchingStateStyles();
 		}
 
-		for(auto child : _logicalChildren)
-		{
-			child->OnDetachedFromLogicalTree();
-		}
-
 		DetachedFromLogicalTree.Invoke(*this);
-	}
-
-	void Styleable::OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext)
-	{
-		for(auto child : GetLogicalChildren())
-		{
-			child->SetDataContext(dataContext, ValueSource::Inheritance);
-		}
-	}
-
-	void Styleable::AddLogicalChild(Styleable* child)
-	{
-		_logicalChildren.push_back(child);
-		child->SetParent(this);
-
-		if(IsAttachedToLogicalTree())
-		{
-			child->OnAttachedToLogicalTree();
-		}
-	}
-
-	void Styleable::RemoveLogicalChild(Styleable* child)
-	{
-		std::erase(_logicalChildren, child);
-		child->SetParent(nullptr);
-
-		if(IsAttachedToLogicalTree())
-		{
-			child->OnDetachedFromLogicalTree();
-		}
 	}
 
 	bool Styleable::FetchStyles()

@@ -33,11 +33,6 @@ namespace Sgl
 	void Renderable::SetVisualRoot(IVisualRoot* value)
 	{
 		_visualRoot = value;
-
-		for(auto child : GetLogicalChildren())
-		{
-			static_cast<Renderable*>(child)->SetVisualRoot(value);
-		}
 	}
 
 	void Renderable::SetParent(IStyleHost* parent)

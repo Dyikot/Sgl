@@ -9,11 +9,23 @@ namespace Sgl
 	UIElement::UIElement(UIElement&& other) noexcept:
 		Layoutable(std::move(other)),
 		_backgroundFragment(std::move(other._backgroundFragment)),
+		_parent(other._parent),
+		_children(std::move(other._children)),
 		_tag(std::move(other._tag)),
 		_cornersRadius(other._cornersRadius),
 		_tagSource(other._tagSource),
 		_cornersRadiusSource(other._cornersRadiusSource)
 	{}
+
+	void UIElement::SetVisualRoot(IVisualRoot* value)
+	{
+		Renderable::SetVisualRoot(value);
+
+		for(auto& child : _children)
+		{
+			child->SetVisualRoot(value);
+		}
+	}
 
 	void UIElement::SetTag(const Any& value, ValueSource source)
 	{
@@ -65,7 +77,7 @@ namespace Sgl
 			_backgroundFragment(context, GetBounds());
 		}
 
-		for(auto& child : GetChildren())
+		for(auto& child : _children)
 		{
 			child->Render(context);
 		}
@@ -79,7 +91,7 @@ namespace Sgl
 
 	void UIElement::OnCursorChanged(Cursor cursor)
 	{
-		for(auto& child : GetChildren())
+		for(auto& child : _children)
 		{
 			child->SetCursor(cursor, ValueSource::Inheritance);
 		}
@@ -95,6 +107,14 @@ namespace Sgl
 		InvalidateBackground();
 	}
 
+	void UIElement::OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext)
+	{
+		for(auto& child : _children)
+		{
+			child->SetDataContext(dataContext, ValueSource::Inheritance);
+		}
+	}
+
 	void UIElement::OnAttachedToLogicalTree()
 	{
 		Layoutable::OnAttachedToLogicalTree();
@@ -104,11 +124,21 @@ namespace Sgl
 		SetCursor(parent->GetCursor(), ValueSource::Inheritance);
 		
 		ApplyBindings();
+
+		for(auto& child : _children)
+		{
+			child->OnAttachedToLogicalTree();
+		}
 	}
 
-	std::span<const Ref<UIElement>> UIElement::GetChildren() const
+	void UIElement::OnDetachedFromLogicalTree()
 	{
-		return {};
+		Layoutable::OnDetachedFromLogicalTree();
+
+		for(auto& child : _children)
+		{
+			child->OnDetachedFromLogicalTree();
+		}
 	}
 
 	void UIElement::OnKeyUp(KeyEventArgs e)
@@ -193,6 +223,28 @@ namespace Sgl
 		//Logging::LogInfo("OnMouseLeave: {}", Name);
 		MouseLeave.Invoke(*this, e);
 		PseudoClasses.Reset(OnHover);
+	}
+
+	void UIElement::AddChild(const Ref<UIElement>& child)
+	{
+		_children.push_back(child);
+		child->SetParent(this);
+
+		if(IsAttachedToLogicalTree())
+		{
+			child->OnAttachedToLogicalTree();
+		}
+	}
+
+	void UIElement::RemoveChild(const Ref<UIElement>& child)
+	{
+		std::erase(_children, child);
+		child->SetParent(nullptr);
+
+		if(IsAttachedToLogicalTree())
+		{
+			child->OnDetachedFromLogicalTree();
+		}
 	}
 
 	RenderFragment UIElement::CreateBackgroundFragment(const Brush& background)

@@ -18,14 +18,14 @@ namespace Sgl
 
 		if(_child)
 		{
-			RemoveLogicalChild(_child.Get());
+			RemoveChild(_child);
 		}
 
 		if(SetProperty(ChildProperty, _child, child, _childSource, source))
 		{
 			if(_child)
 			{
-				AddLogicalChild(_child.Get());
+				AddChild(_child);
 			}
 
 			InvalidateMeasure();
@@ -38,16 +38,6 @@ namespace Sgl
 		{
 			InvalidateMeasure();
 		}
-	}
-
-	std::span<const Ref<UIElement>> Decorator::GetChildren() const
-	{
-		if(!_child)
-		{
-			return {};
-		}
-
-		return std::span(&_child, 1);
 	}
 
 	FSize Decorator::MeasureContent(FSize availableSize)

@@ -24,19 +24,15 @@ namespace Sgl
 		void SetClasses(std::vector<std::string> classList);
 		const std::vector<std::string>& GetClasses() const;
 
-		StyleCollection& GetStyles() final { return Styles; }
+		StyleCollection& GetStyles() final;
 		IStyleHost* GetStylingParent() final { return _stylingParent; }
 		bool IsAttachedToLogicalTree() const noexcept { return _isAttachedToLogicalTree; }
 
-		void ApplyStyle();
+		virtual void ApplyStyle();
 	protected:
 		virtual void SetParent(IStyleHost* parent);
 		virtual void OnAttachedToLogicalTree();
-		virtual void OnDetachedFromLogicalTree();
-		void OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext) final;
-		void AddLogicalChild(Styleable* child);
-		void RemoveLogicalChild(Styleable* child);
-		const std::vector<Styleable*>& GetLogicalChildren() const { return _logicalChildren; }
+		virtual void OnDetachedFromLogicalTree();		
 	private:
 		bool FetchStyles();
 		void FetchStylesFrom(const StyleCollection& styles);
@@ -67,7 +63,6 @@ namespace Sgl
 			StyleableElementEventHandler _detachedHandler;
 		};
 
-		std::vector<Styleable*> _logicalChildren;
 		std::vector<std::string> _classList;
 		std::vector<const Style*> _styles;
 		std::vector<const Style*> _stateStyles;

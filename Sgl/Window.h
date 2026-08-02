@@ -318,7 +318,23 @@ namespace Sgl
 		/// <returns>A reference to the current content element.</returns>
 		const Ref<UIElement>& GetContent() const noexcept { return _content; }
 
+		/// <summary>
+		/// Returns top most active element at point
+		/// </summary>
+		/// <param name="point"> - the point on element</param>
+		/// <returns>Reference of top most active element</returns>
 		Ref<UIElement> HitTest(FPoint point) const;
+
+		/// <summary>
+		/// Apply style for window and its content
+		/// </summary>
+		void ApplyStyle() final;
+
+		/// <summary>
+		/// Sets visual root. Typically the visual root is the window.
+		/// </summary>
+		/// <param name="value"> - pointer to IVisualRoot</param>
+		void SetVisualRoot(IVisualRoot* value) final;
 
 		/// <summary>
 		/// Marks the window's visual content as invalid, requesting a re-render on the next frame.
@@ -397,7 +413,9 @@ namespace Sgl
 	protected:
 		void OnCursorChanged(Cursor cursor) final;
 		void OnBackgroundChanged(const Brush& background) final;
+		void OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext) final;
 		void OnAttachedToLogicalTree() override;
+		void OnDetachedFromLogicalTree() override;
 		virtual void OnWindowStateChanged(WindowStateChangedEventArgs e);
 		virtual void OnPositionChanged(WindowPositionChangedEventArgs e);
 		virtual void OnWindowSizeChanged(WindowSizeChangedEventArgs e);

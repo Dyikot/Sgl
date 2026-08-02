@@ -29,7 +29,7 @@ namespace Sgl
     {
         for(auto& item : _items)
         {
-            _panel.OnChildRemoving(item.Get());
+            _panel.RemoveChild(item);
         }
 
         base::ClearItems();
@@ -37,20 +37,20 @@ namespace Sgl
 
     void UIElementsCollection::InsertItem(size_t index, const Ref<UIElement>& item)
     {
-        _panel.OnChildAdded(item.Get());
+        _panel.AddChild(item);
         base::InsertItem(index, item);
     }
 
     void UIElementsCollection::SetItem(size_t index, const Ref<UIElement>& item)
     {
-        _panel.OnChildAdded(item.Get());
+        _panel.AddChild(item);
         base::SetItem(index, item);
     }
 
     void UIElementsCollection::RemoveItem(size_t index)
     {
         auto& item = GetElementAt(index);
-        _panel.OnChildRemoving(item.Get());
+        _panel.RemoveChild(item);
         base::RemoveItem(index);
     }
 
@@ -66,20 +66,6 @@ namespace Sgl
         Children(*this)
     {}
 
-    void Panel::OnChildAdded(UIElement* child)
-    {
-        AddLogicalChild(child);
-    }
-
-    void Panel::OnChildRemoving(UIElement* child)
-    {
-        RemoveLogicalChild(child);
-    }
-
-    std::span<const Ref<UIElement>> Panel::GetChildren() const
-    {
-        return Children;
-    }
 
     FSize Panel::MeasureContent(FSize availableSize)
     {
