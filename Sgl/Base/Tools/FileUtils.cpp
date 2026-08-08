@@ -1,6 +1,6 @@
 #include "FileUtils.h"
 #include "../Exceptions.h"
-#include "../Threading/TaskAwaitable.h"
+#include "../Threading/TaskAwaiter.h"
 #include <fstream>
 
 namespace Sgl
@@ -15,7 +15,7 @@ namespace Sgl
 
 	Task<void> File::WriteTextAsync(const std::filesystem::path& path, const std::string& text)
 	{
-		co_return co_await TaskAwaitable([path, text] { return WriteText(path, text); }, false);
+		co_return co_await TaskAwaiter([path, text] { return WriteText(path, text); }, false);
 	}
 
 	std::string File::ReadText(const std::filesystem::path& path)
@@ -34,7 +34,7 @@ namespace Sgl
 
 	Task<std::string> File::ReadTextAsync(const std::filesystem::path& path)
 	{
-		co_return co_await TaskAwaitable([path] { return File::ReadText(path); }, true);
+		co_return co_await TaskAwaiter([path] { return File::ReadText(path); }, true);
 	}
 }
 

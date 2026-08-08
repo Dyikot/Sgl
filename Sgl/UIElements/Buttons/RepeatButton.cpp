@@ -1,5 +1,4 @@
 #include "RepeatButton.h"
-#include "../../Base/Time/DispatcherTimer.h"
 
 namespace Sgl::UIElements
 {
@@ -10,7 +9,6 @@ namespace Sgl::UIElements
 
 	RepeatButton::RepeatButton(RepeatButton&& other) noexcept:
 		Button(std::move(other)),
-		_timer(std::move(other._timer)),
 		_delay(other._delay),
 		_interval(other._interval)
 	{}

@@ -1,7 +1,9 @@
 #pragma once
 
 #include <coroutine>
-
+#include <exception>
+#include <stdexcept>
+#include <type_traits>
 #include "../Logging.h"
 
 namespace Sgl
@@ -14,81 +16,12 @@ namespace Sgl
 	class [[nodiscard]] Task
 	{
 	public:
+		struct Awaiter;
+		struct FinalAwaiter;
 		struct promise_type;
 		using CoroutineHandle = std::coroutine_handle<promise_type>;
-
-		struct Awaitable
-		{
-			CoroutineHandle Handle;
-
-			bool await_ready() const noexcept 
-			{
-				return !Handle || Handle.done();
-			}
-
-			std::coroutine_handle<> await_suspend(std::coroutine_handle<> continuation)
-			{
-				Handle.promise().Continuation = continuation;
-				return Handle;
-			}
-
-			T await_resume() const
-			{
-				if(auto exception = Handle.promise().Exception)
-				{
-					std::rethrow_exception(exception);
-				}
-
-				if constexpr(!std::is_void_v<T>)
-				{
-					return std::move(Handle.promise().Result);
-				}
-			}
-		};		
-
-		struct FinalAwaiter
-		{
-			bool await_ready() const noexcept { return false; }
-
-			std::coroutine_handle<> await_suspend(CoroutineHandle handle) noexcept
-			{
-				if(auto continuation = handle.promise().Continuation)
-				{
-					return continuation;
-				}
-
-				return std::noop_coroutine();
-			}
-
-			void await_resume() const noexcept {}
-		};
-
-		struct promise_type
-		{				
-			T Result {};
-			std::exception_ptr Exception;
-			std::coroutine_handle<> Continuation;
-
-			Task get_return_object() 
-			{
-				return Task(CoroutineHandle::from_promise(*this));
-			}
-
-			std::suspend_always initial_suspend() noexcept { return {}; }
-			FinalAwaiter final_suspend() noexcept {	return {}; }
-
-			void unhandled_exception() 
-			{
-				Exception = std::current_exception();
-			}
-
-			void return_value(T result) noexcept
-			{
-				Result = std::move(result);
-			}
-		};
 	public:
-		explicit Task(CoroutineHandle handle):
+		explicit Task(CoroutineHandle handle) noexcept:
 			_handle(handle)
 		{}
 
@@ -106,18 +39,157 @@ namespace Sgl
 			}
 		}
 
-		Awaitable operator co_await() noexcept
+		bool IsValid() const noexcept
 		{
-			return Awaitable(_handle);
+			return static_cast<bool>(_handle);
 		}
+
+		bool IsDone() const noexcept
+		{
+			return _handle && _handle.done();
+		}
+
+		bool IsFaulted() const noexcept
+		{
+			return _handle
+				&& _handle.done()
+				&& _handle.promise().Exception;
+		}
+
+		bool IsSuccessful() const noexcept
+		{
+			return _handle
+				&& _handle.done()
+				&& !_handle.promise().Exception;
+		}
+
+		std::exception_ptr GetException() const noexcept
+		{
+			return _handle ? _handle.promise().Exception : nullptr;
+		}
+
+		T Result()
+		{
+			if(!_handle)
+			{
+				throw std::runtime_error("Task is empty");
+			}
+
+			if(!_handle.done())
+			{
+				throw std::logic_error("Task is not completed");
+			}
+
+			if(auto exception = _handle.promise().Exception)
+			{
+				std::rethrow_exception(exception);
+			}
+
+			return _handle.promise().Result;
+		}
+
+		Awaiter operator co_await() noexcept
+		{
+			return Awaiter(_handle);
+		}
+
+		explicit operator bool() const noexcept
+		{
+			return IsValid();
+		}
+
+		Task& operator=(const Task&) = delete;
 
 		Task& operator=(Task&& other) noexcept
 		{
-			std::swap(_handle, other._handle);
+			if(this != &other)
+			{
+				std::swap(_handle, other._handle);
+			}
+
 			return *this;
 		}
 	private:
 		CoroutineHandle _handle;
+	};
+
+	template<typename T>
+	struct Task<T>::Awaiter
+	{
+		CoroutineHandle Handle;
+
+		bool await_ready() const noexcept
+		{
+			return !Handle || Handle.done();
+		}
+
+		std::coroutine_handle<> await_suspend(std::coroutine_handle<> continuation) noexcept
+		{
+			Handle.promise().Continuation = continuation;
+			return Handle;
+		}
+
+		T await_resume()
+		{
+			if(!Handle)
+			{
+				throw std::runtime_error("Awaited empty Task");
+			}
+
+			if(auto exception = Handle.promise().Exception)
+			{
+				std::rethrow_exception(exception);
+			}
+
+			if constexpr(!std::is_void_v<T>)
+			{
+				return std::move(Handle.promise().Result);
+			}
+		}
+	};
+
+	template<typename T>
+	struct Task<T>::FinalAwaiter
+	{
+		bool await_ready() const noexcept { return false; }
+
+		std::coroutine_handle<> await_suspend(CoroutineHandle handle) noexcept
+		{
+			if(auto continuation = handle.promise().Continuation)
+			{
+				return continuation;
+			}
+
+			return std::noop_coroutine();
+		}
+
+		void await_resume() const noexcept {}
+	};
+
+	template<typename T>
+	struct Task<T>::promise_type
+	{
+		T Result {};
+		std::exception_ptr Exception;
+		std::coroutine_handle<> Continuation;
+
+		Task get_return_object()
+		{
+			return Task(CoroutineHandle::from_promise(*this));
+		}
+
+		std::suspend_always initial_suspend() noexcept { return {}; }
+		FinalAwaiter final_suspend() noexcept { return {}; }
+
+		void unhandled_exception()
+		{
+			Exception = std::current_exception();
+		}
+
+		void return_value(T result) noexcept(std::is_nothrow_move_assignable_v<T>)
+		{
+			Result = std::move(result);
+		}
 	};
 
 	template<>
@@ -158,6 +230,10 @@ namespace Sgl
 				catch(const std::exception& e)
 				{
 					Logging::LogError("{}", e.what());
+				}
+				catch(...)
+				{
+					Logging::LogError("Unknown exception escaped from AsyncTask");
 				}
 			}
 			void return_void() noexcept {}

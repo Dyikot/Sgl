@@ -57,10 +57,6 @@ namespace Sgl
 		{
 			_visualRoot = renderable->GetVisualRoot();
 		}
-		else
-		{
-			_visualRoot = nullptr;
-		}
 	}
 
 	void Renderable::OnDetachedFromLogicalTree()

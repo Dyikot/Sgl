@@ -23,11 +23,7 @@ This automatic synchronization eliminates boilerplate code for updating UI eleme
 **Example - Basic Binding:**
 ```cpp
 // Bind a TextBlock's text to a view model property
-textBlock->Bind(
-    TextBlock::TextProperty,
-    ViewModel::TitleProperty,
-    BindingMode::OneWay
-);
+textBlock->Bind(TextBlock::TextProperty, ViewModel::TitleProperty, BindingMode::OneWay);
 ```
 
 ---
@@ -93,11 +89,7 @@ Data flows from source to target only. Changes to the source update the target, 
 **Example:**
 ```cpp
 // Binding a TextBlock to display a title
-textBlock->Bind(
-    TextBlock::TextProperty,
-    ViewModel::TitleProperty,
-    BindingMode::OneWay
-);
+textBlock->Bind(TextBlock::TextProperty, ViewModel::TitleProperty, BindingMode::OneWay);
 ```
 
 ### OneWayToSource
@@ -107,11 +99,7 @@ Data flows from target to source only. Changes to the target update the source, 
 **Example:**
 ```cpp
 // Binding a TextBox to capture user input
-textBox->Bind(
-    TextBox::TextProperty,
-    ViewModel::SearchQueryProperty,
-    BindingMode::OneWayToSource
-);
+textBox->Bind(TextBox::TextProperty, ViewModel::SearchQueryProperty, BindingMode::OneWayToSource);
 ```
 
 ### TwoWay
@@ -121,11 +109,9 @@ Data flows in both directions. Changes on either side are synchronized. Ideal fo
 **Example:**
 ```cpp
 // Binding a ToggleButton to a boolean setting
-toggleButton->Bind(
-    ToggleButton::IsCheckedProperty,
-    ViewModel::EnableNotificationsProperty,
-    BindingMode::TwoWay
-);
+toggleButton->Bind(ToggleButton::IsCheckedProperty, 
+                   ViewModel::EnableNotificationsProperty,
+                   BindingMode::TwoWay);
 ```
 
 ---
@@ -154,20 +140,16 @@ The framework provides several built-in converters in the `Converters` namespace
 #include "Sgl/Data/Converters.h"
 
 // Display an integer counter as text
-textBlock->Bind(
-    TextBlock::TextProperty,
-    ViewModel::CounterProperty,
-    Converters::IntToStringConverter(),
-    BindingMode::OneWay
-);
+textBlock->Bind(TextBlock::TextProperty,
+                ViewModel::CounterProperty,
+                Converters::IntToStringConverter(),
+                BindingMode::OneWay);
 
 // Invert a boolean value
-toggleButton->Bind(
-    ToggleButton::IsCheckedProperty,
-    ViewModel::IsDisabledProperty,
-    Converters::InverseBoolConverter(),
-    BindingMode::OneWay
-);
+toggleButton->Bind(ToggleButton::IsCheckedProperty,
+                   ViewModel::IsDisabledProperty,
+                   Converters::InverseBoolConverter(),
+                   BindingMode::OneWay);
 ```
 
 ### Custom Converters
@@ -180,17 +162,15 @@ struct ScoreToStringConverter
 {
     std::string operator()(int score) const
     {
-        return std::format("Scope: {}");
+        return std::format("Score: {}");
     }
 };
 
 // Usage
-textBlock->Bind(
-    TextBlock::TextProperty,
-    ViewModel::ScoreProperty,
-    ScoreToStringConverter(),
-    BindingMode::OneWay
-);
+textBlock->Bind(TextBlock::TextProperty,
+                ViewModel::ScoreProperty,
+                ScoreToStringConverter(),
+                BindingMode::OneWay);
 ```
 
 ### Converter with Fallback
@@ -199,12 +179,10 @@ Some converters support fallback values for invalid conversions:
 
 ```cpp
 // Use fallback value of -1 when parsing fails
-textBlock->Bind(
-    TextBlock::TextProperty,
-    ViewModel::ValueProperty,
-    Converters::IntToStringConverter(-1),
-    BindingMode::TwoWay
-);
+textBlock->Bind(TextBlock::TextProperty,
+                ViewModel::ValueProperty,
+                Converters::IntToStringConverter(-1),
+                BindingMode::TwoWay);
 ```
 
 ---
@@ -266,11 +244,9 @@ public:
         // Age label with converter
         auto ageLabel = New<TextBlock>();
         ageLabel->SetDataContext(data);
-        ageLabel->Bind(
-            TextBlock::TextProperty,
-            PersonViewModel::AgeProperty,
-            Converters::IntToStringConverter()
-        );
+        ageLabel->Bind(TextBlock::TextProperty,
+                       PersonViewModel::AgeProperty,
+                       Converters::IntToStringConverter());
 
         panel->Children.Add(nameLabel);
         panel->Children.Add(ageLabel);

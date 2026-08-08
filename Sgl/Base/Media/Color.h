@@ -103,12 +103,12 @@ namespace Sgl
 		/// </summary>
 		/// <param name="color">- the color to compare with</param>
 		/// <returns>True if RGBA components are equal, false otherwise</returns>
-		constexpr bool operator==(Color color) const
+		constexpr bool operator==(Color color) const noexcept
 		{
-			return Red == color.Red && 
-				   Green == color.Green && 
-				   Blue == color.Blue &&
-				   Alpha == color.Alpha;
+			return Red == color.Red 
+				&& Green == color.Green 
+				&& Blue == color.Blue 
+				&& Alpha == color.Alpha;
 		}
 
 		/// <summary>
@@ -121,20 +121,29 @@ namespace Sgl
 		/// </summary>
 		constexpr Color& operator=(Color&&) noexcept = default;
 
-		constexpr operator SDL_Color() const
+		/// <summary>
+		/// Convert to SDL_Color
+		/// </summary>
+		constexpr operator SDL_Color() const noexcept
 		{
 			return SDL_Color(Red, Green, Blue, Alpha);
 		}
 
-		constexpr operator SDL_FColor() const
+		/// <summary>
+		/// Convert to SDL_FColor
+		/// </summary>
+		constexpr operator SDL_FColor() const noexcept
 		{
 			return SDL_FColor(
-				static_cast<float>(Red) / 255.f, 
-				static_cast<float>(Green) / 255.f, 
-				static_cast<float>(Blue) / 255.f, 
-				static_cast<float>(Alpha) / 255.f
+				static_cast<float>(Red) * _toFloat, 
+				static_cast<float>(Green) * _toFloat, 
+				static_cast<float>(Blue) * _toFloat, 
+				static_cast<float>(Alpha) * _toFloat
 			);
 		}
+
+	private:
+		static constexpr float _toFloat = 1.0f / 255.0f;
 	};
 
 	namespace Colors

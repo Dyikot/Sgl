@@ -91,7 +91,6 @@ namespace Sgl
         }
 
         _id = SDL_GetWindowID(_sdlWindow);
-        SetVisualRoot(this);
         App->AddWindow(*this);
         SetBackground(Colors::White, ValueSource::Default);
     }
@@ -430,11 +429,11 @@ namespace Sgl
         SDL_ShowWindow(_sdlWindow);
     }
 
-    ModalWindowAwaitable Window::ShowModal(Window& owner)
+    Window::ModalAwaiter Window::ShowModal(Window& owner)
     {
         if(IsVisible())
         {
-            return ModalWindowAwaitable(*this);
+            return ModalAwaiter(*this);
         }
 
         _isModal = true;
@@ -449,7 +448,7 @@ namespace Sgl
         SetPosition(DefaultPosition);
         Show();
 
-        return ModalWindowAwaitable(*this);
+        return ModalAwaiter(*this);
     }
 
     void Window::Hide()
@@ -561,7 +560,8 @@ namespace Sgl
 
     void Window::OnAttachedToLogicalTree()
     {
-        Styleable::OnAttachedToLogicalTree();
+        Renderable::OnAttachedToLogicalTree();
+        SetVisualRoot(this);
         ApplyBindings();
         
         if(_content)
@@ -572,7 +572,7 @@ namespace Sgl
 
     void Window::OnDetachedFromLogicalTree()
     {
-        Styleable::OnDetachedFromLogicalTree();
+        Renderable::OnDetachedFromLogicalTree();
 
         if(_content)
         {
@@ -672,5 +672,41 @@ namespace Sgl
     Styleable& Window::Content::operator()(Styleable& element) const
     {
         return static_cast<Window&>(element).GetContent().GetValue();
+    }
+
+    struct WindowResumeHandler
+    {
+        std::coroutine_handle<> Handle;
+
+        void operator()(Window& sender, EventArgs e) const
+        {
+            Handle.resume();
+        }
+
+        bool operator==(const WindowResumeHandler&) const = default;
+    };
+
+    Window::ModalAwaiter::ModalAwaiter(Window& window):
+        _window(window)
+    {}
+
+    Window::ModalAwaiter::~ModalAwaiter()
+    {
+        if(_hasSuspended)
+        {
+            _window.Closed -= WindowResumeHandler(_handle);
+        }
+    }
+
+    bool Window::ModalAwaiter::await_ready()
+    {
+        return !_window.IsClosed();
+    }
+
+    void Window::ModalAwaiter::await_suspend(std::coroutine_handle<> handle)
+    {
+        _hasSuspended = true;
+        _handle = handle;
+        _window.Closed += WindowResumeHandler(handle);
     }
 }

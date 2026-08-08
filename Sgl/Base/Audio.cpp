@@ -1,6 +1,6 @@
 #include "Audio.h"
 #include "Logging.h"
-#include "Threading/TaskAwaitable.h"
+#include "Threading/TaskAwaiter.h"
 #include "../Application.h"
 
 #include <SDL3_mixer/SDL_mixer.h>
@@ -46,9 +46,9 @@ namespace Sgl::Audio
 		MIX_DestroyAudio(_audio);
 	}
 
-	Task<Audio> Audio::LoadAsync(std::string_view path, bool predecode)
+	Task<Audio> Audio::LoadAsync(std::string path, bool predecode)
 	{
-		co_return co_await TaskAwaitable([path = std::string(path), predecode]()
+		co_return co_await TaskAwaiter([path = std::move(path), predecode]()
 		{
 			return Audio(path, predecode);
 		});

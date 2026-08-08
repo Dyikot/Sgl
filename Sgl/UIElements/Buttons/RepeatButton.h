@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Button.h"
-#include "../../Base/Time/DispatcherTimer.h"
+#include "../../Base/Threading/DispatcherTimer.h"
 
 namespace Sgl::UIElements
 {

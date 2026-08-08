@@ -67,6 +67,14 @@ namespace Sgl
             _semaphore.release(_workers.size());
         }
 
+        static inline constinit size_t MaxThreads = 4;
+
+        static ThreadPoolImpl& Instance()
+        {
+            static ThreadPoolImpl threadPool(MaxThreads);
+            return threadPool;
+        }
+
         void Queue(Task task)
         {
             {
@@ -85,34 +93,26 @@ namespace Sgl
         std::counting_semaphore<> _semaphore { 0 };
     };
 
-    static constinit size_t maxThreads = 4;
-
-    static ThreadPoolImpl& GetThreadPoolImpl()
-    {
-        static ThreadPoolImpl threadPool(maxThreads);
-        return threadPool;
-    }
-
     size_t ThreadPool::GetThreadCount() noexcept
     {
-        return GetThreadPoolImpl()._workers.size();
+        return ThreadPoolImpl::Instance()._workers.size();
     }
 
     size_t ThreadPool::GetPendingTaskCount() noexcept
     {
-        auto& impl = GetThreadPoolImpl();
+        auto& impl = ThreadPoolImpl::Instance();
         std::lock_guard lock(impl._mutex);
         return impl._tasks.size();
     }
 
     void ThreadPool::QueueTask(Task task)
     {
-        GetThreadPoolImpl().Queue(std::move(task));
+        ThreadPoolImpl::Instance().Queue(std::move(task));
     }
 
     void ThreadPool::SetThreadCount(size_t threads) noexcept
     {
-        maxThreads = threads;
+        ThreadPoolImpl::Instance().MaxThreads = threads;
     }
 }
 

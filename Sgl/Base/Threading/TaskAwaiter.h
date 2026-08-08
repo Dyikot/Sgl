@@ -9,15 +9,15 @@
 namespace Sgl
 {
 	/// <summary>
-	/// Represents an awaitable object that wraps a task of type T, enabling coroutine suspension and resumption.
+	/// Represents an awaiter object that wraps a task of type T, enabling coroutine suspension and resumption.
 	/// Internally uses the ThreadPool to schedule and execute the asynchronous operation, allowing the coroutine
 	/// to yield control while awaiting completion.
 	/// </summary>
 	template<typename T>
-	class TaskAwaitable
+	class TaskAwaiter
 	{
 	public:
-		explicit TaskAwaitable(Func<T> func, bool saveContext = true):
+		explicit TaskAwaiter(Func<T> func, bool saveContext = true):
 			_func(std::move(func)),
 			_saveContext(saveContext)
 		{}
@@ -68,15 +68,15 @@ namespace Sgl
 	};
 
 	/// <summary>
-	/// Specialization of TaskAwaitable for void-returning tasks. Enables coroutine suspension and resumption 
+	/// Specialization of TaskAwaiter for void-returning tasks. Enables coroutine suspension and resumption 
 	/// for asynchronous operations that do not produce a result value. Internally uses the ThreadPool to 
 	/// schedule and execute the operation.
 	/// </summary>
 	template<>
-	class TaskAwaitable<void>
+	class TaskAwaiter<void>
 	{
 	public:
-		explicit TaskAwaitable(Action<> action, bool saveContext = true):
+		explicit TaskAwaiter(Action<> action, bool saveContext = true):
 			_action(std::move(action)),
 			_saveContext(saveContext)
 		{}
@@ -124,8 +124,8 @@ namespace Sgl
 	};
 
 	template<typename TFunc>
-	TaskAwaitable(TFunc&&) -> TaskAwaitable<std::invoke_result_t<TFunc>>;
+	TaskAwaiter(TFunc&&) -> TaskAwaiter<std::invoke_result_t<TFunc>>;
 
 	template<typename TFunc>
-	TaskAwaitable(TFunc&&, bool) -> TaskAwaitable<std::invoke_result_t<TFunc>>;
+	TaskAwaiter(TFunc&&, bool) -> TaskAwaiter<std::invoke_result_t<TFunc>>;
 }

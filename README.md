@@ -13,7 +13,7 @@ The project is currently in development.
   - Panels: `Panel`, `StackPanel`, `WrapPanel`, `DockPanel`, `Grid`, `UniformGrid`, `Canvas`
   - Basic: `Border`, `TextBlock`, `Image`
   - Buttons: `Button`, `ToggleButton`, `CheckBox`, `SwitchButton`, `RadioButton`, `RepeatButton`
-  - RangeBase: `ProgressBar`
+  - RangeBase: `ProgressBar`, `Slider`
 
 ## Roadmap
 - New UIElements

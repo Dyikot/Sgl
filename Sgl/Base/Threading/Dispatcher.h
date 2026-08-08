@@ -70,35 +70,9 @@ namespace Sgl
 		void Process();
 	private:
 		using TimePoint = std::chrono::steady_clock::time_point;		
-
-		struct DelayHandle
-		{
-			TimePoint ResumeTime;
-			std::coroutine_handle<> Handle;
-
-			bool operator>(const DelayHandle& other) const
-			{
-				return ResumeTime > other.ResumeTime;
-			}
-		};
-
-		struct StopableDelayHandle
-		{
-			TimePoint ResumeTime;
-			std::stop_token StopToken;
-			std::coroutine_handle<> Handle;
-		};
-
-		struct TimerContext
-		{
-			DispatcherTimer* Timer;
-			TimePoint TickTime;
-
-			bool operator==(const DispatcherTimer* timer) const
-			{
-				return Timer == timer;
-			}
-		};
+		struct DelayHandle;
+		struct StopableDelayHandle;
+		struct TimerContext;
 
 		std::mutex _mutex;
 		std::vector<Action<>> _tasks;
@@ -108,6 +82,35 @@ namespace Sgl
 		std::vector<TimerContext> _timerContexts;
 
 		friend class Application;
+	};
+
+	struct Dispatcher::DelayHandle
+	{
+		TimePoint ResumeTime;
+		std::coroutine_handle<> Handle;
+
+		bool operator>(const DelayHandle& other) const
+		{
+			return ResumeTime > other.ResumeTime;
+		}
+	};
+
+	struct Dispatcher::StopableDelayHandle
+	{
+		TimePoint ResumeTime;
+		std::stop_token StopToken;
+		std::coroutine_handle<> Handle;
+	};
+
+	struct Dispatcher::TimerContext
+	{
+		DispatcherTimer* Timer;
+		TimePoint TickTime;
+
+		bool operator==(const DispatcherTimer* timer) const
+		{
+			return Timer == timer;
+		}
 	};
 
 	inline Dispatcher UIThread;

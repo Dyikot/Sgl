@@ -3,8 +3,6 @@
 #include <optional>
 #include <coroutine>
 #include "Base/Event.h"
-#include "Base/Logging.h"
-#include "Base/Threading/ModalWindowAwaitable.h"
 #include "Render/Surface.h"
 #include "Input/TextEventArgs.h"
 #include "UIElements/UIElement.h"
@@ -84,6 +82,7 @@ namespace Sgl
 	{
 	public:
 		struct Content;
+		class ModalAwaiter;
 		using WindowEventHandler = EventHandler<Window>;
 		using WindowStateEventHandler = EventHandler<Window, WindowStateChangedEventArgs>;
 		using WindowPositionChangedEventHandler = EventHandler<Window, WindowPositionChangedEventArgs>;
@@ -356,8 +355,8 @@ namespace Sgl
 		/// Shows this window as a modal dialog centered over the specified owner window.
 		/// </summary>
 		/// <param name="owner"> - the parent window that owns this modal dialog</param>
-		/// <returns>WindowModalAwaitable - object that can be co_awaited</returns>
-		ModalWindowAwaitable ShowModal(Window& owner);
+		/// <returns>ModalAwaiter - object that can be co_awaited</returns>
+		ModalAwaiter ShowModal(Window& owner);
 
 		/// <summary>
 		/// Hides the window
@@ -456,5 +455,23 @@ namespace Sgl
 	struct Window::Content
 	{
 		Styleable& operator()(Styleable& element) const;
+	};
+
+	/// <summary>
+	/// An awaiter object that allows a coroutine to suspend execution until a modal window is closed.
+	/// </summary>
+	class Window::ModalAwaiter
+	{
+	public:
+		explicit ModalAwaiter(Window& window);
+		~ModalAwaiter();
+
+		bool await_ready();
+		void await_suspend(std::coroutine_handle<> handle);
+		void await_resume() {}
+	private:
+		Window& _window;
+		std::coroutine_handle<> _handle;
+		bool _hasSuspended = false;
 	};
 }

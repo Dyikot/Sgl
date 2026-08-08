@@ -1,5 +1,5 @@
 #include "DispatcherTimer.h"
-#include "../Threading/Dispatcher.h"
+#include "Dispatcher.h"
 
 namespace Sgl
 {

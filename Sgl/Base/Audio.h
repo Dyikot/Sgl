@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string_view>
+#include <string>
 #include "Time/TimeSpan.h"
 #include "Threading/Task.h"
 #include "../Base/Event.h"
@@ -19,7 +19,7 @@ namespace Sgl::Audio
 		Audio(Audio&& other) noexcept;
 		~Audio();
 
-		static Task<Audio> LoadAsync(std::string_view path, bool predecode = false);
+		static Task<Audio> LoadAsync(std::string path, bool predecode = false);
 
 		TimeSpan GetDuration() const;
 		std::string_view GetTitle() const;
