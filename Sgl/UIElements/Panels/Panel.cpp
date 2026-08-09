@@ -7,11 +7,6 @@ namespace Sgl
         _panel(panel)
     {}
 
-    UIElementsCollection::~UIElementsCollection()
-    {
-        ClearItems();
-    }
-
     Ref<UIElement> UIElementsCollection::FindByName(std::string_view name) const
     {
         for(auto& item : _items)

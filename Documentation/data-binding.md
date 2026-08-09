@@ -238,12 +238,10 @@ public:
 
         // Name label
         auto nameLabel = New<TextBlock>();
-        nameLabel->SetDataContext(data);
         nameLabel->Bind(TextBlock::TextProperty, PersonViewModel::NameProperty);
 
         // Age label with converter
         auto ageLabel = New<TextBlock>();
-        ageLabel->SetDataContext(data);
         ageLabel->Bind(TextBlock::TextProperty,
                        PersonViewModel::AgeProperty,
                        Converters::IntToStringConverter());

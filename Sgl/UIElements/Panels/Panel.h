@@ -15,7 +15,6 @@ namespace Sgl
 		explicit UIElementsCollection(Panel& panel);
 		UIElementsCollection(const UIElementsCollection&) = delete;
 		UIElementsCollection(UIElementsCollection&&) = delete;
-		~UIElementsCollection();
 
 		Ref<UIElement> FindByName(std::string_view name) const;
 

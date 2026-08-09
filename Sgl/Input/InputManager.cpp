@@ -45,4 +45,10 @@ namespace Sgl
 			_capturedElement = nullptr;
 		}
 	}
+
+	void InputManager::Reset()
+	{
+		_hoveredElement = nullptr;
+		_capturedElement = nullptr;
+	}
 }

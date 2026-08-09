@@ -49,6 +49,7 @@ namespace Sgl
 
 	Application::~Application()
 	{        
+        _inputManager.Reset();
         MainWindow = nullptr;
         MIX_DestroyMixer(_mixer);
         MIX_Quit();
