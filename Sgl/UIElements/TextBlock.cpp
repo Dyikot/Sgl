@@ -4,12 +4,17 @@
 
 namespace Sgl::UIElements
 {
-	static constexpr size_t FontFamilyFlag		= 0x01;
-	static constexpr size_t FontSizeFlag		= 0x02;
-	static constexpr size_t FontStyleFlag		= 0x04;
-	static constexpr size_t FontOutlineFlag		= 0x08;
-	static constexpr size_t FlowDirectionFlag	= 0x10;
-	static constexpr size_t TextAlignmentFlag	= 0x20;
+	static constexpr uint32_t FontFamilyFlag	= 0x01;
+	static constexpr uint32_t FontSizeFlag		= 0x02;
+	static constexpr uint32_t FontStyleFlag		= 0x04;
+	static constexpr uint32_t FontOutlineFlag	= 0x08;
+	static constexpr uint32_t FlowDirectionFlag	= 0x10;
+	static constexpr uint32_t TextAlignmentFlag	= 0x20;
+
+	TextBlock::TextBlock()
+	{
+		Name = "TextBlock";
+	}
 
 	TextBlock::TextBlock(TextBlock&& other) noexcept:
 		UIElement(std::move(other)),
@@ -23,13 +28,11 @@ namespace Sgl::UIElements
 		_textWrapping(other._textWrapping),
 		_textAlignment(other._textAlignment),
 		_padding(other._padding),
-		_textTextureBounds(other._textTextureBounds),
+		_textBounds(other._textBounds),
 		_fontImpl(std::move(other._fontImpl)),
 		_textTexture(std::move(other._textTexture)),
-		_isTextTextureValid(other._isTextTextureValid),
 		_fontFlags(other._fontFlags)
 	{
-		Name = "TextBlock";
 	}
 
 	void TextBlock::SetText(const std::string& value, ValueSource source)
@@ -131,30 +134,31 @@ namespace Sgl::UIElements
 	{
 		UIElement::Render(context);
 
-		if(!_isTextTextureValid)
-		{
-			CreateTextTexture();
-		}
-
-		if(_textTexture)
+		if(auto& textTexture = GetTextTexture(context.GetRenderer()))
 		{
 			auto [x, y, width, height] = GetBounds();
 			context.SetClip(Rect(x, y, width, height));
-			context.DrawTexture(_textTexture, &_textTextureBounds, nullptr);
+			context.DrawTexture(textTexture, &_textBounds, nullptr);
 			context.ResetClip();
 		}
 	}
 
 	void TextBlock::InvalidateTextTexture()
 	{
-		_isTextTextureValid = false;
+		_textTexture = nullptr;
+	}
+
+	void TextBlock::OnDetachedFromLogicalTree()
+	{
+		UIElement::OnDetachedFromLogicalTree();
+		InvalidateTextTexture();
 	}
 
 	FSize TextBlock::MeasureContent(FSize availableSize)
 	{
 		FSize size {};
 
-		if(_text == "")
+		if(_text.empty())
 		{
 			return size;
 		}
@@ -169,24 +173,17 @@ namespace Sgl::UIElements
 
 		auto [left, top, right, bottom] = GetPadding();
 
-		switch(_textWrapping)
+		if(_textWrapping == TextWrapping::NoWrap)
 		{
-			case Sgl::TextWrapping::NoWrap:
-			{
-				TTF_GetStringSize(_fontImpl, _text.data(), _text.length(), &width, &height);
-				break;
-			}
-
-			case Sgl::TextWrapping::Wrap:
-			{
-				int wrapWidth = availableSize.Width;
-				TTF_GetStringSizeWrapped(_fontImpl, _text.data(), _text.length(),
-										 wrapWidth, &width, &height);
-				break;
-			}
+			TTF_GetStringSize(_fontImpl, _text.data(), _text.length(), &width, &height);
+		}
+		else
+		{
+			int wrapWidth = availableSize.Width;
+			TTF_GetStringSizeWrapped(_fontImpl, _text.data(), _text.length(), wrapWidth, &width, &height);
 		}
 
-		_textTextureBounds = FRect(0, 0, width, height);
+		_textBounds = FRect(0, 0, width, height);
 		size.Width = width + left + right;
 		size.Height = height + top + bottom;
 
@@ -195,11 +192,11 @@ namespace Sgl::UIElements
 
 	void TextBlock::ArrangeContent(FRect rect)
 	{
-		_textTextureBounds.x = rect.x + _padding.Left;
-		_textTextureBounds.y = rect.y + _padding.Top;
+		_textBounds.x = rect.x + _padding.Left;
+		_textBounds.y = rect.y + _padding.Top;
 	}
 
-	void TextBlock::InvalidateFont(size_t flag)
+	void TextBlock::InvalidateFont(uint32_t flag)
 	{
 		_fontFlags |= flag;
 	}
@@ -238,33 +235,16 @@ namespace Sgl::UIElements
 		_fontFlags = 0;
 	}
 
-	void TextBlock::CreateTextTexture()
+	Texture& TextBlock::GetTextTexture(SDL_Renderer* renderer)
 	{
-		if(_text != "")
+		if(!_textTexture && !_text.empty())
 		{
-			auto renderer = GetVisualRoot()->GetRenderer();
-			switch(_textWrapping)
-			{
-				case TextWrapping::NoWrap:
-				{
-					_textTexture = Texture(renderer, FontQuality::Blended, _fontImpl, _text, _foreground);
-					break;
-				}
-
-				case TextWrapping::Wrap:
-				{
-					int wrapWidth = _textTextureBounds.w;
-					_textTexture = Texture(renderer, FontQuality::Blended, _fontImpl, _text, wrapWidth, _foreground);
-					break;
-				}
-			}
-		}
-		else
-		{
-			_textTexture = nullptr;
+			_textTexture = _textWrapping == TextWrapping::NoWrap
+				? Texture(renderer, FontQuality::Blended, _fontImpl, _text, _foreground)
+				: Texture(renderer, FontQuality::Blended, _fontImpl, _text, _textBounds.w, _foreground);
 		}
 
-		_isTextTextureValid = true;
+		return _textTexture;
 	}
 }
 

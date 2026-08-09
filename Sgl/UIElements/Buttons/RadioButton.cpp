@@ -2,53 +2,85 @@
 
 namespace Sgl::UIElements
 {
-	class RadioButtonGrouopRegistry
+	class RadioButtonGroup
 	{
 	public:
-		void Add(const std::string& groupName, RadioButton* button)
+		RadioButtonGroup() = default;
+
+		void Add(RadioButton* button)
 		{
+			_buttons.push_back(button);
+		}
+
+		void Remove(RadioButton* button)
+		{
+			std::erase(_buttons, button);
+		}
+		
+		void NotifyCheckedChanged(RadioButton* changedButton)
+		{
+			for(auto button : _buttons)
+			{
+				if(button != changedButton)
+				{
+					button->Uncheck();
+				}
+			}
+		}
+
+		bool Empty() const noexcept
+		{
+			return _buttons.empty();
+		}
+	private:
+		std::vector<RadioButton*> _buttons;
+	};
+
+	class RadioButtonGroupRegistry
+	{
+	public:
+		static RadioButtonGroupRegistry& Instance()
+		{
+			static RadioButtonGroupRegistry registry;
+			return registry;
+		}
+
+		void Add(RadioButton* button)
+		{
+			auto& groupName = button->GetGroupName();
+
 			if(groupName.empty())
 			{
 				return;
 			}
 
-			_groups[groupName].push_back(button);
+			_groups[groupName].Add(button);
 		}
 
-		void Remove(const std::string& groupName, RadioButton* button)
+		void Remove(RadioButton* button)
 		{
+			auto& groupName = button->GetGroupName();
+
 			if(auto it = _groups.find(groupName); it != _groups.end())
 			{
 				auto& group = it->second;
-				std::erase(group, button);
+				group.Remove(button);
 
-				if(group.size() == 0)
+				if(group.Empty())
 				{
 					_groups.erase(groupName);
 				}
 			}
 		}
 
-		void NotifyGroup(const std::string& groupName, RadioButton* button)
+		void NotifyCheckedChanged(RadioButton* button)
 		{
-			auto& group = _groups[groupName];
-			for(auto item : group)
-			{
-				if(item != button)
-				{
-					item->Uncheck();
-				}
-			}
+			auto& groupName = button->GetGroupName();
+			_groups[groupName].NotifyCheckedChanged(button);
 		}
 	private:
-		std::unordered_map<std::string, std::vector<RadioButton*>> _groups;
+		std::unordered_map<std::string, RadioButtonGroup> _groups;
 	};
-
-	static RadioButtonGrouopRegistry& GetRadioButtonRegistry()
-	{
-		static RadioButtonGrouopRegistry registry;
-		return registry;
-	}
 
 	RadioButton::RadioButton()
 	{
@@ -64,22 +96,22 @@ namespace Sgl::UIElements
 		_groupName(std::move(other._groupName))
 	{}
 
-	void RadioButton::SetGroupName(const std::string & value, ValueSource source)
+	void RadioButton::SetGroupName(const std::string& value, ValueSource source)
 	{
 		std::string oldValue = _groupName;
 
 		if(SetProperty(GroupNameProperty, _groupName, value, _groupNameValueSource, source))
 		{
-			auto& registry = GetRadioButtonRegistry();
+			auto& registry = RadioButtonGroupRegistry::Instance();
 
 			if(!oldValue.empty() && IsAttachedToLogicalTree())
 			{
-				registry.Remove(_groupName, this);
+				registry.Remove(this);
 			}
 
 			if(!_groupName.empty() && IsAttachedToLogicalTree())
 			{
-				registry.Add(_groupName, this);
+				registry.Add(this);
 			}
 		}
 	}
@@ -88,8 +120,7 @@ namespace Sgl::UIElements
 	{
 		if(IsChecked())
 		{
-			auto& registry = GetRadioButtonRegistry();
-			registry.NotifyGroup(_groupName, this);			
+			RadioButtonGroupRegistry::Instance().NotifyCheckedChanged(this);
 		}
 	}
 
@@ -106,16 +137,12 @@ namespace Sgl::UIElements
 	void RadioButton::OnAttachedToLogicalTree()
 	{
 		ToggleButton::OnAttachedToLogicalTree();
-
-		auto& registry = GetRadioButtonRegistry();
-		registry.Add(_groupName, this);
+		RadioButtonGroupRegistry::Instance().Add(this);
 	}
 
 	void RadioButton::OnDetachedFromLogicalTree()
 	{
 		ToggleButton::OnDetachedFromLogicalTree();
-
-		auto& registry = GetRadioButtonRegistry();
-		registry.Remove(_groupName, this);
+		RadioButtonGroupRegistry::Instance().Remove(this);
 	}
 }

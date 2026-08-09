@@ -5,13 +5,10 @@
 
 namespace Sgl::UIElements
 {
-	inline constexpr float DefaultFontSize = 14;
-
 	class TextBlock : public UIElement
 	{
 	public:
-		TextBlock() = default;
-		TextBlock(const TextBlock&) = delete;
+		TextBlock();
 		TextBlock(TextBlock&& other) noexcept;		
 
 		void SetText(const std::string& value, ValueSource source = ValueSource::Local);
@@ -58,15 +55,16 @@ namespace Sgl::UIElements
 		static inline StyleableProperty PaddingProperty { &SetPadding, &GetPadding };
 	protected:
 		void InvalidateTextTexture();
+		void OnDetachedFromLogicalTree() override;
 		FSize MeasureContent(FSize availableSize) override;
 		void ArrangeContent(FRect rect) override;
 	private:
-		void InvalidateFont(size_t flag);
+		void InvalidateFont(uint32_t flag);
 		void UpdateFont();
-		void CreateTextTexture();
+		Texture& GetTextTexture(SDL_Renderer* renderer);
 	private:
 		std::string _text;
-		float _fontSize = DefaultFontSize;
+		float _fontSize = 14;
 		int _outline = 0;
 		FontFamily _fontFamily = FontFamily::Default;
 		FlowDirection _flowDirection = FlowDirection::BottomToTop;
@@ -87,10 +85,9 @@ namespace Sgl::UIElements
 		ValueSource _textAlignmentSource {};
 		ValueSource _paddingSource {};
 
-		FRect _textTextureBounds {};
+		FRect _textBounds {};
 		TrueTypeFont _fontImpl;
 		Texture _textTexture;
-		bool _isTextTextureValid = false;
 		uint32_t _fontFlags = 1;
 	};
 }

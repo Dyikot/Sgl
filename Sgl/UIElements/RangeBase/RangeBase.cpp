@@ -16,7 +16,7 @@ namespace Sgl::UIElements
 		{
 			if(_minValue > _value)
 			{
-				SetValue(_minValue);
+				SetValue(_minValue, source);
 			}
 
 			InvalidateRender();
@@ -29,7 +29,7 @@ namespace Sgl::UIElements
 		{
 			if(_maxValue < _value)
 			{
-				SetValue(_maxValue);
+				SetValue(_maxValue, source);
 			}
 
 			InvalidateRender();

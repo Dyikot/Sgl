@@ -1,4 +1,5 @@
 #include "Slider.h"
+#include "Track.h"
 #include "../Buttons/RepeatButton.h"
 
 namespace Sgl::UIElements
@@ -8,6 +9,12 @@ namespace Sgl::UIElements
 		Name = "Slider";
 		BuildTemplate();
 	}
+
+	Slider::Slider(Slider&& other) noexcept:
+		RangeBase(std::move(other)),
+		_button(std::move(other._button)),
+		_track(std::move(other._track))
+	{}
 
 	void Slider::OnValueChanged(float value)
 	{
@@ -27,12 +34,10 @@ namespace Sgl::UIElements
 
 	void Slider::BuildTemplate()
 	{
-		// Track
 		_track = New<Track>();
 
-		// RepeatButton
 		_button = New<RepeatButton>();
-		_button->SetInterval(100);
+		_button->SetInterval(25);
 		_button->SetContent(_track);
 		_button->Click += [this](Button& sender, EventArgs e)
 		{
@@ -42,7 +47,7 @@ namespace Sgl::UIElements
 			auto bounds = GetBounds();
 			auto value = GetOrientation() == Orientation::Horizontal
 				? (GetMaxValue() - GetMinValue()) * (x - bounds.x) / bounds.w
-				: (GetMaxValue() - GetMinValue()) * (1.0 - (y - bounds.y) / bounds.h);
+				: (GetMaxValue() - GetMinValue()) * (1.0f - (y - bounds.y) / bounds.h);
 
 			SetValue(value);
 		};

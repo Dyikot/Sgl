@@ -23,6 +23,6 @@ namespace Sgl::UIElements
 		std::string _groupName;
 		ValueSource _groupNameValueSource {};
 
-		friend class RadioButtonGrouopRegistry;
+		friend class RadioButtonGroup;
 	};
 }

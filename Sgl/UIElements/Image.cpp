@@ -9,18 +9,23 @@ namespace Sgl::UIElements
 
 	Image::Image(Image&& other) noexcept:
 		UIElement(std::move(other)),
-		_sourceBounds(other._sourceBounds),
 		_source(std::move(other._source)),
-		_sourceTexture(std::move(other._sourceTexture)),
-		_stretch(other._stretch)
+		_stretch(other._stretch),
+		_sourceBounds(other._sourceBounds),
+		_sourceTexture(std::move(other._sourceTexture))
 	{}
+
+	void Image::SetSource(const std::filesystem::path& imagePath, ValueSource source)
+	{
+		SetSource(ImageSource(imagePath), source);
+	}
 
 	void Image::SetSource(const ImageSource& value, ValueSource source)
 	{
 		if(SetProperty(SourceProperty, _source, value, _sourceSource, source))
 		{
-			InvalidateImageTexture();
 			InvalidateArrange();
+			UpdateImageTexture();
 		}
 	}
 
@@ -41,16 +46,9 @@ namespace Sgl::UIElements
 			switch(_stretch)
 			{
 				case Stretch::None:
+				case Stretch::UniformToFill:
 				{
-					FRect clip = 
-					{
-						.x = 0,
-						.y = 0,
-						.w = _sourceBounds.w,
-						.h = _sourceBounds.h
-					};
-
-					context.DrawTexture(_sourceTexture, &_sourceBounds, &clip);
+					context.DrawTexture(_sourceTexture, &_sourceBounds, &_sourceClip);
 					break;
 				}
 
@@ -60,36 +58,38 @@ namespace Sgl::UIElements
 					context.DrawTexture(_sourceTexture, &_sourceBounds, nullptr);
 					break;
 				}
-
-				case Stretch::UniformToFill:
-				{
-					auto bounds = GetBounds();
-					context.DrawTexture(_sourceTexture, &bounds, &_sourceBounds);
-					break;
-				}
 			}
 		}
-
-		UIElement::Render(context);
 	}	
 
-	void Image::ArrangeCore(FRect rect)
+	void Image::OnAttachedToLogicalTree()
 	{
-		UIElement::ArrangeCore(rect);		
-		
-		if(!_isImageTextureValid)
-		{
-			UpdateTexture();
-		}
+		UIElement::OnAttachedToLogicalTree();
+		UpdateImageTexture();
+	}
 
+	void Image::OnDetachedFromLogicalTree()
+	{
+		UIElement::OnDetachedFromLogicalTree();
+		_sourceTexture = nullptr;
+	}
+
+	void Image::ArrangeContent(FRect rect)
+	{		
 		if(!_sourceTexture)
 		{
 			return;
 		}
 
-		auto sourceWidth = _sourceTexture.GetWidth();
-		auto sourceHeight = _sourceTexture.GetHeight();
-		auto [x, y, w, h] = GetBounds();
+		float sourceWidth = _sourceTexture.GetWidth();
+		float sourceHeight = _sourceTexture.GetHeight();
+		auto [x, y, w, h] = rect;
+
+		if(sourceWidth <= 0 || sourceHeight <= 0 || w <= 0 || h <= 0)
+		{
+			return;
+		}
+
 		float width = w;
 		float height = h;
 
@@ -107,6 +107,8 @@ namespace Sgl::UIElements
 					height = sourceHeight;
 				}
 
+				_sourceClip = { 0, 0, width, height };
+
 				break;
 			}
 
@@ -117,13 +119,13 @@ namespace Sgl::UIElements
 
 			case Stretch::Uniform:
 			{
-				if(height > width)
+				if(w * sourceHeight < h * sourceWidth)
 				{
-					height = sourceHeight * width / sourceWidth;
+					height = w * sourceHeight / sourceWidth;
 				}
 				else
 				{
-					width = sourceWidth * height / sourceHeight;
+					width = h * sourceWidth / sourceHeight;
 				}
 
 				break;
@@ -131,16 +133,24 @@ namespace Sgl::UIElements
 
 			case Stretch::UniformToFill:
 			{
-				if(height > width)
+				if(w * sourceHeight > h * sourceWidth)
 				{
-					height = sourceHeight;
-					width = w * height / h;
+					width = sourceWidth;
+					height = h * sourceWidth / w;
 				}
 				else
 				{
-					width = sourceWidth;
-					height = h * width / w;
+					height = sourceHeight;
+					width = w * sourceHeight / h;
 				}
+
+				_sourceClip =
+				{
+					.x = (sourceWidth - width) * 0.5f,
+					.y = (sourceHeight - height) * 0.5f,
+					.w = width,
+					.h = height
+				};
 
 				break;
 			}
@@ -148,29 +158,24 @@ namespace Sgl::UIElements
 
 		if(_stretch == Stretch::UniformToFill)
 		{
-			_sourceBounds =
-			{
-				.x = (sourceWidth - width) * 0.5f,
-				.y = (sourceHeight - height) * 0.5f,
-				.w = width,
-				.h = height
-			};
+			_sourceBounds = rect;
 		}
 		else
 		{
 			_sourceBounds =
 			{
-				.x = x + (w - width)  * 0.5f,
+				.x = x + (w - width) * 0.5f,
 				.y = y + (h - height) * 0.5f,
 				.w = width,
 				.h = height
 			};
-		}	
+		}
 	}
 
-	void Image::UpdateTexture()
+	void Image::UpdateImageTexture()
 	{
-		_sourceTexture = GetVisualRoot()->GetTextureFactory().Create(_source, false);
-		_isImageTextureValid = true;
+		_sourceTexture = IsAttachedToLogicalTree() && _source
+			? GetVisualRoot()->GetTextureFactory().Create(_source, false)
+			: nullptr;
 	}
 }

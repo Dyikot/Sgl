@@ -50,7 +50,7 @@ namespace Sgl
 
 	void UIElement::Render(RenderContext context)
 	{
-		Renderable::Render(context);
+		Layoutable::Render(context);
 
 		if(!IsVisible())
 		{
@@ -124,6 +124,8 @@ namespace Sgl
 	void UIElement::OnDetachedFromLogicalTree()
 	{
 		Layoutable::OnDetachedFromLogicalTree();
+
+		_backgroundFragment = nullptr;
 
 		for(auto& child : _children)
 		{

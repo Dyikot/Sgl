@@ -8,7 +8,7 @@ namespace Sgl::UIElements
 
 		Name = "CheckBox";
 		SetWidth(24, ValueSource::Default);
-		SetHeight(24, ValueSource::Default);		
+		SetHeight(24, ValueSource::Default);
 		SetBackground(source, ValueSource::Default);
 	}
 }

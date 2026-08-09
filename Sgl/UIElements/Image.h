@@ -19,9 +19,9 @@ namespace Sgl::UIElements
 	{
 	public:
 		Image();
-		Image(const Image&) = delete;
 		Image(Image&& other) noexcept;
 
+		void SetSource(const std::filesystem::path& imagePath, ValueSource source = ValueSource::Local);
 		void SetSource(const ImageSource& value, ValueSource source = ValueSource::Local);
 		const ImageSource& GetSource() const { return _source; }
 
@@ -33,17 +33,18 @@ namespace Sgl::UIElements
 		static inline StyleableProperty SourceProperty { &SetSource, &GetSource };
 		static inline StyleableProperty StretchProperty { &SetStretch, &GetStretch };
 	protected:
-		void ArrangeCore(FRect rect) override;
-		void InvalidateImageTexture() { _isImageTextureValid = false; }
+		void OnAttachedToLogicalTree() override;
+		void OnDetachedFromLogicalTree() override;
+		void ArrangeContent(FRect rect) override;
 	private:
-		void UpdateTexture();
+		void UpdateImageTexture();
 	private:
-		ImageSource _source { nullptr };
+		ImageSource _source;
 		Stretch _stretch = Stretch::Uniform;
 
 		FRect _sourceBounds {};
+		FRect _sourceClip {};
 		Texture _sourceTexture;
-		bool _isImageTextureValid = false;
 
 		ValueSource _sourceSource {};
 		ValueSource _stretchSource {};

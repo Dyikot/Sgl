@@ -1,6 +1,4 @@
 #include "ContentUIElement.h"
-
-#include <algorithm>
 #include "../UIElements/TextBlock.h"
 #include "../Layout/LayoutHelper.h"
 
@@ -13,24 +11,15 @@ namespace Sgl
 		_padding(std::move(other._padding)),
 		_horizontalContentAlignment(std::move(other._horizontalContentAlignment)),
 		_verticalContentAlignment(std::move(other._verticalContentAlignment)),
-		_contentPresenter(std::move(other._contentPresenter)),
-		_isContentPresenterValid(other._isContentPresenterValid)
+		_contentPresenter(std::move(other._contentPresenter))
 	{}
-
-	ContentUIElement::~ContentUIElement()
-	{
-		if(_contentPresenter)
-		{
-			RemoveChild(_contentPresenter);
-		}
-	}
 
 	void ContentUIElement::SetContent(const std::string& value)
 	{
 		if(_content.OfType<UIElements::TextBlock>())
 		{
-			auto& textBlock = _content.GetValueAs<UIElements::TextBlock>();
-			textBlock.SetText(value);
+			auto textBlock = _content.GetAs<UIElements::TextBlock>();
+			textBlock->SetText(value);
 		}
 		else
 		{
@@ -49,7 +38,7 @@ namespace Sgl
 				SetDataContext(value);
 			}
 
-			InvalidateContentPresenter();
+			UpdatePresenter();
 		}
 	}
 
@@ -57,7 +46,7 @@ namespace Sgl
 	{
 		if(SetProperty(ContentTemplateProperty, _contentTemplate, value, _contentTemplateSource, source))
 		{
-			InvalidateContentPresenter();
+			UpdatePresenter();
 		}
 	}
 
@@ -94,22 +83,9 @@ namespace Sgl
 			}
 		}
 	}
-	
-	void ContentUIElement::OnAttachedToLogicalTree()
-	{
-		UIElement::OnAttachedToLogicalTree();
-		UpdatePresenter();
-	}
-
-	void ContentUIElement::InvalidateContentPresenter()
-	{
-		InvalidateMeasure();
-		_isContentPresenterValid = false;
-	}	
 
 	FSize ContentUIElement::MeasureContent(FSize availableSize)
 	{
-		UpdatePresenter();
 		return MeasureChild(_contentPresenter.Get(), availableSize, _padding);
 	}
 
@@ -120,20 +96,14 @@ namespace Sgl
 
 	void ContentUIElement::UpdatePresenter()
 	{
-		if(_isContentPresenterValid)
+		if(_contentPresenter)
 		{
-			return;
+			RemoveChild(_contentPresenter);
 		}
 
 		if(_contentTemplate && _contentTemplate->Match(_content))
 		{
-			if(_contentPresenter)
-			{
-				RemoveChild(_contentPresenter);
-			}
-
 			_contentPresenter = _contentTemplate->Build(_content);
-			_isContentPresenterValid = true;
 
 			if(_contentPresenter)
 			{
@@ -141,6 +111,10 @@ namespace Sgl
 				_contentPresenter->SetVerticalAlignment(_verticalContentAlignment, ValueSource::Inheritance);
 				_contentPresenter->SetHorizontalAlignment(_horizontalContentAlignment, ValueSource::Inheritance);
 			}
+		}
+		else
+		{
+			_contentPresenter = nullptr;
 		}
 	}
 

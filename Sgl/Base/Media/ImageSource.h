@@ -29,6 +29,8 @@ namespace Sgl
 	class ImageSource
 	{
 	public:
+		ImageSource() = default;
+
 		/// <summary>
 		/// Constructs an ImageSource that loads data from the specified file path.
 		/// </summary>
@@ -60,6 +62,7 @@ namespace Sgl
 		ImageSource& operator=(const ImageSource& other);
 		ImageSource& operator=(ImageSource&& other) noexcept;
 		bool operator==(const ImageSource& other) const;
+		explicit operator bool() const noexcept { return static_cast<bool>(_source); }
 	private:
 		Ref<IImageSource> _source;
 

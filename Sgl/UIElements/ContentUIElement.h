@@ -11,7 +11,6 @@ namespace Sgl
 	public:
 		ContentUIElement() = default;
 		ContentUIElement(ContentUIElement&& other) noexcept;
-		~ContentUIElement();
 		
 		const Ref<UIElement>& GetContentPresenter() const { return _contentPresenter; }
 
@@ -36,10 +35,7 @@ namespace Sgl
 		static inline StyleableProperty PaddingProperty { &SetPadding, &GetPadding };
 		static inline StyleableProperty VerticalContentAlignmentProperty { &SetVerticalContentAlignment, &GetVerticalContentAlignment };
 		static inline StyleableProperty HorizontalContentAlignmentProperty { &SetHorizontalContentAlignment, &GetHorizontalContentAlignment };
-	protected:
-		void OnAttachedToLogicalTree() override;
-		void InvalidateContentPresenter();
-		
+	protected:		
 		FSize MeasureContent(FSize availableSize) override;
 		void ArrangeContent(FRect rect) override;
 	private:
@@ -51,7 +47,6 @@ namespace Sgl
 		Thickness _padding;
 		VerticalAlignment _verticalContentAlignment = VerticalAlignment::Stretch;
 		HorizontalAlignment _horizontalContentAlignment = HorizontalAlignment::Stretch;
-		bool _isContentPresenterValid = false;
 
 		ValueSource _contentSource {};
 		ValueSource _contentTemplateSource {};

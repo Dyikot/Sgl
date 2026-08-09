@@ -66,7 +66,6 @@ namespace Sgl
         Children(*this)
     {}
 
-
     FSize Panel::MeasureContent(FSize availableSize)
     {
         FSize size {};

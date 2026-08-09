@@ -1,17 +1,17 @@
 #pragma once
 
 #include "RangeBase.h"
-#include "Track.h"
 
 namespace Sgl::UIElements
 {
 	class RepeatButton;
+	class Track;
 
 	class Slider : public RangeBase
 	{
 	public:
 		Slider();
-		Slider(Slider&&) noexcept = default;
+		Slider(Slider&& other) noexcept;
 
 	protected:
 		void OnValueChanged(float value) override;

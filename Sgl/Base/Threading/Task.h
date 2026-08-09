@@ -85,7 +85,10 @@ namespace Sgl
 				std::rethrow_exception(exception);
 			}
 
-			return _handle.promise().Result;
+			if constexpr(!std::is_void_v<T>)
+			{
+				return _handle.promise().Result;
+			}
 		}
 
 		Awaiter operator co_await() noexcept
