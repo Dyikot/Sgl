@@ -178,7 +178,7 @@ namespace Sgl
 		std::vector<SDL_WindowID> _windowsIds;
 		std::vector<Window*> _windows;
 		std::vector<Window*> _activeWindows;
-		InputManager _inputManager;
+		InputManager* _inputManager = new InputManager();
 
 		bool _isRunning = false;
 		ThemeVariant _themeVariant;

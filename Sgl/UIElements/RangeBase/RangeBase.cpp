@@ -69,5 +69,13 @@ namespace Sgl::UIElements
 	{
 		ValueChanged.Invoke(*this, value);
 	}
+
+	float RangeBase::ValueAtPosition(float x, float y) const
+	{
+		auto bounds = GetBounds();
+		return _orientation == Orientation::Horizontal
+			? (_maxValue - _minValue) * (x - bounds.x) / bounds.w
+			: (_maxValue - _minValue) * (1.0f - (y - bounds.y) / bounds.h);
+	}
 }
 

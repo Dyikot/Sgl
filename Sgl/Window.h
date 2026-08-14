@@ -415,9 +415,9 @@ namespace Sgl
 		virtual void OnKeyUp(KeyEventArgs e) {}
 		virtual void OnKeyDown(KeyEventArgs e) {}
 		virtual void OnMouseMove(MouseMoveEventArgs e) {}
-		virtual void OnMouseDown(MouseButtonEventArgs e) {}
-		virtual void OnMouseUp(MouseButtonEventArgs e) {}
-		virtual void OnMouseWheelChanged(MouseWheelEventArgs e) {}
+		virtual void OnMouseDown(MouseClickEventArgs& e) {}
+		virtual void OnMouseUp(MouseClickEventArgs& e) {}
+		virtual void OnMouseWheelChanged(MouseWheelEventArgs& e) {}
 		virtual void OnTextInput(TextInputEventArgs& e) {}
 		virtual void OnTextEditing(TextEditingEventArgs& e) {}
 		virtual void OnMouseEnter() {}

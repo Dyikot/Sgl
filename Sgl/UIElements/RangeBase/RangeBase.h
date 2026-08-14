@@ -34,6 +34,7 @@ namespace Sgl::UIElements
 		static inline StyleableProperty OrientationProperty { &SetOrientation, &GetOrientation };
 	protected:
 		virtual void OnValueChanged(float value);
+		float ValueAtPosition(float x, float y) const;
 	private:
 		float _minValue = 0;
 		float _maxValue = 100;

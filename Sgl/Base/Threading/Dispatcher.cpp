@@ -41,7 +41,7 @@ namespace Sgl
 
 	void Dispatcher::AddTimer(DispatcherTimer& timer)
 	{
-		auto tickTime = Clock::now() + Ns(timer.Interval.GetNanoseconds());
+		auto tickTime = Clock::now() + Ns((timer.Delay + timer.Interval).GetNanoseconds());
 		_timerContexts.emplace_back(&timer, tickTime);
 	}
 
@@ -106,7 +106,7 @@ namespace Sgl
 		// Timers processing
 		for(auto& [timer, tickTime] : _timerContexts)
 		{
-			if(tickTime <= now)
+			if(now >= tickTime)
 			{
 				timer->Tick.Invoke(*timer);
 				tickTime = now + Ns(timer->Interval.GetNanoseconds());
@@ -117,7 +117,7 @@ namespace Sgl
 		for(auto& task : tasks)
 		{
 			task();
-		}		
+		}
 	}
 }
 

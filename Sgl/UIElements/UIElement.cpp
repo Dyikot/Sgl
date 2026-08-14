@@ -168,7 +168,7 @@ namespace Sgl
 		}
 	}
 
-	void UIElement::OnMouseDown(MouseButtonEventArgs e)
+	void UIElement::OnMouseDown(MouseClickEventArgs& e)
 	{
 		if(e.Button == MouseButton::Left)
 		{
@@ -183,7 +183,7 @@ namespace Sgl
 		}
 	}
 
-	void UIElement::OnMouseUp(MouseButtonEventArgs e)
+	void UIElement::OnMouseUp(MouseClickEventArgs& e)
 	{
 		if(e.Button == MouseButton::Left)
 		{

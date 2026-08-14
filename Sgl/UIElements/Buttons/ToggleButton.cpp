@@ -16,9 +16,9 @@ namespace Sgl::UIElements
 		}
 	}
 
-	void ToggleButton::OnClick()
+	void ToggleButton::OnClick(MouseClickEventArgs& e)
 	{
-		Button::OnClick();
+		Button::OnClick(e);
 		ToggleState();
 	}
 

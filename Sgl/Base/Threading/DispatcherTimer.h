@@ -14,11 +14,16 @@ namespace Sgl
 	public:
 		using TimeElapsedEventHandler = EventHandler<DispatcherTimer>;
 	public:
-		explicit DispatcherTimer(TimeSpan interval);
-		explicit DispatcherTimer(int64_t milliseconds);
+		explicit DispatcherTimer(TimeSpan interval, TimeSpan delay = TimeSpan::Zero);
+		explicit DispatcherTimer(int64_t intervalMilliseconds, int64_t delayMilliseconds = 0);
 		DispatcherTimer(const DispatcherTimer&) = delete;
 		DispatcherTimer(DispatcherTimer&&) = delete;
 		~DispatcherTimer();
+
+		/// <summary>
+		/// Gets the initial delay before the timer starts its first interval.
+		/// </summary>
+		const TimeSpan Delay;
 
 		/// <summary>
 		/// Gets the interval for which the timer is set.

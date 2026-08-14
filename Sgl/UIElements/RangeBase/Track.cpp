@@ -57,8 +57,7 @@ namespace Sgl::UIElements
 			contentRect.y = rect.y + height - contentRect.h;
 		}
 
-		auto progress = GetTemplate().Get();
-		progress->Arrange(contentRect);
+		TemplatedUIElement::ArrangeContent(contentRect);
 	}
 
 	void Track::BuildTemplate()

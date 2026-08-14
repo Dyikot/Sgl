@@ -12,9 +12,8 @@ namespace Sgl
 	{
 	public:
 		void HandleMouseMove(Window& window, MouseMoveEventArgs e);
-		void HandleMouseDown(Window& window, MouseButtonEventArgs e);
-		void HandleMouseUp(Window& window, MouseButtonEventArgs e);
-		void Reset();
+		void HandleMouseDown(Window& window, MouseClickEventArgs e);
+		void HandleMouseUp(Window& window, MouseClickEventArgs e);
 	private:
 		Ref<UIElement> _hoveredElement;
 		Ref<UIElement> _capturedElement;

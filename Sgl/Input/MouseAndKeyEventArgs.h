@@ -45,7 +45,7 @@ namespace Sgl
     /// <summary>
     /// Event arguments for mouse button press or release events.
     /// </summary>
-    struct MouseButtonEventArgs
+    struct MouseClickEventArgs : MouseMoveEventArgs
     {
         MouseButton Button;
         int ClicksNumber;
@@ -54,10 +54,8 @@ namespace Sgl
     /// <summary>
     /// Event arguments for mouse wheel (scroll) events, including scroll deltas and direction policy.
     /// </summary>
-    struct MouseWheelEventArgs
+    struct MouseWheelEventArgs : MouseMoveEventArgs
     {
-        float X;
-        float Y;
         int ScrolledByX;
         int ScrolledByY;
         MouseWheelDirection Direction;

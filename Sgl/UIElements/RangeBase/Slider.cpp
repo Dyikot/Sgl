@@ -37,18 +37,11 @@ namespace Sgl::UIElements
 		_track = New<Track>();
 
 		_button = New<RepeatButton>();
-		_button->SetInterval(25);
+		_button->SetInterval(25, ValueSource::Default);
 		_button->SetContent(_track);
-		_button->Click += [this](Button& sender, EventArgs e)
+		_button->Click += [this](Button& sender, MouseClickEventArgs& e)
 		{
-			float x, y;
-			SDL_GetMouseState(&x, &y);
-
-			auto bounds = GetBounds();
-			auto value = GetOrientation() == Orientation::Horizontal
-				? (GetMaxValue() - GetMinValue()) * (x - bounds.x) / bounds.w
-				: (GetMaxValue() - GetMinValue()) * (1.0f - (y - bounds.y) / bounds.h);
-
+			auto value = ValueAtPosition(e.X, e.Y);
 			SetValue(value);
 		};
 

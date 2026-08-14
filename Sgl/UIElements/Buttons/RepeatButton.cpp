@@ -29,7 +29,7 @@ namespace Sgl::UIElements
 		}
 	}
 
-	void RepeatButton::OnMouseDown(MouseButtonEventArgs e)
+	void RepeatButton::OnMouseDown(MouseClickEventArgs& e)
 	{
 		Button::OnMouseDown(e);
 
@@ -39,7 +39,7 @@ namespace Sgl::UIElements
 		}
 	}
 
-	void RepeatButton::OnMouseUp(MouseButtonEventArgs e)
+	void RepeatButton::OnMouseUp(MouseClickEventArgs& e)
 	{
 		Button::OnMouseUp(e);
 
@@ -51,10 +51,15 @@ namespace Sgl::UIElements
 
 	void RepeatButton::StartTimer()
 	{
-		_timer.emplace(_interval);
+		_timer.emplace(_interval, _delay);
 		_timer->Tick += [this](DispatcherTimer& sender, EventArgs e)
 		{
-			OnClick();
+			MouseClickEventArgs args {};
+			args.ClicksNumber = 0;
+			args.Button = MouseButton::Left;
+			SDL_GetMouseState(&args.X, &args.Y);
+
+			OnClick(args);
 		};
 
 		_timer->Start();
@@ -65,7 +70,7 @@ namespace Sgl::UIElements
 		if(_timer)
 		{
 			_timer.reset();
-		}	
+		}
 	}
 }
 

@@ -31,9 +31,9 @@ namespace Sgl::UIElements
 		SetProperty(CommandParameterProperty, _commandParameter, value, _commandParameterSource, source);
 	}
 
-	void Button::OnClick()
+	void Button::OnClick(MouseClickEventArgs& e)
 	{
-		Click.Invoke(*this);
+		Click.Invoke(*this, e);
 
 		if(_command.HasTarget())
 		{
@@ -41,23 +41,23 @@ namespace Sgl::UIElements
 		}
 	}
 
-	void Button::OnMouseDown(MouseButtonEventArgs e)
+	void Button::OnMouseDown(MouseClickEventArgs& e)
 	{
 		ContentUIElement::OnMouseDown(e);
 
 		if(e.Button == MouseButton::Left && _clickMode == ClickMode::Press)
 		{
-			OnClick();
+			OnClick(e);
 		}
 	}
 
-	void Button::OnMouseUp(MouseButtonEventArgs e)
+	void Button::OnMouseUp(MouseClickEventArgs& e)
 	{
 		ContentUIElement::OnMouseUp(e);
 
 		if(e.Button == MouseButton::Left && _clickMode == ClickMode::Release)
 		{
-			OnClick();
+			OnClick(e);
 		}
 	}
 }

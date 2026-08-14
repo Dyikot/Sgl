@@ -20,14 +20,14 @@ namespace Sgl::UIElements
 		static inline StyleableProperty DelayProperty { &SetDelay, &GetDelay };
 		static inline StyleableProperty IntervalProperty { &SetInterval, &GetInterval };
 	protected:
-		void OnMouseDown(MouseButtonEventArgs e) override;
-		void OnMouseUp(MouseButtonEventArgs e) override;		
+		void OnMouseDown(MouseClickEventArgs& e) override;
+		void OnMouseUp(MouseClickEventArgs& e) override;		
 	private:
 		void StartTimer();
 		void ResetTimer();
 	private:
 		std::optional<DispatcherTimer> _timer;
-		uint32_t _delay = 250;
+		uint32_t _delay = 300;
 		uint32_t _interval = 200;
 
 		ValueSource _delaySource {};

@@ -124,9 +124,9 @@ namespace Sgl::UIElements
 		}
 	}
 
-	void RadioButton::OnClick()
+	void RadioButton::OnClick(MouseClickEventArgs& e)
 	{
-		Button::OnClick();
+		Button::OnClick(e);
 
 		if(!IsChecked())
 		{

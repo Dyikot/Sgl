@@ -17,7 +17,7 @@ namespace Sgl
 		using UIElementEventHandler = EventHandler<UIElement>;
 		using KeyEventHandler = EventHandler<UIElement, KeyEventArgs>;
 		using MouseMoveEventHandler = EventHandler<UIElement, MouseMoveEventArgs>;
-		using MouseButtonEventHandler = EventHandler<UIElement, MouseButtonEventArgs>;
+		using MouseClickEventHandler = EventHandler<UIElement, MouseClickEventArgs&>;
 		using MouseWheelEventHandler = EventHandler<UIElement, MouseWheelEventArgs&>;
 	public:
 		UIElement() = default;
@@ -28,8 +28,8 @@ namespace Sgl
 		Event<MouseMoveEventHandler> MouseMove;
 		Event<MouseMoveEventHandler> MouseEnter;
 		Event<MouseMoveEventHandler> MouseLeave;
-		Event<MouseButtonEventHandler> MouseUp;
-		Event<MouseButtonEventHandler> MouseDown;
+		Event<MouseClickEventHandler> MouseUp;
+		Event<MouseClickEventHandler> MouseDown;
 		Event<MouseWheelEventHandler> MouseWheel;
 
 		void SetTag(const Any& value, ValueSource source = ValueSource::Local);
@@ -58,8 +58,8 @@ namespace Sgl
 		virtual void OnKeyUp(KeyEventArgs e);
 		virtual void OnKeyDown(KeyEventArgs e);
 		virtual void OnMouseMove(MouseMoveEventArgs e);
-		virtual void OnMouseDown(MouseButtonEventArgs e);
-		virtual void OnMouseUp(MouseButtonEventArgs e);
+		virtual void OnMouseDown(MouseClickEventArgs& e);
+		virtual void OnMouseUp(MouseClickEventArgs& e);
 		virtual void OnMouseWheelChanged(MouseWheelEventArgs& e);
 		virtual void OnMouseEnter(MouseMoveEventArgs e);
 		virtual void OnMouseLeave(MouseMoveEventArgs e);

@@ -3,12 +3,14 @@
 
 namespace Sgl
 {
-	DispatcherTimer::DispatcherTimer(int64_t milliseconds):
-		DispatcherTimer(TimeSpan::FromMilliseconds(milliseconds))
+	DispatcherTimer::DispatcherTimer(TimeSpan interval, TimeSpan delay):
+		Delay(delay),
+		Interval(interval)
 	{}
 
-	DispatcherTimer::DispatcherTimer(TimeSpan interval):
-		Interval(interval)
+	DispatcherTimer::DispatcherTimer(int64_t intervalMilliseconds, int64_t delayMilliseconds):
+		DispatcherTimer(TimeSpan::FromMilliseconds(intervalMilliseconds),
+						TimeSpan::FromMilliseconds(delayMilliseconds))
 	{}
 
 	DispatcherTimer::~DispatcherTimer()

@@ -19,7 +19,7 @@ namespace Sgl::UIElements
 		static inline const PseudoClass OnChecked = PseudoClass::Register("checked");
 	protected:
 		virtual void OnCheckedChanged() {}
-		void OnClick() override;
+		void OnClick(MouseClickEventArgs& e) override;
 		void ToggleState();
 		void Check();
 		void Uncheck();

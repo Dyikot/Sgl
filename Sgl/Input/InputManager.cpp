@@ -28,7 +28,7 @@ namespace Sgl
 		}
 	}
 
-	void InputManager::HandleMouseDown(Window& window, MouseButtonEventArgs e)
+	void InputManager::HandleMouseDown(Window& window, MouseClickEventArgs e)
 	{
 		if(_hoveredElement)
 		{
@@ -37,18 +37,12 @@ namespace Sgl
 		}
 	}
 
-	void InputManager::HandleMouseUp(Window& window, MouseButtonEventArgs e)
+	void InputManager::HandleMouseUp(Window& window, MouseClickEventArgs e)
 	{
 		if(_capturedElement)
 		{
 			_capturedElement->OnMouseUp(e);
 			_capturedElement = nullptr;
 		}
-	}
-
-	void InputManager::Reset()
-	{
-		_hoveredElement = nullptr;
-		_capturedElement = nullptr;
 	}
 }

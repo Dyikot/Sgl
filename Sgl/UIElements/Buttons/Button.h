@@ -21,7 +21,7 @@ namespace Sgl::UIElements
 	class Button : public ContentUIElement
 	{
 	private:
-		using ButtonEventHandler = EventHandler<Button>;
+		using ButtonEventHandler = EventHandler<Button, MouseClickEventArgs&>;
 	public:
 		Button();
 		Button(Button&& other) noexcept;
@@ -41,9 +41,9 @@ namespace Sgl::UIElements
 		static inline StyleableProperty CommandProperty { &SetCommand, &GetCommand };
 		static inline StyleableProperty CommandParameterProperty { &SetCommandParameter, &GetCommandParameter };
 	protected:
-		virtual void OnClick();
-		void OnMouseDown(MouseButtonEventArgs e) override;
-		void OnMouseUp(MouseButtonEventArgs e) override;
+		virtual void OnClick(MouseClickEventArgs& e);
+		void OnMouseDown(MouseClickEventArgs& e) override;
+		void OnMouseUp(MouseClickEventArgs& e) override;
 	private:
 		ClickMode _clickMode = ClickMode::Release;
 		Command _command;

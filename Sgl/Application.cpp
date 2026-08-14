@@ -49,7 +49,7 @@ namespace Sgl
 
 	Application::~Application()
 	{        
-        _inputManager.Reset();
+        delete _inputManager;
         MainWindow = nullptr;
         MIX_DestroyMixer(_mixer);
         MIX_Quit();
@@ -235,13 +235,9 @@ namespace Sgl
                 {
                     if(auto window = GetWindow(e.window.windowID))
                     {
-                        MouseMoveEventArgs args
-                        {
-                            .X = e.button.x,
-                            .Y = e.button.y
-                        };
+                        MouseMoveEventArgs args(e.button.x, e.button.y);
 
-                        _inputManager.HandleMouseMove(*window, args);
+                        _inputManager->HandleMouseMove(*window, args);
                         window->OnMouseMove(args);
                     }
 
@@ -252,13 +248,15 @@ namespace Sgl
                 {
                     if(auto window = _focusedWindow)
                     {
-                        MouseButtonEventArgs args =
+                        MouseClickEventArgs args =
                         {
-                            .Button = MouseButton(e.button.button),
-                            .ClicksNumber = e.button.clicks
+                            e.button.x,
+                            e.button.y,
+                            MouseButton(e.button.button),
+                            e.button.clicks
                         };
 
-                        _inputManager.HandleMouseDown(*window, args);
+                        _inputManager->HandleMouseDown(*window, args);
                         window->OnMouseDown(args);
                     }
 
@@ -269,13 +267,15 @@ namespace Sgl
                 {
                     if(auto window = _focusedWindow)
                     {
-                        MouseButtonEventArgs args =
+                        MouseClickEventArgs args =
                         {
-                            .Button = MouseButton(e.button.button),
-                            .ClicksNumber = e.button.clicks
+                            e.button.x,
+                            e.button.y,
+                            MouseButton(e.button.button),
+                            e.button.clicks
                         };
 
-                        _inputManager.HandleMouseUp(*window, args);
+                        _inputManager->HandleMouseUp(*window, args);
                         window->OnMouseUp(args);
                     }
 
@@ -288,11 +288,11 @@ namespace Sgl
                     {
                         MouseWheelEventArgs args =
                         {
-                            .X = e.wheel.mouse_x,
-                            .Y = e.wheel.mouse_y,
-                            .ScrolledByX = e.wheel.integer_x,
-                            .ScrolledByY = e.wheel.integer_y,
-                            .Direction = MouseWheelDirection(e.wheel.direction)
+                            e.wheel.mouse_x,
+                            e.wheel.mouse_y,
+                            e.wheel.integer_x,
+                            e.wheel.integer_y,
+                            MouseWheelDirection(e.wheel.direction)
                         };
 
                         window->OnMouseWheelChanged(args);
@@ -307,12 +307,7 @@ namespace Sgl
                     {
                         KeyModifier modifier = e.key.mod & ~SDL_KMOD_NUM;
                         KeyCode key = SDL_GetKeyFromScancode(e.key.scancode, modifier, false);
-
-                        KeyEventArgs args =
-                        {
-                            .Key = key,
-                            .Modifier = modifier
-                        };
+                        KeyEventArgs args(key, modifier);
 
                         window->OnKeyDown(args);
                     }
@@ -326,12 +321,7 @@ namespace Sgl
                     {
                         KeyModifier modifier = e.key.mod & ~SDL_KMOD_NUM;
                         KeyCode key = SDL_GetKeyFromScancode(e.key.scancode, modifier, false);
-
-                        KeyEventArgs args =
-                        {
-                            .Key = key,
-                            .Modifier = modifier
-                        };
+                        KeyEventArgs args(key, modifier);
 
                         window->OnKeyUp(args);
                     }
