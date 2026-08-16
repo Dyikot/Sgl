@@ -30,7 +30,7 @@ namespace Sgl
     /// Represents a mouse cursor, supporting system-defined cursors, custom image-based cursors.
     /// Provides static methods to control the global cursor state (visibility and appearance).
     /// </summary>
-    class Cursor final
+    class Cursor
     {
     public:
         /// <summary>

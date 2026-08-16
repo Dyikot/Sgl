@@ -10,7 +10,7 @@ namespace Sgl
 	/// Enables storing and retrieving heterogeneous values while preserving type information.
 	/// Supports safe type checking and casting, and manages the lifetime of the contained object automatically.
 	/// </summary>
-	class Any final
+	class Any
 	{
 	private:
 		class IStorage

@@ -18,6 +18,7 @@ namespace Sgl::UIElements
 		void OnPropertyChanged(PropertyBase& property) override;
 	private:
 		void BuildTemplate();
+		float ValueAtPosition(float x, float y) const;
 	private:
 		Ref<RepeatButton> _button;
 		Ref<Track> _track;

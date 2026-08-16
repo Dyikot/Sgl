@@ -47,4 +47,12 @@ namespace Sgl::UIElements
 
 		SetTemplate(_button);
 	}
+
+	float Slider::ValueAtPosition(float x, float y) const
+	{
+		auto bounds = GetBounds();
+		return GetOrientation() == Orientation::Horizontal
+			? (GetMaxValue() - GetMinValue()) * (x - bounds.x) / bounds.w
+			: (GetMaxValue() - GetMinValue()) * (1.0f - (y - bounds.y) / bounds.h);
+	}
 }

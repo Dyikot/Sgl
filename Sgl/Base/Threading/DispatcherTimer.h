@@ -9,7 +9,7 @@ namespace Sgl
 	/// Represents a timer that raises the Tick event at regular intervals 
 	/// on the UI thread, suitable for UI-related timed operations. Must be created on the UI thread.
 	/// </summary>
-	class DispatcherTimer final
+	class DispatcherTimer
 	{
 	public:
 		using TimeElapsedEventHandler = EventHandler<DispatcherTimer>;

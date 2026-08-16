@@ -18,8 +18,6 @@ namespace Sgl::UIElements
 			{
 				SetValue(_minValue, source);
 			}
-
-			InvalidateRender();
 		}
 	}
 
@@ -31,18 +29,15 @@ namespace Sgl::UIElements
 			{
 				SetValue(_maxValue, source);
 			}
-
-			InvalidateRender();
 		}
 	}
 
 	void RangeBase::SetValue(float value, ValueSource source)
 	{
-		value = std::clamp(value, _minValue, _maxValue);
+		value = Clamp(value);
 
 		if(SetProperty(ValueProperty, _value, value, _valueSource, source))
 		{
-			InvalidateRender();
 			OnValueChanged(value);
 		}
 	}
@@ -75,7 +70,12 @@ namespace Sgl::UIElements
 		auto bounds = GetBounds();
 		return _orientation == Orientation::Horizontal
 			? (_maxValue - _minValue) * (x - bounds.x) / bounds.w
-			: (_maxValue - _minValue) * (1.0f - (y - bounds.y) / bounds.h);
+			: (_maxValue - _minValue) * (y - bounds.y) / bounds.h;
+	}
+
+	float RangeBase::Clamp(float value) const
+	{
+		return std::clamp(value, _minValue, _maxValue);
 	}
 }
 

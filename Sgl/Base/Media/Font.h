@@ -118,7 +118,7 @@ namespace Sgl
 	/// Encapsulates font rendering settings such as size, style, outline, text alignment, and flow direction.
 	/// Internally manages the lifetime of the TTF_Font resource and provides safe move semantics.
 	/// </summary>
-	class TrueTypeFont final
+	class TrueTypeFont
 	{
 	public:
 		/// <summary>

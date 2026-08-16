@@ -35,6 +35,7 @@ namespace Sgl::UIElements
 	protected:
 		virtual void OnValueChanged(float value);
 		float ValueAtPosition(float x, float y) const;
+		float Clamp(float value) const;
 	private:
 		float _minValue = 0;
 		float _maxValue = 100;
