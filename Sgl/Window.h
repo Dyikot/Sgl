@@ -6,6 +6,7 @@
 #include "Render/Surface.h"
 #include "Input/TextEventArgs.h"
 #include "UIElements/UIElement.h"
+#include "Input/InputManager.h"
 
 namespace Sgl
 {
@@ -414,10 +415,10 @@ namespace Sgl
 		virtual void OnWindowSizeChanged(WindowSizeChangedEventArgs e);
 		virtual void OnKeyUp(KeyEventArgs e) {}
 		virtual void OnKeyDown(KeyEventArgs e) {}
-		virtual void OnMouseMove(MouseMoveEventArgs e) {}
-		virtual void OnMouseDown(MouseClickEventArgs& e) {}
-		virtual void OnMouseUp(MouseClickEventArgs& e) {}
-		virtual void OnMouseWheelChanged(MouseWheelEventArgs& e) {}
+		virtual void OnMouseMove(MouseMoveEventArgs e);
+		virtual void OnMouseDown(MouseClickEventArgs& e);
+		virtual void OnMouseUp(MouseClickEventArgs& e);
+		virtual void OnMouseWheelChanged(MouseWheelEventArgs& e);
 		virtual void OnTextInput(TextInputEventArgs& e) {}
 		virtual void OnTextEditing(TextEditingEventArgs& e) {}
 		virtual void OnMouseEnter() {}
@@ -434,6 +435,7 @@ namespace Sgl
 		SDL_WindowID _id = 0;
 		SDL_Window* _sdlWindow;
 		SDL_Renderer* _renderer;
+		InputManager _inputManager;
 		ITextureFactory* _textureFactory;
 		Ref<UIElement> _content;
 		bool _isModal = false;

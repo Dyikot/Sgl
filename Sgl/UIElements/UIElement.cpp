@@ -201,6 +201,11 @@ namespace Sgl
 	void UIElement::OnMouseWheelChanged(MouseWheelEventArgs& e)
 	{
 		MouseWheel.Invoke(*this, e);
+
+		if(_parent)
+		{
+			_parent->OnMouseWheelChanged(e);
+		}
 	}
 
 	void UIElement::OnMouseEnter(MouseMoveEventArgs e)

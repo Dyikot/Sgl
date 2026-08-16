@@ -68,6 +68,7 @@ namespace Sgl
     Window::Window():
         _sdlWindow(SDL_CreateWindow(DefaultTitle, DefaultWidth, DefaultHeight, DefaultFlags)),
         _renderer(SDL_CreateRenderer(_sdlWindow, nullptr)),
+        _inputManager(*this),
         _textureFactory(new TextureFactory(_renderer))
     {
         if(_sdlWindow == nullptr)
@@ -600,6 +601,26 @@ namespace Sgl
         }
 
         SizeChanged.Invoke(*this, e);
+    }
+
+    void Window::OnMouseMove(MouseMoveEventArgs e)
+    {
+        _inputManager.HandleMouseMove(e);
+    }
+
+    void Window::OnMouseDown(MouseClickEventArgs& e)
+    {
+        _inputManager.HandleMouseDown(e);
+    }
+
+    void Window::OnMouseUp(MouseClickEventArgs& e)
+    {
+        _inputManager.HandleMouseUp(e);
+    }
+
+    void Window::OnMouseWheelChanged(MouseWheelEventArgs& e)
+    {
+        _inputManager.HandleMouseWheelChanged(e);
     }
 
     void Window::OnActivated()

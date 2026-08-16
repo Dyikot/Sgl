@@ -4,12 +4,16 @@
 
 namespace Sgl
 {
-	void InputManager::HandleMouseMove(Window& window, MouseMoveEventArgs e)
+	InputManager::InputManager(Window& window):
+		_window(window)
+	{}
+
+	void InputManager::HandleMouseMove(MouseMoveEventArgs e)
 	{
 		FPoint point(e.X, e.Y);
-		Ref<UIElement> target = window.HitTest(point);
+		Ref<UIElement> target = _window.HitTest(point);
 
-		SDL_SetCursor(target ? target->GetCursor() : window.GetCursor());
+		SDL_SetCursor(target ? target->GetCursor() : _window.GetCursor());
 
 		if(_hoveredElement != target && _hoveredElement && !IsPointInRect(e.X, e.Y, _hoveredElement->GetBounds()))
 		{
@@ -28,7 +32,7 @@ namespace Sgl
 		}
 	}
 
-	void InputManager::HandleMouseDown(Window& window, MouseClickEventArgs e)
+	void InputManager::HandleMouseDown(MouseClickEventArgs& e)
 	{
 		if(_hoveredElement)
 		{
@@ -37,12 +41,20 @@ namespace Sgl
 		}
 	}
 
-	void InputManager::HandleMouseUp(Window& window, MouseClickEventArgs e)
+	void InputManager::HandleMouseUp(MouseClickEventArgs& e)
 	{
 		if(_capturedElement)
 		{
 			_capturedElement->OnMouseUp(e);
 			_capturedElement = nullptr;
+		}
+	}
+
+	void InputManager::HandleMouseWheelChanged(MouseWheelEventArgs& e)
+	{
+		if(_hoveredElement)
+		{
+			_hoveredElement->OnMouseWheelChanged(e);
 		}
 	}
 }

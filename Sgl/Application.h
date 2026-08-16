@@ -5,7 +5,6 @@
 #include "Base/Media/ThemeResourceProvider.h"
 #include "Base/Localization/StringLocalizer.h"
 #include "Base/Localization/LocalizationResources.h"
-#include "Input/InputManager.h"
 
 struct MIX_Mixer;
 
@@ -177,8 +176,7 @@ namespace Sgl
 		Window* _focusedWindow = nullptr;
 		std::vector<SDL_WindowID> _windowsIds;
 		std::vector<Window*> _windows;
-		std::vector<Window*> _activeWindows;
-		InputManager* _inputManager = new InputManager();
+		std::vector<Window*> _activeWindows;		
 
 		bool _isRunning = false;
 		ThemeVariant _themeVariant;

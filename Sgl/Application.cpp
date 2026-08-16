@@ -49,7 +49,6 @@ namespace Sgl
 
 	Application::~Application()
 	{        
-        delete _inputManager;
         MainWindow = nullptr;
         MIX_DestroyMixer(_mixer);
         MIX_Quit();
@@ -237,7 +236,6 @@ namespace Sgl
                     {
                         MouseMoveEventArgs args(e.button.x, e.button.y);
 
-                        _inputManager->HandleMouseMove(*window, args);
                         window->OnMouseMove(args);
                     }
 
@@ -256,7 +254,6 @@ namespace Sgl
                             e.button.clicks
                         };
 
-                        _inputManager->HandleMouseDown(*window, args);
                         window->OnMouseDown(args);
                     }
 
@@ -275,7 +272,6 @@ namespace Sgl
                             e.button.clicks
                         };
 
-                        _inputManager->HandleMouseUp(*window, args);
                         window->OnMouseUp(args);
                     }
 
