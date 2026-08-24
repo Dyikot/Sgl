@@ -342,6 +342,12 @@ namespace Sgl
 		ITextureFactory& GetTextureFactory() final;
 
 		/// <summary>
+		/// Gets focus manager
+		/// </summary>
+		/// <returns>Reference to focus manager</returns>
+		FocusManager& GetFocusManager();
+
+		/// <summary>
 		/// Checks whether the window needs to be rendered due to pending changes.
 		/// </summary>
 		/// <returns>True if rendering is required; otherwise, false.</returns>
@@ -413,8 +419,8 @@ namespace Sgl
 		virtual void OnWindowStateChanged(WindowStateChangedEventArgs e);
 		virtual void OnPositionChanged(WindowPositionChangedEventArgs e);
 		virtual void OnWindowSizeChanged(WindowSizeChangedEventArgs e);
-		virtual void OnKeyUp(KeyEventArgs e) {}
-		virtual void OnKeyDown(KeyEventArgs e) {}
+		virtual void OnKeyUp(KeyEventArgs e);
+		virtual void OnKeyDown(KeyEventArgs e);
 		virtual void OnMouseMove(MouseMoveEventArgs e);
 		virtual void OnMouseDown(MouseClickEventArgs& e);
 		virtual void OnMouseUp(MouseClickEventArgs& e);

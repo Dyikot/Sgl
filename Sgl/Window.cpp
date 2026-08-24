@@ -414,6 +414,11 @@ namespace Sgl
         return *_textureFactory;
     }
 
+    FocusManager& Window::GetFocusManager()
+    {
+        return _inputManager.GetFocusManager();
+    }
+
     bool Window::NeedsRendering() const noexcept
     {
         return !_isRenderValid;
@@ -601,6 +606,16 @@ namespace Sgl
         }
 
         SizeChanged.Invoke(*this, e);
+    }
+
+    void Window::OnKeyUp(KeyEventArgs e)
+    {
+        _inputManager.HandleKeyUp(e);
+    }
+
+    void Window::OnKeyDown(KeyEventArgs e)
+    {
+        _inputManager.HandleKeyDown(e);
     }
 
     void Window::OnMouseMove(MouseMoveEventArgs e)

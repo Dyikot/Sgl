@@ -51,12 +51,12 @@ namespace Sgl
 
 	void Renderable::OnAttachedToLogicalTree()
 	{
-		Styleable::OnAttachedToLogicalTree();
-
 		if(auto renderable = dynamic_cast<Renderable*>(GetStylingParent()))
 		{
 			_visualRoot = renderable->GetVisualRoot();
 		}
+
+		Styleable::OnAttachedToLogicalTree();
 	}
 
 	void Renderable::OnDetachedFromLogicalTree()

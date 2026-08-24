@@ -4,6 +4,7 @@ The project is currently in development.
 
 ## Features
 - **Layout system** - Measure and arrange UI elements
+- **Input** - Input and focus managers
 - **Styling** - Style, selectors, pseudo-classes, projections
 - **Theming** - Light/Dark theme modes
 - **Data binding** - MVVM support
@@ -11,13 +12,14 @@ The project is currently in development.
 - **Threading** - `Timer`, `ThreadPool`, `Dispatcher`, async operations using C++20 coroutines
 - **UI Elements**:
   - Panels: `Panel`, `StackPanel`, `WrapPanel`, `DockPanel`, `Grid`, `UniformGrid`, `Canvas`
-  - Basic: `Border`, `TextBlock`, `Image`
   - Buttons: `Button`, `ToggleButton`, `CheckBox`, `SwitchButton`, `RadioButton`, `RepeatButton`
+  - Text: `TextBlock`
+  - Containers: `Border`
+  - Media: `Image`
   - RangeBase: `ProgressBar`, `Slider`, `ScrollBar`
 
 ## Roadmap
 - New UIElements
-- Focus manager
 - Animation
 - Notifications
 - Drag & drop

@@ -39,9 +39,12 @@ namespace Sgl::UIElements
 		_button = New<RepeatButton>();
 		_button->SetInterval(25, ValueSource::Default);
 		_button->SetContent(_track);
-		_button->Click += [this](Button& sender, MouseClickEventArgs& e)
+		_button->Click += [this](Button& sender, EventArgs e)
 		{
-			auto value = ValueAtPosition(e.X, e.Y);
+			float x = 0, y = 0;
+			SDL_GetMouseState(&x, &y);
+
+			auto value = ValueAtPosition(x, y);
 			SetValue(value);
 		};
 

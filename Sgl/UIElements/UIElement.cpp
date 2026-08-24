@@ -31,6 +31,11 @@ namespace Sgl
 		}
 	}
 
+	void UIElement::SetIsFocusable(bool value, ValueSource source)
+	{
+		SetProperty(IsFocusableProperty, _focusable, value, _focusableSource, source);
+	}
+
 	Ref<UIElement> UIElement::HitTest(const Ref<UIElement>& self, FPoint point)
 	{
 		Ref<UIElement> hit;
@@ -46,6 +51,14 @@ namespace Sgl
 		}
 
 		return self->IsVisible() && IsPointInRect(point.x, point.y, self->GetBounds()) ? self : nullptr;
+	}
+
+	void UIElement::Focus()
+	{
+		if(auto window = static_cast<Window*>(GetVisualRoot()))
+		{
+			window->GetFocusManager().SetFocus(*this);
+		}
 	}
 
 	void UIElement::Render(RenderContext context)
@@ -133,14 +146,14 @@ namespace Sgl
 		}
 	}
 
-	void UIElement::OnKeyUp(KeyEventArgs e)
-	{
-		KeyUp.Invoke(*this, e);
-	}
-
 	void UIElement::OnKeyDown(KeyEventArgs e)
 	{
 		KeyDown.Invoke(*this, e);
+	}
+
+	void UIElement::OnKeyUp(KeyEventArgs e)
+	{
+		KeyUp.Invoke(*this, e);
 	}
 
 	void UIElement::OnMouseMove(MouseMoveEventArgs e)
@@ -220,6 +233,20 @@ namespace Sgl
 		//Logging::LogInfo("OnMouseLeave: {}", Name);
 		MouseLeave.Invoke(*this, e);
 		PseudoClasses.Reset(OnHover);
+	}
+
+	void UIElement::OnGotFocus(EventArgs e)
+	{
+		//Logging::LogInfo("OnGotFocus: {}", Name);
+		PseudoClasses.Set(OnFocus);
+		GotFocus.Invoke(*this, e);
+	}
+
+	void UIElement::OnLostFocus(EventArgs e)
+	{
+		//Logging::LogInfo("OnLostFocus: {}", Name);
+		LostFocus.Invoke(*this, e);
+		PseudoClasses.Reset(OnFocus);
 	}
 
 	void UIElement::AddChild(const Ref<UIElement>& child)

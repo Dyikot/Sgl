@@ -4,6 +4,50 @@
 
 namespace Sgl
 {
+	struct ClearFocusHandler
+	{
+		FocusManager* Manager;
+
+		void operator()(Styleable& sender, EventArgs) const
+		{
+			Manager->ClearFocus();
+		}
+
+		bool operator==(const ClearFocusHandler& other) const
+		{
+			return Manager == other.Manager;
+		}
+	};
+
+	void FocusManager::SetFocus(UIElement& target)
+	{
+		if(!target.IsFocusable() || !target.IsAttachedToLogicalTree())
+		{
+			return;
+		}
+
+		ClearFocus();
+
+		_focusedElement = &target;
+		_focusedElement->DetachedFromLogicalTree += ClearFocusHandler(this);
+		_focusedElement->OnGotFocus(EventArgs());
+	}
+
+	void FocusManager::ClearFocus()
+	{
+		if(_focusedElement)
+		{
+			_focusedElement->OnLostFocus(EventArgs());
+			_focusedElement->DetachedFromLogicalTree -= ClearFocusHandler(this);
+			_focusedElement = nullptr;
+		}
+	}
+
+	UIElement* FocusManager::GetFocusedElement() const
+	{
+		return _focusedElement;
+	}
+
 	InputManager::InputManager(Window& window):
 		_window(window)
 	{}
@@ -38,6 +82,7 @@ namespace Sgl
 		{
 			_capturedElement = _hoveredElement;
 			_hoveredElement->OnMouseDown(e);
+			_focusManager.SetFocus(_hoveredElement.GetValue());
 		}
 	}
 
@@ -56,5 +101,30 @@ namespace Sgl
 		{
 			_hoveredElement->OnMouseWheelChanged(e);
 		}
+	}
+
+	void InputManager::HandleKeyUp(KeyEventArgs e)
+	{
+		if(auto focusedElement = _focusManager.GetFocusedElement())
+		{
+			focusedElement->OnKeyUp(e);
+		}
+	}
+
+	void InputManager::HandleKeyDown(KeyEventArgs e)
+	{
+		if(e.Key == KeyCodes::Escape)
+		{
+			_focusManager.ClearFocus();
+		}
+		else if(auto focusedElement = _focusManager.GetFocusedElement())
+		{
+			focusedElement->OnKeyDown(e);
+		}
+	}
+
+	FocusManager& InputManager::GetFocusManager()
+	{
+		return _focusManager;
 	}
 }

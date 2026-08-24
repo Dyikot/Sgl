@@ -7,6 +7,7 @@ namespace Sgl::UIElements
 		Name = "Button";
 		SetCursor(Cursors::Pointer);
 		SetBackground(Colors::LightGray, ValueSource::Default);
+		SetIsFocusable(true, ValueSource::Default);
 	}
 
 	Button::Button(Button&& other) noexcept:
@@ -31,9 +32,9 @@ namespace Sgl::UIElements
 		SetProperty(CommandParameterProperty, _commandParameter, value, _commandParameterSource, source);
 	}
 
-	void Button::OnClick(MouseClickEventArgs& e)
+	void Button::OnClick()
 	{
-		Click.Invoke(*this, e);
+		Click.Invoke(*this);
 
 		if(_command.HasTarget())
 		{
@@ -47,7 +48,7 @@ namespace Sgl::UIElements
 
 		if(e.Button == MouseButton::Left && _clickMode == ClickMode::Press)
 		{
-			OnClick(e);
+			OnClick();
 		}
 	}
 
@@ -57,7 +58,28 @@ namespace Sgl::UIElements
 
 		if(e.Button == MouseButton::Left && _clickMode == ClickMode::Release)
 		{
-			OnClick(e);
+			OnClick();
+		}
+	}
+
+	void Button::OnKeyDown(KeyEventArgs e)
+	{
+		UIElement::OnKeyDown(e);
+
+		if(e.Key == KeyCodes::Return || e.Key == KeyCodes::KpEnter)
+		{
+			PseudoClasses.Set(OnPressed);
+			OnClick();
+		}
+	}
+
+	void Button::OnKeyUp(KeyEventArgs e)
+	{
+		UIElement::OnKeyUp(e);
+
+		if(e.Key == KeyCodes::Return || e.Key == KeyCodes::KpEnter)
+		{
+			PseudoClasses.Reset(OnPressed);
 		}
 	}
 }

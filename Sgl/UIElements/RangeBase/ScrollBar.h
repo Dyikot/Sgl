@@ -48,9 +48,9 @@ namespace Sgl::UIElements
 		float _smallChange = 1;
 		float _largeChange = 10;
 
+		bool _wasHoverThumb = false;
 		ValueSource _viewportSizeSource {};
 		ValueSource _smallChangeSource {};
 		ValueSource _largeChangeSource {};
-		bool _wasHoverThumb = false;
 	};
 }

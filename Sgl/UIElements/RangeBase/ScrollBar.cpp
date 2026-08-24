@@ -144,21 +144,26 @@ namespace Sgl::UIElements
 
 		_track = New<Track>();
 		_track->SetContent(_thumb);
-		_track->Click += [this](Button& sender, MouseClickEventArgs& e)
+		_track->Click += [this](Button& sender, EventArgs e)
 		{
-			auto newValue = ValueAtPosition(e.X, e.Y);
+			float x = 0, y = 0;
+			SDL_GetMouseState(&x, &y);
 
-			if(_wasHoverThumb && e.ClicksNumber == 0) // Dragging
+			auto newValue = ValueAtPosition(x, y);
+
+			if(_thumb->IsMousePressed())
 			{
 				SetValue(_dragValue + (newValue - _clickValue) * _scrollScale);
 			}
-			else if(!IsPointInRect(e.X, e.Y, _thumb->GetBounds()))
+			else if(!_wasHoverThumb && !IsPointInRect(x, y, _thumb->GetBounds()))
 			{
 				auto oldValue = GetValue();
 				auto pageSize = GetPageSize();
 				auto sign = (newValue > oldValue) - (oldValue > newValue);
 				SetValue(oldValue + sign * pageSize);
 			}
+
+			Logging::LogInfo("Value: {}", newValue);
 		};
 
 		SetTemplate(_track);
