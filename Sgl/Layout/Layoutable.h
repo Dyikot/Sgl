@@ -75,6 +75,7 @@ namespace Sgl
 		static inline StyleableProperty VerticalAlignmentProperty { &SetVerticalAlignment, &GetVerticalAlignment };
 		static inline StyleableProperty HorizontalAlignmentProperty { &SetHorizontalAlignment, &GetHorizontalAlignment };
 	protected:
+		~Layoutable() = default;
 		virtual FSize MeasureContent(FSize availableSize) { return FSize(); }
 		virtual void ArrangeContent(FRect rect) { }
 		void SetParent(IStyleHost* parent) override;

@@ -36,13 +36,13 @@ namespace Sgl
 		SetProperty(IsFocusableProperty, _focusable, value, _focusableSource, source);
 	}
 
-	Ref<UIElement> UIElement::HitTest(const Ref<UIElement>& self, FPoint point)
+	Ref<UIElement> UIElement::HitTest(FPoint point)
 	{
 		Ref<UIElement> hit;
 
-		for(auto& child : self->GetChildren() | std::views::reverse)
+		for(auto& child : GetChildren() | std::views::reverse)
 		{
-			hit = HitTest(child, point);
+			hit = child->HitTest(point);
 
 			if(hit)
 			{
@@ -50,14 +50,14 @@ namespace Sgl
 			}
 		}
 
-		return self->IsVisible() && IsPointInRect(point.x, point.y, self->GetBounds()) ? self : nullptr;
+		return IsVisible() && IsPointInRect(point.x, point.y, GetBounds()) ? Ref(this) : nullptr;
 	}
 
 	void UIElement::Focus()
 	{
 		if(auto window = static_cast<Window*>(GetVisualRoot()))
 		{
-			window->GetFocusManager().SetFocus(*this);
+			window->GetFocusManager().SetFocus(Ref(this));
 		}
 	}
 
@@ -110,7 +110,7 @@ namespace Sgl
 		InvalidateBackground();
 	}
 
-	void UIElement::OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext)
+	void UIElement::OnDataContextChanged(const Ref<ObservableObject>& dataContext)
 	{
 		for(auto& child : _children)
 		{
@@ -307,12 +307,12 @@ namespace Sgl
 		_backgroundFragment = nullptr;
 	}
 
-	Ref<UIElement> UIElementDataTemplate::Build(const Ref<INotifyPropertyChanged>& data)
+	Ref<UIElement> UIElementDataTemplate::Build(const Ref<ObservableObject>& data)
 	{
 		return data.As<UIElement>();
 	}
 
-	bool UIElementDataTemplate::Match(const Ref<INotifyPropertyChanged>& data) const
+	bool UIElementDataTemplate::Match(const Ref<ObservableObject>& data) const
 	{
 		return data.Is<UIElement>();
 	}

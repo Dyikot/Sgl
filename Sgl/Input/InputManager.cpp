@@ -4,32 +4,19 @@
 
 namespace Sgl
 {
-	struct ClearFocusHandler
+	void FocusManager::SetFocus(Ref<UIElement> target)
 	{
-		FocusManager* Manager;
-
-		void operator()(Styleable& sender, EventArgs) const
-		{
-			Manager->ClearFocus();
-		}
-
-		bool operator==(const ClearFocusHandler& other) const
-		{
-			return Manager == other.Manager;
-		}
-	};
-
-	void FocusManager::SetFocus(UIElement& target)
-	{
-		if(!target.IsFocusable() || !target.IsAttachedToLogicalTree())
+		if(!target || !target->IsFocusable() || !target->IsAttachedToLogicalTree())
 		{
 			return;
 		}
 
-		ClearFocus();
+		if(_focusedElement)
+		{
+			_focusedElement->OnLostFocus(EventArgs());
+		}
 
-		_focusedElement = &target;
-		_focusedElement->DetachedFromLogicalTree += ClearFocusHandler(this);
+		_focusedElement = std::move(target);
 		_focusedElement->OnGotFocus(EventArgs());
 	}
 
@@ -38,12 +25,11 @@ namespace Sgl
 		if(_focusedElement)
 		{
 			_focusedElement->OnLostFocus(EventArgs());
-			_focusedElement->DetachedFromLogicalTree -= ClearFocusHandler(this);
 			_focusedElement = nullptr;
 		}
 	}
 
-	UIElement* FocusManager::GetFocusedElement() const
+	Ref<UIElement> FocusManager::GetFocusedElement() const
 	{
 		return _focusedElement;
 	}
@@ -82,7 +68,7 @@ namespace Sgl
 		{
 			_capturedElement = _hoveredElement;
 			_hoveredElement->OnMouseDown(e);
-			_focusManager.SetFocus(_hoveredElement.GetValue());
+			_focusManager.SetFocus(_hoveredElement);
 		}
 	}
 

@@ -391,7 +391,7 @@ namespace Sgl
 
     Ref<UIElement> Window::HitTest(FPoint point) const
     {
-        return _content ? UIElement::HitTest(_content, point) : nullptr;
+        return _content ? _content->HitTest(point) : nullptr;
     }
 
     void Window::ApplyStyle()
@@ -556,7 +556,7 @@ namespace Sgl
         }
     }
 
-    void Window::OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext)
+    void Window::OnDataContextChanged(const Ref<ObservableObject>& dataContext)
     {
         if(_content)
         {

@@ -15,8 +15,8 @@ namespace Sgl
 		const Ref<UIElement>& GetContentPresenter() const { return _contentPresenter; }
 
 		void SetContent(const std::string& value);
-		void SetContent(const Ref<INotifyPropertyChanged>& value, ValueSource source = ValueSource::Local);
-		const Ref<INotifyPropertyChanged>& GetContent() const { return _content; }
+		void SetContent(const Ref<ObservableObject>& value, ValueSource source = ValueSource::Local);
+		const Ref<ObservableObject>& GetContent() const { return _content; }
 
 		void SetContentTemplate(const Ref<IDataTemplate>& value, ValueSource source = ValueSource::Local);
 		const Ref<IDataTemplate>& GetContentTemplate() const { return _contentTemplate; }
@@ -41,7 +41,7 @@ namespace Sgl
 	private:
 		void UpdatePresenter();
 	private:
-		Ref<INotifyPropertyChanged> _content;
+		Ref<ObservableObject> _content;
 		Ref<IDataTemplate> _contentTemplate = New<UIElementDataTemplate>();
 		Ref<UIElement> _contentPresenter;
 		Thickness _padding;

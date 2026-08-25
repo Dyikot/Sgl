@@ -12,7 +12,7 @@ namespace Sgl
 		ClearBindings();
 	}
 
-	void Bindable::SetDataContext(const Ref<INotifyPropertyChanged>& value, ValueSource source)
+	void Bindable::SetDataContext(const Ref<ObservableObject>& value, ValueSource source)
 	{
 		if(_dataContextSource > source)
 		{
@@ -54,11 +54,6 @@ namespace Sgl
 			(*it)->Clear(*this);
 			_bindings.erase(it);
 		}
-	}
-
-	void Bindable::OnPropertyChanged(PropertyBase& property)
-	{
-		PropertyChanged.Invoke(*this, property);
 	}
 
 	void Bindable::ApplyBindings()

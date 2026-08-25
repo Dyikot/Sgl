@@ -28,6 +28,7 @@ namespace Sgl
         static inline StyleableProperty CursorProperty { &SetCursor, &GetCursor };
         static inline StyleableProperty BackgroundProperty { &SetBackground, &GetBackground };
     protected:
+        ~Renderable() = default;
         void SetVisualRoot(IVisualRoot* visualRoot);
         bool IsBackgroundTransparent() const { return _isBackgroundTransparent; }
         void OnAttachedToLogicalTree() override;

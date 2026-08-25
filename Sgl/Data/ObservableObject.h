@@ -1,9 +1,8 @@
 #pragma once
 
-#include <vector>
-#include <concepts>
-#include "INotifyPropertyChanged.h"
-#include "DirectProperty.h"
+#include "Property.h"
+#include "../Base/Event.h"
+#include "../Base/Ref.h"
 
 namespace Sgl
 {
@@ -11,12 +10,14 @@ namespace Sgl
 	/// Base class for objects that support property change notification.
 	/// Provides helper methods for setting properties and raising PropertyChanged events.
 	/// </summary>
-	class ObservableObject : public INotifyPropertyChanged
+	class ObservableObject : public RefCounted
 	{
 	public:
+		using PropertyChangedEventHandler = EventHandler<ObservableObject, PropertyBase&>;
+	public:
 		ObservableObject() = default;
-		ObservableObject(const ObservableObject&) = default;
-		ObservableObject(ObservableObject&&) = default;
+
+		Event<PropertyChangedEventHandler> PropertyChanged;
 
 		/// <summary>
 		/// Sets the property value and raises PropertyChanged if the value changed.
@@ -34,7 +35,7 @@ namespace Sgl
 			}
 
 			field = value;
-			NotifyPropertyChanged(property);
+			OnPropertyChanged(property);
 
 			return true;
 		}
@@ -59,16 +60,12 @@ namespace Sgl
 			}
 
 			changed(newValue);
-			NotifyPropertyChanged(property);
+			OnPropertyChanged(property);
 
 			return true;
 		}
 	protected:
-		/// <summary>
-		/// Raises the PropertyChanged event for the specified property.
-		/// </summary>
-		/// <param name="property"> - the property that changed.</param>
-		virtual void NotifyPropertyChanged(PropertyBase& property)
+		virtual void OnPropertyChanged(PropertyBase& property)
 		{
 			PropertyChanged.Invoke(*this, property);
 		}

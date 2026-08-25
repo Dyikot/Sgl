@@ -10,11 +10,9 @@ namespace Sgl
 	/// <summary>
 	/// Interface representing an abstract source of image data.
 	/// </summary>
-	class IImageSource
+	class IImageSource : public RefCounted
 	{
 	public:
-		virtual ~IImageSource() = default;
-
 		/// <summary>
 		/// Creates a GPU texture from this image source using the specified renderer.
 		/// </summary>

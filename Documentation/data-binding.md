@@ -6,7 +6,7 @@ Data binding is a mechanism that establishes a connection between a **source** (
 
 ### Source and Target
 
-- **Source**: The object that provides the data. In the Sgl framework, the source typically implements the `INotifyPropertyChanged` interface, which allows it to notify subscribers when its properties change.
+- **Source**: The object that provides the data. In the Sgl framework, the source typically inherits from `ObservableObject` class, which allows it to notify subscribers when its properties change.
 
 - **Target**: The object that consumes the data. Targets are usually UI elements that inherit from `Bindable`, which provides the infrastructure for receiving and applying data bindings.
 
@@ -197,8 +197,8 @@ Data templates define how data objects are visualized as UI elements. They enabl
 class IDataTemplate
 {
 public:
-    virtual Ref<UIElement> Build(const Ref<INotifyPropertyChanged>& data) = 0;
-    virtual bool Match(const Ref<INotifyPropertyChanged>& data) const = 0;
+    virtual Ref<UIElement> Build(const Ref<ObservableObject>& data) = 0;
+    virtual bool Match(const Ref<ObservableObject>& data) const = 0;
 };
 ```
 
@@ -231,7 +231,7 @@ private:
 class PersonDataTemplate : public IDataTemplate
 {
 public:
-    Ref<UIElement> Build(const Ref<INotifyPropertyChanged>& data) override
+    Ref<UIElement> Build(const Ref<ObservableObject>& data) override
     {
         auto panel = New<StackPanel>();
         panel->SetOrientation(Orientation::Horizontal);
@@ -252,7 +252,7 @@ public:
         return panel;
     }
 
-    bool Match(const Ref<INotifyPropertyChanged>& data) const override
+    bool Match(const Ref<ObservableObject>& data) const override
     {
         return data.Is<PersonViewModel>();
     }

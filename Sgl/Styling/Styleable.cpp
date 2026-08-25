@@ -4,24 +4,6 @@
 
 namespace Sgl
 {
-	struct EraseSavedStateHandler
-	{
-		Styleable& Source;
-
-		void operator()(Styleable& sender, EventArgs e) const
-		{
-			std::erase_if(Source._savedStates, [&sender](const auto& action)
-			{
-				return action.GetTarget() == &sender;
-			});
-		}
-
-		bool operator==(const EraseSavedStateHandler& other) const
-		{
-			return &Source == &other.Source;
-		}
-	};
-
 	Styleable::Styleable()
 	{
 		PseudoClasses.Changed += [this](PseudoClassesSet& sender, EventArgs e)
@@ -202,27 +184,15 @@ namespace Sgl
 			for(auto& setter : style->_setters)
 			{
 				auto& property = setter->GetProperty();
-				auto restore = property.CreateRestoreAction(&target);
-
-				StyleableElementEventHandler detachedHandler;
-				if(this != &target)
-				{
-					detachedHandler = EraseSavedStateHandler(*this);
-					target.DetachedFromLogicalTree += detachedHandler;				
-				}
-				
-				_savedStates.emplace_back(
-					std::move(restore),
-					&target,
-					std::move(detachedHandler)
-				);
+				auto stateGuard = property.CreateStateGuard(target);
+				_propertyGuards.emplace_back(stateGuard);
 			}
 		}
 	}
 
 	void Styleable::RestoreBaseState()
 	{
-		_savedStates.clear();
+		_propertyGuards.clear();
 	}
 
 	void Styleable::ClearMatchingStateStyles()
@@ -243,49 +213,5 @@ namespace Sgl
 		}
 
 		return _matchingStateStyles.size() > 0;
-	}
-
-	Styleable::SavedState::SavedState(Action<> restore,
-										     Styleable* target, 
-										     StyleableElementEventHandler detachedHandler):
-		_restore(std::move(restore)),
-		_target(target),
-		_detachedHandler(std::move(detachedHandler))
-	{}
-
-	Styleable::SavedState::SavedState(SavedState&& other) noexcept:
-		_restore(std::move(other._restore)),
-		_target(std::exchange(other._target, nullptr)),
-		_detachedHandler(std::move(other._detachedHandler))
-	{}
-
-	Styleable::SavedState::~SavedState()
-	{
-		if(_restore.HasTarget())
-		{
-			_restore();
-		}
-
-		if(_detachedHandler.HasTarget())
-		{
-			_target->DetachedFromLogicalTree -= _detachedHandler;
-		}
-	}
-
-	Styleable* Styleable::SavedState::GetTarget() const noexcept
-	{
-		return _target;
-	}
-
-	Styleable::SavedState& Styleable::SavedState::operator=(SavedState&& other) noexcept
-	{
-		if(this != &other)
-		{
-			_restore = std::move(other._restore);
-			_target = std::exchange(other._target, nullptr);
-			_detachedHandler = std::move(other._detachedHandler);
-		}
-
-		return *this;
 	}
 }

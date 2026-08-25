@@ -15,11 +15,11 @@ namespace Sgl
 		FocusManager(const FocusManager&) = delete;
 		FocusManager(FocusManager&&) = delete;
 
-		void SetFocus(UIElement& target);
+		void SetFocus(Ref<UIElement> target);
 		void ClearFocus();
-		UIElement* GetFocusedElement() const;
+		Ref<UIElement> GetFocusedElement() const;
 	private:
-		UIElement* _focusedElement {};
+		Ref<UIElement> _focusedElement;
 	};
 
 	class InputManager

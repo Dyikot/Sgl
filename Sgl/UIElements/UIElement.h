@@ -46,7 +46,7 @@ namespace Sgl
 		bool IsMousePressed() const { return PseudoClasses.Has(OnPressed); }
 		bool IsFocused() const { return PseudoClasses.Has(OnFocus); }
 
-		static Ref<UIElement> HitTest(const Ref<UIElement>& self, FPoint point);
+		Ref<UIElement> HitTest(FPoint point);
 
 		void Focus();
 		void Render(RenderContext context) override;
@@ -58,10 +58,11 @@ namespace Sgl
 		static inline const PseudoClass OnPressed = PseudoClass::Register("pressed");
 		static inline const PseudoClass OnFocus = PseudoClass::Register("focus");
 	protected:
+		~UIElement() = default;
 		void SetParent(IStyleHost* parent) override;
 		void OnCursorChanged(Cursor cursor) final;
 		void OnBackgroundChanged(const Brush& background) final;
-		void OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext) final;
+		void OnDataContextChanged(const Ref<ObservableObject>& dataContext) final;
 		void OnAttachedToLogicalTree() override;
 		void OnDetachedFromLogicalTree() override;
 		virtual void OnKeyDown(KeyEventArgs e);
@@ -98,10 +99,10 @@ namespace Sgl
 		friend class FocusManager;
 	};
 
-	class UIElementDataTemplate : public IDataTemplate
+	class UIElementDataTemplate final : public IDataTemplate
 	{
 	public:
-		Ref<UIElement> Build(const Ref<INotifyPropertyChanged>& data) override;
-		bool Match(const Ref<INotifyPropertyChanged>& data) const override;
+		Ref<UIElement> Build(const Ref<ObservableObject>& data) override;
+		bool Match(const Ref<ObservableObject>& data) const override;
 	};
 }

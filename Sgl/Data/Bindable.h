@@ -1,9 +1,9 @@
 #pragma once
 
 #include <vector>
-#include <concepts>
+
+#include "ObservableObject.h"
 #include "StyleableProperty.h"
-#include "INotifyPropertyChanged.h"
 #include "../Base/Ref.h"
 #include "../Base/Exceptions.h"
 
@@ -22,16 +22,17 @@ namespace Sgl
 	template<CProperty TTargetProperty, CProperty TSourceProperty, typename TConverter>
 	class ConvertibleBinding;
 
-	class Bindable : public INotifyPropertyChanged
+	class Bindable : public ObservableObject
 	{
 	public:
 		Bindable() = default;
 		Bindable(const Bindable&) = delete;
 		Bindable(Bindable&& other) noexcept;
-		~Bindable();
+		
+		void SetDataContext(const Ref<ObservableObject>& value, ValueSource source = ValueSource::Local);
+		const Ref<ObservableObject>& GetDataContext() const { return _dataContext; }
 
-		void SetDataContext(const Ref<INotifyPropertyChanged>& value, ValueSource source = ValueSource::Local);
-		const Ref<INotifyPropertyChanged>& GetDataContext() const { return _dataContext; }
+		using ObservableObject::SetProperty;
 
 		template<CProperty TProperty, typename TField>
 		bool SetProperty(TProperty& property, TField& field, TProperty::Value value,
@@ -59,20 +60,6 @@ namespace Sgl
 			return true;
 		}
 
-		template<CProperty TProperty, typename TField>
-		bool SetProperty(TProperty& property, TField& field, TProperty::Value value)
-		{
-			if(field == value)
-			{
-				return false;
-			}
-
-			field = value;
-			OnPropertyChanged(property);
-
-			return true;
-		}
-
 		template<CProperty TTargetProperty, CProperty TSourceProperty>
 		void Bind(TTargetProperty& targetProperty,
 				  TSourceProperty& sourceProperty,
@@ -96,13 +83,13 @@ namespace Sgl
 
 		static inline StyleableProperty DataContextProperty { &SetDataContext, &GetDataContext };
 	protected:
-		virtual void OnPropertyChanged(PropertyBase& property);
-		virtual void OnDataContextChanged(const Ref<INotifyPropertyChanged>& dataContext) {}
+		~Bindable();
+		virtual void OnDataContextChanged(const Ref<ObservableObject>& dataContext) {}
 		void ApplyBindings();
 		void ClearBindings();
 	private:
 		std::vector<std::unique_ptr<BindingBase>> _bindings;
-		Ref<INotifyPropertyChanged> _dataContext;
+		Ref<ObservableObject> _dataContext;
 
 		ValueSource _dataContextSource {};
 	};
@@ -131,7 +118,7 @@ namespace Sgl
 		TTarget* Target;
 		TSourceProperty& SourceProperty;
 
-		void operator()(INotifyPropertyChanged& sender, PropertyBase& e)
+		void operator()(ObservableObject& sender, PropertyBase& e)
 		{
 			if(e == SourceProperty)
 			{
@@ -244,7 +231,7 @@ namespace Sgl
 		TSourceProperty& SourceProperty;
 		TConverter Converter;
 
-		void operator()(INotifyPropertyChanged& sender, PropertyBase& e)
+		void operator()(ObservableObject& sender, PropertyBase& e)
 		{
 			if(e == SourceProperty)
 			{
