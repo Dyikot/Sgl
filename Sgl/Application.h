@@ -26,15 +26,7 @@ namespace Sgl
 	class Application : public IStyleHost
 	{
 	public:
-		/// <summary>
-		/// Provides access to the current application instance via a global context.
-		/// </summary>
-		struct Context
-		{
-			Application* operator->() { return Application::_current; }
-			operator Application*() { return Application::_current; }
-		};
-	private:
+		struct Context;
 		using ApplicationEventHandler = EventHandler<Application>;
 	public:
 		/// <summary>
@@ -176,7 +168,7 @@ namespace Sgl
 		Window* _focusedWindow = nullptr;
 		std::vector<SDL_WindowID> _windowsIds;
 		std::vector<Window*> _windows;
-		std::vector<Window*> _activeWindows;		
+		std::vector<Window*> _activeWindows;
 
 		bool _isRunning = false;
 		ThemeVariant _themeVariant;
@@ -184,6 +176,15 @@ namespace Sgl
 
 		friend class Window;
 		friend class StringLocalizer;
+	};
+
+	/// <summary>
+	/// Provides access to the current application instance via a global context.
+	/// </summary>
+	struct Application::Context
+	{
+		Application* operator->() { return Application::_current; }
+		operator Application* () { return Application::_current; }
 	};
 
 	/// <summary>

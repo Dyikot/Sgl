@@ -16,7 +16,7 @@ namespace Sgl::UIElements
 		{
 			if(element.SetProperty(LeftProperty, element.GetLayoutContext<Context>().Left, value))
 			{
-				element.InvalidateMeasure();
+				element.InvalidateArrange();
 			}
 		},
 		[](Layoutable& element) { return element.GetLayoutContext<Context>().Left; }
@@ -28,7 +28,7 @@ namespace Sgl::UIElements
 		{
 			if(element.SetProperty(TopProperty, element.GetLayoutContext<Context>().Top, value))
 			{
-				element.InvalidateMeasure();
+				element.InvalidateArrange();
 			}
 		},
 		[](Layoutable& element) { return element.GetLayoutContext<Context>().Top; }
@@ -40,7 +40,7 @@ namespace Sgl::UIElements
 		{
 			if(element.SetProperty(RightProperty, element.GetLayoutContext<Context>().Right, value))
 			{
-				element.InvalidateMeasure();
+				element.InvalidateArrange();
 			}
 		},
 		[](Layoutable& element) { return element.GetLayoutContext<Context>().Right; }
@@ -52,7 +52,7 @@ namespace Sgl::UIElements
 		{
 			if(element.SetProperty(BottomProperty, element.GetLayoutContext<Context>().Bottom, value))
 			{
-				element.InvalidateMeasure();
+				element.InvalidateArrange();
 			}
 		},
 		[](Layoutable& element) { return element.GetLayoutContext<Context>().Bottom; }

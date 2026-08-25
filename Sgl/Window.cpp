@@ -324,7 +324,7 @@ namespace Sgl
 
         if(_owner)
         {
-            std::erase(_owner->_ownedWindows, this);
+            std::erase(_owner->_ownedWindows, Ref(this));
         }
 
         _owner = owner;
@@ -333,7 +333,7 @@ namespace Sgl
         {
             if(SDL_SetWindowParent(_sdlWindow, owner->_sdlWindow))
             {
-                owner->_ownedWindows.push_back(this);
+                owner->_ownedWindows.emplace_back(this);
             }
             else
             {
@@ -351,7 +351,7 @@ namespace Sgl
         return _owner;
     }
 
-    const std::list<Window*>& Window::GetOwnedWindows() const
+    const std::list<Ref<Window>>& Window::GetOwnedWindows() const
     {
         return _ownedWindows;
     }

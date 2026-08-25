@@ -562,28 +562,15 @@ namespace Sgl
 
     void Application::AddWindow(Window& window)
     {
-        auto id = window.GetId();
-        _windowsIds.push_back(id);
+        _windowsIds.push_back(window.GetId());
         _windows.push_back(&window);
     }
 
     void Application::RemoveWindow(Window& window)
     {
-        auto id = window.GetId();
-        std::optional<size_t> found;
-
-        for(size_t i = 0; i < _windowsIds.size(); i++)
+        if(auto it = std::ranges::find(_windowsIds, window.GetId()); it != _windowsIds.end())
         {
-            if(_windowsIds[i] == id)
-            {
-                found = i;
-                break;
-            }
-        }
-
-        if(found)
-        {
-            auto index = *found;
+            auto index = std::distance(_windowsIds.begin(), it);
             _windows.erase(_windows.begin() + index);
             _windowsIds.erase(_windowsIds.begin() + index);
         }
@@ -597,7 +584,7 @@ namespace Sgl
             window.SetParent(this);
             window.OnAttachedToLogicalTree();
         }
-    }    
+    }
 
     void Application::DetachWindow(Window& window)
     {

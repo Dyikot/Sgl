@@ -93,7 +93,6 @@ namespace Sgl
 		Window();
 		Window(const Window&) = delete;
 		Window(Window&&) = delete;
-		~Window();
 
 		/// <summary>
 		/// Event triggered when the window's state changes (minimized, maximized, restored)
@@ -303,7 +302,7 @@ namespace Sgl
 		/// Gets a list of windows that are owned by this window.
 		/// </summary>
 		/// <returns>A const reference to the list of owned windows.</returns>
-		const std::list<Window*>& GetOwnedWindows() const;
+		const std::list<Ref<Window>>& GetOwnedWindows() const;
 
 		/// <summary>
 		/// Sets the root UI element displayed in the window's client area.
@@ -411,6 +410,7 @@ namespace Sgl
 
 		static inline StyleableProperty ContentProperty { &SetContent, &GetContent };
 	protected:
+		~Window();
 		void OnCursorChanged(Cursor cursor) final;
 		void OnBackgroundChanged(const Brush& background) final;
 		void OnDataContextChanged(const Ref<ObservableObject>& dataContext) final;
@@ -450,7 +450,7 @@ namespace Sgl
 		bool _isActivated = false;
 		bool _isRenderValid = false;
 		Window* _owner = nullptr;
-		std::list<Window*> _ownedWindows;
+		std::list<Ref<Window>> _ownedWindows;
 		Surface _icon;
 		RenderFragment _backgroundFragment;
 
