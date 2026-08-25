@@ -38,17 +38,6 @@ namespace Sgl
         }
 
         /// <summary>
-        /// Adds a new style with a selector and target projection to the collection.
-        /// </summary>
-        /// <param name="selector"> - the selector that determines which elements this style applies to.</param>
-        /// <param name="projection"> - the projection that specifies which part of the element to style.</param>
-        /// <returns>A reference to the newly added style.</returns>
-        Style& Add(Selector selector, TargetProjection projection)
-        {
-            return _items.emplace_back(std::move(selector), projection);
-        }
-
-        /// <summary>
         /// Gets the number of styles in the collection.
         /// </summary>
         size_t Count() const noexcept

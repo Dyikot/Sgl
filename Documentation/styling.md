@@ -8,7 +8,7 @@ A **Style** is a reusable set of property values that can be applied to UI eleme
 
 A `Style` consists of:
 - **Selector**: Determines which elements the style applies to
-- **Projection** (optional): Specifies which part of a composite element to style
+- **TargetSelector** (optional): Specifies which part of a composite element to style
 - **Setters**: A collection of property-value pairs to apply
 
 ### Setters
@@ -130,28 +130,30 @@ Selectors use two matching methods:
 - **`MatchState()`**: Evaluates pseudo-class conditions
 - **`HasState()`**: Returns true if the selector has pseudo-class conditions
 
-## Projection
+## Tarset selector
 
-Projections allow styles to target specific parts of composite elements. Instead of styling the element itself, a projection redirects the style application to a child or internal part.
+Tarset selectors allow styles to target specific parts of composite elements. Instead of styling the element itself, a selector redirects the style application to a child or internal part.
 
-### TargetProjection
+A `TarsetSelector` is a callable that takes a `Styleable&` and returns a `Styleable&` to style. Can be set via `Target` method.
 
-A `TargetProjection` is a callable that takes a `Styleable&` and returns a `Styleable&` to style.
-
-Built-in projections:
+Built-in target selectors:
 - `ContentUIElement::ContentPresenter`
 - `Window::Content`
 - `Panel::FirstChild`
 - `Panel::LastChild`
 - `Panel::NthChild`
 
-### Composed Projections
+```cpp
+Styles.Add(Selector().Is<Button>().Class("TextButton"))
+    .Target(Button::ContentPresenter())
+    .Set(TextBlock::FontSizeProperty, 16);
+```
 
-Projections can be chained using the `>` operator or `ComposedProjection` class.
+Target selectors can be chained using the `>` operator or `ComposedTargetSelector` class.
 
 ```cpp
-Styles.Add(Selector().OfType<CustomControl>(), 
-           Panel::FirstChild() > ContentUIElement::ContentPresenter());
+Styles.Add(Selector().OfType<CustomControl>())
+    .Target(Panel::FirstChild() > ContentUIElement::ContentPresenter());
 ```
 
 ## Style Collections

@@ -5,7 +5,7 @@
 #include "../Data/StyleableProperty.h"
 #include "Selector.h"
 #include "Setter.h"
-#include "Projection.h"
+#include "TargetSelector.h"
 
 namespace Sgl
 {
@@ -13,19 +13,19 @@ namespace Sgl
     {
     public:
         Style(Sgl::Selector selector): 
-            Selector(std::move(selector)),
-            _projection(nullptr)
-        {}
-
-        Style(Sgl::Selector selector, TargetProjection projection):
-            Selector(std::move(selector)),
-            _projection(std::move(projection))
+            Selector(std::move(selector))
         {}
 
         Style(const Style&) = delete;
         Style(Style&&) noexcept = default;
 
         const Selector Selector;        
+
+        Style& Target(TargetSelector targetSelector)
+        {
+            _targetSelector = std::move(targetSelector);
+            return *this;
+        }
 
         Style& Set(std::unique_ptr<Setter> setter)
         {
@@ -48,11 +48,12 @@ namespace Sgl
             return *this;
         }
 
+    private:
         Styleable& SelectTarget(Styleable& element) const
         {
-            return _projection ? _projection(element) : element;
+            return _targetSelector ? _targetSelector(element) : element;
         }
-    private:
+
         void Apply(Styleable& element, ValueSource source) const
         {
             auto& target = SelectTarget(element);
@@ -62,9 +63,10 @@ namespace Sgl
                 setter->Apply(target, source);
             }
         }
+
     private:
         std::vector<std::unique_ptr<Setter>> _setters;
-        TargetProjection _projection;
+        TargetSelector _targetSelector;
 
         friend class Styleable;
     };    
