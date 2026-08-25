@@ -79,54 +79,42 @@ namespace Sgl::UIElements
 
 	void Grid::SetColumn(const Ref<UIElement>& element, uint32_t value)
 	{
-		if(element->SetProperty(ColumnProperty, element->GetLayoutContext<Context>().Column, value))
-		{
-			element->InvalidateMeasure();
-		}
+		ColumnProperty.InvokeSetter(element.GetValue(), value);
 	}
 
 	uint32_t Grid::GetColumn(const Ref<UIElement>& element)
 	{
-		return element->GetLayoutContext<Context>().Column;
+		return ColumnProperty.InvokeGetter(element.GetValue());
 	}
 
 	void Grid::SetRow(const Ref<UIElement>& element, uint32_t value)
 	{
-		if(element->SetProperty(RowProperty, element->GetLayoutContext<Context>().Row, value))
-		{
-			element->InvalidateMeasure();
-		}
+		RowProperty.InvokeSetter(element.GetValue(), value);
 	}
 
-	uint32_t Grid::GetRow(const Ref<UIElement>&element)
+	uint32_t Grid::GetRow(const Ref<UIElement>& element)
 	{
-		return element->GetLayoutContext<Context>().Row;
+		return RowProperty.InvokeGetter(element.GetValue());
 	}
 
 	void Grid::SetColumnSpan(const Ref<UIElement>& element, uint32_t value)
 	{
-		if(element->SetProperty(ColumnSpanProperty, element->GetLayoutContext<Context>().ColumnSpan, value))
-		{
-			element->InvalidateMeasure();
-		}
+		ColumnSpanProperty.InvokeSetter(element.GetValue(), value);
 	}
 
-	uint32_t Grid::GetColumnSpan(const Ref<UIElement>&element)
+	uint32_t Grid::GetColumnSpan(const Ref<UIElement>& element)
 	{
-		return element->GetLayoutContext<Context>().ColumnSpan;
+		return ColumnSpanProperty.InvokeGetter(element.GetValue());
 	}
 
 	void Grid::SetRowSpan(const Ref<UIElement>& element, uint32_t value)
 	{
-		if(element->SetProperty(RowSpanProperty, element->GetLayoutContext<Context>().RowSpan, value))
-		{
-			element->InvalidateMeasure();
-		}
+		RowSpanProperty.InvokeSetter(element.GetValue(), value);
 	}
 
-	uint32_t Grid::GetRowSpan(const Ref<UIElement>&element)
+	uint32_t Grid::GetRowSpan(const Ref<UIElement>& element)
 	{
-		return element->GetLayoutContext<Context>().RowSpan;
+		return RowSpanProperty.InvokeGetter(element.GetValue());
 	}
 
 	static std::vector<ColumnDefinition> ParseDefenition(std::string_view defenition)

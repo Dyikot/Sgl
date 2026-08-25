@@ -21,15 +21,12 @@ namespace Sgl::UIElements
 
 	void DockPanel::SetDock(const Ref<UIElement>& element, Dock dock)
 	{
-		if(element->SetProperty(DockProperty, element->GetLayoutContext<Dock>(), dock))
-		{
-			element->InvalidateMeasure();
-		}
+		DockProperty.InvokeSetter(element.GetValue(), dock);
 	}
 
 	Dock DockPanel::GetDock(const Ref<UIElement>& element)
 	{
-		return element->GetLayoutContext<Dock>();
+		return DockProperty.InvokeGetter(element.GetValue());
 	}
 
 	void DockPanel::SetLastChildFill(bool value, ValueSource source)
