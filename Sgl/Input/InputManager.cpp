@@ -2,13 +2,19 @@
 #include "../Window.h"
 #include "../Layout/LayoutHelper.h"
 
+#include <span>
+
 namespace Sgl
 {
-	void FocusManager::SetFocus(Ref<UIElement> target)
+	FocusManager::FocusManager(Window& window):
+		_window(window)
+	{}
+
+	bool FocusManager::SetFocus(Ref<UIElement> target)
 	{
 		if(!target || !target->IsFocusable() || !target->IsAttachedToLogicalTree())
 		{
-			return;
+			return false;
 		}
 
 		if(_focusedElement)
@@ -18,6 +24,22 @@ namespace Sgl
 
 		_focusedElement = std::move(target);
 		_focusedElement->OnGotFocus(EventArgs());
+		return true;
+	}
+
+	bool FocusManager::MoveFocusNext()
+	{
+		if(_focusedElement)
+		{
+			return FocusFirst(_focusedElement) || FocusNext(_focusedElement);
+		}
+
+		if(auto& first = _window.GetContent())
+		{
+			return SetFocus(first) || FocusFirst(first);
+		}
+
+		return false;
 	}
 
 	void FocusManager::ClearFocus()
@@ -34,8 +56,52 @@ namespace Sgl
 		return _focusedElement;
 	}
 
+	bool FocusManager::FocusFirst(const Ref<UIElement>& element)
+	{
+		for(auto& child : element->GetChildren())
+		{
+			if(SetFocus(child) || FocusFirst(child))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	bool FocusManager::FocusNext(const Ref<UIElement>& element)
+	{
+		auto parent = Ref(element->GetParent());
+
+		if(!parent)
+		{
+			if(auto& first = _window.GetContent())
+			{
+				return SetFocus(first) || FocusFirst(first);
+			}
+
+			return false;
+		}
+
+		auto& children = parent->GetChildren();			
+
+		if(auto it = std::ranges::find(children, element); it != children.end())
+		{
+			for(auto& child : std::span(std::ranges::next(it), children.end()))
+			{
+				if(SetFocus(child) || FocusFirst(child))
+				{
+					return true;
+				}
+			}
+		}
+
+		return FocusNext(parent);
+	}
+
 	InputManager::InputManager(Window& window):
-		_window(window)
+		_window(window),
+		_focusManager(window)
 	{}
 
 	void InputManager::HandleMouseMove(MouseMoveEventArgs e)
@@ -102,6 +168,10 @@ namespace Sgl
 		if(e.Key == KeyCodes::Escape)
 		{
 			_focusManager.ClearFocus();
+		}
+		else if(e.Key == KeyCodes::Tab && e.Modifier == KeyModifiers::None)
+		{
+			_focusManager.MoveFocusNext();
 		}
 		else if(auto focusedElement = _focusManager.GetFocusedElement())
 		{

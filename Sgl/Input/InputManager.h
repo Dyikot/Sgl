@@ -11,15 +11,20 @@ namespace Sgl
 	class FocusManager
 	{
 	public:
-		FocusManager() = default;
+		FocusManager(Window& window);
 		FocusManager(const FocusManager&) = delete;
 		FocusManager(FocusManager&&) = delete;
 
-		void SetFocus(Ref<UIElement> target);
+		bool SetFocus(Ref<UIElement> target);
+		bool MoveFocusNext();
 		void ClearFocus();
 		Ref<UIElement> GetFocusedElement() const;
 	private:
+		bool FocusFirst(const Ref<UIElement>& element);
+		bool FocusNext(const Ref<UIElement>& element);
+	private:
 		Ref<UIElement> _focusedElement;
+		Window& _window;
 	};
 
 	class InputManager

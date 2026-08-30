@@ -48,7 +48,7 @@ namespace Sgl
 
 		Ref<UIElement> HitTest(FPoint point);
 
-		void Focus();
+		bool Focus();
 		void Render(RenderContext context) override;
 
 		static inline StyleableProperty TagProperty { &SetTag, &GetTag };
@@ -77,6 +77,7 @@ namespace Sgl
 		virtual void OnLostFocus(EventArgs e);
 		void AddChild(const Ref<UIElement>& child);
 		void RemoveChild(const Ref<UIElement>& child);
+		UIElement* GetParent() const { return _parent; }
 		const std::vector<Ref<UIElement>>& GetChildren() const { return _children; }
 	private:
 		RenderFragment CreateBackgroundFragment(const Brush& background);

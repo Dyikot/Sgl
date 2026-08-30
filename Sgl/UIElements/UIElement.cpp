@@ -53,12 +53,14 @@ namespace Sgl
 		return IsVisible() && IsPointInRect(point.x, point.y, GetBounds()) ? Ref(this) : nullptr;
 	}
 
-	void UIElement::Focus()
+	bool UIElement::Focus()
 	{
 		if(auto window = static_cast<Window*>(GetVisualRoot()))
 		{
-			window->GetFocusManager().SetFocus(Ref(this));
+			return window->GetFocusManager().SetFocus(Ref(this));
 		}
+
+		return false;
 	}
 
 	void UIElement::Render(RenderContext context)
