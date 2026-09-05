@@ -66,7 +66,7 @@ namespace Sgl::UIElements
 		std::string _text;
 		float _fontSize = 14;
 		int _outline = 0;
-		FontFamily _fontFamily = FontFamily::Default;
+		FontFamily _fontFamily = FontFamily::GetDefault();
 		FlowDirection _flowDirection = FlowDirection::BottomToTop;
 		FontStyle _fontStyle = FontStyle::Normal;
 		Color _foreground = Colors::Black;
@@ -86,7 +86,7 @@ namespace Sgl::UIElements
 		ValueSource _paddingSource {};
 
 		FRect _textBounds {};
-		TrueTypeFont _fontImpl;
+		Font _fontImpl;
 		Texture _textTexture;
 		uint32_t _fontFlags = 1;
 	};

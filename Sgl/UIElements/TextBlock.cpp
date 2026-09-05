@@ -205,7 +205,7 @@ namespace Sgl::UIElements
 	{
 		if(_fontFlags & FontFamilyFlag)
 		{
-			_fontImpl = TrueTypeFont(_fontFamily, _fontSize);
+			_fontImpl = Font(_fontFamily, _fontSize);
 		}
 		else if(_fontFlags & FontSizeFlag)
 		{

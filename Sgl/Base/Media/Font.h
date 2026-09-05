@@ -1,6 +1,8 @@
 #pragma once
 
+#include <string>
 #include <filesystem>
+#include "../Ref.h"
 
 struct TTF_Font;
 
@@ -12,43 +14,45 @@ namespace Sgl
 	class FontFamily
 	{
 	public:
+		class Impl;
+	public:
 		/// <summary>
 		/// Constructs a font family by name, typically resolving to a system-installed font.
 		/// </summary>
-		/// <param name="familyName"> - the name of the system font (e.g., "Arial", "Times New Roman").</param>
-		explicit FontFamily(const std::string& familyName);
+		/// <param name="fontFileName"> - the file name of the system font</param>
+		explicit FontFamily(const std::string& fontFileName);
 
 		/// <summary>
 		/// Constructs a font family from a font file at the given path with an associated display name.
 		/// </summary>
 		/// <param name="basePath"> - the base path that is used to resolve familyName</param>
-		/// <param name="familyName"> - the name of the system font (e.g., "Arial", "Times New Roman").</param>
-		FontFamily(const std::filesystem::path& basePath, const std::string& familyName);
+		/// <param name="fontFileName"> - the file name of the system font</param>
+		FontFamily(const std::filesystem::path& basePath, const std::string& fontFileName);
 
 		FontFamily(const FontFamily& other);
 		FontFamily(FontFamily&& other) noexcept;
+		~FontFamily();
 
 		/// <summary>
 		/// Default font family.
 		/// </summary>
-		static const FontFamily Default;
+		static FontFamily GetDefault();
 
 		/// <summary>
 		/// Returns the file path of the font family.
 		/// </summary>
-		std::string_view GetSource() const;
+		const std::filesystem::path& GetSource() const;
 
 		/// <summary>
 		/// Returns the name of the font family.
 		/// </summary>
-		std::string_view GetName() const;
+		const std::string& GetName() const;
 
-		FontFamily& operator=(FontFamily other);
+		FontFamily& operator=(const FontFamily& other);
 		FontFamily& operator=(FontFamily&& other) noexcept;
-		bool operator==(const FontFamily&) const = default;
+		bool operator==(const FontFamily& other) const;
 	private:
-		const std::string* _source;
-		uint32_t _nameLength;
+		Ref<Impl> _impl;
 	};
 
 	/// <summary>
@@ -58,16 +62,21 @@ namespace Sgl
 	/// </summary>
 	enum class FontStyle
 	{
-		Normal		  =	0x0,   // No special styling.
-		Bold		  =	0x1,   // Thickened character strokes.
+		Normal        =	0x0,   // No special styling.
+		Bold          =	0x1,   // Thickened character strokes.
 		Italic        =	0x2,   // Slanted, cursive-style characters.
-		Underline	  =	0x4,   // A line drawn beneath the text.
+		Underline     = 0x4,   // A line drawn beneath the text.
 		Strikethrough = 0x8    // A horizontal line through the middle of the text.
 	};
 
 	constexpr FontStyle operator|(FontStyle left, FontStyle right) noexcept
 	{
 		return FontStyle(static_cast<int>(left) | static_cast<int>(right));
+	}
+
+	constexpr FontStyle operator&(FontStyle left, FontStyle right) noexcept
+	{
+		return FontStyle(static_cast<int>(left) & static_cast<int>(right));
 	}
 
 	/// <summary>
@@ -118,13 +127,13 @@ namespace Sgl
 	/// Encapsulates font rendering settings such as size, style, outline, text alignment, and flow direction.
 	/// Internally manages the lifetime of the TTF_Font resource and provides safe move semantics.
 	/// </summary>
-	class TrueTypeFont
+	class Font
 	{
 	public:
 		/// <summary>
 		/// Constructs an empty TrueTypeFont with no associated font.
 		/// </summary>
-		TrueTypeFont() = default;
+		Font() = default;
 
 		/// <summary>
 		/// Constructs a font instance from the given font family and point size.
@@ -132,19 +141,19 @@ namespace Sgl
 		/// </summary>
 		/// <param name="fontFamily"> - the font family to use.</param>
 		/// <param name="size"> - the font size in points.</param>
-		TrueTypeFont(FontFamily fontFamily, float size);
+		Font(FontFamily fontFamily, float size);
 
-		TrueTypeFont(const TrueTypeFont&) = delete;
+		Font(const Font&) = delete;
 
 		/// <summary>
 		/// Move constructor. Transfers ownership of the underlying TTF_Font resource.
 		/// </summary>
-		TrueTypeFont(TrueTypeFont&& other) noexcept;
+		Font(Font&& other) noexcept;
 
 		/// <summary>
 		/// Destructor. Releases the underlying TTF_Font if owned.
 		/// </summary>
-		~TrueTypeFont();
+		~Font();
 
 		/// <summary>
 		/// Changes the font size.
@@ -177,18 +186,18 @@ namespace Sgl
 		/// <param name="textAlignment"> - the text alignment (left, center, or right).</param>
 		void SetTextAligment(TextAlignment textAlignment);
 
-		TrueTypeFont& operator=(const TrueTypeFont&) = delete;
+		Font& operator=(const Font&) = delete;
 
 		/// <summary>
 		/// Move assignment operator. Transfers ownership of the TTF_Font resource.
 		/// </summary>
-		TrueTypeFont& operator=(TrueTypeFont&& other) noexcept;
+		Font& operator=(Font&& other) noexcept;
 
 		/// <summary>
 		/// Implicit conversion to the underlying TTF_Font pointer for direct use with SDL_ttf APIs.
 		/// </summary>
-		operator TTF_Font* () const { return _font; }
+		operator TTF_Font* () const { return _impl; }
 	private:
-		TTF_Font* _font = nullptr;
+		TTF_Font* _impl = nullptr;
 	};
 }

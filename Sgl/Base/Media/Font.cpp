@@ -1,7 +1,7 @@
 #include "Font.h"
 #include "../Logging.h"
-#include "../StringPool.h"
 
+#include <stdexcept>
 #include <SDL3_ttf/SDL_ttf.h>
 #include <SDL3/SDL_platform_defines.h>
 
@@ -9,113 +9,158 @@ namespace fs = std::filesystem;
 
 namespace Sgl
 {
+	class FontFamily::Impl : public RefCounted
+	{
+	public:
+		Impl(const fs::path& base, const std::string& name):
+			Name(name)
+		{
+			if(base.empty())
+			{
+				throw std::invalid_argument("Font name must not be empty");
+			}
+
+			Source = (base / name).lexically_normal();
+		}
+
+		std::string Name;
+		fs::path Source;
+	};
+
 	#ifdef SDL_PLATFORM_WIN32
 	static constexpr auto FontsPath = "C:/Windows/Fonts/";
+	static constexpr auto FontFileName = "segoeui.ttf";
 	#elif SDL_PLATFORM_LINUX
 	static constexpr auto FontsPath = "/usr/share/fonts/";
+	static constexpr auto FontFileName = "DejaVuSans.ttf";
 	#elif SDL_PLATFORM_MACOS
 	static constexpr auto FontsPath = "/System/Library/Fonts/";
+	static constexpr auto FontFileName = "Helvetica.ttf";
 	#endif
 	
-	static StringPool FontsPool;
-	FontFamily const FontFamily::Default { FontsPath, "segoeui.ttf" };
-
-	static inline std::string NormalizePath(const fs::path& base, const std::string& name)
-	{
-		return (base / name).lexically_normal().string();
-	}
-
-	FontFamily::FontFamily(const std::string& familyName):
-		FontFamily(FontsPath, familyName)
+	FontFamily::FontFamily(const std::string& fontFileName):
+		FontFamily(FontsPath, fontFileName)
 	{}
 
-	FontFamily::FontFamily(const std::filesystem::path& basePath, const std::string& familyName):
-		_source(FontsPool.Create(NormalizePath(basePath, familyName))),
-		_nameLength(familyName.length())
+	FontFamily::FontFamily(const fs::path& basePath, const std::string& fontFileName):
+		_impl(New<FontFamily::Impl>(basePath, fontFileName))
 	{}
 
 	FontFamily::FontFamily(const FontFamily& other):
-		_source(other._source),
-		_nameLength(other._nameLength)
+		_impl(other._impl)
 	{}
 
 	FontFamily::FontFamily(FontFamily&& other) noexcept:
-		_source(other._source),
-		_nameLength(other._nameLength)
+		_impl(std::move(other._impl))
 	{}
 
-	std::string_view FontFamily::GetSource() const
+	FontFamily::~FontFamily() = default;
+
+	FontFamily FontFamily::GetDefault()
 	{
-		return *_source;
+		static FontFamily instance(FontsPath, FontFileName);
+		return instance;
 	}
 
-	std::string_view FontFamily::GetName() const
+	const fs::path& FontFamily::GetSource() const
 	{
-		auto source = GetSource();
-		return source.substr(source.length() - _nameLength);
+		return _impl->Source;
 	}
 
-	FontFamily& FontFamily::operator=(FontFamily other)
+	const std::string& FontFamily::GetName() const
 	{
-		_source = other._source;
+		return _impl->Name;
+	}
+
+	FontFamily& FontFamily::operator=(const FontFamily& other)
+	{
+		_impl = other._impl;
 		return *this;
 	}
 
 	FontFamily& FontFamily::operator=(FontFamily&& other) noexcept
 	{
-		_source = other._source;
+		_impl = std::move(other._impl);
 		return *this;
 	}
 
-	TrueTypeFont::TrueTypeFont(FontFamily fontFamily, float size):
-		_font(TTF_OpenFont(fontFamily.GetSource().data(), size))
+	bool FontFamily::operator==(const FontFamily& other) const
 	{
-		if(_font == nullptr)
+		return _impl == other._impl;
+	}
+
+	Font::Font(FontFamily fontFamily, float size)
+	{
+		auto source = fontFamily.GetSource().u8string();
+		_impl = TTF_OpenFont(reinterpret_cast<const char*>(source.c_str()), size);
+
+		if(_impl == nullptr)
 		{
 			Logging::LogError("Unable to create a font: {}", SDL_GetError());
 		}
 	}
 
-	TrueTypeFont::TrueTypeFont(TrueTypeFont&& other) noexcept:
-		_font(std::exchange(other._font, nullptr))
+	Font::Font(Font&& other) noexcept:
+		_impl(std::exchange(other._impl, nullptr))
 	{}
 
-	TrueTypeFont::~TrueTypeFont()
+	Font::~Font()
 	{
-		if(_font)
+		if(_impl)
 		{
-			TTF_CloseFont(_font);
+			TTF_CloseFont(_impl);
 		}
 	}
 
-	void TrueTypeFont::SetSize(float size)
+	void Font::SetSize(float size)
 	{
-		TTF_SetFontSize(_font, size);
+		TTF_SetFontSize(_impl, size);
 	}
 
-	void TrueTypeFont::SetStyle(FontStyle fontStyle)
+	void Font::SetStyle(FontStyle fontStyle)
 	{
-		TTF_SetFontStyle(_font, static_cast<int>(fontStyle));
+		TTF_SetFontStyle(_impl, static_cast<int>(fontStyle));
 	}
 
-	void TrueTypeFont::SetOutline(int outline)
+	void Font::SetOutline(int outline)
 	{
-		TTF_SetFontOutline(_font, outline);
+		TTF_SetFontOutline(_impl, outline);
 	}
 
-	void TrueTypeFont::SetFlowDirection(FlowDirection flowDirection)
+	void Font::SetFlowDirection(FlowDirection flowDirection)
 	{
-		TTF_SetFontDirection(_font, TTF_Direction(static_cast<int>(flowDirection) + 4));
+		TTF_Direction direction;
+
+		switch(flowDirection)
+		{
+			case FlowDirection::LeftToRight: direction = TTF_DIRECTION_LTR; break;
+			case FlowDirection::RightToLeft: direction = TTF_DIRECTION_RTL; break;
+			case FlowDirection::BottomToTop: direction = TTF_DIRECTION_BTT; break;
+			case FlowDirection::TopToBottom: direction = TTF_DIRECTION_TTB; break;
+			default:                         direction = TTF_DIRECTION_INVALID; break;
+		}
+
+		TTF_SetFontDirection(_impl, direction);
 	}
 
-	void TrueTypeFont::SetTextAligment(TextAlignment textAlignment)
+	void Font::SetTextAligment(TextAlignment textAlignment)
 	{
-		TTF_SetFontWrapAlignment(_font, TTF_HorizontalAlignment(textAlignment));
+		TTF_HorizontalAlignment alignment;
+
+		switch(textAlignment)
+		{
+			case TextAlignment::Left:   alignment = TTF_HORIZONTAL_ALIGN_LEFT; break;
+			case TextAlignment::Center: alignment = TTF_HORIZONTAL_ALIGN_CENTER; break;
+			case TextAlignment::Right:  alignment = TTF_HORIZONTAL_ALIGN_RIGHT;  break;
+			default:                    alignment = TTF_HORIZONTAL_ALIGN_INVALID; break;
+		}
+
+		TTF_SetFontWrapAlignment(_impl, alignment);
 	}
 
-	TrueTypeFont& TrueTypeFont::operator=(TrueTypeFont&& other) noexcept
+	Font& Font::operator=(Font&& other) noexcept
 	{
-		_font = std::exchange(other._font, _font);
+		_impl = std::exchange(other._impl, _impl);
 		return *this;
 	}
 }

@@ -600,7 +600,7 @@ namespace Sgl
 	void RenderContext::DrawText(FPoint position, std::string_view text, float size, 
 								 Color color, FontFamily fontFamily)
 	{
-		TrueTypeFont font(fontFamily, size);
+		Font font(fontFamily, size);
 		Texture texture(_renderer, FontQuality::Blended, font, text, color);
 		FRect rect(position.x, position.y, texture.GetWidth(), texture.GetHeight());
 		DrawTexture(texture, &rect, nullptr);

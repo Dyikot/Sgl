@@ -11,12 +11,12 @@ namespace Sgl
 	/// </summary>
 	using Brush = std::variant<Color, ImageSource>;
 
-	inline bool operator==(Brush brush, Color color)
+	inline bool operator==(const Brush& brush, Color color)
 	{
 		return brush.index() == 0 && std::get<Color>(brush) == color;
 	}
 
-	inline bool operator==(Brush brush, const ImageSource& imageSource)
+	inline bool operator==(const Brush& brush, const ImageSource& imageSource)
 	{
 		return brush.index() == 1 && std::get<ImageSource>(brush) == imageSource;
 	}

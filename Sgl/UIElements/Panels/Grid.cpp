@@ -2,7 +2,7 @@
 
 #include <algorithm>
 #include <numeric>
-#include "../../Base/Views.h"
+#include <ranges>
 
 namespace Sgl::UIElements
 {
@@ -121,7 +121,12 @@ namespace Sgl::UIElements
 	{
 		std::vector<ColumnDefinition> defenitions;
 
-		for(auto token : defenition | std::views::split(' ') | Views::Cast<std::string_view>())
+		auto toStringView = std::views::transform([](auto&& range)
+		{
+			return std::string_view(range.begin(), range.end());
+		});
+
+		for(auto token : defenition | std::views::split(' ') | toStringView)
 		{
 			const auto size = token.size();
 

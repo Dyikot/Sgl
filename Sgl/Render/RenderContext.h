@@ -242,7 +242,7 @@ namespace Sgl
                       std::string_view text, 
                       float size, 
                       Color color, 
-                      FontFamily fontFamily = FontFamily::Default);
+                      FontFamily fontFamily = FontFamily::GetDefault());
     private:
         void DrawEllipseCore(FRect rect, const Texture& texture, Color color);
         void DrawRectangleFillCore(FRect rect, float cornersRadius, const Texture& texture, Color color);
