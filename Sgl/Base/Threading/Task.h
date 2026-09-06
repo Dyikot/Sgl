@@ -4,6 +4,7 @@
 #include <exception>
 #include <stdexcept>
 #include <type_traits>
+#include <optional>
 #include "../Logging.h"
 
 namespace Sgl
@@ -68,7 +69,8 @@ namespace Sgl
 			return _handle ? _handle.promise().Exception : nullptr;
 		}
 
-		T Result()
+		template<typename TResult = T>
+		TResult Result() requires !std::is_void_v<TResult>
 		{
 			if(!_handle)
 			{
@@ -85,10 +87,7 @@ namespace Sgl
 				std::rethrow_exception(exception);
 			}
 
-			if constexpr(!std::is_void_v<T>)
-			{
-				return _handle.promise().Result;
-			}
+			return *_handle.promise().Result;
 		}
 
 		Awaiter operator co_await() noexcept
@@ -146,7 +145,7 @@ namespace Sgl
 
 			if constexpr(!std::is_void_v<T>)
 			{
-				return std::move(Handle.promise().Result);
+				return std::move(Handle.promise().Result.value());
 			}
 		}
 	};
@@ -172,7 +171,7 @@ namespace Sgl
 	template<typename T>
 	struct Task<T>::promise_type
 	{
-		T Result {};
+		std::optional<T> Result;
 		std::exception_ptr Exception;
 		std::coroutine_handle<> Continuation;
 

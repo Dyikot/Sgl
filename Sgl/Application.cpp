@@ -9,6 +9,7 @@
 #include "Base/Exceptions.h"
 #include "Base/Logging.h"
 #include "Base/Time/Stopwatch.h"
+#include "Base/Media/Audio.h"
 #include "Input/SDLEvents.h"
 #include "UIElements/Buttons/CheckBox.h"
 #include "UIElements/Buttons/RadioButton.h"
@@ -20,8 +21,7 @@ namespace Sgl
 
     static constexpr double MaxFrameTime = 1e3 / 60.0;
 
-	Application::Application() noexcept:
-        _windows()
+	Application::Application() noexcept
 	{
 		_current = this;
 
@@ -45,12 +45,13 @@ namespace Sgl
         SDL_RegisterEvents(UserEventsNumber);
         SetThemeVariant(ThemeVariant::System);
         AddDefaultStyles();
+        RegisterDefaultServices();
 	}
 
 	Application::~Application()
 	{        
         MainWindow = nullptr;
-        MIX_DestroyMixer(_mixer);
+        delete _services;
         MIX_Quit();
 		TTF_Quit();
 		SDL_Quit();
@@ -121,16 +122,6 @@ namespace Sgl
         }
 
         return nullptr;
-    }
-
-    void Application::AddAudioMixer()
-    {
-        _mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, nullptr);
-
-        if(!_mixer)
-        {
-            Logging::LogError("Unable to create mixer device: {}", SDL_GetError());
-        }
     }
 
     void Application::Run()
@@ -551,6 +542,11 @@ namespace Sgl
 
         Styles.Add(Selector().OfType<SwitchButon>().On("checked"))
             .Set(CheckBox::BackgroundProperty, ImageSource(AssetId::SwitchButtonOn));
+    }
+
+    void Application::RegisterDefaultServices()
+    {
+        _services->Add<Media::Mixer>();
     }
 
     void Application::PushSDLUserEvent(uint32_t type)

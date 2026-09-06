@@ -1,12 +1,12 @@
 #include "Audio.h"
-#include "Logging.h"
-#include "Threading/TaskAwaiter.h"
-#include "../Application.h"
+#include "../Logging.h"
+#include "../Threading/TaskAwaiter.h"
+#include "../../Application.h"
 
 #include <SDL3_mixer/SDL_mixer.h>
 #include <algorithm>
 
-namespace Sgl::Audio
+namespace Sgl::Media
 {
 	static constexpr float MinVolume = 0;
 	static constexpr float MaxVolume = 1;
@@ -16,22 +16,61 @@ namespace Sgl::Audio
 		return std::clamp(volume, MinVolume, MaxVolume);
 	}
 
-	struct AppMixer
+	Mixer::Mixer()
 	{
-		operator MIX_Mixer*() const
+		_mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, nullptr);
+
+		if(!_mixer)
 		{
-			return App->GetAudioMixer();
+			Logging::LogError("Unable to create mixer device: {}", SDL_GetError());
 		}
-	};
+	}
 
-	static constexpr AppMixer Mixer;
+	Mixer::~Mixer()
+	{
+		MIX_DestroyMixer(_mixer);
+	}
 
-	Audio::Audio(std::string_view path, bool predecode):
-		_audio(MIX_LoadAudio(Mixer, path.data(), predecode))
+	void Mixer::SetVolume(float volume)
+	{
+		MIX_SetMixerGain(_mixer, Adjust(volume));
+	}
+
+	float Mixer::GetVolume()
+	{
+		return MIX_GetMixerGain(_mixer);
+	}
+
+	void Mixer::ResumeAllPlayers()
+	{
+		MIX_ResumeAllTracks(_mixer);
+	}
+
+	void Mixer::PauseAllPlayers()
+	{
+		MIX_PauseAllTracks(_mixer);
+	}
+
+	void Mixer::StopAllPlayers()
+	{
+		MIX_StopAllTracks(_mixer, 0);
+	}
+
+	MIX_Mixer* Mixer::GetSDLMixer() const
+	{
+		return _mixer;
+	}
+
+	Audio::Audio(std::string_view source, bool predecode):
+		Audio(App->GetServices().GetRequired<Mixer>(), source, predecode)
+	{}
+
+	Audio::Audio(Mixer& mixer, std::string_view source, bool predecode):
+		_audio(MIX_LoadAudio(mixer.GetSDLMixer(), source.data(), predecode))
 	{
 		if(!_audio)
 		{
-			Logging::LogError("Unable to create an Audio: {}", SDL_GetError());
+			Logging::LogError("Unable to load an Audio: {}", SDL_GetError());
 		}
 	}
 
@@ -46,12 +85,22 @@ namespace Sgl::Audio
 		MIX_DestroyAudio(_audio);
 	}
 
-	Task<Audio> Audio::LoadAsync(std::string path, bool predecode)
+	Task<Audio> Audio::LoadAsync(std::string_view source, bool predecode)
 	{
-		co_return co_await TaskAwaiter([path = std::move(path), predecode]()
+		return LoadAsync(App->GetServices().GetRequired<Mixer>(), source, predecode);
+	}
+
+	Task<Audio> Audio::LoadAsync(Mixer& mixer, std::string_view source, bool predecode)
+	{
+		co_return co_await TaskAwaiter([&mixer, source = std::move(source), predecode]()
 		{
-			return Audio(path, predecode);
+			return Audio(source, predecode);
 		});
+	}
+
+	bool Audio::IsLoaded() const
+	{
+		return _audio != nullptr;
 	}
 
 	TimeSpan Audio::GetDuration() const
@@ -104,104 +153,104 @@ namespace Sgl::Audio
 		return *this;
 	}
 
-	Audio::operator bool() const noexcept
-	{
-		return _audio;
-	}
-
 	static void OnTrackStopped(void* sender, MIX_Track* track)
 	{
-		auto self = static_cast<Track*>(sender);
+		auto self = static_cast<AudioPlayer*>(sender);
 		self->Stopped.Invoke(*self);
 	}
 
-	Track::Track():
-		_track(MIX_CreateTrack(Mixer))
+	AudioPlayer::AudioPlayer():
+		AudioPlayer(App->GetServices().GetRequired<Mixer>())
+	{
+	}
+
+	AudioPlayer::AudioPlayer(Mixer& mixer):
+		_track(MIX_CreateTrack(mixer.GetSDLMixer()))
 	{
 		MIX_SetTrackStoppedCallback(_track, OnTrackStopped, this);
 	}
 
-	Track::Track(Track&& other) noexcept:
+	AudioPlayer::AudioPlayer(AudioPlayer&& other) noexcept:
 		_track(other._track)
 	{
 		other._track = nullptr;
-		MIX_SetTrackStoppedCallback(_track, OnTrackStopped, this);
 	}
 
-	Track::~Track()
+	AudioPlayer::~AudioPlayer()
 	{
 		MIX_DestroyTrack(_track);
 	}
 
-	void Track::SetAudio(const Audio& audio)
+	void AudioPlayer::SetAudio(const Audio& audio)
 	{
 		MIX_SetTrackAudio(_track, audio.GetSDLAudio());
 	}
 
-	void Track::SetVolume(float volume)
+	void AudioPlayer::SetVolume(float volume)
 	{
 		MIX_SetTrackGain(_track, Adjust(volume));
 	}
 
-	float Track::GetVolume() const
+	float AudioPlayer::GetVolume() const
 	{
 		return Adjust(MIX_GetTrackGain(_track));
 	}
 
-	void Track::SetPosition(TrackPosition value)
+	void AudioPlayer::SetPosition(Point3D value)
 	{
 		MIX_Point3D point { value.X, value.Y, value.Z };
 		MIX_SetTrack3DPosition(_track, &point);
 	}
 
-	TrackPosition Track::GetPosition() const
+	Point3D AudioPlayer::GetPosition() const
 	{
 		MIX_Point3D point;
 		MIX_GetTrack3DPosition(_track, &point);
-		return TrackPosition(point.x, point.y, point.z);
+		return Point3D(point.x, point.y, point.z);
 	}
 
-	bool Track::IsMuted() const
+	bool AudioPlayer::IsMuted() const
 	{
 		return GetVolume() == MinVolume;
 	}
 
-	bool Track::IsPaused() const
+	bool AudioPlayer::IsPaused() const
 	{
 		return MIX_TrackPaused(_track);
 	}
 
-	bool Track::IsPlaying() const
+	bool AudioPlayer::IsPlaying() const
 	{
 		return MIX_TrackPlaying(_track);
 	}
 	
-	void Track::SetPlaybackTime(TimeSpan value)
+	void AudioPlayer::SetPlaybackTime(TimeSpan value)
 	{
 		auto frames = MIX_TrackMSToFrames(_track, value.GetMilliseconds());
 		MIX_SetTrackPlaybackPosition(_track, frames);
 	}
 
-	TimeSpan Track::GetPlaybackTime() const
+	TimeSpan AudioPlayer::GetPlaybackTime() const
 	{
 		auto frames = MIX_GetTrackPlaybackPosition(_track);
 		auto ms = MIX_TrackFramesToMS(_track, frames);
 		return TimeSpan::FromMilliseconds(std::max(0ll, ms));
 	}
 
-	TimeSpan Track::GetRemainingTime() const
+	TimeSpan AudioPlayer::GetRemainingTime() const
 	{
 		auto frames = MIX_GetTrackRemaining(_track);
 		auto ms = MIX_TrackFramesToMS(_track, frames);
 		return TimeSpan::FromMilliseconds(std::max(0ll, ms));
 	}
 
-	void Track::Play()
+	void AudioPlayer::Play()
 	{
 		MIX_PlayTrack(_track, 0);
+		Started.Invoke(*this);
 	}
 
-	void Track::Play(int64_t loops)
+	void AudioPlayer::Play(int64_t loops)
 	{
 		loops = std::max(-1ll, loops);
 
@@ -209,54 +258,34 @@ namespace Sgl::Audio
 		SDL_SetNumberProperty(properties, MIX_PROP_PLAY_LOOPS_NUMBER, loops);
 		MIX_PlayTrack(_track, properties);
 		SDL_DestroyProperties(properties);
+
+		Started.Invoke(*this);
 	}
 
-	void Track::Pause()
+	void AudioPlayer::Pause()
 	{
 		MIX_PauseTrack(_track);
 	}
 
-	void Track::Stop()
+	void AudioPlayer::Stop()
 	{
 		MIX_StopTrack(_track, 0);
 	}
 
-	void Track::Resume()
+	void AudioPlayer::Resume()
 	{
 		MIX_ResumeTrack(_track);
 	}
 
-	Track& Track::operator=(Track&& other) noexcept
+	AudioPlayer& AudioPlayer::operator=(AudioPlayer&& other) noexcept
 	{
-		MIX_DestroyTrack(_track);
-		_track = other._track;
-		other._track = nullptr;
-		MIX_SetTrackStoppedCallback(_track, OnTrackStopped, this);
+		if(this != &other)
+		{
+			MIX_DestroyTrack(_track);
+			_track = other._track;
+			other._track = nullptr;
+		}
+
 		return *this;
-	}
-
-	void SetMixerVolume(float volume)
-	{
-		MIX_SetMixerGain(Mixer, Adjust(volume));
-	}
-
-	float GetMixerVolume()
-	{
-		return MIX_GetMixerGain(Mixer);
-	}
-
-	void ResumeAllTracks()
-	{
-		MIX_ResumeAllTracks(Mixer);
-	}
-
-	void PauseAllTracks()
-	{
-		MIX_PauseAllTracks(Mixer);
-	}
-
-	void StopAllTracks()
-	{
-		MIX_StopAllTracks(Mixer, 0);
 	}
 }

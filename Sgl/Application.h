@@ -1,12 +1,11 @@
 #pragma once
 
 #include "Window.h"
+#include "Base/ServiceLocator.h"
 #include "Base/Media/ThemeMode.h"
 #include "Base/Media/ThemeResourceProvider.h"
 #include "Base/Localization/StringLocalizer.h"
 #include "Base/Localization/LocalizationResources.h"
-
-struct MIX_Mixer;
 
 namespace Sgl
 {
@@ -75,7 +74,7 @@ namespace Sgl
 		/// <summary>
 		/// The primary window of the application.
 		/// </summary>
-		Ref<Window> MainWindow;
+		Ref<Window> MainWindow;		
 
 		/// <summary>
 		/// Determines when the application automatically shuts down.
@@ -109,6 +108,12 @@ namespace Sgl
 		IStyleHost* GetStylingParent() final { return nullptr; }
 
 		/// <summary>
+		/// Gets the service locator
+		/// </summary>
+		/// <returns>Reference to service locator</returns>
+		ServiceLocator& GetServices() { return *_services; }
+
+		/// <summary>
 		/// Gets the active window.
 		/// </summary>
 		/// <returns>A pointer to the active window.</returns>
@@ -126,17 +131,6 @@ namespace Sgl
 		/// </summary>
 		/// <returns>A vector containing pointers to all active windows.</returns>
 		const std::vector<Window*>& GetWindows() const noexcept { return _activeWindows; }
-
-		/// <summary>
-		/// Gets an audio mixer
-		/// </summary>
-		/// <returns>A pointer to audio mixer</returns>
-		MIX_Mixer* GetAudioMixer() const { return _mixer; }
-
-		/// <summary>
-		/// Creates a mixer for playing music and sounds.
-		/// </summary>
-		void AddAudioMixer();
 
 		/// <summary>
 		/// Starts the application's main event loop.
@@ -157,6 +151,7 @@ namespace Sgl
 		ThemeMode GetSystemThemeMode() const;
 		void HandleInputEvents();
 		void AddDefaultStyles();
+		void RegisterDefaultServices();
 		void PushSDLUserEvent(uint32_t type);
 		void AddWindow(Window& window);
 		void RemoveWindow(Window& window);
@@ -169,10 +164,10 @@ namespace Sgl
 		std::vector<SDL_WindowID> _windowsIds;
 		std::vector<Window*> _windows;
 		std::vector<Window*> _activeWindows;
+		ServiceLocator* _services = new ServiceLocator();
 
 		bool _isRunning = false;
 		ThemeVariant _themeVariant;
-		MIX_Mixer* _mixer = nullptr;
 
 		friend class Window;
 		friend class StringLocalizer;
