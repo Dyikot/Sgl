@@ -94,7 +94,7 @@ namespace Sgl::Media
 	{
 		co_return co_await TaskAwaiter([&mixer, source = std::move(source), predecode]()
 		{
-			return Audio(source, predecode);
+			return Audio(mixer, source, predecode);
 		});
 	}
 
