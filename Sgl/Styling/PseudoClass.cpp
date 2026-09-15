@@ -41,10 +41,6 @@ namespace Sgl
         _classes(classes)
     {}
 
-    PseudoClassesSet::PseudoClassesSet(const PseudoClassesSet& other):
-        _classes(other._classes)
-    {}
-
     void PseudoClassesSet::Set(PseudoClass pseudoClass, bool value)
     {
         if(_classes.test(pseudoClass.GetId()) != value)

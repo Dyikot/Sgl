@@ -1,34 +1,28 @@
 #pragma once
-
 #include <vector>
 #include <ranges>
 #include <concepts>
 
 namespace Sgl
 {
-	/// <summary>
-	/// Provides a base class for a generic collection that can be customized through inheritance.
-	/// </summary>
-	/// <typeparam name="T">The type of elements in the collection. Must be equality comparable.</typeparam>
+	//! @brief Provides a base class for a generic collection that can be customized through inheritance
+	//! @tparam T The type of elements in the collection. Must be equality comparable.
 	template<std::equality_comparable T>
 	class Collection
 	{
 	public:
+		//! @brief Default constructor
 		Collection() = default;
 
-		/// <summary>
-		/// Initializes a new instance of the Collection class with the specified initializer list.
-		/// </summary>
-		/// <param name="init"> - the initial elements for the collection.</param>
-		Collection(std::initializer_list<T> init) :
+		//! @brief Initializes a new instance of the Collection class with the specified initializer list
+		//! @param init The initial elements for the collection
+		Collection(std::initializer_list<T> init):
 			_items(init)
 		{}
 
-		/// <summary>
-		/// Initializes a new instance of the Collection class with the specified vector.
-		/// </summary>
-		/// <param name="range"> - the vector containing initial elements.</param>
-		explicit Collection(std::vector<T> range) :
+		//! @brief Initializes a new instance of the Collection class with the specified vector
+		//! @param range The vector containing initial elements
+		explicit Collection(std::vector<T> range):
 			_items(std::move(range))
 		{}
 
@@ -36,157 +30,119 @@ namespace Sgl
 		Collection(Collection&&) noexcept = default;
 		virtual ~Collection() = default;
 
-		/// <summary>
-		/// Returns an iterator to the beginning of the collection.
-		/// </summary>
+		//! @brief Returns an iterator to the beginning of the collection
 		auto begin() const { return _items.begin(); }
 
-		/// <summary>
-		/// Returns an iterator to the end of the collection.
-		/// </summary>
+		//! @brief Returns an iterator to the end of the collection
 		auto end() const { return _items.end(); }
 
-		/// <summary>
-		/// Returns a reverse iterator to the beginning of the collection.
-		/// </summary>
+		//! @brief Returns a reverse iterator to the beginning of the collection
 		auto rbegin() const { return _items.rbegin(); }
 
-		/// <summary>
-		/// Returns a reverse iterator to the end of the collection.
-		/// </summary>
+		//! @brief Returns a reverse iterator to the end of the collection
 		auto rend() const { return _items.rend(); }
 
-		/// <summary>
-		/// Gets the number of elements in the collection.
-		/// </summary>
+		//! @brief Gets the number of elements in the collection
 		size_t Count() const noexcept
 		{
 			return _items.size();
 		}
 
-		/// <summary>
-		/// Determines whether the collection is empty.
-		/// </summary>
+		//! @brief Determines whether the collection is empty
 		bool IsEmpty() const noexcept
 		{
 			return _items.empty();
 		}
 
-		/// <summary>
-		/// Returns a const reference to the first element in the collection.
-		/// </summary>
+		//! @brief Returns a const reference to the first element in the collection
 		const T& Front() const
 		{
 			return _items.front();
 		}
 
-		/// <summary>
-		/// Returns a const reference to the last element in the collection.
-		/// </summary>
+		//! @brief Returns a const reference to the last element in the collection
 		const T& Back() const
 		{
 			return _items.back();
 		}
 
-		/// <summary>
-		/// Adds an item to the end of the collection.
-		/// </summary>
-		/// <param name="item"> - the item to add.</param>
+		//! @brief Adds an item to the end of the collection
+		//! @param item The item to add
 		void Add(const T& item)
 		{
 			InsertItem(_items.size(), item);
 		}
 
-		/// <summary>
-		/// Removes all elements from the collection.
-		/// </summary>
+		//! @brief Removes all elements from the collection
 		void Clear()
 		{
 			ClearItems();
 		}
 
-		/// <summary>
-		/// Determines whether an element is in the collection.
-		/// </summary>
-		/// <param name="item"> - the item to locate.</param>
-		/// <returns>True if the item is found; otherwise, false.</returns>
+		//! @brief Determines whether an element is in the collection
+		//! @param item The item to locate
+		//! @return True if the item is found; otherwise, false
 		bool Contains(const T& item) const
 		{
 			return std::ranges::find(_items, item) != _items.end();
 		}
 
-		/// <summary>
-		/// Searches for the specified item and returns the zero-based index of the first occurrence.
-		/// </summary>
-		/// <param name="item"> - the item to locate.</param>
-		/// <returns>The zero-based index if found; otherwise, -1.</returns>
+		//! @brief Searches for the specified item and returns the zero-based index of the first occurrence
+		//! @param item The item to locate
+		//! @return The zero-based index if found; otherwise, -1
 		int IndexOf(const T& item) const
 		{
 			auto it = std::ranges::find(_items, item);
 			return it != _items.end() ? static_cast<int>(it - _items.begin()) : -1;
 		}
 
-		/// <summary>
-		/// Inserts an item into the collection at the specified index.
-		/// </summary>
-		/// <param name="index"> - the zero-based index at which the item should be inserted.</param>
-		/// <param name="item">The item to insert.</param>
+		//! @brief Inserts an item into the collection at the specified index
+		//! @param index The zero-based index at which the item should be inserted
+		//! @param item The item to insert
 		void Insert(size_t index, const T& item)
 		{
 			InsertItem(index, item);
 		}
 
-		/// <summary>
-		/// Removes the first occurrence of a specific item from the collection.
-		/// </summary>
-		/// <param name="item"> - the item to remove.</param>
-		/// <returns>True if the item was successfully removed; otherwise, false.</returns>
+		//! @brief Removes the first occurrence of a specific item from the collection
+		//! @param item The item to remove
+		//! @return True if the item was successfully removed; otherwise, false
 		bool Remove(const T& item)
 		{
 			auto it = std::ranges::find(_items, item);
-
 			if(it != _items.end())
 			{
 				RemoveItem(static_cast<size_t>(it - _items.begin()));
 				return true;
 			}
-
 			return false;
 		}
 
-		/// <summary>
-		/// Removes the element at the specified index.
-		/// </summary>
-		/// <param name="index"> - the zero-based index of the element to remove.</param>
+		//! @brief Removes the element at the specified index
+		//! @param index The zero-based index of the element to remove
 		void RemoveAt(size_t index)
 		{
 			RemoveItem(index);
 		}
 
-		/// <summary>
-		/// Replaces the element at the specified index with a new value.
-		/// </summary>
-		/// <param name="index"> - the zero-based index of the element to replace.</param>
-		/// <param name="item"> - the new value for the element.</param>
+		//! @brief Replaces the element at the specified index with a new value
+		//! @param index The zero-based index of the element to replace
+		//! @param item The new value for the element
 		void SetElementAt(size_t index, const T& item)
 		{
 			SetItem(index, item);
 		}
 
-		/// <summary>
-		/// Returns a const reference to the element at the specified index.
-		/// </summary>
-		/// <param name="index"> - the zero-based index of the element to get.</param>
+		//! @brief Returns a const reference to the element at the specified index
+		//! @param index The zero-based index of the element to get
 		const T& GetElementAt(size_t index) const
 		{
 			return _items.at(index);
 		}
 
-		/// <summary>
-		/// Returns a const reference to the element at the specified index using operator syntax.
-		/// </summary>
-		/// <param name="index"> - the zero-based index of the element to get.</param>
-		/// <returns>A const reference to the element.</returns>
+		//! @brief Returns a const reference to the element at the specified index using operator syntax
+		//! @param index The zero-based index of the element to get
+		//! @return A const reference to the element
 		const T& operator[](size_t index) const
 		{
 			return _items[index];
@@ -194,6 +150,7 @@ namespace Sgl
 
 		Collection& operator=(const Collection&) = default;
 		Collection& operator=(Collection&&) noexcept = default;
+
 	protected:
 		virtual void ClearItems()
 		{
@@ -214,6 +171,7 @@ namespace Sgl
 		{
 			_items.erase(_items.begin() + index);
 		}
+
 	protected:
 		std::vector<T> _items;
 	};

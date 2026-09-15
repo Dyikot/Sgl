@@ -5,14 +5,10 @@
 
 namespace Sgl
 {
-	/// <summary>
-	/// Empty event args
-	/// </summary>
+	//! @brief Empty event args
 	struct EventArgs {};
 
-	/// <summary>
-	/// Represents a delegate for handling events with a sender and event arguments.
-	/// </summary>
+	//! @brief Represents a delegate for handling events with a sender and event arguments
 	template<typename TSender, typename TEventArgs = EventArgs>
 	using EventHandler = Delegate<void(TSender&, TEventArgs)>;
 
@@ -21,6 +17,7 @@ namespace Sgl
 	{
 	private:
 		using Method = void(TSource::*)(TSender&, TEventArgs);
+
 	public:
 		MethodEventHandler(Method method, TSource* source):
 			_method(method),
@@ -36,6 +33,7 @@ namespace Sgl
 		{
 			return _method == other._method;
 		}
+
 	private:
 		Method _method;
 		TSource* _source;
@@ -44,9 +42,7 @@ namespace Sgl
 	template<typename T>
 	class Event;
 
-	/// <summary>
-	/// Thread-unsafe event container for EventHandler delegates.
-	/// </summary>
+	//! @brief Thread-unsafe event container for EventHandler delegates
 	template<typename TSender, typename TEventArgs>
 	class Event<EventHandler<TSender, TEventArgs>> final
 	{
@@ -55,6 +51,7 @@ namespace Sgl
 		using EventHandlers = std::vector<EventHandler>;
 		using Sender = TSender;
 		using EventArgs = TEventArgs;
+
 	public:
 		Event() = default;
 		Event(const Event&) = delete;
@@ -65,56 +62,45 @@ namespace Sgl
 			Release();
 		}
 
-		/// <summary>
-		/// Removes all event handlers from the event.
-		/// </summary>
+		//! @brief Removes all event handlers from the event
 		void Clear() noexcept
-		{ 
+		{
 			Release();
 		}
 
-		/// <summary>
-		/// Checks whether the event has any registered handlers.
-		/// </summary>
-		/// <returns>True if there are registered handlers; otherwise, false.</returns>
+		//! @brief Checks whether the event has any registered handlers
+		//! @return True if there are registered handlers; otherwise, false
 		bool HasHandlers() const noexcept
 		{
 			return _eventHandlers != nullptr;
 		}
 
-		/// <summary>
-		/// Return the number of event handlers
-		/// </summary>
-		/// <returns>Number of event handlers</returns>
+		//! @brief Returns the number of event handlers
+		//! @return Number of event handlers
 		size_t Count() const noexcept
 		{
 			return _eventHandlers ? _eventHandlers->size() : 0;
 		}
 
-		/// <summary>
-		/// Adds an event handler to the event.
-		/// </summary>
-		/// <param name="handler"> - The event handler to add.</param>
+		//! @brief Adds an event handler to the event
+		//! @param handler The event handler to add
 		void operator+=(EventHandler handler)
 		{
 			if(!HasHandlers())
 			{
 				_eventHandlers = new EventHandlers();
 			}
-			
+
 			_eventHandlers->push_back(std::move(handler));
 		}
 
-		// <summary>
-		/// Removes an event handler from the event.
-		/// </summary>
-		/// <param name="handler"> - The event handler to remove.</param>
+		//! @brief Removes an event handler from the event
+		//! @param handler The event handler to remove
 		void operator-=(const EventHandler& handler)
 		{
 			if(HasHandlers())
 			{
 				std::erase(*_eventHandlers, handler);
-
 				if(_eventHandlers->empty())
 				{
 					Release();
@@ -122,11 +108,9 @@ namespace Sgl
 			}
 		}
 
-		/// <summary>
-		/// Invokes all registered event handlers with the specified sender and event arguments.
-		/// </summary>
-		/// <param name="sender"> - The sender object that is raising the event.</param>
-		/// <param name="e"> - The event arguments containing data about the event.</param>
+		//! @brief Invokes all registered event handlers with the specified sender and event arguments
+		//! @param sender The sender object that is raising the event
+		//! @param e The event arguments containing data about the event
 		void Invoke(TSender& sender, TEventArgs e) const
 		{
 			if(HasHandlers())
@@ -138,10 +122,8 @@ namespace Sgl
 			}
 		}
 
-		/// <summary>
-		/// Invokes event with default-constructed event arguments.
-		/// </summary>
-		/// <param name="sender">The sender object raising the event</param>
+		//! @brief Invokes event with default-constructed event arguments
+		//! @param sender The sender object raising the event
 		void Invoke(TSender& sender) const requires std::default_initializable<TEventArgs>
 		{
 			Invoke(sender, TEventArgs());
@@ -149,18 +131,20 @@ namespace Sgl
 
 		Event& operator=(const Event&) = delete;
 		Event& operator=(Event&&) = delete;
+
 	private:
 		void Release()
 		{
 			delete _eventHandlers;
 			_eventHandlers = nullptr;
 		}
+
 	private:
 		EventHandlers* _eventHandlers = nullptr;
 	};
 
 	template<typename T>
-	struct is_event : std::false_type {};
+	struct is_event: std::false_type {};
 
 	template<typename T>
 	struct is_event<Event<T>>: std::true_type {};

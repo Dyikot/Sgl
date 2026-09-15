@@ -4,14 +4,10 @@
 
 namespace Sgl
 {
-	/// <summary>
-	/// Represents basic information about a language.
-	/// </summary>
+	//! @brief Represents basic information about a language
 	struct LanguageInfo
 	{
-		/// <summary>
-		/// The identifier of the language (e.g., "en", "fr", "de").
-		/// </summary>
+		//! @brief The identifier of the language (e.g., "en", "fr", "de")
 		std::string Name;
 
 		bool operator==(const LanguageInfo&) const = default;

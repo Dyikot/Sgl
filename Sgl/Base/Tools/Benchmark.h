@@ -6,27 +6,20 @@
 
 namespace Sgl
 {
-	/// <summary>
-	/// A simple benchmarking utility that measures the average execution time of a callable action over a specified number of iterations.
-	/// </summary>
+	//! @brief A simple benchmarking utility that measures the average execution time of a callable action over a specified number of iterations
 	class Benchmark
 	{
 	public:
-		/// <summary>
-		/// Constructs a benchmark with the given name. Uses a default number of iterations (1000) unless changed via Loops().
-		/// </summary>
-		/// <param name="name"> - the descriptive name of the benchmark, shown in the output.</param>
+		//! @brief Constructs a benchmark with the given name
+		//! @param name The descriptive name of the benchmark, shown in the output
 		explicit Benchmark(std::string name):
 			_name(std::move(name)),
 			_loopsNumber(1)
 		{}
 
-		/// <summary>
-		/// Sets the number of times the action will be executed during benchmarking.
-		/// The value is clamped to at least 1 to ensure at least one run.
-		/// </summary>
-		/// <param name="value"> - desired number of iterations.</param>
-		/// <returns>A reference to this Benchmark instance for method chaining.</returns>
+		//! @brief Sets the number of times the action will be executed during benchmarking
+		//! @param value Desired number of iterations
+		//! @return A reference to this Benchmark instance for method chaining
 		Benchmark& Loops(size_t value)
 		{
 			if(value == 0)
@@ -38,12 +31,10 @@ namespace Sgl
 			return *this;
 		}
 
-		/// <summary>
-		/// Executes the provided action repeatedly (as configured by Loops()), measures total elapsed time,
-		/// computes the average per-iteration duration, and prints the result as "{name}: {average_time}".
-		/// The action must be invocable with no arguments.
-		/// </summary>
-		/// <param name="action"> - the code to benchmark.</param>
+		//! @brief Executes the provided action repeatedly (as configured by Loops()), measures total elapsed time,
+		//! computes the average per-iteration duration, and prints the result as "{name}: {average_time}".
+		//! The action must be invocable with no arguments.
+		//! @param action The code to benchmark
 		void Run(std::invocable auto action) const
 		{
 			Stopwatch stopwatch = Stopwatch::StartNew();
@@ -57,6 +48,7 @@ namespace Sgl
 			auto elapsed = stopwatch.Elapsed() / static_cast<double>(_loopsNumber);
 			std::cout << std::format("{}: {}\n", _name, elapsed.ToString());
 		}
+
 	private:
 		std::string _name;
 		size_t _loopsNumber;

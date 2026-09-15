@@ -1,5 +1,4 @@
 #pragma once
-
 #include <string>
 #include <unordered_map>
 #include "Brush.h"
@@ -7,80 +6,63 @@
 
 namespace Sgl
 {
-    /// <summary>
-    /// Provides themed color and brush resources that automatically switch based on the active theme.
-    /// Resources are stored separately for light and dark themes and are looked up at runtime.
-    /// </summary>
-    class ThemeResourceProvider
-    {
-    public:
-        ThemeResourceProvider() = default;
-        ~ThemeResourceProvider();
+	//! @brief Provides themed color and brush resources that automatically switch based on the active theme.
+	//! Resources are stored separately for light and dark themes and are looked up at runtime.
+	class ThemeResourceProvider
+	{
+	public:
+		ThemeResourceProvider() = default;
+		~ThemeResourceProvider();
 
-        /// <summary>
-        /// Adds a color resource for both light and dark themes.
-        /// </summary>
-        /// <param name="key"> - the resource key.</param>
-        /// <param name="lightColor"> - the color value for light theme.</param>
-        /// <param name="darkColor"> - the color value for dark theme.</param>
-        void AddColor(const std::string& key, Color lightColor, Color darkColor);
+		//! @brief Adds a color resource for both light and dark themes
+		//! @param key The resource key
+		//! @param lightColor The color value for light theme
+		//! @param darkColor The color value for dark theme
+		void AddColor(const std::string& key, Color lightColor, Color darkColor);
 
-        /// <summary>
-        /// Adds a brush resource for both light and dark themes.
-        /// </summary>
-        /// <param name="key"> - the resource key.</param>
-        /// <param name="lightBrush"> - the brush value for light theme.</param>
-        /// <param name="darkBrush"> - the brush value for dark theme.</param>
-        void AddBrush(const std::string& key, const Brush& lightBrush, const Brush& darkBrush);
+		//! @brief Adds a brush resource for both light and dark themes
+		//! @param key The resource key
+		//! @param lightBrush The brush value for light theme
+		//! @param darkBrush The brush value for dark theme
+		void AddBrush(const std::string& key, const Brush& lightBrush, const Brush& darkBrush);
 
-        /// <summary>
-        /// Gets a color resource for the current active theme.
-        /// </summary>
-        /// <param name="key"> - the resource key.</param>
-        /// <returns>The color value.</returns>
-        Color GetColor(const std::string& key) const;
+		//! @brief Gets a color resource for the current active theme
+		//! @param key The resource key
+		//! @return The color value
+		Color GetColor(const std::string& key) const;
 
-        /// <summary>
-        /// Gets a brush resource for the current active theme.
-        /// </summary>
-        /// <param name="key"> - the resource key.</param>
-        /// <returns>The brush value.</returns>
-        Brush GetBrush(const std::string& key) const;
+		//! @brief Gets a brush resource for the current active theme
+		//! @param key The resource key
+		//! @return The brush value
+		Brush GetBrush(const std::string& key) const;
 
-        /// <summary>
-        /// Tries to get a color resource for the current active theme.
-        /// </summary>
-        /// <param name="key"> - the resource key.</param>
-        /// <param name="out"> - output parameter for the color value.</param>
-        /// <returns>True if the key was found, false otherwise.</returns>
-        bool TryGetColor(const std::string& key, Color& out) const;
+		//! @brief Tries to get a color resource for the current active theme
+		//! @param key The resource key
+		//! @param out Output parameter for the color value
+		//! @return True if the key was found, false otherwise
+		bool TryGetColor(const std::string& key, Color& out) const;
 
-        /// <summary>
-        /// Tries to get a brush resource for the current active theme.
-        /// </summary>
-        /// <param name="key"> - the resource key.</param>
-        /// <param name="out"> - output parameter for the brush value.</param>
-        /// <returns>True if the key was found, false otherwise.</returns>
-        bool TryGetBrush(const std::string& key, Brush& out) const;
+		//! @brief Tries to get a brush resource for the current active theme
+		//! @param key The resource key
+		//! @param out Output parameter for the brush value
+		//! @return True if the key was found, false otherwise
+		bool TryGetBrush(const std::string& key, Brush& out) const;
 
-        /// <summary>
-        /// Sets the current active theme mode.
-        /// </summary>
-        /// <param name="mode"> - the new theme mode.</param>
-        void SetCurrentTheme(ThemeMode mode);
+		//! @brief Sets the current active theme mode
+		//! @param mode The new theme mode
+		void SetCurrentTheme(ThemeMode mode);
 
-        /// <summary>
-        /// Gets the current active theme mode.
-        /// </summary>
-        ThemeMode GetCurrentTheme() const { return _currentMode; }
-    private:
-        struct ThemeDictionary
-        {
-            std::unordered_map<std::string, Color> Colors;
-            std::unordered_map<std::string, Brush> Brushes;
-        };
+		//! @brief Gets the current active theme mode
+		ThemeMode GetCurrentTheme() const { return _currentMode; }
 
-        ThemeMode _currentMode = ThemeMode::Light;
-        ThemeDictionary* _resources = new ThemeDictionary[2];
-    };
+	private:
+		struct ThemeDictionary
+		{
+			std::unordered_map<std::string, Color> Colors;
+			std::unordered_map<std::string, Brush> Brushes;
+		};
+
+		ThemeMode _currentMode = ThemeMode::Light;
+		ThemeDictionary* _resources = new ThemeDictionary[2];
+	};
 }

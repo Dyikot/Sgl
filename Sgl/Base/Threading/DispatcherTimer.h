@@ -5,10 +5,8 @@
 
 namespace Sgl
 {
-	/// <summary>
-	/// Represents a timer that raises the Tick event at regular intervals 
-	/// on the UI thread, suitable for UI-related timed operations. Must be created on the UI thread.
-	/// </summary>
+	//! @brief Represents a timer that raises the Tick event at regular intervals
+	//! on the UI thread, suitable for UI-related timed operations. Must be created on the UI thread.
 	class DispatcherTimer
 	{
 	public:
@@ -20,29 +18,19 @@ namespace Sgl
 		DispatcherTimer(DispatcherTimer&&) = delete;
 		~DispatcherTimer();
 
-		/// <summary>
-		/// Gets the initial delay before the timer starts its first interval.
-		/// </summary>
+		//! @brief Gets the initial delay before the timer starts its first interval
 		const TimeSpan Delay;
 
-		/// <summary>
-		/// Gets the interval for which the timer is set.
-		/// </summary>
+		//! @brief Gets the interval for which the timer is set
 		const TimeSpan Interval;
 
-		/// <summary>
-		/// Occurs when the timer interval has elapsed.
-		/// </summary>
+		//! @brief Occurs when the timer interval has elapsed
 		Event<TimeElapsedEventHandler> Tick;
 
-		/// <summary>
-		/// Starts the timer.
-		/// </summary>
+		//! @brief Starts the timer
 		void Start();
-
-		/// <summary>
-		/// Stop the timer.
-		/// </summary>
+		
+		//! @brief Stop the timer
 		void Stop();
 	private:
 		bool _running = false;

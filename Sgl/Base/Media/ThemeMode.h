@@ -2,18 +2,14 @@
 
 namespace Sgl
 {
-	/// <summary>
-	/// Specifies the visual theme mode used for rendering UI elements.
-	/// </summary>
+	//! @brief Specifies the visual theme mode used for rendering UI elements
 	enum class ThemeMode
 	{
 		Light,
 		Dark
 	};
 
-	/// <summary>
-	/// Specifies how the application should determine its active theme.
-	/// </summary>
+	//! @brief Specifies how the application should determine its active theme
 	enum class ThemeVariant
 	{
 		Light,

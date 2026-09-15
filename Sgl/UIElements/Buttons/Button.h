@@ -4,18 +4,14 @@
 
 namespace Sgl::UIElements
 {
-	/// <summary>
-	/// Represents an action that can be bound to UI elements. For example to buttons.
-	/// </summary>
+	//! @brief Represents an action that can be bound to UI elements
 	using Command = Action<const Any&>;
 
-	/// <summary>
-	/// Specifies when a click event is generated for interactive controls (e.g., buttons).
-	/// </summary>
+	//! @brief Specifies when a click event is generated for interactive controls (e.g., buttons)
 	enum class ClickMode
 	{
-		Release, // The Click event is triggered when the mouse button is released over the control.
-		Press    // The Click event is triggered as soon as the mouse button is pressed on the control.
+		Release, // The Click event is triggered when the mouse button is released over the control
+		Press    // The Click event is triggered as soon as the mouse button is pressed on the control
 	};
 
 	class Button : public ContentUIElement

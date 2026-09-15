@@ -4,9 +4,22 @@
 #include <SDL3_image/SDL_image.h>
 
 #include "../Base/Logging.h"
+#include "../Base/Exceptions.h"
 
 namespace Sgl
 {
+	static SDL_FlipMode ToSDLFlipMode(FlipMode mode)
+	{
+		switch(mode)
+		{
+			case FlipMode::None:          return SDL_FLIP_NONE;
+			case FlipMode::Horizontal:    return SDL_FLIP_HORIZONTAL;
+			case FlipMode::Vertical:      return SDL_FLIP_VERTICAL;
+			case FlipMode::Both:          return SDL_FLIP_HORIZONTAL_AND_VERTICAL;
+			default: throw Exception("Not supported flip mode");
+		}
+	}
+
 	Surface::Surface(std::nullptr_t):
 		_surface(nullptr)
 	{}
@@ -121,7 +134,7 @@ namespace Sgl
 
 	void Surface::Flip(FlipMode flipMode)
 	{
-		SDL_FlipSurface(_surface, SDL_FlipMode(flipMode));
+		SDL_FlipSurface(_surface, ToSDLFlipMode(flipMode));
 	}
 
 	Surface Surface::Clone() const

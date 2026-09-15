@@ -9,10 +9,10 @@
 
 namespace Sgl
 {
-	/// <summary>
-	/// Represents an awaitable asynchronous operation that eventually produces a result of type T.
-	/// Designed to be used with C++20 coroutines, where a function returning Task<T> can use co_await and co_return.
-	/// </summary>
+	//! @brief Represents an awaitable asynchronous operation that eventually produces a result of type T.
+	//! 
+	//! Designed to be used with C++20 coroutines, where a function returning Task<T> can use co_await and co_return.
+	//! @tparam T Result type
 	template<typename T>
 	class [[nodiscard]] Task
 	{

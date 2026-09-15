@@ -4,7 +4,6 @@
 #include "../Data/IDataTemplate.h"
 #include "../Input/MouseAndKeyEventArgs.h"
 #include "../Layout/Layoutable.h"
-#include "../Render/RenderFragment.h"
 
 namespace Sgl
 {

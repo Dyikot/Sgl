@@ -2,16 +2,10 @@
 
 namespace Sgl
 {
-    /// <summary>
-    /// Represents a bitmask of modifier keys (e.g., Shift, Ctrl, Alt) active during a keyboard event.
-    /// </summary>
-	using KeyModifier = unsigned short;
+    //! @brief Represents a bitmask of modifier keys (e.g., Shift, Ctrl, Alt) active during a keyboard event
+    using KeyModifier = unsigned short;
 
-    /// <summary>
-    /// A collection of static constants representing individual keyboard modifier keys.
-    /// Each modifier is assigned a unique bit flag, allowing multiple modifiers to be combined
-    /// using bitwise OR (e.g., KeyModifiers::LShift | KeyModifiers::Ctrl).
-    /// </summary>
+    //! @brief A collection of static constants representing individual keyboard modifier keys
     class KeyModifiers
     {
     public:

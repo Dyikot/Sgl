@@ -6,9 +6,7 @@
 
 namespace Sgl
 {
-	/// <summary>
-	/// Transparent hash functor supporting heterogeneous lookup for string-like types.
-	/// </summary>
+	//! @brief Transparent hash functor supporting heterogeneous lookup for string-like types
 	struct StringHash
 	{
 		using Hash = std::hash<std::string_view>;
@@ -19,11 +17,9 @@ namespace Sgl
 		std::size_t operator()(std::string const& str) const { return Hash()(str); }
 	};
 
-	/// <summary>
-	/// Splits a string into a vector of substrings based on a delimiter character.
-	/// </summary>
-	/// <param name="str"> - the string view to split.</param>
-	/// <param name="delimiter"> - the character used as the delimiter.</param>
-	/// <returns>A vector of strings containing the split substrings.</returns>
+	//! @brief Splits a string into a vector of substrings based on a delimiter character
+	//! @param str The string view to split
+	//! @param delimiter The character used as the delimiter
+	//! @return A vector of strings containing the split substrings
 	std::vector<std::string> SplitString(std::string_view str, char delimiter);
 }

@@ -4,10 +4,8 @@
 
 namespace Sgl
 {
-	/// <summary>
-	/// Opens the specified URL in the default web browser.
-	/// </summary>
-	/// <param name="url"> - the URL to open (must start with http:// or https://).</param>
-	/// <returns>True if the URL was opened successfully, false otherwise.</returns>
+	//! @brief Opens the specified URL in the default web browser
+	//! @param url The URL to open (must start with http:// or https://)
+	//! @return True if the URL was opened successfully, false otherwise
 	bool OpenUrl(std::string_view url);
 }

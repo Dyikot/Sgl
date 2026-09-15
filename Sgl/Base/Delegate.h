@@ -8,9 +8,7 @@ namespace Sgl
 	template<typename T>
 	class Delegate;
 
-	/// <summary>
-	/// A generic delegate class that can store and invoke callable objects with specified signature.
-	/// </summary>
+	//! @brief A generic delegate class that can store and invoke callable objects with specified signature
 	template<typename TReturn, typename... TArgs>
 	class Delegate<TReturn(TArgs...)>
 	{
@@ -19,7 +17,6 @@ namespace Sgl
 		{
 		public:
 			virtual ~ICallable() = default;
-
 			virtual ICallable* Copy() const = 0;
 			virtual const std::type_info& Type() const = 0;
 			virtual bool Equals(const ICallable& other) const = 0;
@@ -27,7 +24,7 @@ namespace Sgl
 		};
 
 		template<typename T>
-		struct Callable final : public ICallable
+		struct Callable final: public ICallable
 		{
 		public:
 			Callable(T object):
@@ -52,13 +49,11 @@ namespace Sgl
 				{
 					return false;
 				}
-
 				if constexpr(std::equality_comparable<T>)
 				{
 					auto& otherCallable = static_cast<const Callable<T>&>(other);
 					return Object == otherCallable.Object;
 				}
-
 				return false;
 			}
 
@@ -67,39 +62,27 @@ namespace Sgl
 				return std::invoke(Object, std::forward<TArgs>(args)...);
 			}
 		};
+
 	public:
-		/// <summary>
-		/// Default constructor. Creates an empty delegate with no target.
-		/// </summary>
+		//! @brief Default constructor. Creates an empty delegate with no target
 		Delegate() noexcept = default;
 
-		// <summary>
-		/// Null pointer constructor. Creates an empty delegate.
-		/// </summary>
-		/// <param name="ptr"> - nullptr value.</param>
+		//! @brief Creates an empty delegate with no target
 		Delegate(std::nullptr_t) noexcept {}
 
-		/// <summary>
-		/// Constructs a delegate with the specified callable object.
-		/// </summary>
-		/// <param name="func"> - The callable object to wrap.</param>
+		//! @brief Constructs a delegate with the specified callable object
+		//! @param func The callable object to wrap
 		template<typename TFunc> requires !std::same_as<std::decay_t<TFunc>, Delegate>
 		Delegate(TFunc&& func):
 			_callable(new Callable<std::decay_t<TFunc>>(std::forward<TFunc>(func)))
 		{}
 
-		/// <summary>
-		/// Copy constructor. Creates a new delegate with a copy of the callable from another delegate.
-		/// </summary>
-		/// <param name="other"> - The delegate to copy from.</param>
+		//! @brief Copy constructor
 		Delegate(const Delegate& other):
 			_callable(other.HasTarget() ? other._callable->Copy() : nullptr)
 		{}
 
-		/// <summary>
-		/// Move constructor. Transfers ownership of the callable from another delegate.
-		/// </summary>
-		/// <param name="other"> - The delegate to move from.</param>
+		//! @brief Move constructor
 		Delegate(Delegate&& other) noexcept:
 			_callable(std::exchange(other._callable, nullptr))
 		{}
@@ -109,48 +92,37 @@ namespace Sgl
 			delete _callable;
 		}
 
-		/// <summary>
-		/// Resets the delegate to empty state, releasing any held callable.
-		/// </summary>
+		//! @brief Resets the delegate to empty state, releasing any held callable
 		void Reset() noexcept
 		{
 			delete _callable;
 			_callable = nullptr;
 		}
 
-		/// <summary>
-		/// Checks whether the delegate has a target callable.
-		/// </summary>
-		/// <returns>True if the delegate has a target; otherwise, false.</returns>
+		//! @brief Checks whether the delegate has a target callable
+		//! @return True if the delegate has a target; otherwise, false
 		bool HasTarget() const noexcept
 		{
 			return _callable != nullptr;
 		}
 
-		/// <summary>
-		/// Gets the type information of the target callable.
-		/// </summary>
-		/// <returns>A reference to the type_info object representing the target callable's type, or typeid(nullptr) if empty.</returns>
+		//! @brief Gets the type information of the target callable
+		//! @return A reference to the type_info object representing the target callable's type, or typeid(nullptr) if empty
 		const std::type_info& TargetType() const noexcept
 		{
 			return _callable ? _callable->Type() : typeid(nullptr);
 		}
 
-		/// <summary>
-		/// Invokes the target callable with the specified arguments.
-		/// </summary>
-		/// <param name="args"> - The arguments to pass to the callable.</param>
-		/// <returns>The result of invoking the callable.</returns>
-		/// <exception cref="std::bad_function_call">Thrown if the delegate is empty.</exception>
+		//! @brief Invokes the target callable with the specified arguments
+		//! @param args The arguments to pass to the callable
+		//! @return The result of invoking the callable
 		TReturn operator()(TArgs... args) const
 		{
 			return (*_callable)(std::forward<TArgs>(args)...);
 		}
 
-		/// <summary>
-		/// Assignment operator for nullptr. Resets the delegate to empty state.
-		/// </summary>
-		/// <param name="ptr"> - nullptr value.</param>
+		//! @brief Assignment operator for nullptr. Resets the delegate to empty state
+		//! @param ptr Nullptr value
 		Delegate& operator=(nullptr_t) noexcept
 		{
 			delete _callable;
@@ -158,10 +130,8 @@ namespace Sgl
 			return *this;
 		}
 
-		// <summary>
-		/// Assignment operator for callable objects.
-		/// </summary>
-		/// <param name="func"> - The callable object to assign.</param>
+		//! @brief Assignment operator for callable objects
+		//! @param func The callable object to assign
 		template<typename TFunc> requires !std::same_as<std::decay_t<TFunc>, Delegate>
 		Delegate& operator=(TFunc&& func)
 		{
@@ -170,10 +140,8 @@ namespace Sgl
 			return *this;
 		}
 
-		/// <summary>
-		/// Copy assignment operator. Copies the callable from another delegate.
-		/// </summary>
-		/// <param name="other"> - The delegate to copy from.</param>
+		//! @brief Copy assignment operator. Copies the callable from another delegate
+		//! @param other The delegate to copy from
 		Delegate& operator=(const Delegate& other)
 		{
 			if(this != &other)
@@ -185,10 +153,8 @@ namespace Sgl
 			return *this;
 		}
 
-		/// <summary>
-		/// Move assignment operator. Transfers ownership of the callable from another delegate.
-		/// </summary>
-		/// <param name="other"> - The delegate to move from.</param>
+		//! @brief Move assignment operator. Transfers ownership of the callable from another delegate
+		//! @param other The delegate to move from
 		Delegate& operator=(Delegate&& other) noexcept
 		{
 			if(this != &other)
@@ -200,26 +166,22 @@ namespace Sgl
 			return *this;
 		}
 
-		/// <summary>
-		/// Checks whether the delegate has a target callable.
-		/// </summary>
-		/// <returns>True if the delegate has a target; otherwise, false.</returns>
+		//! @brief Checks whether the delegate has a target callable
+		//! @return True if the delegate has a target; otherwise, false
 		explicit operator bool() const noexcept
 		{
 			return _callable != nullptr;
 		}
 
-		/// <summary>
-		/// Equality operator. Compares two delegates based on their target types.
-		/// </summary>
-		/// <param name="left"> - The first delegate to compare.</param>
-		/// <param name="right"> - The second delegate to compare.</param>
-		/// <returns>True if both delegates have targets of the same type; otherwise, false.</returns>
+		//! @brief Equality operator. Compares two delegates based on their target types
+		//! @param left The first delegate to compare
+		//! @param right The second delegate to compare
+		//! @return True if both delegates have targets of the same type; otherwise, false
 		friend bool operator==(const Delegate& left, const Delegate& right) noexcept
 		{
 			bool isLeftNull = left._callable == nullptr;
 			bool isRightNull = right._callable == nullptr;
-
+			
 			if(isLeftNull || isRightNull)
 			{
 				return isLeftNull && isRightNull;
@@ -227,25 +189,20 @@ namespace Sgl
 
 			return left._callable->Equals(*right._callable);
 		}
+
 	private:
 		ICallable* _callable = nullptr;
 	};
 
-	/// <summary>
-	/// Represents a delegate that encapsulates a method that takes any number of arguments and does not return a value.
-	/// </summary>
+	//! @brief Represents a delegate that encapsulates a method that takes any number of arguments and does not return a value
 	template<typename... TArgs>
 	using Action = Delegate<void(TArgs...)>;
 
-	/// <summary>
-	/// Represents a delegate that encapsulates a method that takes any number of arguments and returns a boolean value.
-	/// </summary>
+	//! @brief Represents a delegate that encapsulates a method that takes any number of arguments and returns a boolean value
 	template<typename... TArgs>
 	using Predicate = Delegate<bool(TArgs...)>;
 
-	/// <summary>
-	/// Represents a delegate that encapsulates a method that takes any number of arguments and returns a value of the specified type.
-	/// </summary>
+	//! @brief Represents a delegate that encapsulates a method that takes any number of arguments and returns a value of the specified type
 	template<typename TResult, typename... TArgs>
 	using Func = Delegate<TResult(TArgs...)>;
 }

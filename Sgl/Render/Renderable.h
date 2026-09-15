@@ -59,4 +59,6 @@ namespace Sgl
     private:
         ResourceKey _key;
     };
+
+    using RenderFragment = Action<RenderContext, const FRect&>;
 }

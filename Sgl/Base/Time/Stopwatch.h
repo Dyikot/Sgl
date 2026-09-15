@@ -5,52 +5,37 @@
 
 namespace Sgl
 {
-	/// <summary>
-	/// Provides functionality to measure elapsed time with high precision.
-	/// </summary>
+	//! @brief Provides functionality to measure elapsed time with high precision
 	class Stopwatch
 	{
 	public:
-		/// <summary>
-		/// Initializes and starts a new stopwatch instance.
-		/// </summary>
-		/// <returns>A new Stopwatch instance that has already started.</returns>
+		//! @brief Initializes and starts a new stopwatch instance
+		//! @return A new Stopwatch instance that has already started
 		static Stopwatch StartNew();
 
-		/// <summary>
-		/// Starts the stopwatch if it is not already running.
-		/// </summary>
+		//! @brief Starts the stopwatch if it is not already running
 		void Start() noexcept;
 
-		/// <summary>
-		/// Resets, and restarts the stopwatch.
-		/// </summary>
+		//! @brief Resets and restarts the stopwatch
 		void Restart() noexcept;
 
-		/// <summary>
-		/// Stops the stopwatch and resets the elapsed time to zero.
-		/// </summary>
+		//! @brief Stops the stopwatch and resets the elapsed time to zero
 		void Reset() noexcept;
 
-		/// <summary>
-		/// Pause the stopwatch.
-		/// </summary>
+		//! @brief Pauses the stopwatch
 		void Pause() noexcept;
 
-		/// <summary>
-		/// Gets a value indicating whether the stopwatch is currently running.
-		/// </summary>
-		/// <returns>True if the stopwatch is running; otherwise, false.</returns>
+		//! @brief Gets a value indicating whether the stopwatch is currently running
+		//! @return True if the stopwatch is running; otherwise, false
 		bool IsRunning() const noexcept;
 
-		/// <summary>
-		/// Gets the total elapsed time measured by the stopwatch.
-		/// </summary>
-		/// <returns>The TimeSpan representing the total elapsed time.</returns>
+		//! @brief Gets the total elapsed time measured by the stopwatch
+		//! @return The TimeSpan representing the total elapsed time
 		TimeSpan Elapsed() const noexcept;
+
 	private:
 		TimeSpan GetElapsedTime() const noexcept;
-		
+
 		using Clock = std::chrono::high_resolution_clock;
 		using TimePoint = std::chrono::steady_clock::time_point;
 

@@ -7,7 +7,7 @@
 
 namespace Sgl::Math
 {
-	constexpr float PI = std::numbers::pi_v<float>;
+	static constexpr float PI = std::numbers::pi_v<float>;
 
 	static std::vector<float> Transform(auto func, size_t count)
 	{

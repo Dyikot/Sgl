@@ -7,54 +7,40 @@
 
 namespace Sgl
 {
-	/// <summary>
-	/// Interface representing an abstract source of image data.
-	/// </summary>
+	//! @brief Interface representing an abstract source of image data
 	class IImageSource : public RefCounted
 	{
 	public:
-		/// <summary>
-		/// Creates a GPU texture from this image source using the specified renderer.
-		/// </summary>
-		/// <param name="renderer"> - the SDL_Renderer used to create the GPU resource.</param>
-		/// <returns>A new Texture object representing the image data.</returns>
+		//! @brief Creates a GPU texture from this image source using the specified renderer
+		//! @param renderer The SDL_Renderer used to create the GPU resource
+		//! @return A new Texture object representing the image data
 		virtual Texture CreateTexture(SDL_Renderer* renderer) const = 0;
 	};
 
-	/// <summary>
-	/// A value-type wrapper for managing reference-counted image sources.
-	/// </summary>
+	//! @brief A value-type wrapper for managing reference-counted image sources
 	class ImageSource
 	{
 	public:
 		ImageSource() = default;
 
-		/// <summary>
-		/// Constructs an ImageSource that loads data from the specified file path.
-		/// </summary>
-		/// <param name="imagePath"> - the filesystem path to the image file.</param>
+		//! @brief Constructs an ImageSource that loads data from the specified file path
+		//! @param imagePath The filesystem path to the image file
 		explicit ImageSource(const std::filesystem::path& imagePath);
 
-		/// <summary>
-		/// Constructs an ImageSource that loads data from a predefined asset identifier.
-		/// </summary>
-		/// <param name="asset"> - the AssetId referencing a registered asset.</param>
+		//! @brief Constructs an ImageSource that loads data from a predefined asset identifier
+		//! @param asset The AssetId referencing a registered asset
 		explicit ImageSource(AssetId asset);
 
-		/// <summary>
-		/// Constructs an ImageSource wrapping an existing IImageSource implementation.
-		/// </summary>
-		/// <param name="source">- a reference-counted pointer to an IImageSource implementation.</param>
+		//! @brief Constructs an ImageSource wrapping an existing IImageSource implementation
+		//! @param source A reference-counted pointer to an IImageSource implementation
 		explicit ImageSource(Ref<IImageSource> source);
 
 		ImageSource(const ImageSource&) = default;
 		ImageSource(ImageSource&&) = default;
 
-		/// <summary>
-		/// Creates a GPU texture from the underlying image source.
-		/// </summary>
-		/// <param name="renderer"> - the SDL_Renderer used to create the GPU resource.</param>
-		/// <returns>A new Texture object.</returns>
+		//! @brief Creates a GPU texture from the underlying image source
+		//! @param renderer The SDL_Renderer used to create the GPU resource
+		//! @return A new Texture object
 		Texture CreateTexture(SDL_Renderer* renderer) const;
 
 		ImageSource& operator=(const ImageSource& other);

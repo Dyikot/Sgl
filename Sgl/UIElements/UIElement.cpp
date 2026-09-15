@@ -1,11 +1,57 @@
 #include "UIElement.h"
 #include "../Application.h"
 #include "../Layout/LayoutHelper.h"
+
 #include <cassert>
 #include <ranges>
 
 namespace Sgl
 {
+	namespace
+	{
+		struct Rectangle
+		{
+			Color Background;
+
+			void operator()(RenderContext context, const FRect& rect) const
+			{
+				context.DrawRectangleFill(rect, Background);
+			}
+		};
+
+		struct RoundedRectangle
+		{
+			Color Background;
+			float CornersRadius;
+
+			void operator()(RenderContext context, const FRect& rect) const
+			{
+				context.DrawRectangleFill(rect, CornersRadius, Background);
+			}
+		};
+
+		struct Image
+		{
+			Texture Background;
+
+			void operator()(RenderContext context, const FRect& rect) const
+			{
+				context.DrawTexture(Background, &rect, nullptr);
+			}
+		};
+
+		struct RoundedImage
+		{
+			Texture Background;
+			float CornersRadius;
+
+			void operator()(RenderContext context, const FRect& rect) const
+			{
+				context.DrawRectangleFill(rect, CornersRadius, Background);
+			}
+		};
+	}
+
 	UIElement::UIElement(UIElement&& other) noexcept:
 		Layoutable(std::move(other)),
 		_backgroundFragment(std::move(other._backgroundFragment)),
@@ -281,11 +327,11 @@ namespace Sgl
 			
 			if(_cornersRadius > 0.0f)
 			{
-				return RenderFragments::RoundedRectangle(color, _cornersRadius);
+				return RoundedRectangle(color, _cornersRadius);
 			}
 			else
 			{
-				return RenderFragments::Rectangle(color);
+				return Rectangle(color);
 			}
 		}
 		else
@@ -295,11 +341,11 @@ namespace Sgl
 
 			if(_cornersRadius > 0.0f)
 			{
-				return RenderFragments::RoundedImage(texture, _cornersRadius);
+				return RoundedImage(texture, _cornersRadius);
 			}
 			else
 			{
-				return RenderFragments::Image(texture);
+				return Image(texture);
 			}
 		}
 	}

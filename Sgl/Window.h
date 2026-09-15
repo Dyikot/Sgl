@@ -2,6 +2,7 @@
 
 #include <optional>
 #include <coroutine>
+
 #include "Base/Event.h"
 #include "Render/Surface.h"
 #include "Input/TextEventArgs.h"
@@ -10,75 +11,58 @@
 
 namespace Sgl
 {
-	/// <summary>
-	/// Specifies the display mode of a window.
-	/// </summary>
+	//! @brief Specifies the display mode of a window
 	enum class WindowDisplayMode
 	{
-		Window,           // Standard window with borders and title bar.
-		BorderlessWindow, // Window without borders, typically spanning the screen but not exclusive.
-		Fullscreen        // Exclusive fullscreen mode.
+		Window,           // Standard window with borders and title bar
+		BorderlessWindow, // Window without borders, typically spanning the screen but not exclusive
+		Fullscreen        // Exclusive fullscreen mode
 	};
 
-	/// <summary>
-	/// Represents the current state of a window.
-	/// </summary>
+	//! @brief Represents the current state of a window
 	enum class WindowState
 	{
-		Normal,     // The window is in its standard restored state.
-		Minimized,  // The window is minimized (e.g., to the taskbar).
-		Maximized   // The window is maximized to fill the screen (or work area).
+		Normal,     // The window is in its standard restored state
+		Minimized,  // The window is minimized (e.g., to the taskbar)
+		Maximized   // The window is maximized to fill the screen (or work area)
 	};
 
-	/// <summary>
-	/// Event arguments provided when the window's state changes (e.g., minimized, maximized).
-	/// </summary>
+	//! @brief Event arguments provided when the window's state changes (e.g., minimized, maximized)
 	struct WindowStateChangedEventArgs
 	{
 		WindowState State;
 	};
 
-	/// <summary>
-	/// Event arguments provided when the window's position changes on the screen.
-	/// </summary>
+	//! @brief Event arguments provided when the window's position changes on the screen
 	struct WindowPositionChangedEventArgs
 	{
 		int X;
 		int Y;
 	};
 
-	/// <summary>
-	/// Event arguments provided when the window's client size changes.
-	/// </summary>
+	//! @brief Event arguments provided when the window's client size changes
 	struct WindowSizeChangedEventArgs
 	{
 		int Width;
 		int Height;
 	};
 
-	/// <summary>
-	/// Event arguments used to allow cancellation of an operation (e.g., closing a window).
-	/// </summary>
+	//! @brief Event arguments used to allow cancellation of an operation (e.g., closing a window)
 	struct CancelEventArgs
 	{
 		bool Cancel;
 	};
 
-	/// <summary>
-	/// Represents the result of a dialog or modal interaction.
-	/// </summary>
+	//! @brief Represents the result of a dialog or modal interaction
 	enum class DialogResult
 	{
-		None,    // No result has been set (default or pending state).
-		Accept,  // The user accepted the dialog (e.g., clicked OK).
-		Cancel   // The user canceled the dialog (e.g., clicked Cancel).
+		None,    // No result has been set (default or pending state)
+		Accept,  // The user accepted the dialog (e.g., clicked OK)
+		Cancel   // The user canceled the dialog (e.g., clicked Cancel)
 	};
 
-	/// <summary>
-	/// The Window class provides a high-level interface for creating and managing window,
-	/// handling events, and rendering graphics. It encapsulates SDL_Window and SDL_Renderer
-	/// objects and provides convenient methods for common window operations.
-	/// </summary>
+	//! @brief The Window class provides a high-level interface for creating and managing window, handling events, and rendering graphics.
+	//! It encapsulates SDL_Window and SDL_Renderer objects and provides convenient methods for common window operations.
 	class Window : public Renderable, public IVisualRoot
 	{
 	public:
@@ -94,328 +78,222 @@ namespace Sgl
 		Window(const Window&) = delete;
 		Window(Window&&) = delete;
 
-		/// <summary>
-		/// Event triggered when the window's state changes (minimized, maximized, restored)
-		/// </summary>
+		//! @brief Event triggered when the window's state changes (minimized, maximized, restored)
 		Event<WindowStateEventHandler> WindowStateChanged;
 
-		/// <summary>
-		/// Event triggered when the window's position changes
-		/// </summary>
+		//! @brief Event triggered when the window's position changes
 		Event<WindowPositionChangedEventHandler> PositionChanged;
 
-		/// <summary>
-		/// Event triggered when the window's size changes
-		/// </summary>
+		//! @brief Event triggered when the window's size changes
 		Event<WindowSizeChangedEventHandler> SizeChanged;
 
-		/// <summary>
-		/// Event triggered when the window is about to close.
-		/// </summary>
+		//! @brief Event triggered when the window is about to close
 		Event<CancelEventHandler> Closing;
 
-		/// <summary>
-		/// Event triggered after the window has been closed.
-		/// </summary>
+		//! @brief Event triggered after the window has been closed
 		Event<WindowEventHandler> Closed;
 
-		/// <summary>
-		/// The result returned by this dialog when it closes.
-		/// </summary>
+		//! @brief The result returned by this dialog when it closes
 		DialogResult DialogResult = DialogResult::None;
 
-		/// <summary>
-		/// Gets the underlying SDL window handle
-		/// </summary>
-		/// <returns>Pointer to the SDL_Window</returns>
+		//! @brief Gets the underlying SDL window handle
+		//! @return Pointer to the SDL_Window
 		SDL_Window* GetSDLWindow() const noexcept;
 
-		/// <summary>
-		/// Gets the underlying SDL renderer handle
-		/// </summary>
-		/// <returns>Pointer to the SDL_Renderer</returns>
+		//! @brief Gets the underlying SDL renderer handle
+		//! @return Pointer to the SDL_Renderer
 		SDL_Renderer* GetRenderer() const override;
 
-		/// <summary>
-		/// Gets window id
-		/// </summary>
-		/// <returns>Window unique id</returns>
+		//! @brief Gets window id
+		//! @return Window unique id
 		SDL_WindowID GetId() const noexcept;
 
-		/// <summary>
-		/// Sets the window width
-		/// </summary>
-		/// <param name="value">- the new width in pixels</param>
+		//! @brief Sets the window width
+		//! @param value The new width in pixels
 		void SetWidth(uint32_t value) noexcept;
 
-		/// <summary>
-		/// Gets the window width
-		/// </summary>
-		/// <returns>The current width in pixels</returns>
+		//! @brief Gets the window width
+		//! @return The current width in pixels
 		uint32_t GetWidth() const noexcept;
 
-		/// <summary>
-		/// Sets the window height
-		/// </summary>
-		/// <param name="value">- the new height in pixels</param>
+		//! @brief Sets the window height
+		//! @param value The new height in pixels
 		void SetHeight(uint32_t value) noexcept;
 
-		/// <summary>
-		/// Gets the window height
-		/// </summary>
-		/// <returns>The current height in pixels</returns>
+		//! @brief Gets the window height
+		//! @return The current height in pixels
 		uint32_t GetHeight() const noexcept;
 
-		/// <summary>
-		/// Set the width width and height
-		/// </summary>
-		/// <param name="size">- the new width and height in pixels</param>
+		//! @brief Sets the window width and height
+		//! @param size The new width and height in pixels
 		void SetSize(Size size) noexcept;
 
-		/// <summary>
-		/// Gets the window size
-		/// </summary>
-		/// <returns>The current width and height in pixels</returns>
+		//! @brief Gets the window size
+		//! @return The current width and height in pixels
 		Size GetSize() const noexcept;
 
-		/// <summary>
-		/// Sets the window title
-		/// </summary>
-		/// <param name="value">- the new window title</param>
+		//! @brief Sets the window title
+		//! @param value The new window title
 		void SetTitle(std::string_view value) noexcept;
 
-		/// <summary>
-		/// Gets the window title
-		/// </summary>
-		/// <returns>String view of the current window title</returns>
+		//! @brief Gets the window title
+		//! @return String view of the current window title
 		std::string_view GetTitle() const noexcept;
 
-		/// <summary>
-		/// Sets the maximum size of the window
-		/// </summary>
-		/// <param name="size">- the maximum size</param>
+		//! @brief Sets the maximum size of the window
+		//! @param size The maximum size
 		void SetMaxSize(Size size) noexcept;
 
-		/// <summary>
-		/// Gets the maximum size of the window
-		/// </summary>
-		/// <returns>The current maximum size</returns>
+		//! @brief Gets the maximum size of the window
+		//! @return The current maximum size
 		Size GetMaxSize() const noexcept;
 
-		/// <summary>
-		/// Sets the minimum size of the window
-		/// </summary>
-		/// <param name="size">- the minimum size</param>
+		//! @brief Sets the minimum size of the window
+		//! @param size The minimum size
 		void SetMinSize(Size size) noexcept;
 
-		/// <summary>
-		/// Gets the minimum size of the window
-		/// </summary>
-		/// <returns>The current minimum size</returns>
+		//! @brief Gets the minimum size of the window
+		//! @return The current minimum size
 		Size GetMinSize() const noexcept;
 
-		/// <summary>
-		/// Sets the window position
-		/// </summary>
-		/// <param name="value">- the new position</param>
+		//! @brief Sets the window position
+		//! @param value The new position
 		void SetPosition(Point value) noexcept;
 
-		/// <summary>
-		/// Gets the window position
-		/// </summary>
-		/// <returns>The current position</returns>
+		//! @brief Gets the window position
+		//! @return The current position
 		Point GetPosition() const noexcept;
 
-		/// <summary>
-		/// Sets the window display mode (Window, Borderless, Fullscreen)
-		/// </summary>
-		/// <param name="displayMode">- the display mode to set</param>
+		//! @brief Sets the window display mode (Window, Borderless, Fullscreen)
+		//! @param displayMode The display mode to set
 		void SetDisplayMode(WindowDisplayMode displayMode);
 
-		/// <summary>
-		/// Gets the current display mode
-		/// </summary>
-		/// <returns>The current display mode</returns>
+		//! @brief Gets the current display mode
+		//! @return The current display mode
 		WindowDisplayMode GetDisplayMode() const noexcept;
 
-		/// <summary>
-		/// Sets the window state (Normal, Minimized, Maximized)
-		/// </summary>
-		/// <param name="state">- the new window state</param>
+		//! @brief Sets the window state (Normal, Minimized, Maximized)
+		//! @param state The new window state
 		void SetWindowState(WindowState state) noexcept;
 
-		/// <summary>
-		/// Gets the current window state
-		/// </summary>
-		/// <returns>The current window state</returns>
+		//! @brief Gets the current window state
+		//! @return The current window state
 		WindowState GetWindowState() const noexcept;
 
-		/// <summary>
-		/// Sets the window icon
-		/// </summary>
-		/// <param name="icon">- an icon surface</param>
+		//! @brief Sets the window icon
+		//! @param icon An icon surface
 		void SetIcon(Surface icon);
 
-		/// <summary>
-		/// Gets the current window icon
-		/// </summary>
-		/// <returns>Path to the icon</returns>
+		//! @brief Gets the current window icon
+		//! @return Path to the icon
 		Surface GetIcon() const;
 
-		/// <summary>
-		/// Sets whether the window is resizable
-		/// </summary>
-		/// <param name="value">- true to make resizable, false otherwise</param>
+		//! @brief Sets whether the window is resizable
+		//! @param value True to make resizable, false otherwise
 		void SetResizable(bool value = true) noexcept;
 
-		/// <summary>
-		/// Checks if the window is resizable
-		/// </summary>
-		/// <returns>True if resizable, false otherwise</returns>
+		//! @brief Checks if the window is resizable
+		//! @return True if resizable, false otherwise
 		bool IsResizable() const;
 
-		/// <summary>
-		/// Sets whether the window should always appear on top of other windows.
-		/// </summary>
-		/// <param name="value"> - true to make the window stay on top; false to restore normal z-order. Defaults to true.</param>
+		//! @brief Sets whether the window should always appear on top of other windows
+		//! @param value True to make the window stay on top; false to restore normal z-order. Defaults to true.
 		void SetAlwayOnTop(bool value = true);
 
-		/// <summary>
-		/// Checks whether the window is set to always stay on top.
-		/// </summary>
-		/// <returns>True if the window is always on top; otherwise, false.</returns>
+		//! @brief Checks whether the window is set to always stay on top
+		//! @return True if the window is always on top; otherwise, false
 		bool IsAlwayOnTop() const;
 
-		/// <summary>
-		/// Sets the owner of this window. Owned windows are typically modal.
-		/// </summary>
-		/// <param name="owner"> - pointer to the owner window, or nullptr to remove ownership.</param>
+		//! @brief Sets the owner of this window. Owned windows are typically modal.
+		//! @param owner Pointer to the owner window, or nullptr to remove ownership
 		void SetOwner(Window* owner);
 
-		/// <summary>
-		/// Gets the current owner of this window.
-		/// </summary>
-		/// <returns>Pointer to the owner window, or nullptr if no owner is set.</returns>
+		//! @brief Gets the current owner of this window
+		//! @return Pointer to the owner window, or nullptr if no owner is set
 		Window* GetOwner() const;
 
-		/// <summary>
-		/// Gets a list of windows that are owned by this window.
-		/// </summary>
-		/// <returns>A const reference to the list of owned windows.</returns>
+		//! @brief Gets a list of windows that are owned by this window
+		//! @return A const reference to the list of owned windows
 		const std::list<Ref<Window>>& GetOwnedWindows() const;
 
-		/// <summary>
-		/// Sets the root UI element displayed in the window's client area.
-		/// </summary>
-		/// <param name="value"> - the UI element to use as content.</param>
-		/// <param name="source"> - the source of the value. Defaults to ValueSource::Local.</param>
+		//! @brief Sets the root UI element displayed in the window's client area
+		//! @param value The UI element to use as content
+		//! @param source The source of the value. Defaults to ValueSource::Local.
 		void SetContent(const Ref<UIElement>& value, ValueSource source = ValueSource::Local);
 
-		/// <summary>
-		/// Gets the root UI element currently displayed in the window.
-		/// </summary>
-		/// <returns>A reference to the current content element.</returns>
+		//! @brief Gets the root UI element currently displayed in the window
+		//! @return A reference to the current content element
 		const Ref<UIElement>& GetContent() const noexcept { return _content; }
 
-		/// <summary>
-		/// Returns top most active element at point
-		/// </summary>
-		/// <param name="point"> - the point on element</param>
-		/// <returns>Reference of top most active element</returns>
+		//! @brief Returns the topmost active element at the specified point
+		//! @param point The point on the element
+		//! @return Reference to the topmost active element
 		Ref<UIElement> HitTest(FPoint point) const;
 
-		/// <summary>
-		/// Apply style for window and its content
-		/// </summary>
+		//! @brief Applies style for the window and its content
 		void ApplyStyle() final;
 
-		/// <summary>
-		/// Marks the window's visual content as invalid, requesting a re-render on the next frame.
-		/// </summary>
+		//! @brief Marks the window's visual content as invalid, requesting a re-render on the next frame
 		void MarkDirty() final;
-		
-		/// <summary>
-		/// Provides access to the texture factory instance.
-		/// </summary>
-		/// <returns>A reference to the active ITextureFactory implementation.</returns>
+
+		//! @brief Provides access to the texture factory instance
+		//! @return A reference to the active ITextureFactory implementation
 		ITextureFactory& GetTextureFactory() final;
 
-		/// <summary>
-		/// Gets focus manager
-		/// </summary>
-		/// <returns>Reference to focus manager</returns>
+		//! @brief Gets focus manager
+		//! @return Reference to focus manager
 		FocusManager& GetFocusManager();
 
-		/// <summary>
-		/// Checks whether the window needs to be rendered due to pending changes.
-		/// </summary>
-		/// <returns>True if rendering is required; otherwise, false.</returns>
+		//! @brief Checks whether the window needs to be rendered due to pending changes
+		//! @return True if rendering is required; otherwise, false
 		bool NeedsRendering() const noexcept;
 
-		/// <summary>
-		/// Shows the window
-		/// </summary>
+		//! @brief Shows the window
 		void Show();
 
-		/// <summary>
-		/// Shows this window as a modal dialog centered over the specified owner window.
-		/// </summary>
-		/// <param name="owner"> - the parent window that owns this modal dialog</param>
-		/// <returns>ModalAwaiter - object that can be co_awaited</returns>
+		//! @brief Shows this window as a modal dialog centered over the specified owner window
+		//! @param owner The parent window that owns this modal dialog
+		//! @return ModalAwaiter object that can be co_awaited
 		ModalAwaiter ShowModal(Window& owner);
 
-		/// <summary>
-		/// Hides the window
-		/// </summary>
+		//! @brief Hides the window
 		void Hide();
 
-		/// <summary>
-		/// Close the window
-		/// </summary>
+		//! @brief Closes the window
 		void Close();
 
-		/// <summary>
-		/// Window gain a focus
-		/// </summary>
+		//! @brief Window gains focus
 		void Activate();
 
-		/// <summary>
-		/// Checks if the window has a focus
-		/// </summary>
-		/// <returns>True if has focus, false otherwise</returns>
+		//! @brief Checks if the window has focus
+		//! @return True if it has focus; otherwise, false
 		bool IsActivated() const noexcept;
 
-		/// <summary>
-		/// Checks if the window is visible
-		/// </summary>
-		/// <returns>- true if visible, false otherwise</returns>
+		//! @brief Checks if the window is visible
+		//! @return True if visible; otherwise, false
 		bool IsVisible() const;
 
-		/// <summary>
-		/// Checks whether the window has been closed.
-		/// </summary>
-		/// <returns>True if the window is closed; otherwise, false.</returns>
+		//! @brief Checks whether the window has been closed
+		//! @return True if the window is closed; otherwise, false
 		bool IsClosed() const noexcept;
 
-		/// <summary>
-		/// Renders the window's content using the provided rendering context.
-		/// </summary>
-		/// <param name="context"> - the render context used to draw UI elements.</param>
+		//! @brief Renders the window's content using the provided rendering context
+		//! @param context The render context used to draw UI elements
 		void Render(RenderContext context) override;
 
-		/// <summary>
-		/// Processes window-specific logic.
-		/// </summary>
+		//! @brief Processes window-specific logic
 		virtual void Process();
 
 		static inline StyleableProperty ContentProperty { &SetContent, &GetContent };
 	protected:
 		~Window();
+
 		void OnCursorChanged(Cursor cursor) final;
 		void OnBackgroundChanged(const Brush& background) final;
 		void OnDataContextChanged(const Ref<ObservableObject>& dataContext) final;
 		void OnAttachedToLogicalTree() override;
 		void OnDetachedFromLogicalTree() override;
+
 		virtual void OnWindowStateChanged(WindowStateChangedEventArgs e);
 		virtual void OnPositionChanged(WindowPositionChangedEventArgs e);
 		virtual void OnWindowSizeChanged(WindowSizeChangedEventArgs e);
@@ -453,21 +331,20 @@ namespace Sgl
 		std::list<Ref<Window>> _ownedWindows;
 		Surface _icon;
 		RenderFragment _backgroundFragment;
-
 		ValueSource _contentSource {};
 
 		friend class UIElement;
-		friend class Application;		
+		friend class Application;
 	};
 
 	struct Window::Content
 	{
-		Styleable& operator()(Styleable& element) const;
+		Styleable& operator()(Styleable& element) const
+		{
+			return static_cast<Window&>(element).GetContent().GetValue();
+		}
 	};
 
-	/// <summary>
-	/// An awaiter object that allows a coroutine to suspend execution until a modal window is closed.
-	/// </summary>
 	class Window::ModalAwaiter
 	{
 	public:

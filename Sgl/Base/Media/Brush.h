@@ -5,10 +5,8 @@
 #include "ImageSource.h"
 
 namespace Sgl
-{	
-	/// <summary>
-	/// Represents a drawing brush that can be either a solid color or an image source.
-	/// </summary>
+{
+	//! @brief Represents a drawing brush that can be either a solid color or an image source
 	using Brush = std::variant<Color, ImageSource>;
 
 	inline bool operator==(const Brush& brush, Color color)

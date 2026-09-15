@@ -4,60 +4,50 @@
 #include "KeyModifiers.h"
 
 namespace Sgl
-{	
-    /// <summary>
-    /// Identifies a mouse button pressed or released during a mouse event.
-    /// </summary>
-    enum class MouseButton
-    {
-        Left = 1,
-        Middle,
-        Right
-    };
+{
+	//! @brief Identifies a mouse button pressed or released during a mouse event
+	enum class MouseButton
+	{
+		Left,
+		Middle,
+		Right,
+		XButton1,
+		XButton2
+	};
 
-    /// <summary>
-    /// Specifies the interpretation of vertical scroll direction for mouse wheel events.
-    /// </summary>
-    enum class MouseWheelDirection
-    {
-        Normal,
-        Flipped
-    };
+	//! @brief Specifies the interpretation of vertical scroll direction for mouse wheel events
+	enum class MouseWheelDirection
+	{
+		Normal,
+		Flipped
+	};
 
-    /// <summary>
-    /// Event arguments for keyboard input events, containing the pressed key and active modifiers.
-    /// </summary>
-    struct KeyEventArgs
-    {
-        KeyCode Key;
-        KeyModifier Modifier;
-    };
+	//! @brief Event arguments for keyboard input events, containing the pressed key and active modifiers
+	struct KeyEventArgs
+	{
+		KeyCode Key;
+		KeyModifier Modifier;
+	};
 
-    /// <summary>
-    /// Event arguments for mouse movement, providing the current cursor position in client coordinates.
-    /// </summary>
-    struct MouseMoveEventArgs
-    {
-        float X;
-        float Y;
-    };
+	//! @brief Event arguments for mouse movement, providing the current cursor position in client coordinates
+	struct MouseMoveEventArgs
+	{
+		float X;
+		float Y;
+	};
 
-    /// <summary>
-    /// Event arguments for mouse button press or release events.
-    /// </summary>
-    struct MouseClickEventArgs : MouseMoveEventArgs
-    {
-        MouseButton Button;
-        int ClicksNumber;
-    };
+	//! @brief Event arguments for mouse button press or release events
+	struct MouseClickEventArgs : MouseMoveEventArgs
+	{
+		MouseButton Button;
+		int ClicksNumber;
+	};
 
-    /// <summary>
-    /// Event arguments for mouse wheel (scroll) events, including scroll deltas and direction policy.
-    /// </summary>
-    struct MouseWheelEventArgs : MouseMoveEventArgs
-    {
-        int ScrolledByX;
-        int ScrolledByY;
-        MouseWheelDirection Direction;
-    };
+	//! @brief Event arguments for mouse wheel (scroll) events, including scroll deltas and direction policy
+	struct MouseWheelEventArgs : MouseMoveEventArgs
+	{
+		int ScrolledByX;
+		int ScrolledByY;
+		MouseWheelDirection Direction;
+	};
 }

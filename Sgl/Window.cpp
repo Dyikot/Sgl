@@ -4,66 +4,88 @@
 #include "Layout/LayoutHelper.h"
 #include "Base/Exceptions.h"
 #include "Base/Logging.h"
-#include "Input/SDLEvents.h"
 
 namespace Sgl
 {
-    class TextureFactory final : public ITextureFactory
+    namespace
     {
-    public:
-        TextureFactory(SDL_Renderer* renderer): 
-            _renderer(renderer) 
-        {}
-
-        Texture Create(const ImageSource& source, bool cache) override
+        struct ColorBackground
         {
-            if(!cache)
+            Color color;
+
+            void operator()(RenderContext context, const FRect& rect) const
             {
-                return source.CreateTexture(_renderer);
+                context.FillBackground(color);
             }
-
-            if(auto it = _textures.find(source); it != _textures.end())
-            {
-                _order.splice(_order.begin(), _order, it->second.OrderIt);
-                return it->second.Texture;
-            }
-
-            static constexpr size_t cacheSize = 100;
-            auto texture = source.CreateTexture(_renderer);
-
-            if(texture)
-            {
-                if(_textures.size() >= cacheSize)
-                {
-                    const auto& source = _order.back();
-                    _textures.erase(source);
-                    _order.pop_back();
-                }
-
-                auto [it, _] = _textures.emplace(source, CachedTexture(texture, {}));
-                auto orderIt = _order.insert(_order.begin(), it->first);
-                it->second.OrderIt = orderIt;
-            }
-
-            return texture;
-        }
-    private:
-        struct CachedTexture
-        {
-            Texture Texture;
-            std::list<ImageSource>::iterator OrderIt;
         };
 
-        SDL_Renderer* _renderer;
-        std::unordered_map<ImageSource, CachedTexture> _textures;
-        std::list<ImageSource> _order;
-    };
+        struct ImageBackground
+        {
+            Texture texture;
 
-    static constexpr auto DefaultTitle = "Window";
-    static constexpr auto DefaultWidth = 1280;
-    static constexpr auto DefaultHeight = 720;
-    static constexpr auto DefaultPosition = Point(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
-    static constexpr auto DefaultFlags = SDL_WINDOW_HIDDEN;
+            void operator()(RenderContext context, const FRect& rect) const
+            {
+                context.DrawTexture(texture, nullptr, nullptr);
+            }
+        };
+
+        class TextureFactory final: public ITextureFactory
+        {
+        public:
+            TextureFactory(SDL_Renderer* renderer):
+                _renderer(renderer)
+            {}
+
+            Texture Create(const ImageSource& source, bool cache) override
+            {
+                if(!cache)
+                {
+                    return source.CreateTexture(_renderer);
+                }
+
+                if(auto it = _textures.find(source); it != _textures.end())
+                {
+                    _order.splice(_order.begin(), _order, it->second.OrderIt);
+                    return it->second.Texture;
+                }
+
+                static constexpr size_t cacheSize = 100;
+                auto texture = source.CreateTexture(_renderer);
+
+                if(texture)
+                {
+                    if(_textures.size() >= cacheSize)
+                    {
+                        const auto& source = _order.back();
+                        _textures.erase(source);
+                        _order.pop_back();
+                    }
+
+                    auto [it, _] = _textures.emplace(source, CachedTexture(texture, {}));
+                    auto orderIt = _order.insert(_order.begin(), it->first);
+                    it->second.OrderIt = orderIt;
+                }
+
+                return texture;
+            }
+        private:
+            struct CachedTexture
+            {
+                Texture Texture;
+                std::list<ImageSource>::iterator OrderIt;
+            };
+
+            SDL_Renderer* _renderer;
+            std::unordered_map<ImageSource, CachedTexture> _textures;
+            std::list<ImageSource> _order;
+        };
+
+        constexpr auto DefaultTitle = "Window";
+        constexpr auto DefaultWidth = 1280;
+        constexpr auto DefaultHeight = 720;
+        constexpr auto DefaultPosition = Point(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+        constexpr auto DefaultFlags = SDL_WINDOW_HIDDEN;
+    }
 
     Window::Window():
         _sdlWindow(SDL_CreateWindow(DefaultTitle, DefaultWidth, DefaultHeight, DefaultFlags)),
@@ -248,7 +270,7 @@ namespace Sgl
     {
         switch(state)
         {
-            case WindowState::Normal:
+            case WindowState::Normal: 
                 SDL_RestoreWindow(_sdlWindow);
                 break;
 
@@ -538,21 +560,13 @@ namespace Sgl
         if(std::holds_alternative<Color>(background))
         {
             auto color = std::get<Color>(background);
-
-            _backgroundFragment = [color](RenderContext context, const FRect& rect)
-            {
-                context.FillBackground(color);
-            };
+            _backgroundFragment = ColorBackground(color);
         }
         else
         {
             auto& source = std::get<ImageSource>(background);
             auto texture = _textureFactory->Create(source, false);
-
-            _backgroundFragment = [texture](RenderContext context, const FRect& rect)
-            {
-                context.DrawTexture(texture, nullptr, nullptr);
-            };
+            _backgroundFragment = ImageBackground(texture);
         }
     }
 
@@ -703,11 +717,6 @@ namespace Sgl
     {
         delete _textureFactory;
         SDL_DestroyRenderer(_renderer);
-    }
-
-    Styleable& Window::Content::operator()(Styleable& element) const
-    {
-        return static_cast<Window&>(element).GetContent().GetValue();
     }
 
     struct WindowResumeHandler

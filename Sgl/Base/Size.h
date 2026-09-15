@@ -2,18 +2,14 @@
 
 namespace Sgl
 {
-	/// <summary>
-	/// Represents a 2D size with unsigned integer dimensions.
-	/// </summary>
+	//! @brief Represents a 2D size with unsigned integer dimensions
 	struct Size
 	{
 		uint32_t Width;
 		uint32_t Height;
 	};
 
-	/// <summary>
-	/// Represents a 2D size with floating-point dimensions.
-	/// </summary>
+	//! @brief Represents a 2D size with floating-point dimensions
 	struct FSize
 	{
 		float Width;

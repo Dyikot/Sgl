@@ -9,139 +9,91 @@
 
 namespace Sgl
 {
-	/// <summary>
-	/// Specifies when the application should shut down automatically.
-	/// </summary>
+	//! @brief Specifies when the application should shut down automatically
 	enum class ShutdownMode
 	{
-		OnMainWindowClose,    // The application exits when the main window is closed.
-		OnLastWindowClose,    // The application exits when the last open window is closed.
-		OnExplicitShutdown    // The application only shuts down when explicitly requested (e.g., via Shutdown()).
-	};	
+		OnMainWindowClose, // The application exits when the main window is closed
+		OnLastWindowClose, // The application exits when the last open window is closed
+		OnExplicitShutdown // The application only shuts down when explicitly requested (e.g., via Shutdown())
+	};
 
-	/// <summary>
-	/// Represents the main application instance, managing windows, styling, theme, and the event loop.
-	/// </summary>
-	class Application : public IStyleHost
+	//! @brief Represents the main application instance, managing windows, styling, theme, and the event loop
+	class Application: public IStyleHost
 	{
 	public:
 		struct Context;
 		using ApplicationEventHandler = EventHandler<Application>;
 	public:
-		/// <summary>
-		/// Constructs an application instance.
-		/// </summary>
+		//! @brief Constructs an application instance
 		Application() noexcept;
 
 		Application(const Application&) = delete;
 		Application(Application&&) = delete;
 
-		/// <summary>
-		/// Destroys the application and releases all managed resources.
-		/// </summary>
+		//! @brief Destroys the application and releases all managed resources
 		~Application();
 
-		/// <summary>
-		/// Event raised when the application has started and entered its main loop.
-		/// </summary>
+		//! @brief Event raised when the application has started and entered its main loop
 		Event<ApplicationEventHandler> Started;
 
-		/// <summary>
-		/// Event raised when the application is shutting down and the main loop has exited.
-		/// </summary>
+		//! @brief Event raised when the application is shutting down and the main loop has exited
 		Event<ApplicationEventHandler> Stopped;
 
-		/// <summary>
-		/// Event raised when the active theme variant changes.
-		/// </summary>
+		//! @brief Event raised when the active theme variant changes
 		Event<ApplicationEventHandler> ThemeVariantChanged;
 
-		/// <summary>
-		/// Collection of global styles applied to all UI elements in the application.
-		/// </summary>
+		//! @brief Collection of global styles applied to all UI elements in the application
 		StyleCollection Styles;
 
-		/// <summary>
-		/// Theme resource provider for managing themed colors and brushes.
-		/// </summary>
+		//! @brief Theme resource provider for managing themed colors and brushes
 		ThemeResourceProvider Resources;
 
-		/// <summary>
-		/// Localization resources for managing text translation
-		/// </summary>
+		//! @brief Localization resources for managing text translation
 		LocalizationResources Localization;
 
-		/// <summary>
-		/// The primary window of the application.
-		/// </summary>
-		Ref<Window> MainWindow;		
+		//! @brief The primary window of the application
+		Ref<Window> MainWindow;
 
-		/// <summary>
-		/// Determines when the application automatically shuts down.
-		/// </summary>
+		//! @brief Determines when the application automatically shuts down
 		ShutdownMode ShutdownMode;
 
-		/// <summary>
-		/// Sets the active theme variant (e.g., Light, Dark, or System).
-		/// If the new value differs from the current one, the ThemeVariantChanged event is triggered.
-		/// When set to System, the application automatically follows the OS-level theme preference.
-		/// </summary>
-		/// <param name="value"> - the new theme variant to apply.</param>
+		//! @brief Sets the active theme variant (e.g., Light, Dark, or System). If the new value differs from the current one, the ThemeVariantChanged event is triggered. When set to System, the application automatically follows the OS-level theme preference.
+		//! @param value The new theme variant to apply
 		void SetThemeVariant(ThemeVariant value);
 
-		/// <summary>
-		/// Gets the currently active theme variant.
-		/// </summary>
-		/// <returns>The current theme variant.</returns>
+		//! @brief Gets the currently active theme variant
+		//! @return The current theme variant
 		ThemeVariant GetThemeVariant() const { return _themeVariant; }
 
-		/// <summary>
-		/// Gets the global style collection for this application.
-		/// </summary>
-		/// <returns>Reference to the application's StyleCollection.</returns>
+		//! @brief Gets the global style collection for this application
+		//! @return Reference to the application's StyleCollection
 		StyleCollection& GetStyles() final { return Styles; }
 
-		/// <summary>
-		/// Gets the parent styling host in the hierarchy.
-		/// </summary>
-		/// <returns>Always nullptr, as the application is the root style host.</returns>
+		//! @brief Gets the parent styling host in the hierarchy
+		//! @return Always nullptr, as the application is the root style host
 		IStyleHost* GetStylingParent() final { return nullptr; }
 
-		/// <summary>
-		/// Gets the service locator
-		/// </summary>
-		/// <returns>Reference to service locator</returns>
+		//! @brief Gets the service locator
+		//! @return Reference to service locator
 		ServiceLocator& GetServices() { return *_services; }
 
-		/// <summary>
-		/// Gets the active window.
-		/// </summary>
-		/// <returns>A pointer to the active window.</returns>
+		//! @brief Gets the active window
+		//! @return A pointer to the active window
 		Window* GetActiveWindow() { return _focusedWindow; }
 
-		/// <summary>
-		/// Search for a window by ID
-		/// </summary>
-		/// <param name="id"> - unique window identifier</param>
-		/// <returns>Pointer to a window or nullptr if not found</returns>
+		//! @brief Searches for a window by ID
+		//! @param id Unique window identifier
+		//! @return Pointer to a window or nullptr if not found
 		Window* GetWindow(SDL_WindowID id);
 
-		/// <summary>
-		/// Gets a list of all currently open windows.
-		/// </summary>
-		/// <returns>A vector containing pointers to all active windows.</returns>
+		//! @brief Gets a list of all currently open windows
+		//! @return A vector containing pointers to all active windows
 		const std::vector<Window*>& GetWindows() const noexcept { return _activeWindows; }
 
-		/// <summary>
-		/// Starts the application's main event loop.
-		/// Blocks until the application is shut down.
-		/// </summary>
+		//! @brief Starts the application's main event loop. Blocks until the application is shut down.
 		void Run();
 
-		/// <summary>
-		/// Requests a shutdown of the application.
-		/// The main loop will exit after processing pending events.
-		/// </summary>
+		//! @brief Requests a shutdown of the application. The main loop will exit after processing pending events.
 		void Shutdown();
 	protected:
 		virtual void OnStarted();
@@ -159,13 +111,11 @@ namespace Sgl
 		void DetachWindow(Window& window);
 	private:
 		static inline Application* _current;
-
 		Window* _focusedWindow = nullptr;
 		std::vector<SDL_WindowID> _windowsIds;
 		std::vector<Window*> _windows;
 		std::vector<Window*> _activeWindows;
 		ServiceLocator* _services = new ServiceLocator();
-
 		bool _isRunning = false;
 		ThemeVariant _themeVariant;
 
@@ -173,18 +123,13 @@ namespace Sgl
 		friend class StringLocalizer;
 	};
 
-	/// <summary>
-	/// Provides access to the current application instance via a global context.
-	/// </summary>
+	//! @brief Provides access to the current application instance via a global context
 	struct Application::Context
 	{
 		Application* operator->() { return Application::_current; }
 		operator Application* () { return Application::_current; }
 	};
 
-	/// <summary>
-	/// Global access point to the current application instance.
-	/// Provides convenient syntax like App->GetThemeVariant() or App.Current()->MainWindow.
-	/// </summary>
+	//! @brief Global access point to the current application instance. Provides convenient syntax like App->GetThemeVariant() or App.Current()->MainWindow.
 	inline Application::Context App;
 }

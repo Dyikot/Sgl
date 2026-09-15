@@ -2,9 +2,7 @@
 
 namespace Sgl
 {
-	/// <summary>
-	/// Defines how a control aligns itself horizontally in its parent control.
-	/// </summary>
+	//! @brief Defines how a control aligns itself horizontally in its parent control
 	enum class HorizontalAlignment
 	{
 		Center,		// The control centers itself in the parent control.
@@ -13,9 +11,7 @@ namespace Sgl
 		Stretch		// The control stretches to fill the width of the parent control.
 	};
 
-	/// <summary>
-	/// Defines how a control aligns itself vertically in its parent control.
-	/// </summary>
+	//! @brief Defines how a control aligns itself vertically in its parent control
 	enum class VerticalAlignment
 	{
 		Bottom,		// The control aligns itself to the bottom of the parent control.
@@ -24,84 +20,62 @@ namespace Sgl
 		Stretch		// The control stretches to fill the height of the parent control.
 	};
 
-	/// <summary>
-	/// Defines vertical or horizontal orientation.
-	/// </summary>
+	//! @brief Defines vertical or horizontal orientation
 	enum class Orientation
 	{
-		Horizontal = 1,
+		Horizontal,
 		Vertical
 	};
 
-	/// <summary>
-	/// Represents the thickness of a frame or border around a rectangle.
-	/// </summary>
+	//! @brief Represents the thickness of a frame or border around a rectangle
 	struct Thickness
 	{
 	public:
-		/// <summary>
-		/// Initializes a new instance of the Thickness structure with individual values for each side
-		/// </summary>
-		/// <param name="left">- the left thickness</param>
-		/// <param name="top">- the top thickness</param>
-		/// <param name="right">- the right thickness</param>
-		/// <param name="bottom">- the bottom thickness</param>
+		//! @brief Initializes a new instance of the Thickness structure with individual values for each side
+		//! @param left The left thickness
+		//! @param top The top thickness
+		//! @param right The right thickness
+		//! @param bottom The bottom thickness
 		constexpr Thickness(int left, int top, int right, int bottom) noexcept:
 			Left(left), Top(top), Right(right), Bottom(bottom)
 		{}
 
-		/// <summary>
-		/// Initializes a new instance of the Thickness structure with horizontal and vertical values
-		/// </summary>
-		/// <param name="horizontal">- the horizontal thickness (applied to left and right)</param>
-		/// <param name="vertical">- the vertical thickness (applied to top and bottom)</param>
+		//! @brief Initializes a new instance of the Thickness structure with horizontal and vertical values
+		//! @param horizontal The horizontal thickness (applied to left and right)
+		//! @param vertical The vertical thickness (applied to top and bottom)
 		constexpr Thickness(int horizontal, int vertical) noexcept:
 			Left(horizontal), Top(vertical), Right(horizontal), Bottom(vertical)
 		{}
 
-		/// <summary>
-		/// Initializes a new instance of the Thickness structure with uniform thickness
-		/// </summary>
-		/// <param name="value">- the uniform thickness applied to all sides (default is 0)</param>
+		//! @brief Initializes a new instance of the Thickness structure with uniform thickness
+		//! @param value The uniform thickness applied to all sides (default is 0)
 		constexpr Thickness(int value = 0) noexcept:
 			Thickness(value, value, value, value)
 		{}
 
-		/// <summary>
-		/// Thickness of the left side
-		/// </summary>
+		//! @brief Thickness of the left side
 		int Left;
 
-		/// <summary>
-		/// Thickness of the top side
-		/// </summary>
+		//! @brief Thickness of the top side
 		int Top;
 
-		/// <summary>
-		/// Thickness of the right side
-		/// </summary>
+		//! @brief Thickness of the right side
 		int Right;
 
-		/// <summary>
-		/// Thickness of the bottom side
-		/// </summary>
+		//! @brief Thickness of the bottom side
 		int Bottom;
 
-		/// <summary>
-		/// Creates a new thickness expanded by the specified value on all sides.
-		/// </summary>
-		/// <param name="value"> - the value to add to each side.</param>
-		/// <returns>A new Thickness instance with increased boundaries.</returns>
+		//! @brief Creates a new thickness expanded by the specified value on all sides
+		//! @param value The value to add to each side
+		//! @return A new Thickness instance with increased boundaries
 		constexpr Thickness Inflate(int value) const
 		{
 			return Thickness(Left + value, Top + value, Right + value, Bottom + value);
 		}
 
-		/// <summary>
-		/// Creates a new thickness decreased by the specified value on all sides.
-		/// </summary>
-		/// <param name="value"> - the value to subtract from each side.</param>
-		/// <returns>A new Thickness instance with decreased boundaries.</returns>
+		//! @brief Creates a new thickness decreased by the specified value on all sides
+		//! @param value The value to subtract from each side
+		//! @return A new Thickness instance with decreased boundaries
 		constexpr Thickness Deflate(int value) const
 		{
 			return Thickness(Left - value, Top - value, Right - value, Bottom - value);

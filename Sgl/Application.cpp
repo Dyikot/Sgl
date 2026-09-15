@@ -10,16 +10,42 @@
 #include "Base/Logging.h"
 #include "Base/Time/Stopwatch.h"
 #include "Base/Media/Audio.h"
-#include "Input/SDLEvents.h"
 #include "UIElements/Buttons/CheckBox.h"
 #include "UIElements/Buttons/RadioButton.h"
 #include "UIElements/Buttons/SwithButton.h"
 
+using namespace Sgl::UIElements;
+
 namespace Sgl
 {
-    using namespace UIElements;
+    namespace
+    {
+        MouseButton FromSDLButton(SDL_MouseButtonFlags button)
+        {
+            switch(button)
+            {
+                case SDL_BUTTON_LEFT:   return MouseButton::Left;
+                case SDL_BUTTON_MIDDLE: return MouseButton::Middle;
+                case SDL_BUTTON_RIGHT:  return MouseButton::Right;
+                case SDL_BUTTON_X1:     return MouseButton::XButton1;
+                case SDL_BUTTON_X2:     return MouseButton::XButton2;
+                default: throw Exception("Unsupported mouse button");
+            }
+        }
 
-    static constexpr double MaxFrameTime = 1e3 / 60.0;
+        MouseWheelDirection FromSDLWheelDirection(SDL_MouseWheelDirection direction)
+        {
+            switch(direction)
+            {
+                case SDL_MOUSEWHEEL_NORMAL:     return MouseWheelDirection::Normal;
+                case SDL_MOUSEWHEEL_FLIPPED:    return MouseWheelDirection::Flipped;
+                default: throw Exception("Unsupported mouse wheel direction");
+            }
+        }
+
+        constexpr double MaxFrameTime = 1e3 / 60.0;
+        constexpr uint32_t SDL_EVENT_SHUTDOWN = 0x8000;
+    }
 
 	Application::Application() noexcept
 	{
@@ -42,7 +68,7 @@ namespace Sgl
 
         SDL_SetHint(SDL_HINT_RENDER_LINE_METHOD, "2");
 
-        SDL_RegisterEvents(UserEventsNumber);
+        SDL_RegisterEvents(1);
         SetThemeVariant(ThemeVariant::System);
         AddDefaultStyles();
         RegisterDefaultServices();
@@ -52,6 +78,7 @@ namespace Sgl
 	{        
         MainWindow = nullptr;
         delete _services;
+        _current = nullptr;
         MIX_Quit();
 		TTF_Quit();
 		SDL_Quit();
@@ -241,7 +268,7 @@ namespace Sgl
                         {
                             e.button.x,
                             e.button.y,
-                            MouseButton(e.button.button),
+                            FromSDLButton(e.button.button),
                             e.button.clicks
                         };
 
@@ -259,7 +286,7 @@ namespace Sgl
                         {
                             e.button.x,
                             e.button.y,
-                            MouseButton(e.button.button),
+                            FromSDLButton(e.button.button),
                             e.button.clicks
                         };
 
@@ -279,7 +306,7 @@ namespace Sgl
                             e.wheel.mouse_y,
                             e.wheel.integer_x,
                             e.wheel.integer_y,
-                            MouseWheelDirection(e.wheel.direction)
+                            FromSDLWheelDirection(e.wheel.direction)
                         };
 
                         window->OnMouseWheelChanged(args);
@@ -488,7 +515,7 @@ namespace Sgl
                 {
                     if(auto window = GetWindow(e.window.windowID))
                     {
-                        CancelEventArgs args {};
+                        CancelEventArgs args { .Cancel = false };
                         window->OnClosing(args);
 
                         if(args.Cancel)
@@ -498,10 +525,11 @@ namespace Sgl
 
                         window->Hide();
 
-                        bool hasMultipleWindows = _activeWindows.size() > 0;
-                        bool isMainWindow = window == MainWindow.Get();
+                        bool shutdown = !_activeWindows.empty() &&
+                                        window == MainWindow.Get() &&
+                                        ShutdownMode == ShutdownMode::OnMainWindowClose;
 
-                        if(hasMultipleWindows && isMainWindow && ShutdownMode == ShutdownMode::OnMainWindowClose)
+                        if(shutdown)
                         {
                             PushSDLUserEvent(SDL_EVENT_SHUTDOWN);
                         }

@@ -1,5 +1,6 @@
 #include "TextBlock.h"
 #include "../Application.h"
+
 #include <SDL3_ttf/SDL_ttf.h>
 
 namespace Sgl::UIElements

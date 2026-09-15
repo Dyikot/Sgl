@@ -4,29 +4,21 @@
 
 namespace Sgl
 {
-    /// <summary>
-    /// Represents an interface for a visual root object that manages rendering state and provides access to the underlying renderer.
-    /// </summary>
+    //! @brief Represents an interface for a visual root object that manages rendering state and provides access to the underlying renderer
     class IVisualRoot
     {
     public:
         virtual ~IVisualRoot() = default;
 
-        /// <summary>
-        /// Gets the SDL renderer associated with this visual root.
-        /// </summary>
-        /// <returns>A pointer to the SDL_Renderer used for drawing.</returns>
+        //! @brief Gets the SDL renderer associated with this visual root
+        //! @return A pointer to the SDL_Renderer used for drawing
         virtual SDL_Renderer* GetRenderer() const = 0;
 
-        /// <summary>
-        /// Provides access to the texture factory instance.
-        /// </summary>
-        /// <returns>A reference to the active ITextureFactory implementation.</returns>
+        //! @brief Provides access to the texture factory instance
+        //! @return A reference to the active ITextureFactory implementation
         virtual ITextureFactory& GetTextureFactory() = 0;
 
-        /// <summary>
-        /// Marks the visual content as dirty, indicating that a re-render is required.
-        /// </summary>
+        //! @brief Marks the visual content as dirty, indicating that a re-render is required
         virtual void MarkDirty() = 0;
     };
 }

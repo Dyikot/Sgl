@@ -1,7 +1,5 @@
 #pragma once
-
 #include <string>
-
 #include "../Event.h"
 #include "../Time/TimeSpan.h"
 #include "../Threading/Task.h"
@@ -12,9 +10,7 @@ struct MIX_Mixer;
 
 namespace Sgl::Media
 {
-	/// <summary>
-	/// Represents a 3D point in space, typically used for spatial/positional audio calculations
-	/// </summary>
+	//! @brief Represents a 3D point in space, typically used for spatial/positional audio calculations
 	struct Point3D
 	{
 		float X;
@@ -22,9 +18,7 @@ namespace Sgl::Media
 		float Z;
 	};
 
-	/// <summary>
-	/// Manages audio mixing
-	/// </summary>
+	//! @brief Manages audio mixing
 	class Mixer
 	{
 	public:
@@ -33,262 +27,186 @@ namespace Sgl::Media
 		Mixer(Mixer&&) = delete;
 		~Mixer();
 
-		/// <summary>
-		/// Sets the master volume for the mixer
-		/// </summary>
-		/// <param name="volume">The volume level, typically between 0.0f (silent) and 1.0f (max)</param>
+		//! @brief Sets the master volume for the mixer
+		//! @param volume The volume level, typically between 0.0f (silent) and 1.0f (max)
 		void SetVolume(float volume);
 
-		/// <summary>
-		/// Gets the current master volume of the mixer
-		/// </summary>
-		/// <returns>The current master volume level</returns>
+		//! @brief Gets the current master volume of the mixer
+		//! @return The current master volume level
 		float GetVolume();
 
-		/// <summary>
-		/// Resumes playback for all currently paused audio tracks managed by this mixer
-		/// </summary>
+		//! @brief Resumes playback for all currently paused audio tracks managed by this mixer
 		void ResumeAllPlayers();
 
-		/// <summary>
-		/// Pauses playback for all currently playing audio tracks managed by this mixer
-		/// </summary>
+		//! @brief Pauses playback for all currently playing audio tracks managed by this mixer
 		void PauseAllPlayers();
 
-		/// <summary>
-		/// Stops playback for all currently playing audio tracks managed by this mixer
-		/// </summary>
+		//! @brief Stops playback for all currently playing audio tracks managed by this mixer
 		void StopAllPlayers();
 
-		/// <summary>
-		/// Gets the underlying SDL3 mixer pointer
-		/// </summary>
-		/// <returns>A pointer to the native MIX_Mixer object</returns>
+		//! @brief Gets the underlying SDL3 mixer pointer
+		//! @return A pointer to the native MIX_Mixer object
 		MIX_Mixer* GetSDLMixer() const;
 
 	private:
 		MIX_Mixer* _mixer {};
 	};
 
-	/// <summary>
-	/// Represents a loaded audio resource (eg, sound effect or music track). Uses reference counting.
-	/// </summary>
+	//! @brief Represents a loaded audio resource (e.g., sound effect or music track). Uses reference counting.
 	class Audio
 	{
 	public:
-		/// <summary>
-		/// Constructor. Uses application mixer.
-		/// </summary>
-		/// <param name="source">The file path of the audio source</param>
-		/// <param name="predecode">If set to true, the audio is fully decoded into memory upon loading; otherwise, it may be streamed</param>
+		//! @brief Constructor. Uses application mixer.
+		//! @param source The file path of the audio source
+		//! @param predecode If set to true, the audio is fully decoded into memory upon loading; otherwise, it may be streamed
 		Audio(std::string_view source, bool predecode = false);
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="mixer">The mixer to associate this audio with</param>
-		/// <param name="source">The file path of the audio source</param>
-		/// <param name="predecode">If set to true, the audio is fully decoded into memory upon loading; otherwise, it may be streamed</param>
+		//! @brief Constructor
+		//! @param mixer The mixer to associate this audio with
+		//! @param source The file path of the audio source
+		//! @param predecode If set to true, the audio is fully decoded into memory upon loading; otherwise, it may be streamed
 		Audio(Mixer& mixer, std::string_view source, bool predecode = false);
 
 		Audio(const Audio&) = delete;
 		Audio(Audio&& other) noexcept;
 		~Audio();
 
-		/// <summary>
-		/// Asynchronously loads an audio resource from the specified path
-		/// </summary>
-		/// <param name="source">The file path of the audio source</param>
-		/// <param name="predecode">If set to true, the audio is fully decoded into memory upon loading</param>
-		/// <returns>A task representing the asynchronous load operation, which yields an Audio instance</returns>
+		//! @brief Asynchronously loads an audio resource from the specified path
+		//! @param source The file path of the audio source
+		//! @param predecode If set to true, the audio is fully decoded into memory upon loading
+		//! @return A task representing the asynchronous load operation, which yields an Audio instance
 		static Task<Audio> LoadAsync(std::string_view source, bool predecode = false);
 
-		/// <summary>
-		/// Asynchronously loads an audio resource from the specified path using a specific mixer
-		/// </summary>
-		/// <param name="mixer">The mixer to associate the loaded audio with</param>
-		/// <param name="source">The file path of the audio source</param>
-		/// <param name="predecode">If set to true, the audio is fully decoded into memory upon loading</param>
-		/// <returns>A task representing the asynchronous load operation, which yields an Audio instance</returns>
+		//! @brief Asynchronously loads an audio resource from the specified path using a specific mixer
+		//! @param mixer The mixer to associate the loaded audio with
+		//! @param source The file path of the audio source
+		//! @param predecode If set to true, the audio is fully decoded into memory upon loading
+		//! @return A task representing the asynchronous load operation, which yields an Audio instance
 		static Task<Audio> LoadAsync(Mixer& mixer, std::string_view path, bool predecode = false);
 
-		/// <summary>
-		/// Checks whether the audio data has been successfully loaded and is ready for playback
-		/// </summary>
-		/// <returns>true if the audio is loaded; otherwise, false</returns>
+		//! @brief Checks whether the audio data has been successfully loaded and is ready for playback
+		//! @return True if the audio is loaded; otherwise, false
 		bool IsLoaded() const;
 
-		/// <summary>
-		/// Gets the total playback duration of the audio track
-		/// </summary>
-		/// <returns>A TimeSpan representing the total duration</returns>
+		//! @brief Gets the total playback duration of the audio track
+		//! @return A TimeSpan representing the total duration
 		TimeSpan GetDuration() const;
 
-		/// <summary>
-		/// Gets the title metadata of the audio track
-		/// </summary>
-		/// <returns>The title of the track, or an empty view if unavailable</returns>
+		//! @brief Gets the title metadata of the audio track
+		//! @return The title of the track, or an empty view if unavailable
 		std::string_view GetTitle() const;
 
-		/// <summary>
-		/// Gets the artist metadata of the audio track
-		/// </summary>
-		/// <returns>The artist name, or an empty view if unavailable</returns>
+		//! @brief Gets the artist metadata of the audio track
+		//! @return The artist name, or an empty view if unavailable
 		std::string_view GetArtist() const;
 
-		/// <summary>
-		/// Gets the album metadata of the audio track
-		/// </summary>
-		/// <returns>The album name, or an empty view if unavailable</returns>
+		//! @brief Gets the album metadata of the audio track
+		//! @return The album name, or an empty view if unavailable
 		std::string_view GetAlbum() const;
 
-		/// <summary>
-		/// Gets the release year metadata of the audio track
-		/// </summary>
-		/// <returns>The release year, or 0 if unavailable</returns>
+		//! @brief Gets the release year metadata of the audio track
+		//! @return The release year, or 0 if unavailable
 		uint32_t GetReleaseYear() const;
 
-		/// <summary>
-		/// Gets the underlying SDL3 audio data pointer
-		/// </summary>
-		/// <returns>A pointer to the native MIX_Audio object</returns>
+		//! @brief Gets the underlying SDL3 audio data pointer
+		//! @return A pointer to the native MIX_Audio object
 		MIX_Audio* GetSDLAudio() const;
 
 		Audio& operator=(const Audio&) = delete;
 		Audio& operator=(Audio&& other) noexcept;
 		bool operator==(const Audio&) const = default;
+
 	private:
 		MIX_Audio* _audio {};
 	};
 
-	/// <summary>
-	/// Represents an active audio playback instance (a track or channel)
-	/// </summary>
+	//! @brief Represents an active audio playback instance (a track or channel)
 	class AudioPlayer
 	{
 	public:
-		using AudioPlayerEventHanlder = EventHandler<AudioPlayer>;
-	public:
-		/// <summary>
-		/// Default constructor. Uses appication mixer.
-		/// </summary>
+		using AudioPlayerEventHandler = EventHandler<AudioPlayer>;
+
+		//! @brief Default constructor. Uses application mixer.
 		AudioPlayer();
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="mixer">The mixer to route this player's audio through</param>
+		//! @brief Constructor
+		//! @param mixer The mixer to route this player's audio through
 		explicit AudioPlayer(Mixer& mixer);
 
 		AudioPlayer(const AudioPlayer&) = delete;
 		AudioPlayer(AudioPlayer&& other) noexcept;
 		~AudioPlayer();
 
-		/// <summary>
-		/// Event raised when audio playback starts
-		/// </summary>
-		Event<AudioPlayerEventHanlder> Started;
+		//! @brief Event raised when audio playback starts
+		Event<AudioPlayerEventHandler> Started;
 
-		/// <summary>
-		/// Event raised when audio playback stops
-		/// </summary>
-		Event<AudioPlayerEventHanlder> Stopped;
+		//! @brief Event raised when audio playback stops
+		Event<AudioPlayerEventHandler> Stopped;
 
-		/// <summary>
-		/// Assigns an audio resource to this player for playback
-		/// </summary>
-		/// <param name="audio">The audio resource to play</param>
+		//! @brief Assigns an audio resource to this player for playback
+		//! @param audio The audio resource to play
 		void SetAudio(const Audio& audio);
 
-		/// <summary>
-		/// Sets the playback volume for this specific player
-		/// </summary>
-		/// <param name="volume">The volume level, typically between 0.0f (silent) and 1.0f (max)</param>
+		//! @brief Sets the playback volume for this specific player
+		//! @param volume The volume level, typically between 0.0f (silent) and 1.0f (max)
 		void SetVolume(float volume);
 
-		/// <summary>
-		/// Gets the current playback volume of this player
-		/// </summary>
-		/// <returns>The current volume level</returns>
+		//! @brief Gets the current playback volume of this player
+		//! @return The current volume level
 		float GetVolume() const;
 
-		/// <summary>
-		/// Sets the 3D spatial position of the audio source for positional audio effects
-		/// </summary>
-		/// <param name="value">The 3D coordinates representing the source position</param>
+		//! @brief Sets the 3D spatial position of the audio source for positional audio effects
+		//! @param value The 3D coordinates representing the source position
 		void SetPosition(Point3D value);
 
-		/// <summary>
-		/// Gets the current 3D spatial position of the audio source
-		/// </summary>
-		/// <returns>The 3D coordinates of the source position</returns>
+		//! @brief Gets the current 3D spatial position of the audio source
+		//! @return The 3D coordinates of the source position
 		Point3D GetPosition() const;
 
-		/// <summary>
-		/// Checks whether the player is currently muted
-		/// </summary>
-		/// <returns>true if muted; otherwise, false</returns>
+		//! @brief Checks whether the player is currently muted
+		//! @return True if muted; otherwise, false
 		bool IsMuted() const;
 
-		/// <summary>
-		/// Checks whether the player is currently paused
-		/// </summary>
-		/// <returns>true if paused; otherwise, false</returns>
+		//! @brief Checks whether the player is currently paused
+		//! @return True if paused; otherwise, false
 		bool IsPaused() const;
 
-		/// <summary>
-		/// Checks whether the player is currently playing audio
-		/// </summary>
-		/// <returns>true if playing; otherwise, false</returns>
+		//! @brief Checks whether the player is currently playing audio
+		//! @return True if playing; otherwise, false
 		bool IsPlaying() const;
 
-		/// <summary>
-		/// Seeks to a specific playback time within the audio track
-		/// </summary>
-		/// <param name="value">The time position to seek to</param>
+		//! @brief Seeks to a specific playback time within the audio track
+		//! @param value The time position to seek to
 		void SetPlaybackTime(TimeSpan value);
 
-		/// <summary>
-		/// Gets the current playback position within the audio track
-		/// </summary>
-		/// <returns>A <see cref="TimeSpan"/> representing the current playback time</returns>
+		//! @brief Gets the current playback position within the audio track
+		//! @return A TimeSpan representing the current playback time
 		TimeSpan GetPlaybackTime() const;
 
-		/// <summary>
-		/// Gets the remaining playback time for the audio track
-		/// </summary>
-		/// <returns>A <see cref="TimeSpan"/> representing the time left until playback finishes</returns>
+		//! @brief Gets the remaining playback time for the audio track
+		//! @return A TimeSpan representing the time left until playback finishes
 		TimeSpan GetRemainingTime() const;
 
-		/// <summary>
-		/// Starts playback of the assigned audio once
-		/// </summary>
+		//! @brief Starts playback of the assigned audio once
 		void Play();
 
-		/// <summary>
-		/// Starts playback of the assigned audio for a specified number of loops
-		/// </summary>
-		/// <param name="loops">The number of times to loop the audio Use -1 for infinite looping</param>
+		//! @brief Starts playback of the assigned audio for a specified number of loops
+		//! @param loops The number of times to loop the audio. Use -1 for infinite looping
 		void Play(int64_t loops);
 
-		/// <summary>
-		/// Pauses the current playback
-		/// </summary>
+		//! @brief Pauses the current playback
 		void Pause();
 
-		/// <summary>
-		/// Stops the current playback and resets the playback position to the beginning
-		/// </summary>
+		//! @brief Stops the current playback and resets the playback position to the beginning
 		void Stop();
 
-		/// <summary>
-		/// Resumes playback that was previously paused
-		/// </summary>
+		//! @brief Resumes playback that was previously paused
 		void Resume();
 
 		AudioPlayer& operator=(const AudioPlayer&) = delete;
 		AudioPlayer& operator=(AudioPlayer&& other) noexcept;
 		operator bool() const noexcept { return _track != nullptr; }
+
 	private:
 		MIX_Track* _track {};
 	};

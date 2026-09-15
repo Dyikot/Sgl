@@ -5,19 +5,22 @@
 
 namespace Sgl::UIElements
 {
+	//! @brief Specifies the sizing mode for a row or column in a layout
 	enum class SizingMode
 	{
-		Auto,
-		Fixed,
-		Proportional
+		Auto,        // Size is determined automatically based on content
+		Fixed,       // Size is explicitly specified in absolute units
+		Proportional // Size is distributed proportionally based on a weight value
 	};
 
+	//! @brief Defines the sizing properties for a column in a grid layout
 	struct ColumnDefinition
 	{
-		SizingMode Mode;
-		float Value;
+		SizingMode Mode; // The sizing mode applied to this column
+		float Value;     // The value associated with the sizing mode
 	};
 
+	//! @brief Defines the sizing properties for a row in a grid layout
 	using RowDefinition = ColumnDefinition;
 
 	class Grid : public Panel

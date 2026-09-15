@@ -6,19 +6,15 @@
 
 namespace Sgl
 {
-    /// <summary>
-    /// A simple, logging utility that supports formatted, color-coded output to stdout.
-    /// Provides static methods for logging messages at different severity levels (Debug, Info, Warning, Error)
-    /// with ANSI color codes for terminal readability. All logging is synchronous and uses std::format-style syntax.
-    /// </summary>
+    //! @brief A simple, logging utility that supports formatted, color-coded output to stdout.
+    //! Provides static methods for logging messages at different severity levels (Debug, Info, Warning, Error)
+    //! with ANSI color codes for terminal readability. All logging is synchronous and uses std::format-style syntax.
     class Logging
     {
     public:
-        /// <summary>
-        /// Logs a raw formatted message without any prefix or color styling.
-        /// </summary>
-        /// <param name="format"> - a format string compatible with std::format.</param>
-        /// <param name="args"> - arguments to substitute into the format string.</param>
+        //! @brief Logs a raw formatted message without any prefix or color styling
+        //! @param format A format string compatible with std::format
+        //! @param ...args Arguments to substitute into the format string
         template<typename... TArgs>
         static void Log(std::string_view format, TArgs&&... args)
         {
@@ -32,44 +28,36 @@ namespace Sgl
             }
         }
 
-        /// <summary>
-        /// Logs a debug-level message with cyan color and "[DEBUG]" prefix.
-        /// </summary>
-        /// <param name="format"> - a format string compatible with std::format.</param>
-        /// <param name="args"> - arguments to substitute into the format string.</param>
+        //! @brief Logs a debug-level message with cyan color and "[DEBUG]" prefix
+        //! @param format A format string compatible with std::format
+        //! @param ...args Arguments to substitute into the format string
         template<typename... TArgs>
         static void LogDebug(std::string_view format, TArgs&&... args)
         {
             Log(Format, DebugColor, "DEBUG", DefaultColor, std::vformat(format, std::make_format_args(args...)));
         }
-
-        /// <summary>
-        /// Logs an informational message with green color and "[INFO]" prefix.
-        /// </summary>
-        /// <param name="format"> - a format string compatible with std::format.</param>
-        /// <param name="args"> - arguments to substitute into the format string.</param>
+        
+        //! @brief Logs an informational message with green color and "[INFO]" prefix
+        //! @param format A format string compatible with std::format
+        //! @param ...args Arguments to substitute into the format string
         template<typename... TArgs>
         static void LogInfo(std::string_view format, TArgs&&... args)
         {
             Log(Format, InfoColor, "INFO", DefaultColor, std::vformat(format, std::make_format_args(args...)));
         }
-
-        /// <summary>
-        /// Logs a warning message with yellow color and "[WARNING]" prefix.
-        /// </summary>
-        /// <param name="format"> - a format string compatible with std::format.</param>
-        /// <param name="args"> - arguments to substitute into the format string.</param>
+        
+        //! @brief Logs a warning message with yellow color and "[WARNING]" prefix
+        //! @param format A format string compatible with std::format
+        //! @param ...args Arguments to substitute into the format string
         template<typename... TArgs>
         static void LogWarning(std::string_view format, TArgs&&... args)
         {
             Log(Format, WarningColor, "WARNING", DefaultColor, std::vformat(format, std::make_format_args(args...)));
         }
 
-        /// <summary>
-        /// Logs an error message with red color and "[ERROR]" prefix.
-        /// </summary>
-        /// <param name="format"> - a format string compatible with std::format.</param>
-        /// <param name="args"> - arguments to substitute into the format string.</param>
+        //! @brief Logs an error message with red color and "[ERROR]" prefix
+        //! @param format A format string compatible with std::format
+        //! @param ...args Arguments to substitute into the format string
         template<typename... TArgs>
         static void LogError(std::string_view format, TArgs&&... args)
         {

@@ -4,105 +4,73 @@
 
 namespace Sgl
 {
-	/// <summary>
-	/// Represents a color with red, green, blue, and alpha components.
-	/// </summary>
+	//! @brief Represents a color with red, green, blue, and alpha components
 	class Color
 	{
 	public:
-		/// <summary>
-		/// Initializes a new instance of the Color structure with individual RGBA values
-		/// </summary>
-		/// <param name="red">- red component value (0-255)</param>
-		/// <param name="green">- green component value (0-255)</param>
-		/// <param name="blue">- blue component value (0-255)</param>
-		/// <param name="alpha">- alpha component value (0-255)</param>
+		//! @brief Initializes a new instance of the Color structure with individual RGBA values
+		//! @param red Red component value (0-255)
+		//! @param green Green component value (0-255)
+		//! @param blue Blue component value (0-255)
+		//! @param alpha Alpha component value (0-255)
 		constexpr Color(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha):
 			Red(red), Green(green), Blue(blue), Alpha(alpha)
 		{}
 
-		/// <summary>
-		/// Initializes a new instance of the Color structure with RGB values and full opacity
-		/// </summary>
-		/// <param name="red">- red component value (0-255)</param>
-		/// <param name="green">- green component value (0-255)</param>
-		/// <param name="blue">- blue component value (0-255)</param>
+		//! @brief Initializes a new instance of the Color structure with RGB values and full opacity
+		//! @param red Red component value (0-255)
+		//! @param green Green component value (0-255)
+		//! @param blue Blue component value (0-255)
 		constexpr Color(uint8_t red, uint8_t green, uint8_t blue):
 			Color(red, green, blue, 0xff)
 		{}
-
-		/// <summary>
-		/// Initializes a new instance of the Color structure from a 32-bit RGBA value
-		/// </summary>
-		/// <param name="rgba">- 32-bit value where bits 31-24 (Red), 23-16 (Green), 15-8 (Blue), 7-0 (Alpha)</param>
+		
+		//! @brief Initializes a new instance of the Color structure from a 32-bit RGBA value
+		//! @param rgba 32-bit value where bits 31-24 (Red), 23-16 (Green), 15-8 (Blue), 7-0 (Alpha)
 		constexpr explicit Color(uint32_t rgba):
 			Red(rgba >> 24), Green(rgba >> 16), Blue(rgba >> 8), Alpha(rgba)
 		{}
 
-		/// <summary>
-		/// Copy constructor
-		/// </summary>
+		//! @brief Copy constructor
 		constexpr Color(const Color&) = default;
 
-		/// <summary>
-		/// Move constructor
-		/// </summary>
+		//! @brief Move constructor
 		constexpr Color(Color&&) noexcept = default;
 
-		/// <summary>
-		/// Red component value (0-255)
-		/// </summary>
+		//! @brief Red component value (0-255)
 		uint8_t Red;
 
-		/// <summary>
-		/// Green component value (0-255)
-		/// </summary>
+		//! @brief Green component value (0-255)
 		uint8_t Green;
 
-		/// <summary>
-		/// Blue component value (0-255)
-		/// </summary>
+		//! @brief Blue component value (0-255)
 		uint8_t Blue;
-
-		/// <summary>
-		/// Alpha (transparency) component value (0-255, where 0 is fully transparent and 255 is fully opaque)
-		/// </summary>
+		
+		//! @brief Alpha component value (0-255)
 		uint8_t Alpha;
 
-		/// <summary>
-		/// Determines whether this color is fully transparent
-		/// </summary>
-		/// <returns>True if Alpha is 0, false otherwise</returns>
+		//! @brief Determines whether this color is fully transparent
+		//! @return True if Alpha is 0, false otherwise
 		constexpr bool IsTransparent() const noexcept
 		{
 			return Alpha == 0x00;
 		}
 
-		/// <summary>
-		/// Converts the color to a 32-bit unsigned integer in RGBA format,
-		/// where each component occupies one byte in big-endian order: 0xRRGGBBAA.
-		/// </summary>
-		/// <returns>A uint32_t value representing the color in RGBA layout.</returns>
+		//! @brief Converts the color to a 32-bit unsigned integer in RGBA format
 		constexpr uint32_t ToRgba() const noexcept
 		{
 			return (Red << 24) | (Green << 16) | (Blue << 8) | Alpha;
 		}
 
-		/// <summary>
-		/// Converts the color to a 32-bit unsigned integer in ARGB format,
-		/// where each component occupies one byte in big-endian order: 0xAARRGGBB.
-		/// Commonly used in graphics APIs such as DirectX and Windows GDI.
-		/// </summary>
+		//! @brief Converts the color to a 32-bit unsigned integer in ARGB format
 		constexpr uint32_t ToArgb() const noexcept
 		{
 			return (Alpha << 24) | (Red << 16) | (Green << 8) | Blue;
 		}
 
-		/// <summary>
-		/// Compares this color with another color for equality
-		/// </summary>
-		/// <param name="color">- the color to compare with</param>
-		/// <returns>True if RGBA components are equal, false otherwise</returns>
+		//! @brief Compares this color with another color for equality
+		//! @param color The color to compare with
+		//! @return True if RGBA components are equal, false otherwise
 		constexpr bool operator==(Color color) const noexcept
 		{
 			return Red == color.Red 
@@ -111,27 +79,14 @@ namespace Sgl
 				&& Alpha == color.Alpha;
 		}
 
-		/// <summary>
-		/// Copy assignment operator
-		/// </summary>
 		constexpr Color& operator=(const Color&) = default;
-
-		/// <summary>
-		/// Move assignment operator
-		/// </summary>
 		constexpr Color& operator=(Color&&) noexcept = default;
 
-		/// <summary>
-		/// Convert to SDL_Color
-		/// </summary>
 		constexpr operator SDL_Color() const noexcept
 		{
 			return SDL_Color(Red, Green, Blue, Alpha);
 		}
 
-		/// <summary>
-		/// Convert to SDL_FColor
-		/// </summary>
 		constexpr operator SDL_FColor() const noexcept
 		{
 			return SDL_FColor(

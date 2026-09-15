@@ -3,7 +3,6 @@
 #include <span>
 #include <SDL3/SDL_pixels.h>
 #include <SDL3/SDL_blendmode.h>
-
 #include "../Base/Primitives.h"
 #include "../Base/Media/Color.h"
 #include "../Base/Media/Font.h"
@@ -14,289 +13,216 @@ struct SDL_Texture;
 
 namespace Sgl
 {
-	class Surface;
+    class Surface;
 
-	/// <summary>
-	/// Specifies how a texture is intended to be used, which affects performance and memory layout.
-	/// </summary>
-	enum class TextureAccess
-	{
-		Static,    // The texture is rarely updated and optimized for fast rendering (e.g., sprites, UI assets).
-		Streaming, // The texture is frequently updated from CPU memory (e.g., dynamic buffers, video frames).
-		Target     // The texture can be used as a render target (i.e., rendered into via SetTarget).
-	};
-	
-	enum class ScaleMode
-	{
-		Nearest, Linear
-	};
+    //! @brief Specifies how a texture is intended to be used, which affects performance and memory layout
+    enum class TextureAccess
+    {
+        Static,    // The texture is rarely updated and optimized for fast rendering
+        Streaming, // The texture is frequently updated from CPU memory
+        Target     // The texture can be used as a render target
+    };
 
-	/// <summary>
-	/// A RAII wrapper around SDL_Texture that manages a reference-counted GPU texture.
-	/// </summary>
-	class Texture final
-	{
-	public:
-		/// <summary>
-		/// Constructs an empty (null) texture.
-		/// </summary>
-		Texture() = default;
+    //! @brief Specifies the scale filtering mode used when rendering a texture
+    enum class ScaleMode
+    {
+        Nearest, // Uses nearest-neighbor filtering
+        Linear   // Uses linear filtering
+    };
 
-		/// <summary>
-		/// Constructs a null texture from a nullptr literal.
-		/// </summary>
-		Texture(std::nullptr_t);
+    //! @brief A RAII wrapper around SDL_Texture that manages a reference-counted GPU texture
+    class Texture final
+    {
+    public:
+        //! @brief Constructs an empty (null) texture
+        Texture() = default;
 
-		/// <summary>
-		/// Loads a texture from an image file using the given renderer.
-		/// </summary>
-		/// <param name="renderer"> - the SDL renderer used to create the texture.</param>
-		/// <param name="filePath"> - path to the image file.</param>
-		Texture(SDL_Renderer* renderer, std::string_view filePath);
+        //! @brief Constructs a null texture from a nullptr literal
+        Texture(std::nullptr_t);
 
-		/// <summary>
-		/// Creates a texture by uploading the pixel data from a surface.
-		/// </summary>
-		/// <param name="renderer"> - the SDL renderer used to create the texture.</param>
-		/// <param name="surface"> - the surface whose contents will be copied into the texture.</param>
-		Texture(SDL_Renderer* renderer, const Surface& surface);
+        //! @brief Loads a texture from an image file using the given renderer
+        //! @param renderer The SDL renderer used to create the texture
+        //! @param filePath Path to the image file
+        Texture(SDL_Renderer* renderer, std::string_view filePath);
 
-		/// <summary>
-		/// Creates a texture by uploading PNG image data from memory.
-		/// </summary>
-		/// <param name="renderer"> - the SDL renderer used to create the texture.</param>
-		/// <param name="data"> - span containing the raw bytes of a PNG file.</param>
-		Texture(SDL_Renderer* renderer, std::span<const uint8_t> data);
+        //! @brief Creates a texture by uploading the pixel data from a surface
+        //! @param renderer The SDL renderer used to create the texture
+        //! @param surface The surface whose contents will be copied into the texture
+        Texture(SDL_Renderer* renderer, const Surface& surface);
 
-		/// <summary>
-		/// Creates an empty texture with specified dimensions, access type, and pixel format.
-		/// </summary>
-		/// <param name="renderer"> - the SDL renderer used to create the texture.</param>
-		/// <param name="size"> - width and height of the new texture.</param>
-		/// <param name="access"> - how the texture will be used (static, streaming, or render target). Defaults to Static.</param>
-		/// <param name="format"> - pixel format of the texture. Defaults to SDL_PIXELFORMAT_RGBA8888.</param>
-		Texture(SDL_Renderer* renderer,
-				Size size,
-				TextureAccess access = TextureAccess::Static,
-				SDL_PixelFormat format = SDL_PIXELFORMAT_RGBA8888);
+        //! @brief Creates a texture by uploading PNG image data from memory
+        //! @param renderer The SDL renderer used to create the texture
+        //! @param data Span containing the raw bytes of a PNG file
+        Texture(SDL_Renderer* renderer, std::span<const uint8_t> data);
 
-		/// <summary>
-		/// Renders text to a texture using the given font and colors.
-		/// </summary>
-		/// <param name="renderer"> - the SDL renderer used to create the texture.</param>
-		/// <param name="fontQuality"> - rendering quality (e.g., solid, shaded, blended).</param>
-		/// <param name="font"> - pointer to the loaded TrueType font.</param>
-		/// <param name="text"> - text to render.</param>
-		/// <param name="foreground"> - color of the text.</param>
-		/// <param name="background"> - background color; defaults to transparent.</param>
-		Texture(SDL_Renderer* renderer,
-				FontQuality fontQuality,
-				TTF_Font* font,
-				std::string_view text,
-				Color foreground,
-				Color background = Colors::Transparent);
+        //! @brief Creates an empty texture with specified dimensions, access type, and pixel format
+        //! @param renderer The SDL renderer used to create the texture
+        //! @param size Width and height of the new texture
+        //! @param access How the texture will be used (static, streaming, or render target). Defaults to Static.
+        //! @param format Pixel format of the texture. Defaults to SDL_PIXELFORMAT_RGBA8888.
+        Texture(SDL_Renderer* renderer,
+                Size size,
+                TextureAccess access = TextureAccess::Static,
+                SDL_PixelFormat format = SDL_PIXELFORMAT_RGBA8888);
 
-		/// <summary>
-		/// Renders wrapped text to a texture using the given font, colors, and maximum line width.
-		/// </summary>
-		/// <param name="renderer"> - the SDL renderer used to create the texture.</param>
-		/// <param name="fontQuality"> - rendering quality (e.g., solid, shaded, blended).</param>
-		/// <param name="font"> - pointer to the loaded TrueType font.</param>
-		/// <param name="text"> - text to render.</param>
-		/// <param name="wrapWidth"> - maximum width in pixels before wrapping lines.</param>
-		/// <param name="foreground"> - color of the text.</param>
-		/// <param name="background"> - background color; defaults to transparent.</param>
-		Texture(SDL_Renderer* renderer,
-				FontQuality fontQuality,
-				TTF_Font* font,
-				std::string_view text,
-				int wrapWidth,
-				Color foreground,
-				Color background = Colors::Transparent);
+        //! @brief Renders text to a texture using the given font and colors
+        //! @param renderer The SDL renderer used to create the texture
+        //! @param fontQuality Rendering quality (e.g., solid, shaded, blended)
+        //! @param font Pointer to the loaded TrueType font
+        //! @param text Text to render
+        //! @param foreground Color of the text
+        //! @param background Background color; defaults to transparent
+        Texture(SDL_Renderer* renderer,
+                FontQuality fontQuality,
+                TTF_Font* font,
+                std::string_view text,
+                Color foreground,
+                Color background = Colors::Transparent);
 
-		/// <summary>
-		/// Copy constructor. Increments the reference count of the underlying SDL_Texture.
-		/// </summary>
-		/// <param name="other"> - the texture to copy from.</param>
-		Texture(const Texture& other);
+        //! @brief Renders wrapped text to a texture using the given font, colors, and maximum line width
+        //! @param renderer The SDL renderer used to create the texture
+        //! @param fontQuality Rendering quality (e.g., solid, shaded, blended)
+        //! @param font Pointer to the loaded TrueType font
+        //! @param text Text to render
+        //! @param wrapWidth Maximum width in pixels before wrapping lines
+        //! @param foreground Color of the text
+        //! @param background Background color; defaults to transparent
+        Texture(SDL_Renderer* renderer,
+                FontQuality fontQuality,
+                TTF_Font* font,
+                std::string_view text,
+                int wrapWidth,
+                Color foreground,
+                Color background = Colors::Transparent);
 
-		/// <summary>
-		/// Move constructor. Transfers ownership without modifying the reference count.
-		/// </summary>
-		/// <param name="other"> - the texture to move from.</param>
-		Texture(Texture&& other) noexcept;
+        //! @brief Copy constructor. Increments the reference count of the underlying SDL_Texture.
+        //! @param other The texture to copy from
+        Texture(const Texture& other);
 
-		/// <summary>
-		/// Destructor. Decrements the reference count of the underlying SDL_Texture.
-		/// The GPU resource is freed only when the reference count reaches zero.
-		/// </summary>
-		~Texture();
+        //! @brief Move constructor. Transfers ownership without modifying the reference count.
+        //! @param other The texture to move from
+        Texture(Texture&& other) noexcept;
 
-		/// <summary>
-		/// Sets the color modulation (multiply color) applied during rendering.
-		/// </summary>
-		/// <param name="value"> - the color to modulate with.</param>
-		void SetColor(Color value);
+        //! @brief Destructor. Decrements the reference count of the underlying SDL_Texture. The GPU resource is freed only when the reference count reaches zero.
+        ~Texture();
 
-		/// <summary>
-		/// Gets the current color modulation of the texture.
-		/// </summary>
-		/// <returns>The color currently used for modulation.</returns>
-		Color GetColor() const;
+        //! @brief Sets the color modulation (multiply color) applied during rendering
+        //! @param value The color to modulate with
+        void SetColor(Color value);
 
-		/// <summary>
-		/// Sets the blend mode used when rendering this texture.
-		/// </summary>
-		/// <param name="value"> - the SDL_BlendMode to apply (e.g., blend, add, modulate).</param>
-		void SetBlendMode(SDL_BlendMode value);
+        //! @brief Gets the current color modulation of the texture
+        //! @return The color currently used for modulation
+        Color GetColor() const;
 
-		/// <summary>
-		/// Gets the current blend mode of the texture.
-		/// </summary>
-		/// <returns>The blend mode currently set for this texture.</returns>
-		SDL_BlendMode GetBlendMode() const;
+        //! @brief Sets the blend mode used when rendering this texture
+        //! @param value The SDL_BlendMode to apply (e.g., blend, add, modulate)
+        void SetBlendMode(SDL_BlendMode value);
 
-		/// <summary>
-		/// Sets the scale quality (filtering) used when the texture is scaled during rendering.
-		/// </summary>
-		/// <param name="value"> - the scaling mode.</param>
-		void SetScaleMode(ScaleMode value);
+        //! @brief Gets the current blend mode of the texture
+        //! @return The blend mode currently set for this texture
+        SDL_BlendMode GetBlendMode() const;
 
-		/// <summary>
-		/// Gets the current scale mode of the texture.
-		/// </summary>
-		/// <returns>The scale filtering mode currently in use.</returns>
-		ScaleMode GetScaleMode() const;
+        //! @brief Sets the scale quality (filtering) used when the texture is scaled during rendering
+        //! @param value The scaling mode
+        void SetScaleMode(ScaleMode value);
 
-		/// <summary>
-		/// Gets the width of the texture in pixels.
-		/// </summary>
-		/// <returns>Width of the texture.</returns>
-		uint32_t GetWidth() const;
+        //! @brief Gets the current scale mode of the texture
+        //! @return The scale filtering mode currently in use
+        ScaleMode GetScaleMode() const;
 
-		/// <summary>
-		/// Gets the height of the texture in pixels.
-		/// </summary>
-		/// <returns>Height of the texture.</returns>
-		uint32_t GetHeight() const;
+        //! @brief Gets the width of the texture in pixels
+        //! @return Width of the texture
+        uint32_t GetWidth() const;
 
-		/// <summary>
-		/// Gets the access type of the texture (Static, Streaming, or Target).
-		/// </summary>
-		/// <returns>The access mode specified at creation time.</returns>
-		TextureAccess GetAccess() const;
+        //! @brief Gets the height of the texture in pixels
+        //! @return Height of the texture
+        uint32_t GetHeight() const;
 
-		/// <summary>
-		/// Gets the pixel format of the texture.
-		/// </summary>
-		/// <returns>The SDL pixel format used by this texture.</returns>
-		SDL_PixelFormat GetFormat() const;
+        //! @brief Gets the access type of the texture (Static, Streaming, or Target)
+        //! @return The access mode specified at creation time
+        TextureAccess GetAccess() const;
 
-		SDL_Renderer* GetRenderer() const;
+        //! @brief Gets the pixel format of the texture
+        //! @return The SDL pixel format used by this texture
+        SDL_PixelFormat GetFormat() const;
 
-		/// <summary>
-		/// Assigns a null state to this texture, releasing its reference.
-		/// </summary>
-		/// <returns>Reference to this texture after assignment.</returns>
-		Texture& operator=(std::nullptr_t);
+        //! @brief Gets the SDL renderer associated with this texture
+        SDL_Renderer* GetRenderer() const;
 
-		/// <summary>
-		/// Copy assignment operator. Releases current reference and increments the reference count of the source.
-		/// </summary>
-		/// <param name="other"> - the texture to copy from.</param>
-		/// <returns>Reference to this texture after assignment.</returns>
-		Texture& operator=(const Texture& other);
+        //! @brief Assigns a null state to this texture, releasing its reference
+        //! @return Reference to this texture after assignment
+        Texture& operator=(std::nullptr_t);
 
-		/// <summary>
-		/// Move assignment operator. Transfers ownership from another texture.
-		/// </summary>
-		/// <param name="other"> - the texture to move from.</param>
-		/// <returns>Reference to this texture after assignment.</returns>
-		Texture& operator=(Texture&& other) noexcept;
+        //! @brief Copy assignment operator. Releases current reference and increments the reference count of the source.
+        //! @param other The texture to copy from
+        //! @return Reference to this texture after assignment
+        Texture& operator=(const Texture& other);
 
-		/// <summary>
-		/// Compares two textures for equality based on their underlying SDL_Texture pointers.
-		/// </summary>
-		/// <returns>True if both textures wrap the same SDL_Texture or are both null; otherwise, false.</returns>
-		friend bool operator==(const Texture&, const Texture&) = default;
+        //! @brief Move assignment operator. Transfers ownership from another texture.
+        //! @param other The texture to move from
+        //! @return Reference to this texture after assignment
+        Texture& operator=(Texture&& other) noexcept;
 
-		/// <summary>
-		/// Compares the texture with nullptr.
-		/// </summary>
-		/// <returns>True if the texture is null; otherwise, false.</returns>
-		bool operator==(std::nullptr_t) const noexcept { return _texture == nullptr; }
+        //! @brief Compares two textures for equality based on their underlying SDL_Texture pointers
+        //! @return True if both textures wrap the same SDL_Texture or are both null; otherwise, false
+        friend bool operator==(const Texture&, const Texture&) = default;
 
-		/// <summary>
-		/// Gets the raw SDL_Texture pointer managed by this object.
-		/// </summary>
-		/// <returns>Pointer to the underlying SDL_Texture, or nullptr if empty.</returns>
-		operator SDL_Texture* () const noexcept
-		{
-			return _texture;
-		}
+        //! @brief Compares the texture with nullptr
+        //! @return True if the texture is null; otherwise, false
+        bool operator==(std::nullptr_t) const noexcept { return _texture == nullptr; }
 
-		/// <summary>
-		/// Checks whether the texture is valid (non-null).
-		/// </summary>
-		/// <returns>True if the texture owns a valid SDL_Texture; otherwise, false.</returns>
-		explicit operator bool() const noexcept { return _texture != nullptr; }
-	private:
-		void Release();
-	private:
-		SDL_Texture* _texture = nullptr;
-	};
+        //! @brief Gets the raw SDL_Texture pointer managed by this object
+        //! @return Pointer to the underlying SDL_Texture, or nullptr if empty
+        operator SDL_Texture* () const noexcept
+        {
+            return _texture;
+        }
 
-	/// <summary>
-	/// A RAII helper that locks a streaming texture for direct pixel access.
-	/// Must only be used with textures created with TextureAccess::Streaming.
-	/// The texture remains locked during the lifetime of this object.
-	/// </summary>
-	class TextureLock
-	{
-	public:
-		/// <summary>
-		/// Locks the specified texture for direct pixel access.
-		/// If a rectangle is provided, only that region is locked; otherwise, the entire texture is locked.
-		/// </summary>
-		/// <param name="texture"> - the streaming texture to lock (must be valid and unlocked).</param>
-		/// <param name="rect"> - optional rectangle to lock; if null, the whole texture is locked.</param>
-		TextureLock(Texture texture, const Rect* rect = nullptr);
+        //! @brief Checks whether the texture is valid (non-null)
+        //! @return True if the texture owns a valid SDL_Texture; otherwise, false
+        explicit operator bool() const noexcept { return _texture != nullptr; }
 
-		/// <summary>
-		/// Unlocks the texture, committing any changes made to the pixel data.
-		/// </summary>
-		~TextureLock();
+    private:
+        void Release();
 
-		/// <summary>
-		/// Pointer to the raw pixel data of the locked texture region.
-		/// </summary>
-		void* Pixels = nullptr;
+    private:
+        SDL_Texture* _texture = nullptr;
+    };
 
-		/// <summary>
-		/// Number of bytes per row (including padding) in the locked pixel data.
-		/// </summary>
-		int Pitch = 0;
-	private:
-		Texture _texture;
-	};
+    //! @brief A RAII helper that locks a streaming texture for direct pixel access. Must only be used with textures created with TextureAccess::Streaming. The texture remains locked during the lifetime of this object.
+    class TextureLock
+    {
+    public:
+        //! @brief Locks the specified texture for direct pixel access. If a rectangle is provided, only that region is locked; otherwise, the entire texture is locked.
+        //! @param texture The streaming texture to lock (must be valid and unlocked)
+        //! @param rect Optional rectangle to lock; if null, the whole texture is locked
+        TextureLock(Texture texture, const Rect* rect = nullptr);
 
-	class ImageSource;
+        //! @brief Unlocks the texture, committing any changes made to the pixel data
+        ~TextureLock();
 
-	/// <summary>
-	/// Interface for factory objects that manage the creation and lifecycle of textures.
-	/// This abstraction isolates the texture loading logic and asset management from the rest of the application.
-	/// </summary>
-	class ITextureFactory
-	{
-	public:
-		virtual ~ITextureFactory() = default;
+        //! @brief Pointer to the raw pixel data of the locked texture region
+        void* Pixels = nullptr;
 
-		/// <summary>
-		/// Creates a texture from the specified source, with optional caching.
-		/// </summary>
-		/// <param name="imageSource"> - the source of the image.</param>
-		/// <param name="cache"> - whether to cache the texture for future use. Defaults to true.</param>
-		/// <returns>The loaded texture. If the file fails to load, returns an invalid (null) texture.</returns>
-		virtual Texture Create(const ImageSource& source, bool cache) = 0;
-	};
+        //! @brief Number of bytes per row (including padding) in the locked pixel data
+        int Pitch = 0;
+
+    private:
+        Texture _texture;
+    };
+
+    class ImageSource;
+
+    //! @brief Interface for factory objects that manage the creation and lifecycle of textures
+    class ITextureFactory
+    {
+    public:
+        virtual ~ITextureFactory() = default;
+
+        //! @brief Creates a texture from the specified source, with optional caching
+        //! @param imageSource The source of the image
+        //! @param cache Whether to cache the texture for future use. Defaults to true.
+        //! @return The loaded texture. If the file fails to load, returns an invalid (null) texture.
+        virtual Texture Create(const ImageSource& source, bool cache) = 0;
+    };
 }

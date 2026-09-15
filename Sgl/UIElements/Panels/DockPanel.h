@@ -5,12 +5,13 @@
 
 namespace Sgl::UIElements
 {
+	//! @brief Specifies the dock position of an element within DockPanel
 	enum class Dock
 	{
-		Left, 
-		Right, 
-		Top, 
-		Bottom
+		Left,   // Docks the element to the left edge
+		Right,  // Docks the element to the right edge
+		Top,    // Docks the element to the top edge
+		Bottom  // Docks the element to the bottom edge
 	};
 
 	class DockPanel : public Panel

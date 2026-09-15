@@ -7,53 +7,43 @@
 
 namespace Sgl
 {
-    /// <summary>
-    /// Service Locator container
-    /// </summary>
+    //! @brief Service Locator container
     class ServiceLocator
     {
     public:
-        /// <summary>
-        /// Registers a service using a std::shared_ptr
-        /// </summary>
+        //! @brief Registers a service using a std::shared_ptr
         template<typename TInterface, typename TImpl = TInterface>
         void Add(std::shared_ptr<TImpl> service)
         {
             _services[typeid(TInterface)] = std::static_pointer_cast<TInterface>(std::move(service));
         }
 
-        /// <summary>
-        /// Registers a service using a std::unique_ptr
-        /// </summary>
+        //! @brief Registers a service using a std::unique_ptr
         template<typename TInterface, typename TImpl = TInterface>
         void Add(std::unique_ptr<TImpl> service)
         {
             _services[typeid(TInterface)] = std::shared_ptr<TInterface>(std::move(service));
         }
 
-        /// <summary>
-        /// Register a default initializable service
-        /// </summary>
+        //! @brief Register a default initializable service
         template<typename TInterface, typename TImpl = TInterface>
         void Add() requires std::default_initializable<TImpl>
         {
             Add<TInterface, TImpl>(std::make_shared<TImpl>());
         }
 
-        /// <summary>
-        /// Checks if a service has been registered
-        /// </summary>
-        /// <returns>true if registered, false if not</returns>
+        //! @brief Checks if a service has been registered
+        //! @tparam T Service type
+        //! @return true if registered, false if not
         template<typename T>
         bool Has() const
         {
             return _services.find(typeid(T)) != _services.end();
         }
 
-        /// <summary>
-        /// Retrieves a service
-        /// </summary>
-        /// <returns>Pointer to service or nullptr if not found</returns>
+        //! @brief Retrieves a service
+        //! @tparam T Service type
+        //! @return Pointer to service or nullptr if not found
         template<typename T>
         T* Get() const
         {
@@ -65,10 +55,9 @@ namespace Sgl
             return nullptr;
         }
 
-        /// <summary>
-        /// Retrieves a service
-        /// </summary>
-        /// <returns>Reference to service or throws an exception if it's missing</returns>
+        //! @brief Retrieves a service
+        //! @tparam T Service type
+        //! @return Reference to service or throws an exception if it's missing
         template<typename T>
         T& GetRequired() const
         {

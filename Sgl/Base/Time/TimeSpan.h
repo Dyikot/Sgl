@@ -6,6 +6,7 @@
 
 namespace Sgl
 {
+	//! @brief Represents a time interval
 	class TimeSpan
 	{
 	public:
@@ -21,19 +22,13 @@ namespace Sgl
 			_nanoseconds(timespan._nanoseconds)
 		{}
 
-		/// <summary>
-		/// Represents a zero time interval (0 nanoseconds).
-		/// </summary>
+		//! @brief Represents a zero time interval (0 nanoseconds)
 		static const TimeSpan Zero;
 
-		/// <summary>
-		/// Represents the maximum possible time interval.
-		/// </summary>
+		//! @brief Represents the maximum possible time interval
 		static const TimeSpan MaxValue;
 
-		/// <summary>
-		/// Represents the minimum possible time interval.
-		/// </summary>
+		//! @brief Represents the minimum possible time interval
 		static const TimeSpan MinValue;
 
 		static constexpr TimeSpan FromMicroseconds(int64_t value) noexcept
@@ -227,6 +222,7 @@ namespace Sgl
 		}
 
 		friend constexpr auto operator<=>(TimeSpan, TimeSpan) noexcept = default;
+
 	private:
 		static constexpr double NanosecondsPerMicrosecond = 1e3;
 		static constexpr double NanosecondsPerMillisecond = 1e6;

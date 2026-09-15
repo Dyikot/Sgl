@@ -4,10 +4,7 @@
 
 namespace Sgl
 {
-    /// <summary>
-    /// Represents a strongly-typed key for accessing theme resources.
-    /// Provides type safety when referencing resources in styles.
-    /// </summary>
+    //! @brief Represents a strongly-typed key for accessing theme resources
     struct ResourceKey
     {
         std::string Value;

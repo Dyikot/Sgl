@@ -4,10 +4,7 @@
 
 namespace Sgl
 {
-    /// <summary>
-    /// A collection of styles that can be applied to UI elements.
-    /// Styles are stored in order and applied sequentially.
-    /// </summary>
+    //! @brief A collection of styles that can be applied to UI elements
     class StyleCollection
     {
     public:
@@ -27,43 +24,33 @@ namespace Sgl
         auto rend() { return _items.rend(); }
         auto rend() const { return _items.rend(); }
 
-        /// <summary>
-        /// Adds a new style with the specified selector to the collection.
-        /// </summary>
-        /// <param name="selector"> - the selector that determines which elements this style applies to.</param>
-        /// <returns>A reference to the newly added style.</returns>
+        //! @brief Adds a new style with the specified selector to the collection
+        //! @param selector The selector that determines which elements this style applies to
+        //! @return A reference to the newly added style
         Style& Add(Selector selector)
         {
             return _items.emplace_back(std::move(selector));
         }
 
-        /// <summary>
-        /// Gets the number of styles in the collection.
-        /// </summary>
+        //! @brief Gets the number of styles in the collection
         size_t Count() const noexcept
         {
             return _items.size();
         }
 
-        /// <summary>
-        /// Determines whether the collection is empty.
-        /// </summary>
+        //! @brief Determines whether the collection is empty
         bool IsEmpty() const noexcept
         {
             return _items.empty();
         }
 
-        /// <summary>
-        /// Gets the style at the specified index.
-        /// </summary>
+        //! @brief Gets the style at the specified index
         Style& operator[](size_t index)
         {
             return _items[index];
         }
 
-        /// <summary>
-        /// Gets the style at the specified index (const version).
-        /// </summary>
+        //! @brief Gets the style at the specified index (const version)
         const Style& operator[](size_t index) const
         {
             return _items[index];

@@ -4,27 +4,19 @@
 
 namespace Sgl
 {
-	/// <summary>
-	/// A convenient callable wrapper for localized string retrieval with optional formatting.
-	/// Delegates key lookup to the global localization storage and supports std::format-style arguments.
-	/// </summary>
+	//! @brief A convenient callable wrapper for localized string retrieval with optional formatting
 	class StringLocalizer
 	{
 	public:
-		/// <summary>
-		/// Retrieves the localized string for the given key without formatting.
-		/// </summary>
-		/// <param name="key"> - the localization key.</param>
-		/// <returns>The localized string.</returns>
+		//! @brief Retrieves the localized string for the given key without formatting
+		//! @param key The localization key
+		//! @return The localized string
 		std::string operator()(std::string_view key) const;
-
-		/// <summary>
-		/// Retrieves the localized string for the given key and formats it using the provided arguments.
-		/// Uses std::vformat internally, so the localized string must contain valid format specifiers.
-		/// </summary>
-		/// <param name="key"> - the localization key.</param>
-		/// <param name="args"> - arguments to substitute into the formatted string.</param>
-		/// <returns>A formatted std::string.</returns>
+				
+		//! @brief Retrieves the localized string for the given key and formats it using the provided arguments
+		//! @param key The localization key
+		//! @param ...args Arguments to substitute into the formatted string
+		//! @return A formatted std::string
 		template<typename... TArgs>
 		std::string operator()(std::string_view key, TArgs&&... args) const
 		{
@@ -32,11 +24,6 @@ namespace Sgl
 		}
 	};
 
-	/// <summary>
-	/// Global instance of StringLocalizer for easy access to localized strings anywhere in the application.
-	/// Usage examples:
-	///   auto message = Localizer("WelcomeMessage");
-	///   auto formatted = Localizer("HelloUser", userName);
-	/// </summary>
+	//! @brief Global instance of StringLocalizer for easy access to localized strings anywhere in the application
 	inline constexpr StringLocalizer Localizer;
 }

@@ -8,274 +8,289 @@
 #include "../Base/Math.h"
 #include "../Base/Media/Font.h"
 #include "../Base/Logging.h"
+#include "../Base/Exceptions.h"
 
 namespace Sgl
 {
-	static constexpr float PI = std::numbers::pi_v<float>;
-	
-	static constexpr size_t EllipseNormalizedSize = 61;
-	static constexpr FPoint EllipseNormalized[] =
+	namespace
 	{
-		{ 1.000000f,  0.000000f}, { 0.994522f,  0.104528f}, { 0.978148f,  0.207912f},
-		{ 0.951057f,  0.309017f}, { 0.913545f,  0.406737f}, { 0.866025f,  0.500000f},
-		{ 0.809017f,  0.587785f}, { 0.743145f,  0.669131f}, { 0.669131f,  0.743145f},
-		{ 0.587785f,  0.809017f}, { 0.500000f,  0.866025f}, { 0.406737f,  0.913545f},
-		{ 0.309017f,  0.951057f}, { 0.207912f,  0.978148f}, { 0.104528f,  0.994522f},
-		{ 0.000000f,  1.000000f}, {-0.104528f,  0.994522f}, {-0.207912f,  0.978148f},
-		{-0.309017f,  0.951057f}, {-0.406737f,  0.913545f}, {-0.500000f,  0.866025f},
-		{-0.587785f,  0.809017f}, {-0.669131f,  0.743145f}, {-0.743145f,  0.669131f},
-		{-0.809017f,  0.587785f}, {-0.866025f,  0.500000f}, {-0.913545f,  0.406737f},
-		{-0.951057f,  0.309017f}, {-0.978148f,  0.207912f}, {-0.994522f,  0.104528f},
-		{-1.000000f,  0.000000f}, {-0.994522f, -0.104528f}, {-0.978148f, -0.207912f},
-		{-0.951057f, -0.309017f}, {-0.913545f, -0.406737f}, {-0.866025f, -0.500000f},
-		{-0.809017f, -0.587785f}, {-0.743145f, -0.669131f}, {-0.669131f, -0.743145f},
-		{-0.587785f, -0.809017f}, {-0.500000f, -0.866025f}, {-0.406737f, -0.913545f},
-		{-0.309017f, -0.951057f}, {-0.207912f, -0.978148f}, {-0.104528f, -0.994522f},
-		{ 0.000000f, -1.000000f}, { 0.104528f, -0.994522f}, { 0.207912f, -0.978148f},
-		{ 0.309017f, -0.951057f}, { 0.406737f, -0.913545f}, { 0.500000f, -0.866025f},
-		{ 0.587785f, -0.809017f}, { 0.669131f, -0.743145f}, { 0.743145f, -0.669131f},
-		{ 0.809017f, -0.587785f}, { 0.866025f, -0.500000f}, { 0.913545f, -0.406737f},
-		{ 0.951057f, -0.309017f}, { 0.978148f, -0.207912f}, { 0.994522f, -0.104528f},
-		{ 1.000000f,  0.000000f}
-	};
-
-	class Arc
-	{
-	public:
-		static constexpr size_t Segments = 8;
-		static constexpr size_t VerticesCount = Segments + 1;
-		
-		static constexpr FPoint Coordinates[] =
+		class Arc
 		{
-			{ 1.000000f,  0.000000f}, { 0.980785f,  0.195090f}, { 0.923880f,  0.382683f},
-			{ 0.831470f,  0.555570f}, { 0.707107f,  0.707107f}, { 0.555570f,  0.831470f},
-			{ 0.382683f,  0.923880f}, { 0.195090f,  0.980785f}, { 0.000000f,  1.000000f},
+		public:
+			static constexpr size_t Segments = 8;
+			static constexpr size_t VerticesCount = Segments + 1;
+
+			static constexpr FPoint Coordinates[] =
+			{
+				{ 1.000000f,  0.000000f}, { 0.980785f,  0.195090f}, { 0.923880f,  0.382683f},
+				{ 0.831470f,  0.555570f}, { 0.707107f,  0.707107f}, { 0.555570f,  0.831470f},
+				{ 0.382683f,  0.923880f}, { 0.195090f,  0.980785f}, { 0.000000f,  1.000000f},
+			};
+
+			static std::array<FPoint, VerticesCount> CalculatePoints(float radius)
+			{
+				std::array<FPoint, VerticesCount> points;
+				for(size_t i = 0; i < VerticesCount; i++)
+				{
+					points[i].x = radius * Coordinates[i].x;
+					points[i].y = radius * Coordinates[i].y;
+				}
+
+				return points;
+			}
 		};
 
-		static std::array<FPoint, VerticesCount> CalculatePoints(float radius)
+		class VertexFactory
 		{
-			std::array<FPoint, VerticesCount> points;
-			for(size_t i = 0; i < VerticesCount; i++)
+		public:
+			explicit VertexFactory(Color color):
+				_color(color),
+				_uv()
+			{}
+
+			VertexFactory(Color color, FPoint uv):
+				_color(color),
+				_uv(uv)
+			{}
+
+			inline Vertex operator()(float x, float y) const
 			{
-				points[i].x = radius * Coordinates[i].x;
-				points[i].y = radius * Coordinates[i].y;
+				return Vertex(FPoint(x, y), _color, _uv);
 			}
 
-			return points;
-		}
-	};		
-
-	class VertexFactory
-	{
-	public:
-		explicit VertexFactory(Color color):
-			_color(color),
-			_uv()
-		{}
-
-		VertexFactory(Color color, FPoint uv):
-			_color(color),
-			_uv(uv)
-		{}	
-
-		inline Vertex operator()(float x, float y) const
-		{
-			return Vertex(FPoint(x, y), _color, _uv);
-		}
-
-		inline Vertex operator()(float x, float y, FPoint uv) const
-		{
-			return Vertex(FPoint(x, y), _color, uv);
-		}
-	private:
-		SDL_FColor _color;
-		FPoint _uv;
-	};
-
-	static void CalculateRoundedRectVertices(std::span<Vertex> vertices, FRect rect, 
-											 float radius, Color color)
-	{
-		const std::array arcPoints = Arc::CalculatePoints(radius);
-		size_t i = 0;
-
-		VertexFactory createVertex(color);
-
-		// Center
-		vertices[i++] = createVertex(rect.x + rect.w / 2.0f, rect.y + rect.h / 2.0f);
-
-		// Top-Left
-		{
-			float x = rect.x + radius;
-			float y = rect.y + radius;
-
-			for(auto& p : arcPoints)
+			inline Vertex operator()(float x, float y, FPoint uv) const
 			{
-				vertices[i++] = createVertex(x - p.x, y - p.y);
+				return Vertex(FPoint(x, y), _color, uv);
 			}
-		}
+		private:
+			SDL_FColor _color;
+			FPoint _uv;
+		};
 
-		// Top-Right
+		constexpr float PI = std::numbers::pi_v<float>;
+		constexpr size_t EllipseNormalizedSize = 61;
+		constexpr FPoint EllipseNormalized[] =
 		{
-			float x = rect.x + rect.w - radius;
-			float y = rect.y + radius;
+			{ 1.000000f,  0.000000f}, { 0.994522f,  0.104528f}, { 0.978148f,  0.207912f},
+			{ 0.951057f,  0.309017f}, { 0.913545f,  0.406737f}, { 0.866025f,  0.500000f},
+			{ 0.809017f,  0.587785f}, { 0.743145f,  0.669131f}, { 0.669131f,  0.743145f},
+			{ 0.587785f,  0.809017f}, { 0.500000f,  0.866025f}, { 0.406737f,  0.913545f},
+			{ 0.309017f,  0.951057f}, { 0.207912f,  0.978148f}, { 0.104528f,  0.994522f},
+			{ 0.000000f,  1.000000f}, {-0.104528f,  0.994522f}, {-0.207912f,  0.978148f},
+			{-0.309017f,  0.951057f}, {-0.406737f,  0.913545f}, {-0.500000f,  0.866025f},
+			{-0.587785f,  0.809017f}, {-0.669131f,  0.743145f}, {-0.743145f,  0.669131f},
+			{-0.809017f,  0.587785f}, {-0.866025f,  0.500000f}, {-0.913545f,  0.406737f},
+			{-0.951057f,  0.309017f}, {-0.978148f,  0.207912f}, {-0.994522f,  0.104528f},
+			{-1.000000f,  0.000000f}, {-0.994522f, -0.104528f}, {-0.978148f, -0.207912f},
+			{-0.951057f, -0.309017f}, {-0.913545f, -0.406737f}, {-0.866025f, -0.500000f},
+			{-0.809017f, -0.587785f}, {-0.743145f, -0.669131f}, {-0.669131f, -0.743145f},
+			{-0.587785f, -0.809017f}, {-0.500000f, -0.866025f}, {-0.406737f, -0.913545f},
+			{-0.309017f, -0.951057f}, {-0.207912f, -0.978148f}, {-0.104528f, -0.994522f},
+			{ 0.000000f, -1.000000f}, { 0.104528f, -0.994522f}, { 0.207912f, -0.978148f},
+			{ 0.309017f, -0.951057f}, { 0.406737f, -0.913545f}, { 0.500000f, -0.866025f},
+			{ 0.587785f, -0.809017f}, { 0.669131f, -0.743145f}, { 0.743145f, -0.669131f},
+			{ 0.809017f, -0.587785f}, { 0.866025f, -0.500000f}, { 0.913545f, -0.406737f},
+			{ 0.951057f, -0.309017f}, { 0.978148f, -0.207912f}, { 0.994522f, -0.104528f},
+			{ 1.000000f,  0.000000f}
+		};
 
-			for(int j = arcPoints.size() - 1; j >= 0; j--)
+		SDL_FlipMode ToSDLFlipMode(FlipMode mode)
+		{
+			switch(mode)
 			{
-				auto& p = arcPoints[j];
-				vertices[i++] = createVertex(x + p.x, y - p.y);
+				case FlipMode::None:          return SDL_FLIP_NONE;
+				case FlipMode::Horizontal:    return SDL_FLIP_HORIZONTAL;
+				case FlipMode::Vertical:      return SDL_FLIP_VERTICAL;
+				case FlipMode::Both:          return SDL_FLIP_HORIZONTAL_AND_VERTICAL;
+				default: throw Exception("Not supported flip mode");
 			}
 		}
 
-		// Bottom-Right
+		void CalculateRoundedRectVertices(std::span<Vertex> vertices, FRect rect,
+										  float radius, Color color)
 		{
-			float x = rect.x + rect.w - radius;
-			float y = rect.y + rect.h - radius;
+			const std::array arcPoints = Arc::CalculatePoints(radius);
+			size_t i = 0;
 
-			for(auto& p : arcPoints)
+			VertexFactory createVertex(color);
+
+			// Center
+			vertices[i++] = createVertex(rect.x + rect.w / 2.0f, rect.y + rect.h / 2.0f);
+
+			// Top-Left
 			{
-				vertices[i++] = createVertex(x + p.x, y + p.y);
+				float x = rect.x + radius;
+				float y = rect.y + radius;
+
+				for(auto& p : arcPoints)
+				{
+					vertices[i++] = createVertex(x - p.x, y - p.y);
+				}
+			}
+
+			// Top-Right
+			{
+				float x = rect.x + rect.w - radius;
+				float y = rect.y + radius;
+
+				for(int j = arcPoints.size() - 1; j >= 0; j--)
+				{
+					auto& p = arcPoints[j];
+					vertices[i++] = createVertex(x + p.x, y - p.y);
+				}
+			}
+
+			// Bottom-Right
+			{
+				float x = rect.x + rect.w - radius;
+				float y = rect.y + rect.h - radius;
+
+				for(auto& p : arcPoints)
+				{
+					vertices[i++] = createVertex(x + p.x, y + p.y);
+				}
+			}
+
+			// Bottom-Left
+			{
+				float x = rect.x + radius;
+				float y = rect.y + rect.h - radius;
+
+				for(int j = arcPoints.size() - 1; j >= 0; j--)
+				{
+					auto& p = arcPoints[j];
+					vertices[i++] = createVertex(x - p.x, y + p.y);
+				}
 			}
 		}
 
-		// Bottom-Left
+		void CalculateRoundedRectVertices(std::span<Vertex> vertices, FRect rect,
+										  float radius, const Texture& texture)
 		{
-			float x = rect.x + radius;
-			float y = rect.y + rect.h - radius;
+			const std::array arcPoints = Arc::CalculatePoints(radius);
+			size_t i = 0;
 
-			for(int j = arcPoints.size() - 1; j >= 0; j--)
+			VertexFactory createVertex(texture.GetColor());
+
+			// Center
+			vertices[i++] = createVertex(rect.x + rect.w / 2.0f, rect.y + rect.h / 2.0f, FPoint(0.5, 0.5));
+
+			// Top-Left
 			{
-				auto& p = arcPoints[j];
-				vertices[i++] = createVertex(x - p.x, y + p.y);
+				float x = rect.x + radius;
+				float y = rect.y + radius;
+
+				for(auto& p : arcPoints)
+				{
+					float px = x - p.x;
+					float py = y - p.y;
+					float u = (px - rect.x) / rect.w;
+					float v = (py - rect.y) / rect.h;
+
+					vertices[i++] = createVertex(px, py, FPoint(u, v));
+				}
 			}
-		}
-	}
 
-	static void CalculateRoundedRectVertices(std::span<Vertex> vertices, FRect rect,
-											 float radius, const Texture& texture)
-	{	
-		const std::array arcPoints = Arc::CalculatePoints(radius);
-		size_t i = 0;
-
-		VertexFactory createVertex(texture.GetColor());
-
-		// Center
-		vertices[i++] = createVertex(rect.x + rect.w / 2.0f, rect.y + rect.h / 2.0f, FPoint(0.5, 0.5));
-
-		// Top-Left
-		{
-			float x = rect.x + radius;
-			float y = rect.y + radius;
-
-			for(auto& p : arcPoints)
+			// Top-Right
 			{
-				const float px = x - p.x;
-				const float py = y - p.y;
-				const float u = (px - rect.x) / rect.w;
-				const float v = (py - rect.y) / rect.h;
+				float x = rect.x + rect.w - radius;
+				float y = rect.y + radius;
 
-				vertices[i++] = createVertex(px, py, FPoint(u, v));
+				for(int j = arcPoints.size() - 1; j >= 0; j--)
+				{
+					auto& p = arcPoints[j];
+					float px = x + p.x;
+					float py = y - p.y;
+					float u = (px - rect.x) / rect.w;
+					float v = (py - rect.y) / rect.h;
+
+					vertices[i++] = createVertex(px, py, FPoint(u, v));
+				}
 			}
-		}
 
-		// Top-Right
-		{
-			float x = rect.x + rect.w - radius;
-			float y = rect.y + radius;
-
-			for(int j = arcPoints.size() - 1; j >= 0; j--)
+			// Bottom-Right
 			{
-				auto& p = arcPoints[j];
-				const float px = x + p.x;
-				const float py = y - p.y;
-				const float u = (px - rect.x) / rect.w;
-				const float v = (py - rect.y) / rect.h;
+				float x = rect.x + rect.w - radius;
+				float y = rect.y + rect.h - radius;
 
-				vertices[i++] = createVertex(px, py, FPoint(u, v));
+				for(auto& p : arcPoints)
+				{
+					float px = x + p.x;
+					float py = y + p.y;
+					float u = (px - rect.x) / rect.w;
+					float v = (py - rect.y) / rect.h;
+
+					vertices[i++] = createVertex(px, py, FPoint(u, v));
+				}
 			}
-		}
 
-		// Bottom-Right
-		{
-			float x = rect.x + rect.w - radius;
-			float y = rect.y + rect.h - radius;
-
-			for(auto& p : arcPoints)
+			// Bottom-Left
 			{
-				const float px = x + p.x;
-				const float py = y + p.y;
-				const float u = (px - rect.x) / rect.w;
-				const float v = (py - rect.y) / rect.h;
+				float x = rect.x + radius;
+				float y = rect.y + rect.h - radius;
 
-				vertices[i++] = createVertex(px, py, FPoint(u, v));
-			}
-		}
+				for(int j = arcPoints.size() - 1; j >= 0; j--)
+				{
+					auto& p = arcPoints[j];
+					float px = x - p.x;
+					float py = y + p.y;
+					float u = (px - rect.x) / rect.w;
+					float v = (py - rect.y) / rect.h;
 
-		// Bottom-Left
-		{
-			float x = rect.x + radius;
-			float y = rect.y + rect.h - radius;
-
-			for(int j = arcPoints.size() - 1; j >= 0; j--)
-			{
-				auto& p = arcPoints[j];
-				const float px = x - p.x;
-				const float py = y + p.y;
-				const float u = (px - rect.x) / rect.w;
-				const float v = (py - rect.y) / rect.h;
-
-				vertices[i++] = createVertex(px, py, FPoint(u, v));
-			}
-		}
-	}
-
-	static void CalculateRoundedRectPoints(std::span<FPoint> points, FRect rect, float radius)
-	{
-		const std::array arcPoints = Arc::CalculatePoints(radius);
-		size_t i = 0;
-
-		// Top-Left
-		{
-			float x = rect.x + radius;
-			float y = rect.y + radius;
-
-			for(auto& p : arcPoints)
-			{
-				points[i++] = { x - p.x, y - p.y };
+					vertices[i++] = createVertex(px, py, FPoint(u, v));
+				}
 			}
 		}
 
-		// Top-Right
+		void CalculateRoundedRectPoints(std::span<FPoint> points, FRect rect, float radius)
 		{
-			float x = rect.x + rect.w - radius;
-			float y = rect.y + radius;
+			const std::array arcPoints = Arc::CalculatePoints(radius);
+			size_t i = 0;
 
-			for(int j = arcPoints.size() - 1; j >= 0; j--)
+			// Top-Left
 			{
-				auto& p = arcPoints[j];
-				points[i++] = { x + p.x, y - p.y };
+				float x = rect.x + radius;
+				float y = rect.y + radius;
+
+				for(auto& p : arcPoints)
+				{
+					points[i++] = { x - p.x, y - p.y };
+				}
 			}
-		}
 
-		// Bottom-Right
-		{
-			float x = rect.x + rect.w - radius;
-			float y = rect.y + rect.h - radius;
-
-			for(auto& p : arcPoints)
+			// Top-Right
 			{
-				points[i++] = { x + p.x, y + p.y };
+				float x = rect.x + rect.w - radius;
+				float y = rect.y + radius;
+
+				for(int j = arcPoints.size() - 1; j >= 0; j--)
+				{
+					auto& p = arcPoints[j];
+					points[i++] = { x + p.x, y - p.y };
+				}
 			}
-		}
 
-		// Bottom-Left
-		{
-			float x = rect.x + radius;
-			float y = rect.y + rect.h - radius;
-
-			for(int j = arcPoints.size() - 1; j >= 0; j--)
+			// Bottom-Right
 			{
-				auto& p = arcPoints[j];
-				points[i++] = { x - p.x, y + p.y };
+				float x = rect.x + rect.w - radius;
+				float y = rect.y + rect.h - radius;
+
+				for(auto& p : arcPoints)
+				{
+					points[i++] = { x + p.x, y + p.y };
+				}
+			}
+
+			// Bottom-Left
+			{
+				float x = rect.x + radius;
+				float y = rect.y + rect.h - radius;
+
+				for(int j = arcPoints.size() - 1; j >= 0; j--)
+				{
+					auto& p = arcPoints[j];
+					points[i++] = { x - p.x, y + p.y };
+				}
 			}
 		}
 	}
@@ -589,12 +604,12 @@ namespace Sgl
 	void RenderContext::DrawTextureTransformed(const Texture& texture, 
 											   double angle, 
 											   const FPoint* center, 
-											   FlipMode flip, 
+											   FlipMode flipMode,
 											   const FRect* target, 
 											   const FRect* clip)
 	{
 		SDL_RenderTextureRotated(_renderer, texture, clip,
-								 target, angle, center, SDL_FlipMode(flip));
+								 target, angle, center, ToSDLFlipMode(flipMode));
 	}
 
 	void RenderContext::DrawText(FPoint position, std::string_view text, float size, 
