@@ -5,44 +5,84 @@
 
 namespace Sgl
 {
-	class Styleable;
+    class Styleable;
 
-	//! @brief Function type for projecting a styleable element to a target element
-	using TargetSelector = Func<Styleable&, Styleable&>;
+    //! @brief Type-erased selector function
+    using TargetSelector = Func<Styleable&, Styleable&>;
 
-	//! @brief Concept that defines the requirements for a target selector function
-	template<typename T>
-	concept CTargetSelector = requires (T func, Styleable& target)
-	{
-		{ func(target) } -> std::same_as<Styleable&>;
-	};
+    //! @brief Concept kept to validate selectors when they are added to the chain
+    template<typename T>
+    concept CTargetSelector = requires(T func, Styleable & target)
+    {
+        { func(target) } -> std::same_as<Styleable&>;
+    };
 
-	//! @brief Composes two selector functions into a single selector
-	template<CTargetSelector T1, CTargetSelector T2>
-	class ComposedTargetSelector
-	{
-	public:
-		ComposedTargetSelector(T1 first, T2 second):
-			_first(std::move(first)),
-			_second(std::move(second))
-		{}
+    //! @brief Composed selector: applies an ordered chain of selectors
+    class ComposedTargetSelector
+    {
+    public:
+        ComposedTargetSelector() = default;
+        
+        explicit ComposedTargetSelector(std::vector<TargetSelector> selectors):
+            _selectors(std::move(selectors))
+        {}
 
-		Styleable& operator()(Styleable& target) const
-		{
-			return _second(_first(target));
-		}
-	private:
-		T1 _first;
-		T2 _second;
-	};
+        //! @brief Appends a selector
+        void Append(TargetSelector selector)
+        {
+            _selectors.emplace_back(std::move(selector));
+        }
 
-	//! @brief Composes two target selectors using the > operator
-	//! @param first The first selector to apply
-	//! @param second The second selector to apply
-	//! @return A composed selector
-	template<typename T1, typename T2>
-	inline ComposedTargetSelector<T1, T2> operator>(T1 first, T2 second)
-	{
-		return ComposedTargetSelector(std::move(first), std::move(second));
-	}
+        //! @brief Concatenates another chain
+        void Append(ComposedTargetSelector other)
+        {
+            _selectors.insert(_selectors.end(),
+                              std::make_move_iterator(other._selectors.begin()),
+                              std::make_move_iterator(other._selectors.end()));
+        }
+
+        //! @brief Inserts a selector
+        void Prepend(TargetSelector selector)
+        {
+            _selectors.emplace(_selectors.begin(), std::move(selector));
+        }
+
+        //! @brief Applies the chain in order; an empty chain is the identity
+        Styleable& operator()(Styleable& target) const
+        {
+            Styleable* current = &target;
+            for(const auto& selector : _selectors)
+            {
+                current = &selector(*current);
+            }
+
+            return *current;
+        }
+
+    private:
+        std::vector<TargetSelector> _selectors;
+    };
+
+    inline ComposedTargetSelector operator>(TargetSelector left, TargetSelector right)
+    {
+        return ComposedTargetSelector({ std::move(left), std::move(right) });
+    }
+
+    inline ComposedTargetSelector operator>(ComposedTargetSelector left, TargetSelector right)
+    {
+        left.Append(std::move(right));
+        return left;
+    }
+
+    inline ComposedTargetSelector operator>(TargetSelector left, ComposedTargetSelector right)
+    {
+        right.Prepend(std::move(left));
+        return right;
+    }
+
+    inline ComposedTargetSelector operator>(ComposedTargetSelector left, ComposedTargetSelector right)
+    {
+        left.Append(std::move(right));
+        return left;
+    }
 }

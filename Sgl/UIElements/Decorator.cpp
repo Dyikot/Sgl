@@ -49,10 +49,5 @@ namespace Sgl
 	{
 		ArrangeChild(_child.Get(), rect, _padding);
 	}
-
-	Styleable& Decorator::Child::operator()(Styleable& element) const
-	{
-		return static_cast<Decorator&>(element).GetChild().GetValue();
-	}
 }
 

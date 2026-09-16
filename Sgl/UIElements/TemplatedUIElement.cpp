@@ -42,10 +42,5 @@ namespace Sgl
 			_template->Arrange(rect);
 		}
 	}
-
-	Styleable& TemplatedUIElement::Template::operator()(Styleable& element) const
-	{
-		return static_cast<TemplatedUIElement&>(element).GetTemplate().GetValue();
-	}
 }
 

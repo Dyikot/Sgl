@@ -117,9 +117,4 @@ namespace Sgl
 			_contentPresenter = nullptr;
 		}
 	}
-
-	Styleable& ContentUIElement::ContentPresenter::operator()(Styleable& element) const
-	{
-		return static_cast<ContentUIElement&>(element).GetContentPresenter().GetValue();
-	}
 }

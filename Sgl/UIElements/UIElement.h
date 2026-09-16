@@ -11,6 +11,8 @@ namespace Sgl
 
 	class UIElement : public Layoutable
 	{
+	public:
+		struct Child;
 	private:
 		using UIElementEventHandler = EventHandler<UIElement>;
 		using KeyEventHandler = EventHandler<UIElement, KeyEventArgs>;
@@ -104,5 +106,13 @@ namespace Sgl
 	public:
 		Ref<UIElement> Build(const Ref<ObservableObject>& data) override;
 		bool Match(const Ref<ObservableObject>& data) const override;
+	};
+
+	struct UIElement::Child
+	{
+		Styleable& operator()(Styleable& element) const
+		{
+			return static_cast<UIElement&>(element).GetChildren().front().GetValue();
+		}
 	};
 }

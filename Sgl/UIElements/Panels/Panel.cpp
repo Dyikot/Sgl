@@ -92,23 +92,4 @@ namespace Sgl
             child->Arrange(rect);
         }
     }
-
-    Styleable& Panel::FirstChild::operator()(Styleable& element) const
-    {
-        return static_cast<Panel&>(element).Children.Front().GetValue();
-    }
-
-    Styleable& Panel::LastChild::operator()(Styleable& element) const
-    {
-        return static_cast<Panel&>(element).Children.Back().GetValue();
-    }
-
-    Panel::NthChild::NthChild(size_t position):
-        Index(std::max(1ull, position - 1ull))
-    {}
-
-    Styleable& Panel::NthChild::operator()(Styleable& element) const
-    {
-        return static_cast<Panel&>(element).Children.GetElementAt(Index).GetValue();
-    }
 }

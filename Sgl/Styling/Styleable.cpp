@@ -140,9 +140,11 @@ namespace Sgl
 
 		for(auto& style : styles)
 		{
-			if(style.Selector.Match(*this))
+			auto& selector = style.GetSelector();
+			
+			if(selector.Match(*this))
 			{
-				if(style.Selector.HasState())
+				if(selector.HasState())
 				{
 					_stateStyles.push_back(&style);
 				}
@@ -206,7 +208,7 @@ namespace Sgl
 
 		for(auto style : _stateStyles)
 		{
-			if(style->Selector.MatchState(*this))
+			if(style->GetSelector().MatchState(*this))
 			{
 				_matchingStateStyles.push_back(style);
 			}

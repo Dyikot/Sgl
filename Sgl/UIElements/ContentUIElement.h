@@ -7,8 +7,6 @@ namespace Sgl
 	class ContentUIElement : public UIElement
 	{
 	public:
-		struct ContentPresenter;
-	public:
 		ContentUIElement() = default;
 		ContentUIElement(ContentUIElement&& other) noexcept;
 		
@@ -53,10 +51,5 @@ namespace Sgl
 		ValueSource _paddingSource {};
 		ValueSource _verticalContentAlignmentSource {};
 		ValueSource _horizontalContentAlignmentSource {};
-	};
-
-	struct ContentUIElement::ContentPresenter
-	{
-		Styleable& operator()(Styleable& element) const;
 	};
 }

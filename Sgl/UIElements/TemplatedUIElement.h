@@ -7,8 +7,6 @@ namespace Sgl
 	class TemplatedUIElement : public UIElement
 	{
 	public:
-		struct Template;
-	public:
 		TemplatedUIElement() = default;
 		TemplatedUIElement(TemplatedUIElement&&) noexcept;
 
@@ -20,10 +18,5 @@ namespace Sgl
 		void ArrangeContent(FRect rect) override;
 	private:
 		Ref<UIElement> _template;
-	};
-
-	struct TemplatedUIElement::Template
-	{
-		Styleable& operator()(Styleable& element) const;
 	};
 }

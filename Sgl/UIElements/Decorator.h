@@ -7,8 +7,6 @@ namespace Sgl
 	class Decorator : public UIElement
 	{
 	public:
-		struct Child;
-	public:
 		Decorator() = default;
 		Decorator(Decorator&& other) noexcept;
 
@@ -29,10 +27,5 @@ namespace Sgl
 
 		ValueSource _childSource {};
 		ValueSource _paddingSource {};
-	};
-
-	struct Decorator::Child
-	{
-		Styleable& operator()(Styleable& element) const;
 	};
 }

@@ -13,13 +13,21 @@ namespace Sgl
     {
     public:
         Style(Sgl::Selector selector): 
-            Selector(std::move(selector))
+            _selector(std::move(selector))
         {}
 
         Style(const Style&) = delete;
-        Style(Style&&) noexcept = default;
 
-        const Selector Selector;        
+        Style(Style&& other) noexcept:
+            _setters(std::move(other._setters)),
+            _targetSelector(std::move(other._targetSelector)),
+            _selector(std::move(other._selector))
+        {}
+                
+        const Selector& GetSelector() const
+        {
+            return _selector;
+        }
 
         Style& Target(TargetSelector targetSelector)
         {
@@ -67,6 +75,7 @@ namespace Sgl
     private:
         std::vector<std::unique_ptr<Setter>> _setters;
         TargetSelector _targetSelector;
+        Selector _selector;
 
         friend class Styleable;
     };    
