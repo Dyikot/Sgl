@@ -35,18 +35,18 @@ namespace Sgl
 		virtual void OnDetachedFromLogicalTree();
 	private:
 		bool FetchStyles();
+		void FetchAndApplyStyle();
 		void FetchStylesFrom(const StyleCollection& styles);
 		void OnStyleClassesChanged();
 		void ApplyStateStyle();
 		void SaveBaseState();
 		void RestoreBaseState();
-		void ClearMatchingStateStyles();
 		bool MatchStateStyles();
 	private:
 		std::vector<std::string> _classList;
 		std::vector<const Style*> _styles;
 		std::vector<const Style*> _stateStyles;
-		std::vector<const Style*> _matchingStateStyles;
+		std::vector<const Style*> _activeStateStyles;
 		std::vector<std::unique_ptr<IPropertyStateGuard>> _propertyGuards;
 		IStyleHost* _stylingParent = nullptr;
 		bool _isAttachedToLogicalTree = false;

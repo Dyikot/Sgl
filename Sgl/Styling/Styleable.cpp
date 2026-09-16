@@ -8,25 +8,20 @@ namespace Sgl
 	{
 		PseudoClasses.Changed += [this](PseudoClassesSet& sender, EventArgs e)
 		{
-			if(PseudoClasses.IsEmpty())
+			auto previousStyleStates = std::move(_activeStateStyles);
+			bool match = MatchStateStyles();
+
+			if(previousStyleStates == _activeStateStyles)
 			{
-				RestoreBaseState();
-				ClearMatchingStateStyles();
 				return;
 			}
 
-			auto matchedStyles = std::move(_matchingStateStyles);
-			bool match = MatchStateStyles();
+			RestoreBaseState();
 
-			if(matchedStyles != _matchingStateStyles)
+			if(match)
 			{
-				RestoreBaseState();
-
-				if(match)
-				{
-					SaveBaseState();
-					ApplyStateStyle();
-				}
+				SaveBaseState();
+				ApplyStateStyle();
 			}
 		};
 	}
@@ -70,17 +65,7 @@ namespace Sgl
 	{
 		_isAttachedToLogicalTree = true;
 		AttachedToLogicalTree.Invoke(*this);
-
-		if(FetchStyles())
-		{
-			ApplyStyle();
-
-			if(!PseudoClasses.IsEmpty() && MatchStateStyles())
-			{
-				SaveBaseState();
-				ApplyStateStyle();
-			}
-		}
+		FetchAndApplyStyle();
 	}
 
 	void Styleable::OnDetachedFromLogicalTree()
@@ -90,8 +75,11 @@ namespace Sgl
 		if(!PseudoClasses.IsEmpty())
 		{
 			RestoreBaseState();
-			ClearMatchingStateStyles();
+			_activeStateStyles.clear();
 		}
+
+		_styles.clear();
+		_stateStyles.clear();
 
 		DetachedFromLogicalTree.Invoke(*this);
 	}
@@ -118,6 +106,20 @@ namespace Sgl
 		}
 
 		return !_styles.empty() || !_stateStyles.empty();
+	}
+
+	void Styleable::FetchAndApplyStyle()
+	{
+		if(FetchStyles())
+		{
+			ApplyStyle();
+
+			if(!PseudoClasses.IsEmpty() && MatchStateStyles())
+			{
+				SaveBaseState();
+				ApplyStateStyle();
+			}
+		}
 	}
 
 	void Styleable::FetchStylesFrom(const StyleCollection& styles)
@@ -147,15 +149,14 @@ namespace Sgl
 			return;
 		}
 
-		if(FetchStyles())
-		{
-			ApplyStyle();
-		}
+		_activeStateStyles.clear();
+		RestoreBaseState();
+		FetchAndApplyStyle();
 	}
 
 	void Styleable::ApplyStateStyle()
 	{
-		for(auto style : _matchingStateStyles)
+		for(auto style : _activeStateStyles)
 		{
 			style->Apply(*this, ValueSource::PseudoClass);
 		}
@@ -163,7 +164,7 @@ namespace Sgl
 
 	void Styleable::SaveBaseState()
 	{
-		for(auto style : _matchingStateStyles)
+		for(auto style : _activeStateStyles)
 		{
 			auto& target = style->SelectTarget(*this);
 
@@ -181,23 +182,18 @@ namespace Sgl
 		_propertyGuards.clear();
 	}
 
-	void Styleable::ClearMatchingStateStyles()
-	{
-		_matchingStateStyles.clear();
-	}
-
 	bool Styleable::MatchStateStyles()
 	{
-		_matchingStateStyles.clear();
+		_activeStateStyles.clear();
 
 		for(auto style : _stateStyles)
 		{
 			if(style->GetSelector().MatchState(*this))
 			{
-				_matchingStateStyles.push_back(style);
+				_activeStateStyles.push_back(style);
 			}
 		}
 
-		return !_matchingStateStyles.empty();
+		return !_activeStateStyles.empty();
 	}
 }
