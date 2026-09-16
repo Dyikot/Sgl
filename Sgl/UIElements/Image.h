@@ -17,7 +17,6 @@ namespace Sgl::UIElements
 	{
 	public:
 		Image();
-		Image(Image&& other) noexcept;
 
 		void SetSource(const std::filesystem::path& imagePath, ValueSource source = ValueSource::Local);
 		void SetSource(const ImageSource& value, ValueSource source = ValueSource::Local);

@@ -10,13 +10,6 @@ namespace Sgl::UIElements
 		SetIsFocusable(true, ValueSource::Default);
 	}
 
-	Button::Button(Button&& other) noexcept:
-		ContentUIElement(std::move(other)),
-		_clickMode(other._clickMode),
-		_command(std::move(other._command)),
-		_commandParameter(std::move(other._commandParameter))
-	{}
-
 	void Button::SetClickMode(ClickMode value, ValueSource source)
 	{
 		SetProperty(ClickModeProperty, _clickMode, value, _clickModeSource, source);

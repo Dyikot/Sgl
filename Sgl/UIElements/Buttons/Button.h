@@ -20,7 +20,6 @@ namespace Sgl::UIElements
 		using ButtonEventHandler = EventHandler<Button, EventArgs>;
 	public:
 		Button();
-		Button(Button&& other) noexcept;
 
 		Event<ButtonEventHandler> Click;
 

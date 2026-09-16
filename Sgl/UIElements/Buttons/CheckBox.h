@@ -8,6 +8,5 @@ namespace Sgl::UIElements
 	{
 	public:
 		CheckBox();
-		CheckBox(CheckBox&&) noexcept = default;
 	};
 }

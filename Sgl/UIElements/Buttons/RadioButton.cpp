@@ -92,10 +92,6 @@ namespace Sgl::UIElements
 		SetBackground(source, ValueSource::Default);
 	}
 
-	RadioButton::RadioButton(RadioButton&& other) noexcept:
-		_groupName(std::move(other._groupName))
-	{}
-
 	void RadioButton::SetGroupName(const std::string& value, ValueSource source)
 	{
 		std::string oldValue = _groupName;

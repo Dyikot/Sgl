@@ -12,7 +12,6 @@ namespace Sgl
     {
     public:
         Renderable() = default;
-        Renderable(Renderable&& other) noexcept;
 
         void SetCursor(Cursor value, ValueSource source = ValueSource::Local);
         Cursor GetCursor() const { return _cursor; }

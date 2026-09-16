@@ -8,7 +8,6 @@ namespace Sgl::UIElements
 	{
 	public:
 		WrapPanel();
-		WrapPanel(WrapPanel&& other) noexcept;
 
 		void SetVerticalSpacing(float value, ValueSource source = ValueSource::Local);
 		float GetVerticalSpacing() const { return _verticalSpacing; }

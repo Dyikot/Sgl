@@ -27,7 +27,6 @@ namespace Sgl::UIElements
 	{		
 	public:
 		Grid();
-		Grid(Grid&& other) noexcept;
 
 		static void SetColumn(const Ref<UIElement>& element, uint32_t value);
 		static uint32_t GetColumn(const Ref<UIElement>& element);

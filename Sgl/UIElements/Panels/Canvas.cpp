@@ -1,6 +1,6 @@
 #include "Canvas.h"
 
-namespace Sgl::UIElements
+namespace
 {
 	struct Context
 	{
@@ -9,7 +9,10 @@ namespace Sgl::UIElements
 		int Right;
 		int Bottom;
 	};
+}
 
+namespace Sgl::UIElements
+{
 	LayoutProperty<int> Canvas::LeftProperty =
 	{
 		[](Layoutable& element, int value)

@@ -61,13 +61,6 @@ namespace Sgl::UIElements
 		BuildTemplate();
 	}
 
-	ScrollBar::ScrollBar(ScrollBar&& other) noexcept:
-		RangeBase(std::move(other)),
-		_thumb(std::move(other._thumb)),
-		_track(std::move(other._track)),
-		_viewportSize(other._viewportSize)
-	{}
-
 	void ScrollBar::SetViewportSize(float value, ValueSource source)
 	{
 		value = std::clamp(value, 0.0f, 1.0f);

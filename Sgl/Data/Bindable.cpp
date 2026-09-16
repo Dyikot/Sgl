@@ -2,11 +2,6 @@
 
 namespace Sgl
 {
-	Bindable::Bindable(Bindable&& other) noexcept:
-		_bindings(std::move(other._bindings)),
-		_dataContext(std::move(other._dataContext))
-	{}
-
 	Bindable::~Bindable()
 	{
 		ClearBindings();

@@ -7,14 +7,6 @@ namespace Sgl::UIElements
 		Name = "Image";
 	}
 
-	Image::Image(Image&& other) noexcept:
-		UIElement(std::move(other)),
-		_source(std::move(other._source)),
-		_stretch(other._stretch),
-		_sourceBounds(other._sourceBounds),
-		_sourceTexture(std::move(other._sourceTexture))
-	{}
-
 	void Image::SetSource(const std::filesystem::path& imagePath, ValueSource source)
 	{
 		SetSource(ImageSource(imagePath), source);

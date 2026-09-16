@@ -8,7 +8,6 @@ namespace Sgl
 	{
 	public:
 		Decorator() = default;
-		Decorator(Decorator&& other) noexcept;
 
 		void SetChild(const Ref<UIElement>& child, ValueSource source = ValueSource::Default);
 		const Ref<UIElement>& GetChild() const { return _child; }

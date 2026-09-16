@@ -10,7 +10,6 @@ namespace Sgl::UIElements
 		using ToggleButtonEventHandler = EventHandler<ToggleButton>;		
 	public:
 		ToggleButton() = default;
-		ToggleButton(ToggleButton&& other) noexcept;
 
 		void SetIsChecked(bool value, ValueSource source = ValueSource::Local);
 		bool IsChecked() const { return _isChecked; }

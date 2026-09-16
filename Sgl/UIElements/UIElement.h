@@ -21,7 +21,6 @@ namespace Sgl
 		using MouseWheelEventHandler = EventHandler<UIElement, MouseWheelEventArgs&>;
 	public:
 		UIElement() = default;
-		UIElement(UIElement&& other) noexcept;
 
 		Event<KeyEventHandler> KeyUp;
 		Event<KeyEventHandler> KeyDown;

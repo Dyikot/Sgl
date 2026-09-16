@@ -8,7 +8,6 @@ namespace Sgl::UIElements
 	{
 	public:
 		StackPanel();
-		StackPanel(StackPanel&& other) noexcept;
 
 		void SetSpacing(float value, ValueSource source = ValueSource::Local);
 		float GetSpacing() const { return _spacing; }

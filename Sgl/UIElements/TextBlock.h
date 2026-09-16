@@ -9,7 +9,6 @@ namespace Sgl::UIElements
 	{
 	public:
 		TextBlock();
-		TextBlock(TextBlock&& other) noexcept;		
 
 		void SetText(const std::string& value, ValueSource source = ValueSource::Local);
 		const std::string& GetText() const { return _text; }

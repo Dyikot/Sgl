@@ -7,14 +7,6 @@ namespace Sgl::UIElements
         Name = "UniformGrid";
     }
 
-    UniformGrid::UniformGrid(UniformGrid&& other) noexcept:
-        Panel(std::move(other)),
-        _rows(other._rows),
-        _columns(other._columns),
-        _rowSpacing(other._rowSpacing),
-        _columnSpacing(other._columnSpacing)
-	{}
-
 	void UniformGrid::SetRows(uint32_t value, ValueSource source)
 	{
 		if(SetProperty(RowsProperty, _rows, value, _rowsValueSource, source))

@@ -27,7 +27,7 @@ namespace Sgl
 	public:
 		Bindable() = default;
 		Bindable(const Bindable&) = delete;
-		Bindable(Bindable&& other) noexcept;
+		Bindable(Bindable&&) = delete;
 		
 		void SetDataContext(const Ref<ObservableObject>& value, ValueSource source = ValueSource::Local);
 		const Ref<ObservableObject>& GetDataContext() const { return _dataContext; }

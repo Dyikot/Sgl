@@ -9,12 +9,6 @@ namespace Sgl::UIElements
 		BuildTemplate();
 	}
 
-	Track::Track(Track&& other) noexcept:
-		TemplatedUIElement(std::move(other)),
-		_fillRatio(other._fillRatio)
-	{
-	}
-
 	void Track::SetFillRatio(float value, ValueSource source)
 	{
 		if(SetProperty(FillRatioProperty, _fillRatio, value, _fillRatioSource, source))

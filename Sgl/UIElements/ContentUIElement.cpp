@@ -4,16 +4,6 @@
 
 namespace Sgl
 {
-	ContentUIElement::ContentUIElement(ContentUIElement&& other) noexcept:
-		UIElement(std::move(other)),
-		_content(std::move(other._content)),
-		_contentTemplate(std::move(other._contentTemplate)),
-		_padding(std::move(other._padding)),
-		_horizontalContentAlignment(std::move(other._horizontalContentAlignment)),
-		_verticalContentAlignment(std::move(other._verticalContentAlignment)),
-		_contentPresenter(std::move(other._contentPresenter))
-	{}
-
 	void ContentUIElement::SetContent(const std::string& value)
 	{
 		if(_content.OfType<UIElements::TextBlock>())

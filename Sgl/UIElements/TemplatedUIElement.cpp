@@ -2,11 +2,6 @@
 
 namespace Sgl
 {
-	TemplatedUIElement::TemplatedUIElement(TemplatedUIElement&& other) noexcept:
-		UIElement(std::move(other)),
-		_template(std::move(_template))
-	{}
-
 	void TemplatedUIElement::SetTemplate(const Ref<UIElement>& template_)
 	{
 		if(_template)

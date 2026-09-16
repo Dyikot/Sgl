@@ -4,10 +4,7 @@
 
 namespace Sgl::UIElements
 {
-	Border::Border(Border&& other) noexcept:
-		Decorator(std::move(other)),
-		_borderWidth(other._borderWidth),
-		_borderColor(other._borderColor)
+	Border::Border()
 	{
 		Name = "Border";
 	}

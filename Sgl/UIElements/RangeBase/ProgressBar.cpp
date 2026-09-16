@@ -9,11 +9,6 @@ namespace Sgl::UIElements
 		BuildTemplate();
 	}
 
-	ProgressBar::ProgressBar(ProgressBar&& other) noexcept:
-		RangeBase(std::move(other)),
-		_track(std::move(other._track))
-	{}
-
 	void ProgressBar::OnValueChanged(float value)
 	{
 		RangeBase::OnValueChanged(value);

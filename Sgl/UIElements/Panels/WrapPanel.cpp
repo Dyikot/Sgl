@@ -7,13 +7,6 @@ namespace Sgl::UIElements
 		Name = "WrapPanel";
 	}
 
-	WrapPanel::WrapPanel(WrapPanel && other) noexcept:
-		Panel(std::move(other)),
-		_verticalSpacing(other._verticalSpacing),
-		_horizontalSpacing(other._horizontalSpacing),
-		_orientation(other._orientation)
-	{}
-
 	void WrapPanel::SetVerticalSpacing(float value, ValueSource source)
 	{
 		if(SetProperty(VeritcalSpacingProperty, _verticalSpacing, value, _verticalSpacingSource, source))

@@ -10,7 +10,6 @@ namespace Sgl::UIElements
 		using ValueChangedEventHandler = EventHandler<RangeBase, float>;
 	public:
 		RangeBase() = default;
-		RangeBase(RangeBase&& other) noexcept;
 
 		Event<ValueChangedEventHandler> ValueChanged;
 

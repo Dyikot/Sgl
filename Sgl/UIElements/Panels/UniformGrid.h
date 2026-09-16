@@ -8,7 +8,6 @@ namespace Sgl::UIElements
 	{
 	public:
 		UniformGrid();
-		UniformGrid(UniformGrid&& other) noexcept;
 
 		void SetRows(uint32_t value, ValueSource source = ValueSource::Local);
 		uint32_t GetRows() const { return _rows; }

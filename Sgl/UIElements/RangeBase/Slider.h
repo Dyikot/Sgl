@@ -11,8 +11,6 @@ namespace Sgl::UIElements
 	{
 	public:
 		Slider();
-		Slider(Slider&& other) noexcept;
-
 	protected:
 		void OnValueChanged(float value) override;
 		void OnPropertyChanged(PropertyBase& property) override;

@@ -3,12 +3,6 @@
 
 namespace Sgl
 {
-	Decorator::Decorator(Decorator&& other) noexcept:
-		UIElement(std::move(other)),
-		_child(std::move(_child)),
-		_padding(other._padding)
-	{}
-
 	void Decorator::SetChild(const Ref<UIElement>& child, ValueSource source)
 	{
 		if(_childSource > source)

@@ -7,9 +7,7 @@ namespace Sgl::UIElements
 	class Border : public Decorator
 	{
 	public:
-		Border() = default;
-		Border(const Border&) = delete;
-		Border(Border&& other) noexcept;
+		Border();
 
 		void SetBorderWidth(uint32_t value, ValueSource source = ValueSource::Local);
 		uint32_t GetBorderWidth() const { return _borderWidth; }

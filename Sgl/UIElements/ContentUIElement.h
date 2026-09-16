@@ -8,7 +8,6 @@ namespace Sgl
 	{
 	public:
 		ContentUIElement() = default;
-		ContentUIElement(ContentUIElement&& other) noexcept;
 		
 		const Ref<UIElement>& GetContentPresenter() const { return _contentPresenter; }
 

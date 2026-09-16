@@ -52,17 +52,6 @@ namespace Sgl
 		};
 	}
 
-	UIElement::UIElement(UIElement&& other) noexcept:
-		Layoutable(std::move(other)),
-		_backgroundFragment(std::move(other._backgroundFragment)),
-		_parent(other._parent),
-		_children(std::move(other._children)),
-		_tag(std::move(other._tag)),
-		_cornersRadius(other._cornersRadius),
-		_tagSource(other._tagSource),
-		_cornersRadiusSource(other._cornersRadiusSource)
-	{}
-
 	void UIElement::SetTag(const Any& value, ValueSource source)
 	{
 		SetProperty(TagProperty, _tag, value, _tagSource, source);

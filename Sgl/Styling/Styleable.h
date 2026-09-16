@@ -12,7 +12,6 @@ namespace Sgl
 		using StyleableElementEventHandler = EventHandler<Styleable>;
 	public:
 		Styleable();
-		Styleable(Styleable&& other) noexcept;
 
 		std::string Name;
 		StyleCollection Styles;

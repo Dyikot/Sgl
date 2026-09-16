@@ -31,17 +31,6 @@ namespace Sgl
 		};
 	}
 
-	Styleable::Styleable(Styleable&& other) noexcept:
-		Bindable(std::move(other)),
-		Name(std::move(other.Name)),
-		PseudoClasses(std::move(other.PseudoClasses)),
-		Styles(std::move(other.Styles)),
-		_classList(std::move(other._classList)),
-		_stylingParent(std::exchange(other._stylingParent, nullptr)),
-		_isAttachedToLogicalTree(other._isAttachedToLogicalTree),
-		_styles(std::move(other._styles))
-	{}
-
 	void Styleable::SetClasses(std::string_view classNames)
 	{
 		_classList = SplitString(classNames, ' ');
@@ -133,11 +122,6 @@ namespace Sgl
 
 	void Styleable::FetchStylesFrom(const StyleCollection& styles)
 	{
-		if(styles.IsEmpty())
-		{
-			return;
-		}
-
 		for(auto& style : styles)
 		{
 			auto& selector = style.GetSelector();
@@ -214,6 +198,6 @@ namespace Sgl
 			}
 		}
 
-		return _matchingStateStyles.size() > 0;
+		return !_matchingStateStyles.empty();
 	}
 }

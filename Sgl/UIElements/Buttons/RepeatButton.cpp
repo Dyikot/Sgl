@@ -7,12 +7,6 @@ namespace Sgl::UIElements
 		Name = "RepeatButton";
 	}
 
-	RepeatButton::RepeatButton(RepeatButton&& other) noexcept:
-		Button(std::move(other)),
-		_delay(other._delay),
-		_interval(other._interval)
-	{}
-
 	void RepeatButton::SetDelay(uint32_t value, ValueSource source)
 	{
 		if(SetProperty(DelayProperty, _delay, value, _delaySource, source))

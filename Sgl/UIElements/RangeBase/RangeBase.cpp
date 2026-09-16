@@ -2,14 +2,6 @@
 
 namespace Sgl::UIElements
 {
-	RangeBase::RangeBase(RangeBase&& other) noexcept:
-		TemplatedUIElement(std::move(other)),
-		_minValue(other._minValue),
-		_maxValue(other._maxValue),
-		_value(other._value),
-		_orientation(other._orientation)
-	{}
-
 	void RangeBase::SetMinValue(float value, ValueSource source)
 	{
 		if(SetProperty(MinValueProperty, _minValue, value, _minValueSource, source))

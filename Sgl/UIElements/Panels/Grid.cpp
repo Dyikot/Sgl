@@ -4,7 +4,7 @@
 #include <numeric>
 #include <ranges>
 
-namespace Sgl::UIElements
+namespace
 {
 	struct Context
 	{
@@ -13,7 +13,10 @@ namespace Sgl::UIElements
 		uint32_t ColumnSpan;
 		uint32_t RowSpan;
 	};
+}
 
+namespace Sgl::UIElements
+{
 	LayoutProperty<uint32_t> Grid::ColumnProperty =
 	{
 		[](Layoutable& element, uint32_t value)
@@ -66,16 +69,6 @@ namespace Sgl::UIElements
 	{
 		Name = "Grid";
 	}
-
-	Grid::Grid(Grid&& other) noexcept:
-		Panel(std::move(other)),
-		_columnDefinitionsStr(std::move(other._columnDefinitionsStr)),
-		_rowDefinitionsStr(std::move(other._rowDefinitionsStr)),
-		_rowDefinitions(std::move(other._rowDefinitions)),
-		_columnDefinitions(std::move(other._columnDefinitions)),
-		_measuredWidth(std::move(other._measuredWidth)),
-		_measuredHeight(std::move(other._measuredHeight))
-	{}
 
 	void Grid::SetColumn(const Ref<UIElement>& element, uint32_t value)
 	{

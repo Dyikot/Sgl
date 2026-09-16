@@ -75,8 +75,6 @@ namespace Sgl
 		using CancelEventHandler = EventHandler<Window, CancelEventArgs&>;
 	public:
 		Window();
-		Window(const Window&) = delete;
-		Window(Window&&) = delete;
 
 		//! @brief Event triggered when the window's state changes (minimized, maximized, restored)
 		Event<WindowStateEventHandler> WindowStateChanged;

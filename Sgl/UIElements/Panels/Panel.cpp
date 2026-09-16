@@ -56,11 +56,6 @@ namespace Sgl
         Name = "Panel";
     }
 
-    Panel::Panel(Panel&& other) noexcept:
-        UIElement(std::move(other)),
-        Children(*this)
-    {}
-
     FSize Panel::MeasureContent(FSize availableSize)
     {
         FSize size {};

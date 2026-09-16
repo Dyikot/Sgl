@@ -12,7 +12,6 @@ namespace Sgl
 	{
 	public:
 		Layoutable() = default;
-		Layoutable(Layoutable&& other) noexcept;
 
 		void SetWidth(float value, ValueSource source = ValueSource::Local);
 		float GetWidth() const { return _width; }

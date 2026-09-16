@@ -8,6 +8,5 @@ namespace Sgl::UIElements
 	{
 	public:
 		SwitchButon();
-		SwitchButon(SwitchButon&&) noexcept = default;
 	};
 }

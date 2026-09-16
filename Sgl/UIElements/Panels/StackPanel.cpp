@@ -7,12 +7,6 @@ namespace Sgl::UIElements
 		Name = "StackPanel";
 	}
 
-	StackPanel::StackPanel(StackPanel && other) noexcept :
-		Panel(std::move(other)),
-		_spacing(other._spacing),
-		_orientation(other._orientation)
-	{}
-
 	void StackPanel::SetSpacing(float value, ValueSource source)
 	{
 		if(SetProperty(SpacingProperty, _spacing, value, _spacingSource, source))

@@ -10,12 +10,6 @@ namespace Sgl::UIElements
 		BuildTemplate();
 	}
 
-	Slider::Slider(Slider&& other) noexcept:
-		RangeBase(std::move(other)),
-		_button(std::move(other._button)),
-		_track(std::move(other._track))
-	{}
-
 	void Slider::OnValueChanged(float value)
 	{
 		RangeBase::OnValueChanged(value);

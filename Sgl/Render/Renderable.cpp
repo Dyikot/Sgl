@@ -3,15 +3,6 @@
 
 namespace Sgl
 {
-	Renderable::Renderable(Renderable&& other) noexcept:
-		Styleable(std::move(other)),
-		_visualRoot(std::exchange(other._visualRoot, nullptr)),
-		_cursor(std::move(other._cursor)),
-		_background(std::move(other._background)),
-		_isBackgroundTransparent(other._isBackgroundTransparent),
-		_isDirty(other._isDirty)
-	{}
-
 	void Renderable::SetCursor(Cursor value, ValueSource source)
 	{
 		if(SetProperty(CursorProperty, _cursor, value, _cursorSource, source))

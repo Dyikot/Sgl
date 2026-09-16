@@ -51,7 +51,6 @@ namespace Sgl
 		struct ChildOfType;
 	public:
 		Panel();
-		Panel(Panel&& other) noexcept;
 
 		UIElementsCollection Children;
 	protected:

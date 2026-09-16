@@ -8,7 +8,6 @@ namespace Sgl::UIElements
 	{
 	public:
 		ScrollBar();
-		ScrollBar(ScrollBar&& other) noexcept;
 
 		void SetViewportSize(float value, ValueSource source = ValueSource::Local);
 		float GetViewportSize() const { return _viewportSize; }

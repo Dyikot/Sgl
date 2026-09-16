@@ -9,7 +9,6 @@ namespace Sgl::UIElements
 	{
 	public:
 		RepeatButton();
-		RepeatButton(RepeatButton&& other) noexcept;
 
 		void SetDelay(uint32_t value, ValueSource source = ValueSource::Local);
 		uint32_t GetDelay() const { return _delay; }

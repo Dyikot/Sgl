@@ -2,11 +2,6 @@
 
 namespace Sgl::UIElements
 {
-	ToggleButton::ToggleButton(ToggleButton&& other) noexcept:
-		Button(std::move(other)),
-		_isChecked(other._isChecked)
-	{}
-
 	void ToggleButton::SetIsChecked(bool value, ValueSource source)
 	{
 		if(SetProperty(IsCheckedProperty, _isChecked, value, _isCheckedSource, source))

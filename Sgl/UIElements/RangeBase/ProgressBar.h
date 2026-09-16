@@ -10,8 +10,6 @@ namespace Sgl::UIElements
 	{
 	public:
 		ProgressBar();
-		ProgressBar(ProgressBar&& other) noexcept;
-
 	protected:
 		void OnValueChanged(float value) override;
 		void OnPropertyChanged(PropertyBase& property) override;

@@ -17,25 +17,6 @@ namespace Sgl::UIElements
 		Name = "TextBlock";
 	}
 
-	TextBlock::TextBlock(TextBlock&& other) noexcept:
-		UIElement(std::move(other)),
-		_text(std::move(other._text)),
-		_fontSize(other._fontSize),
-		_outline(other._outline),
-		_fontFamily(std::move(other._fontFamily)),
-		_flowDirection(other._flowDirection),
-		_fontStyle(other._fontStyle),
-		_foreground(other._foreground),
-		_textWrapping(other._textWrapping),
-		_textAlignment(other._textAlignment),
-		_padding(other._padding),
-		_textBounds(other._textBounds),
-		_fontImpl(std::move(other._fontImpl)),
-		_textTexture(std::move(other._textTexture)),
-		_fontFlags(other._fontFlags)
-	{
-	}
-
 	void TextBlock::SetText(const std::string& value, ValueSource source)
 	{
 		if(SetProperty(TextProperty, _text, value, _textSource, source))

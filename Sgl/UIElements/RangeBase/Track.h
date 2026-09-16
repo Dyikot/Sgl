@@ -8,7 +8,6 @@ namespace Sgl::UIElements
 	{
 	public:
 		Track();
-		Track(Track&& other) noexcept;
 
 		void SetFillRatio(float value, ValueSource source = ValueSource::Local);
 		float GetFillRatio() const { return _fillRatio; }

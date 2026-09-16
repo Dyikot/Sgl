@@ -9,7 +9,6 @@ namespace Sgl::UIElements
 	{
 	public:
 		Canvas();
-		Canvas(Canvas&&) noexcept = default;
 
 		static void SetLeft(const Ref<UIElement>& element, int value);
 		static int GetLeft(const Ref<UIElement>& element);

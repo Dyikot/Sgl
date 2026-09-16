@@ -8,7 +8,6 @@ namespace Sgl
 	{
 	public:
 		TemplatedUIElement() = default;
-		TemplatedUIElement(TemplatedUIElement&&) noexcept;
 
 	protected:
 		void SetTemplate(const Ref<UIElement>& template_);
