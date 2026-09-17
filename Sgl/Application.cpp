@@ -116,9 +116,9 @@ namespace Sgl
         OnThemeVariantChanged();
     }
 
-    std::vector<const StyleCollection*> Application::GetAllStyles() const
+    void Application::WithStyles(const Action<const StyleCollection&>& action) const
     {
-        return { &Styles };
+        action(Styles);
     }
 
     static inline double ToMilliseconds(uint64_t count)

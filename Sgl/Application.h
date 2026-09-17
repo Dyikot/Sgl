@@ -69,9 +69,9 @@ namespace Sgl
 		//! @return Reference to the application's StyleCollection
 		StyleCollection& GetStyles() final { return Styles; }
 
-		//! @brief Gets styles from this host and all its ancestors
-		//! @return Vector of style collections
-		std::vector<const StyleCollection*> GetAllStyles() const override;
+		//! @brief Executes an action on the style collection in a read-only context
+		//! @param action The callback action to execute with the immutable style collection
+		void WithStyles(const Action<const StyleCollection&>& action) const final;
 
 		//! @brief Gets the service locator
 		//! @return Reference to service locator
