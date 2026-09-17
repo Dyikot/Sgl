@@ -14,8 +14,8 @@ namespace Sgl
 		//! @return A reference to the style collection
 		virtual StyleCollection& GetStyles() = 0;
 
-		//! @brief Gets the parent style host used for style inheritance and resolution
-		//! @return A pointer to the parent style host, or nullptr if there is no parent
-		virtual IStyleHost* GetStylingParent() = 0;
+		//! @brief Gets style collections from this host and all its ancestors
+		//! @return Vector of style collections
+		virtual std::vector<const StyleCollection*> GetAllStyles() const = 0;
 	};
 }

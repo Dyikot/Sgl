@@ -24,7 +24,8 @@ namespace Sgl
 		const std::vector<std::string>& GetClasses() const;
 
 		StyleCollection& GetStyles() final;
-		IStyleHost* GetStylingParent() final { return _stylingParent; }
+		std::vector<const StyleCollection*> GetAllStyles() const final;
+		IStyleHost* GetStylingParent() const { return _stylingParent; }
 		bool IsAttachedToLogicalTree() const noexcept { return _isAttachedToLogicalTree; }
 
 		virtual void ApplyStyle();

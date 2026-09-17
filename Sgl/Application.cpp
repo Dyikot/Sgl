@@ -116,6 +116,11 @@ namespace Sgl
         OnThemeVariantChanged();
     }
 
+    std::vector<const StyleCollection*> Application::GetAllStyles() const
+    {
+        return { &Styles };
+    }
+
     static inline double ToMilliseconds(uint64_t count)
     {
         static const double msMultiplier = 1e3 / SDL_GetPerformanceFrequency();

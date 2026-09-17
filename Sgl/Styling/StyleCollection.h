@@ -12,16 +12,10 @@ namespace Sgl
         StyleCollection(const StyleCollection&) = delete;
         StyleCollection(StyleCollection&&) noexcept = default;
 
-        auto begin() { return _items.begin(); }
         auto begin() const { return _items.begin(); }
-
-        auto end() { return _items.end(); }
-        auto end() const { return _items.end(); }
-
-        auto rbegin() { return _items.rbegin(); }
         auto rbegin() const { return _items.rbegin(); }
 
-        auto rend() { return _items.rend(); }
+        auto end() const { return _items.end(); }
         auto rend() const { return _items.rend(); }
 
         //! @brief Adds a new style with the specified selector to the collection
@@ -42,12 +36,6 @@ namespace Sgl
         bool IsEmpty() const noexcept
         {
             return _items.empty();
-        }
-
-        //! @brief Gets the style at the specified index
-        Style& operator[](size_t index)
-        {
-            return _items[index];
         }
 
         //! @brief Gets the style at the specified index (const version)

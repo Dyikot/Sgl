@@ -69,9 +69,9 @@ namespace Sgl
 		//! @return Reference to the application's StyleCollection
 		StyleCollection& GetStyles() final { return Styles; }
 
-		//! @brief Gets the parent styling host in the hierarchy
-		//! @return Always nullptr, as the application is the root style host
-		IStyleHost* GetStylingParent() final { return nullptr; }
+		//! @brief Gets styles from this host and all its ancestors
+		//! @return Vector of style collections
+		std::vector<const StyleCollection*> GetAllStyles() const override;
 
 		//! @brief Gets the service locator
 		//! @return Reference to service locator

@@ -48,6 +48,18 @@ namespace Sgl
 		return Styles;
 	}
 
+	std::vector<const StyleCollection*> Styleable::GetAllStyles() const
+	{
+		if(_stylingParent)
+		{
+			auto styles = _stylingParent->GetAllStyles();
+			styles.push_back(&Styles);
+			return styles;
+		}
+
+		return { &Styles };
+	}
+
 	void Styleable::SetParent(IStyleHost* parent)
 	{
 		_stylingParent = parent;
@@ -89,18 +101,9 @@ namespace Sgl
 		_styles.clear();
 		_stateStyles.clear();
 
-		std::vector<const StyleCollection*> stylesCollections;
-		stylesCollections.reserve(4);
-		stylesCollections.push_back(&Styles);
+		auto styleCollections = GetAllStyles();
 
-		auto parent = _stylingParent;
-		while(parent != nullptr)
-		{
-			stylesCollections.push_back(&parent->GetStyles());
-			parent = parent->GetStylingParent();
-		}
-		
-		for(auto it = stylesCollections.rbegin(); it != stylesCollections.rend(); ++it)
+		for(auto it = styleCollections.rbegin(); it != styleCollections.rend(); ++it)
 		{
 			FetchStylesFrom(**it);
 		}
