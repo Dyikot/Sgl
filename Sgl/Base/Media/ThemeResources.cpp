@@ -1,4 +1,4 @@
-#include "ThemeResourceProvider.h"
+#include "ThemeResources.h"
 #include "../Exceptions.h"
 
 namespace Sgl
@@ -6,24 +6,24 @@ namespace Sgl
     static constexpr size_t LightIndex = static_cast<size_t>(ThemeMode::Light);
     static constexpr size_t DarkIndex  = static_cast<size_t>(ThemeMode::Dark);
 
-    ThemeResourceProvider::~ThemeResourceProvider()
+    ThemeResources::~ThemeResources()
     {
         delete[] _resources;
     }
 
-    void ThemeResourceProvider::AddColor(const std::string& key, Color lightColor, Color darkColor)
+    void ThemeResources::AddColor(const std::string& key, Color lightColor, Color darkColor)
     {
         _resources[LightIndex].Colors.emplace(key, lightColor);
         _resources[DarkIndex].Colors.emplace(key, darkColor);
     }
 
-    void ThemeResourceProvider::AddBrush(const std::string& key, const Brush& lightBrush, const Brush& darkBrush)
+    void ThemeResources::AddBrush(const std::string& key, const Brush& lightBrush, const Brush& darkBrush)
     {
         _resources[LightIndex].Brushes.emplace(key, lightBrush);
         _resources[DarkIndex].Brushes.emplace(key, darkBrush);
     }
 
-    Color ThemeResourceProvider::GetColor(const std::string& key) const
+    Color ThemeResources::GetColor(const std::string& key) const
     {
         Color result = Colors::Transparent;
 
@@ -35,7 +35,7 @@ namespace Sgl
         return result;
     }
 
-    Brush ThemeResourceProvider::GetBrush(const std::string& key) const
+    Brush ThemeResources::GetBrush(const std::string& key) const
     {
         Brush result = Colors::Transparent;
 
@@ -47,7 +47,7 @@ namespace Sgl
         return result;
     }
 
-    bool ThemeResourceProvider::TryGetColor(const std::string& key, Color& out) const
+    bool ThemeResources::TryGetColor(const std::string& key, Color& out) const
     {
         auto& dict = _resources[static_cast<size_t>(_currentMode)];
         
@@ -60,7 +60,7 @@ namespace Sgl
         return false;
     }
 
-    bool ThemeResourceProvider::TryGetBrush(const std::string& key, Brush& out) const
+    bool ThemeResources::TryGetBrush(const std::string& key, Brush& out) const
     {
         auto& dict = _resources[static_cast<size_t>(_currentMode)];
         
@@ -73,7 +73,7 @@ namespace Sgl
         return false;
     }
 
-    void ThemeResourceProvider::SetCurrentTheme(ThemeMode mode)
+    void ThemeResources::SetCurrentTheme(ThemeMode mode)
     {
         _currentMode = mode;
     }

@@ -1,6 +1,7 @@
 #include "ScrollBar.h"
 #include "../Buttons/RepeatButton.h"
 #include "../../Layout/LayoutHelper.h"
+#include "../../Base/Logging.h"
 
 namespace Sgl::UIElements
 {

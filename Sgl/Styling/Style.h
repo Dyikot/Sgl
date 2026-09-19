@@ -1,45 +1,45 @@
 #pragma once
 
-#include "../Base/Logging.h"
+#include "../Base/Delegate.h"
 #include "../Base/Media/ResourceKey.h"
-#include "../Data/StyleableProperty.h"
-#include "Selector.h"
 #include "Setter.h"
-#include "TargetSelector.h"
+#include "PseudoClass.h"
 
 namespace Sgl
 {
     class Style
     {
     public:
-        Style(Sgl::Selector selector): 
-            _selector(std::move(selector))
-        {}
-
+        using PseudoClasses = std::bitset<64>;
+        using TypeComparer = bool(*)(const Styleable&);
+        using TargetSelector = Func<Styleable&, Styleable&>;
+    public:
+        Style() = default;
         Style(const Style&) = delete;
-
-        Style(Style&& other) noexcept:
-            _setters(std::move(other._setters)),
-            _targetSelector(std::move(other._targetSelector)),
-            _selector(std::move(other._selector))
-        {}
+        Style(Style&& other) noexcept;
+        ~Style();
                 
-        const Selector& GetSelector() const
+        template<typename T>
+        Style& OfType()
         {
-            return _selector;
-        }
-
-        Style& Target(TargetSelector targetSelector)
-        {
-            _targetSelector = std::move(targetSelector);
+            _typeComparer = CompareTypeById<T>;
             return *this;
         }
 
-        Style& Set(std::unique_ptr<Setter> setter)
+        template<typename T>
+        Style& Is()
         {
-            _setters.push_back(std::move(setter));
+            _typeComparer = CompareType<T>;
             return *this;
         }
+
+        Style& Name(std::string name);
+        Style& Class(std::string className);
+        Style& On(PseudoClass pseudoClass);
+        Style& On(std::string_view pseudoClassName);       
+        Style& Target(TargetSelector targetSelector);
+
+        Style& Set(std::unique_ptr<Setter> setter);
 
         template<typename TOwner, typename TValue>
         Style& Set(StyleableProperty<TOwner, TValue>& property,
@@ -56,27 +56,32 @@ namespace Sgl
             return *this;
         }
 
+        bool HasState() const;
+        bool Match(const Styleable& element) const;
+        bool MatchState(const Styleable& element) const;
+        void Apply(Styleable& element, ValueSource source) const;
+        void Save(Styleable& element, std::vector<std::unique_ptr<ISavedValue>>& values) const;
     private:
-        Styleable& SelectTarget(Styleable& element) const
+        Styleable& SelectTarget(Styleable& element) const;
+
+        template<typename T>
+        static bool CompareType(const Styleable& element)
         {
-            return _targetSelector ? _targetSelector(element) : element;
+            return dynamic_cast<const T*>(&element);
         }
 
-        void Apply(Styleable& element, ValueSource source) const
+        template<typename T>
+        static bool CompareTypeById(const Styleable& element)
         {
-            auto& target = SelectTarget(element);
-
-            for(auto& setter : _setters)
-            {
-                setter->Apply(target, source);
-            }
+            return typeid(T) == typeid(element);
         }
 
     private:
-        std::vector<std::unique_ptr<Setter>> _setters;
+        TypeComparer _typeComparer {};
+        std::string* _name {};
+        std::vector<std::string>* _classes {};
+        PseudoClasses _pseudoClasses;
         TargetSelector _targetSelector;
-        Selector _selector;
-
-        friend class Styleable;
-    };    
+        std::vector<std::unique_ptr<Setter>> _setters;
+    };
 }

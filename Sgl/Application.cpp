@@ -1,10 +1,12 @@
 #include "Application.h"
 
+#include <ranges>
 #include <cassert>
 #include <SDL3/SDL_init.h>
 #include <SDL3_ttf/SDL_ttf.h>
 #include <SDL3_mixer/SDL_mixer.h>
 
+#include "Window.h"
 #include "Base/Threading/Dispatcher.h"
 #include "Base/Exceptions.h"
 #include "Base/Logging.h"
@@ -143,7 +145,7 @@ namespace Sgl
         }
     }
 
-    Window* Application::GetWindow(SDL_WindowID id)
+    Window* Application::GetWindow(uint32_t id)
     {
         for(size_t i = 0; i < _windowsIds.size(); i++)
         {
@@ -229,7 +231,7 @@ namespace Sgl
 
         for(auto& window : _activeWindows)
         {
-            window->ApplyStyle();
+            window->RecalculateStyle();
         }
     }
 
@@ -567,13 +569,13 @@ namespace Sgl
 
     void Application::AddDefaultStyles()
     {
-        Styles.Add(Selector().OfType<CheckBox>().On("checked"))
+        Styles.New().OfType<CheckBox>().On("checked")
             .Set(CheckBox::BackgroundProperty, ImageSource(AssetId::CheckBox));
 
-        Styles.Add(Selector().OfType<RadioButton>().On("checked"))
+        Styles.New().OfType<RadioButton>().On("checked")
             .Set(CheckBox::BackgroundProperty, ImageSource(AssetId::RadioButton));
 
-        Styles.Add(Selector().OfType<SwitchButon>().On("checked"))
+        Styles.New().OfType<SwitchButon>().On("checked")
             .Set(CheckBox::BackgroundProperty, ImageSource(AssetId::SwitchButtonOn));
     }
 

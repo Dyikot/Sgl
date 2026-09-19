@@ -4,106 +4,94 @@
 
 A **Style** is a reusable set of property values that can be applied to UI elements. Styles separate visual appearance from element logic, enabling consistent theming and easier maintenance.
 
-### Style Structure
-
 A `Style` consists of:
 - **Selector**: Determines which elements the style applies to
 - **TargetSelector** (optional): Specifies which part of a composite element to style
 - **Setters**: A collection of property-value pairs to apply
 
-### Setters
+## Setters
 
 Setters are the mechanism by which styles apply values to properties. There are two types:
 
-1. **Setter**: Applies a fixed value directly
+1. **ValueSetter**: Applies a fixed value directly
 2. **ResourceSetter**: Resolves a value from theme resources at runtime
 
 ```cpp
 // Create a style for all Button elements
-Styles.Add(Selector().OfType<Button>())
-    // Set a fixed value
+Style().OfType<Button>()
+    // Set a fixed value (ValueSetter is created)
     .Set(Button::MarginProperty, Thickness(5))
-    // Set a themed resource (resolved at runtime)
+    // Set a themed resource (ResourceSetter is created)
     .Set(Button::BackgroundProperty, ResourceKey("ButtonBgColor"));
 ```
 
-## Selector
+## Selectors
 
-Selectors determine which elements a style applies to. The `Selector` class provides a fluent API for building complex matching rules.
+Selectors determine which elements a style applies to.
 
 ### Supported Selector Types
 
-#### Type Selector (`.OfType<T>()`)
+#### Type Selector
 
 Matches elements of the exact specified type.
 
 ```cpp
 // Matches only TextBlock elements
-Selector().OfType<TextBlock>()
+Style().OfType<TextBlock>();
 ```
 
-#### Type Identity Selector (`.Is<T>()`)
+#### Type Identity Selector
 
 Matches elements of the specified type or any derived type.
 
 ```cpp
 // Matches Button and all derived types (e.g., ToggleButton)
-Selector().Is<Button>()
+Style().Is<Button>();
 ```
 
-#### Name Selector (`.Name()`)
+#### Name Selector
 
 Matches elements by their `Name` property.
 
 ```cpp
 // Matches element with Name == "SubmitButton"
-Selector().Name("SubmitButton")
+Style().Name("SubmitButton");
 ```
 
-#### Class Selector (`.Class()`)
+#### Class Selector
 
 Matches elements by CSS-like class names. Multiple classes can be specified; all must match.
 
 ```cpp
 // Matches elements with class "primary"
-Selector().Class("primary")
+Style().Class("primary");
 
 // Matches elements with both "primary" AND "large" classes
-Selector().Class("primary").Class("large")
+Style().Class("primary").Class("large");
 
 // Usage: Set classes on element
 element->SetClasses("primary large");
 ```
 
-#### Pseudo-Class Selector (`.On()`)
+#### Pseudo-Class Selector
 
-Matches elements in a specific state. Pseudo-classes are registered by name and identified by `PseudoClassId`.
+Matches elements in a specific state. Pseudo-classes are registered by name. The maximum number of states is 64.
 
 ```cpp
 // Matches elements in the "hover" state
-Selector().On("hover")
+Style().On("hover");
 
 // Matches elements in multiple states (all must be active)
-Selector().On("hover").On("pressed")
+Style().On("hover").On("pressed");
 ```
 
-Supported pseudo-classes:
+Built-in pseudo-classes:
 - `hover` - Mouse is over the element
 - `pressed` - Mouse button is pressed on the element
+- `focus` - Element got focus
 - `checked` - Toggle state is active
 
-#### Predicate Selector (`.Where()`)
-
-Matches elements using custom logic via a predicate function.
-
-```cpp
-// Matches elements with a specific property value
-Selector().Is<Button>().Where([](Styleable& element)
-{
-    auto& button = static_cast<Button&>(element);
-    return button->GetClickMode() == ClickMode::Press;
-})
-```
+To register a pseudo-class, you must to use the `PseudoClass::Register` static method.
 
 ### Combining Selectors
 
@@ -111,49 +99,32 @@ Selectors can be combined to create more specific rules. All conditions must mat
 
 ```cpp
 // Matches ToggleButton elements with class "toggle" and name "ThemeToggle"
-Selector()
-    .OfType<ToggleButton>()
-    .Class("toggle")
-    .Name("ThemeToggle")
+Style().OfType<ToggleButton>().Class("toggle").Name("ThemeToggle");
 
 // Matches Button elements in the pressed state
-Selector()
-    .Is<Button>()
-    .Class("primary")
-    .On("pressed")
+Style().Is<Button>().Class("primary").On("pressed");
 ```
 
-### Selector Matching
+## Target selector
 
-Selectors use two matching methods:
-- **`Match()`**: Evaluates type, name, class, and predicate conditions
-- **`MatchState()`**: Evaluates pseudo-class conditions
-- **`HasState()`**: Returns true if the selector has pseudo-class conditions
+Target selectors allow styles to target specific parts of composite elements. Instead of styling the element itself, a selector redirects the style application to a child or internal part.
 
-## Tarset selector
-
-Tarset selectors allow styles to target specific parts of composite elements. Instead of styling the element itself, a selector redirects the style application to a child or internal part.
-
-A `TarsetSelector` is a callable that takes a `Styleable&` and returns a `Styleable&` to style. Can be set via `Target` method.
+A `TargetSelector` is a callable that takes a `Styleable&` and returns a `Styleable&` to style. Can be set via `Target` method.
 
 Built-in target selectors:
-- `ContentUIElement::ContentPresenter`
+- `UIElement::Child`
 - `Window::Content`
 - `Panel::FirstChild`
 - `Panel::LastChild`
 - `Panel::NthChild`
+- `Panel::ChildWithName`
+- `Panel::ChildOfType<T>`
 
 ```cpp
-Styles.Add(Selector().Is<Button>().Class("TextButton"))
+Style()
+    .Is<Button>().Class("TextButton")
     .Target(Button::ContentPresenter())
     .Set(TextBlock::FontSizeProperty, 16);
-```
-
-Target selectors can be chained using the `>` operator or `ComposedTargetSelector` class.
-
-```cpp
-Styles.Add(Selector().OfType<CustomControl>())
-    .Target(Panel::FirstChild() > ContentUIElement::ContentPresenter());
 ```
 
 ## Style Collections
@@ -162,47 +133,28 @@ A **StyleCollection** is a container that holds multiple styles and applies them
 
 ### Style Application Order
 
-Styles are applied in the order they appear in the collection. Later styles can override earlier ones based on property value precedence.
+Styles are applied in the order they appear in the collection. Later styles can override earlier ones based on property value precedence. Style collections are contained at the application, window, and element levels.
 
 ```cpp
 // First style
-styles.Add(Selector().Class("button"))
+Styles.New().Class("button")
     .Set(Button::BackgroundProperty, Colors::Blue);
 
 // Second style - overrides background if both match
-styles.Add(Selector().Class("button").Class("primary"))
+Styles.New().Class("button").Class("primary")
     .Set(Button::BackgroundProperty, Colors::Green);
 ```
 
-### IStyleHost Interface
-
-`IStyleHost` defines an interface for objects that can host style collections:
-
-```cpp
-class IStyleHost
+## Value Priority
+The class `ValueSource` defines the priority when setting style property values. `Default` has the lowest priority, while `PseudoClass` has the highest.
+```c++
+enum class ValueSource : uint8_t
 {
-public:
-    virtual StyleCollection& GetStyles() = 0;
-    virtual IStyleHost* GetStylingParent() = 0;
-};
-```
-
-### Styleable
-
-`Styleable` is the base class for all styleable UI elements:
-
-```cpp
-class Styleable : public Bindable, public IStyleHost
-{
-public:
-    std::string Name;
-    StyleCollection Styles;
-    PseudoClassesSet PseudoClasses;
-
-    void SetClasses(std::string_view classNames);
-    const std::vector<std::string>& GetClasses() const;
-
-    void ApplyStyle();
+    Default,
+    Inheritance,
+    Style,
+    Local,
+    PseudoClass
 };
 ```
 
@@ -210,29 +162,9 @@ public:
 
 Theme styling enables UI elements to automatically adapt their appearance based on the active theme (Light or Dark). This is achieved through theme-aware resources.
 
-### ThemeResourceProvider
-
-`ThemeResourceProvider` manages themed color and brush resources:
-
-```cpp
-#include "Sgl/Base/Media/ThemeResourceProvider.h"
-
-// Add themed colors
-app.Resources.AddColor(
-    "PrimaryColor",
-    Colors::Blue,        // Light theme
-    Colors::LightBlue    // Dark theme
-);
-
-// Add themed brushes
-app.Resources.AddBrush(
-    "BackgroundBrush",
-    Colors::White,       // Light theme
-    Colors::Black        // Dark theme
-);
-```
-
 ### ThemeMode and ThemeVariant
+
+`ThemeMode` is used by resources and determines the current theme. `ThemeVariant` is used by the application and automatically sets the theme mode for resources.
 
 ```cpp
 enum class ThemeMode
@@ -249,6 +181,26 @@ enum class ThemeVariant
 };
 ```
 
+### ThemeResources
+
+`ThemeResources` manages themed color and brush resources.
+
+```cpp
+// Add themed colors
+app.Resources.AddColor(
+    "PrimaryColor",
+    Colors::Blue,        // Light theme
+    Colors::LightBlue    // Dark theme
+);
+
+// Add themed brushes
+app.Resources.AddBrush(
+    "BackgroundBrush",
+    Colors::White,       // Light theme
+    Colors::Black        // Dark theme
+);
+```
+
 ### Switching Themes
 
 ```cpp
@@ -261,9 +213,8 @@ Brush bgBrush = app.Resources.GetBrush("BackgroundBrush");
 
 ### ResourceKey
 
-`ResourceKey` provides strongly-typed references to theme resources:
+`ResourceKey` provides strongly typed references to theme resources. Using a resource key automatically creates a `ResourceSetter`.
 
 ```cpp
-// Use in style setter
 style.Set(TextBlock::ForegroundProperty, ResourceKey("TextColor"));
 ```

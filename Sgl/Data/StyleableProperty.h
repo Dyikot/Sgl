@@ -15,22 +15,9 @@ namespace Sgl
 		PseudoClass
 	};
 
-	class Styleable;
-	class IPropertyStateGuard;
-
-	//! @brief Base class for a styleable property
-	class StyleablePropertyBase : public PropertyBase
-	{
-	public:
-		//! @brief Creates an object that saves the current state and restores it upon destruction
-		//! @param target Target element
-		//! @return Pointer to allocated guard object
-		virtual IPropertyStateGuard* CreateStateGuard(Styleable& target) = 0;
-	};
-
 	//! @brief Represents a styleable property that wraps a getter and setter method pair
 	template<typename TOwner, typename TValue>
-	class StyleableProperty : public StyleablePropertyBase
+	class StyleableProperty : public PropertyBase
 	{
 	public:
 		using Owner = TOwner;
@@ -73,11 +60,6 @@ namespace Sgl
 		{
 			return (owner.*_getter)();
 		}
-
-		//! @brief Creates an object that saves the current state and restores it upon destruction
-		//! @param target Target element
-		//! @return Pointer to allocated guard object
-		IPropertyStateGuard* CreateStateGuard(Styleable& target) final;
 
 	private:
 		Setter _setter;

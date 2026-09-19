@@ -1,18 +1,20 @@
 #pragma once
+
 #include <string>
 #include <unordered_map>
+
 #include "Brush.h"
 #include "ThemeMode.h"
 
 namespace Sgl
 {
-	//! @brief Provides themed color and brush resources that automatically switch based on the active theme.
+	//! @brief Stores themed color and brush resources that automatically switch based on the active theme.
 	//! Resources are stored separately for light and dark themes and are looked up at runtime.
-	class ThemeResourceProvider
+	class ThemeResources
 	{
 	public:
-		ThemeResourceProvider() = default;
-		~ThemeResourceProvider();
+		ThemeResources() = default;
+		~ThemeResources();
 
 		//! @brief Adds a color resource for both light and dark themes
 		//! @param key The resource key

@@ -42,7 +42,9 @@ namespace Sgl
 		ResourceSetter(BorderColorProperty& property, ResourceKey key);
 
 		void Apply(Styleable& target, ValueSource valueSource) const final;
+		ISavedValue* Save(Styleable& target) const override;
 	private:
+		BorderColorProperty& _property;
 		ResourceKey _key;
 	};
 }

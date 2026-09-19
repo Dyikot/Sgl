@@ -50,6 +50,7 @@ namespace Sgl
 
 		bool Focus();
 		void Render(RenderContext context) override;
+		void RecalculateStyle();
 
 		static inline StyleableProperty TagProperty { &SetTag, &GetTag };
 		static inline StyleableProperty CornersRadiusProperty { &SetCornersRadius, &GetCornersRadius };

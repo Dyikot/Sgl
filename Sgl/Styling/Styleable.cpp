@@ -8,39 +8,34 @@ namespace Sgl
 	{
 		PseudoClasses.Changed += [this](PseudoClassesSet& sender, EventArgs e)
 		{
-			auto previousStyleStates = std::move(_activeStateStyles);
-			bool match = MatchStateStyles();
-
-			if(previousStyleStates == _activeStateStyles)
-			{
-				return;
-			}
-
 			RestoreBaseState();
 
-			if(match)
+			if(!PseudoClasses.IsEmpty())
 			{
-				SaveBaseState();
-				ApplyStateStyle();
-			}
+				auto newStyles = MatchStateStyles();
+				if(!newStyles.empty())
+				{
+					ApplyStateStyle(newStyles);
+				}
+			}			
 		};
 	}
 
 	void Styleable::SetClasses(std::string_view classNames)
 	{
-		_classList = SplitString(classNames, ' ');
-		OnStyleClassesChanged();
+		_classes = SplitString(classNames, ' ');
+		FetchAndApplyStyle();
 	}
 
 	void Styleable::SetClasses(std::vector<std::string> classList)
 	{
-		_classList = std::move(classList);
-		OnStyleClassesChanged();
+		_classes = std::move(classList);
+		FetchAndApplyStyle();
 	}
 
 	const std::vector<std::string>& Styleable::GetClasses() const
 	{
-		return _classList;
+		return _classes;
 	}
 
 	StyleCollection& Styleable::GetStyles()
@@ -63,14 +58,6 @@ namespace Sgl
 		_stylingParent = parent;
 	}
 
-	void Styleable::ApplyStyle()
-	{
-		for(auto style : _styles)
-		{
-			style->Apply(*this, ValueSource::Style);
-		}
-	}
-
 	void Styleable::OnAttachedToLogicalTree()
 	{
 		_isAttachedToLogicalTree = true;
@@ -81,114 +68,92 @@ namespace Sgl
 	void Styleable::OnDetachedFromLogicalTree()
 	{
 		_isAttachedToLogicalTree = false;
+		_stateStyles.clear();
 
 		if(!PseudoClasses.IsEmpty())
 		{
 			RestoreBaseState();
-			_activeStateStyles.clear();
 		}
-
-		_styles.clear();
-		_stateStyles.clear();
 
 		DetachedFromLogicalTree.Invoke(*this);
 	}
 
-	bool Styleable::FetchStyles()
-	{
-		_styles.clear();
-		_stateStyles.clear();
-
-		WithStyles([this](const auto& styles) { FetchStylesFrom(styles); });
-		return !_styles.empty() || !_stateStyles.empty();
-	}
-
-	void Styleable::FetchAndApplyStyle()
-	{
-		if(FetchStyles())
-		{
-			ApplyStyle();
-
-			if(!PseudoClasses.IsEmpty() && MatchStateStyles())
-			{
-				SaveBaseState();
-				ApplyStateStyle();
-			}
-		}
-	}
-
-	void Styleable::FetchStylesFrom(const StyleCollection& styles)
+	void Styleable::FetchAndApplyStylesFrom(const StyleCollection& styles)
 	{
 		for(auto& style : styles)
 		{
-			auto& selector = style.GetSelector();
-			
-			if(selector.Match(*this))
+			if(style.Match(*this))
 			{
-				if(selector.HasState())
+				if(style.HasState())
 				{
 					_stateStyles.push_back(&style);
 				}
 				else
 				{
-					_styles.push_back(&style);
+					style.Apply(*this, ValueSource::Style);
 				}
 			}
 		}
 	}
 
-	void Styleable::OnStyleClassesChanged()
+	void Styleable::FetchAndApplyStyle()
 	{
 		if(!IsAttachedToLogicalTree())
 		{
 			return;
 		}
 
-		_activeStateStyles.clear();
+		_stateStyles.clear();
 		RestoreBaseState();
-		FetchAndApplyStyle();
+
+		WithStyles([this](const auto& styles) { FetchAndApplyStylesFrom(styles); });
+
+		if(!PseudoClasses.IsEmpty())
+		{
+			auto newStyles = MatchStateStyles();
+			if(!newStyles.empty())
+			{
+				ApplyStateStyle(newStyles);
+			}
+		}		
 	}
 
-	void Styleable::ApplyStateStyle()
+	void Styleable::ApplyStateStyle(const std::vector<const Style*>& styles)
 	{
-		for(auto style : _activeStateStyles)
+		for(auto style : styles)
+		{
+			style->Save(*this, _savedValues);
+		}
+
+		for(auto style : styles)
 		{
 			style->Apply(*this, ValueSource::PseudoClass);
 		}
 	}
 
-	void Styleable::SaveBaseState()
-	{
-		for(auto style : _activeStateStyles)
-		{
-			auto& target = style->SelectTarget(*this);
-
-			for(auto& setter : style->_setters)
-			{
-				auto& property = setter->GetProperty();
-				auto stateGuard = property.CreateStateGuard(target);
-				_propertyGuards.emplace_back(stateGuard);
-			}
-		}
-	}
-
 	void Styleable::RestoreBaseState()
 	{
-		_propertyGuards.clear();
+		for(auto& savedValue : _savedValues)
+		{
+			savedValue->Restore();
+		}
+
+		_savedValues.clear();
 	}
 
-	bool Styleable::MatchStateStyles()
+	std::vector<const Style*> Styleable::MatchStateStyles()
 	{
-		_activeStateStyles.clear();
+		std::vector<const Style*> styles;
+		styles.reserve(_stateStyles.size());
 
 		for(auto style : _stateStyles)
 		{
-			if(style->GetSelector().MatchState(*this))
+			if(style->MatchState(*this))
 			{
-				_activeStateStyles.push_back(style);
+				styles.push_back(style);
 			}
 		}
 
-		return !_activeStateStyles.empty();
+		return styles;
 	}
 }

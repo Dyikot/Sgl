@@ -1,6 +1,7 @@
 #pragma once
 
 #include <unordered_map>
+
 #include "LanguageInfo.h"
 #include "../Event.h"
 #include "../Tools/StringUtils.h"

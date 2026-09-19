@@ -1,5 +1,5 @@
 #include "UIElement.h"
-#include "../Application.h"
+#include "../Window.h"
 #include "../Layout/LayoutHelper.h"
 
 #include <cassert>
@@ -120,6 +120,16 @@ namespace Sgl
 		for(auto& child : _children)
 		{
 			child->Render(context);
+		}
+	}
+
+	void UIElement::RecalculateStyle()
+	{
+		FetchAndApplyStyle();
+
+		for(auto& child : _children)
+		{
+			child->RecalculateStyle();
 		}
 	}
 

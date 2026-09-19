@@ -47,15 +47,17 @@ namespace Sgl
     };
 
     template<>
-    class ResourceSetter<Renderable, const Brush&> : public Setter
+    class ResourceSetter<Renderable, const Brush&> final : public Setter
     {
     public:
         using BackgroundProperty = decltype(Renderable::BackgroundProperty);
     public:
         ResourceSetter(BackgroundProperty& property, ResourceKey key);
 
-        void Apply(Styleable& target, ValueSource valueSource) const final;
+        void Apply(Styleable& target, ValueSource valueSource) const override;
+        ISavedValue* Save(Styleable& target) const override;
     private:
+        BackgroundProperty& _property;
         ResourceKey _key;
     };
 

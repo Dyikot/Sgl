@@ -59,7 +59,7 @@ namespace Sgl
 	ResourceSetter<Renderable, const Brush&>::ResourceSetter(
 		BackgroundProperty& property,
 		ResourceKey key):
-		Setter(property),
+		_property(property),
 		_key(std::move(key))
 	{}
 
@@ -67,11 +67,13 @@ namespace Sgl
 		Styleable& target, 
 		ValueSource valueSource) const
 	{
-		auto& property = static_cast<BackgroundProperty&>(GetProperty());
-		property.InvokeSetter(
-			static_cast<Renderable&>(target),
-			App->Resources.GetBrush(_key.Value),
-			valueSource
-		);
+		auto& owner = static_cast<Renderable&>(target);
+		_property.InvokeSetter(owner, App->Resources.GetBrush(_key.Value), valueSource);
+	}
+
+	ISavedValue* ResourceSetter<Renderable, const Brush&>::Save(Styleable& target) const
+	{
+		auto& owner = static_cast<Renderable&>(target);
+		return new SavedPropertyValue<Renderable, const Brush&>(_property, owner);
 	}
 }

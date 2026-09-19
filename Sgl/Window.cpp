@@ -416,13 +416,13 @@ namespace Sgl
         return _content ? _content->HitTest(point) : nullptr;
     }
 
-    void Window::ApplyStyle()
+    void Window::RecalculateStyle()
     {
-        Styleable::ApplyStyle();
-
+        FetchAndApplyStyle();
+        
         if(_content)
         {
-            _content->ApplyStyle();
+            _content->RecalculateStyle();
         }
     }
 

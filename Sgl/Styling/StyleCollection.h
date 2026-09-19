@@ -18,12 +18,16 @@ namespace Sgl
         auto end() const { return _items.end(); }
         auto rend() const { return _items.rend(); }
 
-        //! @brief Adds a new style with the specified selector to the collection
-        //! @param selector The selector that determines which elements this style applies to
-        //! @return A reference to the newly added style
-        Style& Add(Selector selector)
+        //! @brief Creates a new style
+        Style& New()
         {
-            return _items.emplace_back(std::move(selector));
+            return _items.emplace_back();
+        }
+
+        //! @brief Adds a new style to the collection
+        void Add(Style style)
+        {
+            _items.push_back(std::move(style));
         }
 
         //! @brief Gets the number of styles in the collection

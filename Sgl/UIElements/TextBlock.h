@@ -102,7 +102,9 @@ namespace Sgl
 		ResourceSetter(ForegroundProperty& property, ResourceKey key);
 
 		void Apply(Styleable& target, ValueSource valueSource) const final;
+		ISavedValue* Save(Styleable& target) const override;
 	private:
+		ForegroundProperty& _property;
 		ResourceKey _key;
 	};
 }

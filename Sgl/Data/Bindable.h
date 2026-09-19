@@ -45,7 +45,11 @@ namespace Sgl
 
 			if(field == value)
 			{
-				currentSource = newSource;
+				if(newSource < ValueSource::PseudoClass)
+				{
+					currentSource = newSource;
+				}
+
 				return false;
 			}
 

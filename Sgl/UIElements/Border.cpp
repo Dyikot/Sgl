@@ -62,7 +62,7 @@ namespace Sgl
 	ResourceSetter<UIElements::Border, Color>::ResourceSetter(
 		BorderColorProperty& property,
 		ResourceKey key):
-		Setter(property),
+		_property(property),
 		_key(std::move(key))
 	{}
 
@@ -70,11 +70,13 @@ namespace Sgl
 		Styleable& target,
 		ValueSource valueSource) const
 	{
-		auto& property = static_cast<BorderColorProperty&>(GetProperty());
-		property.InvokeSetter(
-			static_cast<UIElements::Border&>(target),
-			App->Resources.GetColor(_key.Value),
-			valueSource
-		);
+		auto& owner = static_cast<UIElements::Border&>(target);
+		_property.InvokeSetter(owner, App->Resources.GetColor(_key.Value), valueSource);
+	}
+
+	ISavedValue* ResourceSetter<UIElements::Border, Color>::Save(Styleable& target) const
+	{
+		auto& owner = static_cast<UIElements::Border&>(target);
+		return new SavedPropertyValue<UIElements::Border, Color>(_property, owner);
 	}
 }

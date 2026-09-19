@@ -1,6 +1,7 @@
 #pragma once
 
 #include "IStyleHost.h"
+#include "StyleCollection.h"
 #include "PseudoClass.h"
 #include "../Data/Bindable.h"
 
@@ -27,63 +28,23 @@ namespace Sgl
 		void WithStyles(const Action<const StyleCollection&>& action) const final;
 		IStyleHost* GetStylingParent() const { return _stylingParent; }
 		bool IsAttachedToLogicalTree() const noexcept { return _isAttachedToLogicalTree; }
-
-		virtual void ApplyStyle();
+				
 	protected:
 		~Styleable() = default;
 		virtual void SetParent(IStyleHost* parent);
 		virtual void OnAttachedToLogicalTree();
 		virtual void OnDetachedFromLogicalTree();
-	private:
-		bool FetchStyles();
 		void FetchAndApplyStyle();
-		void FetchStylesFrom(const StyleCollection& styles);
-		void OnStyleClassesChanged();
-		void ApplyStateStyle();
-		void SaveBaseState();
-		void RestoreBaseState();
-		bool MatchStateStyles();
 	private:
-		std::vector<std::string> _classList;
-		std::vector<const Style*> _styles;
+		void FetchAndApplyStylesFrom(const StyleCollection& styles);
+		void ApplyStateStyle(const std::vector<const Style*>& styles);
+		void RestoreBaseState();
+		std::vector<const Style*> MatchStateStyles();
+	private:
+		std::vector<std::string> _classes;
 		std::vector<const Style*> _stateStyles;
-		std::vector<const Style*> _activeStateStyles;
-		std::vector<std::unique_ptr<IPropertyStateGuard>> _propertyGuards;
+		std::vector<std::unique_ptr<ISavedValue>> _savedValues;
 		IStyleHost* _stylingParent = nullptr;
 		bool _isAttachedToLogicalTree = false;
 	};
-
-	class IPropertyStateGuard
-	{
-	public:
-		virtual ~IPropertyStateGuard() = default;
-	};
-
-	template<typename TOwner, typename TValue>
-	class PropertyStateGuard : public IPropertyStateGuard
-	{
-	public:
-		using Value = std::decay_t<TValue>;
-	public:
-		PropertyStateGuard(StyleableProperty<TOwner, TValue>& property, TOwner& target):
-			_property(property),
-			_target(&target),
-			_value(property.InvokeGetter(target))
-		{}
-
-		~PropertyStateGuard()
-		{
-			_property.InvokeSetter(_target.GetValue(), _value, ValueSource::PseudoClass);
-		}
-	private:
-		StyleableProperty<TOwner, TValue>& _property;
-		Ref<TOwner> _target;
-		Value _value;
-	};
-
-	template<typename TOwner, typename TValue>
-	inline IPropertyStateGuard* StyleableProperty<TOwner, TValue>::CreateStateGuard(Styleable& target)
-	{
-		return new PropertyStateGuard(*this, static_cast<TOwner&>(target));
-	}
 }
