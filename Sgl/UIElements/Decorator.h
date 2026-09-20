@@ -9,7 +9,7 @@ namespace Sgl
 	public:
 		Decorator() = default;
 
-		void SetChild(const Ref<UIElement>& value, ValueSource source = ValueSource::Default);
+		void SetChild(const Ref<UIElement>& value, ValueSource source = ValueSource::Local);
 		const Ref<UIElement>& GetChild() const { return _child; }
 		
 		void SetPadding(Thickness value, ValueSource source = ValueSource::Local);
