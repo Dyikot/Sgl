@@ -3,10 +3,20 @@
 
 namespace Sgl
 {
-	void Decorator::SetChild(const Ref<UIElement>& child, ValueSource source)
+	void Decorator::SetChild(const Ref<UIElement>& value, ValueSource source)
 	{
 		if(_childSource > source)
 		{
+			return;
+		}
+
+		if(_child == value)
+		{
+			if(source < ValueSource::PseudoClass)
+			{
+				_childSource = source;
+			}
+
 			return;
 		}
 
@@ -15,20 +25,27 @@ namespace Sgl
 			RemoveChild(_child);
 		}
 
-		if(SetProperty(ChildProperty, _child, child, _childSource, source))
-		{
-			if(_child)
-			{
-				AddChild(_child);
-			}
+		_child = value;
+		_childSource = source;
 
-			InvalidateMeasure();
+		if(_child)
+		{
+			AddChild(_child);
 		}
+
+		OnPropertyChanged(ChildProperty);
 	}
 
 	void Decorator::SetPadding(Thickness value, ValueSource source)
 	{
-		if(SetProperty(PaddingProperty, _padding, value, _paddingSource, source))
+		SetProperty(PaddingProperty, _padding, value, _paddingSource, source);
+	}
+
+	void Decorator::OnPropertyChanged(PropertyBase& property)
+	{
+		UIElement::OnPropertyChanged(property);
+
+		if(property == ChildProperty || property == PaddingProperty)
 		{
 			InvalidateMeasure();
 		}

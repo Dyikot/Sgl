@@ -17,11 +17,12 @@ namespace Sgl::UIElements
 		static inline StyleableProperty IsCheckedProperty { &SetIsChecked, &IsChecked };
 		static inline const PseudoClass OnChecked = PseudoClass::Register("checked");
 	protected:
-		virtual void OnCheckedChanged() {}
+		void OnPropertyChanged(PropertyBase& property) override;
 		void OnClick() override;
 		void ToggleState();
 		void Check();
 		void Uncheck();
+		virtual void OnCheckedChanged() {}
 	private:
 		bool _isChecked = false;
 		ValueSource _isCheckedSource {};

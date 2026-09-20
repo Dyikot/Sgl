@@ -59,11 +59,7 @@ namespace Sgl
 
 	void UIElement::SetCornersRadius(float value, ValueSource source)
 	{
-		if(SetProperty(CornersRadiusProperty, _cornersRadius, value, _cornersRadiusSource, source))
-		{
-			InvalidateRender();
-			InvalidateBackground();
-		}
+		SetProperty(CornersRadiusProperty, _cornersRadius, value, _cornersRadiusSource, source);
 	}
 
 	void UIElement::SetIsFocusable(bool value, ValueSource source)
@@ -130,6 +126,17 @@ namespace Sgl
 		for(auto& child : _children)
 		{
 			child->RecalculateStyle();
+		}
+	}
+
+	void UIElement::OnPropertyChanged(PropertyBase& property)
+	{
+		Layoutable::OnPropertyChanged(property);
+
+		if(property == CornersRadiusProperty)
+		{
+			InvalidateRender();
+			InvalidateBackground();
 		}
 	}
 

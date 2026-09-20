@@ -21,55 +21,66 @@ namespace Sgl
 
 	void ContentUIElement::SetContent(const Ref<ObservableObject>& value, ValueSource source)
 	{
-		if(SetProperty(ContentProperty, _content, value, _contentSource, source))
-		{
-			if(!value.Is<UIElement>())
-			{
-				SetDataContext(value);
-			}
-
-			UpdatePresenter();
-		}
+		SetProperty(ContentProperty, _content, value, _contentSource, source);
 	}
 
 	void ContentUIElement::SetContentTemplate(const Ref<IDataTemplate>& value, ValueSource source)
 	{
-		if(SetProperty(ContentTemplateProperty, _contentTemplate, value, _contentTemplateSource, source))
-		{
-			UpdatePresenter();
-		}
+		SetProperty(ContentTemplateProperty, _contentTemplate, value, _contentTemplateSource, source);
 	}
 
 	void ContentUIElement::SetPadding(Thickness value, ValueSource source)
 	{
-		if(SetProperty(PaddingProperty, _padding, value, _paddingSource, source))
-		{
-			InvalidateMeasure();
-		}
+		SetProperty(PaddingProperty, _padding, value, _paddingSource, source);
 	}
 
 	void ContentUIElement::SetVerticalContentAlignment(VerticalAlignment value, ValueSource source)
 	{
-		if(SetProperty(VerticalContentAlignmentProperty, _verticalContentAlignment, value, _verticalContentAlignmentSource, source))
-		{
-			InvalidateArrange();
-
-			if(_contentPresenter)
-			{
-				_contentPresenter->SetVerticalAlignment(value, ValueSource::Inheritance);
-			}
-		}
+		SetProperty(VerticalContentAlignmentProperty, _verticalContentAlignment, value, _verticalContentAlignmentSource, source);
 	}
 
 	void ContentUIElement::SetHorizontalContentAlignment(HorizontalAlignment value, ValueSource source)
 	{
-		if(SetProperty(HorizontalContentAlignmentProperty, _horizontalContentAlignment, value, _horizontalContentAlignmentSource, source))
+		SetProperty(HorizontalContentAlignmentProperty, _horizontalContentAlignment, value, _horizontalContentAlignmentSource, source);
+	}
+
+	void ContentUIElement::OnPropertyChanged(PropertyBase& property)
+	{
+		UIElement::OnPropertyChanged(property);
+
+		if(property == ContentProperty)
+		{
+			if(!_content.Is<UIElement>())
+			{
+				SetDataContext(_content);
+			}
+
+			UpdatePresenter();
+		}
+		else if(property == PaddingProperty)
+		{
+			InvalidateMeasure();
+		}
+		else if(property == ContentTemplateProperty)
+		{
+			UpdatePresenter();
+		}
+		else if(property == VerticalContentAlignmentProperty)
 		{
 			InvalidateArrange();
 
 			if(_contentPresenter)
 			{
-				_contentPresenter->SetHorizontalAlignment(value, ValueSource::Inheritance);
+				_contentPresenter->SetVerticalAlignment(_verticalContentAlignment, ValueSource::Inheritance);
+			}
+		}
+		else if(property == HorizontalContentAlignmentProperty)
+		{
+			InvalidateArrange();
+
+			if(_contentPresenter)
+			{
+				_contentPresenter->SetHorizontalAlignment(_horizontalContentAlignment, ValueSource::Inheritance);
 			}
 		}
 	}

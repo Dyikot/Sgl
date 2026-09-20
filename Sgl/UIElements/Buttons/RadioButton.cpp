@@ -94,22 +94,37 @@ namespace Sgl::UIElements
 
 	void RadioButton::SetGroupName(const std::string& value, ValueSource source)
 	{
-		std::string oldValue = _groupName;
-
-		if(SetProperty(GroupNameProperty, _groupName, value, _groupNameValueSource, source))
+		if(_groupNameValueSource > source)
 		{
-			auto& registry = RadioButtonGroupRegistry::Instance();
-
-			if(!oldValue.empty() && IsAttachedToLogicalTree())
-			{
-				registry.Remove(this);
-			}
-
-			if(!_groupName.empty() && IsAttachedToLogicalTree())
-			{
-				registry.Add(this);
-			}
+			return;
 		}
+
+		if(_groupName == value)
+		{
+			if(source < ValueSource::PseudoClass)
+			{
+				_groupNameValueSource = source;
+			}
+
+			return;
+		}
+
+		auto& registry = RadioButtonGroupRegistry::Instance();
+
+		if(!_groupName.empty() && IsAttachedToLogicalTree())
+		{
+			registry.Remove(this);
+		}
+
+		_groupName = value;
+		_groupNameValueSource = source;
+
+		if(!_groupName.empty() && IsAttachedToLogicalTree())
+		{
+			registry.Add(this);
+		}
+
+		OnPropertyChanged(GroupNameProperty);
 	}
 
 	void RadioButton::OnCheckedChanged()

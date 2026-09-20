@@ -5,20 +5,12 @@ namespace Sgl
 {
 	void Renderable::SetCursor(Cursor value, ValueSource source)
 	{
-		if(SetProperty(CursorProperty, _cursor, value, _cursorSource, source))
-		{
-			OnCursorChanged(value);
-		}
+		SetProperty(CursorProperty, _cursor, value, _cursorSource, source);
 	}
 
 	void Renderable::SetBackground(const Brush& value, ValueSource source)
 	{
-		if(SetProperty(BackgroundProperty, _background, value, _backgroundSource, source))
-		{
-			_isBackgroundTransparent = value == Colors::Transparent;
-			InvalidateRender();
-			OnBackgroundChanged(_background);
-		}
+		SetProperty(BackgroundProperty, _background, value, _backgroundSource, source);
 	}
 
 	void Renderable::Render(RenderContext context)
@@ -32,6 +24,22 @@ namespace Sgl
 		{
 			_visualRoot->MarkDirty();
 			_isDirty = true;
+		}
+	}
+
+	void Renderable::OnPropertyChanged(PropertyBase& property)
+	{
+		Styleable::OnPropertyChanged(property);
+
+		if(property == BackgroundProperty)
+		{
+			_isBackgroundTransparent = _background == Colors::Transparent;
+			InvalidateRender();
+			OnBackgroundChanged(_background);
+		}
+		else if(property == CursorProperty)
+		{
+			OnCursorChanged(_cursor);
 		}
 	}
 

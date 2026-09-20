@@ -286,6 +286,7 @@ namespace Sgl
 	protected:
 		~Window();
 
+		void OnPropertyChanged(PropertyBase& property) override;
 		void OnCursorChanged(Cursor cursor) final;
 		void OnBackgroundChanged(const Brush& background) final;
 		void OnDataContextChanged(const Ref<ObservableObject>& dataContext) final;

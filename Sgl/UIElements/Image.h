@@ -30,6 +30,7 @@ namespace Sgl::UIElements
 		static inline StyleableProperty SourceProperty { &SetSource, &GetSource };
 		static inline StyleableProperty StretchProperty { &SetStretch, &GetStretch };
 	protected:
+		void OnPropertyChanged(PropertyBase& property) override;
 		void OnAttachedToLogicalTree() override;
 		void OnDetachedFromLogicalTree() override;
 		void ArrangeContent(FRect rect) override;

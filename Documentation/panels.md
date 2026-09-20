@@ -224,7 +224,7 @@ for(auto color : colors)
 ## Canvas
 `Canvas` provides absolute positioning of children using explicit coordinate values, with no automatic layout behavior. This low-level control suits drawing applications, animations, custom diagrams, pixel-perfect layouts, or scenarios where you need full manual control over element placement.
 
-Positioning uses static methods: `Canvas::SetTop`, `SetBottom`, `SetLeft`, and `SetRight` place a child relative to the corresponding canvas edge. Because Canvas performs no automatic layout, children do not affect each other's position or size, and explicit element size are typically required for visibility.
+Positioning uses static methods: `Canvas::SetTop`, `Canvas::SetBottom`, `Canvas::SetLeft`, and `Canvas::SetRight` place a child relative to the corresponding canvas edge. Because Canvas performs no automatic layout, children do not affect each other's position or size, and explicit element size are typically required for visibility.
 
 ```c++
 auto canvas = New<Canvas>();

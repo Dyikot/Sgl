@@ -11,18 +11,12 @@ namespace Sgl::UIElements
 
 	void Border::SetBorderWidth(uint32_t value, ValueSource source)
 	{
-		if(SetProperty(BorderWidthProperty, _borderWidth, value, _borderWidthSource, source))
-		{
-			InvalidateMeasure();
-		}
+		SetProperty(BorderWidthProperty, _borderWidth, value, _borderWidthSource, source);
 	}
 
 	void Border::SetBorderColor(Color value, ValueSource source)
 	{
-		if(SetProperty(BorderColorProperty, _borderColor, value, _borderColorSource, source))
-		{
-			InvalidateRender();
-		}
+		SetProperty(BorderColorProperty, _borderColor, value, _borderColorSource, source);
 	}
 
 	void Border::Render(RenderContext context)
@@ -43,6 +37,20 @@ namespace Sgl::UIElements
 		else
 		{
 			context.DrawRectangle(GetBounds(), _borderWidth, _borderColor);
+		}
+	}
+
+	void Border::OnPropertyChanged(PropertyBase& property)
+	{
+		Decorator::OnPropertyChanged(property);
+
+		if(property == BorderColorProperty)
+		{
+			InvalidateRender();
+		}
+		else if(property == BorderWidthProperty)
+		{
+			InvalidateMeasure();
 		}
 	}
 

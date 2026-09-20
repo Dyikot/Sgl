@@ -30,39 +30,7 @@ namespace Sgl
 		Bindable(Bindable&&) = delete;
 		
 		void SetDataContext(const Ref<ObservableObject>& value, ValueSource source = ValueSource::Local);
-		const Ref<ObservableObject>& GetDataContext() const { return _dataContext; }
-
-		using ObservableObject::SetProperty;
-
-		template<CProperty TProperty, typename TField>
-		bool SetProperty(TProperty& property, TField& field, TProperty::Value value,
-						 ValueSource& currentSource, ValueSource newSource)
-		{
-			if(currentSource > newSource)
-			{
-				return false;
-			}
-
-			if(field == value)
-			{
-				if(newSource < ValueSource::PseudoClass)
-				{
-					currentSource = newSource;
-				}
-
-				return false;
-			}
-
-			field = value;
-
-			if(newSource < ValueSource::PseudoClass)
-			{
-				currentSource = newSource;
-				OnPropertyChanged(property);
-			}
-
-			return true;
-		}
+		const Ref<ObservableObject>& GetDataContext() const { return _dataContext; }	
 
 		template<CProperty TTargetProperty, CProperty TSourceProperty>
 		void Bind(TTargetProperty& targetProperty,
@@ -88,9 +56,39 @@ namespace Sgl
 		static inline StyleableProperty DataContextProperty { &SetDataContext, &GetDataContext };
 	protected:
 		~Bindable();
-		virtual void OnDataContextChanged(const Ref<ObservableObject>& dataContext) {}
+
+		using ObservableObject::SetProperty;
+
+		template<CProperty TProperty, typename TField>
+		bool SetProperty(TProperty& property, TField& field, TProperty::Value value,
+						 ValueSource& currentSource, ValueSource newSource)
+		{
+			if(currentSource > newSource)
+			{
+				return false;
+			}
+
+			if(field == value)
+			{
+				if(newSource < ValueSource::PseudoClass)
+				{
+					currentSource = newSource;
+				}
+
+				return false;
+			}
+
+			field = value;
+			currentSource = newSource;
+			OnPropertyChanged(property);
+
+			return true;
+		}
+
+		void OnPropertyChanged(PropertyBase& property) override;
 		void ApplyBindings();
 		void ClearBindings();
+		virtual void OnDataContextChanged(const Ref<ObservableObject>& dataContext) {}
 	private:
 		std::vector<std::unique_ptr<BindingBase>> _bindings;
 		Ref<ObservableObject> _dataContext;

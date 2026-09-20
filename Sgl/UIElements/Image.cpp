@@ -14,19 +14,12 @@ namespace Sgl::UIElements
 
 	void Image::SetSource(const ImageSource& value, ValueSource source)
 	{
-		if(SetProperty(SourceProperty, _source, value, _sourceSource, source))
-		{
-			InvalidateArrange();
-			UpdateImageTexture();
-		}
+		SetProperty(SourceProperty, _source, value, _sourceSource, source);
 	}
 
 	void Image::SetStretch(Stretch value, ValueSource source)
 	{
-		if(SetProperty(StretchProperty, _stretch, value, _stretchSource, source))
-		{
-			InvalidateArrange();
-		}
+		SetProperty(StretchProperty, _stretch, value, _stretchSource, source);
 	}
 
 	void Image::Render(RenderContext context)
@@ -53,6 +46,21 @@ namespace Sgl::UIElements
 			}
 		}
 	}	
+
+	void Image::OnPropertyChanged(PropertyBase& property)
+	{
+		UIElement::OnPropertyChanged(property);
+
+		if(property == SourceProperty)
+		{
+			InvalidateArrange();
+			UpdateImageTexture();
+		}
+		else if(property == StretchProperty)
+		{
+			InvalidateArrange();
+		}
+	}
 
 	void Image::OnAttachedToLogicalTree()
 	{

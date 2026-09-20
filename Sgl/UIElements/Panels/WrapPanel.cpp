@@ -7,25 +7,28 @@ namespace Sgl::UIElements
 		Name = "WrapPanel";
 	}
 
+	void WrapPanel::SetOrientation(Orientation value, ValueSource source)
+	{
+		SetProperty(OrientationProperty, _orientation, value, _orientationSource, source);
+	}
+
 	void WrapPanel::SetVerticalSpacing(float value, ValueSource source)
 	{
-		if(SetProperty(VeritcalSpacingProperty, _verticalSpacing, value, _verticalSpacingSource, source))
-		{
-			InvalidateMeasure();
-		}
+		SetProperty(VeritcalSpacingProperty, _verticalSpacing, value, _verticalSpacingSource, source);
 	}
 
 	void WrapPanel::SetHorizontalSpacing(float value, ValueSource source)
 	{
-		if(SetProperty(HorizontalSpacingProperty, _horizontalSpacing, value, _horizontalSpacingSource, source))
-		{
-			InvalidateMeasure();
-		}
+		SetProperty(HorizontalSpacingProperty, _horizontalSpacing, value, _horizontalSpacingSource, source);
 	}
 
-	void WrapPanel::SetOrientation(Orientation value, ValueSource source)
+	void WrapPanel::OnPropertyChanged(PropertyBase& property)
 	{
-		if(SetProperty(OrientationProperty, _orientation, value, _orientationSource, source))
+		Panel::OnPropertyChanged(property);
+
+		if(property == OrientationProperty ||
+		   property == VeritcalSpacingProperty ||
+		   property == HorizontalSpacingProperty)
 		{
 			InvalidateMeasure();
 		}

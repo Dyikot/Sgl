@@ -9,15 +9,19 @@ namespace Sgl::UIElements
 
 	void StackPanel::SetSpacing(float value, ValueSource source)
 	{
-		if(SetProperty(SpacingProperty, _spacing, value, _spacingSource, source))
-		{
-			InvalidateMeasure();
-		}
+		SetProperty(SpacingProperty, _spacing, value, _spacingSource, source);
 	}
 
 	void StackPanel::SetOrientation(Orientation value, ValueSource source)
 	{
-		if(SetProperty(OrientationProperty, _orientation, value, _orientationSource, source))
+		SetProperty(OrientationProperty, _orientation, value, _orientationSource, source);
+	}
+
+	void StackPanel::OnPropertyChanged(PropertyBase& property)
+	{
+		Panel::OnPropertyChanged(property);
+
+		if(property == SpacingProperty || property == OrientationProperty)
 		{
 			InvalidateMeasure();
 		}

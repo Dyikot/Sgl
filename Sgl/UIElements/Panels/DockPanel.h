@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Panel.h"
-#include "../../Data/LayoutProperty.h"
 
 namespace Sgl::UIElements
 {
@@ -19,15 +18,15 @@ namespace Sgl::UIElements
 	public:
 		DockPanel();
 		
-		static void SetDock(const Ref<UIElement>& element, Dock dock);
+		static void SetDock(const Ref<UIElement>& element, Dock value);
 		static Dock GetDock(const Ref<UIElement>& element);
 
 		void SetLastChildFill(bool value, ValueSource source = ValueSource::Local);
 		bool GetLastChildFill() const { return _lastChildFill; }
 
-		static LayoutProperty<Dock> DockProperty;
 		static inline StyleableProperty LastChildFillProperty { &SetLastChildFill, &GetLastChildFill };
 	protected:
+		void OnPropertyChanged(PropertyBase& property) override;
 		FSize MeasureContent(FSize availableSize) override;
 		void ArrangeContent(FRect rect) override;
 	private:

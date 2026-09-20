@@ -9,7 +9,7 @@ namespace Sgl
 	public:
 		Decorator() = default;
 
-		void SetChild(const Ref<UIElement>& child, ValueSource source = ValueSource::Default);
+		void SetChild(const Ref<UIElement>& value, ValueSource source = ValueSource::Default);
 		const Ref<UIElement>& GetChild() const { return _child; }
 		
 		void SetPadding(Thickness value, ValueSource source = ValueSource::Local);
@@ -18,6 +18,7 @@ namespace Sgl
 		static inline StyleableProperty ChildProperty { &SetChild, &GetChild };
 		static inline StyleableProperty PaddingProperty { &SetPadding, &GetPadding };
 	protected:
+		void OnPropertyChanged(PropertyBase& property) override;
 		FSize MeasureContent(FSize availableSize) override;
 		void ArrangeContent(FRect rect) override;
 	private:

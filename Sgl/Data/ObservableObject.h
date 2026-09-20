@@ -17,6 +17,7 @@ namespace Sgl
 		//! @brief Occurs when a property value changes
 		Event<PropertyChangedEventHandler> PropertyChanged;
 
+	protected:
 		//! @brief Sets the property value and raises PropertyChanged if the value changed
 		//! @param property Reference to property
 		//! @param field The backing field
@@ -59,7 +60,6 @@ namespace Sgl
 			return true;
 		}
 
-	protected:
 		virtual void OnPropertyChanged(PropertyBase& property)
 		{
 			PropertyChanged.Invoke(*this, property);

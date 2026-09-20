@@ -13,25 +13,26 @@ namespace Sgl::UIElements
 
 		Event<ValueChangedEventHandler> ValueChanged;
 
+		void SetValue(float value, ValueSource source = ValueSource::Local);
+		float GetValue() const { return _value; }
+
 		void SetMinValue(float value, ValueSource source = ValueSource::Local);
 		float GetMinValue() const { return _minValue; }
 
 		void SetMaxValue(float value, ValueSource source = ValueSource::Local);
 		float GetMaxValue() const { return _maxValue; }
 
-		void SetValue(float value, ValueSource source = ValueSource::Local);
-		float GetValue() const { return _value; }
-
 		void SetOrientation(Orientation value, ValueSource source = ValueSource::Local);
 		Orientation GetOrientation() const { return _orientation; }
 
 		float GetRelativeValue() const;
 
+		static inline StyleableProperty ValueProperty { &SetValue, &GetValue };
 		static inline StyleableProperty MinValueProperty { &SetMinValue, &GetMinValue };
 		static inline StyleableProperty MaxValueProperty { &SetMaxValue, &GetMaxValue };
-		static inline StyleableProperty ValueProperty { &SetValue, &GetValue };
 		static inline StyleableProperty OrientationProperty { &SetOrientation, &GetOrientation };
 	protected:
+		void OnPropertyChanged(PropertyBase& property) override;
 		virtual void OnValueChanged(float value);
 		float ValueAtPosition(float x, float y) const;
 		float Clamp(float value) const;

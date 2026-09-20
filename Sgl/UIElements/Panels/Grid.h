@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Panel.h"
-#include "../../Data/LayoutProperty.h"
 
 namespace Sgl::UIElements
 {
@@ -46,13 +45,10 @@ namespace Sgl::UIElements
 		void SetRowDefinitions(const std::string& value, ValueSource source = ValueSource::Local);
 		const std::string& GetRowDefinitions() const { return _rowDefinitionsStr; }
 
-		static LayoutProperty<uint32_t> ColumnProperty;
-		static LayoutProperty<uint32_t> RowProperty;
-		static LayoutProperty<uint32_t> ColumnSpanProperty;
-		static LayoutProperty<uint32_t> RowSpanProperty;
 		static inline StyleableProperty ColumnDefinitionsProperty { &SetColumnDefinitions, &GetColumnDefinitions };
 		static inline StyleableProperty RowDefinitionsProperty { &SetRowDefinitions, &GetRowDefinitions };
 	protected:
+		void OnPropertyChanged(PropertyBase& property) override;
 		FSize MeasureContent(FSize availableSize) override;
 		void ArrangeContent(FRect rect) override;
 	private:

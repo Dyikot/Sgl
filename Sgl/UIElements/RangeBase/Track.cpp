@@ -11,15 +11,19 @@ namespace Sgl::UIElements
 
 	void Track::SetFillRatio(float value, ValueSource source)
 	{
-		if(SetProperty(FillRatioProperty, _fillRatio, value, _fillRatioSource, source))
-		{
-			InvalidateArrange();
-		}
+		SetProperty(FillRatioProperty, _fillRatio, value, _fillRatioSource, source);
 	}
 
 	void Track::SetOrientation(Orientation value, ValueSource source)
 	{
-		if(SetProperty(OrientationProperty, _orientation, value, _orientationSource, source))
+		SetProperty(OrientationProperty, _orientation, value, _orientationSource, source);
+	}
+
+	void Track::OnPropertyChanged(PropertyBase& property)
+	{
+		TemplatedUIElement::OnPropertyChanged(property);
+
+		if(property == FillRatioProperty || property == OrientationProperty)
 		{
 			InvalidateArrange();
 		}

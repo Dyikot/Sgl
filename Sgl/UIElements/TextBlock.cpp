@@ -19,97 +19,52 @@ namespace Sgl::UIElements
 
 	void TextBlock::SetText(const std::string& value, ValueSource source)
 	{
-		if(SetProperty(TextProperty, _text, value, _textSource, source))
-		{
-			InvalidateTextTexture();
-			InvalidateMeasure();
-		}
+		SetProperty(TextProperty, _text, value, _textSource, source);
 	}
 
 	void TextBlock::SetFontSize(float value, ValueSource source)
 	{
-		if(SetProperty(FontSizeProperty, _fontSize, value, _fontSizeSource, source))
-		{
-			InvalidateFont(FontSizeFlag);
-			InvalidateTextTexture();
-			InvalidateMeasure();
-		}
+		SetProperty(FontSizeProperty, _fontSize, value, _fontSizeSource, source);
 	}
 
 	void TextBlock::SetFontOutline(int value, ValueSource source)
 	{
-		if(SetProperty(FontOutlineProperty, _outline, value, _outlineSource, source))
-		{
-			InvalidateFont(FontOutlineFlag);
-			InvalidateTextTexture();
-			InvalidateMeasure();
-		}
+		SetProperty(FontOutlineProperty, _outline, value, _outlineSource, source);
 	}
 
 	void TextBlock::SetFontFamily(FontFamily value, ValueSource source)
 	{
-		if(SetProperty(FontFamilyProperty, _fontFamily, value, _fontFamilySource, source))
-		{
-			InvalidateFont(FontFamilyFlag);
-			InvalidateTextTexture();
-			InvalidateMeasure();
-		}
+		SetProperty(FontFamilyProperty, _fontFamily, value, _fontFamilySource, source);
 	}
 
 	void TextBlock::SetFlowDirection(FlowDirection value, ValueSource source)
 	{
-		if(SetProperty(FlowDirectionProperty, _flowDirection, value, _flowDirectionSource, source))
-		{
-			InvalidateFont(FlowDirectionFlag);
-			InvalidateTextTexture();
-			InvalidateMeasure();
-		}
+		SetProperty(FlowDirectionProperty, _flowDirection, value, _flowDirectionSource, source);
 	}
 
 	void TextBlock::SetFontStyle(FontStyle value, ValueSource source)
 	{
-		if(SetProperty(FontStyleProperty, _fontStyle, value, _fontStyleSource, source))
-		{
-			InvalidateFont(FontStyleFlag);
-			InvalidateTextTexture();
-			InvalidateRender();
-		}
+		SetProperty(FontStyleProperty, _fontStyle, value, _fontStyleSource, source);
 	}
 
 	void TextBlock::SetForeground(Color value, ValueSource source)
 	{
-		if(SetProperty(ForegroundProperty, _foreground, value, _foregroundSource, source))
-		{
-			InvalidateTextTexture();
-			InvalidateRender();
-		}
+		SetProperty(ForegroundProperty, _foreground, value, _foregroundSource, source);
 	}
 
 	void TextBlock::SetTextWrapping(TextWrapping value, ValueSource source)
 	{
-		if(SetProperty(TextWrappingProperty, _textWrapping, value, _textWrappingSource, source))
-		{
-			InvalidateTextTexture();
-			InvalidateMeasure();
-		}
+		SetProperty(TextWrappingProperty, _textWrapping, value, _textWrappingSource, source);
 	}
 
 	void TextBlock::SetTextAlignment(TextAlignment value, ValueSource source)
 	{
-		if(SetProperty(TextAlignmentProperty, _textAlignment, value, _textAlignmentSource, source))
-		{
-			InvalidateFont(TextAlignmentFlag);
-			InvalidateTextTexture();
-			InvalidateMeasure();
-		}
+		SetProperty(TextAlignmentProperty, _textAlignment, value, _textAlignmentSource, source);
 	}
 
 	void TextBlock::SetPadding(Thickness value, ValueSource source)
 	{
-		if(SetProperty(PaddingProperty, _padding, value, _paddingSource, source))
-		{
-			InvalidateMeasure();
-		}
+		SetProperty(PaddingProperty, _padding, value, _paddingSource, source);
 	}
 
 	void TextBlock::Render(RenderContext context)
@@ -122,6 +77,67 @@ namespace Sgl::UIElements
 			context.SetClip(Rect(x, y, width, height));
 			context.DrawTexture(textTexture, &_textBounds, nullptr);
 			context.ResetClip();
+		}
+	}
+
+	void TextBlock::OnPropertyChanged(PropertyBase& property)
+	{
+		UIElement::OnPropertyChanged(property);
+
+		if(property == TextProperty)
+		{
+			InvalidateTextTexture();
+			InvalidateMeasure();
+		}
+		else if(property == ForegroundProperty)
+		{
+			InvalidateTextTexture();
+			InvalidateRender();
+		}
+		else if(property == PaddingProperty)
+		{
+			InvalidateMeasure();
+		}
+		else if(property == FontSizeProperty)
+		{
+			InvalidateFont(FontSizeFlag);
+			InvalidateTextTexture();
+			InvalidateMeasure();
+		}
+		else if(property == TextAlignmentProperty)
+		{
+			InvalidateFont(TextAlignmentFlag);
+			InvalidateTextTexture();
+			InvalidateMeasure();
+		}
+		else if(property == TextWrappingProperty)
+		{
+			InvalidateTextTexture();
+			InvalidateMeasure();
+		}
+		else if(property == FontFamilyProperty)
+		{
+			InvalidateFont(FontFamilyFlag);
+			InvalidateTextTexture();
+			InvalidateMeasure();
+		}
+		else if(property == FontStyleProperty)
+		{
+			InvalidateFont(FontStyleFlag);
+			InvalidateTextTexture();
+			InvalidateRender();
+		}
+		else if(property == FontOutlineProperty)
+		{
+			InvalidateFont(FontOutlineFlag);
+			InvalidateTextTexture();
+			InvalidateMeasure();
+		}
+		else if(property == FlowDirectionProperty)
+		{
+			InvalidateFont(FlowDirectionFlag);
+			InvalidateTextTexture();
+			InvalidateMeasure();
 		}
 	}
 

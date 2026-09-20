@@ -60,6 +60,7 @@ namespace Sgl
 		static inline const PseudoClass OnFocus = PseudoClass::Register("focus");
 	protected:
 		~UIElement() = default;
+		void OnPropertyChanged(PropertyBase& property) override;
 		void SetParent(IStyleHost* parent) override;
 		void OnCursorChanged(Cursor cursor) final;
 		void OnBackgroundChanged(const Brush& background) final;

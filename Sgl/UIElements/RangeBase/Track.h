@@ -18,6 +18,7 @@ namespace Sgl::UIElements
 		static inline StyleableProperty FillRatioProperty { &SetFillRatio, &GetFillRatio };
 		static inline StyleableProperty OrientationProperty { &SetOrientation, &GetOrientation };
 	protected:
+		void OnPropertyChanged(PropertyBase& property) override;
 		void ArrangeContent(FRect rect) override;
 	private:
 		void BuildTemplate();

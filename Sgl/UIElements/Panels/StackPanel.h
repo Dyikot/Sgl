@@ -18,6 +18,7 @@ namespace Sgl::UIElements
 		static inline StyleableProperty SpacingProperty { &SetSpacing, &GetSpacing };
 		static inline StyleableProperty OrientationProperty { &SetOrientation, &GetOrientation };
 	protected:
+		void OnPropertyChanged(PropertyBase& property) override;
 		FSize MeasureContent(FSize availableSize) override;
 		void ArrangeContent(FRect rect) override;
 	private:

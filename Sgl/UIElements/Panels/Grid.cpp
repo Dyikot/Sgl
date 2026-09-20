@@ -13,58 +13,21 @@ namespace
 		uint32_t ColumnSpan;
 		uint32_t RowSpan;
 	};
+
+	bool SetField(uint32_t& field, uint32_t value)
+	{
+		if(field == value)
+		{
+			return false;
+		}
+
+		field = value;
+		return true;
+	}
 }
 
 namespace Sgl::UIElements
 {
-	LayoutProperty<uint32_t> Grid::ColumnProperty =
-	{
-		[](Layoutable& element, uint32_t value)
-		{
-			if(element.SetProperty(ColumnProperty, element.GetLayoutContext<Context>().Column, value))
-			{
-				element.InvalidateMeasure();
-			}
-		},
-		[](Layoutable& element) { return element.GetLayoutContext<Context>().Column; }
-	};
-
-	LayoutProperty<uint32_t> Grid::RowProperty =
-	{
-		[](Layoutable& element, uint32_t value)
-		{
-			if(element.SetProperty(RowProperty, element.GetLayoutContext<Context>().Row, value))
-			{
-				element.InvalidateMeasure();
-			}
-		},
-		[](Layoutable& element) { return element.GetLayoutContext<Context>().Row; }
-	};
-
-	LayoutProperty<uint32_t> Grid::ColumnSpanProperty =
-	{
-		[](Layoutable& element, uint32_t value)
-		{
-			if(element.SetProperty(ColumnSpanProperty, element.GetLayoutContext<Context>().ColumnSpan, value))
-			{
-				element.InvalidateMeasure();
-			}
-		},
-		[](Layoutable& element) { return element.GetLayoutContext<Context>().ColumnSpan; }
-	};
-
-	LayoutProperty<uint32_t> Grid::RowSpanProperty =
-	{
-		[](Layoutable& element, uint32_t value)
-		{
-			if(element.SetProperty(RowSpanProperty, element.GetLayoutContext<Context>().RowSpan, value))
-			{
-				element.InvalidateMeasure();
-			}
-		},
-		[](Layoutable& element) { return element.GetLayoutContext<Context>().RowSpan; }
-	};
-
 	Grid::Grid()
 	{
 		Name = "Grid";
@@ -72,42 +35,54 @@ namespace Sgl::UIElements
 
 	void Grid::SetColumn(const Ref<UIElement>& element, uint32_t value)
 	{
-		ColumnProperty.InvokeSetter(element.GetValue(), value);
+		if(SetField(element->GetLayoutContext<Context>().Column, value))
+		{
+			element->InvalidateMeasure();
+		}
 	}
 
 	uint32_t Grid::GetColumn(const Ref<UIElement>& element)
 	{
-		return ColumnProperty.InvokeGetter(element.GetValue());
+		return element->GetLayoutContext<Context>().Column;
 	}
 
 	void Grid::SetRow(const Ref<UIElement>& element, uint32_t value)
 	{
-		RowProperty.InvokeSetter(element.GetValue(), value);
+		if(SetField(element->GetLayoutContext<Context>().Row, value))
+		{
+			element->InvalidateMeasure();
+		}
 	}
 
 	uint32_t Grid::GetRow(const Ref<UIElement>& element)
 	{
-		return RowProperty.InvokeGetter(element.GetValue());
+		return element->GetLayoutContext<Context>().Row;
 	}
 
 	void Grid::SetColumnSpan(const Ref<UIElement>& element, uint32_t value)
 	{
-		ColumnSpanProperty.InvokeSetter(element.GetValue(), value);
+		if(SetField(element->GetLayoutContext<Context>().ColumnSpan, value))
+		{
+			element->InvalidateMeasure();
+		}
 	}
 
 	uint32_t Grid::GetColumnSpan(const Ref<UIElement>& element)
 	{
-		return ColumnSpanProperty.InvokeGetter(element.GetValue());
+		return element->GetLayoutContext<Context>().ColumnSpan;
 	}
 
 	void Grid::SetRowSpan(const Ref<UIElement>& element, uint32_t value)
 	{
-		RowSpanProperty.InvokeSetter(element.GetValue(), value);
+		if(SetField(element->GetLayoutContext<Context>().RowSpan, value))
+		{
+			element->InvalidateMeasure();
+		}
 	}
 
 	uint32_t Grid::GetRowSpan(const Ref<UIElement>& element)
 	{
-		return RowSpanProperty.InvokeGetter(element.GetValue());
+		return element->GetLayoutContext<Context>().RowSpan;
 	}
 
 	static std::vector<ColumnDefinition> ParseDefenition(std::string_view defenition)
@@ -170,22 +145,30 @@ namespace Sgl::UIElements
 
 	void Grid::SetColumnDefinitions(const std::string& value, ValueSource source)
 	{
-		if(SetProperty(ColumnDefinitionsProperty, _columnDefinitionsStr, value, _columnDefinitionsValueSource, source))
-		{
-			InvalidateMeasure();
-			_columnDefinitions = ParseDefenition(_columnDefinitionsStr);
-		}
+		SetProperty(ColumnDefinitionsProperty, _columnDefinitionsStr, value, _columnDefinitionsValueSource, source);
 	}
 
 	void Grid::SetRowDefinitions(const std::string& value, ValueSource source)
 	{
-		if(SetProperty(RowDefinitionsProperty, _rowDefinitionsStr, value, _rowDefinitionsValueSource, source))
-		{
-			InvalidateMeasure();
-			_rowDefinitions = ParseDefenition(_rowDefinitionsStr);
-		}
+		SetProperty(RowDefinitionsProperty, _rowDefinitionsStr, value, _rowDefinitionsValueSource, source);
 	}
 	
+	void Grid::OnPropertyChanged(PropertyBase& property)
+	{
+		Panel::OnPropertyChanged(property);
+
+		if(property == ColumnDefinitionsProperty)
+		{
+			_columnDefinitions = ParseDefenition(_columnDefinitionsStr);
+			InvalidateMeasure();
+		}
+		else if(property == RowDefinitionsProperty)
+		{
+			_rowDefinitions = ParseDefenition(_rowDefinitionsStr);
+			InvalidateMeasure();
+		}
+	}
+
 	FSize Grid::MeasureContent(FSize availableSize)
 	{
 		FSize size {};

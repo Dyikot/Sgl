@@ -75,11 +75,12 @@ namespace Sgl
 		static inline StyleableProperty HorizontalAlignmentProperty { &SetHorizontalAlignment, &GetHorizontalAlignment };
 	protected:
 		~Layoutable() = default;
-		virtual FSize MeasureContent(FSize availableSize) { return FSize(); }
-		virtual void ArrangeContent(FRect rect) { }
+		void OnPropertyChanged(PropertyBase& property) override;
 		void SetParent(IStyleHost* parent) override;
 		void OnAttachedToLogicalTree() override;
 		void OnDetachedFromLogicalTree() override;
+		virtual FSize MeasureContent(FSize availableSize) { return FSize(); }
+		virtual void ArrangeContent(FRect rect) { }
 	private:
 		alignas(std::max_align_t) char _layoutContext[32] {};
 		float _width = 0;

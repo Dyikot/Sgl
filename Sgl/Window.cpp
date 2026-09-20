@@ -385,6 +385,16 @@ namespace Sgl
             return;
         }
 
+        if(_content == value)
+        {
+            if(source < ValueSource::PseudoClass)
+            {
+                _contentSource = source;
+            }
+
+            return;
+        }
+
         if(_content)
         {
             _content->SetParent(nullptr);
@@ -395,20 +405,20 @@ namespace Sgl
             }
         }
 
-        if(SetProperty(ContentProperty, _content, value, _contentSource, source))
+        _content = value;
+        _contentSource = source;
+        
+        if(_content)
         {
-            if(_content)
+            _content->SetParent(this);
+
+            if(IsAttachedToLogicalTree())
             {
-                _content->SetParent(this);
-
-                if(IsAttachedToLogicalTree())
-                {
-                    _content->OnAttachedToLogicalTree();
-                }
+                _content->OnAttachedToLogicalTree();
             }
-
-            InvalidateRender();
         }
+
+        OnPropertyChanged(ContentProperty);
     }
 
     Ref<UIElement> Window::HitTest(FPoint point) const
@@ -544,6 +554,16 @@ namespace Sgl
                 auto [width, height] = GetSize();
                 _content->Arrange(FRect(0, 0, width, height));
             }
+        }
+    }
+
+    void Window::OnPropertyChanged(PropertyBase& property)
+    {
+        Renderable::OnPropertyChanged(property);
+
+        if(property == ContentProperty)
+        {
+            InvalidateRender();
         }
     }
 

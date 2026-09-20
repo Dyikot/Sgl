@@ -1,89 +1,59 @@
 #include "Layoutable.h"
+#include "LayoutHelper.h"
+#include "../Base/Logging.h"
 
 #include <algorithm>
-#include "../Base/Logging.h"
-#include "LayoutHelper.h"
 
 namespace Sgl
 {
 	void Layoutable::SetWidth(float value, ValueSource source)
 	{
-		if(SetProperty(WidthProperty, _width, value, _widthSource, source))
-		{
-			InvalidateMeasure();
-		}
+		SetProperty(WidthProperty, _width, value, _widthSource, source);
 	}
 
 	void Layoutable::SetHeight(float value, ValueSource source)
 	{
-		if(SetProperty(HeightProperty, _height, value, _heightSource, source))
-		{
-			InvalidateMeasure();
-		}
+		SetProperty(HeightProperty, _height, value, _heightSource, source);
 	}
 
 	void Layoutable::SetMinWidth(float value, ValueSource source)
 	{
-		if(SetProperty(MinWidthProperty, _minWidth, value, _minWidthSource, source))
-		{
-			InvalidateMeasure();
-		}
+		SetProperty(MinWidthProperty, _minWidth, value, _minWidthSource, source);
 	}
 
 	void Layoutable::SetMinHeight(float value, ValueSource source)
 	{
-		if(SetProperty(MinHeightProperty, _minHeight, value, _minHeightSource, source))
-		{
-			InvalidateMeasure();
-		}
+		SetProperty(MinHeightProperty, _minHeight, value, _minHeightSource, source);
 	}
 
 	void Layoutable::SetMaxWidth(float value, ValueSource source)
 	{
-		if(SetProperty(MaxWidthProperty, _maxWidth, value, _maxWidthSource, source))
-		{
-			InvalidateMeasure();
-		}
+		SetProperty(MaxWidthProperty, _maxWidth, value, _maxWidthSource, source);
 	}
 
 	void Layoutable::SetMaxHeight(float value, ValueSource source)
 	{
-		if(SetProperty(MaxHeightProperty, _maxHeight, value, _maxHeightSource, source))
-		{
-			InvalidateMeasure();
-		}
+		SetProperty(MaxHeightProperty, _maxHeight, value, _maxHeightSource, source);
 	}
 
 	void Layoutable::SetMargin(Thickness value, ValueSource source)
 	{
-		if(SetProperty(MarginProperty, _margin, value, _marginSource, source))
-		{
-			InvalidateMeasure();
-		}
+		SetProperty(MarginProperty, _margin, value, _marginSource, source);
 	}
 
 	void Layoutable::SetIsVisible(bool value, ValueSource source)
 	{
-		if(SetProperty(IsVisibleProperty, _isVisible, value, _isVisibleSource, source))
-		{
-			InvalidateMeasure();
-		}
+		SetProperty(IsVisibleProperty, _isVisible, value, _isVisibleSource, source);
 	}
 
 	void Layoutable::SetVerticalAlignment(VerticalAlignment value, ValueSource source)
 	{
-		if(SetProperty(VerticalAlignmentProperty, _verticalAlignment, value, _verticalAlignmentSource, source))
-		{
-			InvalidateArrange();
-		}
+		SetProperty(VerticalAlignmentProperty, _verticalAlignment, value, _verticalAlignmentSource, source);
 	}
 
 	void Layoutable::SetHorizontalAlignment(HorizontalAlignment value, ValueSource source)
 	{
-		if(SetProperty(HorizontalAlignmentProperty, _horizontalAlignment, value, _horizontalAlignmentSource, source))
-		{
-			InvalidateArrange();
-		}
+		SetProperty(HorizontalAlignmentProperty, _horizontalAlignment, value, _horizontalAlignmentSource, source);
 	}
 
 	void Layoutable::Arrange(FRect rect)
@@ -208,6 +178,27 @@ namespace Sgl
 			{
 				_layotableParent->InvalidateMeasure();
 			}
+		}
+	}
+
+	void Layoutable::OnPropertyChanged(PropertyBase& property)
+	{
+		Renderable::OnPropertyChanged(property);
+
+		if(property == WidthProperty || 
+		   property == HeightProperty ||
+		   property == MinWidthProperty ||
+		   property == MinHeightProperty ||
+		   property == MaxWidthProperty ||
+		   property == MaxHeightProperty ||
+		   property == MarginProperty ||
+		   property == IsVisibleProperty)
+		{
+			InvalidateMeasure();
+		}
+		else if(property == VerticalAlignmentProperty || property == HorizontalAlignmentProperty)
+		{
+			InvalidateArrange();
 		}
 	}
 

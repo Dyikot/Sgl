@@ -53,6 +53,7 @@ namespace Sgl::UIElements
 		static inline StyleableProperty TextAlignmentProperty { &SetTextAlignment, &GetTextAlignment };
 		static inline StyleableProperty PaddingProperty { &SetPadding, &GetPadding };
 	protected:
+		void OnPropertyChanged(PropertyBase& property) override;
 		void InvalidateTextTexture();
 		void OnDetachedFromLogicalTree() override;
 		FSize MeasureContent(FSize availableSize) override;

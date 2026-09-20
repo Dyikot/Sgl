@@ -36,11 +36,11 @@ namespace Sgl::UIElements
 		static inline StyleableProperty CommandProperty { &SetCommand, &GetCommand };
 		static inline StyleableProperty CommandParameterProperty { &SetCommandParameter, &GetCommandParameter };
 	protected:
-		virtual void OnClick();
 		void OnMouseDown(MouseClickEventArgs& e) override;
 		void OnMouseUp(MouseClickEventArgs& e) override;
 		void OnKeyDown(KeyEventArgs e) override;
 		void OnKeyUp(KeyEventArgs e) override;
+		virtual void OnClick();
 	private:
 		ClickMode _clickMode = ClickMode::Release;
 		Command _command;

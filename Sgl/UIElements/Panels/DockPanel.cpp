@@ -2,36 +2,39 @@
 
 namespace Sgl::UIElements
 {
-	LayoutProperty<Dock> DockPanel::DockProperty =
-	{
-		[](Layoutable& element, Dock value)
-		{
-			if(element.SetProperty(DockProperty, element.GetLayoutContext<Dock>(), value))
-			{
-				element.InvalidateMeasure();
-			}
-		},
-		[](Layoutable& element) { return element.GetLayoutContext<Dock>(); }
-	};
-
 	DockPanel::DockPanel()
 	{
 		Name = "DockPanel";
 	}
 
-	void DockPanel::SetDock(const Ref<UIElement>& element, Dock dock)
+	void DockPanel::SetDock(const Ref<UIElement>& element, Dock value)
 	{
-		DockProperty.InvokeSetter(element.GetValue(), dock);
+		auto& dock = element->GetLayoutContext<Dock>();
+
+		if(dock == value)
+		{
+			return;
+		}
+
+		dock = value;
+		element->InvalidateMeasure();
 	}
 
 	Dock DockPanel::GetDock(const Ref<UIElement>& element)
 	{
-		return DockProperty.InvokeGetter(element.GetValue());
+		return element->GetLayoutContext<Dock>();
 	}
 
 	void DockPanel::SetLastChildFill(bool value, ValueSource source)
 	{
-		if(SetProperty(LastChildFillProperty, _lastChildFill, value, _lastChildFillSource, source))
+		SetProperty(LastChildFillProperty, _lastChildFill, value, _lastChildFillSource, source);
+	}
+
+	void DockPanel::OnPropertyChanged(PropertyBase& property)
+	{
+		Panel::OnPropertyChanged(property);
+
+		if(property == LastChildFillProperty)
 		{
 			InvalidateMeasure();
 		}

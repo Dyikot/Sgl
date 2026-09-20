@@ -2,44 +2,24 @@
 
 namespace Sgl::UIElements
 {
+	void RangeBase::SetValue(float value, ValueSource source)
+	{
+		SetProperty(ValueProperty, _value, Clamp(value), _valueSource, source);
+	}
+
 	void RangeBase::SetMinValue(float value, ValueSource source)
 	{
-		if(SetProperty(MinValueProperty, _minValue, value, _minValueSource, source))
-		{
-			if(_minValue > _value)
-			{
-				SetValue(_minValue, source);
-			}
-		}
+		SetProperty(MinValueProperty, _minValue, value, _minValueSource, source);
 	}
 
 	void RangeBase::SetMaxValue(float value, ValueSource source)
 	{
-		if(SetProperty(MaxValueProperty, _maxValue, value, _maxValueSource, source))
-		{
-			if(_maxValue < _value)
-			{
-				SetValue(_maxValue, source);
-			}
-		}
-	}
-
-	void RangeBase::SetValue(float value, ValueSource source)
-	{
-		value = Clamp(value);
-
-		if(SetProperty(ValueProperty, _value, value, _valueSource, source))
-		{
-			OnValueChanged(value);
-		}
+		SetProperty(MaxValueProperty, _maxValue, value, _maxValueSource, source);
 	}
 
 	void RangeBase::SetOrientation(Orientation value, ValueSource source)
 	{
-		if(SetProperty(OrientationProperty, _orientation, value, _orientationSource, source))
-		{
-			InvalidateRender();
-		}
+		SetProperty(OrientationProperty, _orientation, value, _orientationSource, source);
 	}
 
 	float RangeBase::GetRelativeValue() const
@@ -50,6 +30,34 @@ namespace Sgl::UIElements
 		}
 
 		return (_value - _minValue) / (_maxValue - _minValue);
+	}
+
+	void RangeBase::OnPropertyChanged(PropertyBase& property)
+	{
+		TemplatedUIElement::OnPropertyChanged(property);
+
+		if(property == ValueProperty)
+		{
+			OnValueChanged(_value);
+		}
+		else if(property == MinValueProperty)
+		{
+			if(_minValue > _value)
+			{
+				SetValue(_minValue, _minValueSource);
+			}
+		}
+		else if(property == MaxValueProperty)
+		{
+			if(_maxValue < _value)
+			{
+				SetValue(_maxValue, _maxValueSource);
+			}
+		}
+		else if(property == OrientationProperty)
+		{
+			InvalidateRender();
+		}		
 	}
 
 	void RangeBase::OnValueChanged(float value)

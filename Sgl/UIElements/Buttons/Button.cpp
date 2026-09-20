@@ -25,16 +25,6 @@ namespace Sgl::UIElements
 		SetProperty(CommandParameterProperty, _commandParameter, value, _commandParameterSource, source);
 	}
 
-	void Button::OnClick()
-	{
-		Click.Invoke(*this);
-
-		if(_command.HasTarget())
-		{
-			_command(_commandParameter);
-		}
-	}
-
 	void Button::OnMouseDown(MouseClickEventArgs& e)
 	{
 		ContentUIElement::OnMouseDown(e);
@@ -73,6 +63,16 @@ namespace Sgl::UIElements
 		if(e.Key == KeyCodes::Return || e.Key == KeyCodes::KpEnter)
 		{
 			PseudoClasses.Reset(OnPressed);
+		}
+	}
+
+	void Button::OnClick()
+	{
+		Click.Invoke(*this);
+
+		if(_command.HasTarget())
+		{
+			_command(_commandParameter);
 		}
 	}
 }

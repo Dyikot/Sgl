@@ -16,7 +16,11 @@ namespace Sgl
 
 		if(_dataContext == value)
 		{
-			_dataContextSource = source;
+			if(source < ValueSource::PseudoClass)
+			{
+				_dataContextSource = source;
+			}
+
 			return;
 		}
 
@@ -25,8 +29,8 @@ namespace Sgl
 			ClearBindings();
 		}
 
-		_dataContextSource = source;
 		_dataContext = value;
+		_dataContextSource = source;
 
 		if(_dataContext)
 		{
@@ -34,7 +38,16 @@ namespace Sgl
 		}
 
 		OnPropertyChanged(DataContextProperty);
-		OnDataContextChanged(value);
+	}
+
+	void Bindable::OnPropertyChanged(PropertyBase& property)
+	{
+		ObservableObject::OnPropertyChanged(property);
+
+		if(property == DataContextProperty)
+		{
+			OnDataContextChanged(_dataContext);
+		}
 	}
 
 	void Bindable::ClearBinding(PropertyBase& targetProperty)

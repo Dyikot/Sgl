@@ -28,6 +28,7 @@ namespace Sgl
         static inline StyleableProperty BackgroundProperty { &SetBackground, &GetBackground };
     protected:
         ~Renderable() = default;
+        void OnPropertyChanged(PropertyBase& property) override;
         void SetVisualRoot(IVisualRoot* visualRoot);
         bool IsBackgroundTransparent() const { return _isBackgroundTransparent; }
         void OnAttachedToLogicalTree() override;

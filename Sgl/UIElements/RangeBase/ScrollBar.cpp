@@ -65,24 +65,17 @@ namespace Sgl::UIElements
 	void ScrollBar::SetViewportSize(float value, ValueSource source)
 	{
 		value = std::clamp(value, 0.0f, 1.0f);
-
-		if(SetProperty(ViewportSizeProperty, _viewportSize, value, _viewportSizeSource, source))
-		{
-			_scrollScale = 1.0f / (1.0f - _viewportSize);
-			InvalidateArrange();
-		}
+		SetProperty(ViewportSizeProperty, _viewportSize, value, _viewportSizeSource, source);
 	}
 
 	void ScrollBar::SetSmallChange(float value, ValueSource source)
 	{
-		value = Clamp(value);
-		SetProperty(SmallChangeProperty, _smallChange, value, _smallChangeSource, source);
+		SetProperty(SmallChangeProperty, _smallChange, Clamp(value), _smallChangeSource, source);
 	}
 
 	void ScrollBar::SetLargeChange(float value, ValueSource source)
 	{
-		value = Clamp(value);
-		SetProperty(LargeChangeProperty, _largeChange, value, _largeChangeSource, source);
+		SetProperty(LargeChangeProperty, _largeChange, Clamp(value), _largeChangeSource, source);
 	}
 
 	void ScrollBar::LineUp()
@@ -113,6 +106,17 @@ namespace Sgl::UIElements
 	void ScrollBar::ScrollToEnd()
 	{
 		SetValue(GetMaxValue());
+	}
+
+	void ScrollBar::OnPropertyChanged(PropertyBase& property)
+	{
+		RangeBase::OnPropertyChanged(property);
+
+		if(property == ViewportSizeProperty)
+		{
+			_scrollScale = 1.0f / (1.0f - _viewportSize);
+			InvalidateArrange();
+		}
 	}
 
 	void ScrollBar::OnValueChanged(float value)

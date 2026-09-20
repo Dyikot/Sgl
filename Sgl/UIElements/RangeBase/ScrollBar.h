@@ -29,6 +29,7 @@ namespace Sgl::UIElements
 		static inline StyleableProperty SmallChangeProperty { &SetSmallChange, &GetSmallChange };
 		static inline StyleableProperty LargeChangeProperty { &SetLargeChange, &GetLargeChange };
 	protected:
+		void OnPropertyChanged(PropertyBase& property) override;
 		void OnValueChanged(float value) override;
 		void OnMouseDown(MouseClickEventArgs& e) override;
 	private:

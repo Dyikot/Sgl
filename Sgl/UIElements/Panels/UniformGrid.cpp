@@ -9,35 +9,36 @@ namespace Sgl::UIElements
 
 	void UniformGrid::SetRows(uint32_t value, ValueSource source)
 	{
-		if(SetProperty(RowsProperty, _rows, value, _rowsValueSource, source))
-		{
-			InvalidateMeasure();
-		}
+        SetProperty(RowsProperty, _rows, value, _rowsValueSource, source);
 	}
 
 	void UniformGrid::SetColumns(uint32_t value, ValueSource source)
 	{
-		if(SetProperty(ColumnsProperty, _columns, value, _columnsValueSource, source))
-		{
-			InvalidateMeasure();
-		}
+        SetProperty(ColumnsProperty, _columns, value, _columnsValueSource, source);
 	}
 
 	void UniformGrid::SetRowSpacing(float value, ValueSource source)
 	{
-		if(SetProperty(RowSpacingProperty, _rowSpacing, value, _rowSpacingValueSource, source))
-		{
-			InvalidateMeasure();
-		}
+        SetProperty(RowSpacingProperty, _rowSpacing, value, _rowSpacingValueSource, source);
 	}
 
 	void UniformGrid::SetColumnSpacing(float value, ValueSource source)
 	{
-		if(SetProperty(ColumnSpacingProperty, _columnSpacing, value, _columnSpacingValueSource, source))
-		{
-			InvalidateMeasure();
-		}
+        SetProperty(ColumnSpacingProperty, _columnSpacing, value, _columnSpacingValueSource, source);
 	}
+
+    void UniformGrid::OnPropertyChanged(PropertyBase& property)
+    {
+        Panel::OnPropertyChanged(property);
+
+        if(property == RowsProperty || 
+           property == ColumnsProperty ||
+           property == RowSpacingProperty ||
+           property == ColumnSpacingProperty)
+        {
+            InvalidateMeasure();
+        }
+    }
 
     FSize UniformGrid::MeasureContent(FSize availableSize)
     {

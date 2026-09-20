@@ -20,6 +20,7 @@ namespace Sgl::UIElements
 		static inline StyleableProperty BorderWidthProperty { &SetBorderWidth, &GetBorderWidth };
 		static inline StyleableProperty BorderColorProperty { &SetBorderColor, &GetBorderColor };
 	protected:
+		void OnPropertyChanged(PropertyBase& property) override;
 		FSize MeasureContent(FSize availableSize) override;
 		void ArrangeContent(FRect rect) override;
 	private:

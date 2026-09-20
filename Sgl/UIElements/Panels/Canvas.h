@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Panel.h"
-#include "../../Data/LayoutProperty.h"
 
 namespace Sgl::UIElements
 {
@@ -21,11 +20,6 @@ namespace Sgl::UIElements
 
 		static void SetBottom(const Ref<UIElement>& element, int value);
 		static int GetBottom(const Ref<UIElement>& element);
-
-		static LayoutProperty<int> LeftProperty;
-		static LayoutProperty<int> TopProperty;
-		static LayoutProperty<int> RightProperty;
-		static LayoutProperty<int> BottomProperty;
 	protected:
 		FSize MeasureContent(FSize availableSize) override;
 		void ArrangeContent(FRect rect) override;	

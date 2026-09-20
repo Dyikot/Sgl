@@ -26,6 +26,7 @@ namespace Sgl::UIElements
 		static inline StyleableProperty RowSpacingProperty { &SetRowSpacing, &GetRowSpacing };
 		static inline StyleableProperty ColumnSpacingProperty { &SetColumnSpacing, &GetColumnSpacing };
 	protected:
+		void OnPropertyChanged(PropertyBase& property) override;
 		FSize MeasureContent(FSize availableSize) override;
 		void ArrangeContent(FRect rect) override;
 	private:
