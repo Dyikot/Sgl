@@ -115,8 +115,7 @@ namespace Sgl
     private:
         static inline Application* _current;
         Window* _focusedWindow = nullptr;
-        std::vector<uint32_t> _windowsIds;
-        std::vector<Window*> _windows;
+        std::vector<std::pair<uint32_t, Window*>> _windowsById;
         std::vector<Window*> _activeWindows;
         ServiceLocator* _services = new ServiceLocator();
         bool _isRunning = false;

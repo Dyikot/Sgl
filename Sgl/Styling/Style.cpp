@@ -3,19 +3,6 @@
 
 namespace Sgl
 {
-    static bool Contains(const std::vector<std::string>& classes, const std::string& className)
-    {
-        for(auto& aclass : classes)
-        {
-            if(aclass == className)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     Style::Style(Style&& other) noexcept: 
         _setters(std::move(other._setters)),
         _typeComparer(other._typeComparer),
@@ -95,7 +82,7 @@ namespace Sgl
 
             for(auto& className : *_classes)
             {
-                if(!Contains(targetClasses, className))
+                if(std::ranges::find(targetClasses, className) == targetClasses.end())
                 {
                     return false;
                 }
