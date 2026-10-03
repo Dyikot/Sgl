@@ -4,6 +4,7 @@
 #include "Base/ServiceLocator.h"
 #include "Base/Media/ThemeMode.h"
 #include "Base/Media/ThemeResources.h"
+#include "Base/Collections/PackedMap.h"
 #include "Base/Localization/StringLocalizer.h"
 #include "Base/Localization/LocalizationResources.h"
 #include "Styling/IStyleHost.h"
@@ -115,7 +116,7 @@ namespace Sgl
     private:
         static inline Application* _current;
         Window* _focusedWindow = nullptr;
-        std::vector<std::pair<uint32_t, Window*>> _windowsById;
+        PackedMap<uint32_t, Window*> _windows;
         std::vector<Window*> _activeWindows;
         ServiceLocator* _services = new ServiceLocator();
         bool _isRunning = false;

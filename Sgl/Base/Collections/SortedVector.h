@@ -157,12 +157,7 @@ namespace Sgl
 		int Find(const T& item) const
 		{
 			auto it = LowerBound(item);
-			if(it != _items.end() && !_comparer(item, *it))
-			{
-				return static_cast<int>(it - _items.begin());
-			}
-
-			return -1;
+			return it != _items.end() && !_comparer(item, *it) ? static_cast<int>(it - _items.begin()) : -1;
 		}
 
 		//! @brief Removes the first occurrence of a specific item from the vector

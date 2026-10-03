@@ -147,8 +147,8 @@ namespace Sgl
 
     Window* Application::GetWindow(uint32_t id)
     {
-        auto it = std::ranges::find(_windowsById, id, &std::pair<uint32_t, Window*>::first);
-        return it != _windowsById.end() ? it->second : nullptr;
+        auto it = _windows.Find(id);
+        return it ? *it : nullptr;
     }
 
     void Application::Run()
@@ -586,18 +586,12 @@ namespace Sgl
 
     void Application::AddWindow(Window& window)
     {
-        _windowsById.emplace_back(window.GetId(), &window);
+        _windows.Add(window.GetId(), &window);
     }
 
     void Application::RemoveWindow(Window& window)
     {
-        auto it = std::ranges::find(_windowsById, window.GetId(), &std::pair<uint32_t, Window*>::first);
-
-        if(it != _windowsById.end())
-        {
-            auto index = std::distance(_windowsById.begin(), it);
-            _windowsById.erase(_windowsById.begin() + index);
-        }
+        _windows.Remove(window.GetId());
     }
 
     void Application::AttachWindow(Window& window)
