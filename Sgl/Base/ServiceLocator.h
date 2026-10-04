@@ -48,12 +48,8 @@ namespace Sgl
         template<typename T>
         T* Get() const
         {
-            if(auto it = _services.find(typeid(T)); it != _services.end())
-            {
-                return static_cast<T*>(it->second.get());
-            }
-
-            return nullptr;
+            auto it = _services.find(typeid(T));
+            return it != _services.end() ? static_cast<T*>(it->second.get()) : nullptr;
         }
 
         //! @brief Retrieves a service
@@ -62,13 +58,8 @@ namespace Sgl
         template<typename T>
         T& GetRequired() const
         {
-            auto service = Get<T>();
-            if(!service)
-            {
-                throw Exception("Service not found: {}", typeid(T).name());
-            }
-
-            return *service;
+            T* service = Get<T>();
+            return service ? *service : throw Exception("Service not found: {}", typeid(T).name());
         }
 
     private:

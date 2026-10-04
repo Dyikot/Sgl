@@ -6,82 +6,55 @@
 
 #include "../Base/Logging.h"
 #include "../Render/Surface.h"
-#include "../Base/Exceptions.h"
 #include "../Base/Tools/StringUtils.h"
 
 namespace Sgl
 {
-    class CursorsPool
+    static SDL_Cursor* CreateSystemCursor(Cursors systemCursor)
     {
-    public:
-        ~CursorsPool()
-        {
-            for(auto cursor : _systems)
-            {
-                SDL_DestroyCursor(cursor);
-            }
+        static std::array<SDL_Cursor*, 12> systems {};
+        
+        auto index = static_cast<size_t>(systemCursor);
+        auto& cursor = systems[index];
 
-            for(auto& [_, cursor] : _customs)
-            {
-                SDL_DestroyCursor(cursor);
-            }
+        if(cursor == nullptr)
+        {
+            cursor = SDL_CreateSystemCursor(SDL_SystemCursor(index));
         }
 
-        static CursorsPool& Instance()
+        return cursor;
+    }
+
+    static SDL_Cursor* CreateCustomCursor(std::string_view filePath, Point hotSpot)
+    {
+        static std::unordered_map<std::string, SDL_Cursor*, StringHash, std::equal_to<>> customs;
+        
+        if(auto it = customs.find(filePath); it != customs.end())
         {
-            static CursorsPool pool;
-            return pool;
+            return it->second;
         }
 
-        SDL_Cursor* Get(Cursors systemCursor)
+        Surface surface(filePath);
+        auto cursor = SDL_CreateColorCursor(surface, hotSpot.x, hotSpot.y);
+
+        if(cursor == nullptr)
         {
-            size_t id = static_cast<size_t>(systemCursor);
-            auto& cursor = _systems[id];
-
-            if(cursor == nullptr)
-            {
-                cursor = SDL_CreateSystemCursor(SDL_SystemCursor(id));
-            }
-
-            return cursor;
+            Logging::LogError("Unable to create a cursor: {}", SDL_GetError());
+        }
+        else
+        {
+            customs.emplace(filePath, cursor);
         }
 
-        SDL_Cursor* Get(std::string_view filePath, Point hotSpot)
-        {
-            if(auto it = _customs.find(filePath); it != _customs.end())
-            {
-                return it->second;
-            }
-
-            Surface surface(filePath);
-            auto cursor = SDL_CreateColorCursor(surface, hotSpot.x, hotSpot.y);
-
-            if(cursor == nullptr)
-            {
-                Logging::LogError("Unable to create a cursor: {}", SDL_GetError());
-            }
-            else
-            {
-                _customs.emplace(filePath, cursor);
-            }
-
-            return cursor;
-        }
-
-    private:
-        CursorsPool() = default;
-
-    private:
-        std::array<SDL_Cursor*, 12> _systems {};
-        std::unordered_map<std::string, SDL_Cursor*, StringHash, std::equal_to<>> _customs;
-    };
+        return cursor;
+    }
 
     Cursor::Cursor(Cursors systemCursor) noexcept:
-        _cursor(CursorsPool::Instance().Get(systemCursor))
+        _cursor(CreateSystemCursor(systemCursor))
     {}
 
     Cursor::Cursor(std::string_view filePath, Point hotSpot):
-        _cursor(CursorsPool::Instance().Get(filePath, hotSpot))
+        _cursor(CreateCustomCursor(filePath, hotSpot))
     {}
 
     Cursor::Cursor(const Cursor& other):

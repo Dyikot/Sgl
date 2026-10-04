@@ -155,7 +155,8 @@ namespace Sgl
         {
             if(auto it = std::ranges::find(_keys, key); it != _keys.end())
             {
-                *it = value;
+                auto index = std::distance(_keys.begin(), it);
+                _values[index] = value;
                 return;
             }
 
@@ -171,7 +172,8 @@ namespace Sgl
         {
             if(auto it = std::ranges::find(_keys, key); it != _keys.end())
             {
-                *it = std::move(value);
+                auto index = std::distance(_keys.begin(), it);
+                _values[index] = std::move(value);
                 return;
             }
 
