@@ -119,13 +119,13 @@ namespace Sgl
 		}
 	}
 
-	void UIElement::RecalculateStyle()
+	void UIElement::ApplyStyling()
 	{
-		FetchAndApplyStyle();
+		ApplyStyle();
 
 		for(auto& child : _children)
 		{
-			child->RecalculateStyle();
+			child->ApplyStyling();
 		}
 	}
 
@@ -239,7 +239,7 @@ namespace Sgl
 	{
 		if(e.Button == MouseButton::Left)
 		{
-			PseudoClasses.Set(OnPressed);
+			States.Set(OnPressed);
 		}
 
 		MouseDown.Invoke(*this, e);
@@ -254,7 +254,7 @@ namespace Sgl
 	{
 		if(e.Button == MouseButton::Left)
 		{
-			PseudoClasses.Reset(OnPressed);
+			States.Reset(OnPressed);
 		}
 
 		MouseUp.Invoke(*this, e);
@@ -278,7 +278,7 @@ namespace Sgl
 	void UIElement::OnMouseEnter(MouseMoveEventArgs e)
 	{
 		//Logging::LogInfo("OnMouseEnter: {}", Name);
-		PseudoClasses.Set(OnHover);
+		States.Set(OnHover);
 		MouseEnter.Invoke(*this, e);
 	}
 
@@ -286,13 +286,13 @@ namespace Sgl
 	{
 		//Logging::LogInfo("OnMouseLeave: {}", Name);
 		MouseLeave.Invoke(*this, e);
-		PseudoClasses.Reset(OnHover);
+		States.Reset(OnHover);
 	}
 
 	void UIElement::OnGotFocus(EventArgs e)
 	{
 		//Logging::LogInfo("OnGotFocus: {}", Name);
-		PseudoClasses.Set(OnFocus);
+		States.Set(OnFocus);
 		GotFocus.Invoke(*this, e);
 	}
 
@@ -300,7 +300,7 @@ namespace Sgl
 	{
 		//Logging::LogInfo("OnLostFocus: {}", Name);
 		LostFocus.Invoke(*this, e);
-		PseudoClasses.Reset(OnFocus);
+		States.Reset(OnFocus);
 	}
 
 	void UIElement::AddChild(const Ref<UIElement>& child)

@@ -228,8 +228,8 @@ namespace Sgl
 		//! @return Reference to the topmost active element
 		Ref<UIElement> HitTest(FPoint point) const;
 
-		//! @brief Recalculates style for window and its content
-		void RecalculateStyle();
+		//! @brief Apply style for window and its content
+		void ApplyStyling();
 
 		//! @brief Marks the window's visual content as invalid, requesting a re-render on the next frame
 		void MarkDirty() final;

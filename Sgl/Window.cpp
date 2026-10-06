@@ -387,7 +387,7 @@ namespace Sgl
 
         if(_content == value)
         {
-            if(source < ValueSource::PseudoClass)
+            if(source < ValueSource::VisualState)
             {
                 _contentSource = source;
             }
@@ -426,13 +426,13 @@ namespace Sgl
         return _content ? _content->HitTest(point) : nullptr;
     }
 
-    void Window::RecalculateStyle()
+    void Window::ApplyStyling()
     {
-        FetchAndApplyStyle();
+        ApplyStyle();
         
         if(_content)
         {
-            _content->RecalculateStyle();
+            _content->ApplyStyling();
         }
     }
 

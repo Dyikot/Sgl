@@ -131,6 +131,12 @@ namespace Sgl
             _data.clear();
         }
 
+        TValue& operator[](const TKey& key)
+        {
+            auto it = std::ranges::find(_data, key, &std::pair<TKey, TValue>::first);
+            return it != _data.end() ? it->second : _data.emplace_back(key, TValue()).second;
+        }
+
         PackedMap& operator=(const PackedMap&) = default;
         PackedMap& operator=(PackedMap&&) noexcept = default;
 

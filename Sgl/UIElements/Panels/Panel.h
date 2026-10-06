@@ -43,13 +43,6 @@ namespace Sgl
 	class Panel : public UIElement
 	{
 	public:
-		struct FirstChild;
-		struct LastChild;
-		struct NthChild;
-		struct ChildWithName;
-		template<typename T>
-		struct ChildOfType;
-	public:
 		Panel();
 
 		UIElementsCollection Children;
@@ -58,54 +51,5 @@ namespace Sgl
 		void ArrangeContent(FRect rect) override;
 
 		friend class UIElementsCollection;
-	};	
-
-	struct Panel::FirstChild
-	{
-		Styleable& operator()(Styleable& element) const
-		{
-			return static_cast<Panel&>(element).Children.Front().GetValue();
-		}
-	};
-
-	struct Panel::LastChild
-	{
-		Styleable& operator()(Styleable& element) const
-		{
-			return static_cast<Panel&>(element).Children.Back().GetValue();
-		}
-	};
-
-	struct Panel::NthChild
-	{
-		explicit Panel::NthChild(size_t position):
-			Index(std::max(1ull, position) - 1ull)
-		{}
-
-		const size_t Index;
-
-		Styleable& operator()(Styleable& element) const
-		{
-			return static_cast<Panel&>(element).Children.GetElementAt(Index).GetValue();
-		}
-	};
-
-	struct Panel::ChildWithName
-	{
-		std::string Name;
-
-		Styleable& operator()(Styleable& element) const
-		{
-			return static_cast<Panel&>(element).Children.FindByName(Name).GetValue();
-		}
-	};
-
-	template<typename T>
-	struct Panel::ChildOfType
-	{
-		Styleable& operator()(Styleable& element) const
-		{
-			return static_cast<Panel&>(element).Children.FindOfType<T>().GetValue();
-		}
 	};
 }

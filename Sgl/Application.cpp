@@ -118,9 +118,9 @@ namespace Sgl
         OnThemeVariantChanged();
     }
 
-    void Application::WithStyles(const Action<const StyleCollection&>& action) const
+    void Application::MergeStylesTo(Styleable& element, Style& target)
     {
-        action(Styles);
+        Styles.MergeStylesTo(element, target);
     }
 
     static inline double ToMilliseconds(uint64_t count)
@@ -224,7 +224,7 @@ namespace Sgl
 
         for(auto& window : _activeWindows)
         {
-            window->RecalculateStyle();
+            window->ApplyStyling();
         }
     }
 
@@ -562,14 +562,50 @@ namespace Sgl
 
     void Application::AddDefaultStyles()
     {
-        Styles.New().OfType<CheckBox>().On("checked")
-            .Set(CheckBox::BackgroundProperty, ImageSource(AssetId::CheckBox));
+        Styles.Add(
+        {
+            .selector = Selector().OfType<CheckBox>(),
+            .states =
+            {
+                {
+                    ToggleButton::OnChecked,
+                    SetterCollection
+                    {
+                        new Setter(Renderable::BackgroundProperty, ImageSource(AssetId::CheckBox))
+                    }
+                }
+            }
+        });
 
-        Styles.New().OfType<RadioButton>().On("checked")
-            .Set(CheckBox::BackgroundProperty, ImageSource(AssetId::RadioButton));
+        Styles.Add(
+        {
+            .selector = Selector().OfType<RadioButton>(),
+            .states = 
+            {
+                {
+                    ToggleButton::OnChecked,
+                    SetterCollection
+                    {
+                        new Setter(Renderable::BackgroundProperty, ImageSource(AssetId::RadioButton))
+                    }
+                }
+            }
+        });
 
-        Styles.New().OfType<SwitchButon>().On("checked")
-            .Set(CheckBox::BackgroundProperty, ImageSource(AssetId::SwitchButtonOn));
+        Styles.Add(
+        {
+            .selector = Selector().OfType<SwitchButon>(),
+            .states =
+            {
+                {
+                    ToggleButton::OnChecked,
+                    SetterCollection
+                    {
+                        new Setter(Renderable::BackgroundProperty, ImageSource(AssetId::SwitchButtonOn))
+                    }
+                }
+            }
+        });
     }
 
     void Application::RegisterDefaultServices()

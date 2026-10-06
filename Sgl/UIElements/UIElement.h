@@ -11,8 +11,6 @@ namespace Sgl
 
 	class UIElement : public Layoutable
 	{
-	public:
-		struct Child;
 	private:
 		using UIElementEventHandler = EventHandler<UIElement>;
 		using KeyEventHandler = EventHandler<UIElement, KeyEventArgs>;
@@ -42,22 +40,23 @@ namespace Sgl
 		void SetIsFocusable(bool value, ValueSource source = ValueSource::Local);
 		bool IsFocusable() const { return _focusable; }
 
-		bool IsMouseOver() const { return PseudoClasses.Has(OnHover); }	
-		bool IsMousePressed() const { return PseudoClasses.Has(OnPressed); }
-		bool IsFocused() const { return PseudoClasses.Has(OnFocus); }
+		bool IsMouseOver() const { return States.Has(OnHover); }	
+		bool IsMousePressed() const { return States.Has(OnPressed); }
+		bool IsFocused() const { return States.Has(OnFocus); }
 
 		Ref<UIElement> HitTest(FPoint point);
 
 		bool Focus();
 		void Render(RenderContext context) override;
-		void RecalculateStyle();
+		void ApplyStyling();
+
+		static inline const VisualState OnHover = VisualState::Register("hover");
+		static inline const VisualState OnPressed = VisualState::Register("pressed");
+		static inline const VisualState OnFocus = VisualState::Register("focus");
 
 		static inline StyleableProperty TagProperty { &SetTag, &GetTag };
 		static inline StyleableProperty CornersRadiusProperty { &SetCornersRadius, &GetCornersRadius };
 		static inline StyleableProperty IsFocusableProperty { &SetIsFocusable, &IsFocusable };
-		static inline const PseudoClass OnHover = PseudoClass::Register("hover");
-		static inline const PseudoClass OnPressed = PseudoClass::Register("pressed");
-		static inline const PseudoClass OnFocus = PseudoClass::Register("focus");
 	protected:
 		~UIElement() = default;
 		void OnPropertyChanged(PropertyBase& property) override;
@@ -107,13 +106,5 @@ namespace Sgl
 	public:
 		Ref<UIElement> Build(const Ref<ObservableObject>& data) override;
 		bool Match(const Ref<ObservableObject>& data) const override;
-	};
-
-	struct UIElement::Child
-	{
-		Styleable& operator()(Styleable& element) const
-		{
-			return static_cast<UIElement&>(element).GetChildren().front().GetValue();
-		}
 	};
 }

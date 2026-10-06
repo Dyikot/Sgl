@@ -8,9 +8,19 @@ namespace Sgl
 		SetProperty(CursorProperty, _cursor, value, _cursorSource, source);
 	}
 
+	Cursor Renderable::GetCursor() const
+	{
+		return GetProperty(CursorProperty, _cursor);
+	}
+
 	void Renderable::SetBackground(const Brush& value, ValueSource source)
 	{
 		SetProperty(BackgroundProperty, _background, value, _backgroundSource, source);
+	}
+
+	const Brush& Renderable::GetBackground() const
+	{
+		return GetProperty(BackgroundProperty, _background);
 	}
 
 	void Renderable::Render(RenderContext context)
@@ -66,22 +76,21 @@ namespace Sgl
 
 	ResourceSetter<Renderable, const Brush&>::ResourceSetter(
 		BackgroundProperty& property,
-		ResourceKey key):
+		std::string key):
 		_property(property),
 		_key(std::move(key))
 	{}
+
+	PropertyBase& ResourceSetter<Renderable, const Brush&>::GetProperty() const
+	{
+		return _property;
+	}
 
 	void ResourceSetter<Renderable, const Brush&>::Apply(
 		Styleable& target, 
 		ValueSource valueSource) const
 	{
 		auto& owner = static_cast<Renderable&>(target);
-		_property.InvokeSetter(owner, App->Resources.GetBrush(_key.Value), valueSource);
-	}
-
-	ISavedValue* ResourceSetter<Renderable, const Brush&>::Save(Styleable& target) const
-	{
-		auto& owner = static_cast<Renderable&>(target);
-		return new SavedPropertyValue<Renderable, const Brush&>(_property, owner);
+		_property.InvokeSetter(owner, App->Resources.GetBrush(_key), valueSource);
 	}
 }

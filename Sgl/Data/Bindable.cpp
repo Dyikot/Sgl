@@ -16,7 +16,7 @@ namespace Sgl
 
 		if(_dataContext == value)
 		{
-			if(source < ValueSource::PseudoClass)
+			if(source < ValueSource::VisualState)
 			{
 				_dataContextSource = source;
 			}
@@ -38,6 +38,23 @@ namespace Sgl
 		}
 
 		OnPropertyChanged(DataContextProperty);
+	}
+
+	void Bindable::ClearValue(PropertyBase& property)
+	{
+		_valueStorage.Remove(&property);
+		OnPropertyChanged(property);
+	}
+
+	void Bindable::ClearAllValues()
+	{
+		_clearProperties = _valueStorage.Keys();
+		_valueStorage.Clear();
+
+		for(auto property : _clearProperties)
+		{
+			OnPropertyChanged(*property);
+		}
 	}
 
 	void Bindable::OnPropertyChanged(PropertyBase& property)

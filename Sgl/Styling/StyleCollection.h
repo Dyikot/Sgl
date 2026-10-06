@@ -18,12 +18,6 @@ namespace Sgl
         auto end() const { return _items.end(); }
         auto rend() const { return _items.rend(); }
 
-        //! @brief Creates a new style
-        Style& New()
-        {
-            return _items.emplace_back();
-        }
-
         //! @brief Adds a new style to the collection
         void Add(Style style)
         {
@@ -40,6 +34,17 @@ namespace Sgl
         bool IsEmpty() const noexcept
         {
             return _items.empty();
+        }
+
+        void MergeStylesTo(Styleable& element, Style& target)
+        {
+            for(auto& style : _items)
+            {
+                if(style.selector.Match(element))
+                {
+                    target.Merge(style);
+                }
+            }
         }
 
         //! @brief Gets the style at the specified index (const version)

@@ -10,10 +10,10 @@ namespace Sgl::UIElements
 		Border();
 
 		void SetBorderWidth(uint32_t value, ValueSource source = ValueSource::Local);
-		uint32_t GetBorderWidth() const { return _borderWidth; }
+		uint32_t GetBorderWidth() const;
 
 		void SetBorderColor(Color value, ValueSource source = ValueSource::Local);
-		Color GetBorderColor() const { return _borderColor; }
+		Color GetBorderColor() const;
 
 		void Render(RenderContext context) override;
 
@@ -35,17 +35,17 @@ namespace Sgl::UIElements
 namespace Sgl
 {
 	template<>
-	class ResourceSetter<UIElements::Border, Color>: public Setter
+	class ResourceSetter<UIElements::Border, Color> final: public ISetter
 	{
 	public:
 		using BorderColorProperty = decltype(UIElements::Border::BorderColorProperty);
 	public:
-		ResourceSetter(BorderColorProperty& property, ResourceKey key);
+		ResourceSetter(BorderColorProperty& property, std::string key);
 
-		void Apply(Styleable& target, ValueSource valueSource) const final;
-		ISavedValue* Save(Styleable& target) const override;
+		PropertyBase& GetProperty() const override;
+		void Apply(Styleable& target, ValueSource valueSource) const override;
 	private:
 		BorderColorProperty& _property;
-		ResourceKey _key;
+		std::string _key;
 	};
 }

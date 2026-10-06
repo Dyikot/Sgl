@@ -14,29 +14,42 @@ namespace Sgl::UIElements
 		SetProperty(BorderWidthProperty, _borderWidth, value, _borderWidthSource, source);
 	}
 
+	uint32_t Border::GetBorderWidth() const
+	{
+		return GetProperty(BorderWidthProperty, _borderWidth);
+	}
+
 	void Border::SetBorderColor(Color value, ValueSource source)
 	{
 		SetProperty(BorderColorProperty, _borderColor, value, _borderColorSource, source);
+	}
+
+	Color Border::GetBorderColor() const
+	{
+		return GetProperty(BorderColorProperty, _borderColor);
 	}
 
 	void Border::Render(RenderContext context)
 	{
 		Decorator::Render(context);
 		
-		if(_borderWidth == 0)
+		float borderWidth = GetBorderWidth();
+
+		if(borderWidth == 0)
 		{
 			return;
 		}
 
 		float cornersRadius = GetCornersRadius();
+		Color borderColor = GetBorderColor();
 
 		if(cornersRadius > 0.0f)
 		{
-			context.DrawRoundedRectangle(GetBounds(), cornersRadius, _borderWidth, _borderColor);
+			context.DrawRoundedRectangle(GetBounds(), cornersRadius, borderWidth, borderColor);
 		}
 		else
 		{
-			context.DrawRectangle(GetBounds(), _borderWidth, _borderColor);
+			context.DrawRectangle(GetBounds(), borderWidth, borderColor);
 		}
 	}
 
@@ -56,12 +69,12 @@ namespace Sgl::UIElements
 
 	FSize Border::MeasureContent(FSize availableSize)
 	{
-		return MeasureChild(GetChild().Get(), availableSize, GetPadding().Inflate(_borderWidth));
+		return MeasureChild(GetChild().Get(), availableSize, GetPadding().Inflate(GetBorderWidth()));
 	}
 
 	void Border::ArrangeContent(FRect rect)
 	{
-		ArrangeChild(GetChild().Get(), rect, GetPadding().Inflate(_borderWidth));
+		ArrangeChild(GetChild().Get(), rect, GetPadding().Inflate(GetBorderWidth()));
 	}
 }
 
@@ -69,22 +82,21 @@ namespace Sgl
 {
 	ResourceSetter<UIElements::Border, Color>::ResourceSetter(
 		BorderColorProperty& property,
-		ResourceKey key):
+		std::string key):
 		_property(property),
 		_key(std::move(key))
 	{}
+
+	PropertyBase& ResourceSetter<UIElements::Border, Color>::GetProperty() const
+	{
+		return _property;
+	}
 
 	void ResourceSetter<UIElements::Border, Color>::Apply(
 		Styleable& target,
 		ValueSource valueSource) const
 	{
 		auto& owner = static_cast<UIElements::Border&>(target);
-		_property.InvokeSetter(owner, App->Resources.GetColor(_key.Value), valueSource);
-	}
-
-	ISavedValue* ResourceSetter<UIElements::Border, Color>::Save(Styleable& target) const
-	{
-		auto& owner = static_cast<UIElements::Border&>(target);
-		return new SavedPropertyValue<UIElements::Border, Color>(_property, owner);
+		_property.InvokeSetter(owner, App->Resources.GetColor(_key), valueSource);
 	}
 }

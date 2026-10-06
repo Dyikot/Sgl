@@ -14,10 +14,10 @@ namespace Sgl
         Renderable() = default;
 
         void SetCursor(Cursor value, ValueSource source = ValueSource::Local);
-        Cursor GetCursor() const { return _cursor; }
+        Cursor GetCursor() const;
 
         void SetBackground(const Brush& value, ValueSource source = ValueSource::Local);
-        const Brush& GetBackground() const { return _background; }
+        const Brush& GetBackground() const;
 
         IVisualRoot* GetVisualRoot() const { return _visualRoot; }
         
@@ -48,18 +48,18 @@ namespace Sgl
     };
 
     template<>
-    class ResourceSetter<Renderable, const Brush&> final : public Setter
+    class ResourceSetter<Renderable, const Brush&> final : public ISetter
     {
     public:
         using BackgroundProperty = decltype(Renderable::BackgroundProperty);
     public:
-        ResourceSetter(BackgroundProperty& property, ResourceKey key);
+        ResourceSetter(BackgroundProperty& property, std::string key);
 
+        PropertyBase& GetProperty() const override;
         void Apply(Styleable& target, ValueSource valueSource) const override;
-        ISavedValue* Save(Styleable& target) const override;
     private:
         BackgroundProperty& _property;
-        ResourceKey _key;
+        std::string _key;
     };
 
     using RenderFragment = Action<RenderContext, const FRect&>;

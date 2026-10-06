@@ -101,7 +101,7 @@ namespace Sgl::UIElements
 
 		if(_groupName == value)
 		{
-			if(source < ValueSource::PseudoClass)
+			if(source < ValueSource::VisualState)
 			{
 				_groupNameValueSource = source;
 			}

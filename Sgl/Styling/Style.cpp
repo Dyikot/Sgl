@@ -1,129 +1,73 @@
 #include "Style.h"
 #include "Styleable.h"
 
+namespace
+{
+    using namespace Sgl;
+
+    struct ByProperty
+    {
+        PropertyBase* property;
+
+        bool operator()(const Ref<ISetter>& setter)
+        {
+            return setter->GetProperty() == *property;
+        }
+    };
+}
+
 namespace Sgl
 {
-    Style::Style(Style&& other) noexcept: 
-        _setters(std::move(other._setters)),
-        _typeComparer(other._typeComparer),
-        _name(std::exchange(other._name, nullptr)),
-        _classes(std::exchange(other._classes, nullptr)),
-        _pseudoClasses(other._pseudoClasses)
-    {}
-
-    Style::~Style()
+    void Style::Apply(Styleable& element) const
     {
-        delete _name;
-        delete _classes;
-    }
-
-    Style& Style::Name(std::string name)
-    {
-        if(!_name)
+        for(auto& setter : setters)
         {
-            _name = new std::string();
+            setter->Apply(element, ValueSource::Style);
         }
-
-        _name->swap(name);
-
-        return *this;
     }
 
-    Style& Style::Class(std::string className)
+    void Style::ApplyStates(Styleable& element) const
     {
-        if(!_classes)
+        for(auto& [state, setters] : states)
         {
-            _classes = new std::vector<std::string>();
-        }
-
-        _classes->push_back(std::move(className));
-        return *this;
-    }
-
-    Style& Style::On(PseudoClass pseudoClass)
-    {
-        _pseudoClasses.set(pseudoClass.GetId());
-        return *this;
-    }
-
-    Style& Style::On(std::string_view pseudoClassName)
-    {
-        _pseudoClasses.set(PseudoClass::GetByName(pseudoClassName).GetId());
-        return *this;
-    }
-
-    Style& Style::Target(TargetSelector targetSelector)
-    {
-        _targetSelector = std::move(targetSelector);
-        return *this;
-    }
-
-    Style& Style::Set(std::unique_ptr<Setter> setter)
-    {
-        _setters.push_back(std::move(setter));
-        return *this;
-    }
-
-    bool Style::Match(const Styleable& element) const
-    {
-        if(_typeComparer && !_typeComparer(element))
-        {
-            return false;
-        }
-
-        if(_name && element.Name != *_name)
-        {
-            return false;
-        }
-
-        if(_classes)
-        {
-            auto& targetClasses = element.GetClasses();
-
-            for(auto& className : *_classes)
+            if(!element.States.Has(state))    
             {
-                if(std::ranges::find(targetClasses, className) == targetClasses.end())
-                {
-                    return false;
-                }
+                continue;
+            }
+
+            for(auto& setter : setters)
+            {
+                setter->Apply(element, ValueSource::VisualState);
             }
         }
-
-        return true;
     }
 
-    bool Style::HasState() const
+    void Style::Merge(const Style& other)
     {
-        return _pseudoClasses.any();
-    }
+        Merge(setters, other.setters);
 
-    bool Style::MatchState(const Styleable& element) const
-    {
-        return element.PseudoClasses.Has(_pseudoClasses);
-    }
-
-    void Style::Apply(Styleable& element, ValueSource source) const
-    {
-        auto& target = SelectTarget(element);
-
-        for(auto& setter : _setters)
+        for(auto& [state, source] : other.states)
         {
-            setter->Apply(target, source);
+            auto& target = states[state];
+            Merge(target, source);
         }
     }
 
-    void Style::Save(Styleable& element, std::vector<std::unique_ptr<ISavedValue>>& values) const
+    void Style::Merge(SetterCollection target, SetterCollection source)
     {
-        auto& target = SelectTarget(element);
-
-        for(auto& setter : _setters)
+        for(auto& setter : source)
         {
-            values.emplace_back(setter->Save(target));
-        }
-    }
+            auto& property = setter->GetProperty();
+            auto it = std::ranges::find_if(target, ByProperty(&property));
 
-    Styleable& Style::SelectTarget(Styleable& element) const
-    {
-        return _targetSelector ? _targetSelector(element) : element;
+            if(it != target.end())
+            {
+                *it = setter;
+            }
+            else
+            {
+                target.Add(setter);
+            }
+        }
     }
 }

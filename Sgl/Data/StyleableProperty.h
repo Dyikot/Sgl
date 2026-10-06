@@ -12,7 +12,7 @@ namespace Sgl
 		Inheritance,
 		Style,
 		Local,
-		PseudoClass
+		VisualState
 	};
 
 	//! @brief Represents a styleable property that wraps a getter and setter method pair

@@ -14,8 +14,8 @@ namespace Sgl::UIElements
 		void SetIsChecked(bool value, ValueSource source = ValueSource::Local);
 		bool IsChecked() const { return _isChecked; }
 
+		static inline const VisualState OnChecked = VisualState::Register("checked");
 		static inline StyleableProperty IsCheckedProperty { &SetIsChecked, &IsChecked };
-		static inline const PseudoClass OnChecked = PseudoClass::Register("checked");
 	protected:
 		void OnPropertyChanged(PropertyBase& property) override;
 		void OnClick() override;

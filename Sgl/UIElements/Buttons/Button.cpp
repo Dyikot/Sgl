@@ -51,7 +51,7 @@ namespace Sgl::UIElements
 
 		if(e.Key == KeyCodes::Return || e.Key == KeyCodes::KpEnter)
 		{
-			PseudoClasses.Set(OnPressed);
+			States.Set(OnPressed);
 			OnClick();
 		}
 	}
@@ -62,7 +62,7 @@ namespace Sgl::UIElements
 
 		if(e.Key == KeyCodes::Return || e.Key == KeyCodes::KpEnter)
 		{
-			PseudoClasses.Reset(OnPressed);
+			States.Reset(OnPressed);
 		}
 	}
 

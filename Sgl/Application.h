@@ -73,9 +73,10 @@ namespace Sgl
         //! @return A reference to the style collection
         StyleCollection& GetStyles() final { return Styles; }
 
-        //! @brief Executes an action on the style collection in a read-only context
-        //! @param action The callback action to execute with the immutable style collection
-        void WithStyles(const Action<const StyleCollection&>& action) const final;
+        //! @brief Merges the styles hosted by this object into a target style
+        //! @param element The styleable element providing context for the style resolution
+        //! @param target The target style object that will receive the merged setters
+        void MergeStylesTo(Styleable& element, Style& target) override;
 
         //! @brief Gets the service locator
         //! @return Reference to service locator

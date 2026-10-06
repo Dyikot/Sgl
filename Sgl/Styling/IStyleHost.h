@@ -15,8 +15,9 @@ namespace Sgl
 		//! @return A reference to the style collection
 		virtual StyleCollection& GetStyles() = 0;
 
-		//! @brief Executes an action on the style collection in a read-only context
-		//! @param action The callback action to execute with the immutable style collection
-		virtual void WithStyles(const Action<const StyleCollection&>& action) const = 0;
+		//! @brief Merges the styles hosted by this object into a target style
+		//! @param element The styleable element providing context for the style resolution
+		//! @param target The target style object that will receive the merged setters
+		virtual void MergeStylesTo(Styleable& element, Style& target) = 0;
 	};
 }

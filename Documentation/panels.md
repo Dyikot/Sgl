@@ -156,8 +156,6 @@ grid->SetVerticalAlignment(VerticalAlignment::Center);
 grid->SetColumnDefinitions("100 * auto");
 grid->SetRowDefinitions("100 100");
 grid->SetBackground(Colors::White);
-grid->Styles.Add(Selector().OfType<Grid>(), Panel_NthChild(3))
-	.Set(Border::WidthProperty, 150);
 
 Color colors[] =
 {
@@ -180,6 +178,11 @@ for(auto color : colors)
 	Grid::SetColumn(child, i % 3);
 
 	i++;
+
+	if (i == 3)
+	{
+		child->SetWidth(150);
+	}
 }
 ```
 

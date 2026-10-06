@@ -5,7 +5,9 @@
 #include "ObservableObject.h"
 #include "StyleableProperty.h"
 #include "../Base/Ref.h"
+#include "../Base/Any.h"
 #include "../Base/Exceptions.h"
+#include "../Base/Collections/FlatMap.h"
 
 namespace Sgl
 {
@@ -24,6 +26,12 @@ namespace Sgl
 
 	class Bindable : public ObservableObject
 	{
+	public:
+		struct PropertyValue
+		{
+			Any state;
+		};
+
 	public:
 		Bindable() = default;
 		Bindable(const Bindable&) = delete;
@@ -68,29 +76,51 @@ namespace Sgl
 				return false;
 			}
 
-			if(field == value)
+			if(newSource < ValueSource::VisualState)
 			{
-				if(newSource < ValueSource::PseudoClass)
+				if(field == value)
 				{
 					currentSource = newSource;
+					return false;
 				}
 
-				return false;
+				field = value;
+				currentSource = newSource;
+			}
+			else
+			{
+				PropertyValue  newValue = { .state = value };
+				PropertyValue* currentValue = _valueStorage.Find(&property);
+
+				if(currentValue && currentValue->state == newValue.state)
+				{
+					return false;
+				}
+
+				_valueStorage.Add(&property, std::move(newValue));
 			}
 
-			field = value;
-			currentSource = newSource;
 			OnPropertyChanged(property);
-
 			return true;
 		}
 
+		template<CProperty TProperty, typename TField>
+		TProperty::Value GetProperty(TProperty& property, const TField& field) const
+		{
+			const PropertyValue* it = _valueStorage.Find(&property);
+			return it ? it->state.As<TField>() : field;
+		}
+
+		void ClearValue(PropertyBase& property);
+		void ClearAllValues();
 		void OnPropertyChanged(PropertyBase& property) override;
 		void ApplyBindings();
 		void ClearBindings();
 		virtual void OnDataContextChanged(const Ref<ObservableObject>& dataContext) {}
 	private:
 		std::vector<std::unique_ptr<BindingBase>> _bindings;
+		std::vector<PropertyBase*> _clearProperties;
+		FlatMap<PropertyBase*, PropertyValue> _valueStorage;
 		Ref<ObservableObject> _dataContext;
 
 		ValueSource _dataContextSource {};

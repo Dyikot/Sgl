@@ -52,6 +52,11 @@ namespace Sgl::UIElements
 		SetProperty(ForegroundProperty, _foreground, value, _foregroundSource, source);
 	}
 
+	Color TextBlock::GetForeground() const
+	{
+		return GetProperty(ForegroundProperty, _foreground);
+	}
+
 	void TextBlock::SetTextWrapping(TextWrapping value, ValueSource source)
 	{
 		SetProperty(TextWrappingProperty, _textWrapping, value, _textWrappingSource, source);
@@ -238,8 +243,8 @@ namespace Sgl::UIElements
 		if(!_textTexture && !_text.empty())
 		{
 			_textTexture = _textWrapping == TextWrapping::NoWrap
-				? Texture(renderer, FontQuality::Blended, _fontImpl, _text, _foreground)
-				: Texture(renderer, FontQuality::Blended, _fontImpl, _text, _textBounds.w, _foreground);
+				? Texture(renderer, FontQuality::Blended, _fontImpl, GetText(), GetForeground())
+				: Texture(renderer, FontQuality::Blended, _fontImpl, GetText(), _textBounds.w, GetForeground());
 		}
 
 		return _textTexture;
@@ -250,22 +255,21 @@ namespace Sgl
 {
 	ResourceSetter<UIElements::TextBlock, Color>::ResourceSetter(
 		ForegroundProperty& property,
-		ResourceKey key):
+		std::string key):
 		_property(property),
 		_key(std::move(key))
 	{}
+
+	PropertyBase& ResourceSetter<UIElements::TextBlock, Color>::GetProperty() const
+	{
+		return _property;
+	}
 
 	void ResourceSetter<UIElements::TextBlock, Color>::Apply(
 		Styleable& target,
 		ValueSource valueSource) const
 	{
 		auto& owner = static_cast<UIElements::TextBlock&>(target);
-		_property.InvokeSetter(owner, App->Resources.GetColor(_key.Value), valueSource);
-	}
-
-	ISavedValue* ResourceSetter<UIElements::TextBlock, Color>::Save(Styleable& target) const
-	{
-		auto& owner = static_cast<UIElements::TextBlock&>(target);
-		return new SavedPropertyValue<UIElements::TextBlock, Color>(_property, owner);
+		_property.InvokeSetter(owner, App->Resources.GetColor(_key), valueSource);
 	}
 }

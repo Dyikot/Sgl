@@ -29,7 +29,7 @@ namespace Sgl::UIElements
 		FontStyle GetFontStyle() const { return _fontStyle; }
 
 		void SetForeground(Color value, ValueSource source = ValueSource::Local);
-		Color GetForeground() const { return _foreground; }
+		Color GetForeground() const;
 
 		void SetTextWrapping(TextWrapping value, ValueSource source = ValueSource::Local);
 		TextWrapping GetTextWrapping() const { return _textWrapping; }
@@ -95,17 +95,17 @@ namespace Sgl::UIElements
 namespace Sgl
 {
 	template<>
-	class ResourceSetter<UIElements::TextBlock, Color> : public Setter
+	class ResourceSetter<UIElements::TextBlock, Color> : public ISetter
 	{
 	public:
 		using ForegroundProperty = decltype(UIElements::TextBlock::ForegroundProperty);
 	public:
-		ResourceSetter(ForegroundProperty& property, ResourceKey key);
+		ResourceSetter(ForegroundProperty& property, std::string key);
 
+		PropertyBase& GetProperty() const override;
 		void Apply(Styleable& target, ValueSource valueSource) const final;
-		ISavedValue* Save(Styleable& target) const override;
 	private:
 		ForegroundProperty& _property;
-		ResourceKey _key;
+		std::string _key;
 	};
 }

@@ -13,7 +13,7 @@ namespace Sgl::UIElements
 
 		if(property == IsCheckedProperty)
 		{
-			PseudoClasses.Set(OnChecked, _isChecked);
+			States.Set(OnChecked, _isChecked);
 			OnCheckedChanged();
 		}
 	}
