@@ -1,5 +1,4 @@
 #include "TextBlock.h"
-#include "../Application.h"
 
 #include <SDL3_ttf/SDL_ttf.h>
 
@@ -248,28 +247,5 @@ namespace Sgl::UIElements
 		}
 
 		return _textTexture;
-	}
-}
-
-namespace Sgl
-{
-	ResourceSetter<UIElements::TextBlock, Color>::ResourceSetter(
-		ForegroundProperty& property,
-		std::string key):
-		_property(property),
-		_key(std::move(key))
-	{}
-
-	PropertyBase& ResourceSetter<UIElements::TextBlock, Color>::GetProperty() const
-	{
-		return _property;
-	}
-
-	void ResourceSetter<UIElements::TextBlock, Color>::Apply(
-		Styleable& target,
-		ValueSource valueSource) const
-	{
-		auto& owner = static_cast<UIElements::TextBlock&>(target);
-		_property.InvokeSetter(owner, App->Resources.GetColor(_key), valueSource);
 	}
 }

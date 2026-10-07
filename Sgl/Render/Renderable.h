@@ -47,20 +47,5 @@ namespace Sgl
         bool _isDirty = true;
     };
 
-    template<>
-    class ResourceSetter<Renderable, const Brush&> final : public ISetter
-    {
-    public:
-        using BackgroundProperty = decltype(Renderable::BackgroundProperty);
-    public:
-        ResourceSetter(BackgroundProperty& property, std::string key);
-
-        PropertyBase& GetProperty() const override;
-        void Apply(Styleable& target, ValueSource valueSource) const override;
-    private:
-        BackgroundProperty& _property;
-        std::string _key;
-    };
-
     using RenderFragment = Action<RenderContext, const FRect&>;
 }

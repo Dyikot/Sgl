@@ -1,5 +1,4 @@
 #include "Border.h"
-#include "../Application.h"
 #include "../Layout/LayoutHelper.h"
 
 namespace Sgl::UIElements
@@ -75,28 +74,5 @@ namespace Sgl::UIElements
 	void Border::ArrangeContent(FRect rect)
 	{
 		ArrangeChild(GetChild().Get(), rect, GetPadding().Inflate(GetBorderWidth()));
-	}
-}
-
-namespace Sgl
-{
-	ResourceSetter<UIElements::Border, Color>::ResourceSetter(
-		BorderColorProperty& property,
-		std::string key):
-		_property(property),
-		_key(std::move(key))
-	{}
-
-	PropertyBase& ResourceSetter<UIElements::Border, Color>::GetProperty() const
-	{
-		return _property;
-	}
-
-	void ResourceSetter<UIElements::Border, Color>::Apply(
-		Styleable& target,
-		ValueSource valueSource) const
-	{
-		auto& owner = static_cast<UIElements::Border&>(target);
-		_property.InvokeSetter(owner, App->Resources.GetColor(_key), valueSource);
 	}
 }

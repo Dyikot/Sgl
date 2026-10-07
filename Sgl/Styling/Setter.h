@@ -1,6 +1,5 @@
 #pragma once
 
-#include <string>
 #include "../Base/Ref.h"
 #include "../Data/StyleableProperty.h"
 
@@ -57,12 +56,4 @@ namespace Sgl
 		Property& _property;
 		Value _value;
 	};
-
-	//! @brief A setter that resolves a value from a theme resource at runtime. 
-	//! Specializations are provided for specific property types.
-	template<typename TOwner, typename TValue>
-	class ResourceSetter;
-
-	template<typename TOwner, typename TValue>
-	ResourceSetter(StyleableProperty<TOwner, TValue>&, std::string) -> ResourceSetter<TOwner, TValue>;
 }

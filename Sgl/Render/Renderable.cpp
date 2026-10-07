@@ -1,5 +1,4 @@
 #include "Renderable.h"
-#include "../Application.h"
 
 namespace Sgl
 {
@@ -72,25 +71,5 @@ namespace Sgl
 	{
 		Styleable::OnDetachedFromLogicalTree();
 		_visualRoot = nullptr;
-	}
-
-	ResourceSetter<Renderable, const Brush&>::ResourceSetter(
-		BackgroundProperty& property,
-		std::string key):
-		_property(property),
-		_key(std::move(key))
-	{}
-
-	PropertyBase& ResourceSetter<Renderable, const Brush&>::GetProperty() const
-	{
-		return _property;
-	}
-
-	void ResourceSetter<Renderable, const Brush&>::Apply(
-		Styleable& target, 
-		ValueSource valueSource) const
-	{
-		auto& owner = static_cast<Renderable&>(target);
-		_property.InvokeSetter(owner, App->Resources.GetBrush(_key), valueSource);
 	}
 }

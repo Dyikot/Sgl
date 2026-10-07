@@ -6,7 +6,7 @@ Sgl brings the retained-mode UI model popularized by WPF to modern C++ — witho
 ## Features
 - **Layout system** - measure and arrange UI elements
 - **Input** - input and focus managers
-- **Styling** - style, selectors, pseudo-classes
+- **Styling** - style, selectors, setters, visual states
 - **Theming** - build-in Light/Dark theme modes
 - **Data binding** - MVVM support
 - **Localization** - runtime language switching with CSV-based localization files

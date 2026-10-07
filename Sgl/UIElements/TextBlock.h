@@ -91,21 +91,3 @@ namespace Sgl::UIElements
 		uint32_t _fontFlags = 1;
 	};
 }
-
-namespace Sgl
-{
-	template<>
-	class ResourceSetter<UIElements::TextBlock, Color> : public ISetter
-	{
-	public:
-		using ForegroundProperty = decltype(UIElements::TextBlock::ForegroundProperty);
-	public:
-		ResourceSetter(ForegroundProperty& property, std::string key);
-
-		PropertyBase& GetProperty() const override;
-		void Apply(Styleable& target, ValueSource valueSource) const final;
-	private:
-		ForegroundProperty& _property;
-		std::string _key;
-	};
-}

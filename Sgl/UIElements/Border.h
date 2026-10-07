@@ -31,21 +31,3 @@ namespace Sgl::UIElements
 		ValueSource _borderColorSource {};
 	};
 }
-
-namespace Sgl
-{
-	template<>
-	class ResourceSetter<UIElements::Border, Color> final: public ISetter
-	{
-	public:
-		using BorderColorProperty = decltype(UIElements::Border::BorderColorProperty);
-	public:
-		ResourceSetter(BorderColorProperty& property, std::string key);
-
-		PropertyBase& GetProperty() const override;
-		void Apply(Styleable& target, ValueSource valueSource) const override;
-	private:
-		BorderColorProperty& _property;
-		std::string _key;
-	};
-}
