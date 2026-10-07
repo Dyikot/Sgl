@@ -259,6 +259,20 @@ namespace Sgl
             return _values; 
         }
 
+        TValue& operator[](const TKey& key)
+        {
+            auto it = std::ranges::find(_keys, key);
+
+            if(it != _keys.end())
+            {
+                auto index = std::distance(_keys.begin(), it);
+                return _values[index];
+            }
+
+            _keys.push_back(key);
+            return _values.emplace_back();
+        }
+
         FlatMap& operator=(const FlatMap&) = default;
         FlatMap& operator=(FlatMap&&) noexcept = default;
 

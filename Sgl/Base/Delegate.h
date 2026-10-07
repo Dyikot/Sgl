@@ -144,12 +144,8 @@ namespace Sgl
 		//! @param other The delegate to copy from
 		Delegate& operator=(const Delegate& other)
 		{
-			if(this != &other)
-			{
-				delete _callable;
-				_callable = other.HasTarget() ? other._callable->Copy() : nullptr;
-			}
-
+			delete _callable;
+			_callable = other.HasTarget() ? other._callable->Copy() : nullptr;
 			return *this;
 		}
 

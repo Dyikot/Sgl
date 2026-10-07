@@ -18,6 +18,6 @@ namespace Sgl
         void ApplyStates(Styleable& element) const;
         void Merge(const Style& other);
     private:
-        static void Merge(SetterCollection target, SetterCollection source);
+        static void Merge(SetterCollection& target, const SetterCollection& source);
     };
 }

@@ -5,40 +5,16 @@
 namespace Sgl
 {
     //! @brief A collection of styles that can be applied to UI elements
-    class StyleCollection
+    class StyleCollection : public Vector<Style>
     {
     public:
-        StyleCollection() = default;
+        using Vector::Vector;
         StyleCollection(const StyleCollection&) = delete;
         StyleCollection(StyleCollection&&) noexcept = default;
 
-        auto begin() const { return _items.begin(); }
-        auto rbegin() const { return _items.rbegin(); }
-
-        auto end() const { return _items.end(); }
-        auto rend() const { return _items.rend(); }
-
-        //! @brief Adds a new style to the collection
-        void Add(Style style)
-        {
-            _items.push_back(std::move(style));
-        }
-
-        //! @brief Gets the number of styles in the collection
-        size_t Count() const noexcept
-        {
-            return _items.size();
-        }
-
-        //! @brief Determines whether the collection is empty
-        bool IsEmpty() const noexcept
-        {
-            return _items.empty();
-        }
-
         void MergeStylesTo(Styleable& element, Style& target)
         {
-            for(auto& style : _items)
+            for(auto& style : _data)
             {
                 if(style.selector.Match(element))
                 {
@@ -47,15 +23,7 @@ namespace Sgl
             }
         }
 
-        //! @brief Gets the style at the specified index (const version)
-        const Style& operator[](size_t index) const
-        {
-            return _items[index];
-        }
-
         StyleCollection& operator=(const StyleCollection&) = delete;
         StyleCollection& operator=(StyleCollection&&) noexcept = default;
-    private:
-        std::vector<Style> _items;
     };
 }

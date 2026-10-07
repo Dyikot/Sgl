@@ -17,9 +17,8 @@ namespace Sgl
     }
 
     Selector::Selector(Selector&& other) noexcept:
-        _data(other._data)
+        _data(std::exchange(other._data, nullptr))
     {
-        other._data = nullptr;
     }
 
     Selector::~Selector()
@@ -68,7 +67,12 @@ namespace Sgl
 
     Selector& Selector::operator=(Selector&& other) noexcept
     {
-        std::swap(_data, other._data);
+        if(this != &other)
+        {
+            Release();
+            _data = std::exchange(other._data, nullptr);
+        }
+
         return *this;
     }
 

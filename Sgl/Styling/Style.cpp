@@ -53,7 +53,7 @@ namespace Sgl
         }
     }
 
-    void Style::Merge(SetterCollection target, SetterCollection source)
+    void Style::Merge(SetterCollection& target, const SetterCollection& source)
     {
         for(auto& setter : source)
         {

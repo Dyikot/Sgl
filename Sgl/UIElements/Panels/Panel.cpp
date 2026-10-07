@@ -50,7 +50,6 @@ namespace Sgl
     }
 
     Panel::Panel():
-        UIElement(),
         Children(*this)
     {
         Name = "Panel";

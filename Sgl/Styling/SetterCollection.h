@@ -1,43 +1,28 @@
 #pragma once
 
-#include <vector>
-#include <memory>
-
+#include "../Base/Collections/Vector.h"
 #include "Setter.h"
 
 namespace Sgl
 {
-	class SetterCollection
+	class SetterCollection : public Vector<Ref<ISetter>>
 	{
 	public:
-		SetterCollection();
-		SetterCollection(std::initializer_list<ISetter*> setters);
-		explicit SetterCollection(std::vector<Ref<ISetter>> setters);
-		SetterCollection(const SetterCollection& other);
-		SetterCollection(SetterCollection&& other) noexcept;
-		~SetterCollection();
+		using Vector::Vector;
+		SetterCollection(const SetterCollection&) = default;
+		SetterCollection(SetterCollection&&) noexcept = default;
 
-		auto begin() { return _data->setters.begin(); }
-		auto begin() const { return _data->setters.begin(); }
-
-		auto end() { return _data->setters.end(); }
-		auto end() const { return _data->setters.end(); }
-
-		void Add(Ref<ISetter> setter);
-		void Clear();
-		size_t Count() const;
-
-		SetterCollection& operator=(const SetterCollection& other);
-		SetterCollection& operator=(SetterCollection&& other) noexcept;
-	private:
-		struct Data
+		SetterCollection(std::initializer_list<ISetter*> setters)
 		{
-			uint32_t references;
-			std::vector<Ref<ISetter>> setters;
-		};
-		
-		void Release();
-	private:
-		Data* _data {};
+			_data.reserve(setters.size());
+
+			for(auto setter : setters)
+			{
+				_data.emplace_back(setter);
+			}
+		}
+
+		SetterCollection& operator=(const SetterCollection&) = default;
+		SetterCollection& operator=(SetterCollection&&) noexcept = default;
 	};
 }
