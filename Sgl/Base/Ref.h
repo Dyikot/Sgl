@@ -1,4 +1,5 @@
 #pragma once
+
 #include <atomic>
 #include <memory>
 #include <utility>
@@ -197,12 +198,9 @@ namespace Sgl
 		//! @param other The reference to copy from
 		Ref& operator=(const Ref& other) noexcept
 		{
-			if(this != &other)
-			{
-				Release();
-				_data = other._data;
-				AddRef();
-			}
+			Release();
+			_data = other._data;
+			AddRef();
 
 			return *this;
 		}
@@ -215,6 +213,7 @@ namespace Sgl
 			Release();
 			_data = other._data;
 			AddRef();
+
 			return *this;
 		}
 
@@ -225,8 +224,7 @@ namespace Sgl
 			if(this != &other)
 			{
 				Release();
-				_data = other._data;
-				other._data = nullptr;
+				_data = std::exchange(other._data, nullptr);
 			}
 
 			return *this;
@@ -237,9 +235,12 @@ namespace Sgl
 		template<std::derived_from<T> TDerived>
 		Ref& operator=(Ref<TDerived>&& other) noexcept
 		{
-			Release();
-			_data = other._data;
-			other._data = nullptr;
+			if(_data != other._data)
+			{
+				Release();
+				_data = std::exchange(other._data, nullptr);
+			}
+
 			return *this;
 		}
 
