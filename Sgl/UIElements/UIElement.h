@@ -50,7 +50,7 @@ namespace Sgl
 		Ref<UIElement> HitTest(FPoint point);
 
 		bool Focus();
-		void Render(RenderContext& context) override;
+		void Render(RenderContext& context) final;
 		void ApplyStyling();
 
 		static inline const VisualState OnHover = VisualState::Register("hover");
@@ -70,6 +70,7 @@ namespace Sgl
 		void OnDataContextChanged(const Ref<ObservableObject>& dataContext) final;
 		void OnAttachedToLogicalTree() override;
 		void OnDetachedFromLogicalTree() override;
+		virtual void OnRender(RenderContext& context) {}
 		virtual void OnKeyDown(KeyEventArgs& e);
 		virtual void OnKeyUp(KeyEventArgs& e);
 		virtual void OnMouseMove(MouseMoveEventArgs e);

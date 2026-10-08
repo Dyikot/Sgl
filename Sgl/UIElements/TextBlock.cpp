@@ -72,15 +72,11 @@ namespace Sgl::UIElements
 		SetProperty(PaddingProperty, _padding, value, _paddingSource, source);
 	}
 
-	void TextBlock::Render(RenderContext& context)
+	void TextBlock::OnRender(RenderContext& context)
 	{
-		UIElement::Render(context);
-
 		if(auto& textTexture = GetTextTexture(context.GetRenderer()))
 		{
-			context.PushClip(ToRect(GetBounds()));
 			context.DrawTexture(textTexture, &_textBounds, nullptr);
-			context.PopClip();
 		}
 	}
 

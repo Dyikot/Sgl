@@ -112,6 +112,11 @@ namespace Sgl
 			return;
 		}
 
+		if(_clipToBounds)
+		{
+			context.PushClip(ToRect(GetBounds()));
+		}
+
 		if(!IsBackgroundTransparent())
 		{
 			if(!_backgroundFragment)
@@ -122,9 +127,16 @@ namespace Sgl
 			_backgroundFragment(context, GetBounds());
 		}
 
+		OnRender(context);
+
 		for(auto& child : _children)
 		{
 			child->Render(context);
+		}
+
+		if(_clipToBounds)
+		{
+			context.PopClip();
 		}
 	}
 

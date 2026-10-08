@@ -28,10 +28,8 @@ namespace Sgl::UIElements
 		return GetProperty(BorderColorProperty, _borderColor);
 	}
 
-	void Border::Render(RenderContext& context)
-	{
-		Decorator::Render(context);
-		
+	void Border::OnRender(RenderContext& context)
+	{		
 		float borderWidth = GetBorderWidth();
 
 		if(borderWidth == 0)

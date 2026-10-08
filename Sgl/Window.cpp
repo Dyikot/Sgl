@@ -529,7 +529,7 @@ namespace Sgl
     {
         _backgroundFragment(context, {});
 
-        if(_content && _content->IsVisible())
+        if(_content)
         {
             _content->Render(context);
         }
