@@ -22,7 +22,7 @@ namespace Sgl::UIElements
 		SetProperty(StretchProperty, _stretch, value, _stretchSource, source);
 	}
 
-	void Image::Render(RenderContext context)
+	void Image::Render(RenderContext& context)
 	{
 		UIElement::Render(context);
 

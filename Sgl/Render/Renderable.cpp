@@ -22,17 +22,11 @@ namespace Sgl
 		return GetProperty(BackgroundProperty, _background);
 	}
 
-	void Renderable::Render(RenderContext context)
-	{
-		_isDirty = false;
-	}
-
 	void Renderable::InvalidateRender()
 	{
-		if(_visualRoot && !_isDirty)
+		if(_visualRoot)
 		{
 			_visualRoot->MarkDirty();
-			_isDirty = true;
 		}
 	}
 

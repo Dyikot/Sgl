@@ -525,18 +525,14 @@ namespace Sgl
         return _isClosed;
     }
 
-    void Window::Render(RenderContext context)
+    void Window::Render(RenderContext& context)
     {
-        Renderable::Render(context);
-
         _backgroundFragment(context, {});
 
         if(_content && _content->IsVisible())
         {
             _content->Render(context);
-        }        
-
-        _isRenderValid = true;
+        }
     }
 
     void Window::Process()
@@ -642,12 +638,12 @@ namespace Sgl
         SizeChanged.Invoke(*this, e);
     }
 
-    void Window::OnKeyUp(KeyEventArgs e)
+    void Window::OnKeyUp(KeyEventArgs& e)
     {
         _inputManager.HandleKeyUp(e);
     }
 
-    void Window::OnKeyDown(KeyEventArgs e)
+    void Window::OnKeyDown(KeyEventArgs& e)
     {
         _inputManager.HandleKeyDown(e);
     }
@@ -728,8 +724,10 @@ namespace Sgl
     {
         if(NeedsRendering())
         {
-            Render(RenderContext(_renderer));
+            RenderContext context(_renderer);
+            Render(context);
             SDL_RenderPresent(_renderer);
+            _isRenderValid = true;
         }
     }
 

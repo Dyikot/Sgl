@@ -27,6 +27,7 @@ namespace Sgl
 	{
 		KeyCode Key;
 		KeyModifier Modifier;
+		bool Handled;
 	};
 
 	//! @brief Event arguments for mouse movement, providing the current cursor position in client coordinates
@@ -41,13 +42,15 @@ namespace Sgl
 	{
 		MouseButton Button;
 		int ClicksNumber;
+		bool Handled;
 	};
 
 	//! @brief Event arguments for mouse wheel (scroll) events, including scroll deltas and direction policy
 	struct MouseWheelEventArgs : MouseMoveEventArgs
 	{
-		int ScrolledByX;
-		int ScrolledByY;
+		float ScrolledByX;
+		float ScrolledByY;
 		MouseWheelDirection Direction;
+		bool Handled;
 	};
 }

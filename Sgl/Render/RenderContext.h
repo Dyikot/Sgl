@@ -1,6 +1,7 @@
 #pragma once
 
 #include <span>
+#include <stack>
 #include <SDL3/SDL_render.h>
 
 #include "Surface.h"
@@ -36,10 +37,10 @@ namespace Sgl
 
         //! @brief Sets a clipping rectangle that restricts all subsequent drawing operations to the specified region
         //! @param clip The rectangle defining the clipping area in renderer coordinates
-        void SetClip(Rect clip);
+        void PushClip(Rect clip);
 
         //! @brief Removes any active clipping rectangle, restoring full rendering access to the target
-        void ResetClip();
+        void PopClip();
 
         //! @brief Fills the entire current render target with a solid color
         //! @param color The color to use for the background fill
@@ -191,5 +192,6 @@ namespace Sgl
 
     private:
         SDL_Renderer* _renderer;
+        std::stack<Rect> _clips;
     };
 }

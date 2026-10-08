@@ -45,7 +45,7 @@ namespace Sgl::UIElements
 		}
 	}
 
-	void Button::OnKeyDown(KeyEventArgs e)
+	void Button::OnKeyDown(KeyEventArgs& e)
 	{
 		UIElement::OnKeyDown(e);
 
@@ -56,7 +56,7 @@ namespace Sgl::UIElements
 		}
 	}
 
-	void Button::OnKeyUp(KeyEventArgs e)
+	void Button::OnKeyUp(KeyEventArgs& e)
 	{
 		UIElement::OnKeyUp(e);
 

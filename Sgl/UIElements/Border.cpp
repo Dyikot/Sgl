@@ -28,7 +28,7 @@ namespace Sgl::UIElements
 		return GetProperty(BorderColorProperty, _borderColor);
 	}
 
-	void Border::Render(RenderContext context)
+	void Border::Render(RenderContext& context)
 	{
 		Decorator::Render(context);
 		

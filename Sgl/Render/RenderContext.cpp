@@ -293,6 +293,16 @@ namespace Sgl
 				}
 			}
 		}
+
+		Rect IntersectRects(Rect a, Rect b)
+		{
+			int x1 = std::max(a.x, b.x);
+			int y1 = std::max(a.y, b.y);
+			int x2 = std::min(a.x + a.w, b.x + b.w);
+			int y2 = std::min(a.y + a.h, b.y + b.h);
+
+			return Rect(x1, y1, std::max(0, x2 - x1), std::max(0, y2 - y1));
+		}
 	}
 
 	RenderContext::RenderContext(SDL_Renderer* _renderer):
@@ -309,14 +319,22 @@ namespace Sgl
 		SDL_SetRenderTarget(_renderer, nullptr);
 	}
 
-	void RenderContext::SetClip(Rect clip)
+	void RenderContext::PushClip(Rect clip)
 	{
+		if(!_clips.empty())
+		{
+			Rect current = _clips.top();
+			clip = IntersectRects(current, clip);
+		}
+
+		_clips.push(clip);
 		SDL_SetRenderClipRect(_renderer, &clip);
 	}
 
-	void RenderContext::ResetClip()
+	void RenderContext::PopClip()
 	{
-		SDL_SetRenderClipRect(_renderer, nullptr);
+		_clips.pop();
+		SDL_SetRenderClipRect(_renderer, !_clips.empty() ? &_clips.top(): nullptr);
 	}
 
 	void RenderContext::FillBackground(Color color)

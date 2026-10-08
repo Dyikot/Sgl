@@ -277,7 +277,7 @@ namespace Sgl
 
 		//! @brief Renders the window's content using the provided rendering context
 		//! @param context The render context used to draw UI elements
-		void Render(RenderContext context) override;
+		void Render(RenderContext& context) override;
 
 		//! @brief Processes window-specific logic
 		virtual void Process();
@@ -296,8 +296,8 @@ namespace Sgl
 		virtual void OnWindowStateChanged(WindowStateChangedEventArgs e);
 		virtual void OnPositionChanged(WindowPositionChangedEventArgs e);
 		virtual void OnWindowSizeChanged(WindowSizeChangedEventArgs e);
-		virtual void OnKeyUp(KeyEventArgs e);
-		virtual void OnKeyDown(KeyEventArgs e);
+		virtual void OnKeyUp(KeyEventArgs& e);
+		virtual void OnKeyDown(KeyEventArgs& e);
 		virtual void OnMouseMove(MouseMoveEventArgs e);
 		virtual void OnMouseDown(MouseClickEventArgs& e);
 		virtual void OnMouseUp(MouseClickEventArgs& e);

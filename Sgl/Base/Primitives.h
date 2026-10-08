@@ -15,4 +15,12 @@ namespace Sgl
 		
 	//! @brief Represents an axis-aligned rectangle with floating-point coordinates and dimensions
 	using FRect = SDL_FRect;
+
+	//! @brief Converts FRect to Rect
+	//! @param rect Source rectable
+	//! @return Target rectable
+	constexpr Rect ToRect(FRect rect)
+	{
+		return Rect(rect.x, rect.y, rect.w, rect.h);
+	}
 }

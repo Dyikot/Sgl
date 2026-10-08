@@ -40,6 +40,9 @@ namespace Sgl
 		void SetIsFocusable(bool value, ValueSource source = ValueSource::Local);
 		bool IsFocusable() const { return _focusable; }
 
+		void SetClipToBounds(bool value, ValueSource source = ValueSource::Local);
+		bool GetClipToBounds() const { return _clipToBounds; }
+
 		bool IsMouseOver() const { return States.Has(OnHover); }	
 		bool IsMousePressed() const { return States.Has(OnPressed); }
 		bool IsFocused() const { return States.Has(OnFocus); }
@@ -47,7 +50,7 @@ namespace Sgl
 		Ref<UIElement> HitTest(FPoint point);
 
 		bool Focus();
-		void Render(RenderContext context) override;
+		void Render(RenderContext& context) override;
 		void ApplyStyling();
 
 		static inline const VisualState OnHover = VisualState::Register("hover");
@@ -57,6 +60,7 @@ namespace Sgl
 		static inline StyleableProperty TagProperty { &SetTag, &GetTag };
 		static inline StyleableProperty CornersRadiusProperty { &SetCornersRadius, &GetCornersRadius };
 		static inline StyleableProperty IsFocusableProperty { &SetIsFocusable, &IsFocusable };
+		static inline StyleableProperty ClipToBoundsProperty { &SetClipToBounds, &GetClipToBounds };
 	protected:
 		~UIElement() = default;
 		void OnPropertyChanged(PropertyBase& property) override;
@@ -66,8 +70,8 @@ namespace Sgl
 		void OnDataContextChanged(const Ref<ObservableObject>& dataContext) final;
 		void OnAttachedToLogicalTree() override;
 		void OnDetachedFromLogicalTree() override;
-		virtual void OnKeyDown(KeyEventArgs e);
-		virtual void OnKeyUp(KeyEventArgs e);
+		virtual void OnKeyDown(KeyEventArgs& e);
+		virtual void OnKeyUp(KeyEventArgs& e);
 		virtual void OnMouseMove(MouseMoveEventArgs e);
 		virtual void OnMouseDown(MouseClickEventArgs& e);
 		virtual void OnMouseUp(MouseClickEventArgs& e);
@@ -91,10 +95,12 @@ namespace Sgl
 		Any _tag;
 		float _cornersRadius = 0;
 		bool _focusable = false;
+		bool _clipToBounds = false;
 
 		ValueSource _tagSource {};	
 		ValueSource _cornersRadiusSource {};
 		ValueSource _focusableSource {};
+		ValueSource _clipToBoundsSource {};
 
 		friend class Window;
 		friend class InputManager;

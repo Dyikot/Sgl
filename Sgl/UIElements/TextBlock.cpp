@@ -14,6 +14,7 @@ namespace Sgl::UIElements
 	TextBlock::TextBlock()
 	{
 		Name = "TextBlock";
+		SetClipToBounds(true, ValueSource::Default);
 	}
 
 	void TextBlock::SetText(const std::string& value, ValueSource source)
@@ -71,16 +72,15 @@ namespace Sgl::UIElements
 		SetProperty(PaddingProperty, _padding, value, _paddingSource, source);
 	}
 
-	void TextBlock::Render(RenderContext context)
+	void TextBlock::Render(RenderContext& context)
 	{
 		UIElement::Render(context);
 
 		if(auto& textTexture = GetTextTexture(context.GetRenderer()))
 		{
-			auto [x, y, width, height] = GetBounds();
-			context.SetClip(Rect(x, y, width, height));
+			context.PushClip(ToRect(GetBounds()));
 			context.DrawTexture(textTexture, &_textBounds, nullptr);
-			context.ResetClip();
+			context.PopClip();
 		}
 	}
 

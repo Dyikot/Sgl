@@ -12,11 +12,7 @@ namespace Sgl
 
 		if(_child == value)
 		{
-			if(source < ValueSource::VisualState)
-			{
-				_childSource = source;
-			}
-
+			_childSource = source;
 			return;
 		}
 

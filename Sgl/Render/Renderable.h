@@ -21,7 +21,7 @@ namespace Sgl
 
         IVisualRoot* GetVisualRoot() const { return _visualRoot; }
         
-        virtual void Render(RenderContext context);
+        virtual void Render(RenderContext& context) {}
         void InvalidateRender();
 
         static inline StyleableProperty CursorProperty { &SetCursor, &GetCursor };
@@ -43,8 +43,6 @@ namespace Sgl
 
         ValueSource _cursorSource {};
         ValueSource _backgroundSource {};
-
-        bool _isDirty = true;
     };
 
     using RenderFragment = Action<RenderContext, const FRect&>;

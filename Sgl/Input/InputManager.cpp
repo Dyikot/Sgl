@@ -51,7 +51,7 @@ namespace Sgl
 		}
 	}
 
-	Ref<UIElement> FocusManager::GetFocusedElement() const
+	const Ref<UIElement>& FocusManager::GetFocusedElement() const
 	{
 		return _focusedElement;
 	}
@@ -113,18 +113,18 @@ namespace Sgl
 
 		if(_hoveredElement != target && _hoveredElement && !IsPointInRect(e.X, e.Y, _hoveredElement->GetBounds()))
 		{
-			_hoveredElement->OnMouseMove(e);
+			HandleMouseMove(e, _hoveredElement.Get());
 		}
 
 		_hoveredElement = target;
 
 		if(_capturedElement)
 		{
-			_capturedElement->OnMouseMove(e);
+			HandleMouseMove(e, _capturedElement.Get());
 		}
 		else if(_hoveredElement)
 		{
-			_hoveredElement->OnMouseMove(e);
+			HandleMouseMove(e, _hoveredElement.Get());
 		}
 	}
 
@@ -133,37 +133,38 @@ namespace Sgl
 		if(_hoveredElement)
 		{
 			_capturedElement = _hoveredElement;
-			_hoveredElement->OnMouseDown(e);
+			HandleMouseDown(e, _hoveredElement.Get());
 			_focusManager.SetFocus(_hoveredElement);
 		}
 	}
 
 	void InputManager::HandleMouseUp(MouseClickEventArgs& e)
 	{
-		if(_capturedElement)
-		{
-			_capturedElement->OnMouseUp(e);
-			_capturedElement = nullptr;
-		}
+		HandleMouseUp(e, _capturedElement.Get());
+		_capturedElement = nullptr;
 	}
 
 	void InputManager::HandleMouseWheelChanged(MouseWheelEventArgs& e)
 	{
-		if(_hoveredElement)
+		UIElement* current = _hoveredElement.Get();
+		while(current && !e.Handled)
 		{
-			_hoveredElement->OnMouseWheelChanged(e);
+			current->OnMouseWheelChanged(e);
+			current = current->GetParent();
 		}
 	}
 
-	void InputManager::HandleKeyUp(KeyEventArgs e)
+	void InputManager::HandleKeyUp(KeyEventArgs& e)
 	{
-		if(auto focusedElement = _focusManager.GetFocusedElement())
+		UIElement* current = _focusManager.GetFocusedElement().Get();
+		while(current && !e.Handled)
 		{
-			focusedElement->OnKeyUp(e);
+			current->OnKeyUp(e);
+			current = current->GetParent();
 		}
 	}
 
-	void InputManager::HandleKeyDown(KeyEventArgs e)
+	void InputManager::HandleKeyDown(KeyEventArgs& e)
 	{
 		if(e.Key == KeyCodes::Escape)
 		{
@@ -173,14 +174,46 @@ namespace Sgl
 		{
 			_focusManager.MoveFocusNext();
 		}
-		else if(auto focusedElement = _focusManager.GetFocusedElement())
+		else
 		{
-			focusedElement->OnKeyDown(e);
+			UIElement* current = _focusManager.GetFocusedElement().Get();
+			while(current && !e.Handled)
+			{
+				current->OnKeyDown(e);
+				current = current->GetParent();
+			}
 		}
 	}
 
 	FocusManager& InputManager::GetFocusManager()
 	{
 		return _focusManager;
+	}
+
+	void InputManager::HandleMouseMove(MouseMoveEventArgs e, UIElement* current)
+	{
+		while(current)
+		{
+			current->OnMouseMove(e);
+			current = current->GetParent();
+		}
+	}
+
+	void InputManager::HandleMouseDown(MouseClickEventArgs& e, UIElement* current)
+	{
+		while(current && !e.Handled)
+		{
+			current->OnMouseDown(e);
+			current = current->GetParent();
+		}
+	}
+
+	void InputManager::HandleMouseUp(MouseClickEventArgs& e, UIElement* current)
+	{
+		while(current && !e.Handled)
+		{
+			current->OnMouseUp(e);
+			current = current->GetParent();
+		}
 	}
 }

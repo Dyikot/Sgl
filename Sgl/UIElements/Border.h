@@ -15,7 +15,7 @@ namespace Sgl::UIElements
 		void SetBorderColor(Color value, ValueSource source = ValueSource::Local);
 		Color GetBorderColor() const;
 
-		void Render(RenderContext context) override;
+		void Render(RenderContext& context) override;
 
 		static inline StyleableProperty BorderWidthProperty { &SetBorderWidth, &GetBorderWidth };
 		static inline StyleableProperty BorderColorProperty { &SetBorderColor, &GetBorderColor };

@@ -4,6 +4,7 @@
 
 #include <cassert>
 #include <ranges>
+#include "../Base/Logging.h"
 
 namespace Sgl
 {
@@ -67,8 +68,18 @@ namespace Sgl
 		SetProperty(IsFocusableProperty, _focusable, value, _focusableSource, source);
 	}
 
+	void UIElement::SetClipToBounds(bool value, ValueSource source)
+	{
+		SetProperty(ClipToBoundsProperty, _clipToBounds, value, _clipToBoundsSource, source);
+	}
+
 	Ref<UIElement> UIElement::HitTest(FPoint point)
 	{
+		if(!IsVisible() || (_clipToBounds && !IsPointInRect(point.x, point.y, GetBounds())))
+		{
+			return nullptr;
+		}
+
 		Ref<UIElement> hit;
 
 		for(auto& child : GetChildren() | std::views::reverse)
@@ -81,7 +92,7 @@ namespace Sgl
 			}
 		}
 
-		return IsVisible() && IsPointInRect(point.x, point.y, GetBounds()) ? Ref(this) : nullptr;
+		return IsPointInRect(point.x, point.y, GetBounds()) ? Ref(this) : nullptr;
 	}
 
 	bool UIElement::Focus()
@@ -94,10 +105,8 @@ namespace Sgl
 		return false;
 	}
 
-	void UIElement::Render(RenderContext context)
+	void UIElement::Render(RenderContext& context)
 	{
-		Layoutable::Render(context);
-
 		if(!IsVisible())
 		{
 			return;
@@ -200,12 +209,12 @@ namespace Sgl
 		}
 	}
 
-	void UIElement::OnKeyDown(KeyEventArgs e)
+	void UIElement::OnKeyDown(KeyEventArgs& e)
 	{
 		KeyDown.Invoke(*this, e);
 	}
 
-	void UIElement::OnKeyUp(KeyEventArgs e)
+	void UIElement::OnKeyUp(KeyEventArgs& e)
 	{
 		KeyUp.Invoke(*this, e);
 	}
@@ -227,11 +236,6 @@ namespace Sgl
 		else if (wasMouseOver)
 		{
 			OnMouseLeave(e);
-		}	
-
-		if(_parent)
-		{
-			_parent->OnMouseMove(e);
 		}
 	}
 
@@ -243,11 +247,6 @@ namespace Sgl
 		}
 
 		MouseDown.Invoke(*this, e);
-
-		if(_parent)
-		{
-			_parent->OnMouseDown(e);
-		}
 	}
 
 	void UIElement::OnMouseUp(MouseClickEventArgs& e)
@@ -258,21 +257,11 @@ namespace Sgl
 		}
 
 		MouseUp.Invoke(*this, e);
-
-		if(_parent)
-		{
-			_parent->OnMouseUp(e);
-		}
 	}
 
 	void UIElement::OnMouseWheelChanged(MouseWheelEventArgs& e)
 	{
 		MouseWheel.Invoke(*this, e);
-
-		if(_parent)
-		{
-			_parent->OnMouseWheelChanged(e);
-		}
 	}
 
 	void UIElement::OnMouseEnter(MouseMoveEventArgs e)

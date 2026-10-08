@@ -33,7 +33,7 @@ namespace Sgl
 
 		//! @brief Gets the UI element that currently has keyboard focus
 		//! @return A reference to the focused element, or an empty reference if no element is focused
-		Ref<UIElement> GetFocusedElement() const;
+		const Ref<UIElement>& GetFocusedElement() const;
 
 	private:
 		bool FocusFirst(const Ref<UIElement>& element);
@@ -73,15 +73,20 @@ namespace Sgl
 
 		//! @brief Handles a keyboard key release event
 		//! @param e The key event arguments
-		void HandleKeyUp(KeyEventArgs e);
+		void HandleKeyUp(KeyEventArgs& e);
 
 		//! @brief Handles a keyboard key press event
 		//! @param e The key event arguments
-		void HandleKeyDown(KeyEventArgs e);
+		void HandleKeyDown(KeyEventArgs& e);
 
 		//! @brief Gets the focus manager associated with this input manager
 		//! @return A reference to the focus manager
 		FocusManager& GetFocusManager();
+
+	private:
+		static void HandleMouseMove(MouseMoveEventArgs e, UIElement* current);
+		static void HandleMouseDown(MouseClickEventArgs& e, UIElement* current);
+		static void HandleMouseUp(MouseClickEventArgs& e, UIElement* current);
 
 	private:
 		Window& _window;

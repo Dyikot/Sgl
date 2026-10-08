@@ -269,7 +269,8 @@ namespace Sgl
                             e.button.x,
                             e.button.y,
                             FromSDLButton(e.button.button),
-                            e.button.clicks
+                            e.button.clicks,
+                            false
                         };
 
                         window->OnMouseDown(args);
@@ -287,7 +288,8 @@ namespace Sgl
                             e.button.x,
                             e.button.y,
                             FromSDLButton(e.button.button),
-                            e.button.clicks
+                            e.button.clicks,
+                            false
                         };
 
                         window->OnMouseUp(args);
@@ -304,9 +306,10 @@ namespace Sgl
                         {
                             e.wheel.mouse_x,
                             e.wheel.mouse_y,
-                            e.wheel.integer_x,
-                            e.wheel.integer_y,
-                            FromSDLWheelDirection(e.wheel.direction)
+                            e.wheel.x,
+                            e.wheel.y,
+                            FromSDLWheelDirection(e.wheel.direction),
+                            false
                         };
 
                         window->OnMouseWheelChanged(args);
@@ -321,7 +324,7 @@ namespace Sgl
                     {
                         KeyModifier modifier = e.key.mod & ~SDL_KMOD_NUM;
                         KeyCode key = SDL_GetKeyFromScancode(e.key.scancode, modifier, false);
-                        KeyEventArgs args(key, modifier);
+                        KeyEventArgs args(key, modifier, false);
 
                         window->OnKeyDown(args);
                     }
@@ -335,7 +338,7 @@ namespace Sgl
                     {
                         KeyModifier modifier = e.key.mod & ~SDL_KMOD_NUM;
                         KeyCode key = SDL_GetKeyFromScancode(e.key.scancode, modifier, false);
-                        KeyEventArgs args(key, modifier);
+                        KeyEventArgs args(key, modifier, false);
 
                         window->OnKeyUp(args);
                     }

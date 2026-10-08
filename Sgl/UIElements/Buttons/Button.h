@@ -38,8 +38,8 @@ namespace Sgl::UIElements
 	protected:
 		void OnMouseDown(MouseClickEventArgs& e) override;
 		void OnMouseUp(MouseClickEventArgs& e) override;
-		void OnKeyDown(KeyEventArgs e) override;
-		void OnKeyUp(KeyEventArgs e) override;
+		void OnKeyDown(KeyEventArgs& e) override;
+		void OnKeyUp(KeyEventArgs& e) override;
 		virtual void OnClick();
 	private:
 		ClickMode _clickMode = ClickMode::Release;
