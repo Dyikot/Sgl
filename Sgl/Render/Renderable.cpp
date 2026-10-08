@@ -36,13 +36,12 @@ namespace Sgl
 
 		if(property == BackgroundProperty)
 		{
-			_isBackgroundTransparent = _background == Colors::Transparent;
 			InvalidateRender();
-			OnBackgroundChanged(_background);
+			OnBackgroundChanged(GetBackground());
 		}
 		else if(property == CursorProperty)
 		{
-			OnCursorChanged(_cursor);
+			OnCursorChanged(GetCursor());
 		}
 	}
 

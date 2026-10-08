@@ -117,7 +117,7 @@ namespace Sgl
 			context.PushClip(ToRect(GetBounds()));
 		}
 
-		if(!IsBackgroundTransparent())
+		if(_renderBackground)
 		{
 			if(!_backgroundFragment)
 			{
@@ -182,6 +182,7 @@ namespace Sgl
 
 	void UIElement::OnBackgroundChanged(const Brush& background)
 	{
+		_renderBackground = !IsTransparent(background);
 		InvalidateBackground();
 	}
 

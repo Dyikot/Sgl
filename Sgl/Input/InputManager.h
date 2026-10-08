@@ -87,6 +87,7 @@ namespace Sgl
 		static void HandleMouseMove(MouseMoveEventArgs e, UIElement* current);
 		static void HandleMouseDown(MouseClickEventArgs& e, UIElement* current);
 		static void HandleMouseUp(MouseClickEventArgs& e, UIElement* current);
+		static Ref<UIElement> FindFocusableAncestor(const Ref<UIElement>& element);
 
 	private:
 		Window& _window;

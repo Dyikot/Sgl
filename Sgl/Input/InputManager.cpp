@@ -134,7 +134,7 @@ namespace Sgl
 		{
 			_capturedElement = _hoveredElement;
 			HandleMouseDown(e, _hoveredElement.Get());
-			_focusManager.SetFocus(_hoveredElement);
+			_focusManager.SetFocus(FindFocusableAncestor(_hoveredElement));
 		}
 	}
 
@@ -215,5 +215,22 @@ namespace Sgl
 			current->OnMouseUp(e);
 			current = current->GetParent();
 		}
+	}
+
+	Ref<UIElement> InputManager::FindFocusableAncestor(const Ref<UIElement>& element)
+	{
+		UIElement* current = element.Get();
+
+		while(current)
+		{
+			if(current->IsFocusable())
+			{
+				return Ref(current);
+			}
+
+			current = current->GetParent();
+		}
+
+		return nullptr;
 	}
 }

@@ -97,6 +97,7 @@ namespace Sgl
 		float _cornersRadius = 0;
 		bool _focusable = false;
 		bool _clipToBounds = false;
+		bool _renderBackground = false;
 
 		ValueSource _tagSource {};	
 		ValueSource _cornersRadiusSource {};

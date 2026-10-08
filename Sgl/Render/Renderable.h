@@ -30,7 +30,6 @@ namespace Sgl
         ~Renderable() = default;
         void OnPropertyChanged(PropertyBase& property) override;
         void SetVisualRoot(IVisualRoot* visualRoot);
-        bool IsBackgroundTransparent() const { return _isBackgroundTransparent; }
         void OnAttachedToLogicalTree() override;
         void OnDetachedFromLogicalTree() override;
         virtual void OnCursorChanged(Cursor cursor) {}
@@ -39,8 +38,7 @@ namespace Sgl
         IVisualRoot* _visualRoot = nullptr;
         Cursor _cursor = Cursors::Arrow;
         Brush _background = Colors::Transparent;
-        bool _isBackgroundTransparent = true;
-
+        
         ValueSource _cursorSource {};
         ValueSource _backgroundSource {};
     };

@@ -18,4 +18,11 @@ namespace Sgl
 	{
 		return brush.index() == 1 && std::get<ImageSource>(brush) == imageSource;
 	}
+
+	constexpr bool IsTransparent(const Brush& brush)
+	{
+		return brush.index() == 0 
+			? std::get<Color>(brush).IsTransparent()
+			: !std::get<ImageSource>(brush);
+	}
 }
