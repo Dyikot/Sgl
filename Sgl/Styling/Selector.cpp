@@ -97,7 +97,7 @@ namespace Sgl
             return false;
         }
 
-        if(name && element.Name != *name)
+        if(name && element.GetName() != *name)
         {
             return false;
         }

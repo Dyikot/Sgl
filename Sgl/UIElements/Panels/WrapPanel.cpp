@@ -4,7 +4,7 @@ namespace Sgl::UIElements
 {
 	WrapPanel::WrapPanel()
 	{
-		Name = "WrapPanel";
+		SetName("WrapPanel");
 	}
 
 	void WrapPanel::SetOrientation(Orientation value, ValueSource source)

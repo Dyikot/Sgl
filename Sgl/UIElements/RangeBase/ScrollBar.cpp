@@ -5,60 +5,63 @@
 
 namespace Sgl::UIElements
 {
-	static constexpr Color TrackBackground { 0xf5f5f5ff };
-	static constexpr Color ThumbBackground { 0xc2c2c2ff };
-
-	class ScrollBar::Track : public RepeatButton
+	namespace
 	{
-	public:
-		Track()
+		constexpr Color TrackBackground { 0xf5f5f5ff };
+		constexpr Color ThumbBackground { 0xc2c2c2ff };
+
+		class Track : public RepeatButton
 		{
-			Name = "Track";
-			SetCursor(Cursors::Arrow);
-			SetDelay(150, ValueSource::Default);
-			SetInterval(25, ValueSource::Default);
-			SetBackground(TrackBackground, ValueSource::Default);
-		}
-	protected:
-		void ArrangeContent(FRect rect) final
-		{
-			auto parent = static_cast<ScrollBar*>(GetStylingParent());
-			auto value = parent->GetRelativeValue();
-			auto viewportSize = parent->GetViewportSize();
-			auto orientation = parent->GetOrientation();
-
-			auto [width, height] = GetDesiredSize();
-
-			FRect thumbRect = rect;
-
-			if(orientation == Orientation::Horizontal)
+		public:
+			Track()
 			{
-				if(width == 0.0f)
+				SetName("Track");
+				SetCursor(Cursors::Arrow);
+				SetDelay(150, ValueSource::Default);
+				SetInterval(25, ValueSource::Default);
+				SetBackground(TrackBackground, ValueSource::Default);
+			}
+		protected:
+			void ArrangeContent(FRect rect) override
+			{
+				auto parent = static_cast<ScrollBar*>(GetStylingParent());
+				auto value = parent->GetRelativeValue();
+				auto viewportSize = parent->GetViewportSize();
+				auto orientation = parent->GetOrientation();
+
+				auto [width, height] = GetDesiredSize();
+
+				FRect thumbRect = rect;
+
+				if(orientation == Orientation::Horizontal)
 				{
-					width = rect.w;
+					if(width == 0.0f)
+					{
+						width = rect.w;
+					}
+
+					thumbRect.w = width * viewportSize;
+					thumbRect.x = rect.x + (rect.w - thumbRect.w) * value;
+				}
+				else
+				{
+					if(height == 0.0f)
+					{
+						height = rect.h;
+					}
+
+					thumbRect.h = height * viewportSize;
+					thumbRect.y = rect.y + (rect.h - thumbRect.h) * value;
 				}
 
-				thumbRect.w = width * viewportSize;
-				thumbRect.x = rect.x + (rect.w - thumbRect.w) * value;
+				RepeatButton::ArrangeContent(thumbRect);
 			}
-			else
-			{
-				if(height == 0.0f)
-				{
-					height = rect.h;
-				}
-
-				thumbRect.h = height * viewportSize;
-				thumbRect.y = rect.y + (rect.h - thumbRect.h) * value;
-			}
-
-			RepeatButton::ArrangeContent(thumbRect);
-		}
-	};
+		};
+	}
 
 	ScrollBar::ScrollBar()
 	{
-		Name = "ScrollBar";
+		SetName("ScrollBar");
 		BuildTemplate();
 	}
 
@@ -137,7 +140,7 @@ namespace Sgl::UIElements
 	void ScrollBar::BuildTemplate()
 	{
 		_thumb = New<UIElement>();
-		_thumb->Name = "Thumb";
+		_thumb->SetName("Thumb");
 		_thumb->SetBackground(ThumbBackground, ValueSource::Default);
 
 		_track = New<Track>();
@@ -161,7 +164,7 @@ namespace Sgl::UIElements
 				SetValue(oldValue + sign * pageSize);
 			}
 
-			Logging::LogInfo("Value: {}", newValue);
+			Logging::LogInfo("Value: {}", GetValue());
 		};
 
 		SetTemplate(_track);

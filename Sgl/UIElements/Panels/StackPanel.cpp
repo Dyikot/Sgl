@@ -4,7 +4,7 @@ namespace Sgl::UIElements
 {
 	StackPanel::StackPanel()
 	{
-		Name = "StackPanel";
+		SetName("StackPanel");
 	}
 
 	void StackPanel::SetSpacing(float value, ValueSource source)

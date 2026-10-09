@@ -5,7 +5,7 @@ namespace Sgl::UIElements
 {
 	ProgressBar::ProgressBar()
 	{
-		Name = "ProgressBar";
+		SetName("ProgressBar");
 		BuildTemplate();
 	}
 

@@ -13,7 +13,7 @@ namespace Sgl::UIElements
 
 	TextBlock::TextBlock()
 	{
-		Name = "TextBlock";
+		SetName("TextBlock");
 		SetClipToBounds(true, ValueSource::Default);
 	}
 

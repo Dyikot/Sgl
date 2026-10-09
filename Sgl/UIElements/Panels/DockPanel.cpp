@@ -4,7 +4,7 @@ namespace Sgl::UIElements
 {
 	DockPanel::DockPanel()
 	{
-		Name = "DockPanel";
+		SetName("DockPanel");
 	}
 
 	void DockPanel::SetDock(const Ref<UIElement>& element, Dock value)

@@ -6,7 +6,7 @@ namespace Sgl::UIElements
 {
 	Slider::Slider()
 	{
-		Name = "Slider";
+		SetName("Slider");
 		BuildTemplate();
 	}
 
@@ -32,6 +32,7 @@ namespace Sgl::UIElements
 
 		_button = New<RepeatButton>();
 		_button->SetInterval(25, ValueSource::Default);
+		_button->SetDelay(150, ValueSource::Default);
 		_button->SetContent(_track);
 		_button->Click += [this](Button& sender, EventArgs e)
 		{

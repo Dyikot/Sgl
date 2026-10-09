@@ -4,7 +4,7 @@ namespace Sgl::UIElements
 {
 	RepeatButton::RepeatButton()
 	{
-		Name = "RepeatButton";
+		SetName("RepeatButton");
 	}
 
 	void RepeatButton::SetDelay(uint32_t value, ValueSource source)

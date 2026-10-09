@@ -4,7 +4,7 @@ namespace Sgl::UIElements
 {
     UniformGrid::UniformGrid()
     {
-        Name = "UniformGrid";
+        SetName("UniformGrid");
     }
 
 	void UniformGrid::SetRows(uint32_t value, ValueSource source)

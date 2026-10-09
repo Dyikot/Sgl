@@ -4,7 +4,7 @@ namespace Sgl::UIElements
 {
 	Track::Track()
 	{
-		Name = "Track";
+		SetName("Track");
 		SetBackground(Colors::White, ValueSource::Default);
 		BuildTemplate();
 	}
@@ -61,7 +61,7 @@ namespace Sgl::UIElements
 	void Track::BuildTemplate()
 	{
 		auto progress = New<UIElement>();
-		progress->Name = "Progress";
+		progress->SetName("Progress");
 		progress->SetBackground(Colors::Blue, ValueSource::Default);
 		
 		SetTemplate(progress);

@@ -13,7 +13,7 @@ namespace Sgl
 	{
 	private:
 		using UIElementEventHandler = EventHandler<UIElement>;
-		using KeyEventHandler = EventHandler<UIElement, KeyEventArgs>;
+		using KeyEventHandler = EventHandler<UIElement, KeyEventArgs&>;
 		using MouseMoveEventHandler = EventHandler<UIElement, MouseMoveEventArgs>;
 		using MouseClickEventHandler = EventHandler<UIElement, MouseClickEventArgs&>;
 		using MouseWheelEventHandler = EventHandler<UIElement, MouseWheelEventArgs&>;

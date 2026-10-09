@@ -4,7 +4,7 @@ namespace Sgl::UIElements
 {
 	Button::Button()
 	{
-		Name = "Button";
+		SetName("Button");
 		SetCursor(Cursors::Pointer);
 		SetBackground(Colors::LightGray, ValueSource::Default);
 		SetIsFocusable(true, ValueSource::Default);

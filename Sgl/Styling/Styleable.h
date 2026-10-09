@@ -14,11 +14,13 @@ namespace Sgl
 	public:
 		Styleable();
 
-		std::string Name;
 		StyleCollection Styles;
 		VisualStateSet States;
 		Event<StyleableElementEventHandler> AttachedToLogicalTree;
 		Event<StyleableElementEventHandler> DetachedFromLogicalTree;
+
+		void SetName(const std::string& value);
+		const std::string& GetName() const { return _name; }
 
 		void SetClasses(std::string_view classNames, char delimiter = ' ');
 		void SetClasses(std::vector<std::string> classList);
@@ -39,6 +41,7 @@ namespace Sgl
 	private:
 		std::vector<std::string> _classes;
 		Style _style;
+		std::string _name;
 		IStyleHost* _stylingParent = nullptr;
 		bool _isAttachedToLogicalTree = false;
 	};

@@ -30,7 +30,7 @@ namespace Sgl::UIElements
 {
 	Grid::Grid()
 	{
-		Name = "Grid";
+		SetName("Grid");
 	}
 
 	void Grid::SetColumn(const Ref<UIElement>& element, uint32_t value)

@@ -4,7 +4,7 @@ namespace Sgl::UIElements
 {
 	Image::Image()
 	{
-		Name = "Image";
+		SetName("Image");
 	}
 
 	void Image::SetSource(const std::filesystem::path& imagePath, ValueSource source)

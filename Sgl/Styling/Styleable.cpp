@@ -12,6 +12,16 @@ namespace Sgl
 		};
 	}
 
+	void Styleable::SetName(const std::string& value)
+	{
+		if(IsAttachedToLogicalTree())
+		{
+			throw Exception("Cannot change element name after it has been attached to the tree");
+		}
+
+		_name = value;
+	}
+
 	void Styleable::SetClasses(std::string_view classNames, char delimiter)
 	{
 		_classes = SplitString(classNames, delimiter);

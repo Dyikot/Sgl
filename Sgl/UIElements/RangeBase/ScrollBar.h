@@ -4,6 +4,8 @@
 
 namespace Sgl::UIElements
 {
+	class RepeatButton;
+
 	class ScrollBar : public RangeBase
 	{
 	public:
@@ -36,10 +38,8 @@ namespace Sgl::UIElements
 		void BuildTemplate();
 		float GetPageSize() const;
 	private:
-		class Track;
-
 		Ref<UIElement> _thumb;
-		Ref<Track> _track;
+		Ref<RepeatButton> _track;
 
 		float _dragValue = 0;
 		float _clickValue = 0;

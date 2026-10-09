@@ -5,7 +5,7 @@ namespace Sgl::UIElements
 {
 	Border::Border()
 	{
-		Name = "Border";
+		SetName("Border");
 	}
 
 	void Border::SetBorderWidth(uint32_t value, ValueSource source)

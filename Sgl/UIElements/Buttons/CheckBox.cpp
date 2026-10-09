@@ -6,7 +6,7 @@ namespace Sgl::UIElements
 	{
 		static ImageSource source(AssetId::CheckBoxOutline);
 
-		Name = "CheckBox";
+		SetName("CheckBox");
 		SetWidth(24, ValueSource::Default);
 		SetHeight(24, ValueSource::Default);
 		SetBackground(source, ValueSource::Default);

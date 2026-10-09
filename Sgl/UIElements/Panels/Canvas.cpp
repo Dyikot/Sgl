@@ -26,7 +26,7 @@ namespace Sgl::UIElements
 {
 	Canvas::Canvas()
 	{
-		Name = "Canvas";
+		SetName("Canvas");
 	}
 
 	void Canvas::SetLeft(const Ref<UIElement>& element, int value)

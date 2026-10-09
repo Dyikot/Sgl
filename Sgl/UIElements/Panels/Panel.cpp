@@ -11,7 +11,7 @@ namespace Sgl
     {
         for(auto& item : _items)
         {
-            if(item->Name == name)
+            if(item->GetName() == name)
             {
                 return item;
             }
@@ -52,7 +52,7 @@ namespace Sgl
     Panel::Panel():
         Children(*this)
     {
-        Name = "Panel";
+        SetName("Panel");
     }
 
     FSize Panel::MeasureContent(FSize availableSize)
