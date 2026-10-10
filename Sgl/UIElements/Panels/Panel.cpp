@@ -22,11 +22,7 @@ namespace Sgl
 
     void UIElementsCollection::ClearItems()
     {
-        for(auto& item : _items)
-        {
-            _panel.RemoveChild(item);
-        }
-
+        _panel.ClearChildren();
         base::ClearItems();
     }
 

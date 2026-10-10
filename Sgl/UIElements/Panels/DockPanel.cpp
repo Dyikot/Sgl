@@ -130,12 +130,8 @@ namespace Sgl::UIElements
 						.h = remainingRect.h
 					});
 
-					remainingRect = {
-						.x = remainingRect.x + width,
-						.y = remainingRect.y,
-						.w = remainingRect.w - width,
-						.h = remainingRect.h
-					};
+					remainingRect.x += width;
+					remainingRect.w -= width;
 
 					break;
 				}
@@ -150,12 +146,7 @@ namespace Sgl::UIElements
 						.h = remainingRect.h
 					});
 
-					remainingRect = {
-						.x = remainingRect.x,
-						.y = remainingRect.y,
-						.w = remainingRect.w - width,
-						.h = remainingRect.h
-					};
+					remainingRect.w -= width;
 
 					break;
 				}
@@ -170,12 +161,8 @@ namespace Sgl::UIElements
 						.h = height
 					});
 
-					remainingRect = {
-						.x = remainingRect.x,
-						.y = remainingRect.y + height,
-						.w = remainingRect.w,
-						.h = remainingRect.h - height
-					};
+					remainingRect.y += height;
+					remainingRect.h -= height;
 
 					break;
 				}
@@ -190,12 +177,7 @@ namespace Sgl::UIElements
 						.h = height
 					});
 
-					remainingRect = {
-						.x = remainingRect.x,
-						.y = remainingRect.y,
-						.w = remainingRect.w,
-						.h = remainingRect.h - height
-					};
+					remainingRect.h -= height;
 
 					break;
 				}

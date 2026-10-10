@@ -63,21 +63,18 @@ namespace Sgl
 			Measure(FSize(rect.w, rect.h));
 		}
 
-		_isArrangeValid = true;
-
 		if(IsVisible())
 		{
 			ArrangeCore(rect);
 		}
+
+		_isArrangeValid = true;
 	}
 
 	void Layoutable::Measure(FSize availableSize)
 	{
-		if(!_isMeasureValid)
-		{
-			_isMeasureValid = true;
-			_desiredSize = IsVisible() ? MeasureCore(availableSize) : FSize();
-		}
+		_desiredSize = IsVisible() ? MeasureCore(availableSize) : FSize();
+		_isMeasureValid = true;
 	}
 
 	void Layoutable::ArrangeCore(FRect rect)
@@ -140,8 +137,8 @@ namespace Sgl
 
 		auto [contentWidth, contentHeight] = MeasureContent(contentAvailableSize);
 
-		float width = std::clamp(std::fmax(_width, contentWidth), _minWidth, _maxWidth);
-		float height = std::clamp(std::fmax(_height, contentHeight), _minHeight, _maxHeight);
+		float width = std::clamp(std::max(_width, contentWidth), _minWidth, _maxWidth);
+		float height = std::clamp(std::max(_height, contentHeight), _minHeight, _maxHeight);
 
 		FSize contentSize = Expand(FSize(width, height), _margin);
 		contentSize.Width = std::max(0.0f, contentSize.Width);

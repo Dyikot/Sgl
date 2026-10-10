@@ -327,6 +327,27 @@ namespace Sgl
 		}
 	}
 
+	void UIElement::ClearChildren()
+	{
+		if(IsAttachedToLogicalTree())
+		{
+			for(auto& child : _children)
+			{
+				child->SetParent(nullptr);
+				child->OnDetachedFromLogicalTree();
+			}
+		}
+		else
+		{
+			for(auto& child : _children)
+			{
+				child->SetParent(nullptr);
+			}
+		}
+
+		_children.clear();
+	}
+
 	RenderFragment UIElement::CreateBackgroundFragment(const Brush& background)
 	{
 		if(std::holds_alternative<Color>(background))

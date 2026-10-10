@@ -32,7 +32,7 @@ namespace Sgl::UIElements
 	{		
 		float borderWidth = GetBorderWidth();
 
-		if(borderWidth == 0)
+		if(borderWidth == 0.0f)
 		{
 			return;
 		}

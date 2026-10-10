@@ -24,7 +24,7 @@ namespace Sgl::UIElements
 		protected:
 			void ArrangeContent(FRect rect) override
 			{
-				auto parent = static_cast<ScrollBar*>(GetStylingParent());
+				auto parent = static_cast<ScrollBar*>(GetParent());
 				auto value = parent->GetRelativeValue();
 				auto viewportSize = parent->GetViewportSize();
 				auto orientation = parent->GetOrientation();
@@ -117,7 +117,7 @@ namespace Sgl::UIElements
 
 		if(property == ViewportSizeProperty)
 		{
-			_scrollScale = 1.0f / (1.0f - _viewportSize);
+			_scrollScale = _viewportSize < 1.0f ? 1.0f / (1.0f - _viewportSize) : 0.0f;
 			InvalidateArrange();
 		}
 	}
@@ -164,7 +164,7 @@ namespace Sgl::UIElements
 				SetValue(oldValue + sign * pageSize);
 			}
 
-			Logging::LogInfo("Value: {}", GetValue());
+			//Logging::LogInfo("Value: {}", GetValue());
 		};
 
 		SetTemplate(_track);
