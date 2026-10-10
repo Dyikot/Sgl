@@ -103,7 +103,7 @@ namespace Sgl::UIElements
 
 				child->Arrange(childRect);
 
-				totalHeight += height + spacing;				
+				totalHeight += height + spacing;
 			}
 		}
 		else

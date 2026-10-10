@@ -79,32 +79,42 @@ namespace Sgl
 
 	void Layoutable::ArrangeCore(FRect rect)
 	{
-		rect = Shrink(rect, _margin);
-		rect.w = std::max(0.0f, rect.w);
-		rect.h = std::max(0.0f, rect.h);
+		auto [width, height] = Shrink(FSize(rect.w, rect.h), _margin);
+		
+		if(width < 0)
+		{
+			width = 0;
+		}
 
-		float width = _horizontalAlignment == HorizontalAlignment::Stretch
-			? rect.w
-			: std::fmin(rect.w, _desiredSize.Width - _margin.Left - _margin.Right);
+		if(height < 0)
+		{
+			height = 0;
+		}
 
-		float height = _verticalAlignment == VerticalAlignment::Stretch
-			? rect.h
-			: std::fmin(rect.h, _desiredSize.Height - _margin.Top - _margin.Bottom);
+		if(_horizontalAlignment != HorizontalAlignment::Stretch)
+		{
+			width = std::fmin(width, _desiredSize.Width - _margin.Left - _margin.Right);
+		}
+
+		if(_verticalAlignment != VerticalAlignment::Stretch)
+		{
+			height = std::fmin(height, _desiredSize.Height - _margin.Top - _margin.Bottom);
+		}
 
 		width = std::clamp(width, _minWidth, _maxWidth);
 		height = std::clamp(height, _minHeight, _maxHeight);
 
-		float offsetX = std::max(0.0f, rect.w - width);
-		float offsetY = std::max(0.0f, rect.h - height);
+		float x = rect.x;
+		float y = rect.y;
 
 		switch(_horizontalAlignment)
 		{
 			case HorizontalAlignment::Right:
-				rect.x += offsetX;
+				x += rect.w - width;
 				break;
 
 			case HorizontalAlignment::Center:
-				rect.x += offsetX * 0.5f;
+				x += (rect.w - width) * 0.5f;
 				break;
 
 			default:
@@ -114,37 +124,48 @@ namespace Sgl
 		switch(_verticalAlignment)
 		{
 			case VerticalAlignment::Bottom:
-				rect.y += offsetY;
+				y += rect.h - height;
 				break;
 
 			case VerticalAlignment::Center:
-				rect.y += offsetY * 0.5f;
+				y += (rect.h - height) * 0.5f;
 				break;
 
 			default:
 				break;
 		}
 
-		_bounds = FRect(rect.x, rect.y, width, height);
+		_bounds = FRect(x, y, width, height);
 		ArrangeContent(_bounds);
 	}
 
 	FSize Layoutable::MeasureCore(FSize availableSize)
 	{
-		FSize contentAvailableSize = Shrink(availableSize, _margin);
-		contentAvailableSize.Width = std::max(0.0f, contentAvailableSize.Width);
-		contentAvailableSize.Height = std::max(0.0f, contentAvailableSize.Height);
+		FSize constrainedSize = Shrink(availableSize, _margin);
+		constrainedSize.Width = std::clamp(constrainedSize.Width, _minWidth, _maxWidth);
+		constrainedSize.Height = std::clamp(constrainedSize.Height, _minHeight, _maxHeight);
 
-		auto [contentWidth, contentHeight] = MeasureContent(contentAvailableSize);
+		auto [contentWidth, contentHeight] = MeasureContent(constrainedSize);
 
-		float width = std::clamp(std::max(_width, contentWidth), _minWidth, _maxWidth);
-		float height = std::clamp(std::max(_height, contentHeight), _minHeight, _maxHeight);
+		FSize desiredSize =
+		{
+			.Width = std::clamp(std::max(_width, contentWidth), _minWidth, _maxWidth),
+			.Height = std::clamp(std::max(_height, contentHeight), _minHeight, _maxHeight)
+		};
 
-		FSize contentSize = Expand(FSize(width, height), _margin);
-		contentSize.Width = std::max(0.0f, contentSize.Width);
-		contentSize.Height = std::max(0.0f, contentSize.Height);
+		desiredSize = Expand(desiredSize, _margin);
 
-		return contentSize;
+		if(desiredSize.Width < 0.0f)
+		{
+			desiredSize.Width = 0.0f;
+		}
+
+		if(desiredSize.Height < 0.0f)
+		{
+			desiredSize.Height = 0.0f;
+		}
+
+		return desiredSize;
 	}
 
 	void Layoutable::InvalidateArrange()

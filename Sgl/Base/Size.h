@@ -15,15 +15,29 @@ namespace Sgl
 		float Width;
 		float Height;
 
-		bool operator==(const FSize&) const = default;
+		constexpr bool operator==(const FSize&) const noexcept = default;
+
+		constexpr FSize& operator+=(FSize other) noexcept
+		{
+			Width += other.Width;
+			Height += other.Height;
+			return *this;
+		}
+
+		constexpr FSize& operator-=(FSize other) noexcept
+		{
+			Width -= other.Width;
+			Height -= other.Height;
+			return *this;
+		}
 	};
 
-	constexpr FSize operator+(const FSize& left, const FSize& right) noexcept
+	constexpr FSize operator+(FSize left, FSize right) noexcept
 	{
 		return FSize(left.Width + right.Width, left.Height + right.Height);
 	}
 
-	constexpr FSize operator-(const FSize& left, const FSize& right) noexcept
+	constexpr FSize operator-(FSize left, FSize right) noexcept
 	{
 		return FSize(left.Width - right.Width, left.Height - right.Height);
 	}

@@ -14,7 +14,6 @@ namespace Sgl::UIElements
 	TextBlock::TextBlock()
 	{
 		SetName("TextBlock");
-		SetClipToBounds(true, ValueSource::Default);
 	}
 
 	void TextBlock::SetText(const std::string& value, ValueSource source)
