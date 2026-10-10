@@ -15,7 +15,7 @@ Sgl brings the retained-mode UI model popularized by WPF to modern C++ — witho
   - *Panels*: `Panel`, `StackPanel`, `WrapPanel`, `DockPanel`, `Grid`, `UniformGrid`, `Canvas`
   - *Buttons*: `Button`, `ToggleButton`, `CheckBox`, `SwitchButton`, `RadioButton`, `RepeatButton`
   - *Text*: `TextBlock`
-  - *Containers*: `Border`
+  - *Containers*: `Border`, `ScrollableView`
   - *Media*: `Image`
   - *RangeBase*: `ProgressBar`, `Slider`, `ScrollBar`
 
