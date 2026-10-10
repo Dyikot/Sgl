@@ -158,6 +158,20 @@ namespace Sgl
 		TTF_SetFontWrapAlignment(_impl, alignment);
 	}
 
+	Size Font::GetTextSize(const std::string text) const
+	{
+		int width = 0, height = 0;
+		TTF_GetStringSize(_impl, text.data(), text.length(), &width, &height);
+		return Size(width, height);
+	}
+
+	Size Font::GetWrappedTextSize(const std::string text, int wrapWidth) const
+	{
+		int width = 0, height = 0;
+		TTF_GetStringSizeWrapped(_impl, text.data(), text.length(), wrapWidth, &width, &height);
+		return Size(width, height);
+	}
+
 	Font& Font::operator=(Font&& other) noexcept
 	{
 		_impl = std::exchange(other._impl, _impl);

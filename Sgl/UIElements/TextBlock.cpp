@@ -1,4 +1,5 @@
 #include "TextBlock.h"
+#include "../Layout/LayoutHelper.h"
 
 #include <SDL3_ttf/SDL_ttf.h>
 
@@ -153,11 +154,9 @@ namespace Sgl::UIElements
 
 	FSize TextBlock::MeasureContent(FSize availableSize)
 	{
-		FSize size {};
-
 		if(_text.empty())
 		{
-			return size;
+			return FSize();
 		}
 
 		if(_fontFlags > 0)
@@ -165,26 +164,14 @@ namespace Sgl::UIElements
 			UpdateFont();
 		}
 
-		int width = 0;
-		int height = 0;		
+		auto [width, height] = _textWrapping == TextWrapping::NoWrap
+			? _font.GetTextSize(_text)
+			: _font.GetWrappedTextSize(_text, availableSize.Width);
 
-		auto [left, top, right, bottom] = GetPadding();
+		FSize size(width, height);
+		SetTextBounds(FRect(0, 0, size.Width, size.Height));
 
-		if(_textWrapping == TextWrapping::NoWrap)
-		{
-			TTF_GetStringSize(_fontImpl, _text.data(), _text.length(), &width, &height);
-		}
-		else
-		{
-			int wrapWidth = availableSize.Width;
-			TTF_GetStringSizeWrapped(_fontImpl, _text.data(), _text.length(), wrapWidth, &width, &height);
-		}
-
-		_textBounds = FRect(0, 0, width, height);
-		size.Width = width + left + right;
-		size.Height = height + top + bottom;
-
-		return size;
+		return Expand(size, _padding);
 	}
 
 	void TextBlock::ArrangeContent(FRect rect)
@@ -202,34 +189,43 @@ namespace Sgl::UIElements
 	{
 		if(_fontFlags & FontFamilyFlag)
 		{
-			_fontImpl = Font(_fontFamily, _fontSize);
+			_font = Font(_fontFamily, _fontSize);
 		}
 		else if(_fontFlags & FontSizeFlag)
 		{
-			_fontImpl.SetSize(_fontSize);
+			_font.SetSize(_fontSize);
 		}
 
 		if(_fontFlags & FontStyleFlag)
 		{
-			_fontImpl.SetStyle(_fontStyle);
+			_font.SetStyle(_fontStyle);
 		}
 
 		if(_fontFlags & FontOutlineFlag)
 		{
-			_fontImpl.SetOutline(_outline);
+			_font.SetOutline(_outline);
 		}
 
 		if(_fontFlags & FlowDirectionFlag)
 		{
-			_fontImpl.SetFlowDirection(_flowDirection);
+			_font.SetFlowDirection(_flowDirection);
 		}
 
 		if(_fontFlags & TextAlignmentFlag)
 		{
-			_fontImpl.SetTextAligment(_textAlignment);
+			_font.SetTextAligment(_textAlignment);
 		}
 
 		_fontFlags = 0;
+	}
+
+	void TextBlock::SetTextBounds(FRect bounds)
+	{
+		if(_textBounds.w != bounds.w && _textBounds.h != bounds.h)
+		{
+			_textBounds = bounds;
+			InvalidateTextTexture();
+		}
 	}
 
 	Texture& TextBlock::GetTextTexture(SDL_Renderer* renderer)
@@ -237,8 +233,8 @@ namespace Sgl::UIElements
 		if(!_textTexture && !_text.empty())
 		{
 			_textTexture = _textWrapping == TextWrapping::NoWrap
-				? Texture(renderer, FontQuality::Blended, _fontImpl, GetText(), GetForeground())
-				: Texture(renderer, FontQuality::Blended, _fontImpl, GetText(), _textBounds.w, GetForeground());
+				? Texture(renderer, FontQuality::Blended, _font, GetText(), GetForeground())
+				: Texture(renderer, FontQuality::Blended, _font, GetText(), _textBounds.w, GetForeground());
 		}
 
 		return _textTexture;

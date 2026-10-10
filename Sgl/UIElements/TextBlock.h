@@ -60,6 +60,7 @@ namespace Sgl::UIElements
 	private:
 		void InvalidateFont(uint32_t flag);
 		void UpdateFont();
+		void SetTextBounds(FRect bounds);
 		Texture& GetTextTexture(SDL_Renderer* renderer);
 	private:
 		std::string _text;
@@ -85,7 +86,7 @@ namespace Sgl::UIElements
 		ValueSource _paddingSource {};
 
 		FRect _textBounds {};
-		Font _fontImpl;
+		Font _font;
 		Texture _textTexture;
 		uint32_t _fontFlags = 1;
 	};

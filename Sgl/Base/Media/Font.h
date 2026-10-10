@@ -1,7 +1,9 @@
 #pragma once
+
 #include <string>
 #include <filesystem>
 #include "../Ref.h"
+#include "../Size.h"
 
 struct TTF_Font;
 
@@ -143,6 +145,17 @@ namespace Sgl
 		//! @brief Sets the horizontal alignment for multi-line or bounded text rendering
 		//! @param textAlignment The text alignment (left, center, or right)
 		void SetTextAligment(TextAlignment textAlignment);
+
+		//! @brief Calculates the size of a single line of text without wrapping
+		//! @param text The UTF-8 encoded string of text to measure
+		//! @return The width and height required to render the text
+		Size GetTextSize(const std::string text) const;
+
+		//! @brief Calculates the size of text when constrained to a specific width
+		//! @param text The UTF-8 encoded string of text to measure
+		//! @param wrapWidth The maximum line width before the text wraps
+		//! @return The bounding box size of the wrapped text
+		Size GetWrappedTextSize(const std::string text, int wrapWidth) const;
 
 		Font& operator=(const Font&) = delete;
 
