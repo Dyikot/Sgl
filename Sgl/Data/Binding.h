@@ -3,6 +3,7 @@
 #include "Property.h"
 #include "ObservableObject.h"
 #include "../Base/Exceptions.h"
+#include "../Base/Delegate.h"
 
 namespace Sgl
 {
@@ -201,10 +202,7 @@ namespace Sgl
                 auto sourceValue = _sourceProperty.InvokeGetter(*source);
                 _targetProperty.InvokeSetter(*target, _converter(sourceValue));
 
-                source->PropertyChanged += ConvertibleBindingHandler<
-                    TTargetProperty, TSourceProperty, TConverter>(
-                        _targetProperty, target, _sourceProperty, _converter
-                    );
+                source->PropertyChanged += ConvertibleBindingHandler(_targetProperty, target, _sourceProperty, _converter);
             }
 
             if(_mode == BindingMode::OneWayToSource || _mode == BindingMode::TwoWay)
@@ -212,10 +210,7 @@ namespace Sgl
                 auto targetValue = _targetProperty.InvokeGetter(*target);
                 _sourceProperty.InvokeSetter(*source, _converter(targetValue));
 
-                target->PropertyChanged += ConvertibleBindingHandler<
-                    TSourceProperty, TTargetProperty, TConverter>(
-                        _sourceProperty, source, _targetProperty, _converter
-                    );
+                target->PropertyChanged += ConvertibleBindingHandler(_sourceProperty, source, _targetProperty, _converter);
             }
 
             _applied = true;
@@ -235,18 +230,12 @@ namespace Sgl
 
             if(_mode == BindingMode::OneWay || _mode == BindingMode::TwoWay)
             {
-                source->PropertyChanged -= ConvertibleBindingHandler<
-                    TTargetProperty, TSourceProperty, TConverter>(
-                        _targetProperty, target, _sourceProperty, _converter
-                    );
+                source->PropertyChanged -= ConvertibleBindingHandler(_targetProperty, target, _sourceProperty, _converter);
             }
 
             if(_mode == BindingMode::OneWayToSource || _mode == BindingMode::TwoWay)
             {
-                target->PropertyChanged -= ConvertibleBindingHandler<
-                    TSourceProperty, TTargetProperty, TConverter>(
-                        _sourceProperty, source, _targetProperty, _converter
-                    );
+                target->PropertyChanged -= ConvertibleBindingHandler(_sourceProperty, source, _targetProperty, _converter);
             }
 
             _applied = false;

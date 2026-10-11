@@ -6,6 +6,9 @@
 
 namespace Sgl
 {
+	template<CProperty TProperty, typename TObserver>
+	struct PropertyObserver;
+
 	//! @brief Base class for objects that support property change notification
 	class ObservableObject : public RefCounted
 	{
@@ -16,6 +19,24 @@ namespace Sgl
 
 		//! @brief Occurs when a property value changes
 		Event<PropertyChangedEventHandler> PropertyChanged;
+
+		//! @brief Subscribes an observer to be notified when a specific property changes
+		//! @param property Reference to the property to observe
+		//! @param observer The callback to invoke when the property changes
+		template<CProperty TProperty, typename TObserver>
+		void AddObserver(TProperty& property, TObserver observer)
+		{
+			PropertyChanged += PropertyObserver(property, std::move(observer));
+		}
+
+		//! @brief Unsubscribes an observer from a specific property
+		//! @param property Reference to the property to stop observing
+		//! @param observer The callback to remove
+		template<CProperty TProperty, typename TObserver>
+		void RemoveObserver(TProperty& property, TObserver observer)
+		{
+			PropertyChanged -= PropertyObserver(property, std::move(observer));
+		}
 
 	protected:
 		//! @brief Sets the property value and raises PropertyChanged if the value changed
@@ -63,6 +84,37 @@ namespace Sgl
 		virtual void OnPropertyChanged(PropertyBase& property)
 		{
 			PropertyChanged.Invoke(*this, property);
+		}
+	};
+
+	//! @brief A wrapper that binds an observer callback to a specific property.
+	//! It acts as an event handler for the PropertyChanged event. When invoked, 
+	//! it checks if the raised property matches the bound property. If it does, it extracts 
+	//! the new value and passes it to the observer callback.
+	template<CProperty TProperty, typename TObserver>
+	struct PropertyObserver
+	{
+	public:
+		using Owner = TProperty::Owner;
+		using Value = TProperty::Value;
+
+		static_assert(std::invocable<TObserver, Value>);
+
+	public:
+		TProperty& property;
+		TObserver observer;
+
+		void operator()(ObservableObject& sender, PropertyBase& p) const
+		{
+			if(property == p)
+			{
+				observer(property.InvokeGetter(static_cast<TProperty::Owner&>(sender)));
+			}
+		}
+
+		bool operator==(const PropertyObserver& other) const
+		{
+			return property == other.property && observer == other.observer;
 		}
 	};
 }
