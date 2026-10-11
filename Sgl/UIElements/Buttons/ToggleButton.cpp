@@ -14,7 +14,7 @@ namespace Sgl::UIElements
 		if(property == IsCheckedProperty)
 		{
 			States.Set(OnChecked, _isChecked);
-			OnCheckedChanged();
+			OnIsCheckedChanged();
 		}
 	}
 
@@ -37,5 +37,10 @@ namespace Sgl::UIElements
 	void ToggleButton::Uncheck()
 	{
 		SetIsChecked(false, _isCheckedSource);
+	}
+
+	void ToggleButton::OnIsCheckedChanged()
+	{
+		IsCheckedChanged.Invoke(*this);
 	}
 }

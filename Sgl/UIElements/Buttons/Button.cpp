@@ -29,9 +29,14 @@ namespace Sgl::UIElements
 	{
 		ContentUIElement::OnMouseDown(e);
 
-		if(e.Button == MouseButton::Left && _clickMode == ClickMode::Press)
+		if(e.Button == MouseButton::Left)
 		{
-			OnClick();
+			if(_clickMode == ClickMode::Press)
+			{
+				OnClick();
+			}
+
+			e.Handled = true;
 		}
 	}
 
@@ -39,9 +44,14 @@ namespace Sgl::UIElements
 	{
 		ContentUIElement::OnMouseUp(e);
 
-		if(e.Button == MouseButton::Left && _clickMode == ClickMode::Release)
+		if(e.Button == MouseButton::Left)
 		{
-			OnClick();
+			if(_clickMode == ClickMode::Release)
+			{
+				OnClick();
+			}
+
+			e.Handled = true;
 		}
 	}
 
@@ -53,6 +63,7 @@ namespace Sgl::UIElements
 		{
 			States.Set(OnPressed);
 			OnClick();
+			e.Handled = true;
 		}
 	}
 
@@ -63,6 +74,7 @@ namespace Sgl::UIElements
 		if(e.Key == KeyCodes::Return || e.Key == KeyCodes::KpEnter)
 		{
 			States.Reset(OnPressed);
+			e.Handled = true;
 		}
 	}
 

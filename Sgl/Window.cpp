@@ -9,27 +9,29 @@ namespace Sgl
 {
     namespace
     {
-        struct ColorBackground
+        struct BackgroundVisitor
         {
-            Color color;
+            ITextureFactory* factory;
 
-            void operator()(RenderContext context, const FRect& rect) const
+            RenderFragment operator()(Color color) const
             {
-                context.FillBackground(color);
+                return [color](RenderContext context, const FRect& rect)
+                {
+                    context.FillBackground(color);
+                };
+            }
+
+            RenderFragment operator()(const ImageSource& imageSource) const
+            {
+                Texture texture = factory->Create(imageSource, false);
+                return [texture](RenderContext context, const FRect& rect)
+                {
+                    context.DrawTexture(texture, nullptr, nullptr);
+                };
             }
         };
 
-        struct ImageBackground
-        {
-            Texture texture;
-
-            void operator()(RenderContext context, const FRect& rect) const
-            {
-                context.DrawTexture(texture, nullptr, nullptr);
-            }
-        };
-
-        class TextureFactory final: public ITextureFactory
+        class TextureFactory : public ITextureFactory
         {
         public:
             TextureFactory(SDL_Renderer* renderer):
@@ -49,7 +51,7 @@ namespace Sgl
                     return it->second.Texture;
                 }
 
-                static constexpr size_t cacheSize = 100;
+                constexpr size_t cacheSize = 100;
                 auto texture = source.CreateTexture(_renderer);
 
                 if(texture)
@@ -78,6 +80,18 @@ namespace Sgl
             SDL_Renderer* _renderer;
             std::unordered_map<ImageSource, CachedTexture> _textures;
             std::list<ImageSource> _order;
+        };
+
+        struct WindowResumeHandler
+        {
+            std::coroutine_handle<> Handle;
+
+            void operator()(Window& sender, EventArgs e) const
+            {
+                Handle.resume();
+            }
+
+            bool operator==(const WindowResumeHandler&) const = default;
         };
 
         constexpr auto DefaultTitle = "Window";
@@ -573,17 +587,7 @@ namespace Sgl
 
     void Window::OnBackgroundChanged(const Brush& background)
     {
-        if(std::holds_alternative<Color>(background))
-        {
-            auto color = std::get<Color>(background);
-            _backgroundFragment = ColorBackground(color);
-        }
-        else
-        {
-            auto& source = std::get<ImageSource>(background);
-            auto texture = _textureFactory->Create(source, false);
-            _backgroundFragment = ImageBackground(texture);
-        }
+        _backgroundFragment = std::visit(BackgroundVisitor(_textureFactory), background);
     }
 
     void Window::OnDataContextChanged(const Ref<ObservableObject>& dataContext)
@@ -736,18 +740,6 @@ namespace Sgl
         delete _textureFactory;
         SDL_DestroyRenderer(_renderer);
     }
-
-    struct WindowResumeHandler
-    {
-        std::coroutine_handle<> Handle;
-
-        void operator()(Window& sender, EventArgs e) const
-        {
-            Handle.resume();
-        }
-
-        bool operator==(const WindowResumeHandler&) const = default;
-    };
 
     Window::ModalAwaiter::ModalAwaiter(Window& window):
         _window(window)

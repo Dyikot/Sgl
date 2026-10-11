@@ -11,6 +11,8 @@ namespace Sgl::UIElements
 	public:
 		ToggleButton() = default;
 
+		Event<ToggleButtonEventHandler> IsCheckedChanged;
+
 		void SetIsChecked(bool value, ValueSource source = ValueSource::Local);
 		bool IsChecked() const { return _isChecked; }
 
@@ -22,7 +24,7 @@ namespace Sgl::UIElements
 		void ToggleState();
 		void Check();
 		void Uncheck();
-		virtual void OnCheckedChanged() {}
+		virtual void OnIsCheckedChanged();
 	private:
 		bool _isChecked = false;
 		ValueSource _isCheckedSource {};

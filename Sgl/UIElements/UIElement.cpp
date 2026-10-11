@@ -10,45 +10,50 @@ namespace Sgl
 {
 	namespace
 	{
-		struct Rectangle
+		struct BackgroundVisitor
 		{
-			Color Background;
+			ITextureFactory* factory;
 
-			void operator()(RenderContext context, const FRect& rect) const
+			RenderFragment operator()(Color color) const
 			{
-				context.DrawRectangleFill(rect, Background);
+				return [color](RenderContext context, const FRect& rect)
+				{
+					context.DrawRectangleFill(rect, color);
+				};
+			}
+
+			RenderFragment operator()(const ImageSource& imageSource) const
+			{
+				Texture texture = factory->Create(imageSource, false);
+				return [texture](RenderContext context, const FRect& rect)
+				{
+					context.DrawTexture(texture, &rect, nullptr);
+				};
 			}
 		};
 
-		struct RoundedRectangle
+		struct RoundedBackgroundVisitor
 		{
-			Color Background;
-			float CornersRadius;
+			float cornersRadius;
+			ITextureFactory* factory;
 
-			void operator()(RenderContext context, const FRect& rect) const
+			RenderFragment operator()(Color color) const
 			{
-				context.DrawRectangleFill(rect, CornersRadius, Background);
+				float radius = cornersRadius;
+				return [color, radius](RenderContext context, const FRect& rect)
+				{
+					context.DrawRectangleFill(rect, radius, color);
+				};
 			}
-		};
 
-		struct Image
-		{
-			Texture Background;
-
-			void operator()(RenderContext context, const FRect& rect) const
+			RenderFragment operator()(const ImageSource& imageSource) const
 			{
-				context.DrawTexture(Background, &rect, nullptr);
-			}
-		};
-
-		struct RoundedImage
-		{
-			Texture Background;
-			float CornersRadius;
-
-			void operator()(RenderContext context, const FRect& rect) const
-			{
-				context.DrawRectangleFill(rect, CornersRadius, Background);
+				float radius = cornersRadius;
+				Texture texture = factory->Create(imageSource, false);
+				return [texture, radius](RenderContext context, const FRect& rect)
+				{
+					context.DrawRectangleFill(rect, radius, texture);
+				};
 			}
 		};
 	}
@@ -350,33 +355,10 @@ namespace Sgl
 
 	RenderFragment UIElement::CreateBackgroundFragment(const Brush& background)
 	{
-		if(std::holds_alternative<Color>(background))
-		{
-			Color color = std::get<Color>(background);
-			
-			if(_cornersRadius > 0.0f)
-			{
-				return RoundedRectangle(color, _cornersRadius);
-			}
-			else
-			{
-				return Rectangle(color);
-			}
-		}
-		else
-		{
-			auto& source = std::get<ImageSource>(background);
-			auto texture = GetVisualRoot()->GetTextureFactory().Create(source, false);
-
-			if(_cornersRadius > 0.0f)
-			{
-				return RoundedImage(texture, _cornersRadius);
-			}
-			else
-			{
-				return Image(texture);
-			}
-		}
+		auto& textureFactory = GetVisualRoot()->GetTextureFactory();
+		return _cornersRadius > 0.0f
+			? std::visit(RoundedBackgroundVisitor(_cornersRadius, &textureFactory), background)
+			: std::visit(BackgroundVisitor(&textureFactory), background);
 	}
 
 	void UIElement::InvalidateBackground()

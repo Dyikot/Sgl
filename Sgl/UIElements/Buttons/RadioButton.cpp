@@ -127,8 +127,10 @@ namespace Sgl::UIElements
 		OnPropertyChanged(GroupNameProperty);
 	}
 
-	void RadioButton::OnCheckedChanged()
+	void RadioButton::OnIsCheckedChanged()
 	{
+		ToggleButton::OnIsCheckedChanged();
+
 		if(IsChecked())
 		{
 			RadioButtonGroupRegistry::Instance().NotifyCheckedChanged(this);

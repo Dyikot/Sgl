@@ -14,7 +14,7 @@ namespace Sgl::UIElements
 
 		static inline StyleableProperty GroupNameProperty { &SetGroupName, &GetGroupName };
 	protected:
-		void OnCheckedChanged() final;
+		void OnIsCheckedChanged() override;
 		void OnClick() final;
 		void OnAttachedToLogicalTree() override;
 		void OnDetachedFromLogicalTree() override;
