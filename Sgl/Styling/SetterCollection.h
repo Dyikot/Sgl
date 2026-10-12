@@ -5,14 +5,14 @@
 
 namespace Sgl
 {
-	class SetterCollection : public Vector<Ref<ISetter>>
+	class SetterCollection : public Vector<Ref<SetterBase>>
 	{
 	public:
 		using Vector::Vector;
 		SetterCollection(const SetterCollection&) = default;
 		SetterCollection(SetterCollection&&) noexcept = default;
 
-		SetterCollection(std::initializer_list<ISetter*> setters)
+		SetterCollection(std::initializer_list<SetterBase*> setters)
 		{
 			_data.reserve(setters.size());
 

@@ -8,10 +8,10 @@
 namespace Sgl
 {
 	//! @brief Base class for resource setter 
-	class ResourceSetterBase : public ISetter
+	class ResourceSetterBase : public SetterBase
 	{
 	public:
-		explicit ResourceSetterBase(std::string key);
+		ResourceSetterBase(PropertyBase& property, std::string key);
 	protected:
 		Color GetColor() const;
 		Brush GetBrush() const;
@@ -31,26 +31,16 @@ namespace Sgl
 		using ColorProperty = StyleableProperty<TOwner, Color>;
 	public:
 		ResourceSetter(ColorProperty& property, std::string key):
-			ResourceSetterBase(std::move(key)),
-			_property(property)
+			ResourceSetterBase(property, std::move(key))
 		{}
-
-		//! @brief Gets target property
-		//! @return Reference to property
-		PropertyBase& GetProperty() const override
-		{
-			return _property;
-		}
 
 		//! @brief Applies the value from resources to the specified target element
 		//! @param target The target element
 		//! @param valueSource The source of the value
 		void Apply(Styleable& target, ValueSource valueSource) const override
 		{
-			_property.InvokeSetter(static_cast<TOwner&>(target), GetColor(), valueSource);
+			SetPropertyValue<TOwner, Color>(target, valueSource, GetColor());
 		}
-	private:
-		ColorProperty& _property;
 	};
 
 	//! @brief A setter that resolves a brush from a theme resource at runtime
@@ -61,26 +51,16 @@ namespace Sgl
 		using BrushProperty = StyleableProperty<TOwner, const Brush&>;
 	public:
 		ResourceSetter(BrushProperty& property, std::string key):
-			ResourceSetterBase(std::move(key)),
-			_property(property)
+			ResourceSetterBase(property, std::move(key))
 		{}
-
-		//! @brief Gets target property
-		//! @return Reference to property
-		PropertyBase& GetProperty() const override
-		{
-			return _property;
-		}
 
 		//! @brief Applies the value from resources to the specified target element
 		//! @param target The target element
 		//! @param valueSource The source of the value
 		void Apply(Styleable& target, ValueSource valueSource) const override
 		{
-			_property.InvokeSetter(static_cast<TOwner&>(target), GetBrush(), valueSource);
+			SetPropertyValue<TOwner, const Brush&>(target, valueSource, GetBrush());
 		}
-	private:
-		BrushProperty& _property;
 	};
 
 	template<typename TOwner, typename TValue>

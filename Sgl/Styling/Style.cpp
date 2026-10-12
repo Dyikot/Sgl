@@ -9,7 +9,7 @@ namespace
     {
         PropertyBase* property;
 
-        bool operator()(const Ref<ISetter>& setter)
+        bool operator()(const Ref<SetterBase>& setter)
         {
             return setter->GetProperty() == *property;
         }

@@ -3,7 +3,8 @@
 
 namespace Sgl
 {
-	ResourceSetterBase::ResourceSetterBase(std::string key):
+	ResourceSetterBase::ResourceSetterBase(PropertyBase& property, std::string key):
+		SetterBase(property),
 		_key(std::move(key))
 	{}
 
