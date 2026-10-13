@@ -24,6 +24,10 @@ namespace Sgl::UIElements
 				context.Set(Button::BackgroundProperty, Colors::Grey_1);
 				context.Set(Button::CursorProperty, Cursors::Arrow);
 			}
+		protected:
+			void OnHover(StyleContext& context) override {}
+			void OnPressed(StyleContext& context) override {}
+			void OnFocus(StyleContext& context) override {}
 		};
 
 		class Track : public RepeatButton

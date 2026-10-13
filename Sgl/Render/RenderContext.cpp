@@ -1,13 +1,9 @@
 #include "RenderContext.h"
 
-#include <cassert>
 #include <numbers>
-#include <SDL3_ttf/SDL_ttf.h>
-#include <SDL3_image/SDL_image.h>
 
 #include "../Base/Math.h"
 #include "../Base/Media/Font.h"
-#include "../Base/Logging.h"
 #include "../Base/Exceptions.h"
 
 namespace Sgl

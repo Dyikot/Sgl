@@ -22,7 +22,7 @@ namespace Sgl
 	};
 
 	//! @brief A RAII wrapper around SDL_Surface that manages a reference-counted surface
-	class Surface final
+	class Surface
 	{
 	public:
 		//! @brief Constructs an empty (null) surface

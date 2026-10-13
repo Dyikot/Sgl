@@ -31,7 +31,7 @@ namespace Sgl
     };
 
     //! @brief A RAII wrapper around SDL_Texture that manages a reference-counted GPU texture
-    class Texture final
+    class Texture
     {
     public:
         //! @brief Constructs an empty (null) texture
