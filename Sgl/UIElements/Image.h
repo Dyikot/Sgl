@@ -18,11 +18,11 @@ namespace Sgl::UIElements
 	public:
 		Image();
 
-		void SetSource(const std::filesystem::path& imagePath, ValueSource source = ValueSource::Local);
-		void SetSource(const ImageSource& value, ValueSource source = ValueSource::Local);
+		void SetSource(const std::filesystem::path& imagePath);
+		void SetSource(const ImageSource& value);
 		const ImageSource& GetSource() const { return _source; }
 
-		void SetStretch(Stretch value, ValueSource source = ValueSource::Local);
+		void SetStretch(Stretch value);
 		Stretch GetStretch() const { return _stretch; }
 
 		static inline StyleableProperty SourceProperty { &SetSource, &GetSource };

@@ -36,18 +36,8 @@ namespace Sgl::UIElements
 	ScrollableView::ScrollableView()
 	{
 		SetName("ScrollableView");
-		SetIsFocusable(true, ValueSource::Default);
+		SetIsFocusable(true);
 		BuildTemplate();
-
-		_verticalScrollBar->ValueChanged += [this](RangeBase& sender, float value)
-		{
-			SetVerticalOffset(value);
-		};
-
-		_horizontalScrollBar->ValueChanged += [this](RangeBase& sender, float value)
-		{
-			SetHorizontalOffset(value);
-		};
 
 		ScrollMeasured += [this](ScrollableView& sender, EventArgs e)
 		{
@@ -73,9 +63,9 @@ namespace Sgl::UIElements
 		};
 	}
 
-	void ScrollableView::SetContent(const Ref<ObservableObject>& value, ValueSource source)
+	void ScrollableView::SetContent(const Ref<ObservableObject>& value)
 	{
-		_content->SetContent(value, source);
+		_content->SetContent(value);
 	}
 
 	const Ref<ObservableObject>& ScrollableView::GetContent() const
@@ -83,9 +73,9 @@ namespace Sgl::UIElements
 		return _content->GetContent();
 	}
 
-	void ScrollableView::SetContentTemplate(const Ref<IDataTemplate>& value, ValueSource source)
+	void ScrollableView::SetContentTemplate(const Ref<IDataTemplate>& value)
 	{
-		_content->SetContentTemplate(value, source);
+		_content->SetContentTemplate(value);
 	}
 
 	const Ref<IDataTemplate>& ScrollableView::GetContentTemplate() const
@@ -93,10 +83,10 @@ namespace Sgl::UIElements
 		return _content->GetContentTemplate();
 	}
 
-	void ScrollableView::SetScrollStep(float value, ValueSource source)
+	void ScrollableView::SetScrollStep(float value)
 	{
 		_scrollStep = std::max(1.0f, value);
-		SetProperty(ScrollStepProperty, _scrollStep, value, _ScrollStepSource, source);
+		SetProperty(ScrollStepProperty, _scrollStep, value, _ScrollStepSource);
 	}
 
 	void ScrollableView::SetHorizontalOffset(float value)
@@ -298,17 +288,21 @@ namespace Sgl::UIElements
 
 	void ScrollableView::BuildTemplate()
 	{
-		constexpr float ScrollBarLenght = 15;
-
 		_verticalScrollBar = New<ScrollBar>();
 		_verticalScrollBar->SetName("VerticalScrollBar");
 		_verticalScrollBar->SetOrientation(Orientation::Vertical);
-		_verticalScrollBar->SetWidth(ScrollBarLenght);
-		
+		_verticalScrollBar->ValueChanged += [this](RangeBase& sender, float value)
+		{
+			SetVerticalOffset(value);
+		};
+
 		_horizontalScrollBar = New<ScrollBar>();
 		_horizontalScrollBar->SetName("HorizontalScrollBar");
 		_horizontalScrollBar->SetOrientation(Orientation::Horizontal);
-		_horizontalScrollBar->SetHeight(ScrollBarLenght);
+		_horizontalScrollBar->ValueChanged += [this](RangeBase& sender, float value)
+		{
+			SetHorizontalOffset(value);
+		};
 
 		_content = New<ScrollContentPresenter>(_scrollInfo);
 

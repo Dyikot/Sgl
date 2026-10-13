@@ -13,10 +13,10 @@ namespace Sgl
     public:
         Renderable() = default;
 
-        void SetCursor(Cursor value, ValueSource source = ValueSource::Local);
+        void SetCursor(Cursor value);
         Cursor GetCursor() const;
 
-        void SetBackground(const Brush& value, ValueSource source = ValueSource::Local);
+        void SetBackground(const Brush& value);
         const Brush& GetBackground() const;
 
         IVisualRoot* GetVisualRoot() const { return _visualRoot; }

@@ -8,9 +8,9 @@ namespace Sgl::UIElements
 		SetName("Border");
 	}
 
-	void Border::SetBorderWidth(uint32_t value, ValueSource source)
+	void Border::SetBorderWidth(uint32_t value)
 	{
-		SetProperty(BorderWidthProperty, _borderWidth, value, _borderWidthSource, source);
+		SetProperty(BorderWidthProperty, _borderWidth, value, _borderWidthSource);
 	}
 
 	uint32_t Border::GetBorderWidth() const
@@ -18,9 +18,9 @@ namespace Sgl::UIElements
 		return GetProperty(BorderWidthProperty, _borderWidth);
 	}
 
-	void Border::SetBorderColor(Color value, ValueSource source)
+	void Border::SetBorderColor(Color value)
 	{
-		SetProperty(BorderColorProperty, _borderColor, value, _borderColorSource, source);
+		SetProperty(BorderColorProperty, _borderColor, value, _borderColorSource);
 	}
 
 	Color Border::GetBorderColor() const

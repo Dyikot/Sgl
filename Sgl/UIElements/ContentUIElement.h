@@ -12,19 +12,19 @@ namespace Sgl
 		const Ref<UIElement>& GetContentPresenter() const { return _contentPresenter; }
 
 		void SetContent(const std::string& value);
-		void SetContent(const Ref<ObservableObject>& value, ValueSource source = ValueSource::Local);
+		void SetContent(const Ref<ObservableObject>& value);
 		const Ref<ObservableObject>& GetContent() const { return _content; }
 
-		void SetContentTemplate(const Ref<IDataTemplate>& value, ValueSource source = ValueSource::Local);
+		void SetContentTemplate(const Ref<IDataTemplate>& value);
 		const Ref<IDataTemplate>& GetContentTemplate() const { return _contentTemplate; }
 
-		void SetPadding(Thickness value, ValueSource source = ValueSource::Local);
+		void SetPadding(Thickness value);
 		Thickness GetPadding() const { return _padding; }
 
-		void SetVerticalContentAlignment(VerticalAlignment value, ValueSource source = ValueSource::Local);
+		void SetVerticalContentAlignment(VerticalAlignment value);
 		VerticalAlignment GetVerticalContentAlignment() const { return _verticalContentAlignment; }
 
-		void SetHorizontalContentAlignment(HorizontalAlignment value, ValueSource source = ValueSource::Local);
+		void SetHorizontalContentAlignment(HorizontalAlignment value);
 		HorizontalAlignment GetHorizontalContentAlignment() const { return _horizontalContentAlignment; }
 
 		static inline StyleableProperty ContentProperty { &SetContent, &GetContent };

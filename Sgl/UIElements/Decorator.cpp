@@ -3,8 +3,10 @@
 
 namespace Sgl
 {
-	void Decorator::SetChild(const Ref<UIElement>& value, ValueSource source)
+	void Decorator::SetChild(const Ref<UIElement>& value)
 	{
+		auto source = GetValueSource();
+
 		if(_childSource > source)
 		{
 			return;
@@ -32,9 +34,9 @@ namespace Sgl
 		OnPropertyChanged(ChildProperty);
 	}
 
-	void Decorator::SetPadding(Thickness value, ValueSource source)
+	void Decorator::SetPadding(Thickness value)
 	{
-		SetProperty(PaddingProperty, _padding, value, _paddingSource, source);
+		SetProperty(PaddingProperty, _padding, value, _paddingSource);
 	}
 
 	void Decorator::OnPropertyChanged(PropertyBase& property)

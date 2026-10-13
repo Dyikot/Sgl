@@ -1,28 +1,32 @@
 #include "Button.h"
+#include "../../Styling/StyleContext.h"
 
 namespace Sgl::UIElements
 {
 	Button::Button()
 	{
 		SetName("Button");
-		SetCursor(Cursors::Pointer);
-		SetBackground(Colors::LightGray, ValueSource::Default);
-		SetIsFocusable(true, ValueSource::Default);
+		SetIsFocusable(true);
 	}
 
-	void Button::SetClickMode(ClickMode value, ValueSource source)
+	void Button::SetClickMode(ClickMode value)
 	{
-		SetProperty(ClickModeProperty, _clickMode, value, _clickModeSource, source);
+		SetProperty(ClickModeProperty, _clickMode, value, _clickModeSource);
 	}
 
-	void Button::SetCommand(const Command& value, ValueSource sorce)
+	void Button::SetCommand(const Command& value)
 	{
-		SetProperty(CommandProperty, _command, value, _commandSource, sorce);
+		SetProperty(CommandProperty, _command, value, _commandSource);
 	}
 
-	void Button::SetCommandParameter(const Any& value, ValueSource source)
+	void Button::SetCommandParameter(const Any& value)
 	{
-		SetProperty(CommandParameterProperty, _commandParameter, value, _commandParameterSource, source);
+		SetProperty(CommandParameterProperty, _commandParameter, value, _commandParameterSource);
+	}
+
+	Ref<Style> Button::CreateDefaultStyle() const
+	{
+		return New<ButtonStyle>();
 	}
 
 	void Button::OnMouseDown(MouseClickEventArgs& e)
@@ -86,5 +90,26 @@ namespace Sgl::UIElements
 		{
 			_command(_commandParameter);
 		}
+	}
+
+	void ButtonStyle::OnBase(StyleContext& context)
+	{
+		context.Set(Button::CursorProperty, Cursors::Pointer);
+		context.Set(Button::BackgroundProperty, Colors::Grey_2);
+	}
+
+	void ButtonStyle::OnHover(StyleContext& context)
+	{
+		context.Set(Button::BackgroundProperty, Colors::Grey_3);
+	}
+
+	void ButtonStyle::OnPressed(StyleContext& context)
+	{
+		context.Set(Button::BackgroundProperty, Colors::Grey_4);
+	}
+
+	void ButtonStyle::OnFocus(StyleContext& context)
+	{
+	
 	}
 }

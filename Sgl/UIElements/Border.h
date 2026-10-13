@@ -9,10 +9,10 @@ namespace Sgl::UIElements
 	public:
 		Border();
 
-		void SetBorderWidth(uint32_t value, ValueSource source = ValueSource::Local);
+		void SetBorderWidth(uint32_t value);
 		uint32_t GetBorderWidth() const;
 
-		void SetBorderColor(Color value, ValueSource source = ValueSource::Local);
+		void SetBorderColor(Color value);
 		Color GetBorderColor() const;
 
 		static inline StyleableProperty BorderWidthProperty { &SetBorderWidth, &GetBorderWidth };

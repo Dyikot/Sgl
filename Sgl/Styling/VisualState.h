@@ -74,7 +74,7 @@ namespace Sgl
         //! @return True if all visual states are set; otherwise, false
         bool Has(const VisualStateSet& states) const;
 
-    private:
+    public:
         VisualStates _states;
     };
 }

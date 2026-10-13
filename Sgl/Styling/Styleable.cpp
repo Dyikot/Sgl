@@ -1,4 +1,4 @@
-#include "Styleable.h"
+#include "StyleContext.h"
 #include "../Base/Tools/StringUtils.h"
 #include "../Base/Logging.h"
 
@@ -22,29 +22,12 @@ namespace Sgl
 		_name = value;
 	}
 
-	void Styleable::SetClasses(std::string_view classNames, char delimiter)
+	void Styleable::SetStyle(Ref<Style> style)
 	{
-		_classes = SplitString(classNames, delimiter);
-		FetchAndApplyStyle();
+		_style = std::move(style);
 	}
 
-	void Styleable::SetClasses(std::vector<std::string> classList)
-	{
-		_classes = std::move(classList);
-		FetchAndApplyStyle();
-	}
-
-	const std::vector<std::string>& Styleable::GetClasses() const
-	{
-		return _classes;
-	}
-
-	StyleCollection& Styleable::GetStyles()
-	{
-		return Styles;
-	}
-
-	void Styleable::SetParent(IStyleHost* parent)
+	void Styleable::SetParent(Styleable* parent)
 	{
 		_stylingParent = parent;
 	}
@@ -52,49 +35,47 @@ namespace Sgl
 	void Styleable::OnAttachedToLogicalTree()
 	{
 		_isAttachedToLogicalTree = true;
-		FetchAndApplyStyle();
+		
+		if(!_style)
+		{
+			_style = CreateDefaultStyle();
+		}
+
+		ApplyStyle();
+		ApplyStateStyle();
 		AttachedToLogicalTree.Invoke(*this);
 	}
 
 	void Styleable::OnDetachedFromLogicalTree()
 	{
 		_isAttachedToLogicalTree = false;
-		_style = {};
 		DetachedFromLogicalTree.Invoke(*this);
 	}
 
-	void Styleable::FetchAndApplyStyle()
+	Ref<Style> Styleable::CreateDefaultStyle() const
 	{
-		if(!IsAttachedToLogicalTree())
-		{
-			return;
-		}
-
-		_style = {};
-				
-		MergeStylesTo(*this, _style);
-		ApplyStyle();
-		ApplyStateStyle();
-	}
-
-	void Styleable::MergeStylesTo(Styleable& element, Style& target)
-	{
-		if(_stylingParent)
-		{
-			_stylingParent->MergeStylesTo(element, target);
-		}
-
-		Styles.MergeStylesTo(element, target);
+		return nullptr;
 	}
 
 	void Styleable::ApplyStyle()
 	{
-		_style.Apply(*this);
+		if(_style)
+		{
+			ValueSourceScope scope(*this, ValueSource::Style);
+			StyleContext context(*this);
+			_style->OnBase(context);
+		}
 	}
 
 	void Styleable::ApplyStateStyle()
 	{
-		ClearAllValues();
-		_style.ApplyStates(*this);
+		if(_style)
+		{
+			ClearAllValues();
+
+			ValueSourceScope scope(*this, ValueSource::VisualState);
+			StyleContext context(*this);
+			_style->OnState(context, States);
+		}
 	}
 }

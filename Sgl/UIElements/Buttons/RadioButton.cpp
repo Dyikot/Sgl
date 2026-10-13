@@ -1,4 +1,5 @@
 #include "RadioButton.h"
+#include "../../Styling/StyleContext.h"
 
 namespace Sgl::UIElements
 {
@@ -84,16 +85,13 @@ namespace Sgl::UIElements
 
 	RadioButton::RadioButton()
 	{
-		static ImageSource source(AssetId::RadioButtonOutline);
-
 		SetName("RadioButton");
-		SetWidth(24, ValueSource::Default);
-		SetHeight(24, ValueSource::Default);
-		SetBackground(source, ValueSource::Default);
 	}
 
-	void RadioButton::SetGroupName(const std::string& value, ValueSource source)
+	void RadioButton::SetGroupName(const std::string& value)
 	{
+		auto source = GetValueSource();
+
 		if(_groupNameValueSource > source)
 		{
 			return;
@@ -127,6 +125,11 @@ namespace Sgl::UIElements
 		OnPropertyChanged(GroupNameProperty);
 	}
 
+	Ref<Style> RadioButton::CreateDefaultStyle() const
+	{
+		return New<RadioButtonStyle>();
+	}
+
 	void RadioButton::OnIsCheckedChanged()
 	{
 		ToggleButton::OnIsCheckedChanged();
@@ -157,5 +160,18 @@ namespace Sgl::UIElements
 	{
 		ToggleButton::OnDetachedFromLogicalTree();
 		RadioButtonGroupRegistry::Instance().Remove(this);
+	}
+
+	void RadioButtonStyle::OnBase(StyleContext& context)
+	{
+		ToggleButtonStyle::OnBase(context);
+		context.Set(Button::WidthProperty, 24);
+		context.Set(Button::HeightProperty, 24);
+		context.Set(Button::BackgroundProperty, ImageSource(AssetId::RadioButtonOutline));
+	}
+
+	void RadioButtonStyle::OnChecked(StyleContext & context)
+	{
+		context.Set(Button::BackgroundProperty, ImageSource(AssetId::RadioButton));
 	}
 }

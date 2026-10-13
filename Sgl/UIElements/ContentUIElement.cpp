@@ -19,29 +19,29 @@ namespace Sgl
 		}
 	}
 
-	void ContentUIElement::SetContent(const Ref<ObservableObject>& value, ValueSource source)
+	void ContentUIElement::SetContent(const Ref<ObservableObject>& value)
 	{
-		SetProperty(ContentProperty, _content, value, _contentSource, source);
+		SetProperty(ContentProperty, _content, value, _contentSource);
 	}
 
-	void ContentUIElement::SetContentTemplate(const Ref<IDataTemplate>& value, ValueSource source)
+	void ContentUIElement::SetContentTemplate(const Ref<IDataTemplate>& value)
 	{
-		SetProperty(ContentTemplateProperty, _contentTemplate, value, _contentTemplateSource, source);
+		SetProperty(ContentTemplateProperty, _contentTemplate, value, _contentTemplateSource);
 	}
 
-	void ContentUIElement::SetPadding(Thickness value, ValueSource source)
+	void ContentUIElement::SetPadding(Thickness value)
 	{
-		SetProperty(PaddingProperty, _padding, value, _paddingSource, source);
+		SetProperty(PaddingProperty, _padding, value, _paddingSource);
 	}
 
-	void ContentUIElement::SetVerticalContentAlignment(VerticalAlignment value, ValueSource source)
+	void ContentUIElement::SetVerticalContentAlignment(VerticalAlignment value)
 	{
-		SetProperty(VerticalContentAlignmentProperty, _verticalContentAlignment, value, _verticalContentAlignmentSource, source);
+		SetProperty(VerticalContentAlignmentProperty, _verticalContentAlignment, value, _verticalContentAlignmentSource);
 	}
 
-	void ContentUIElement::SetHorizontalContentAlignment(HorizontalAlignment value, ValueSource source)
+	void ContentUIElement::SetHorizontalContentAlignment(HorizontalAlignment value)
 	{
-		SetProperty(HorizontalContentAlignmentProperty, _horizontalContentAlignment, value, _horizontalContentAlignmentSource, source);
+		SetProperty(HorizontalContentAlignmentProperty, _horizontalContentAlignment, value, _horizontalContentAlignmentSource);
 	}
 
 	void ContentUIElement::OnPropertyChanged(PropertyBase& property)
@@ -71,7 +71,8 @@ namespace Sgl
 
 			if(_contentPresenter)
 			{
-				_contentPresenter->SetVerticalAlignment(_verticalContentAlignment, ValueSource::Inheritance);
+				ValueSourceScope scope(_contentPresenter, ValueSource::Inheritance);
+				_contentPresenter->SetVerticalAlignment(_verticalContentAlignment);
 			}
 		}
 		else if(property == HorizontalContentAlignmentProperty)
@@ -80,7 +81,8 @@ namespace Sgl
 
 			if(_contentPresenter)
 			{
-				_contentPresenter->SetHorizontalAlignment(_horizontalContentAlignment, ValueSource::Inheritance);
+				ValueSourceScope scope(_contentPresenter, ValueSource::Inheritance);
+				_contentPresenter->SetHorizontalAlignment(_horizontalContentAlignment);
 			}
 		}
 	}
@@ -109,8 +111,10 @@ namespace Sgl
 			if(_contentPresenter)
 			{
 				AddChild(_contentPresenter);
-				_contentPresenter->SetVerticalAlignment(_verticalContentAlignment, ValueSource::Inheritance);
-				_contentPresenter->SetHorizontalAlignment(_horizontalContentAlignment, ValueSource::Inheritance);
+
+				ValueSourceScope scope(_contentPresenter, ValueSource::Inheritance);
+				_contentPresenter->SetVerticalAlignment(_verticalContentAlignment);
+				_contentPresenter->SetHorizontalAlignment(_horizontalContentAlignment);
 			}
 		}
 		else

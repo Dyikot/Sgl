@@ -1,10 +1,11 @@
 #include "Renderable.h"
+#include "../Base/Logging.h"
 
 namespace Sgl
 {
-	void Renderable::SetCursor(Cursor value, ValueSource source)
+	void Renderable::SetCursor(Cursor value)
 	{
-		SetProperty(CursorProperty, _cursor, value, _cursorSource, source);
+		SetProperty(CursorProperty, _cursor, value, _cursorSource);
 	}
 
 	Cursor Renderable::GetCursor() const
@@ -12,9 +13,9 @@ namespace Sgl
 		return GetProperty(CursorProperty, _cursor);
 	}
 
-	void Renderable::SetBackground(const Brush& value, ValueSource source)
+	void Renderable::SetBackground(const Brush& value)
 	{
-		SetProperty(BackgroundProperty, _background, value, _backgroundSource, source);
+		SetProperty(BackgroundProperty, _background, value, _backgroundSource);
 	}
 
 	const Brush& Renderable::GetBackground() const

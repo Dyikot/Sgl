@@ -39,10 +39,10 @@ namespace Sgl::UIElements
 		static void SetRowSpan(const Ref<UIElement>& element, uint32_t value);
 		static uint32_t GetRowSpan(const Ref<UIElement>& element);
 
-		void SetColumnDefinitions(const std::string& value, ValueSource source = ValueSource::Local);
+		void SetColumnDefinitions(const std::string& value);
 		const std::string& GetColumnDefinitions() const { return _columnDefinitionsStr; }
 
-		void SetRowDefinitions(const std::string& value, ValueSource source = ValueSource::Local);
+		void SetRowDefinitions(const std::string& value);
 		const std::string& GetRowDefinitions() const { return _rowDefinitionsStr; }
 
 		static inline StyleableProperty ColumnDefinitionsProperty { &SetColumnDefinitions, &GetColumnDefinitions };

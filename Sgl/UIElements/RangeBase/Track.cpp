@@ -1,22 +1,22 @@
 #include "Track.h"
+#include "../../Styling/StyleContext.h"
 
 namespace Sgl::UIElements
 {
 	Track::Track()
 	{
 		SetName("Track");
-		SetBackground(Colors::White, ValueSource::Default);
 		BuildTemplate();
 	}
 
-	void Track::SetFillRatio(float value, ValueSource source)
+	void Track::SetFillRatio(float value)
 	{
-		SetProperty(FillRatioProperty, _fillRatio, value, _fillRatioSource, source);
+		SetProperty(FillRatioProperty, _fillRatio, value, _fillRatioSource);
 	}
 
-	void Track::SetOrientation(Orientation value, ValueSource source)
+	void Track::SetOrientation(Orientation value)
 	{
-		SetProperty(OrientationProperty, _orientation, value, _orientationSource, source);
+		SetProperty(OrientationProperty, _orientation, value, _orientationSource);
 	}
 
 	void Track::OnPropertyChanged(PropertyBase& property)
@@ -58,12 +58,27 @@ namespace Sgl::UIElements
 		TemplatedUIElement::ArrangeContent(contentRect);
 	}
 
+	Ref<Style> Track::CreateDefaultStyle() const
+	{
+		return New<TrackStyle>();
+	}
+
 	void Track::BuildTemplate()
 	{
 		auto progress = New<UIElement>();
 		progress->SetName("Progress");
-		progress->SetBackground(Colors::Blue, ValueSource::Default);
-		
+		progress->SetStyle(New<TrackProgressStyle>());
+
 		SetTemplate(progress);
+	}
+
+	void TrackStyle::OnBase(StyleContext& context)
+	{
+		context.Set(Track::BackgroundProperty, Colors::Grey_1);
+	}
+
+	void TrackProgressStyle::OnBase(StyleContext& context)
+	{
+		context.Set(Track::BackgroundProperty, Colors::Blue);
 	}
 }

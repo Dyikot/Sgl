@@ -10,10 +10,10 @@ namespace Sgl::UIElements
 	public:
 		RepeatButton();
 
-		void SetDelay(uint32_t value, ValueSource source = ValueSource::Local);
+		void SetDelay(uint32_t value);
 		uint32_t GetDelay() const { return _delay; }
 
-		void SetInterval(uint32_t value, ValueSource source = ValueSource::Local);
+		void SetInterval(uint32_t value);
 		uint32_t GetInterval() const { return _interval; }
 
 		static inline StyleableProperty DelayProperty { &SetDelay, &GetDelay };

@@ -7,24 +7,24 @@ namespace Sgl::UIElements
         SetName("UniformGrid");
     }
 
-	void UniformGrid::SetRows(uint32_t value, ValueSource source)
+	void UniformGrid::SetRows(uint32_t value)
 	{
-        SetProperty(RowsProperty, _rows, value, _rowsValueSource, source);
+        SetProperty(RowsProperty, _rows, value, _rowsValueSource);
 	}
 
-	void UniformGrid::SetColumns(uint32_t value, ValueSource source)
+	void UniformGrid::SetColumns(uint32_t value)
 	{
-        SetProperty(ColumnsProperty, _columns, value, _columnsValueSource, source);
+        SetProperty(ColumnsProperty, _columns, value, _columnsValueSource);
 	}
 
-	void UniformGrid::SetRowSpacing(float value, ValueSource source)
+	void UniformGrid::SetRowSpacing(float value)
 	{
-        SetProperty(RowSpacingProperty, _rowSpacing, value, _rowSpacingValueSource, source);
+        SetProperty(RowSpacingProperty, _rowSpacing, value, _rowSpacingValueSource);
 	}
 
-	void UniformGrid::SetColumnSpacing(float value, ValueSource source)
+	void UniformGrid::SetColumnSpacing(float value)
 	{
-        SetProperty(ColumnSpacingProperty, _columnSpacing, value, _columnSpacingValueSource, source);
+        SetProperty(ColumnSpacingProperty, _columnSpacing, value, _columnSpacingValueSource);
 	}
 
     void UniformGrid::OnPropertyChanged(PropertyBase& property)

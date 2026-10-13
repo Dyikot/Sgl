@@ -9,10 +9,10 @@ namespace Sgl::UIElements
 	public:
 		Track();
 
-		void SetFillRatio(float value, ValueSource source = ValueSource::Local);
+		void SetFillRatio(float value);
 		float GetFillRatio() const { return _fillRatio; }
 
-		void SetOrientation(Orientation value, ValueSource source = ValueSource::Local);
+		void SetOrientation(Orientation value);
 		Orientation GetOrientation() const { return _orientation; }
 
 		static inline StyleableProperty FillRatioProperty { &SetFillRatio, &GetFillRatio };
@@ -20,6 +20,7 @@ namespace Sgl::UIElements
 	protected:
 		void OnPropertyChanged(PropertyBase& property) override;
 		void ArrangeContent(FRect rect) override;
+		Ref<Style> CreateDefaultStyle() const override;
 	private:
 		void BuildTemplate();
 	private:
@@ -28,5 +29,17 @@ namespace Sgl::UIElements
 
 		ValueSource _fillRatioSource {};
 		ValueSource _orientationSource {};
+	};
+
+	class TrackStyle : public UIElementStyle
+	{
+	public:
+		void OnBase(StyleContext& context) override;
+	};
+
+	class TrackProgressStyle : public UIElementStyle
+	{
+	public:
+		void OnBase(StyleContext& context) override;
 	};
 }

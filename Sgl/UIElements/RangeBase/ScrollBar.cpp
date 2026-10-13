@@ -7,8 +7,24 @@ namespace Sgl::UIElements
 {
 	namespace
 	{
-		constexpr Color TrackBackground { 0xf5f5f5ff };
-		constexpr Color ThumbBackground { 0xc2c2c2ff };
+		class ThumbStyle : public UIElementStyle
+		{
+		public:
+			void OnBase(StyleContext& context) override
+			{
+				context.Set(Button::BackgroundProperty, Colors::Grey_3);
+			}
+		};
+
+		class TrackStyle : public ButtonStyle
+		{
+		public:
+			void OnBase(StyleContext& context) override
+			{
+				context.Set(Button::BackgroundProperty, Colors::Grey_1);
+				context.Set(Button::CursorProperty, Cursors::Arrow);
+			}
+		};
 
 		class Track : public RepeatButton
 		{
@@ -16,12 +32,15 @@ namespace Sgl::UIElements
 			Track()
 			{
 				SetName("Track");
-				SetCursor(Cursors::Arrow);
-				SetDelay(150, ValueSource::Default);
-				SetInterval(25, ValueSource::Default);
-				SetBackground(TrackBackground, ValueSource::Default);
+				SetDelay(150);
+				SetInterval(25);
 			}
 		protected:
+			Ref<Style> CreateDefaultStyle() const override
+			{
+				return New<TrackStyle>();
+			}
+
 			void ArrangeContent(FRect rect) override
 			{
 				auto parent = static_cast<ScrollBar*>(GetParent());
@@ -65,20 +84,20 @@ namespace Sgl::UIElements
 		BuildTemplate();
 	}
 
-	void ScrollBar::SetViewportSize(float value, ValueSource source)
+	void ScrollBar::SetViewportSize(float value)
 	{
 		value = std::clamp(value, 0.0f, 1.0f);
-		SetProperty(ViewportSizeProperty, _viewportSize, value, _viewportSizeSource, source);
+		SetProperty(ViewportSizeProperty, _viewportSize, value, _viewportSizeSource);
 	}
 
-	void ScrollBar::SetSmallChange(float value, ValueSource source)
+	void ScrollBar::SetSmallChange(float value)
 	{
-		SetProperty(SmallChangeProperty, _smallChange, Clamp(value), _smallChangeSource, source);
+		SetProperty(SmallChangeProperty, _smallChange, Clamp(value), _smallChangeSource);
 	}
 
-	void ScrollBar::SetLargeChange(float value, ValueSource source)
+	void ScrollBar::SetLargeChange(float value)
 	{
-		SetProperty(LargeChangeProperty, _largeChange, Clamp(value), _largeChangeSource, source);
+		SetProperty(LargeChangeProperty, _largeChange, Clamp(value), _largeChangeSource);
 	}
 
 	void ScrollBar::LineUp()
@@ -128,23 +147,25 @@ namespace Sgl::UIElements
 		InvalidateArrange();
 	}
 
-	void ScrollBar::OnMouseDown(MouseClickEventArgs& e)
+	Ref<Style> ScrollBar::CreateDefaultStyle() const
 	{
-		RangeBase::OnMouseDown(e);
-
-		_dragValue = GetValue();
-		_clickValue = ValueAtPosition(e.X, e.Y);
-		_wasHoverThumb = _thumb->IsMouseOver();
+		return New<ScrollBarStyle>();
 	}
 
 	void ScrollBar::BuildTemplate()
 	{
 		_thumb = New<UIElement>();
 		_thumb->SetName("Thumb");
-		_thumb->SetBackground(ThumbBackground, ValueSource::Default);
-
+		_thumb->SetStyle(New<ThumbStyle>());
+		
 		_track = New<Track>();
 		_track->SetContent(_thumb);
+		_track->MouseDown += [this](UIElement& sender, MouseClickEventArgs& e)
+		{
+			_dragValue = GetValue();
+			_clickValue = ValueAtPosition(e.X, e.Y);
+			_wasHoverThumb = _thumb->IsMouseOver();
+		};
 		_track->Click += [this](Button& sender, EventArgs e)
 		{
 			float x = 0, y = 0;
@@ -173,6 +194,12 @@ namespace Sgl::UIElements
 	float ScrollBar::GetPageSize() const
 	{
 		return _viewportSize * _scrollScale * (GetMaxValue() - GetMinValue());
+	}
+
+	void ScrollBarStyle::OnBase(StyleContext& context)
+	{
+		context.Set(ScrollBar::WidthProperty, 15);
+		context.Set(ScrollBar::HeightProperty, 15);
 	}
 }
 

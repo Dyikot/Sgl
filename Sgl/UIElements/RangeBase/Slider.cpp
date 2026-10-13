@@ -22,7 +22,8 @@ namespace Sgl::UIElements
 
 		if(property == OrientationProperty)
 		{
-			_track->SetOrientation(GetOrientation(), ValueSource::Inheritance);
+			ValueSourceScope scope(_track, ValueSource::Inheritance);
+			_track->SetOrientation(GetOrientation());
 		}
 	}
 
@@ -31,8 +32,8 @@ namespace Sgl::UIElements
 		_track = New<Track>();
 
 		_button = New<RepeatButton>();
-		_button->SetInterval(25, ValueSource::Default);
-		_button->SetDelay(150, ValueSource::Default);
+		_button->SetInterval(25);
+		_button->SetDelay(150);
 		_button->SetContent(_track);
 		_button->Click += [this](Button& sender, EventArgs e)
 		{

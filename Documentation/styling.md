@@ -2,93 +2,62 @@
 
 ## What is Style?
 
-A **Style** is a reusable set of property values that can be applied to UI elements. Styles separate visual appearance from element logic, enabling consistent theming and easier maintenance.
+A **Style** is an abstract class used to set element properties. Styles separate visual appearance from element logic, enabling consistent theming and easier maintenance.
 
-A `Style` consists of:
-- **Selector**: Determines which elements the style applies to
-- **Setters**: A collection of property-value pairs to apply
-- **States**: Map of setters for a specific visual state
+Style defines two hooks:
 
-## Setters
+- `OnBase` — applies the default, unconditional base styling rules.
+- `OnState` — applies state-specific styling rules based on the element's current visual states.
 
-Setters are the mechanism by which styles apply values to properties. There are two types:
-
-1. **Setter**: Applies a fixed value directly
-2. **ResourceSetter**: Resolves a value from theme resources at runtime
+For UI elements, derive from `UIElementStyle` instead of `Style` directly. `UIElementStyle` implements `OnState` and dispatches each built-in state to a dedicated virtual hook — `OnHover`, `OnPressed`, `OnFocus` — so you only override the states you want to customize.
 
 ```cpp
-// Create a style for all Button elements
-Style
+//! @brief Abstract base class representing a visual style applied to Styleable elements
+class Style : public RefCounted
 {
-    .selector = Selector().OfType<Button>(),
-    .setters = SetterCollection
+public:
+	//! @brief Applies the default, unconditional base styling rules
+	//! @param context The style context providing access to the target object and resources
+	virtual void OnBase(StyleContext& context) = 0;
+
+	//! @brief Applies state-specific styling rules based on the current element state
+	//! @param context The style context providing access to the target object and resources
+	//! @param states The set of active visual states
+	virtual void OnState(StyleContext& context, const VisualStateSet& states) = 0;
+};
+```
+
+## Applying a style
+A style is set with the SetStyle method:
+`button.SetStyle(MakeRef<ButtonStyle>());`
+
+`SetStyle` does not apply the style immediately. Styles are applied when the element is attached to the UI tree, and re-applied when the active theme changes.
+
+`Style` is reference-counted and stateless, so a single instance can safely be shared between any number of elements. 
+
+If no style is set, the element uses its default style, created by the `CreateDefaultStyle` virtual method. Override it in a custom element to provide your own default:
+```cpp
+class MyButton : public Button
+{
+protected:
+    Ref<Style> CreateDefaultStyle() const override
     {
-        new Setter(Button::MarginProperty, Thickness(5)),
-        new ResourceSetter(Button::BackgroundProperty, "ButtonBgColor")
+        return New<MyButtonStyle>();
     }
 };
 ```
 
-## Selectors
-
-Selectors determine which elements a style applies to.
-
-### Supported Selector Types
-
-#### Type Selector
-
-Matches elements of the exact specified type.
+## StyleContext
+Properties are set via a special proxy class `StyleContext`.
+The style context allows you to set a value directly or via application resources by specifying the required key. Currently, resources support colors and brushes. Resource keys are resolved against the resources of the current application instance.
 
 ```cpp
-// Matches only TextBlock elements
-Selector().OfType<TextBlock>();
-```
-
-#### Type Identity Selector
-
-Matches elements of the specified type or any derived type.
-
-```cpp
-// Matches Button and all derived types (e.g., ToggleButton)
-Selector().Is<Button>();
-```
-
-#### Name Selector
-
-Matches elements by their `Name` property.
-
-```cpp
-// Matches element with Name == "SubmitButton"
-Selector().Name("SubmitButton");
-```
-
-#### Class Selector
-
-Matches elements by CSS-like class names. Multiple classes can be specified; all must match.
-
-```cpp
-// Matches elements with class "primary"
-Selector().Class("primary");
-
-// Matches elements with both "primary" AND "large" classes
-Selector().Class("primary").Class("large");
-
-// Usage: Set classes on element
-element->SetClasses("primary large");
-```
-
-### Combining Selectors
-
-Selectors can be combined to create more specific rules. All conditions must match (AND logic).
-
-```cpp
-// Matches ToggleButton elements with class "toggle" and name "ThemeToggle"
-Selector().OfType<ToggleButton>().Class("toggle").Name("ThemeToggle");
+context.Set(Button::BackgroundProperty, Colors::Blue); // Direct value
+context.Set(Button::BackgroundProperty, "ButtonBg");   // Value from application resources
 ```
 
 ## Visual states
-
-The state is defined by VisualState. Each state corresponds to a specific name, which is specified during registration. The maximum number of states is 64.
+A state is defined by VisualState. Each state has a name, specified during registration, and a unique numeric ID. Registration is global to the application: IDs are assigned sequentially from 0, and no more than 64 states can be registered.
 
 Built-in visual states:
 | Name | VisualState | Description |
@@ -108,68 +77,100 @@ Next are the properties that can be used to style visual states:
 - `Border::BorderWidthProperty`
 - `TextBlock::ForegroundProperty`
 
-### Applying Visual States to a Style:
+## Dispatch order
+When several states are active at once, the default `UIElementStyle::OnState` dispatches hooks in a fixed order — hover, focus, pressed:
 ```cpp
-Style hoverStyle 
+void UIElementStyle::OnState(StyleContext& context, const VisualStateSet& states)
 {
-    .selector = Selector().OfType<Button>(),
-    .setters = SetterCollection 
+	if(states.Has(UIElement::OnHover))
+	{
+		OnHover(context);
+	}
+
+	if(states.Has(UIElement::OnFocus))
+	{
+		OnFocus(context);
+	}
+
+	if(states.Has(UIElement::OnPressed))
+	{
+		OnPressed(context);
+	}
+}
+```
+
+The order can be changed by overriding `OnState`.
+
+## Example
+The default style `ButtonStyle` for a button:
+```cpp
+class ButtonStyle : public UIElementStyle
+{
+public:
+	void OnBase(StyleContext& context) override
     {
-        new Setter(Button::BackgroundProperty, Colors::Gray)
-    },
-    .states = 
+        context.Set(Button::CursorProperty, Cursors::Pointer);
+        context.Set(Button::BackgroundProperty, Colors::Grey_2);
+    }
+
+protected:
+	void OnHover(StyleContext& context) override
     {
-        { 
-            UIElement::OnHover, 
-            SetterCollection 
-            {
-                new Setter(Button::BackgroundProperty, Colors::LightBlue)
-            }
-        }
+        context.Set(Button::BackgroundProperty, Colors::Grey_3);
+    }
+
+	void OnPressed(StyleContext& context) override
+    {
+        context.Set(Button::BackgroundProperty, Colors::Grey_4);
+    }
+
+	void OnFocus(StyleContext& context) override
+    {
+
     }
 };
 ```
 
-## Style Collections
-
-A **StyleCollection** is a container that holds multiple styles and applies them sequentially to matching elements.
-
-### Style Application Order
-
-Element style obtained by merging matching styles. Child styles can override parent. Style collections are contained at the application, window, and element levels.
-
+## Custom visual states
+To style a state that has no dedicated hook (e.g. checked), override `OnState`, call thebase dispatch to keep the built-in hooks running, and route the new state to its own hook. The default `ToggleButtonStyle` does exactly this:
 ```cpp
-// First style
-Style
+class ToggleButtonStyle : public ButtonStyle
 {
-    .selector = Selector().Class("button"),
-    .setters = SetterCollection
+public:
+	void OnState(StyleContext& context, const VisualStateSet& states) override
     {
-        new Setter(Button::BackgroundProperty, Colors::Blue)
-    }
-};
+        ButtonStyle::OnState(context, states);
 
-// Second style - overrides background if both match
-Style
-{
-    .selector = Selector().Class("button").Class("primary"),
-    .setters = SetterCollection
-    {
-        new Setter(Button::BackgroundProperty, Colors::Green)
+        if(states.Has(ToggleButton::OnChecked))
+        {
+            OnChecked(context);
+        }
     }
+protected:
+	void OnHover(StyleContext& context) override {}
+	void OnPressed(StyleContext& context) override {}
+	void OnFocus(StyleContext& context) override {}
+	virtual void OnChecked(StyleContext& context) {}
 };
+```
+
+## Styling composite elements
+Complex elements such as `ProgressBar` are built from internal elements (parts) that are not exposed as properties. Parts are regular elements: find one by name with `FindChild` and set a style on it as you would on any element.
+```cpp
+auto progressBar = New<ProgressBar>();
+progressBar->FindChild("Track")->SetStyle(New<MyTrackStyle>());
 ```
 
 ## Value Priority
-The class `ValueSource` defines the priority when setting style property values. `Default` has the lowest priority, while `VisualState` has the highest.
+The class `ValueSource` defines the priority when setting style property values. `Default` has the lowest priority, while `Local` has the highest.
 ```cpp
 enum class ValueSource : uint8_t
 {
     Default,
     Inheritance,
     Style,
-    Local,
-    VisualState
+    VisualState,
+    Local
 };
 ```
 

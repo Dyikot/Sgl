@@ -143,14 +143,14 @@ namespace Sgl::UIElements
 		return defenitions;
 	}
 
-	void Grid::SetColumnDefinitions(const std::string& value, ValueSource source)
+	void Grid::SetColumnDefinitions(const std::string& value)
 	{
-		SetProperty(ColumnDefinitionsProperty, _columnDefinitionsStr, value, _columnDefinitionsValueSource, source);
+		SetProperty(ColumnDefinitionsProperty, _columnDefinitionsStr, value, _columnDefinitionsValueSource);
 	}
 
-	void Grid::SetRowDefinitions(const std::string& value, ValueSource source)
+	void Grid::SetRowDefinitions(const std::string& value)
 	{
-		SetProperty(RowDefinitionsProperty, _rowDefinitionsStr, value, _rowDefinitionsValueSource, source);
+		SetProperty(RowDefinitionsProperty, _rowDefinitionsStr, value, _rowDefinitionsValueSource);
 	}
 	
 	void Grid::OnPropertyChanged(PropertyBase& property)

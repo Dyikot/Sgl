@@ -9,10 +9,10 @@ namespace Sgl::UIElements
 	public:
 		StackPanel();
 
-		void SetSpacing(float value, ValueSource source = ValueSource::Local);
+		void SetSpacing(float value);
 		float GetSpacing() const { return _spacing; }
 
-		void SetOrientation(Orientation value, ValueSource source = ValueSource::Local);
+		void SetOrientation(Orientation value);
 		Orientation GetOrientation() const { return _orientation; }
 
 		static inline StyleableProperty SpacingProperty { &SetSpacing, &GetSpacing };

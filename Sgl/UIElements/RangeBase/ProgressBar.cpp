@@ -21,7 +21,8 @@ namespace Sgl::UIElements
 
 		if(property == OrientationProperty)
 		{
-			_track->SetOrientation(GetOrientation(), ValueSource::Inheritance);
+			ValueSourceScope scope(_track, ValueSource::Inheritance);
+			_track->SetOrientation(GetOrientation());
 		}
 	}
 

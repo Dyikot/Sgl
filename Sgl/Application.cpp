@@ -12,11 +12,6 @@
 #include "Base/Logging.h"
 #include "Base/Time/Stopwatch.h"
 #include "Base/Media/Audio.h"
-#include "UIElements/Buttons/CheckBox.h"
-#include "UIElements/Buttons/RadioButton.h"
-#include "UIElements/Buttons/SwithButton.h"
-
-using namespace Sgl::UIElements;
 
 namespace Sgl
 {
@@ -72,7 +67,6 @@ namespace Sgl
 
         SDL_RegisterEvents(1);
         SetThemeVariant(ThemeVariant::System);
-        AddDefaultStyles();
         RegisterDefaultServices();
 	}
 
@@ -116,11 +110,6 @@ namespace Sgl
         _themeVariant = value;
         Resources.SetCurrentTheme(themeMode);
         OnThemeVariantChanged();
-    }
-
-    void Application::MergeStylesTo(Styleable& element, Style& target)
-    {
-        Styles.MergeStylesTo(element, target);
     }
 
     static inline double ToMilliseconds(uint64_t count)
@@ -563,54 +552,6 @@ namespace Sgl
 		}
 	}
 
-    void Application::AddDefaultStyles()
-    {
-        Styles.Add(
-        {
-            .selector = Selector().OfType<CheckBox>(),
-            .states =
-            {
-                {
-                    ToggleButton::OnChecked,
-                    SetterCollection
-                    {
-                        new Setter(Renderable::BackgroundProperty, ImageSource(AssetId::CheckBox))
-                    }
-                }
-            }
-        });
-
-        Styles.Add(
-        {
-            .selector = Selector().OfType<RadioButton>(),
-            .states = 
-            {
-                {
-                    ToggleButton::OnChecked,
-                    SetterCollection
-                    {
-                        new Setter(Renderable::BackgroundProperty, ImageSource(AssetId::RadioButton))
-                    }
-                }
-            }
-        });
-
-        Styles.Add(
-        {
-            .selector = Selector().OfType<SwitchButon>(),
-            .states =
-            {
-                {
-                    ToggleButton::OnChecked,
-                    SetterCollection
-                    {
-                        new Setter(Renderable::BackgroundProperty, ImageSource(AssetId::SwitchButtonOn))
-                    }
-                }
-            }
-        });
-    }
-
     void Application::RegisterDefaultServices()
     {
         _services->Add<Media::Mixer>();
@@ -637,8 +578,7 @@ namespace Sgl
     {
         if(std::ranges::find(_activeWindows, &window) == _activeWindows.end())
         {
-            _activeWindows.push_back(&window);     
-            window.SetParent(this);
+            _activeWindows.push_back(&window);
             window.OnAttachedToLogicalTree();
         }
     }
@@ -647,7 +587,6 @@ namespace Sgl
     {
         if(std::erase(_activeWindows, &window) > 0)
         {
-            window.SetParent(nullptr);
             window.OnDetachedFromLogicalTree();
         }
     }

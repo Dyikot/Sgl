@@ -25,9 +25,9 @@ namespace Sgl::UIElements
 		return element->GetLayoutContext<Dock>();
 	}
 
-	void DockPanel::SetLastChildFill(bool value, ValueSource source)
+	void DockPanel::SetLastChildFill(bool value)
 	{
-		SetProperty(LastChildFillProperty, _lastChildFill, value, _lastChildFillSource, source);
+		SetProperty(LastChildFillProperty, _lastChildFill, value, _lastChildFillSource);
 	}
 
 	void DockPanel::OnPropertyChanged(PropertyBase& property)

@@ -246,5 +246,12 @@ namespace Sgl
 		inline constexpr Color WhiteSmoke { 0xe6e6e6ff };
 		inline constexpr Color Yellow { 0xdcdc00ff };
 		inline constexpr Color YellowGreen { 0x9acd32ff };
+
+		// Grey shades
+		inline constexpr Color Grey_1 { 0xf2f2f2ff };
+		inline constexpr Color Grey_2 { 0xdbdbdbff };
+		inline constexpr Color Grey_3 { 0xc4c4c4ff };
+		inline constexpr Color Grey_4 { 0xadadadff };
+		inline constexpr Color Grey_5 { 0x969696ff };
 	}
 }

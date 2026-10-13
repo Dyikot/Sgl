@@ -1,20 +1,17 @@
 #pragma once
 
-#include "IStyleHost.h"
-#include "StyleCollection.h"
-#include "VisualState.h"
+#include "Style.h"
 #include "../Data/Bindable.h"
 
 namespace Sgl
 {
-	class Styleable : public Bindable, public IStyleHost
+	class Styleable : public Bindable
 	{
 	public:
 		using StyleableElementEventHandler = EventHandler<Styleable>;
 	public:
 		Styleable();
 
-		StyleCollection Styles;
 		VisualStateSet States;
 		Event<StyleableElementEventHandler> AttachedToLogicalTree;
 		Event<StyleableElementEventHandler> DetachedFromLogicalTree;
@@ -22,27 +19,23 @@ namespace Sgl
 		void SetName(const std::string& value);
 		const std::string& GetName() const { return _name; }
 
-		void SetClasses(std::string_view classNames, char delimiter = ' ');
-		void SetClasses(std::vector<std::string> classList);
-		const std::vector<std::string>& GetClasses() const;
+		void SetStyle(Ref<Style> style);
 
-		StyleCollection& GetStyles() final;
-		void MergeStylesTo(Styleable& element, Style& target) final;
-		IStyleHost* GetStylingParent() const { return _stylingParent; }
+		Styleable* GetStylingParent() const { return _stylingParent; }
 		bool IsAttachedToLogicalTree() const noexcept { return _isAttachedToLogicalTree; }				
 	protected:
 		~Styleable() = default;
-		virtual void SetParent(IStyleHost* parent);
+		virtual void SetParent(Styleable* parent);
 		virtual void OnAttachedToLogicalTree();
 		virtual void OnDetachedFromLogicalTree();
+		virtual Ref<Style> CreateDefaultStyle() const;
 		void ApplyStyle();
 		void ApplyStateStyle();
-		void FetchAndApplyStyle();
 	private:
 		std::vector<std::string> _classes;
-		Style _style;
+		Ref<Style> _style;
 		std::string _name;
-		IStyleHost* _stylingParent = nullptr;
+		Styleable* _stylingParent = nullptr;
 		bool _isAttachedToLogicalTree = false;
 	};
 }

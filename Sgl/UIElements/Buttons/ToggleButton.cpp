@@ -2,9 +2,9 @@
 
 namespace Sgl::UIElements
 {
-	void ToggleButton::SetIsChecked(bool value, ValueSource source)
+	void ToggleButton::SetIsChecked(bool value)
 	{
-		SetProperty(IsCheckedProperty, _isChecked, value, _isCheckedSource, source);
+		SetProperty(IsCheckedProperty, _isChecked, value, _isCheckedSource);
 	}
 
 	void ToggleButton::OnPropertyChanged(PropertyBase& property)
@@ -18,6 +18,11 @@ namespace Sgl::UIElements
 		}
 	}
 
+	Ref<Style> ToggleButton::CreateDefaultStyle() const
+	{
+		return New<ToggleButtonStyle>();
+	}
+
 	void ToggleButton::OnClick()
 	{
 		Button::OnClick();
@@ -26,21 +31,31 @@ namespace Sgl::UIElements
 
 	void ToggleButton::ToggleState()
 	{
-		SetIsChecked(!_isChecked, _isCheckedSource);
+		SetProperty(IsCheckedProperty, _isChecked, !_isChecked);
 	}
 
 	void ToggleButton::Check()
 	{
-		SetIsChecked(true, _isCheckedSource);
+		SetProperty(IsCheckedProperty, _isChecked, true);
 	}
 
 	void ToggleButton::Uncheck()
 	{
-		SetIsChecked(false, _isCheckedSource);
+		SetProperty(IsCheckedProperty, _isChecked, false);
 	}
 
 	void ToggleButton::OnIsCheckedChanged()
 	{
 		IsCheckedChanged.Invoke(*this);
+	}
+
+	void ToggleButtonStyle::OnState(StyleContext& context, const VisualStateSet& states)
+	{
+		ButtonStyle::OnState(context, states);
+
+		if(states.Has(ToggleButton::OnChecked))
+		{
+			OnChecked(context);
+		}
 	}
 }

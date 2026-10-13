@@ -13,34 +13,34 @@ namespace Sgl
 	public:
 		Layoutable() = default;
 
-		void SetWidth(float value, ValueSource source = ValueSource::Local);
+		void SetWidth(float value);
 		float GetWidth() const { return _width; }
 
-		void SetHeight(float value, ValueSource source = ValueSource::Local);
+		void SetHeight(float value);
 		float GetHeight() const { return _height; }
 
-		void SetMinWidth(float value, ValueSource source = ValueSource::Local);
+		void SetMinWidth(float value);
 		float GetMinWidth() const { return _minWidth; }
 
-		void SetMinHeight(float value, ValueSource source = ValueSource::Local);
+		void SetMinHeight(float value);
 		float GetMinHeight() const { return _minHeight; }
 
-		void SetMaxWidth(float value, ValueSource source = ValueSource::Local);
+		void SetMaxWidth(float value);
 		float GetMaxWidth() const { return _maxWidth; }
 
-		void SetMaxHeight(float value, ValueSource source = ValueSource::Local);
+		void SetMaxHeight(float value);
 		float GetMaxHeight() const { return _maxHeight; }		
 
-		void SetMargin(Thickness value, ValueSource source = ValueSource::Local);
+		void SetMargin(Thickness value);
 		Thickness GetMargin() const { return _margin; }
 
-		void SetIsVisible(bool value, ValueSource source = ValueSource::Local);
+		void SetIsVisible(bool value);
 		bool IsVisible() const { return _isVisible; }
 
-		void SetVerticalAlignment(VerticalAlignment value, ValueSource source = ValueSource::Local);
+		void SetVerticalAlignment(VerticalAlignment value);
 		VerticalAlignment GetVerticalAlignment() const { return _verticalAlignment; }
 
-		void SetHorizontalAlignment(HorizontalAlignment value, ValueSource source = ValueSource::Local);
+		void SetHorizontalAlignment(HorizontalAlignment value);
 		HorizontalAlignment GetHorizontalAlignment() const { return _horizontalAlignment; }
 			
 		Layoutable* GetLayoutableParent() const { return _layotableParent; }
@@ -76,7 +76,7 @@ namespace Sgl
 	protected:
 		~Layoutable() = default;
 		void OnPropertyChanged(PropertyBase& property) override;
-		void SetParent(IStyleHost* parent) override;
+		void SetParent(Styleable* parent) override;
 		void OnAttachedToLogicalTree() override;
 		void OnDetachedFromLogicalTree() override;
 		virtual FSize MeasureContent(FSize availableSize) { return FSize(); }

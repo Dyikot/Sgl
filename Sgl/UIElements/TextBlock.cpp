@@ -17,39 +17,39 @@ namespace Sgl::UIElements
 		SetName("TextBlock");
 	}
 
-	void TextBlock::SetText(const std::string& value, ValueSource source)
+	void TextBlock::SetText(const std::string& value)
 	{
-		SetProperty(TextProperty, _text, value, _textSource, source);
+		SetProperty(TextProperty, _text, value, _textSource);
 	}
 
-	void TextBlock::SetFontSize(float value, ValueSource source)
+	void TextBlock::SetFontSize(float value)
 	{
-		SetProperty(FontSizeProperty, _fontSize, value, _fontSizeSource, source);
+		SetProperty(FontSizeProperty, _fontSize, value, _fontSizeSource);
 	}
 
-	void TextBlock::SetFontOutline(int value, ValueSource source)
+	void TextBlock::SetFontOutline(int value)
 	{
-		SetProperty(FontOutlineProperty, _outline, value, _outlineSource, source);
+		SetProperty(FontOutlineProperty, _outline, value, _outlineSource);
 	}
 
-	void TextBlock::SetFontFamily(FontFamily value, ValueSource source)
+	void TextBlock::SetFontFamily(FontFamily value)
 	{
-		SetProperty(FontFamilyProperty, _fontFamily, value, _fontFamilySource, source);
+		SetProperty(FontFamilyProperty, _fontFamily, value, _fontFamilySource);
 	}
 
-	void TextBlock::SetFlowDirection(FlowDirection value, ValueSource source)
+	void TextBlock::SetFlowDirection(FlowDirection value)
 	{
-		SetProperty(FlowDirectionProperty, _flowDirection, value, _flowDirectionSource, source);
+		SetProperty(FlowDirectionProperty, _flowDirection, value, _flowDirectionSource);
 	}
 
-	void TextBlock::SetFontStyle(FontStyle value, ValueSource source)
+	void TextBlock::SetFontStyle(FontStyle value)
 	{
-		SetProperty(FontStyleProperty, _fontStyle, value, _fontStyleSource, source);
+		SetProperty(FontStyleProperty, _fontStyle, value, _fontStyleSource);
 	}
 
-	void TextBlock::SetForeground(Color value, ValueSource source)
+	void TextBlock::SetForeground(Color value)
 	{
-		SetProperty(ForegroundProperty, _foreground, value, _foregroundSource, source);
+		SetProperty(ForegroundProperty, _foreground, value, _foregroundSource);
 	}
 
 	Color TextBlock::GetForeground() const
@@ -57,19 +57,19 @@ namespace Sgl::UIElements
 		return GetProperty(ForegroundProperty, _foreground);
 	}
 
-	void TextBlock::SetTextWrapping(TextWrapping value, ValueSource source)
+	void TextBlock::SetTextWrapping(TextWrapping value)
 	{
-		SetProperty(TextWrappingProperty, _textWrapping, value, _textWrappingSource, source);
+		SetProperty(TextWrappingProperty, _textWrapping, value, _textWrappingSource);
 	}
 
-	void TextBlock::SetTextAlignment(TextAlignment value, ValueSource source)
+	void TextBlock::SetTextAlignment(TextAlignment value)
 	{
-		SetProperty(TextAlignmentProperty, _textAlignment, value, _textAlignmentSource, source);
+		SetProperty(TextAlignmentProperty, _textAlignment, value, _textAlignmentSource);
 	}
 
-	void TextBlock::SetPadding(Thickness value, ValueSource source)
+	void TextBlock::SetPadding(Thickness value)
 	{
-		SetProperty(PaddingProperty, _padding, value, _paddingSource, source);
+		SetProperty(PaddingProperty, _padding, value, _paddingSource);
 	}
 
 	void TextBlock::OnRender(RenderContext& context)
@@ -221,7 +221,7 @@ namespace Sgl::UIElements
 
 	void TextBlock::SetTextBounds(FRect bounds)
 	{
-		if(_textBounds.w != bounds.w && _textBounds.h != bounds.h)
+		if(_textBounds.w != bounds.w || _textBounds.h != bounds.h)
 		{
 			_textBounds = bounds;
 			InvalidateTextTexture();

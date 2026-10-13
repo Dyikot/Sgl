@@ -7,7 +7,6 @@
 #include "Base/Collections/PackedMap.h"
 #include "Base/Localization/StringLocalizer.h"
 #include "Base/Localization/LocalizationResources.h"
-#include "Styling/IStyleHost.h"
 
 namespace Sgl
 {
@@ -22,7 +21,7 @@ namespace Sgl
     class Window;
 
     //! @brief Represents the main application instance, managing windows, styling, theme, and the event loop
-    class Application : public IStyleHost
+    class Application
     {
     public:
         struct Context;
@@ -46,9 +45,6 @@ namespace Sgl
         //! @brief Event raised when the active theme variant changes
         Event<ApplicationEventHandler> ThemeVariantChanged;
 
-        //! @brief Collection of global styles applied to all UI elements in the application
-        StyleCollection Styles;
-
         //! @brief Theme resource provider for managing themed colors and brushes
         ThemeResources Resources;
 
@@ -68,15 +64,6 @@ namespace Sgl
         //! @brief Gets the currently active theme variant
         //! @return The current theme variant
         ThemeVariant GetThemeVariant() const { return _themeVariant; }
-
-        //! @brief Gets the collection of styles defined by this host
-        //! @return A reference to the style collection
-        StyleCollection& GetStyles() final { return Styles; }
-
-        //! @brief Merges the styles hosted by this object into a target style
-        //! @param element The styleable element providing context for the style resolution
-        //! @param target The target style object that will receive the merged setters
-        void MergeStylesTo(Styleable& element, Style& target) override;
 
         //! @brief Gets the service locator
         //! @return Reference to service locator
@@ -107,7 +94,6 @@ namespace Sgl
     private:
         ThemeMode GetSystemThemeMode() const;
         void HandleInputEvents();
-        void AddDefaultStyles();
         void RegisterDefaultServices();
         void PushSDLUserEvent(uint32_t type);
         void AddWindow(Window& window);

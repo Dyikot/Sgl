@@ -2,24 +2,24 @@
 
 namespace Sgl::UIElements
 {
-	void RangeBase::SetValue(float value, ValueSource source)
+	void RangeBase::SetValue(float value)
 	{
-		SetProperty(ValueProperty, _value, Clamp(value), _valueSource, source);
+		SetProperty(ValueProperty, _value, Clamp(value), _valueSource);
 	}
 
-	void RangeBase::SetMinValue(float value, ValueSource source)
+	void RangeBase::SetMinValue(float value)
 	{
-		SetProperty(MinValueProperty, _minValue, value, _minValueSource, source);
+		SetProperty(MinValueProperty, _minValue, value, _minValueSource);
 	}
 
-	void RangeBase::SetMaxValue(float value, ValueSource source)
+	void RangeBase::SetMaxValue(float value)
 	{
-		SetProperty(MaxValueProperty, _maxValue, value, _maxValueSource, source);
+		SetProperty(MaxValueProperty, _maxValue, value, _maxValueSource);
 	}
 
-	void RangeBase::SetOrientation(Orientation value, ValueSource source)
+	void RangeBase::SetOrientation(Orientation value)
 	{
-		SetProperty(OrientationProperty, _orientation, value, _orientationSource, source);
+		SetProperty(OrientationProperty, _orientation, value, _orientationSource);
 	}
 
 	float RangeBase::GetRelativeValue() const
@@ -44,14 +44,14 @@ namespace Sgl::UIElements
 		{
 			if(_minValue > _value)
 			{
-				SetValue(_minValue, _minValueSource);
+				SetProperty(ValueProperty, _value, _minValue);
 			}
 		}
 		else if(property == MaxValueProperty)
 		{
 			if(_maxValue < _value)
 			{
-				SetValue(_maxValue, _maxValueSource);
+				SetProperty(ValueProperty, _value, _maxValue);
 			}
 		}
 		else if(property == OrientationProperty)

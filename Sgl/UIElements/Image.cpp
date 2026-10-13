@@ -7,19 +7,19 @@ namespace Sgl::UIElements
 		SetName("Image");
 	}
 
-	void Image::SetSource(const std::filesystem::path& imagePath, ValueSource source)
+	void Image::SetSource(const std::filesystem::path& imagePath)
 	{
-		SetSource(ImageSource(imagePath), source);
+		SetSource(ImageSource(imagePath));
 	}
 
-	void Image::SetSource(const ImageSource& value, ValueSource source)
+	void Image::SetSource(const ImageSource& value)
 	{
-		SetProperty(SourceProperty, _source, value, _sourceSource, source);
+		SetProperty(SourceProperty, _source, value, _sourceSource);
 	}
 
-	void Image::SetStretch(Stretch value, ValueSource source)
+	void Image::SetStretch(Stretch value)
 	{
-		SetProperty(StretchProperty, _stretch, value, _stretchSource, source);
+		SetProperty(StretchProperty, _stretch, value, _stretchSource);
 	}
 
 	void Image::OnRender(RenderContext& context)

@@ -23,19 +23,20 @@ namespace Sgl::UIElements
 
 		Event<ButtonEventHandler> Click;
 
-		void SetClickMode(ClickMode value, ValueSource source = ValueSource::Local);
+		void SetClickMode(ClickMode value);
 		ClickMode GetClickMode() const { return _clickMode; }
 
-		void SetCommand(const Command& value, ValueSource sorce = ValueSource::Local);
+		void SetCommand(const Command& value);
 		const Command& GetCommand() const { return _command; }
 
-		void SetCommandParameter(const Any& value, ValueSource source = ValueSource::Local);
+		void SetCommandParameter(const Any& value);
 		const Any& GetCommandParameter() const { return _commandParameter; }
 
 		static inline StyleableProperty ClickModeProperty { &SetClickMode, &GetClickMode };
 		static inline StyleableProperty CommandProperty { &SetCommand, &GetCommand };
 		static inline StyleableProperty CommandParameterProperty { &SetCommandParameter, &GetCommandParameter };
 	protected:
+		Ref<Style> CreateDefaultStyle() const override;
 		void OnMouseDown(MouseClickEventArgs& e) override;
 		void OnMouseUp(MouseClickEventArgs& e) override;
 		void OnKeyDown(KeyEventArgs& e) override;
@@ -49,5 +50,15 @@ namespace Sgl::UIElements
 		ValueSource _clickModeSource {};
 		ValueSource _commandSource {};
 		ValueSource _commandParameterSource {};
+	};
+
+	class ButtonStyle : public UIElementStyle
+	{
+	public:
+		void OnBase(StyleContext& context) override;
+	protected:
+		void OnHover(StyleContext& context) override;
+		void OnPressed(StyleContext& context) override;
+		void OnFocus(StyleContext& context) override;
 	};
 }

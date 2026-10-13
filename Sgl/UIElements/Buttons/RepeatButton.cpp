@@ -7,14 +7,14 @@ namespace Sgl::UIElements
 		SetName("RepeatButton");
 	}
 
-	void RepeatButton::SetDelay(uint32_t value, ValueSource source)
+	void RepeatButton::SetDelay(uint32_t value)
 	{
-		SetProperty(DelayProperty, _delay, value, _delaySource, source);
+		SetProperty(DelayProperty, _delay, value, _delaySource);
 	}
 
-	void RepeatButton::SetInterval(uint32_t value, ValueSource source)
+	void RepeatButton::SetInterval(uint32_t value)
 	{
-		SetProperty(IntervalProperty, _interval, value, _intervalSource, source);
+		SetProperty(IntervalProperty, _interval, value, _intervalSource);
 	}
 
 	void RepeatButton::OnPropertyChanged(PropertyBase& property)

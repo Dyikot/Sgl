@@ -2,14 +2,14 @@
 
 namespace Sgl
 {
-	void TemplatedUIElement::SetTemplate(const Ref<UIElement>& template_)
+	void TemplatedUIElement::SetTemplate(const Ref<UIElement>& value)
 	{
 		if(_template)
 		{
 			RemoveChild(_template);
 		}
 
-		_template = template_;
+		_template = value;
 
 		if(_template)
 		{

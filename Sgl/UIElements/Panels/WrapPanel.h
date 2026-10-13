@@ -9,13 +9,13 @@ namespace Sgl::UIElements
 	public:
 		WrapPanel();
 
-		void SetOrientation(Orientation value, ValueSource source = ValueSource::Local);
+		void SetOrientation(Orientation value);
 		Orientation GetOrientation() const { return _orientation; }
 
-		void SetVerticalSpacing(float value, ValueSource source = ValueSource::Local);
+		void SetVerticalSpacing(float value);
 		float GetVerticalSpacing() const { return _verticalSpacing; }
 
-		void SetHorizontalSpacing(float value, ValueSource source = ValueSource::Local);
+		void SetHorizontalSpacing(float value);
 		float GetHorizontalSpacing() const { return _horizontalSpacing; }
 
 		static inline StyleableProperty OrientationProperty { &SetOrientation, &GetOrientation };

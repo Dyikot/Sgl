@@ -10,34 +10,34 @@ namespace Sgl::UIElements
 	public:
 		TextBlock();
 
-		void SetText(const std::string& value, ValueSource source = ValueSource::Local);
+		void SetText(const std::string& value);
 		const std::string& GetText() const { return _text; }
 
-		void SetFontSize(float value, ValueSource source = ValueSource::Local);
+		void SetFontSize(float value);
 		float GetFontSize() const { return _fontSize; }
 
-		void SetFontOutline(int value, ValueSource source = ValueSource::Local);
+		void SetFontOutline(int value);
 		int GetFontOutline() const { return _outline; }
 
-		void SetFontFamily(FontFamily value, ValueSource source = ValueSource::Local);
+		void SetFontFamily(FontFamily value);
 		FontFamily GetFontFamily() const { return _fontFamily; }
 
-		void SetFlowDirection(FlowDirection value, ValueSource source = ValueSource::Local);
+		void SetFlowDirection(FlowDirection value);
 		FlowDirection GetFlowDirection() const { return _flowDirection; }
 
-		void SetFontStyle(FontStyle value, ValueSource source = ValueSource::Local);
+		void SetFontStyle(FontStyle value);
 		FontStyle GetFontStyle() const { return _fontStyle; }
 
-		void SetForeground(Color value, ValueSource source = ValueSource::Local);
+		void SetForeground(Color value);
 		Color GetForeground() const;
 
-		void SetTextWrapping(TextWrapping value, ValueSource source = ValueSource::Local);
+		void SetTextWrapping(TextWrapping value);
 		TextWrapping GetTextWrapping() const { return _textWrapping; }
 
-		void SetTextAlignment(TextAlignment value, ValueSource source = ValueSource::Local);
+		void SetTextAlignment(TextAlignment value);
 		TextAlignment GetTextAlignment() const { return _textAlignment; }
 
-		void SetPadding(Thickness value, ValueSource source = ValueSource::Local);
+		void SetPadding(Thickness value);
 		Thickness GetPadding() const { return _padding; }
 
 		static inline StyleableProperty TextProperty { &SetText, &GetText };
@@ -64,7 +64,7 @@ namespace Sgl::UIElements
 		Texture& GetTextTexture(SDL_Renderer* renderer);
 	private:
 		std::string _text;
-		float _fontSize = 14;
+		float _fontSize = 16;
 		int _outline = 0;
 		FontFamily _fontFamily = FontFamily::GetDefault();
 		FlowDirection _flowDirection = FlowDirection::BottomToTop;

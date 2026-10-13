@@ -5,16 +5,6 @@
 
 namespace Sgl
 {
-	//! @brief Determines the priority when setting the value
-	enum class ValueSource : uint8_t
-	{
-		Default,
-		Inheritance,
-		Style,
-		Local,
-		VisualState
-	};
-
 	//! @brief Represents a styleable property that wraps a getter and setter method pair
 	template<typename TOwner, typename TValue>
 	class StyleableProperty : public PropertyBase
@@ -22,7 +12,7 @@ namespace Sgl
 	public:
 		using Owner = TOwner;
 		using Value = TValue;
-		using Setter = void(Owner::*)(Value, ValueSource);
+		using Setter = void(Owner::*)(Value);
 		using Getter = TValue(Owner::*)() const;
 	public:
 		//! @brief Initializes a new instance with both getter and setter
@@ -36,21 +26,12 @@ namespace Sgl
 		StyleableProperty(const StyleableProperty&) = delete;
 		StyleableProperty(StyleableProperty&&) = delete;
 
-		//! @brief Invokes the setter on the specified owner with the given value and `ValueSource::Local` value source
+		//! @brief Invokes the setter on the specified owner with the given value
 		//! @param owner The owner object
 		//! @param value The value to set
 		void InvokeSetter(Owner& owner, Value value)
 		{
-			(owner.*_setter)(value, ValueSource::Local);
-		}
-
-		//! @brief Invokes the setter on the specified owner with the given value and value source
-		//! @param owner The owner object
-		//! @param value The value to set
-		//! @param source Determines value priority
-		void InvokeSetter(Owner& owner, Value value, ValueSource source)
-		{
-			(owner.*_setter)(value, source);
+			(owner.*_setter)(value);
 		}
 
 		//! @brief Invokes the getter on the specified owner and returns the value
@@ -67,5 +48,5 @@ namespace Sgl
 	};
 
 	template<typename TOwner, typename TValue>
-	StyleableProperty(void(TOwner::*)(TValue, ValueSource), TValue(TOwner::*)() const) -> StyleableProperty<TOwner, TValue>;
+	StyleableProperty(void(TOwner::*)(TValue), TValue(TOwner::*)() const) -> StyleableProperty<TOwner, TValue>;
 }

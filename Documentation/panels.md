@@ -178,12 +178,9 @@ for(auto color : colors)
 	Grid::SetColumn(child, i % 3);
 
 	i++;
-
-	if (i == 3)
-	{
-		child->SetWidth(150);
-	}
 }
+
+grid->Children[2]->SetWidth(150);
 ```
 
 ![Grid](Images/Grid.PNG)

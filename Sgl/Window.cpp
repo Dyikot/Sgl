@@ -4,6 +4,7 @@
 #include "Layout/LayoutHelper.h"
 #include "Base/Exceptions.h"
 #include "Base/Logging.h"
+#include "Styling/StyleContext.h"
 
 namespace Sgl
 {
@@ -129,7 +130,6 @@ namespace Sgl
 
         _id = SDL_GetWindowID(_sdlWindow);
         App->AddWindow(*this);
-        SetBackground(Colors::White, ValueSource::Default);
     }
 
     Window::~Window()
@@ -392,8 +392,10 @@ namespace Sgl
         return _ownedWindows;
     }
 
-    void Window::SetContent(const Ref<UIElement>& value, ValueSource source)
+    void Window::SetContent(const Ref<UIElement>& value)
     {
+        auto source = GetValueSource();
+
         if(_contentSource > source)
         {
             return;
@@ -401,11 +403,7 @@ namespace Sgl
 
         if(_content == value)
         {
-            if(source < ValueSource::VisualState)
-            {
-                _contentSource = source;
-            }
-
+            _contentSource = source;
             return;
         }
 
@@ -594,7 +592,8 @@ namespace Sgl
     {
         if(_content)
         {
-            _content->SetDataContext(dataContext, ValueSource::Inheritance);
+            ValueSourceScope scope(_content, ValueSource::Inheritance);
+            _content->SetDataContext(dataContext);
         }
     }
 
@@ -618,6 +617,11 @@ namespace Sgl
         {
             _content->OnDetachedFromLogicalTree();
         }
+    }
+
+    Ref<Style> Window::CreateDefaultStyle() const
+    {
+        return New<WindowStyle>();
     }
 
     void Window::OnWindowStateChanged(WindowStateChangedEventArgs e)
@@ -763,5 +767,10 @@ namespace Sgl
         _hasSuspended = true;
         _handle = handle;
         _window.Closed += WindowResumeHandler(handle);
+    }
+
+    void WindowStyle::OnBase(StyleContext& context)
+    {
+        context.Set(Window::BackgroundProperty, Colors::White);
     }
 }

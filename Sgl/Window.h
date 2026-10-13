@@ -66,7 +66,6 @@ namespace Sgl
 	class Window : public Renderable, public IVisualRoot
 	{
 	public:
-		struct Content;
 		class ModalAwaiter;
 		using WindowEventHandler = EventHandler<Window>;
 		using WindowStateEventHandler = EventHandler<Window, WindowStateChangedEventArgs>;
@@ -217,7 +216,7 @@ namespace Sgl
 		//! @brief Sets the root UI element displayed in the window's client area
 		//! @param value The UI element to use as content
 		//! @param source The source of the value. Defaults to ValueSource::Local.
-		void SetContent(const Ref<UIElement>& value, ValueSource source = ValueSource::Local);
+		void SetContent(const Ref<UIElement>& value);
 
 		//! @brief Gets the root UI element currently displayed in the window
 		//! @return A reference to the current content element
@@ -292,6 +291,7 @@ namespace Sgl
 		void OnDataContextChanged(const Ref<ObservableObject>& dataContext) final;
 		void OnAttachedToLogicalTree() override;
 		void OnDetachedFromLogicalTree() override;
+		Ref<Style> CreateDefaultStyle() const override;
 
 		virtual void OnWindowStateChanged(WindowStateChangedEventArgs e);
 		virtual void OnPositionChanged(WindowPositionChangedEventArgs e);
@@ -335,12 +335,11 @@ namespace Sgl
 		friend class Application;
 	};
 
-	struct Window::Content
+	class WindowStyle : public Style
 	{
-		Styleable& operator()(Styleable& element) const
-		{
-			return static_cast<Window&>(element).GetContent().GetValue();
-		}
+	public:
+		void OnBase(StyleContext& context) override;
+		void OnState(StyleContext& context, const VisualStateSet& states) override {}
 	};
 
 	class Window::ModalAwaiter

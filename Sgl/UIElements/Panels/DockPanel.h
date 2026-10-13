@@ -21,7 +21,7 @@ namespace Sgl::UIElements
 		static void SetDock(const Ref<UIElement>& element, Dock value);
 		static Dock GetDock(const Ref<UIElement>& element);
 
-		void SetLastChildFill(bool value, ValueSource source = ValueSource::Local);
+		void SetLastChildFill(bool value);
 		bool GetLastChildFill() const { return _lastChildFill; }
 
 		static inline StyleableProperty LastChildFillProperty { &SetLastChildFill, &GetLastChildFill };

@@ -7,20 +7,21 @@ namespace Sgl
 		ClearBindings();
 	}
 
-	void Bindable::SetDataContext(const Ref<ObservableObject>& value, ValueSource source)
+	void Bindable::SetValueSource(ValueSource valueSource)
 	{
-		if(_dataContextSource > source)
+		_valueSource = valueSource;
+	}
+
+	void Bindable::SetDataContext(const Ref<ObservableObject>& value)
+	{
+		if(_dataContextSource > _valueSource)
 		{
 			return;
 		}
 
 		if(_dataContext == value)
 		{
-			if(source < ValueSource::VisualState)
-			{
-				_dataContextSource = source;
-			}
-
+			_dataContextSource = _valueSource;
 			return;
 		}
 
@@ -30,7 +31,7 @@ namespace Sgl
 		}
 
 		_dataContext = value;
-		_dataContextSource = source;
+		_dataContextSource = _valueSource;
 
 		if(_dataContext)
 		{
@@ -48,10 +49,10 @@ namespace Sgl
 
 	void Bindable::ClearAllValues()
 	{
-		_clearProperties = _valueStorage.Keys();
+		std::vector<PropertyBase*> properties = _valueStorage.Keys();
 		_valueStorage.Clear();
 
-		for(auto property : _clearProperties)
+		for(auto property : properties)
 		{
 			OnPropertyChanged(*property);
 		}
@@ -101,5 +102,21 @@ namespace Sgl
 				binding->Clear(*this);
 			}
 		}
+	}
+
+	ValueSourceScope::ValueSourceScope(Bindable& target, ValueSource valueSource):
+		_target(target),
+		_currentSource(target.GetValueSource())
+	{
+		_target.SetValueSource(valueSource);
+	}
+
+	ValueSourceScope::ValueSourceScope(const Ref<Bindable>& target, ValueSource valueSource):
+		ValueSourceScope(target.GetValue(), valueSource)
+	{}
+
+	ValueSourceScope::~ValueSourceScope()
+	{
+		_target.SetValueSource(_currentSource);
 	}
 }

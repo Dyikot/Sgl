@@ -9,16 +9,16 @@ namespace Sgl::UIElements
 	public:
 		UniformGrid();
 
-		void SetRows(uint32_t value, ValueSource source = ValueSource::Local);
+		void SetRows(uint32_t value);
 		uint32_t GetRows() const { return _rows; }
 
-		void SetColumns(uint32_t value, ValueSource source = ValueSource::Local);
+		void SetColumns(uint32_t value);
 		uint32_t GetColumns() const { return _columns; }
 
-		void SetRowSpacing(float value, ValueSource source = ValueSource::Local);
+		void SetRowSpacing(float value);
 		float GetRowSpacing() const { return _rowSpacing; }
 
-		void SetColumnSpacing(float value, ValueSource source = ValueSource::Local);
+		void SetColumnSpacing(float value);
 		float GetColumnSpacing() const { return _columnSpacing; }
 
 		static inline StyleableProperty RowsProperty { &SetRows, &GetRows };

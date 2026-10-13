@@ -6,54 +6,54 @@
 
 namespace Sgl
 {
-	void Layoutable::SetWidth(float value, ValueSource source)
+	void Layoutable::SetWidth(float value)
 	{
-		SetProperty(WidthProperty, _width, value, _widthSource, source);
+		SetProperty(WidthProperty, _width, value, _widthSource);
 	}
 
-	void Layoutable::SetHeight(float value, ValueSource source)
+	void Layoutable::SetHeight(float value)
 	{
-		SetProperty(HeightProperty, _height, value, _heightSource, source);
+		SetProperty(HeightProperty, _height, value, _heightSource);
 	}
 
-	void Layoutable::SetMinWidth(float value, ValueSource source)
+	void Layoutable::SetMinWidth(float value)
 	{
-		SetProperty(MinWidthProperty, _minWidth, value, _minWidthSource, source);
+		SetProperty(MinWidthProperty, _minWidth, value, _minWidthSource);
 	}
 
-	void Layoutable::SetMinHeight(float value, ValueSource source)
+	void Layoutable::SetMinHeight(float value)
 	{
-		SetProperty(MinHeightProperty, _minHeight, value, _minHeightSource, source);
+		SetProperty(MinHeightProperty, _minHeight, value, _minHeightSource);
 	}
 
-	void Layoutable::SetMaxWidth(float value, ValueSource source)
+	void Layoutable::SetMaxWidth(float value)
 	{
-		SetProperty(MaxWidthProperty, _maxWidth, value, _maxWidthSource, source);
+		SetProperty(MaxWidthProperty, _maxWidth, value, _maxWidthSource);
 	}
 
-	void Layoutable::SetMaxHeight(float value, ValueSource source)
+	void Layoutable::SetMaxHeight(float value)
 	{
-		SetProperty(MaxHeightProperty, _maxHeight, value, _maxHeightSource, source);
+		SetProperty(MaxHeightProperty, _maxHeight, value, _maxHeightSource);
 	}
 
-	void Layoutable::SetMargin(Thickness value, ValueSource source)
+	void Layoutable::SetMargin(Thickness value)
 	{
-		SetProperty(MarginProperty, _margin, value, _marginSource, source);
+		SetProperty(MarginProperty, _margin, value, _marginSource);
 	}
 
-	void Layoutable::SetIsVisible(bool value, ValueSource source)
+	void Layoutable::SetIsVisible(bool value)
 	{
-		SetProperty(IsVisibleProperty, _isVisible, value, _isVisibleSource, source);
+		SetProperty(IsVisibleProperty, _isVisible, value, _isVisibleSource);
 	}
 
-	void Layoutable::SetVerticalAlignment(VerticalAlignment value, ValueSource source)
+	void Layoutable::SetVerticalAlignment(VerticalAlignment value)
 	{
-		SetProperty(VerticalAlignmentProperty, _verticalAlignment, value, _verticalAlignmentSource, source);
+		SetProperty(VerticalAlignmentProperty, _verticalAlignment, value, _verticalAlignmentSource);
 	}
 
-	void Layoutable::SetHorizontalAlignment(HorizontalAlignment value, ValueSource source)
+	void Layoutable::SetHorizontalAlignment(HorizontalAlignment value)
 	{
-		SetProperty(HorizontalAlignmentProperty, _horizontalAlignment, value, _horizontalAlignmentSource, source);
+		SetProperty(HorizontalAlignmentProperty, _horizontalAlignment, value, _horizontalAlignmentSource);
 	}
 
 	void Layoutable::Arrange(FRect rect)
@@ -79,7 +79,7 @@ namespace Sgl
 
 	void Layoutable::ArrangeCore(FRect rect)
 	{
-		auto [width, height] = Shrink(FSize(rect.w, rect.h), _margin);
+		auto [x, y, width, height] = Shrink(rect, _margin);
 		
 		if(width < 0)
 		{
@@ -103,9 +103,6 @@ namespace Sgl
 
 		width = std::clamp(width, _minWidth, _maxWidth);
 		height = std::clamp(height, _minHeight, _maxHeight);
-
-		float x = rect.x;
-		float y = rect.y;
 
 		switch(_horizontalAlignment)
 		{
@@ -220,7 +217,7 @@ namespace Sgl
 		}
 	}
 
-	void Layoutable::SetParent(IStyleHost* parent)
+	void Layoutable::SetParent(Styleable* parent)
 	{
 		Renderable::SetParent(parent);
 		_layotableParent = dynamic_cast<Layoutable*>(parent);

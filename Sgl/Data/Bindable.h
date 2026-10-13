@@ -4,25 +4,36 @@
 
 #include "Binding.h"
 #include "StyleableProperty.h"
-#include "../Base/Any.h"
+#include "../Base/Tools/Concepts.h"
+#include "../Input/Cursor.h"
+#include "../Base/Media/Brush.h"
 #include "../Base/Collections/FlatMap.h"
 
 namespace Sgl
 {
+    //! @brief Determines the priority when setting the value
+    enum class ValueSource: uint8_t
+    {
+        Default,
+        Inheritance,
+        Style,
+        VisualState,
+        Local
+    };
+
     class Bindable : public ObservableObject
     {
     public:
-        struct PropertyValue
-        {
-            Any state;
-        };
-
+        using PropertyValue = std::variant<uint32_t, Color, Brush, Cursor>;
     public:
         Bindable() = default;
         Bindable(const Bindable&) = delete;
         Bindable(Bindable&&) = delete;
         
-        void SetDataContext(const Ref<ObservableObject>& value, ValueSource source = ValueSource::Local);
+        void SetValueSource(ValueSource valueSource);
+        ValueSource GetValueSource() const { return _valueSource; }
+
+        void SetDataContext(const Ref<ObservableObject>& value);
         const Ref<ObservableObject>& GetDataContext() const { return _dataContext; }	
 
         template<CProperty TTargetProperty, CProperty TSourceProperty>
@@ -53,36 +64,42 @@ namespace Sgl
         using ObservableObject::SetProperty;
 
         template<CProperty TProperty, typename TField>
-        bool SetProperty(TProperty& property, TField& field, TProperty::Value value,
-                         ValueSource& currentSource, ValueSource newSource)
+        bool SetProperty(TProperty& property, TField& field, TProperty::Value value, ValueSource& currentSource)
         {
-            if(currentSource > newSource)
+            if(currentSource > _valueSource)
             {
                 return false;
             }
 
-            if(newSource < ValueSource::VisualState)
+            if(_valueSource != ValueSource::VisualState)
             {
                 if(field == value)
                 {
-                    currentSource = newSource;
+                    currentSource = _valueSource;
                     return false;
                 }
 
                 field = value;
-                currentSource = newSource;
+                currentSource = _valueSource;
             }
             else
             {
-                PropertyValue  newValue = { .state = value };
-                PropertyValue* currentValue = _valueStorage.Find(&property);
-
-                if(currentValue && currentValue->state == newValue.state)
+                if constexpr(CVariantAlternative<TField, PropertyValue>)
                 {
-                    return false;
-                }
+                    PropertyValue newValue = value;
+                    PropertyValue* currentValue = _valueStorage.Find(&property);
 
-                _valueStorage.Add(&property, std::move(newValue));
+                    if(currentValue && *currentValue == newValue)
+                    {
+                        return false;
+                    }
+
+                    _valueStorage.Add(&property, std::move(newValue));
+                }
+                else
+                {
+                    throw Exception("Property does not support VisualState value source");
+                }
             }
 
             OnPropertyChanged(property);
@@ -93,7 +110,7 @@ namespace Sgl
         TProperty::Value GetProperty(TProperty& property, const TField& field) const
         {
             const PropertyValue* it = _valueStorage.Find(&property);
-            return it ? it->state.As<TField>() : field;
+            return it ? std::get<TField>(*it) : field;
         }
 
         void ClearValue(PropertyBase& property);
@@ -104,10 +121,21 @@ namespace Sgl
         virtual void OnDataContextChanged(const Ref<ObservableObject>& dataContext) {}
     private:
         std::vector<std::unique_ptr<BindingBase>> _bindings;
-        std::vector<PropertyBase*> _clearProperties;
         FlatMap<PropertyBase*, PropertyValue> _valueStorage;
         Ref<ObservableObject> _dataContext;
 
+        ValueSource _valueSource = ValueSource::Local;
         ValueSource _dataContextSource {};
+    };
+
+    class ValueSourceScope
+    {
+    public:
+        ValueSourceScope(Bindable& target, ValueSource valueSource);
+        ValueSourceScope(const Ref<Bindable>& target, ValueSource valueSource);
+        ~ValueSourceScope();
+    private:
+        Bindable& _target;
+        ValueSource _currentSource;
     };
 }

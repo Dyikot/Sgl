@@ -13,16 +13,16 @@ namespace Sgl::UIElements
 
 		Event<ValueChangedEventHandler> ValueChanged;
 
-		void SetValue(float value, ValueSource source = ValueSource::Local);
+		void SetValue(float value);
 		float GetValue() const { return _value; }
 
-		void SetMinValue(float value, ValueSource source = ValueSource::Local);
+		void SetMinValue(float value);
 		float GetMinValue() const { return _minValue; }
 
-		void SetMaxValue(float value, ValueSource source = ValueSource::Local);
+		void SetMaxValue(float value);
 		float GetMaxValue() const { return _maxValue; }
 
-		void SetOrientation(Orientation value, ValueSource source = ValueSource::Local);
+		void SetOrientation(Orientation value);
 		Orientation GetOrientation() const { return _orientation; }
 
 		float GetRelativeValue() const;

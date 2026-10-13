@@ -8,5 +8,15 @@ namespace Sgl::UIElements
 	{
 	public:
 		SwitchButon();
+	protected:
+		Ref<Style> CreateDefaultStyle() const override;
+	};
+
+	class SwitchButonStyle : public ToggleButtonStyle
+	{
+	public:
+		void OnBase(StyleContext& context) override;
+	protected:
+		void OnChecked(StyleContext& context) override;
 	};
 }

@@ -31,13 +31,13 @@ namespace Sgl::UIElements
 		Event<ScrollEvenetHandler> ScrollMeasured;
 		Event<ScrollEvenetHandler> ScrollChanged;
 
-		void SetContent(const Ref<ObservableObject>& value, ValueSource source = ValueSource::Local);
+		void SetContent(const Ref<ObservableObject>& value);
 		const Ref<ObservableObject>& GetContent() const;
 
-		void SetContentTemplate(const Ref<IDataTemplate>& value, ValueSource source = ValueSource::Local);
+		void SetContentTemplate(const Ref<IDataTemplate>& value);
 		const Ref<IDataTemplate>& GetContentTemplate() const;
 
-		void SetScrollStep(float value, ValueSource source = ValueSource::Local);
+		void SetScrollStep(float value);
 		float GetScrollStep() const { return _scrollStep; }
 
 		void SetHorizontalOffset(float value);

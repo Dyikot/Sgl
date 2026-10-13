@@ -5,6 +5,7 @@
 #include <cassert>
 #include <ranges>
 #include "../Base/Logging.h"
+#include <queue>
 
 namespace Sgl
 {
@@ -58,24 +59,24 @@ namespace Sgl
 		};
 	}
 
-	void UIElement::SetTag(const Any& value, ValueSource source)
+	void UIElement::SetTag(const Any& value)
 	{
-		SetProperty(TagProperty, _tag, value, _tagSource, source);
+		SetProperty(TagProperty, _tag, value, _tagSource);
 	}
 
-	void UIElement::SetCornersRadius(float value, ValueSource source)
+	void UIElement::SetCornersRadius(float value)
 	{
-		SetProperty(CornersRadiusProperty, _cornersRadius, value, _cornersRadiusSource, source);
+		SetProperty(CornersRadiusProperty, _cornersRadius, value, _cornersRadiusSource);
 	}
 
-	void UIElement::SetIsFocusable(bool value, ValueSource source)
+	void UIElement::SetIsFocusable(bool value)
 	{
-		SetProperty(IsFocusableProperty, _focusable, value, _focusableSource, source);
+		SetProperty(IsFocusableProperty, _focusable, value, _focusableSource);
 	}
 
-	void UIElement::SetClipToBounds(bool value, ValueSource source)
+	void UIElement::SetClipToBounds(bool value)
 	{
-		SetProperty(ClipToBoundsProperty, _clipToBounds, value, _clipToBoundsSource, source);
+		SetProperty(ClipToBoundsProperty, _clipToBounds, value, _clipToBoundsSource);
 	}
 
 	Ref<UIElement> UIElement::HitTest(FPoint point)
@@ -155,6 +156,34 @@ namespace Sgl
 		}
 	}
 
+	Ref<UIElement> UIElement::FindChild(const std::string& name)
+	{
+		std::queue<UIElement*> queue;
+		
+		for(auto& child : GetChildren())
+		{
+			queue.push(child.Get());
+		}
+
+		while(!queue.empty())
+		{
+			auto current = queue.front();
+			queue.pop();
+
+			if(current->GetName() == name)
+			{
+				return Ref(current);
+			}
+
+			for(auto& child : current->GetChildren())
+			{
+				queue.push(child.Get());
+			}
+		}
+
+		return nullptr;
+	}
+
 	void UIElement::OnPropertyChanged(PropertyBase& property)
 	{
 		Layoutable::OnPropertyChanged(property);
@@ -166,7 +195,7 @@ namespace Sgl
 		}
 	}
 
-	void UIElement::SetParent(IStyleHost* parent)
+	void UIElement::SetParent(Styleable* parent)
 	{
 		Layoutable::SetParent(parent);
 		_parent = dynamic_cast<UIElement*>(parent);
@@ -176,7 +205,8 @@ namespace Sgl
 	{
 		for(auto& child : _children)
 		{
-			child->SetCursor(cursor, ValueSource::Inheritance);
+			ValueSourceScope scope(child, ValueSource::Inheritance);
+			child->SetCursor(cursor);
 		}
 
 		if(IsMouseOver())
@@ -195,7 +225,8 @@ namespace Sgl
 	{
 		for(auto& child : _children)
 		{
-			child->SetDataContext(dataContext, ValueSource::Inheritance);
+			ValueSourceScope scope(child, ValueSource::Inheritance);
+			child->SetDataContext(dataContext);
 		}
 	}
 
@@ -203,9 +234,12 @@ namespace Sgl
 	{
 		Layoutable::OnAttachedToLogicalTree();
 
-		auto parent = static_cast<Renderable*>(GetStylingParent());
-		SetDataContext(parent->GetDataContext(), ValueSource::Inheritance);
-		SetCursor(parent->GetCursor(), ValueSource::Inheritance);
+		{
+			ValueSourceScope scope(*this, ValueSource::Inheritance);
+			auto parent = static_cast<Renderable*>(GetStylingParent());
+			SetDataContext(parent->GetDataContext());
+			SetCursor(parent->GetCursor());
+		}
 		
 		ApplyBindings();
 
@@ -374,5 +408,23 @@ namespace Sgl
 	bool UIElementDataTemplate::Match(const Ref<ObservableObject>& data) const
 	{
 		return data.Is<UIElement>();
+	}
+
+	void UIElementStyle::OnState(StyleContext& context, const VisualStateSet& states)
+	{
+		if(states.Has(UIElement::OnHover))
+		{
+			OnHover(context);
+		}
+
+		if(states.Has(UIElement::OnFocus))
+		{
+			OnFocus(context);
+		}
+
+		if(states.Has(UIElement::OnPressed))
+		{
+			OnPressed(context);
+		}
 	}
 }

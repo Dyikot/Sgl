@@ -9,11 +9,12 @@ namespace Sgl::UIElements
 	public:
 		RadioButton();
 
-		void SetGroupName(const std::string& value, ValueSource source = ValueSource::Local);
+		void SetGroupName(const std::string& value);
 		const std::string& GetGroupName() const { return _groupName; }
 
 		static inline StyleableProperty GroupNameProperty { &SetGroupName, &GetGroupName };
 	protected:
+		Ref<Style> CreateDefaultStyle() const override;
 		void OnIsCheckedChanged() override;
 		void OnClick() final;
 		void OnAttachedToLogicalTree() override;
@@ -23,5 +24,13 @@ namespace Sgl::UIElements
 		ValueSource _groupNameValueSource {};
 
 		friend class RadioButtonGroup;
+	};
+
+	class RadioButtonStyle : public ToggleButtonStyle
+	{
+	public:
+		void OnBase(StyleContext& context) override;
+	protected:
+		void OnChecked(StyleContext& context) override;
 	};
 }

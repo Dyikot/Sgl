@@ -4,6 +4,7 @@
 #include "../Data/IDataTemplate.h"
 #include "../Input/MouseAndKeyEventArgs.h"
 #include "../Layout/Layoutable.h"
+#include "../Styling/StyleContext.h"
 
 namespace Sgl
 {
@@ -31,16 +32,16 @@ namespace Sgl
 		Event<UIElementEventHandler> GotFocus;
 		Event<UIElementEventHandler> LostFocus;
 
-		void SetTag(const Any& value, ValueSource source = ValueSource::Local);
+		void SetTag(const Any& value);
 		const Any& GetTag() const { return _tag; }
 
-		void SetCornersRadius(float value, ValueSource source = ValueSource::Local);
+		void SetCornersRadius(float value);
 		float GetCornersRadius() const { return _cornersRadius; }
 
-		void SetIsFocusable(bool value, ValueSource source = ValueSource::Local);
+		void SetIsFocusable(bool value);
 		bool IsFocusable() const { return _focusable; }
 
-		void SetClipToBounds(bool value, ValueSource source = ValueSource::Local);
+		void SetClipToBounds(bool value);
 		bool GetClipToBounds() const { return _clipToBounds; }
 
 		bool IsMouseOver() const { return States.Has(OnHover); }	
@@ -52,6 +53,7 @@ namespace Sgl
 		bool Focus();
 		void Render(RenderContext& context) final;
 		void ApplyStyling();
+		Ref<UIElement> FindChild(const std::string& name);
 
 		static inline const VisualState OnHover = VisualState::Register("hover");
 		static inline const VisualState OnPressed = VisualState::Register("pressed");
@@ -64,7 +66,7 @@ namespace Sgl
 	protected:
 		~UIElement() = default;
 		void OnPropertyChanged(PropertyBase& property) override;
-		void SetParent(IStyleHost* parent) override;
+		void SetParent(Styleable* parent) override;
 		void OnCursorChanged(Cursor cursor) final;
 		void OnBackgroundChanged(const Brush& background) final;
 		void OnDataContextChanged(const Ref<ObservableObject>& dataContext) final;
@@ -108,6 +110,17 @@ namespace Sgl
 		friend class Window;
 		friend class InputManager;
 		friend class FocusManager;
+	};
+
+	class UIElementStyle : public Style
+	{
+	public:
+		void OnBase(StyleContext& context) override {}
+		void OnState(StyleContext& context, const VisualStateSet& states) override;
+	protected:
+		virtual void OnHover(StyleContext& context) {}
+		virtual void OnPressed(StyleContext& context) {}
+		virtual void OnFocus(StyleContext& context) {}
 	};
 
 	class UIElementDataTemplate final : public IDataTemplate

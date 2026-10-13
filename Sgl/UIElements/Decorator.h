@@ -9,10 +9,10 @@ namespace Sgl
 	public:
 		Decorator() = default;
 
-		void SetChild(const Ref<UIElement>& value, ValueSource source = ValueSource::Local);
+		void SetChild(const Ref<UIElement>& value);
 		const Ref<UIElement>& GetChild() const { return _child; }
 		
-		void SetPadding(Thickness value, ValueSource source = ValueSource::Local);
+		void SetPadding(Thickness value);
 		Thickness GetPadding() const { return _padding; }
 
 		static inline StyleableProperty ChildProperty { &SetChild, &GetChild };

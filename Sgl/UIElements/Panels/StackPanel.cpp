@@ -7,14 +7,14 @@ namespace Sgl::UIElements
 		SetName("StackPanel");
 	}
 
-	void StackPanel::SetSpacing(float value, ValueSource source)
+	void StackPanel::SetSpacing(float value)
 	{
-		SetProperty(SpacingProperty, _spacing, value, _spacingSource, source);
+		SetProperty(SpacingProperty, _spacing, value, _spacingSource);
 	}
 
-	void StackPanel::SetOrientation(Orientation value, ValueSource source)
+	void StackPanel::SetOrientation(Orientation value)
 	{
-		SetProperty(OrientationProperty, _orientation, value, _orientationSource, source);
+		SetProperty(OrientationProperty, _orientation, value, _orientationSource);
 	}
 
 	void StackPanel::OnPropertyChanged(PropertyBase& property)

@@ -10,7 +10,7 @@ namespace Sgl
 		TemplatedUIElement() = default;
 
 	protected:
-		void SetTemplate(const Ref<UIElement>& template_);
+		void SetTemplate(const Ref<UIElement>& value);
 		const Ref<UIElement>& GetTemplate() const { return _template; }
 
 		FSize MeasureContent(FSize availableSize) override;

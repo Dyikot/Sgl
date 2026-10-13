@@ -11,13 +11,13 @@ namespace Sgl::UIElements
 	public:
 		ScrollBar();
 
-		void SetViewportSize(float value, ValueSource source = ValueSource::Local);
+		void SetViewportSize(float value);
 		float GetViewportSize() const { return _viewportSize; }
 
-		void SetSmallChange(float value, ValueSource source = ValueSource::Local);
+		void SetSmallChange(float value);
 		float GetSmallChange() const { return _smallChange; }
 
-		void SetLargeChange(float value, ValueSource source = ValueSource::Local);
+		void SetLargeChange(float value);
 		float GetLargeChange() const { return _largeChange; }
 
 		void LineUp();
@@ -33,7 +33,7 @@ namespace Sgl::UIElements
 	protected:
 		void OnPropertyChanged(PropertyBase& property) override;
 		void OnValueChanged(float value) override;
-		void OnMouseDown(MouseClickEventArgs& e) override;
+		Ref<Style> CreateDefaultStyle() const override;
 	private:
 		void BuildTemplate();
 		float GetPageSize() const;
@@ -52,5 +52,11 @@ namespace Sgl::UIElements
 		ValueSource _viewportSizeSource {};
 		ValueSource _smallChangeSource {};
 		ValueSource _largeChangeSource {};
+	};
+
+	class ScrollBarStyle : public UIElementStyle
+	{
+	public:
+		void OnBase(StyleContext& context) override;
 	};
 }
