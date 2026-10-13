@@ -3,8 +3,8 @@
 #include <atomic>
 #include <memory>
 #include <utility>
-#include <typeinfo>
-#include <type_traits>
+#include <cstdint>
+#include <concepts>
 
 namespace Sgl
 {

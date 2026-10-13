@@ -1,5 +1,5 @@
 #pragma once
-#include <string>
+
 #include "../Event.h"
 #include "../Time/TimeSpan.h"
 #include "../Threading/Task.h"

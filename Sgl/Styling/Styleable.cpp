@@ -1,6 +1,4 @@
 #include "StyleContext.h"
-#include "../Base/Tools/StringUtils.h"
-#include "../Base/Logging.h"
 
 namespace Sgl
 {

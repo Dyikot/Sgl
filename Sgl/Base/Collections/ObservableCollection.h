@@ -1,6 +1,5 @@
 #pragma once
 
-#include <algorithm>
 #include "Collection.h"
 #include "../Event.h"
 

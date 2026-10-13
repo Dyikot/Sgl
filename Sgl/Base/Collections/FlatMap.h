@@ -1,9 +1,11 @@
 #pragma once
 
-#include <algorithm>
-#include <ranges>
 #include <vector>
 #include <utility>
+#include <concepts>
+#include <iterator>
+#include <algorithm>
+#include <initializer_list>
 
 namespace Sgl
 {

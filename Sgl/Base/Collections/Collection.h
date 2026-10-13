@@ -1,7 +1,8 @@
 #pragma once
+
 #include <vector>
-#include <ranges>
 #include <concepts>
+#include <initializer_list>
 
 namespace Sgl
 {

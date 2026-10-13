@@ -2,7 +2,6 @@
 
 #include <vector>
 #include <array>
-#include "Primitives.h"
 
 namespace Sgl::Math
 {

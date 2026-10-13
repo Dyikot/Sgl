@@ -2,8 +2,10 @@
 
 #include <vector>
 #include <ranges>
+#include <utility>
 #include <concepts>
 #include <algorithm>
+#include <initializer_list>
 
 namespace Sgl
 {

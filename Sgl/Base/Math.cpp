@@ -1,9 +1,7 @@
 #include "Math.h"
 
 #include <numbers>
-#include <numeric>
 #include <cmath>
-#include <algorithm>
 
 namespace Sgl::Math
 {

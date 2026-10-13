@@ -1,7 +1,10 @@
 #pragma once
 
 #include <format>
+#include <utility>
 #include <exception>
+#include <string>
+#include <string_view>
 
 namespace Sgl
 {

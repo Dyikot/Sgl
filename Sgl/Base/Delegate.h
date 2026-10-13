@@ -2,6 +2,9 @@
 
 #include <utility>
 #include <typeinfo>
+#include <concepts>
+#include <functional>
+#include <type_traits>
 
 namespace Sgl
 {

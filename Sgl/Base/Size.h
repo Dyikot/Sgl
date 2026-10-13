@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 namespace Sgl
 {
 	//! @brief Represents a 2D size with unsigned integer dimensions

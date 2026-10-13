@@ -1,7 +1,5 @@
 #include "Application.h"
 
-#include <ranges>
-#include <cassert>
 #include <SDL3/SDL_init.h>
 #include <SDL3_ttf/SDL_ttf.h>
 #include <SDL3_mixer/SDL_mixer.h>

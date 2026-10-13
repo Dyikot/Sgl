@@ -1,7 +1,6 @@
 #include "Window.h"
 
 #include "Application.h"
-#include "Layout/LayoutHelper.h"
 #include "Base/Exceptions.h"
 #include "Base/Logging.h"
 #include "Styling/StyleContext.h"
