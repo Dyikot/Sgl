@@ -107,24 +107,24 @@ The default style `ButtonStyle` for a button:
 class ButtonStyle : public UIElementStyle
 {
 public:
-	void OnBase(StyleContext& context) override
+    void OnBase(StyleContext& context) override
     {
         context.Set(Button::CursorProperty, Cursors::Pointer);
         context.Set(Button::BackgroundProperty, Colors::Grey_2);
     }
 
 protected:
-	void OnHover(StyleContext& context) override
+    void OnHover(StyleContext& context) override
     {
         context.Set(Button::BackgroundProperty, Colors::Grey_3);
     }
 
-	void OnPressed(StyleContext& context) override
+    void OnPressed(StyleContext& context) override
     {
         context.Set(Button::BackgroundProperty, Colors::Grey_4);
     }
 
-	void OnFocus(StyleContext& context) override
+    void OnFocus(StyleContext& context) override
     {
 
     }
@@ -137,7 +137,7 @@ To style a state that has no dedicated hook (e.g. checked), override `OnState`, 
 class ToggleButtonStyle : public ButtonStyle
 {
 public:
-	void OnState(StyleContext& context, const VisualStateSet& states) override
+    void OnState(StyleContext& context, const VisualStateSet& states) override
     {
         ButtonStyle::OnState(context, states);
 
@@ -147,10 +147,10 @@ public:
         }
     }
 protected:
-	void OnHover(StyleContext& context) override {}
-	void OnPressed(StyleContext& context) override {}
-	void OnFocus(StyleContext& context) override {}
-	virtual void OnChecked(StyleContext& context) {}
+    void OnHover(StyleContext& context) override {}
+    void OnPressed(StyleContext& context) override {}
+    void OnFocus(StyleContext& context) override {}
+    virtual void OnChecked(StyleContext& context) {}
 };
 ```
 
