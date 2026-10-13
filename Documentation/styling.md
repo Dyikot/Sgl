@@ -29,7 +29,7 @@ public:
 
 ## Applying a style
 A style is set with the SetStyle method:
-`button.SetStyle(MakeRef<ButtonStyle>());`
+`button.SetStyle(New<ButtonStyle>());`
 
 `SetStyle` does not apply the style immediately. Styles are applied when the element is attached to the UI tree, and re-applied when the active theme changes.
 
