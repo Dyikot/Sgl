@@ -85,12 +85,18 @@ namespace Sgl
 		virtual void OnMouseLeave(MouseMoveEventArgs e);
 		virtual void OnGotFocus(EventArgs e);
 		virtual void OnLostFocus(EventArgs e);
+
 		void AddChild(const Ref<UIElement>& child);
-		void RemoveChild(const Ref<UIElement>& child);
+		void InsertChild(size_t index, const Ref<UIElement>& child);
+		bool RemoveChild(const Ref<UIElement>& child);
+		void RemoveChildAt(size_t index);
+		void SetChildAt(size_t index, const Ref<UIElement>& child);
 		void ClearChildren();
 		UIElement* GetParent() const { return _parent; }
 		const std::vector<Ref<UIElement>>& GetChildren() const { return _children; }
 	private:
+		void AttachChild(const Ref<UIElement>& child);
+		void DetachChild(const Ref<UIElement>& child);
 		RenderFragment CreateBackgroundFragment(const Brush& background);
 		void InvalidateBackground();
 	private:

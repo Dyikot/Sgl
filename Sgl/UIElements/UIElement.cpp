@@ -368,6 +368,61 @@ namespace Sgl
 	void UIElement::AddChild(const Ref<UIElement>& child)
 	{
 		_children.push_back(child);
+		AttachChild(child);
+	}
+
+	void UIElement::InsertChild(size_t index, const Ref<UIElement>& child)
+	{
+		_children.insert(_children.begin() + index, child);
+		AttachChild(child);
+	}
+
+	bool UIElement::RemoveChild(const Ref<UIElement>& child)
+	{
+		auto it = std::ranges::find(_children, child);
+
+		if(it == _children.end())
+		{
+			return false;
+		}
+
+		_children.erase(it);
+		DetachChild(child);
+		return true;
+	}
+
+	void UIElement::RemoveChildAt(size_t index)
+	{
+		DetachChild(_children.at(index));
+		_children.erase(_children.begin() + index);
+	}
+
+	void UIElement::SetChildAt(size_t index, const Ref<UIElement>& child)
+	{
+		Ref<UIElement> currentChild = _children.at(index);
+
+		if(currentChild == child)
+		{
+			return;
+		}
+
+		DetachChild(currentChild);
+		_children[index] = child;
+		AttachChild(child);
+	}
+
+	void UIElement::ClearChildren()
+	{
+		for(auto& child : _children)
+		{
+			DetachChild(child);
+		}
+
+		_children.clear();
+	}
+
+	void UIElement::AttachChild(const Ref<UIElement>& child)
+	{
 		child->SetParent(this);
 
 		if(IsAttachedToLogicalTree())
@@ -376,36 +431,14 @@ namespace Sgl
 		}
 	}
 
-	void UIElement::RemoveChild(const Ref<UIElement>& child)
+	void UIElement::DetachChild(const Ref<UIElement>& child)
 	{
-		std::erase(_children, child);
 		child->SetParent(nullptr);
 
 		if(IsAttachedToLogicalTree())
 		{
 			child->OnDetachedFromLogicalTree();
 		}
-	}
-
-	void UIElement::ClearChildren()
-	{
-		if(IsAttachedToLogicalTree())
-		{
-			for(auto& child : _children)
-			{
-				child->SetParent(nullptr);
-				child->OnDetachedFromLogicalTree();
-			}
-		}
-		else
-		{
-			for(auto& child : _children)
-			{
-				child->SetParent(nullptr);
-			}
-		}
-
-		_children.clear();
 	}
 
 	RenderFragment UIElement::CreateBackgroundFragment(const Brush& background)

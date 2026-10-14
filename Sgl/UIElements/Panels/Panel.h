@@ -1,41 +1,45 @@
 #pragma once
 
 #include "../UIElement.h"
-#include "../../Base/Collections/Collection.h"
 
 namespace Sgl
 {
 	class Panel;
 
-	class UIElementsCollection : public Collection<Ref<UIElement>>
+	class UIElementsCollection
 	{
-	private:
-		using base = Collection<Ref<UIElement>>;
+	public:
+		using const_iterator = std::vector<Ref<UIElement>>::const_iterator;
+		using const_reverse_iterator = std::vector<Ref<UIElement>>::const_reverse_iterator;
 	public:
 		explicit UIElementsCollection(Panel& panel);
 		UIElementsCollection(const UIElementsCollection&) = delete;
 		UIElementsCollection(UIElementsCollection&&) = delete;
 
+		const_iterator begin() const;
+		const_iterator end() const;
+
+		const_reverse_iterator rbegin() const;
+		const_reverse_iterator rend() const;
+
+		size_t Count() const noexcept;
+		bool IsEmpty() const noexcept;
+		const Ref<UIElement>& Front() const;
+		const Ref<UIElement>& Back() const;
+
+		void Add(const Ref<UIElement>& item);
+		void Insert(size_t index, const Ref<UIElement>& item);
+		bool Remove(const Ref<UIElement>& item);
+		void RemoveAt(size_t index);		
+		void Clear();
+
+		bool Contains(const Ref<UIElement>& item) const;
 		Ref<UIElement> FindByName(std::string_view name) const;
 
-		template<typename T>
-		Ref<T> FindOfType() const
-		{
-			for(auto& item : _items)
-			{
-				if(item.OfType<T>())
-				{
-					return item.As<T>();
-				}
-			}
+		void SetElementAt(size_t index, const Ref<UIElement>& item);
+		const Ref<UIElement>& GetElementAt(size_t index) const;
+		const Ref<UIElement>& operator[](size_t index) const;
 
-			return nullptr;
-		}
-	protected:
-		void ClearItems() override;
-		void InsertItem(size_t index, const Ref<UIElement>& item) override;
-		void SetItem(size_t index, const Ref<UIElement>& item) override;
-		void RemoveItem(size_t index) override;
 	private:
 		Panel& _panel;
 	};
