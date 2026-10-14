@@ -8,6 +8,42 @@ namespace Sgl::UIElements
 		SetName("Border");
 	}
 
+	void Border::SetChild(const Ref<UIElement>& value)
+	{
+		auto source = GetValueSource();
+
+		if(_childSource > source)
+		{
+			return;
+		}
+
+		if(_child == value)
+		{
+			_childSource = source;
+			return;
+		}
+
+		if(_child)
+		{
+			RemoveChild(_child);
+		}
+
+		_child = value;
+		_childSource = source;
+
+		if(_child)
+		{
+			AddChild(_child);
+		}
+
+		OnPropertyChanged(ChildProperty);
+	}
+
+	void Border::SetPadding(Thickness value)
+	{
+		SetProperty(PaddingProperty, _padding, value, _paddingSource);
+	}
+
 	void Border::SetBorderWidth(uint32_t value)
 	{
 		SetProperty(BorderWidthProperty, _borderWidth, value, _borderWidthSource);
@@ -52,13 +88,15 @@ namespace Sgl::UIElements
 
 	void Border::OnPropertyChanged(PropertyBase& property)
 	{
-		Decorator::OnPropertyChanged(property);
+		UIElement::OnPropertyChanged(property);
 
 		if(property == BorderColorProperty)
 		{
 			InvalidateRender();
 		}
-		else if(property == BorderWidthProperty)
+		else if(property == BorderWidthProperty || 
+				property == ChildProperty || 
+				property == PaddingProperty)
 		{
 			InvalidateMeasure();
 		}
@@ -66,11 +104,11 @@ namespace Sgl::UIElements
 
 	FSize Border::MeasureContent(FSize availableSize)
 	{
-		return MeasureChild(GetChild().Get(), availableSize, GetPadding().Inflate(GetBorderWidth()));
+		return MeasureChild(_child.Get(), availableSize, _padding.Inflate(GetBorderWidth()));
 	}
 
 	void Border::ArrangeContent(FRect rect)
 	{
-		ArrangeChild(GetChild().Get(), rect, GetPadding().Inflate(GetBorderWidth()));
+		ArrangeChild(_child.Get(), rect, _padding.Inflate(GetBorderWidth()));
 	}
 }
