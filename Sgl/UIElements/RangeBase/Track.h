@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../TemplatedUIElement.h"
+#include "../UIElement.h"
 
 namespace Sgl::UIElements
 {
-	class Track : public TemplatedUIElement
+	class Track : public UIElement
 	{
 	public:
 		Track();

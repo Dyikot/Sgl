@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../TemplatedUIElement.h"
+#include "../UIElement.h"
 
 namespace Sgl::UIElements
 {
-	class RangeBase : public TemplatedUIElement
+	class RangeBase : public UIElement
 	{
 	public:
 		using ValueChangedEventHandler = EventHandler<RangeBase, float>;

@@ -21,7 +21,7 @@ namespace Sgl::UIElements
 
 	void Track::OnPropertyChanged(PropertyBase& property)
 	{
-		TemplatedUIElement::OnPropertyChanged(property);
+		UIElement::OnPropertyChanged(property);
 
 		if(property == FillRatioProperty || property == OrientationProperty)
 		{
@@ -55,7 +55,7 @@ namespace Sgl::UIElements
 			contentRect.y = rect.y + height - contentRect.h;
 		}
 
-		TemplatedUIElement::ArrangeContent(contentRect);
+		UIElement::ArrangeContent(contentRect);
 	}
 
 	Ref<Style> Track::CreateDefaultStyle() const
@@ -69,7 +69,7 @@ namespace Sgl::UIElements
 		progress->SetName("Progress");
 		progress->SetStyle(New<TrackProgressStyle>());
 
-		SetTemplate(progress);
+		AddChild(progress);
 	}
 
 	void TrackStyle::OnBase(StyleContext& context)

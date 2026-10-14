@@ -72,6 +72,8 @@ namespace Sgl
 		void OnDataContextChanged(const Ref<ObservableObject>& dataContext) final;
 		void OnAttachedToLogicalTree() override;
 		void OnDetachedFromLogicalTree() override;
+		FSize MeasureContent(FSize availableSize) override;
+		void ArrangeContent(FRect rect) override;
 		virtual void OnRender(RenderContext& context) {}
 		virtual void OnKeyDown(KeyEventArgs& e);
 		virtual void OnKeyUp(KeyEventArgs& e);

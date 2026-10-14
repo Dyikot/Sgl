@@ -261,6 +261,27 @@ namespace Sgl
 		}
 	}
 
+	FSize UIElement::MeasureContent(FSize availableSize)
+	{
+		FSize size {};
+
+		for(auto& child : _children)
+		{
+			child->Measure(availableSize);
+			size += child->GetDesiredSize();
+		}
+
+		return size;
+	}
+
+	void UIElement::ArrangeContent(FRect rect)
+	{
+		for(auto& child : _children)
+		{
+			child->Arrange(rect);
+		}
+	}
+
 	void UIElement::OnKeyDown(KeyEventArgs& e)
 	{
 		KeyDown.Invoke(*this, e);

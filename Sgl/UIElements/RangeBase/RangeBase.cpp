@@ -34,7 +34,7 @@ namespace Sgl::UIElements
 
 	void RangeBase::OnPropertyChanged(PropertyBase& property)
 	{
-		TemplatedUIElement::OnPropertyChanged(property);
+		UIElement::OnPropertyChanged(property);
 
 		if(property == ValueProperty)
 		{

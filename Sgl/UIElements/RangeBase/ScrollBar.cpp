@@ -192,7 +192,7 @@ namespace Sgl::UIElements
 			//Logging::LogInfo("Value: {}", GetValue());
 		};
 
-		SetTemplate(_track);
+		AddChild(_track);
 	}
 
 	float ScrollBar::GetPageSize() const

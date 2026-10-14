@@ -44,7 +44,7 @@ namespace Sgl::UIElements
 			SetValue(value);
 		};
 
-		SetTemplate(_button);
+		AddChild(_button);
 	}
 
 	float Slider::ValueAtPosition(float x, float y) const

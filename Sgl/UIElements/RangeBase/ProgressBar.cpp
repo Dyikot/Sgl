@@ -29,6 +29,6 @@ namespace Sgl::UIElements
 	void ProgressBar::BuildTemplate()
 	{
 		_track = New<Track>();
-		SetTemplate(_track);
+		AddChild(_track);
 	}
 }
