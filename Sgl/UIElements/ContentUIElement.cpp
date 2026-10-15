@@ -48,78 +48,74 @@ namespace Sgl
 	{
 		UIElement::OnPropertyChanged(property);
 
-		if(property == ContentProperty)
-		{
-			if(!_content.Is<UIElement>())
-			{
-				SetDataContext(_content);
-			}
-
-			UpdatePresenter();
-		}
-		else if(property == PaddingProperty)
+		if(property == PaddingProperty)
 		{
 			InvalidateMeasure();
 		}
-		else if(property == ContentTemplateProperty)
+		else if(property == ContentProperty || property == ContentTemplateProperty)
 		{
-			UpdatePresenter();
+			UpdateChild();
 		}
 		else if(property == VerticalContentAlignmentProperty)
 		{
 			InvalidateArrange();
 
-			if(_contentPresenter)
+			if(_child)
 			{
-				ValueSourceScope scope(_contentPresenter, ValueSource::Inheritance);
-				_contentPresenter->SetVerticalAlignment(_verticalContentAlignment);
+				ValueSourceScope scope(_child, ValueSource::Inheritance);
+				_child->SetVerticalAlignment(_verticalContentAlignment);
 			}
 		}
 		else if(property == HorizontalContentAlignmentProperty)
 		{
 			InvalidateArrange();
 
-			if(_contentPresenter)
+			if(_child)
 			{
-				ValueSourceScope scope(_contentPresenter, ValueSource::Inheritance);
-				_contentPresenter->SetHorizontalAlignment(_horizontalContentAlignment);
+				ValueSourceScope scope(_child, ValueSource::Inheritance);
+				_child->SetHorizontalAlignment(_horizontalContentAlignment);
 			}
 		}
 	}
 
 	FSize ContentUIElement::MeasureContent(FSize availableSize)
 	{
-		return MeasureChild(_contentPresenter.Get(), availableSize, _padding);
+		return MeasureChild(_child.Get(), availableSize, _padding);
 	}
 
 	void ContentUIElement::ArrangeContent(FRect rect)
 	{
-		ArrangeChild(_contentPresenter.Get(), rect, _padding);
+		ArrangeChild(_child.Get(), rect, _padding);
 	}
 
-	void ContentUIElement::UpdatePresenter()
+	void ContentUIElement::UpdateChild()
 	{
-		if(_contentPresenter)
+		if(_child)
 		{
-			RemoveChild(_contentPresenter);
+			RemoveChild(_child);
 		}
 
 		if(_contentTemplate && _contentTemplate->Match(_content))
 		{
-			_contentPresenter = _contentTemplate->Build(_content);
+			_child = _contentTemplate->Build(_content);
 
-			if(_contentPresenter)
+			if(_child)
 			{
-				AddChild(_contentPresenter);
+				AddChild(_child);
 
-				ValueSourceScope scope(_contentPresenter, ValueSource::Inheritance);
-				_contentPresenter->SetVerticalAlignment(_verticalContentAlignment);
-				_contentPresenter->SetHorizontalAlignment(_horizontalContentAlignment);
+				if(!_content.Is<UIElement>())
+				{
+					_child->SetDataContext(_content);
+				}
+
+				ValueSourceScope scope(_child, ValueSource::Inheritance);
+				_child->SetVerticalAlignment(_verticalContentAlignment);
+				_child->SetHorizontalAlignment(_horizontalContentAlignment);
 			}
 		}
 		else
 		{
-			_contentPresenter = nullptr;
+			_child = nullptr;
 		}
 	}
 }

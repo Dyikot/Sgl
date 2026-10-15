@@ -9,8 +9,6 @@ namespace Sgl
 	public:
 		ContentUIElement() = default;
 		
-		const Ref<UIElement>& GetContentPresenter() const { return _contentPresenter; }
-
 		void SetContent(const std::string& value);
 		void SetContent(const Ref<ObservableObject>& value);
 		const Ref<ObservableObject>& GetContent() const { return _content; }
@@ -27,6 +25,8 @@ namespace Sgl
 		void SetHorizontalContentAlignment(HorizontalAlignment value);
 		HorizontalAlignment GetHorizontalContentAlignment() const { return _horizontalContentAlignment; }
 
+		const Ref<UIElement>& GetChild() const { return _child; }
+
 		static inline StyleableProperty ContentProperty { &SetContent, &GetContent };
 		static inline StyleableProperty ContentTemplateProperty { &SetContentTemplate, &GetContentTemplate };
 		static inline StyleableProperty PaddingProperty { &SetPadding, &GetPadding };
@@ -37,11 +37,11 @@ namespace Sgl
 		FSize MeasureContent(FSize availableSize) override;
 		void ArrangeContent(FRect rect) override;
 	private:
-		void UpdatePresenter();
+		void UpdateChild();
 	private:
 		Ref<ObservableObject> _content;
 		Ref<IDataTemplate> _contentTemplate = New<UIElementDataTemplate>();
-		Ref<UIElement> _contentPresenter;
+		Ref<UIElement> _child;
 		Thickness _padding;
 		VerticalAlignment _verticalContentAlignment = VerticalAlignment::Stretch;
 		HorizontalAlignment _horizontalContentAlignment = HorizontalAlignment::Stretch;
