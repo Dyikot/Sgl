@@ -12,7 +12,7 @@ namespace Sgl::UIElements
 		Ref<Style> CreateDefaultStyle() const override;
 	};
 
-	class SwitchButonStyle : public ToggleButtonStyle
+	class SwitchButtonStyle : public ToggleButtonStyle
 	{
 	public:
 		void OnBase(StyleContext& context) override;

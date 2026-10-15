@@ -10,10 +10,10 @@ namespace Sgl::UIElements
 
 	Ref<Style> SwitchButon::CreateDefaultStyle() const
 	{
-		return New<SwitchButonStyle>();
+		return New<SwitchButtonStyle>();
 	}
 
-	void SwitchButonStyle::OnBase(StyleContext& context)
+	void SwitchButtonStyle::OnBase(StyleContext& context)
 	{
 		ToggleButtonStyle::OnBase(context);
 		context.Set(Button::WidthProperty, 48);
@@ -23,7 +23,7 @@ namespace Sgl::UIElements
 		context.Set(Button::BackgroundProperty, ImageSource(AssetId::SwitchButtonOff));
 	}
 
-	void SwitchButonStyle::OnChecked(StyleContext& context)
+	void SwitchButtonStyle::OnChecked(StyleContext& context)
 	{
 		context.Set(Button::BackgroundProperty, ImageSource(AssetId::SwitchButtonOn));
 	}

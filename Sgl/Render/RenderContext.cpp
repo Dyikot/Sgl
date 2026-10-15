@@ -696,17 +696,17 @@ namespace Sgl
 		static std::array<Vertex, totalVertices> vertices;
 		// Indices
 		static const std::array indices = Math::FanTriangulate<totalIndices>(totalVertices - 1);
-
+		
 		if(texture)
 		{
 			CalculateRoundedRectVertices(vertices, rect, cornersRadius, texture);
-			DrawGeometry(vertices, texture, indices);
 		}
 		else
 		{
 			CalculateRoundedRectVertices(vertices, rect, cornersRadius, color);
-			DrawGeometry(vertices, nullptr, indices);
 		}
+
+		DrawGeometry(vertices, texture, indices);
 	}
 
 	void RenderContext::SetColor(Color color) const noexcept
