@@ -95,27 +95,39 @@ namespace Sgl
 			RemoveChild(_child);
 		}
 
-		if(_contentTemplate && _contentTemplate->Match(_content))
+		if(!_content)
 		{
-			_child = _contentTemplate->Build(_content);
-
-			if(_child)
-			{
-				AddChild(_child);
-
-				if(!_content.Is<UIElement>())
-				{
-					_child->SetDataContext(_content);
-				}
-
-				ValueSourceScope scope(_child, ValueSource::Inheritance);
-				_child->SetVerticalAlignment(_verticalContentAlignment);
-				_child->SetHorizontalAlignment(_horizontalContentAlignment);
-			}
+			_child = nullptr;
+			return;
+		}
+		else if(auto element = _content.As<UIElement>())
+		{
+			_child = element;
 		}
 		else
 		{
-			_child = nullptr;
+			_child = CreateChild();
 		}
+
+		if(_child)
+		{
+			AddChild(_child);
+
+			ValueSourceScope scope(_child, ValueSource::Inheritance);
+			_child->SetVerticalAlignment(_verticalContentAlignment);
+			_child->SetHorizontalAlignment(_horizontalContentAlignment);
+		}
+	}
+
+	Ref<UIElement> ContentUIElement::CreateChild() const
+	{
+		if(_contentTemplate && _contentTemplate->Match(_content))
+		{
+			auto element = _contentTemplate->Build(_content);
+			element->SetDataContext(_content);
+			return element;
+		}
+
+		return nullptr;
 	}
 }

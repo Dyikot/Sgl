@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../Base/Any.h"
-#include "../Data/IDataTemplate.h"
 #include "../Input/MouseAndKeyEventArgs.h"
 #include "../Layout/Layoutable.h"
 #include "../Styling/StyleContext.h"
@@ -129,12 +128,5 @@ namespace Sgl
 		virtual void OnHover(StyleContext& context) {}
 		virtual void OnPressed(StyleContext& context) {}
 		virtual void OnFocus(StyleContext& context) {}
-	};
-
-	class UIElementDataTemplate final : public IDataTemplate
-	{
-	public:
-		Ref<UIElement> Build(const Ref<ObservableObject>& data) override;
-		bool Match(const Ref<ObservableObject>& data) const override;
 	};
 }

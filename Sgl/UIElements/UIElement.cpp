@@ -454,16 +454,6 @@ namespace Sgl
 		_backgroundFragment = nullptr;
 	}
 
-	Ref<UIElement> UIElementDataTemplate::Build(const Ref<ObservableObject>& data)
-	{
-		return data.As<UIElement>();
-	}
-
-	bool UIElementDataTemplate::Match(const Ref<ObservableObject>& data) const
-	{
-		return data.Is<UIElement>();
-	}
-
 	void UIElementStyle::OnState(StyleContext& context, const VisualStateSet& states)
 	{
 		if(states.Has(UIElement::OnHover))

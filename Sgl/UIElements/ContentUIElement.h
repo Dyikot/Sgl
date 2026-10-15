@@ -1,6 +1,7 @@
 #pragma once
 
 #include "UIElement.h"
+#include "../Data/IDataTemplate.h"
 
 namespace Sgl
 {
@@ -38,9 +39,10 @@ namespace Sgl
 		void ArrangeContent(FRect rect) override;
 	private:
 		void UpdateChild();
+		Ref<UIElement> CreateChild() const;
 	private:
 		Ref<ObservableObject> _content;
-		Ref<IDataTemplate> _contentTemplate = New<UIElementDataTemplate>();
+		Ref<IDataTemplate> _contentTemplate;
 		Ref<UIElement> _child;
 		Thickness _padding;
 		VerticalAlignment _verticalContentAlignment = VerticalAlignment::Stretch;

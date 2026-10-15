@@ -1,6 +1,7 @@
 #pragma once
 
 #include "UIElement.h"
+#include "../Data/IDataTemplate.h"
 
 namespace Sgl
 {
