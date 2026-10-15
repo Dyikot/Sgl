@@ -28,12 +28,17 @@ public:
 ```
 
 ## Applying a style
-A style is set with the SetStyle method:
-`button.SetStyle(New<ButtonStyle>());`
+The style is set using the `SetStyle` and `SetStyleFor<T>` methods:
+```cpp
+button.SetStyle(New<ButtonStyle>());
+window.SetStyleFor<TextBlock>(New<TextStyle>());
+```
 
-`SetStyle` does not apply the style immediately. Styles are applied when the element is attached to the UI tree, and re-applied when the active theme changes.
+- `SetStyle` Explicitly sets the element's style.
 
-`Style` is reference-counted and stateless, so a single instance can safely be shared between any number of elements. 
+- `SetStyleFor<T>` Implicitly sets the style for a child element of type T — provided that no explicit style value has been set for it.
+
+`Style` is reference-counted and stateless, so a single instance can safely be shared between any number of elements. Styles are applied when the element is attached to the UI tree, and re-applied when the active theme changes.
 
 If no style is set, the element uses its default style, created by the `CreateDefaultStyle` virtual method. Override it in a custom element to provide your own default:
 ```cpp

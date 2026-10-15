@@ -1,7 +1,10 @@
 #pragma once
 
+#include <typeindex>
+
 #include "Style.h"
 #include "../Data/Bindable.h"
+#include "../Base/Collections/PackedMap.h"
 
 namespace Sgl
 {
@@ -20,6 +23,8 @@ namespace Sgl
 		const std::string& GetName() const { return _name; }
 
 		void SetStyle(Ref<Style> style);
+		template<typename T>
+		void SetStyleFor(Ref<Style> style);
 
 		Styleable* GetStylingParent() const { return _stylingParent; }
 		bool IsAttachedToLogicalTree() const noexcept { return _isAttachedToLogicalTree; }				
@@ -29,13 +34,20 @@ namespace Sgl
 		virtual void OnAttachedToLogicalTree();
 		virtual void OnDetachedFromLogicalTree();
 		virtual Ref<Style> CreateDefaultStyle() const;
+		Ref<Style> ResolveStyle() const;
 		void ApplyStyle();
 		void ApplyStateStyle();
 	private:
-		std::vector<std::string> _classes;
 		Ref<Style> _style;
-		std::string _name;
 		Styleable* _stylingParent = nullptr;
 		bool _isAttachedToLogicalTree = false;
+		std::string _name;
+		PackedMap<std::type_index, Ref<Style>> _styles;
 	};
+
+	template<typename T>
+	inline void Styleable::SetStyleFor(Ref<Style> style)
+	{
+		_styles.Add(typeid(T), std::move(style));
+	}
 }

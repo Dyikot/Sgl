@@ -36,7 +36,7 @@ namespace Sgl
 		
 		if(!_style)
 		{
-			_style = CreateDefaultStyle();
+			_style = ResolveStyle();
 		}
 
 		ApplyStyle();
@@ -53,6 +53,25 @@ namespace Sgl
 	Ref<Style> Styleable::CreateDefaultStyle() const
 	{
 		return nullptr;
+	}
+
+	Ref<Style> Styleable::ResolveStyle() const
+	{
+		std::type_index typeIndex = typeid(*this);
+		const Styleable* current = this;
+
+		while(current)
+		{
+			auto style = current->_styles.Find(typeIndex);
+			if(style)
+			{
+				return *style;
+			}
+
+			current = current->_stylingParent;
+		}
+
+		return CreateDefaultStyle();
 	}
 
 	void Styleable::ApplyStyle()
